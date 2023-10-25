@@ -1,99 +1,90 @@
-# fez
-
-<p align="center">
-<img width="128" src="./logo.svg"/>
-</p>
-
-Lisp
-
-```lisp
 (defconstant E 2.718281828459045)
 (defconstant PI 3.141592653589793)
 
-(loop defconstant iterate (lambda array callback
-                                (when (length array)
-                                  (do (callback (car array))
+(loop defconstant iterate (lambda array callback  
+                                (when (length array) 
+                                  (do (callback (car array)) 
                                       (iterate (cdr array) callback)))))
 
 (defconstant scan (lambda array callback (do
-                  (loop defconstant iterate (lambda array out
-                                              (if (length array)
-                                                    (iterate (cdr array)
+                  (loop defconstant iterate (lambda array out  
+                                              (if (length array) 
+                                                    (iterate (cdr array) 
                                                       (merge out (Array (callback (car array)))))
                                                     out)))
                                             (iterate array ()))))
 
 (defconstant select (lambda array callback (do
-                  (loop defconstant iterate (lambda array out
+                  (loop defconstant iterate (lambda array out  
                                               (if (length array)
-                                                  (iterate (cdr array)
-                                                            (if (callback (car array))
-                                                                  (merge out (Array (car array)))
+                                                  (iterate (cdr array) 
+                                                            (if (callback (car array)) 
+                                                                  (merge out (Array (car array))) 
                                                                   out))
                                                   out)))
                                             (iterate array ()))))
 
 (defconstant exclude (lambda array callback (do
-                  (loop defconstant iterate (lambda array out
+                  (loop defconstant iterate (lambda array out  
                                               (if (length array)
-                                                  (iterate (cdr array)
-                                                            (if (not (callback (car array)))
-                                                                  (merge out (Array (car array)))
+                                                  (iterate (cdr array) 
+                                                            (if (not (callback (car array))) 
+                                                                  (merge out (Array (car array))) 
                                                                   out))
                                                   out)))
                                             (iterate array ()))))
-
+                                            
 (defconstant fold (lambda array callback initial (do
-                  (loop defconstant iterate (lambda array out
+                  (loop defconstant iterate (lambda array out  
                                               (if (length array)
                                                   (iterate (cdr array) (callback out (car array)))
                                                   out)))
                                             (iterate array initial))))
 
 (defconstant every? (lambda array callback (do
-                    (loop defconstant iterate (lambda array
-                                                (if (and (length array) (callback (car array)))
+                    (loop defconstant iterate (lambda array  
+                                                (if (and (length array) (callback (car array))) 
                                                     (iterate (cdr array))
                                                     (not (length array)))))
                                               (iterate array))))
 
 (defconstant some? (lambda array callback (do
-                    (loop defconstant iterate (lambda array
-                                                (if (and (length array) (not (callback (car array))))
+                    (loop defconstant iterate (lambda array  
+                                                (if (and (length array) (not (callback (car array)))) 
                                                     (iterate (cdr array))
                                                     (type (length array) Boolean))))
                                               (iterate array))))
 
 (defconstant find (lambda array callback (do
-                    (loop defconstant iterate (lambda array
-                                                (when (length array)
+                    (loop defconstant iterate (lambda array  
+                                                (when (length array) 
                                                     (if (callback (car array)) (car array) (iterate (cdr array))))))
                                               (iterate array))))
 
 (defconstant has? (lambda array callback (do
-                    (loop defconstant iterate (lambda array
-                                                (when (length array)
+                    (loop defconstant iterate (lambda array  
+                                                (when (length array) 
                                                     (if (callback (car array)) 1 (iterate (cdr array))))))
                                               (iterate array))))
 
 (defconstant reverse (lambda array (do
-                    (loop defconstant iterate (lambda array out
-                                                (if (length array)
-                                                    (iterate (cdr array)
-                                                    (merge (Array (car array)) out))
+                    (loop defconstant iterate (lambda array out 
+                                                (if (length array) 
+                                                    (iterate (cdr array) 
+                                                    (merge (Array (car array)) out)) 
                                                 out)))
                                               (iterate array ()))))
 
-(defconstant range (lambda start end (do
+(defconstant range (lambda start end (do 
                           (loop defconstant iterate (lambda out count
                           (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () start))))
 
-(defconstant for-range (lambda start end callback (do
+(defconstant for-range (lambda start end callback (do 
                           (loop defconstant iterate (lambda i
-                          (when (< i end)
-                                (do
-                                  (callback i)
+                          (when (< i end) 
+                                (do 
+                                  (callback i) 
                                   (iterate (+ i 1))))))
                           (iterate start))))
 
@@ -121,25 +112,25 @@ Lisp
 (defconstant strings->numbers (lambda array (scan array (safety lambda x (type x Number)))))
 (defconstant numbers->strings (lambda array (scan array (safety lambda x (type x String)))))
 
-(defconstant power (lambda base exp
-  (if (< exp 0)
-      (if (= base 0)
+(defconstant power (lambda base exp 
+  (if (< exp 0) 
+      (if (= base 0) 
       (throw "Attempting to divide by 0 in (power)")
-      (/ (* base (power base (- (* exp -1) 1)))))
+      (/ (* base (power base (- (* exp -1) 1))))) 
       (if (= exp 0) 1
         (if (= exp 1) base
           (* base (power base (- exp 1))))))))
 
-(defconstant greatest-common-divisor (lambda a b (do
-    (loop defconstant gcd (lambda a b
+(defconstant greatest-common-divisor (lambda a b (do 
+    (loop defconstant gcd (lambda a b 
           (if (= b 0) a (gcd b (mod a b)))) (gcd a b)))))
 
 (defconstant least-common-divisor (lambda a b (* a b (/ (greatest-common-divisor a b)))))
 
-(defconstant sqrt (lambda x (do
+(defconstant sqrt (lambda x (do 
   (defconstant is-good-enough (lambda g x (< (abs (- (square g) x)) 0.01))
         improve-guess (lambda g x (average g (* x (/ g)))))
-  (loop defconstant sqrt-iter (lambda g x
+  (loop defconstant sqrt-iter (lambda g x 
       (if (is-good-enough g x) g
           (sqrt-iter (improve-guess g x) x))))
   (sqrt-iter 1.0 x))))
@@ -167,19 +158,19 @@ Lisp
 (defconstant negative? (safety lambda num (< num 0)))
 (defconstant zero? (safety lambda num (= num 0)))
 (defconstant divisible? (safety lambda a b (= (mod a b) 0)))
-(defconstant prime? (lambda n (cond
+(defconstant prime? (lambda n (cond 
         (= n 1) 0
         (< n 0) 0
-        (*) (do
-        (loop defconstant iter (lambda i end (do
+        (*) (do 
+        (loop defconstant iter (lambda i end (do 
             (defconstant it-is (not (= (mod n i) 0)))
             (if (and (<= i end) it-is) (iter (+ i 1) end) it-is))))
       (or (= n 2) (iter 2 (sqrt n)))))))
 
-(defconstant slice (safety lambda array start end (do
+(defconstant slice (safety lambda array start end (do 
         (defconstant bounds (- end start))
         (loop defconstant iterate (lambda i out
-          (if (< i bounds)
+          (if (< i bounds) 
               (iterate (+ i 1) (merge out (Array (get array (+ start i)))))
               out)))
         (iterate 0 ()))))
@@ -197,7 +188,7 @@ Lisp
             (search arr target (+ index 1) end))))))))
    (search array target 0 (length array)))))
 
-(defconstant zip (safety lambda A B (do
+(defconstant zip (safety lambda A B (do 
   (loop defconstant iterate (lambda a b output
     (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (merge output (Array (Array (car a) (car b))))) output)))
   (iterate A B ()))))
@@ -218,10 +209,9 @@ Lisp
     (defconstant left (car sorted))
     (defconstant right (car (cdr sorted)))
     (merge (sort left) (Array pivot) (sort right)))))))
-
-(defconstant equal? (lambda a b
-  (or (and (atom? a) (atom? b) (= a b))
-  (and (Array? a)
-        (= (length a) (length b))
+    
+(defconstant equal? (lambda a b 
+  (or (and (atom? a) (atom? b) (= a b)) 
+  (and (Array? a) 
+        (= (length a) (length b)) 
           (not (some? (range 0 (length a)) (lambda i (not (equal? (get a i) (get b i))))))))))
-```
