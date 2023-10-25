@@ -4,7 +4,7 @@
 <img width="128" src="./logo.svg"/>
 </p>
 
-Lisp
+Immutable Lisp interpreted & compiled by/to JavaScript
 
 - NO Mutations
 - NO Types
@@ -12,7 +12,7 @@ Lisp
 - NO Objects
 - NO Null
 - NO Array going out of bounds
-- Everything is an expression
+- Everything is an Expression
 
 ```lisp
 ; https://adventofcode.com/2020/day/1

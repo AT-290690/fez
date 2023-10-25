@@ -332,7 +332,7 @@ const compile = (tree, Variables) => {
         return `(${compile(Arguments[0], Variables)}?${compile(
           Arguments[1],
           Variables
-        )}:${Arguments.length === 3 ? compile(Arguments[2], Variables) : 0});`
+        )}:${compile(Arguments[2], Variables)});`
       }
       case TOKENS.WHEN: {
         return `(${compile(Arguments[0], Variables)}?${compile(
@@ -341,9 +341,10 @@ const compile = (tree, Variables) => {
         )}:0);`
       }
       case TOKENS.UNLESS: {
-        return `(${compile(Arguments[0], Variables)}?${
-          Arguments.length === 3 ? compile(Arguments[2], Variables) : 0
-        }:${compile(Arguments[1], Variables)});`
+        return `(${compile(Arguments[0], Variables)}?${compile(
+          Arguments[2],
+          Variables
+        )}:${compile(Arguments[1], Variables)});`
       }
       case TOKENS.OTHERWISE: {
         return `(${compile(Arguments[0], Variables)}?0:${compile(
