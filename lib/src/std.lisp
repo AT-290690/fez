@@ -8,72 +8,72 @@
 
 (defconstant scan (lambda array callback (do
                   (loop defconstant iterate (lambda array out  
-                                              (if (length array) 
-                                                    (iterate (cdr array) 
-                                                      (merge out (Array (callback (car array)))))
-                                                    out)))
-                                            (iterate array ()))))
+                        (if (length array) 
+                              (iterate (cdr array) 
+                                (merge out (Array (callback (car array)))))
+                              out)))
+                      (iterate array ()))))
 
 (defconstant select (lambda array callback (do
                   (loop defconstant iterate (lambda array out  
-                                              (if (length array)
-                                                  (iterate (cdr array) 
-                                                            (if (callback (car array)) 
-                                                                  (merge out (Array (car array))) 
-                                                                  out))
-                                                  out)))
-                                            (iterate array ()))))
+                        (if (length array)
+                            (iterate (cdr array) 
+                                      (if (callback (car array)) 
+                                            (merge out (Array (car array))) 
+                                            out))
+                            out)))
+                      (iterate array ()))))
 
 (defconstant exclude (lambda array callback (do
                   (loop defconstant iterate (lambda array out  
-                                              (if (length array)
-                                                  (iterate (cdr array) 
-                                                            (if (not (callback (car array))) 
-                                                                  (merge out (Array (car array))) 
-                                                                  out))
-                                                  out)))
-                                            (iterate array ()))))
+                        (if (length array)
+                            (iterate (cdr array) 
+                                      (if (not (callback (car array))) 
+                                            (merge out (Array (car array))) 
+                                            out))
+                            out)))
+                      (iterate array ()))))
                                             
 (defconstant fold (lambda array callback initial (do
                   (loop defconstant iterate (lambda array out  
-                                              (if (length array)
-                                                  (iterate (cdr array) (callback out (car array)))
-                                                  out)))
-                                            (iterate array initial))))
+                        (if (length array)
+                            (iterate (cdr array) (callback out (car array)))
+                            out)))
+                      (iterate array initial))))
 
 (defconstant every? (lambda array callback (do
                     (loop defconstant iterate (lambda array  
-                                                (if (and (length array) (callback (car array))) 
-                                                    (iterate (cdr array))
-                                                    (not (length array)))))
-                                              (iterate array))))
+                          (if (and (length array) (callback (car array))) 
+                              (iterate (cdr array))
+                              (not (length array)))))
+                        (iterate array))))
 
 (defconstant some? (lambda array callback (do
                     (loop defconstant iterate (lambda array  
-                                                (if (and (length array) (not (callback (car array)))) 
-                                                    (iterate (cdr array))
-                                                    (type (length array) Boolean))))
-                                              (iterate array))))
+                          (if (and (length array) (not (callback (car array)))) 
+                              (iterate (cdr array))
+                              (type (length array) Boolean))))
+                        (iterate array))))
 
 (defconstant find (lambda array callback (do
                     (loop defconstant iterate (lambda array  
-                                                (when (length array) 
-                                                    (if (callback (car array)) (car array) (iterate (cdr array))))))
-                                              (iterate array))))
+                          (when (length array) 
+                              (if (callback (car array)) (car array) (iterate (cdr array))))))
+                        (iterate array))))
 
 (defconstant has? (lambda array callback (do
                     (loop defconstant iterate (lambda array  
-                                                (when (length array) 
-                                                    (if (callback (car array)) 1 (iterate (cdr array))))))
-                                              (iterate array))))
+                          (when (length array) 
+                              (if (callback (car array)) 1 (iterate (cdr array))))))
+                        (iterate array))))
 
 (defconstant reverse (lambda array (do
                     (loop defconstant iterate (lambda array out 
-                                                (if (length array) 
-                                                    (iterate (cdr array) 
-                                                    (merge (Array (car array)) out)) 
-                                                out)))
-                                              (iterate array ()))))
+                          (if (length array) 
+                              (iterate (cdr array) 
+                              (merge (Array (car array)) out)) 
+                          out)))
+                        (iterate array ()))))
 
 (defconstant range (lambda start end (do 
                           (loop defconstant iterate (lambda out count
@@ -215,3 +215,19 @@
   (and (Array? a) 
         (= (length a) (length b)) 
           (not (some? (range 0 (length a)) (lambda i (not (equal? (get a i) (get b i))))))))))
+
+(defconstant split (lambda string delim (do 
+    (defconstant input (type (concatenate string delim) Array))
+    (defconstant marks 
+    (go 
+      input
+      (zip (range 0 (length input))) 
+      (scan (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
+    (defconstant first (find marks (lambda x (Number? x))))
+  (go 
+    marks
+    (fold (lambda a b 
+      (if (Number? b)
+      (merge a (Array (slice input (- b first) b)))
+      a)) ())
+    (scan (lambda x (array->string x)))))))

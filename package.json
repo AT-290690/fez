@@ -1,8 +1,8 @@
 {
-  "name": "node-lisper",
-  "description": "A Lisp for Node.js",
+  "name": "fez",
+  "description": "Immutable Lisp interpreted & compiled by/to JavaScript",
   "author": "AT290690",
-  "version": "1.2.27",
+  "version": "1.0.0",
   "type": "module",
   "main": "index.js",
   "keywords": [
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AT-290690/node.lisp.git"
+    "url": "git+https://github.com/AT-290690/fez.git"
   },
   "prettier": {
     "semi": false,
@@ -23,7 +23,7 @@
   },
   "scripts": {
     "build": "node ./lib/builder.js",
-    "lisp": "node main.js",
+    "fez": "node main.js",
     "test": "mocha"
   },
   "license": "MIT",

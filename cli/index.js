@@ -10,7 +10,6 @@ import {
   handleUnbalancedParens,
   handleUnbalancedQuotes,
   logError,
-  quick,
   removeNoCode,
 } from '../src/utils.js'
 export default async () => {
@@ -30,10 +29,10 @@ export default async () => {
       case '-m':
         writeFileSync(path, removeNoCode(file), 'utf-8')
         break
-      case '-d':
+      case '-destination':
         destination = value
         break
-      case '-s':
+      case '-source':
         path = value
         file = readFileSync(value, 'utf-8')
         break
@@ -69,12 +68,61 @@ export default async () => {
           logError(err.message)
         }
         break
+
       case '-r':
         try {
           run(
             parse(
               handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(file)))
             ),
+            env
+          )
+        } catch (err) {
+          console.log(
+            ` \x1b[30m${[...stacktrace]
+              .reverse()
+              .filter(Boolean)
+              .join('\n ')}\x1b[0m`
+          )
+          logError('Error')
+          logError(err.message)
+        }
+        break
+
+      case '-compile':
+        {
+          const tree = [
+            ...STD,
+            ...parse(
+              handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(file)))
+            ),
+          ]
+          if (Array.isArray(tree)) {
+            const { top, program } = compileToJs(
+              tree,
+              Extensions,
+              Helpers,
+              Tops
+            )
+            const JavaScript = `${top}${program}`
+            writeFileSync(
+              destination ?? './playground/dist/main.js',
+              JavaScript
+            )
+          }
+        }
+        break
+      case '-run':
+        try {
+          run(
+            [
+              ...STD,
+              ...parse(
+                handleUnbalancedQuotes(
+                  handleUnbalancedParens(removeNoCode(file))
+                )
+              ),
+            ],
             env
           )
         } catch (err) {

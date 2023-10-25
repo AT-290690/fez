@@ -352,24 +352,24 @@ const tokens = {
     return args.length === 1 ? -operands[0] : operands.reduce((a, b) => a - b)
   },
   [TOKENS.IF]: (args, env) => {
-    if (args.length < 2 || args.length > 3)
+    if (args.length !== 3)
       throw new RangeError(
         `Invalid number of arguments for (${
           TOKENS.IF
-        }), expected (or 2 3) but got ${args.length} (${
-          TOKENS.IF
-        } ${stringifyArgs(args)}).`
+        }), expected (= 3) but got ${args.length} (${TOKENS.IF} ${stringifyArgs(
+          args
+        )}).`
       )
     return evaluate(args[0], env)
       ? evaluate(args[1], env)
       : evaluate(args[2], env)
   },
   [TOKENS.UNLESS]: (args, env) => {
-    if (args.length < 2 || args.length > 3)
+    if (args.length !== 3)
       throw new RangeError(
         `Invalid number of arguments for (${
           TOKENS.UNLESS
-        }), expected (or 2 3)  but got ${args.length} (${
+        }), expected (= 3)  but got ${args.length} (${
           TOKENS.UNLESS
         } ${stringifyArgs(args)}).`
       )
@@ -384,8 +384,7 @@ const tokens = {
           args.length
         } (${TOKENS.WHEN} ${stringifyArgs(args)}).`
       )
-    if (evaluate(args[0], env)) return evaluate(args[1], env)
-    return 0
+    return evaluate(args[0], env) ? evaluate(args[1], env) : 0
   },
   [TOKENS.OTHERWISE]: (args, env) => {
     if (args.length !== 2)
@@ -396,8 +395,7 @@ const tokens = {
           TOKENS.OTHERWISE
         } ${stringifyArgs(args)}).`
       )
-    if (evaluate(args[0], env)) return 0
-    return evaluate(args[1], env)
+    return evaluate(args[0], env) ? 0 : evaluate(args[1], env)
   },
   [TOKENS.CONDITION]: (args, env) => {
     if (args.length < 2)
