@@ -406,6 +406,10 @@ const compile = (tree, Variables) => {
   else if (first[TYPE] === WORD) return lispToJavaScriptVariableName(token)
 }
 
+const HelperSources = Object.values(Helpers)
+  .map((x) => x.source)
+  .join(',')
+
 export const compileToJs = (AST, extensions = {}, helpers = {}, tops = []) => {
   for (const ext in extensions)
     Extensions[lispToJavaScriptVariableName(ext)] = extensions[ext]
@@ -421,8 +425,25 @@ export const compileToJs = (AST, extensions = {}, helpers = {}, tops = []) => {
     const next = raw[i + 1]
     if (!semiColumnEdgeCases.has(current + next)) program += current
   }
-  const top = `${tops.join('\n')}${Object.values(Helpers)
-    .map((x) => x.source)
-    .join(',')};\n${Variables.size ? `var ${[...Variables].join(',')};` : ''}`
+  const top = `${tops.join('\n')}${HelperSources};\n${
+    Variables.size ? `var ${[...Variables].join(',')};` : ''
+  }`
   return { top, program }
+}
+export const comp = (ast) => {
+  const Variables = new Set()
+  const raw = ast
+    .map((tree) => compile(tree, Variables))
+    .filter(Boolean)
+    .join('\n')
+  let program = ''
+  for (let i = 0; i < raw.length; ++i) {
+    const current = raw[i]
+    const next = raw[i + 1]
+    if (!semiColumnEdgeCases.has(current + next)) program += current
+  }
+  const top = `${HelperSources};\n${
+    Variables.size ? `var ${[...Variables].join(',')};` : ''
+  }`
+  return `${top}${program}`
 }

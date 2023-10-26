@@ -6,13 +6,13 @@
 
 Immutable Lisp interpreted & compiled by & to JavaScript
 
+- Everything is an Expression
 - NO Mutations
 - NO Types
 - NO Booleans
 - NO Objects
 - NO Null
 - NO Array going out of bounds
-- Everything is an Expression
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
@@ -39,8 +39,21 @@ Immutable Lisp interpreted & compiled by & to JavaScript
 ```
 
 ```js
-import STD from '../lib/baked/std.js'
-import { quick } from '../src/utils.js'
-import { readFileSync } from 'fs'
-quick(readFileSync('./playground/main.lisp', 'utf-8'), STD)
+import { fez, std } from '../index.js'
+try {
+  console.log(
+    fez(
+      `
+  (go 
+    (Array 1 2 3 4)
+    (select even?)
+    (product)
+    (* 10)
+  )`,
+      { libraries: [std], validate: true, compile: false }
+    )
+  )
+} catch (error) {
+  console.log('\x1b[31m', error.message, '\x1b[0m')
+}
 ```

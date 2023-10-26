@@ -1,4 +1,4 @@
-import { compileToJs, lispToJavaScriptVariableName } from './compiler.js'
+import { comp, compileToJs, lispToJavaScriptVariableName } from './compiler.js'
 import { APPLY, TYPE, VALUE, WORD } from './enums.js'
 import { run } from './interpreter.js'
 import { parse } from './parser.js'
@@ -109,4 +109,14 @@ export const quickjs = (
     Tops
   )
   return `${top}${program}`
+}
+export const fez = (source, options = {}) => {
+  const libraries = options.libraries ? options.libraries.flat(1) : []
+  const env = options.env ?? {}
+  const code = options.validate
+    ? handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
+    : removeNoCode(source)
+  const parsed = parse(code)
+  const ast = [...libraries, ...parsed]
+  return options.compile ? comp(ast) : run(ast, env)
 }

@@ -1,11 +1,5 @@
 import { APPLY, ATOM, TOKENS, TYPE, VALUE, WORD } from './enums.js'
 import { stringifyArgs, tokens } from './tokeniser.js'
-const traceN = 8
-const trace = (stacktrace, value) => {
-  for (let i = 0; i < traceN; ++i) stacktrace[i] = stacktrace[i + 1]
-  stacktrace[traceN] = value
-}
-export const stacktrace = Array.from({ length: traceN }).fill(null)
 export const evaluate = (expression, env) => {
   if (expression == undefined) return 0
   const [first, ...rest] = Array.isArray(expression) ? expression : [expression]
@@ -21,7 +15,6 @@ export const evaluate = (expression, env) => {
       const apply = env[first[VALUE]]
       if (typeof apply !== 'function')
         throw new TypeError(`${first[VALUE]} is not a (function).`)
-      trace(stacktrace, first[VALUE])
       return apply(rest, env)
     case ATOM:
       if (rest.length) throw new TypeError(`Atoms can't have arguments.`)

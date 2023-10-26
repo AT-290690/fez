@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs'
 import { start } from 'repl'
 import { compileToJs } from '../src/compiler.js'
-import { run, stacktrace } from '../src/interpreter.js'
+import { run } from '../src/interpreter.js'
 import { parse } from '../src/parser.js'
 import STD from '../lib/baked/std.js'
 
@@ -78,12 +78,6 @@ export default async () => {
             env
           )
         } catch (err) {
-          console.log(
-            ` \x1b[30m${[...stacktrace]
-              .reverse()
-              .filter(Boolean)
-              .join('\n ')}\x1b[0m`
-          )
           logError('Error')
           logError(err.message)
         }
@@ -126,26 +120,7 @@ export default async () => {
             env
           )
         } catch (err) {
-          console.log(
-            ` \x1b[30m${[...stacktrace]
-              .reverse()
-              .filter(Boolean)
-              .join('\n ')}\x1b[0m`
-          )
           logError('Error')
-          logError(err.message)
-        }
-        break
-      case '-trace':
-        try {
-          run(
-            parse(
-              handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(file)))
-            ),
-            env
-          )
-        } catch (err) {
-          console.log('\x1b[40m', err, '\x1b[0m')
           logError(err.message)
         }
         break
