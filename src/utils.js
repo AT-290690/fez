@@ -43,7 +43,7 @@ export const treeShake = (deps, stds) => {
         parsed.filter(
           ([dec, name]) =>
             dec[TYPE] === APPLY &&
-            dec[VALUE] === 'defun' &&
+            dec[VALUE] === 'defconstant' &&
             name[TYPE] === WORD &&
             depSet.has(lispToJavaScriptVariableName(name[VALUE]))
         )
@@ -52,39 +52,25 @@ export const treeShake = (deps, stds) => {
   }
   const JavaScript = `${
     mods.length
-      ? `\n// Imported Functions \n${mods
-          .map((x) => compileToJs(x).program)
-          .join('\n')}\n`
-      : '\n// There are no Imported Functions \n'
+      ? `\n${mods.map((x) => compileToJs(x).program).join('\n')}\n`
+      : '\n'
   }`
   return JavaScript
 }
-export const runFromCompiled = (
-  source,
-  topLevel = [],
-  Extensions = {},
-  helpers = {}
-) => {
+export const runFromCompiled = (source, Extensions = {}, helpers = {}) => {
   const tree = parse(
     handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
   )
   if (Array.isArray(tree)) {
     const compiled = compileToJs(tree, Extensions, helpers)
-    const DEPS = topLevel.length
-      ? `\n${treeShake(compiled.deps, JSON.parse(JSON.stringify(topLevel)))}\n`
-      : '\n'
-    const JavaScript = `${compiled.top}${DEPS}${compiled.program}`
+    const JavaScript = `${compiled.top}${compiled.program}`
     return eval(JavaScript)
   }
 }
-export const runFromInterpreted = (source, topLevel = [], env = {}) => {
-  const tree = topLevel
-    .flat(1)
-    .concat(
-      parse(
-        handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-      )
-    )
+export const runFromInterpreted = (source, env = {}) => {
+  const tree = parse(
+    handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
+  )
   if (Array.isArray(tree)) return run(tree, env)
 }
 
@@ -102,4 +88,25 @@ export const quick = (source, library = [], env = Object.create(null)) => {
   } catch (error) {
     logError(error.message)
   }
+}
+
+export const quickjs = (
+  source,
+  library = [],
+  Extensions = [],
+  Helpers = {},
+  Tops = []
+) => {
+  const { top, program } = compileToJs(
+    [
+      ...library,
+      ...parse(
+        handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
+      ),
+    ],
+    Extensions,
+    Helpers,
+    Tops
+  )
+  return `${top}${program}`
 }

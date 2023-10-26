@@ -231,3 +231,10 @@
       (merge a (Array (slice input (- b first) b)))
       a)) ())
     (scan (lambda x (array->string x)))))))
+
+(defconstant flat (lambda array (do
+  (defconstant flatten (lambda item 
+    (if (and (Array? item) (length item))
+        (fold item (lambda a b (merge a (flatten b))) ())
+        (Array item))))
+  (flatten array))))

@@ -236,12 +236,20 @@ describe('Compilation', () => {
             (merge a (Array (slice input (- b first) b)))
             a)) ())
           (scan (lambda x (array->string x)))))))
+
+        (defconstant flat (lambda array (do
+          (defconstant flatten (lambda item 
+            (if (and (Array? item) (length item))
+                (fold item (lambda a b (merge a (flatten b))) ())
+                (Array item))))
+          (flatten array))))
+
 (Array (go
 (Array 1 2 3 4 5) 
 (scan (safety lambda x (* x 2))) 
 (select (safety lambda x (> x 4))) 
 (fold (safety lambda a b (+ a b)) 0))
-
+(Array (flat (Array 1 2 3 4))) (flat (Array (Array 1 2 3 4) 2 3 (Array 1 2 3 4)))
 (Array 
   (go 
   (defconstant arr (Array "a" "b" "c"))
