@@ -42,13 +42,15 @@ Immutable Lisp interpreted & compiled by & to JavaScript
 import { fez, std } from '../index.js'
 try {
   const result = fez(
-    `(defconstant max-count-of (lambda nums
+    `
+  (defconstant max-count-of (lambda nums
     (max
       (count-of nums positive?)
       (count-of nums negative?))))
 
-  (max-count-of (Array -2 -1 -1 0 0 1 2)) ; 3`,
-    { libraries: [std], validate: true, compile: false }
+  (max-count-of (Array -2 -1 -1 0 0 1 2)) ; 3
+  `,
+    { std: true, validate: true, compile: false }
   )
   console.log(result)
 } catch (error) {
