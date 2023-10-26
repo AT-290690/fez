@@ -101,8 +101,10 @@ describe('Compilation', () => {
       
       (defconstant summation (lambda array (fold array (safety lambda a b (+ a b)) 0)))
       (defconstant product (lambda array (fold array (safety lambda a b (* a b)) 1)))
-      (defconstant max (lambda array (fold array (safety lambda a b (if (> a b) a b)) (car array))))
-      (defconstant min (lambda array (fold array (safety lambda a b (if (< a b) a b)) (car array))))
+      (defconstant maximum (lambda array (fold array (safety lambda a b (if (> a b) a b)) (car array))))
+      (defconstant minimum (lambda array (fold array (safety lambda a b (if (< a b) a b)) (car array))))
+      (defconstant max (lambda a b (if (> a b) a b)))
+      (defconstant min (lambda a b (if (< a b) a b)))
       (defconstant count-of (lambda array callback (go array (select callback) (length))))
       (defconstant increment (safety lambda i (+ i 1)))
       (defconstant floor (safety lambda n (| n 0)))

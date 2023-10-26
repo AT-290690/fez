@@ -41,18 +41,16 @@ Immutable Lisp interpreted & compiled by & to JavaScript
 ```js
 import { fez, std } from '../index.js'
 try {
-  console.log(
-    fez(
-      `
-  (go 
-    (Array 1 2 3 4)
-    (select even?)
-    (product)
-    (* 10)
-  )`,
-      { libraries: [std], validate: true, compile: false }
-    )
+  const result = fez(
+    `(defconstant max-count-of (lambda nums
+    (max
+      (count-of nums positive?)
+      (count-of nums negative?))))
+
+  (max-count-of (Array -2 -1 -1 0 0 1 2)) ; 3`,
+    { libraries: [std], validate: true, compile: false }
   )
+  console.log(result)
 } catch (error) {
   console.log('\x1b[31m', error.message, '\x1b[0m')
 }

@@ -102,8 +102,10 @@ describe('Interpretation', () => {
         
         (defconstant summation (lambda array (fold array (safety lambda a b (+ a b)) 0)))
         (defconstant product (lambda array (fold array (safety lambda a b (* a b)) 1)))
-        (defconstant max (lambda array (fold array (safety lambda a b (if (> a b) a b)) (car array))))
-        (defconstant min (lambda array (fold array (safety lambda a b (if (< a b) a b)) (car array))))
+        (defconstant maximum (lambda array (fold array (safety lambda a b (if (> a b) a b)) (car array))))
+        (defconstant minimum (lambda array (fold array (safety lambda a b (if (< a b) a b)) (car array))))
+        (defconstant max (lambda a b (if (> a b) a b)))
+        (defconstant min (lambda a b (if (< a b) a b)))
         (defconstant count-of (lambda array callback (go array (select callback) (length))))
         (defconstant increment (safety lambda i (+ i 1)))
         (defconstant floor (safety lambda n (| n 0)))
@@ -245,6 +247,8 @@ describe('Interpretation', () => {
               (merge a (Array (slice input (- b first) b)))
               a)) ())
             (scan (lambda x (array->string x)))))))
+        
+        (defconstant join (lambda array delim (fold (zip array (sequence array)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
         
         (defconstant flat (lambda array (do
           (defconstant flatten (lambda item 
