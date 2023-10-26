@@ -4,7 +4,7 @@
 <img width="128" src="./logo.svg"/>
 </p>
 
-Immutable Lisp interpreted & compiled by/to JavaScript
+Immutable Lisp interpreted & compiled by & to JavaScript
 
 - NO Mutations
 - NO Types

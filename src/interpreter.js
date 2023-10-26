@@ -1,5 +1,5 @@
 import { APPLY, ATOM, TOKENS, TYPE, VALUE, WORD } from './enums.js'
-import { tokens } from './tokeniser.js'
+import { stringifyArgs, tokens } from './tokeniser.js'
 const traceN = 8
 const trace = (stacktrace, value) => {
   for (let i = 0; i < traceN; ++i) stacktrace[i] = stacktrace[i + 1]
@@ -26,6 +26,10 @@ export const evaluate = (expression, env) => {
     case ATOM:
       if (rest.length) throw new TypeError(`Atoms can't have arguments.`)
       return first[VALUE]
+    default:
+      throw new ReferenceError(
+        `Attempting to acces Undefined near ${stringifyArgs(expression)}`
+      )
   }
 }
 export const run = (tree, env = {}) =>

@@ -80,6 +80,12 @@
                           (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () start))))
 
+(defconstant sequence (lambda array (do 
+                          (defconstant end (length array))
+                          (loop defconstant iterate (lambda out count
+                          (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (iterate () 0))))
+                          
 (defconstant for-range (lambda start end callback (do 
                           (loop defconstant iterate (lambda i
                           (when (< i end) 
@@ -117,9 +123,10 @@
       (if (= base 0) 
       (throw "Attempting to divide by 0 in (power)")
       (/ (* base (power base (- (* exp -1) 1))))) 
-      (if (= exp 0) 1
-        (if (= exp 1) base
-          (* base (power base (- exp 1))))))))
+        (cond 
+            (= exp 0) 1
+            (= exp 1) base
+            (*) (* base (power base (- exp 1)))))))
 
 (defconstant greatest-common-divisor (lambda a b (do 
     (loop defconstant gcd (lambda a b 
@@ -158,7 +165,8 @@
 (defconstant negative? (safety lambda num (< num 0)))
 (defconstant zero? (safety lambda num (= num 0)))
 (defconstant divisible? (safety lambda a b (= (mod a b) 0)))
-(defconstant prime? (lambda n (cond 
+(defconstant prime? (lambda n 
+      (cond 
         (= n 1) 0
         (< n 0) 0
         (*) (do 
@@ -214,14 +222,14 @@
   (or (and (atom? a) (atom? b) (= a b)) 
   (and (Array? a) 
         (= (length a) (length b)) 
-          (not (some? (range 0 (length a)) (lambda i (not (equal? (get a i) (get b i))))))))))
+          (not (some? (sequence a) (lambda i (not (equal? (get a i) (get b i))))))))))
 
 (defconstant split (lambda string delim (do 
     (defconstant input (type (concatenate string delim) Array))
     (defconstant marks 
     (go 
       input
-      (zip (range 0 (length input))) 
+      (zip (sequence input)) 
       (scan (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
     (defconstant first (find marks (lambda x (Number? x))))
   (go 
@@ -231,6 +239,8 @@
       (merge a (Array (slice input (- b first) b)))
       a)) ())
     (scan (lambda x (array->string x)))))))
+
+(defconstant join (lambda array delim (fold (zip array (sequence array)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
 
 (defconstant flat (lambda array (do
   (defconstant flatten (lambda item 
