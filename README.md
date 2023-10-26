@@ -39,7 +39,7 @@ Immutable Lisp interpreted & compiled by & to JavaScript
 ```
 
 ```js
-import { fez, std } from '../index.js'
+import { fez } from '../index.js'
 try {
   const result = fez(
     `
