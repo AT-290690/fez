@@ -5,9 +5,9 @@ export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
 export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
 export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
 export const questionMarkToLodash = (name) =>
-  name.replace(new RegExp(/\?/g), 'Pre')
+  name.replace(new RegExp(/\?/g), 'Assert')
 export const exclamationMarkMarkToLodash = (name) =>
-  name.replace(new RegExp(/\!/g), 'Mut')
+  name.replace(new RegExp(/\!/g), 'Predicate')
 export const toCamelCase = (name) => {
   let out = name[0]
   for (let i = 1; i < name.length; ++i) {
@@ -43,9 +43,6 @@ const Helpers = {
   log: {
     source: `var log = (msg) => { console.log(msg); return msg }`,
   },
-  _identity: {
-    source: `_identity = i => { return i }`,
-  },
   _merge: {
     source: `_merge = (...arrays) => arrays.reduce((a, b) => a.concat(b), [])`,
   },
@@ -57,7 +54,7 @@ const Helpers = {
     }`,
   },
   atom: {
-    source: `_isAtom = (value) => typeof value === 'number' ||  typeof value === 'bigint' || typeof value === 'string'`,
+    source: `_isAtom = (value) => typeof value === 'number' || typeof value === 'string'`,
   },
   error: {
     source: `_error = (error) => { 
@@ -71,7 +68,6 @@ const Helpers = {
       : Array.isArray(result)
       ? JSON.stringify(result, (_, value) => {
           switch (typeof value) {
-            case 'bigint':
             case 'number':
               return Number(value)
             case 'function':
@@ -101,12 +97,10 @@ const Helpers = {
     switch (type) {
       case 'Number':
          return Number(value)
-      case 'Integer':
-         return BigInt(value)
       case 'String':
          return value.toString()
       case 'Array':
-        return typeof value === 'number' || typeof value === 'bigint' ? [...Number(value).toString()].map(Number) : [...value]
+        return typeof value === 'number' ? [...Number(value).toString()].map(Number) : [...value]
       case 'Bit':
          return parseInt(value, 2)
       case 'Boolean':
@@ -199,10 +193,6 @@ const compile = (tree, Variables) => {
         return handleBoolean(
           `(typeof(${compile(Arguments[0], Variables)})==='number');`
         )
-      case TOKENS.IS_INTEGER:
-        return handleBoolean(
-          `(typeof(${compile(Arguments[0], Variables)})==='bigint');`
-        )
       case TOKENS.IS_FUNCTION:
         return `(typeof(${compile(Arguments[0], Variables)})==='function');`
       case TOKENS.IS_ARRAY:
@@ -283,7 +273,7 @@ const compile = (tree, Variables) => {
         return `(${parseArgs(Arguments, Variables, '&&')});`
       case TOKENS.OR:
         return `((${parseArgs(Arguments, Variables, '||')}) || 0);`
-      case TOKENS.STRING_CONCATENATION:
+      case TOKENS.CONCATENATION:
         return '(' + parseArgs(Arguments, Variables, '+') + ');'
       case TOKENS.EQUAL:
         return handleBoolean(`(${parseArgs(Arguments, Variables, '===')});`)
@@ -386,6 +376,21 @@ const compile = (tree, Variables) => {
       case TOKENS.SERIALISE:
         return `_serialise(${compile(Arguments[0], Variables)});`
       case TOKENS.IDENTITY:
+        if (Arguments[0][TYPE] === WORD) {
+          switch (Arguments[0][VALUE]) {
+            case TOKENS.ADDITION:
+              return '0'
+            case TOKENS.MULTIPLICATION:
+              return '1'
+            case TOKENS.MERGE:
+              return '[]'
+            case TOKENS.CONCATENATION:
+              return '""'
+            default:
+              return compile(Arguments[0], Variables)
+          }
+        }
+        return compile(Arguments[0], Variables)
       case TOKENS.NOT_COMPILED_BLOCK:
       case TOKENS.ATOM:
       case TOKENS.TEST_CASE:

@@ -11,18 +11,16 @@ export const TOKENS = {
   BIT_TYPE: 'Bit',
   STRING_TYPE: 'String',
   NUMBER_TYPE: 'Number',
-  INTEGER_TYPE: 'Integer',
   BOOLEAN_TYPE: 'Boolean',
   FUNCTION_TYPE: 'Function',
   ARRAY_TYPE: 'Array',
 
   CAST_TYPE: 'type',
   IDENTITY: 'identity',
-  STRING_CONCATENATION: 'concatenate',
+  CONCATENATION: 'concatenate',
   ARRAY_OR_STRING_LENGTH: 'length',
   IS_ARRAY: 'Array?',
   IS_NUMBER: 'Number?',
-  IS_INTEGER: 'Integer?',
   IS_STRING: 'String?',
   IS_FUNCTION: 'Function?',
   CHAR_CODE_AT: 'char-code',
@@ -71,7 +69,6 @@ export const TOKENS = {
   OR: 'or',
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'defconstant',
-  IMPORT: 'import',
 
   PIPE: 'go',
   THROW_ERROR: 'throw',
@@ -80,7 +77,6 @@ export const TOKENS = {
   NOT_COMPILED_BLOCK: 'void',
   SLEEP: 'sleep',
 
-  DOCUMENTATION: 'documentation',
   TEST_CASE: 'case',
   SERIALISE: 'serialise',
 }

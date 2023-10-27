@@ -10,7 +10,6 @@ export const stringifyOutput = (result) =>
     : Array.isArray(result)
     ? JSON.stringify(result, (_, value) => {
         switch (typeof value) {
-          case 'bigint':
           case 'number':
             return Number(value)
           case 'function':
@@ -62,11 +61,7 @@ export const isAtom = (arg, env) => {
   if (arg[TYPE] === ATOM) return 1
   else {
     const atom = evaluate(arg, env)
-    return +(
-      typeof atom === 'number' ||
-      typeof atom === 'bigint' ||
-      typeof atom === 'string'
-    )
+    return +(typeof atom === 'number' || typeof atom === 'string')
   }
 }
 export const isEqual = (a, b) =>
@@ -119,23 +114,37 @@ const tokens = {
           TOKENS.IDENTITY
         } ${stringifyArgs(args)})`
       )
+    if (args[0][TYPE] === WORD) {
+      switch (args[0][VALUE]) {
+        case TOKENS.ADDITION:
+          return 0
+        case TOKENS.MULTIPLICATION:
+          return 1
+        case TOKENS.MERGE:
+          return []
+        case TOKENS.CONCATENATION:
+          return ''
+        default:
+          return evaluate(args[0], env)
+      }
+    }
     return evaluate(args[0], env)
   },
-  [TOKENS.STRING_CONCATENATION]: (args, env) => {
+  [TOKENS.CONCATENATION]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${
-          tokens.STRING_CONCATENATION
+          tokens.CONCATENATION
         }), expected > 1 but got ${args.length}. (${
-          tokens.STRING_CONCATENATION
+          tokens.CONCATENATION
         } ${stringifyArgs(args)}).`
       )
     const operands = args.map((x) => evaluate(x, env))
     if (operands.some((x) => typeof x !== 'string'))
       throw new TypeError(
-        `Not all arguments of (${TOKENS.STRING_CONCATENATION}) are (${
+        `Not all arguments of (${TOKENS.CONCATENATION}) are (${
           TOKENS.STRING_TYPE
-        }) (${TOKENS.STRING_CONCATENATION} ${stringifyArgs(args)}).`
+        }) (${TOKENS.CONCATENATION} ${stringifyArgs(args)}).`
       )
     return operands.reduce((a, b) => a + b, '')
   },
@@ -187,7 +196,7 @@ const tokens = {
       return 1 / number
     }
     const operands = args.map((x) => evaluate(x, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.DIVISION}) are (${
           TOKENS.NUMBER_TYPE
@@ -233,15 +242,6 @@ const tokens = {
         } ${stringifyArgs(args)}).`
       )
     return +(typeof evaluate(args[0], env) === 'number')
-  },
-  [TOKENS.IS_INTEGER]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${TOKENS.IS_INTEGER}) (1 required) (${
-          TOKENS.IS_INTEGER
-        } ${stringifyArgs(args)}).`
-      )
-    return +(typeof evaluate(args[0], env) === 'bigint')
   },
   [TOKENS.IS_STRING]: (args, env) => {
     if (args.length !== 1)
@@ -295,7 +295,7 @@ const tokens = {
     if (!Number.isInteger(index) || index < 0)
       throw new TypeError(
         `Arguments of (${TOKENS.FROM_CHAR_CODE}) must be (+ ${
-          TOKENS.INTEGER_TYPE
+          TOKENS.NUMBER_TYPE
         }) (${TOKENS.FROM_CHAR_CODE} ${stringifyArgs(args)}).`
       )
     return String.fromCharCode(index)
@@ -310,7 +310,7 @@ const tokens = {
         } ${stringifyArgs(args)}).`
       )
     const operands = args.map((x) => evaluate(x, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.ADDITION}) are (${
           TOKENS.NUMBER_TYPE
@@ -325,7 +325,7 @@ const tokens = {
         `Invalid number of arguments for (${TOKENS.MULTIPLICATION}), expected (or (> 1) (= 0)) but got ${args.length}.`
       )
     const operands = args.map((x) => evaluate(x, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.MULTIPLICATION}) are (${
           TOKENS.NUMBER_TYPE
@@ -343,7 +343,7 @@ const tokens = {
         } ${stringifyArgs(args)}).`
       )
     const operands = args.map((x) => evaluate(x, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.SUBTRACTION}) are (${
           TOKENS.NUMBER_TYPE
@@ -426,7 +426,7 @@ const tokens = {
       if (!Number.isInteger(N))
         throw new TypeError(
           `Size argument for (${TOKENS.ARRAY_TYPE}) has to be an (32 bit ${
-            TOKENS.INTEGER_TYPE
+            TOKENS.NUMBER_TYPE
           }) (${TOKENS.ARRAY_TYPE} ${stringifyArgs(args)})`
         )
       return new Array(N).fill(0)
@@ -526,7 +526,7 @@ const tokens = {
     if (!Number.isInteger(index))
       throw new TypeError(
         `Second argument of (${TOKENS.GET_ARRAY}) must be an (32 bit ${
-          TOKENS.INTEGER_TYPE
+          TOKENS.NUMBER_TYPE
         }) (${index}) (${TOKENS.GET_ARRAY} ${stringifyArgs(args)}).`
       )
     if (index > array.length - 1 || index * -1 > array.length)
@@ -799,7 +799,6 @@ const tokens = {
   },
   [TOKENS.STRING_TYPE]: () => '',
   [TOKENS.NUMBER_TYPE]: () => 0,
-  [TOKENS.INTEGER_TYPE]: () => 0n,
   [TOKENS.BOOLEAN_TYPE]: () => 1,
   [TOKENS.FUNCTION_TYPE]: () => () => {},
   [TOKENS.CAST_TYPE]: (args, env) => {
@@ -827,8 +826,6 @@ const tokens = {
             )
           return num
         }
-        case TOKENS.INTEGER_TYPE:
-          return BigInt(value)
         case TOKENS.STRING_TYPE:
           return value.toString()
         case TOKENS.BIT_TYPE:
@@ -838,7 +835,7 @@ const tokens = {
         case TOKENS.FUNCTION_TYPE:
           return () => value
         case TOKENS.ARRAY_TYPE: {
-          if (typeof value === 'number' || typeof value === 'bigint')
+          if (typeof value === 'number')
             return [...Number(value).toString()].map(Number)
           else if (typeof value[Symbol.iterator] !== 'function')
             throw new TypeError(
@@ -850,13 +847,11 @@ const tokens = {
         }
         default:
           throw new TypeError(
-            `Can only cast (or ${TOKENS.NUMBER_TYPE} ${TOKENS.INTEGER_TYPE} ${
-              TOKENS.STRING_TYPE
-            } ${TOKENS.ARRAY_TYPE} ${TOKENS.BIT_TYPE} ${
-              TOKENS.BOOLEAN_TYPE
-            }) at (${TOKENS.CAST_TYPE}) (${TOKENS.CAST_TYPE} ${stringifyArgs(
-              args
-            )}).`
+            `Can only cast (or ${TOKENS.NUMBER_TYPE} ${TOKENS.STRING_TYPE} ${
+              TOKENS.ARRAY_TYPE
+            } ${TOKENS.BIT_TYPE} ${TOKENS.BOOLEAN_TYPE}) at (${
+              TOKENS.CAST_TYPE
+            }) (${TOKENS.CAST_TYPE} ${stringifyArgs(args)}).`
           )
       }
     }
@@ -869,7 +864,7 @@ const tokens = {
         } ${stringifyArgs(args)})`
       )
     const operand = evaluate(args[0], env)
-    if (typeof operand !== 'number' && typeof operand !== 'bigint')
+    if (typeof operand !== 'number')
       throw new TypeError(
         `Argument of (${TOKENS.BIT_TYPE}) is not a (${TOKENS.NUMBER_TYPE}) (${
           TOKENS.BIT_TYPE
@@ -885,13 +880,11 @@ const tokens = {
         }) (>= 2 required). (${TOKENS.BITWISE_AND} ${stringifyArgs(args)})`
       )
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
-        `Not all arguments of (${TOKENS.BITWISE_AND}) are (or ${
+        `Not all arguments of (${TOKENS.BITWISE_AND}) are ${
           TOKENS.NUMBER_TYPE
-        } ${TOKENS.INTEGER_TYPE}) (${TOKENS.BITWISE_AND} ${stringifyArgs(
-          args
-        )}).`
+        } (${TOKENS.BITWISE_AND} ${stringifyArgs(args)}).`
       )
     return operands.reduce((acc, x) => acc & x)
   },
@@ -903,13 +896,11 @@ const tokens = {
         }) (1 required). (${TOKENS.BITWISE_NOT} ${stringifyArgs(args)})`
       )
     const operand = evaluate(args[0], env)
-    if (typeof operand !== 'number' && typeof operand !== 'bigint')
+    if (typeof operand !== 'number')
       throw new TypeError(
-        `Argument of (${TOKENS.BITWISE_NOT}) is not a (or ${
+        `Argument of (${TOKENS.BITWISE_NOT}) is not a (${
           TOKENS.NUMBER_TYPE
-        } ${TOKENS.INTEGER_TYPE}) (${TOKENS.BITWISE_NOT} ${stringifyArgs(
-          args
-        )}).`
+        }) (${TOKENS.BITWISE_NOT} ${stringifyArgs(args)}).`
       )
     return ~operand
   },
@@ -921,13 +912,11 @@ const tokens = {
         }) (>= 2 required). (${TOKENS.BITWISE_OR} ${stringifyArgs(args)})`
       )
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
-        `Not all arguments of (${TOKENS.BITWISE_OR}) are (or ${
+        `Not all arguments of (${TOKENS.BITWISE_OR}) are (${
           TOKENS.NUMBER_TYPE
-        } ${TOKENS.INTEGER_TYPE}) (${TOKENS.BITWISE_OR} ${stringifyArgs(
-          args
-        )}).`
+        }) (${TOKENS.BITWISE_OR} ${stringifyArgs(args)}).`
       )
     return operands.reduce((acc, x) => acc | x)
   },
@@ -939,13 +928,11 @@ const tokens = {
         }) (>= 2 required). (${TOKENS.BITWISE_XOR} ${stringifyArgs(args)}).`
       )
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
-        `Not all arguments of (${TOKENS.BITWISE_XOR}) are (or ${
+        `Not all arguments of (${TOKENS.BITWISE_XOR}) are (${
           TOKENS.NUMBER_TYPE
-        } ${TOKENS.INTEGER_TYPE}) (${TOKENS.BITWISE_XOR} ${stringifyArgs(
-          args
-        )}).`
+        }) (${TOKENS.BITWISE_XOR} ${stringifyArgs(args)}).`
       )
     return operands.reduce((acc, x) => acc ^ x)
   },
@@ -959,7 +946,7 @@ const tokens = {
         )}).`
       )
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.BITWISE_LEFT_SHIFT}) are (${
           TOKENS.NUMBER_TYPE
@@ -977,7 +964,7 @@ const tokens = {
         )}).`
       )
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.BITWISE_RIGHT_SHIFT}) are (${
           TOKENS.NUMBER_TYPE
@@ -995,7 +982,7 @@ const tokens = {
         } ${stringifyArgs(args)}).`
       )
     const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number' && typeof x !== 'bigint'))
+    if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${TOKENS.BITWISE_UNSIGNED_RIGHT_SHIFT}) are (${
           TOKENS.NUMBER_TYPE
