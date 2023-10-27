@@ -205,21 +205,6 @@
 
 (defconstant cartesian-product (lambda a b (fold a (lambda p x (merge p (scan b (lambda y (Array x y))))) ())))
 
-(defconstant sort (lambda arr (do
-  (if (<= (length arr) 1) arr (do
-    (defconstant pivot (car arr))
-    (loop defconstant iterate (lambda i bounds a b (do
-        (defconstant current (get arr i))
-        (defconstant less? (< current pivot))
-        (defconstant left (if less? (merge a (Array current)) a))
-        (defconstant right (unless less? (merge b (Array current)) b))
-        (if (< i bounds) (iterate (+ i 1) bounds left right)
-        (Array left right)))))
-    (defconstant sorted (iterate 1 (- (length arr) 1) () ()))
-    (defconstant left (car sorted))
-    (defconstant right (car (cdr sorted)))
-    (merge (sort left) (Array pivot) (sort right)))))))
-    
 (defconstant equal? (lambda a b 
   (or (and (atom? a) (atom? b) (= a b)) 
   (and (Array? a) 
@@ -250,3 +235,18 @@
         (fold item (lambda a b (merge a (flatten b))) ())
         (Array item))))
   (flatten array))))
+
+  (defconstant sort (lambda arr callback (do
+    (if (<= (length arr) 1) arr (do
+      (defconstant pivot (car arr))
+      (loop defconstant iterate (lambda i bounds a b (do
+          (defconstant current (get arr i))
+          (defconstant predicate (callback current pivot))
+          (defconstant left (if (= predicate -1) (merge a (Array current)) a))
+          (defconstant right (if (= predicate 1) (merge b (Array current)) b))
+          (if (< i bounds) (iterate (+ i 1) bounds left right)
+          (Array left right)))))
+      (defconstant sorted (iterate 1 (- (length arr) 1) () ()))
+      (defconstant left (car sorted))
+      (defconstant right (car (cdr sorted)))
+      (merge (sort left callback) (Array pivot) (sort right callback)))))))
