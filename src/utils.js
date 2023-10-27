@@ -115,10 +115,21 @@ export const fez = (source, options = {}) => {
   const libraries = options.libraries ? options.libraries.flat(1) : []
   const standard = options.std ? std : []
   const env = options.env ?? {}
-  const code = options.validate
-    ? handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-    : removeNoCode(source)
-  const parsed = parse(code)
-  const ast = [...libraries, ...standard, ...parsed]
-  return options.compile ? comp(ast) : run(ast, env)
+  try {
+    let code
+    if (options.errors)
+      code = handleUnbalancedQuotes(
+        handleUnbalancedParens(removeNoCode(source))
+      )
+    else code = removeNoCode(source)
+    const parsed = parse(code)
+    const ast = [...libraries, ...standard, ...parsed]
+    if (options.compile) return comp(ast)
+    return run(ast, env)
+  } catch (error) {
+    if (options.errors) {
+      console.log('\x1b[31m', error.message, '\x1b[0m')
+    }
+    return error.message
+  }
 }
