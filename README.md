@@ -1,10 +1,11 @@
 # fez
 
 <p align="center">
-<img width="128" src="./logo.svg"/>
+<img width="64 src="./logo.svg"/>
 </p>
 
-Immutable Lisp interpreted & compiled by & to JavaScript
+Immutable Lisp 
+compiles to JavaScript
 
 - Everything is an Expression
 - NO Mutations
@@ -32,7 +33,7 @@ Immutable Lisp interpreted & compiled by & to JavaScript
 (go *input*
     (split "\n")
     (strings->numbers)
-    (sort)
+    (sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (product)
     (log))
