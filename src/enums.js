@@ -39,7 +39,7 @@ export const TOKENS = {
   BITWISE_RIGHT_SHIFT: '>>',
   BITWISE_UNSIGNED_RIGHT_SHIFT: '>>>',
   ATOM: 'atom',
-  IS_ATOM: 'atom?',
+  IS_ATOM: 'Atom?',
   SHORT_ARRAY: "'",
   FIRST_ARRAY: 'car',
   REST_ARRAY: 'cdr',

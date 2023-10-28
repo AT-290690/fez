@@ -1,13 +1,12 @@
 {
   "name": "fez",
-  "description": "Immutable Lisp interpreted & compiled by/to JavaScript",
+  "description": "Immutable Lisp compiled to JavaScript",
   "author": "AT290690",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
   "keywords": [
     "lisp",
-    "scheme",
     "expressions",
     "programming-language",
     "interpreter",

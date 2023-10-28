@@ -4,15 +4,12 @@
 <img width="64" src="./logo.svg"/>
 </p>
 
-Immutable Lisp
-that compiles to JavaScript
-
 ```lisp
 (let fizz-buzz (lambda n
     (cond
-      (= (mod n 15) 0) "Fizz Bazz"
+      (= (mod n 15) 0) "Fizz Buzz"
       (= (mod n 3) 0) "Fizz"
-      (= (mod n 5) 0) "Bazz"
+      (= (mod n 5) 0) "Buzz"
       (*) n)))
 
   (go (range 1 100) (scan fizz-buzz) (log))
@@ -56,12 +53,29 @@ that compiles to JavaScript
   (log)) ; 3
 ```
 
+<p align="center">
+<img width="64" src="./js.svg"/>
+</p>
+
 ```js
 import { fez } from '../index.js'
-fez(
-  `
-  (log "Hello World!")
-  `,
-  { std: false, errors: false, compile: false }
+fez(`(log "Hello World!")`)
+```
+
+```js
+import { fez } from '../index.js'
+fez(`(+ 1 "2")`, { errors: true })
+```
+
+```js
+import { fez } from '../index.js'
+eval(
+  fez(
+    `(go 
+        (range 1 11) 
+        (scan (lambda x (* x x))) 
+        (log)))`,
+    { std: true, compile: true }
+  )
 )
 ```

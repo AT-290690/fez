@@ -77,7 +77,7 @@
 
 (let range (lambda start end (do 
                           (let* iterate (lambda out count
-                          (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (if (< (length out) (- end start)) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () start))))
 
 (let sequence (lambda array (do 
@@ -85,7 +85,12 @@
                           (let* iterate (lambda out count
                           (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () 0))))
-                          
+
+(let sequence-n (lambda n (do 
+                          (let* iterate (lambda out count
+                          (if (< (length out) n) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (iterate () 0))))
+
 (let for-range (lambda start end callback (do 
                           (let* iterate (lambda i
                           (when (< i end) 
@@ -93,6 +98,18 @@
                                   (callback i) 
                                   (iterate (+ i 1))))))
                           (iterate start))))
+
+(let list-range (lambda start end (do 
+   (let range (lambda list start end 
+      (if (< start end) 
+         (Array (merge list (range (Array (Array (+ start 1))) (+ start 1) end))) 
+         list)))
+      (car (car (range () start end))))))
+
+(let traverse (lambda x callback 
+    (if (Atom? x) 
+        (callback x) 
+        (iterate x (lambda y (traverse y callback))))))
 
 (let summation (lambda array (fold array (safety lambda a b (+ a b)) 0)))
 (let product (lambda array (fold array (safety lambda a b (* a b)) 1)))
@@ -173,7 +190,7 @@
         (let* iter (lambda i end (do 
             (let it-is (not (= (mod n i) 0)))
             (if (and (<= i end) it-is) (iter (+ i 1) end) it-is))))
-      (or (= n 2) (iter 2 (sqrt n)))))))
+            (or (= n 2) (iter 2 (sqrt n)))))))
 
 (let slice (safety lambda array start end (do 
         (let bounds (- end start))
@@ -204,7 +221,7 @@
 (let cartesian-product (lambda a b (fold a (lambda p x (merge p (scan b (lambda y (Array x y))))) ())))
 
 (let equal? (lambda a b 
-  (or (and (atom? a) (atom? b) (= a b)) 
+  (or (and (Atom? a) (Atom? b) (= a b)) 
   (and (Array? a) 
         (= (length a) (length b)) 
           (not (some? (sequence a) (lambda i (not (equal? (get a i) (get b i))))))))))

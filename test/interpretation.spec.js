@@ -210,7 +210,7 @@ describe('Interpretation', () => {
         (let cartesian-product (lambda a b (fold a (lambda p x (merge p (scan b (lambda y (Array x y))))) ())))
         
         (let equal? (lambda a b 
-          (or (and (atom? a) (atom? b) (= a b)) 
+          (or (and (Atom? a) (Atom? b) (= a b)) 
           (and (Array? a) 
                 (= (length a) (length b)) 
                   (not (some? (sequence a) (lambda i (not (equal? (get a i) (get b i))))))))))
