@@ -1,7 +1,7 @@
 # fez
 
 <p align="center">
-<img width="64 src="./logo.svg"/>
+<img width="64" src="./logo.svg"/>
 </p>
 
 Immutable Lisp 
