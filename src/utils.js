@@ -1,6 +1,6 @@
 import std from '../lib/baked/std.js'
 import { comp, compileToJs, lispToJavaScriptVariableName } from './compiler.js'
-import { APPLY, TYPE, VALUE, WORD } from './enums.js'
+import { APPLY, TOKENS, TYPE, VALUE, WORD } from './enums.js'
 import { run } from './interpreter.js'
 import { parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
@@ -44,7 +44,7 @@ export const treeShake = (deps, stds) => {
         parsed.filter(
           ([dec, name]) =>
             dec[TYPE] === APPLY &&
-            dec[VALUE] === 'defconstant' &&
+            dec[VALUE] === TOKENS.DEFINE_VARIABLE &&
             name[TYPE] === WORD &&
             depSet.has(lispToJavaScriptVariableName(name[VALUE]))
         )

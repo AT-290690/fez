@@ -4,12 +4,12 @@
 <img width="64" src="./logo.svg"/>
 </p>
 
-Immutable Lisp 
+Immutable Lisp
 that compiles to JavaScript
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
-(defconstant *input*
+(let *input*
 "1721
 979
 366
@@ -17,9 +17,9 @@ that compiles to JavaScript
 675
 1456")
 ; solve part 1
-(defconstant solve (lambda array cb
+(let solve (lambda array cb
      (fold array (lambda a b (do
-        (defconstant res (binary-search array (cb b)))
+        (let res (binary-search array (cb b)))
         (if res (merge a (Array res)) a)))
      ())))
 ; 514579
@@ -36,7 +36,7 @@ that compiles to JavaScript
 import { fez } from '../index.js'
 fez(
   `
-  (defconstant max-count-of (lambda nums
+  (let max-count-of (lambda nums
     (max
       (count-of nums positive?)
       (count-of nums negative?))))

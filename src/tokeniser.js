@@ -467,7 +467,7 @@ const tokens = {
       )
     if (index > array.length - 1 || index * -1 > array.length)
       throw new RangeError(
-        `Second argument of (${TOKENS.GET_ARRAY}) is outside of the (${
+        `Second argument of (${TOKENS.GET_ARRAY}) is outside of let (${
           TOKENS.ARRAY_TYPE
         }) bounds (${index}) (${TOKENS.GET_ARRAY} ${stringifyArgs(args)}).`
       )
@@ -1023,15 +1023,7 @@ const tokens = {
         } ${stringifyArgs(args)}).`
       )
     // TODO: Add validation for TCO recursion
-    const [definition, ...rest] = args
-    const token = definition[VALUE]
-    if (!(token in tokens))
-      throw new ReferenceError(
-        `There is no such keyword ${token} at (${
-          TOKENS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
-        } ${stringifyArgs(args)})`
-      )
-    return tokens[token](rest, env)
+    return tokens[TOKENS.DEFINE_VARIABLE](args, env)
   },
   [TOKENS.IMMUTABLE_FUNCTION]: (args, env) => {
     if (!args.length)

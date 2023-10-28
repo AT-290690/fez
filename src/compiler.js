@@ -246,12 +246,12 @@ const compile = (tree, Variables) => {
         let name,
           newName,
           out = '(('
-        const arg = Arguments[1]
+        const arg = Arguments[0]
         name = lispToJavaScriptVariableName(arg[VALUE])
         newName = `rec_${performance.now().toString().replace('.', 7)}`
         Variables.add(name)
         Variables.add(newName)
-        const functionArgs = Arguments[2].slice(1)
+        const functionArgs = Arguments[1].slice(1)
         const body = functionArgs.pop()
         const FunctionVariables = new Set()
         deepRename(arg[VALUE], newName, body)
