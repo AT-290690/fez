@@ -12,7 +12,7 @@
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (go (range 1 100) (scan fizz-buzz) (log))
+  (go (range 1 100) (scan fizz-buzz) (log!))
 ```
 
 ```lisp
@@ -37,7 +37,7 @@
     (sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (product)
-    (log))
+    (log!))
 ```
 
 ```lisp
@@ -50,7 +50,7 @@
 (go
   (Array -2 -1 -1 0 0 1 2)
   (max-count-of)
-  (log)) ; 3
+  (log!)) ; 3
 ```
 
 ```lisp
@@ -74,7 +74,7 @@
 
 ```js
 import { fez } from '../index.js'
-fez(`(log "Hello World!")`)
+fez(`(log! "Hello World!")`)
 ```
 
 ```js
@@ -89,7 +89,7 @@ eval(
     `(go 
         (range 1 11) 
         (scan (lambda x (* x x))) 
-        (log)))`,
+        (log!)))`,
     { std: true, compile: true }
   )
 )

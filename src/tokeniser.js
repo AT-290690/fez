@@ -482,6 +482,18 @@ const tokens = {
     console.log(...expressions)
     return expressions.at(-1)
   },
+  [TOKENS.READ]: (args, env) => {
+    if (args.length)
+      throw new RangeError(
+        `Invalid number of arguments to (${TOKENS.READ}) (= 0 required) (${
+          TOKENS.READ
+        } ${stringifyArgs(args)})`
+      )
+    const inp = env[TOKENS.INPUT]
+    if (inp.length) return inp
+    else
+      throw new ReferenceError(`${TOKENS.INPUT} is empty! at (${TOKENS.READ})`)
+  },
   [TOKENS.BLOCK]: (args, env) => {
     if (!args.length)
       throw new RangeError(

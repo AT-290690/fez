@@ -44,12 +44,10 @@ export const TOKENS = {
   REST_ARRAY: 'cdr',
   GET_ARRAY: 'get',
 
-  LOG: 'log',
   BLOCK: 'do',
 
   MERGE: 'merge',
   ANONYMOUS_FUNCTION: 'lambda',
-  // DEFINE_FUNCTION: 'defun',
 
   IF: 'if',
   UNLESS: 'unless',
@@ -73,7 +71,8 @@ export const TOKENS = {
   TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
   IMMUTABLE_FUNCTION: 'safety',
   NOT_COMPILED_BLOCK: 'void',
-  SLEEP: 'sleep',
+  LOG: 'log!',
+  READ: 'read!',
 
   TEST_CASE: 'case',
   TEST_BED: 'assert',

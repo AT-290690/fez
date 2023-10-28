@@ -39,35 +39,22 @@ export const lispToJavaScriptVariableName = (name) =>
     )
   )
 const Extensions = {}
+// const INPUT_UNIQUE_NAME = performance.now().toString().replace('.', 7)
 const Helpers = {
-  log: {
-    source: `var log = (msg) => { console.log(msg); return msg }`,
-  },
-  _merge: {
-    source: `_merge = (...arrays) => arrays.reduce((a, b) => a.concat(b), [])`,
-  },
-  tco: {
-    source: `tco = fn => (...args) => {
-      let result = fn(...args)
-      while (typeof result === 'function') result = result()
-      return result
-    }`,
-  },
-  atom: {
-    source: `_isAtom = (value) => typeof value === 'number' || typeof value === 'string'`,
-  },
-  error: {
-    source: `_error = (error) => { 
-      throw new Error(error)
+  log: `var logEffect=(msg)=>{console.log(msg);return msg}`,
+  _merge: `_merge=(...arrays)=>arrays.reduce((a,b)=>a.concat(b),[])`,
+  tco: `tco=fn=>(...args)=>{
+let result=fn(...args)
+while(typeof result==='function')result=result()
+return result
   }`,
-  },
-  serialise: {
-    source: `_serialise = (result) => {
-    return typeof result === 'function'
-      ? '(λ)'
-      : Array.isArray(result)
-      ? JSON.stringify(result, (_, value) => {
-          switch (typeof value) {
+  atom: `_isAtom=(value)=>typeof value==='number'||typeof value==='string'`,
+  error: `_error=(error)=>{ 
+    throw new Error(error)
+}`,
+  serialise: `_serialise=(result)=>{
+    return typeof result==='function'?'(λ)':Array.isArray(result)?JSON.stringify(result,(_,value)=>{
+          switch(typeof value){
             case 'number':
               return Number(value)
             case 'function':
@@ -81,32 +68,30 @@ const Helpers = {
               return value
           }
         })
-          .replace(new RegExp(/\\[/g), "(Array ")
-          .replace(new RegExp(/\\]/g), ')')
-          .replace(new RegExp(/\\,/g), ' ')
-          .replace(new RegExp(/"λ"/g), 'λ')
-      : typeof result === 'string'
-      ? '"' + result + '"'
-      : result == undefined
-      ? '(void)'
-      : result 
+          .replace(new RegExp(/\\[/g),"(Array ")
+          .replace(new RegExp(/\\]/g),')')
+          .replace(new RegExp(/\\,/g),' ')
+          .replace(new RegExp(/"λ"/g),'λ')
+      :typeof result==='string'
+      ?'"'+result+'"'
+      :result==undefined
+      ?'(void)'
+      :result 
   }`,
-  },
-  cast: {
-    source: `_cast = (type, value) => {
+  cast: `_cast=(type,value)=>{
     switch (type) {
       case 'Number':
          return Number(value)
       case 'String':
          return value.toString()
       case 'Array':
-        return typeof value === 'number' ? [...Number(value).toString()].map(Number) : [...value]
+        return typeof value==='number'?[...Number(value).toString()].map(Number):[...value]
       case 'Bit':
-         return parseInt(value, 2)
+         return parseInt(value,2)
       case 'Boolean':
           return +!!value
       case 'Function':
-          return () => value
+          return ()=>value
       case 'Char-Code':
         return String.fromCharCode(value)
       case 'Char':
@@ -115,7 +100,6 @@ const Helpers = {
          return 0
       }
     }`,
-  },
 }
 const handleBoolean = (source) => `+${source}`
 const semiColumnEdgeCases = new Set([
@@ -391,9 +375,7 @@ const compile = (tree, Variables) => {
   else if (first[TYPE] === WORD) return lispToJavaScriptVariableName(token)
 }
 
-const HelperSources = Object.values(Helpers)
-  .map((x) => x.source)
-  .join(',')
+const HelperSources = Object.values(Helpers).join(',')
 
 export const compileToJs = (AST, extensions = {}, helpers = {}, tops = []) => {
   for (const ext in extensions)
