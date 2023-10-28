@@ -8,14 +8,14 @@ Immutable Lisp
 that compiles to JavaScript
 
 ```lisp
-  (let fizz-buzz (lambda n
-      (cond
-        (= (mod n 15) 0) "Fizz Bazz"
-        (= (mod n 3) 0) "Fizz"
-        (= (mod n 5) 0) "Bazz"
-        (*) n)))
+(let fizz-buzz (lambda n
+    (cond
+      (= (mod n 15) 0) "Fizz Bazz"
+      (= (mod n 3) 0) "Fizz"
+      (= (mod n 5) 0) "Bazz"
+      (*) n)))
 
-    (go (range 1 100) (scan fizz-buzz) (log))
+  (go (range 1 100) (scan fizz-buzz) (log))
 ```
 
 ```lisp
@@ -44,16 +44,16 @@ that compiles to JavaScript
 ```
 
 ```lisp
-  ; https://leetcode.com/problems/maximum-count-of-positive-integer-and-negative-integer/description/
-  (let max-count-of (lambda nums
-    (max
-      (count-of nums positive?)
-      (count-of nums negative?))))
+; https://leetcode.com/problems/maximum-count-of-positive-integer-and-negative-integer/description/
+(let max-count-of (lambda nums
+  (max
+    (count-of nums positive?)
+    (count-of nums negative?))))
 
-  (go
-    (Array -2 -1 -1 0 0 1 2)
-    (max-count-of)
-    (log)) ; 3
+(go
+  (Array -2 -1 -1 0 0 1 2)
+  (max-count-of)
+  (log)) ; 3
 ```
 
 ```js
