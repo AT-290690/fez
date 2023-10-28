@@ -91,6 +91,14 @@
                           (if (< (length out) n) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
+(let unique (lambda array (go 
+      (let sorted (sort array (safety lambda a b (> a b)))) 
+      (zip (sequence sorted))
+      (select (lambda x 
+               (or (not (let index (car (cdr x))))
+                  (not (= (get sorted (- index 1)) (get sorted index))))))
+      (scan car))))
+
 (let for-range (lambda start end callback (do 
                           (let* iterate (lambda i
                           (when (< i end) 

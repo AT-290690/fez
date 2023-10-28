@@ -23,7 +23,7 @@ export const stringifyOutput = (result) =>
             return value
         }
       })
-        .replace(new RegExp(/\[/g), `(' `)
+        .replace(new RegExp(/\[/g), `(Array `)
         .replace(new RegExp(/\]/g), ')')
         .replace(new RegExp(/\,/g), ' ')
         .replace(new RegExp(/"λ"/g), 'λ')
@@ -367,15 +367,6 @@ const tokens = {
         )
       return new Array(N).fill(0)
     }
-    return args.map((x) => evaluate(x, env))
-  },
-  [TOKENS.SHORT_ARRAY]: (args, env) => {
-    if (!args.length)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          TOKENS.SHORT_ARRAY
-        }) (>= 1 required) (${TOKENS.SHORT_ARRAY} ${stringifyArgs(args)}).`
-      )
     return args.map((x) => evaluate(x, env))
   },
   [TOKENS.IS_ATOM]: (args, env) => {
@@ -1079,6 +1070,37 @@ const tokens = {
     return !isEqualTypes(a, b) || !isEqual(a, b)
       ? [0, description, stringifyArgs([args[1]]), b, a]
       : [1, description, stringifyArgs([args[1]]), a]
+  },
+  [TOKENS.TEST_BED]: (args, env) => {
+    let tests = []
+    try {
+      tests = args.map((x) => evaluate(x, env))
+      tests.forEach(([state, describe, ...rest]) =>
+        !state
+          ? console.log(
+              '\x1b[31m',
+              `${describe} Failed:\n`,
+
+              `${rest[0]} => ${stringifyOutput(rest[1])} != ${stringifyOutput(
+                rest[2]
+              )}`,
+              '\n',
+              '\x1b[0m'
+            )
+          : console.log(
+              '\x1b[32m',
+              `${describe} Passed:\n`,
+              `${rest[0]} => ${stringifyOutput(rest[1])}`,
+              '\n',
+              '\x1b[0m'
+            )
+      )
+    } catch (err) {
+      console.log('\x1b[31m', 'Tests failed: \n', err.toString())
+    }
+    !tests.length || tests.some(([t]) => !t)
+      ? console.log('\x1b[31m', 'Some tests failed!', '\n', '\x1b[0m')
+      : console.log('\x1b[32m', 'All tests passed!', '\n', '\x1b[0m')
   },
   [TOKENS.SERIALISE]: (args, env) => {
     if (!args.length)

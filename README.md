@@ -53,6 +53,21 @@
   (log)) ; 3
 ```
 
+```lisp
+; remove duplicate elements in the array
+(let unique (lambda array (go
+      (let sorted (sort array (safety lambda a b (> a b))))
+      (zip (sequence sorted))
+      (select (lambda x
+               (or (not (let index (car (cdr x))))
+                  (not (= (get sorted (- index 1)) (get sorted index))))))
+      (scan car))))
+; tests
+(assert
+   (case "test 1" (unique (Array 1)) (Array 1))
+   (case "test 2" (unique (Array 1 2 2 4 5 9 5 12 14 1)) (Array 1 2 4 5 9 12 14)))
+```
+
 <p align="center">
 <img width="64" src="./js.svg"/>
 </p>

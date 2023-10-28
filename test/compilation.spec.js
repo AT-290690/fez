@@ -269,22 +269,22 @@ describe('Compilation', () => {
   (zip (range 1 (length arr)))
   (scan (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) String)))))
 
-(sort (' 1 2 3 4 5 6) ascending?)
-(sort (' 6 5 4 3 2 1) ascending?)
-(sort (' 3 1 2 5 4 6) ascending?)
+(sort (Array 1 2 3 4 5 6) ascending?)
+(sort (Array 6 5 4 3 2 1) ascending?)
+(sort (Array 3 1 2 5 4 6) ascending?)
 
-(sort (' 1 2 3 4 5 6) descending?)
-(sort (' 6 5 4 3 2 1) descending?)
-(sort (' 3 1 2 5 4 6) descending?)
+(sort (Array 1 2 3 4 5 6) descending?)
+(sort (Array 6 5 4 3 2 1) descending?)
+(sort (Array 3 1 2 5 4 6) descending?)
 
-(binary-search (' 3 1 2 5 4 6) 4)
+(binary-search (Array 3 1 2 5 4 6) 4)
 
 (slice (Array 1 2 3 4 5 6) 1 3)
-(zip (' 1 2 3 4) (' "A" "B" "C"))
-(cartesian-product (' 1 2 3 4) (' "A" "B" "C"))
-(equal? (' 1 2 3) (' 1 2 2))
-(equal? (' 1 2 3) (' 1 2 3))
-(equal? (' 1 2 3 4) (' 1 2 3)))
+(zip (Array 1 2 3 4) (Array "A" "B" "C"))
+(cartesian-product (Array 1 2 3 4) (Array "A" "B" "C"))
+(equal? (Array 1 2 3) (Array 1 2 2))
+(equal? (Array 1 2 3) (Array 1 2 3))
+(equal? (Array 1 2 3 4) (Array 1 2 3)))
 (do (let *input* "1721
     979
     366

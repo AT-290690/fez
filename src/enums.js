@@ -38,9 +38,8 @@ export const TOKENS = {
   BITWISE_LEFT_SHIFT: '<<',
   BITWISE_RIGHT_SHIFT: '>>',
   BITWISE_UNSIGNED_RIGHT_SHIFT: '>>>',
-  ATOM: 'atom',
+  ATOM: 'Atom',
   IS_ATOM: 'Atom?',
-  SHORT_ARRAY: "'",
   FIRST_ARRAY: 'car',
   REST_ARRAY: 'cdr',
   GET_ARRAY: 'get',
@@ -77,5 +76,6 @@ export const TOKENS = {
   SLEEP: 'sleep',
 
   TEST_CASE: 'case',
+  TEST_BED: 'assert',
   SERIALISE: 'serialise',
 }

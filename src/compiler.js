@@ -81,7 +81,7 @@ const Helpers = {
               return value
           }
         })
-          .replace(new RegExp(/\\[/g), "(' ")
+          .replace(new RegExp(/\\[/g), "(Array ")
           .replace(new RegExp(/\\]/g), ')')
           .replace(new RegExp(/\\,/g), ' ')
           .replace(new RegExp(/"λ"/g), 'λ')
@@ -202,8 +202,6 @@ const compile = (tree, Variables) => {
         return '1'
       case TOKENS.STRING_TYPE:
         return '""'
-      case TOKENS.SHORT_ARRAY:
-        return `[${parseArgs(Arguments, Variables)}];`
       case TOKENS.ARRAY_TYPE:
         return Arguments.length === 2 &&
           Arguments[1][TYPE] === WORD &&
@@ -375,6 +373,7 @@ const compile = (tree, Variables) => {
       case TOKENS.NOT_COMPILED_BLOCK:
       case TOKENS.ATOM:
       case TOKENS.TEST_CASE:
+      case TOKENS.TEST_BED:
         return ''
       default: {
         const camleCasedToken = lispToJavaScriptVariableName(token)
