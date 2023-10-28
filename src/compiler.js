@@ -107,6 +107,10 @@ const Helpers = {
           return +!!value
       case 'Function':
           return () => value
+      case 'Char-Code':
+        return String.fromCharCode(value)
+      case 'Char':
+        return value.charCodeAt(0)
        default:
          return 0
       }
@@ -178,13 +182,6 @@ const compile = (tree, Variables) => {
         out += `),${name});`
         return out
       }
-      case TOKENS.FROM_CHAR_CODE:
-        return `(String.fromCharCode(${compile(Arguments[0], Variables)}));`
-      case TOKENS.CHAR_CODE_AT:
-        return `((${compile(Arguments[0], Variables)}).charCodeAt(${compile(
-          Arguments[1],
-          Variables
-        )}));`
       case TOKENS.IS_STRING:
         return handleBoolean(
           `(typeof(${compile(Arguments[0], Variables)})==='string');`
@@ -375,22 +372,6 @@ const compile = (tree, Variables) => {
       }
       case TOKENS.SERIALISE:
         return `_serialise(${compile(Arguments[0], Variables)});`
-      case TOKENS.IDENTITY:
-        if (Arguments[0][TYPE] === WORD) {
-          switch (Arguments[0][VALUE]) {
-            case TOKENS.ADDITION:
-              return '0'
-            case TOKENS.MULTIPLICATION:
-              return '1'
-            case TOKENS.MERGE:
-              return '[]'
-            case TOKENS.CONCATENATION:
-              return '""'
-            default:
-              return compile(Arguments[0], Variables)
-          }
-        }
-        return compile(Arguments[0], Variables)
       case TOKENS.NOT_COMPILED_BLOCK:
       case TOKENS.ATOM:
       case TOKENS.TEST_CASE:

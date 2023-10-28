@@ -12,7 +12,7 @@
                               (iterate (cdr array) 
                                 (merge out (Array (callback (car array)))))
                               out)))
-                      (iterate array (identity merge)))))
+                      (iterate array ()))))
 
 (defconstant select (lambda array callback (do
                   (loop defconstant iterate (lambda array out  
@@ -22,7 +22,7 @@
                                             (merge out (Array (car array))) 
                                             out))
                             out)))
-                      (iterate array (identity merge)))))
+                      (iterate array ()))))
 
 (defconstant exclude (lambda array callback (do
                   (loop defconstant iterate (lambda array out  
@@ -32,7 +32,7 @@
                                             (merge out (Array (car array))) 
                                             out))
                             out)))
-                      (iterate array (identity merge)))))
+                      (iterate array ()))))
                                             
 (defconstant fold (lambda array callback initial (do
                   (loop defconstant iterate (lambda array out  
@@ -73,18 +73,18 @@
                               (iterate (cdr array) 
                               (merge (Array (car array)) out)) 
                           out)))
-                        (iterate array (identity merge)))))
+                        (iterate array ()))))
 
 (defconstant range (lambda start end (do 
                           (loop defconstant iterate (lambda out count
                           (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
-                          (iterate (identity merge) start))))
+                          (iterate () start))))
 
 (defconstant sequence (lambda array (do 
                           (defconstant end (length array))
                           (loop defconstant iterate (lambda out count
                           (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
-                          (iterate (identity merge) 0))))
+                          (iterate () 0))))
                           
 (defconstant for-range (lambda start end callback (do 
                           (loop defconstant iterate (lambda i
@@ -94,8 +94,8 @@
                                   (iterate (+ i 1))))))
                           (iterate start))))
 
-(defconstant summation (lambda array (fold array (safety lambda a b (+ a b)) (identity +))))
-(defconstant product (lambda array (fold array (safety lambda a b (* a b)) (identity *))))
+(defconstant summation (lambda array (fold array (safety lambda a b (+ a b)) 0)))
+(defconstant product (lambda array (fold array (safety lambda a b (* a b)) 1)))
 (defconstant maximum (lambda array (fold array (safety lambda a b (if (> a b) a b)) (car array))))
 (defconstant minimum (lambda array (fold array (safety lambda a b (if (< a b) a b)) (car array))))
 (defconstant max (lambda a b (if (> a b) a b)))
@@ -108,11 +108,15 @@
 (defconstant array-in-bounds? (safety lambda array index (and (< index (length array)) (>= index 0))))
 
 (defconstant string->array (safety lambda string (type string Array)))
-(defconstant array->string (lambda array (fold array (safety lambda a x (concatenate a (type x String))) (identity concatenate))))
+(defconstant array->string (lambda array (fold array (safety lambda a x (concatenate a (type x String))) "")))
 (defconstant string->number (safety lambda string (type string Number)))
 (defconstant number->string (safety lambda number (type number String)))
 (defconstant strings->numbers (lambda array (scan array (safety lambda x (type x Number)))))
 (defconstant numbers->strings (lambda array (scan array (safety lambda x (type x String)))))
+(defconstant string->charcodes (lambda string (go string (type Array) (scan (lambda x (type x Char-Code))))))
+(defconstant chars->charcodes (lambda array (go array (scan (lambda x (type x Char-Code))))))
+(defconstant charcodes->chars (lambda array (go array (scan (lambda x (type x Char))))))
+(defconstant charcodes->string (lambda array (go array (scan (lambda x (type x Char))) (array->string))))
 
 (defconstant power (lambda base exp 
   (if (< exp 0) 
@@ -177,7 +181,7 @@
           (if (< i bounds) 
               (iterate (+ i 1) (merge out (Array (get array (+ start i)))))
               out)))
-        (iterate 0 (identity merge)))))
+        (iterate 0 ()))))
 
 (defconstant binary-search
         (lambda array target (do
@@ -195,9 +199,9 @@
 (defconstant zip (safety lambda A B (do 
   (loop defconstant iterate (lambda a b output
     (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (merge output (Array (Array (car a) (car b))))) output)))
-  (iterate A B (identity merge)))))
+  (iterate A B ()))))
 
-(defconstant cartesian-product (lambda a b (fold a (lambda p x (merge p (scan b (lambda y (Array x y))))) (identity merge))))
+(defconstant cartesian-product (lambda a b (fold a (lambda p x (merge p (scan b (lambda y (Array x y))))) ())))
 
 (defconstant equal? (lambda a b 
   (or (and (atom? a) (atom? b) (= a b)) 
@@ -218,15 +222,15 @@
     (fold (lambda a b 
       (if (Number? b)
       (merge a (Array (slice input (- b first) b)))
-      a)) (identity merge))
+      a)) ())
     (scan (lambda x (array->string x)))))))
 
-(defconstant join (lambda array delim (fold (zip array (sequence array)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) (identity concatenate))))
+(defconstant join (lambda array delim (fold (zip array (sequence array)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
 
 (defconstant flat (lambda array (do
   (defconstant flatten (lambda item 
     (if (and (Array? item) (length item))
-        (fold item (lambda a b (merge a (flatten b))) (identity merge))
+        (fold item (lambda a b (merge a (flatten b))) ())
         (Array item))))
   (flatten array))))
 
@@ -240,7 +244,7 @@
           (defconstant right (if (= predicate 1) (merge b (Array current)) b))
           (if (< i bounds) (iterate (+ i 1) bounds left right)
           (Array left right)))))
-      (defconstant sorted (iterate 1 (- (length arr) 1) (identity merge) (identity merge)))
+      (defconstant sorted (iterate 1 (- (length arr) 1) () ()))
       (defconstant left (car sorted))
       (defconstant right (car (cdr sorted)))
       (merge (sort left callback) (Array pivot) (sort right callback)))))))

@@ -117,14 +117,12 @@ describe('Interpretation', () => {
         (defconstant array->string (lambda array (fold array (safety lambda a x (concatenate a (type x String))) "")))
         (defconstant string->number (safety lambda string (type string Number)))
         (defconstant number->string (safety lambda number (type number String)))
-        (defconstant string->integer (safety lambda string (type string Integer)))
-        (defconstant integer->string (safety lambda integer (type integer String)))
-        (defconstant number->integer (safety lambda number (type number Integer)))
-        (defconstant integer->number (safety lambda integer (type integer Number)))
-        (defconstant strings->integers (lambda array (scan array (safety lambda x (type x Integer)))))
-        (defconstant integers->strings (lambda array (scan array (safety lambda x (type x String)))))
         (defconstant strings->numbers (lambda array (scan array (safety lambda x (type x Number)))))
         (defconstant numbers->strings (lambda array (scan array (safety lambda x (type x String)))))
+        (defconstant string->charcodes (lambda string (go string (type Array) (scan (lambda x (type x Char-Code))))))
+        (defconstant chars->charcodes (lambda array (go array (scan (lambda x (type x Char-Code))))))
+        (defconstant charcodes->chars (lambda array (go array (scan (lambda x (type x Char))))))
+        (defconstant charcodes->string (lambda array (go array (scan (lambda x (type x Char))) (array->string))))
         
         (defconstant power (lambda base exp 
           (if (< exp 0) 
@@ -211,21 +209,6 @@ describe('Interpretation', () => {
         
         (defconstant cartesian-product (lambda a b (fold a (lambda p x (merge p (scan b (lambda y (Array x y))))) ())))
         
-        (defconstant sort (lambda arr (do
-          (if (<= (length arr) 1) arr (do
-            (defconstant pivot (car arr))
-            (loop defconstant iterate (lambda i bounds a b (do
-                (defconstant current (get arr i))
-                (defconstant less? (< current pivot))
-                (defconstant left (if less? (merge a (Array current)) a))
-                (defconstant right (unless less? (merge b (Array current)) b))
-                (if (< i bounds) (iterate (+ i 1) bounds left right)
-                (Array left right)))))
-            (defconstant sorted (iterate 1 (- (length arr) 1) () ()))
-            (defconstant left (car sorted))
-            (defconstant right (car (cdr sorted)))
-            (merge (sort left) (Array pivot) (sort right)))))))
-            
         (defconstant equal? (lambda a b 
           (or (and (atom? a) (atom? b) (= a b)) 
           (and (Array? a) 
@@ -256,6 +239,21 @@ describe('Interpretation', () => {
                 (fold item (lambda a b (merge a (flatten b))) ())
                 (Array item))))
           (flatten array))))
+        
+          (defconstant sort (lambda arr callback (do
+            (if (<= (length arr) 1) arr (do
+              (defconstant pivot (car arr))
+              (loop defconstant iterate (lambda i bounds a b (do
+                  (defconstant current (get arr i))
+                  (defconstant predicate (callback current pivot))
+                  (defconstant left (if (= predicate 0) (merge a (Array current)) a))
+                  (defconstant right (if (= predicate 1) (merge b (Array current)) b))
+                  (if (< i bounds) (iterate (+ i 1) bounds left right)
+                  (Array left right)))))
+              (defconstant sorted (iterate 1 (- (length arr) 1) () ()))
+              (defconstant left (car sorted))
+              (defconstant right (car (cdr sorted)))
+              (merge (sort left callback) (Array pivot) (sort right callback)))))))
 
 (Array (go
 (Array 1 2 3 4 5) 

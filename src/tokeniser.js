@@ -105,31 +105,6 @@ export const isPartialTypes = (a, b) =>
       ))) ||
   false
 const tokens = {
-  [TOKENS.IDENTITY]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          TOKENS.IDENTITY
-        }), expected 1 but got ${args.length}. (${
-          TOKENS.IDENTITY
-        } ${stringifyArgs(args)})`
-      )
-    if (args[0][TYPE] === WORD) {
-      switch (args[0][VALUE]) {
-        case TOKENS.ADDITION:
-          return 0
-        case TOKENS.MULTIPLICATION:
-          return 1
-        case TOKENS.MERGE:
-          return []
-        case TOKENS.CONCATENATION:
-          return ''
-        default:
-          return evaluate(args[0], env)
-      }
-    }
-    return evaluate(args[0], env)
-  },
   [TOKENS.CONCATENATION]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
@@ -260,45 +235,6 @@ const tokens = {
         }) (1 required) (${TOKENS.IS_FUNCTION} ${stringifyArgs(args)}).`
       )
     return +(typeof evaluate(args[0], env) === 'function')
-  },
-  [TOKENS.CHAR_CODE_AT]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          TOKENS.CHAR_CODE_AT
-        }) (2 required) (${TOKENS.CHAR_CODE_AT} ${stringifyArgs(args)}).`
-      )
-    const string = evaluate(args[0], env)
-    if (typeof string !== 'string')
-      throw new TypeError(
-        `First argument of (${TOKENS.CHAR_CODE_AT}) must be an (${
-          TOKENS.STRING_TYPE
-        }) (${TOKENS.CHAR_CODE_AT} ${stringifyArgs(args)}).`
-      )
-    const index = evaluate(args[1], env)
-    if (!Number.isInteger(index) || index < 0)
-      throw new TypeError(
-        `Second argument of (${TOKENS.CHAR_CODE_AT}) must be an (+ ${
-          TOKENS.NUMBER_TYPE
-        }) (${TOKENS.CHAR_CODE_AT} ${stringifyArgs(args)}).`
-      )
-    return string.charCodeAt(index)
-  },
-  [TOKENS.FROM_CHAR_CODE]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          TOKENS.FROM_CHAR_CODE
-        }) (= 1 required) (${TOKENS.FROM_CHAR_CODE} ${stringifyArgs(args)}).`
-      )
-    const index = evaluate(args[0], env)
-    if (!Number.isInteger(index) || index < 0)
-      throw new TypeError(
-        `Arguments of (${TOKENS.FROM_CHAR_CODE}) must be (+ ${
-          TOKENS.NUMBER_TYPE
-        }) (${TOKENS.FROM_CHAR_CODE} ${stringifyArgs(args)}).`
-      )
-    return String.fromCharCode(index)
   },
   [TOKENS.ADDITION]: (args, env) => {
     if (args.length < 2)
@@ -845,13 +781,47 @@ const tokens = {
             )
           return [...value]
         }
+        case TOKENS.CHAR_TYPE: {
+          const index = evaluate(args[0], env)
+          if (!Number.isInteger(index) || index < 0)
+            throw new TypeError(
+              `Arguments are not (+ ${TOKENS.NUMBER_TYPE}) for ${
+                TOKENS.CHAR_TYPE
+              } at (${TOKENS.CAST_TYPE}) (${TOKENS.CAST_TYPE} ${stringifyArgs(
+                args
+              )}).`
+            )
+          return String.fromCharCode(index)
+        }
+        case TOKENS.CHAR_CODE_TYPE: {
+          const string = evaluate(args[0], env)
+          if (typeof string !== 'string')
+            throw new TypeError(
+              `Argument is not (${TOKENS.STRING_TYPE}) for ${
+                TOKENS.CHAR_CODE_TYPE
+              } at (${TOKENS.CAST_TYPE}) (${TOKENS.CAST_TYPE} ${stringifyArgs(
+                args
+              )}).`
+            )
+          if (string.length !== 1)
+            throw new RangeError(
+              `Argument is not of (= (length ${TOKENS.STRING_TYPE}) 1) for ${
+                TOKENS.CHAR_CODE_TYPE
+              } at (${TOKENS.CAST_TYPE}) (${TOKENS.CAST_TYPE} ${stringifyArgs(
+                args
+              )}).`
+            )
+          return string.charCodeAt(0)
+        }
         default:
           throw new TypeError(
             `Can only cast (or ${TOKENS.NUMBER_TYPE} ${TOKENS.STRING_TYPE} ${
               TOKENS.ARRAY_TYPE
-            } ${TOKENS.BIT_TYPE} ${TOKENS.BOOLEAN_TYPE}) at (${
-              TOKENS.CAST_TYPE
-            }) (${TOKENS.CAST_TYPE} ${stringifyArgs(args)}).`
+            } ${TOKENS.BIT_TYPE} ${TOKENS.BOOLEAN_TYPE} ${TOKENS.CHAR_TYPE} ${
+              TOKENS.CHAR_CODE_TYPE
+            }) at (${TOKENS.CAST_TYPE}) (${TOKENS.CAST_TYPE} ${stringifyArgs(
+              args
+            )}).`
           )
       }
     }
