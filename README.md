@@ -9,7 +9,8 @@ that compiles to JavaScript
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
-(defconstant *input* "1721
+(defconstant *input*
+"1721
 979
 366
 299
