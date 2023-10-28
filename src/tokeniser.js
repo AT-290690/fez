@@ -4,7 +4,7 @@ export const stringifyType = (type) =>
   Array.isArray(type)
     ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
     : typeof type
-export const stringifyOutput = (result) =>
+export const lispify = (result) =>
   typeof result === 'function'
     ? `(λ)`
     : Array.isArray(result)
@@ -1093,16 +1093,14 @@ const tokens = {
               '\x1b[31m',
               `${describe} Failed:\n`,
 
-              `${rest[0]} => ${stringifyOutput(rest[1])} != ${stringifyOutput(
-                rest[2]
-              )}`,
+              `${rest[0]} => ${lispify(rest[1])} != ${lispify(rest[2])}`,
               '\n',
               '\x1b[0m'
             )
           : console.log(
               '\x1b[32m',
               `${describe} Passed:\n`,
-              `${rest[0]} => ${stringifyOutput(rest[1])}`,
+              `${rest[0]} => ${lispify(rest[1])}`,
               '\n',
               '\x1b[0m'
             )
@@ -1120,7 +1118,7 @@ const tokens = {
         `Invalid number of arguments for (${TOKENS.SERIALISE})`
       )
     const data = evaluate(args[0], env)
-    return stringifyOutput(data)
+    return lispify(data)
   },
 }
 tokens[TOKENS.NOT_COMPILED_BLOCK] = tokens[TOKENS.BLOCK]
