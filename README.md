@@ -5,15 +5,7 @@
 </p>
 
 Immutable Lisp 
-compiles to JavaScript
-
-- Everything is an Expression
-- NO Mutations
-- NO Types
-- NO Booleans
-- NO Objects
-- NO Null
-- NO Array going out of bounds
+that compiles to JavaScript
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
