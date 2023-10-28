@@ -8,6 +8,17 @@ Immutable Lisp
 that compiles to JavaScript
 
 ```lisp
+  (let fizz-buzz (lambda n
+      (cond
+        (= (mod n 15) 0) "Fizz Bazz"
+        (= (mod n 3) 0) "Fizz"
+        (= (mod n 5) 0) "Bazz"
+        (*) n)))
+
+    (go (range 1 100) (scan fizz-buzz) (log))
+```
+
+```lisp
 ; https://adventofcode.com/2020/day/1
 (let *input*
 "1721
@@ -32,20 +43,25 @@ that compiles to JavaScript
     (log))
 ```
 
-```js
-import { fez } from '../index.js'
-fez(
-  `
+```lisp
+  ; https://leetcode.com/problems/maximum-count-of-positive-integer-and-negative-integer/description/
   (let max-count-of (lambda nums
     (max
       (count-of nums positive?)
       (count-of nums negative?))))
 
-  (go 
-    (Array -2 -1 -1 0 0 1 2) 
-    (max-count-of) 
+  (go
+    (Array -2 -1 -1 0 0 1 2)
+    (max-count-of)
     (log)) ; 3
+```
+
+```js
+import { fez } from '../index.js'
+fez(
+  `
+  (log "Hello World!")
   `,
-  { std: true, errors: true, compile: false }
+  { std: false, errors: false, compile: false }
 )
 ```
