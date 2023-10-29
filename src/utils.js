@@ -13,7 +13,7 @@ export const removeNoCode = (source) =>
 export const isBalancedParenthesis = (sourceCode) => {
   let count = 0
   const stack = []
-  const str = sourceCode.match(/\(|\)/g) ?? []
+  const str = sourceCode.match(/[/\(|\)](?=[^"]*(?:"[^"]*"[^"]*)*$)/g) ?? []
   const pairs = { ')': '(' }
   for (let i = 0; i < str.length; ++i)
     if (str[i] === '(') stack.push(str[i])

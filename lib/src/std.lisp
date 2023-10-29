@@ -77,7 +77,7 @@
 
 (let range (lambda start end (do 
                           (let* iterate (lambda out count
-                          (if (< (length out) (- end start)) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (if (<= count end) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () start))))
 
 (let sequence (lambda array (do 
