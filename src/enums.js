@@ -72,7 +72,6 @@ export const TOKENS = {
   IMMUTABLE_FUNCTION: 'safety',
   NOT_COMPILED_BLOCK: 'void',
   LOG: 'log!',
-  READ: 'read!',
 
   TEST_CASE: 'case',
   TEST_BED: 'assert',

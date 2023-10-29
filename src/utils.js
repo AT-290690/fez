@@ -1,7 +1,7 @@
 import std from '../lib/baked/std.js'
-import { comp, compileToJs, lispToJavaScriptVariableName } from './compiler.js'
-import { APPLY, TOKENS, TYPE, VALUE, WORD } from './enums.js'
-import { run } from './interpreter.js'
+import { comp } from './compiler.js'
+import { APPLY, ATOM, TOKENS, TYPE, VALUE, WORD } from './enums.js'
+import { evaluate, run } from './interpreter.js'
 import { parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
@@ -20,6 +20,128 @@ export const isBalancedParenthesis = (sourceCode) => {
     else if (str[i] in pairs) if (stack.pop() !== pairs[str[i]]) ++count
   return count - stack.length
 }
+export const escape = (char) => {
+  switch (char) {
+    case '\\':
+      return '\\'
+    case 'n':
+      return '\n'
+    case 'r':
+      return '\r'
+    case 't':
+      return '\t'
+    case 's':
+      return '\\s'
+    case '"':
+      return '"'
+    default:
+      return ''
+  }
+}
+export const stringifyType = (type) =>
+  Array.isArray(type)
+    ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
+    : typeof type
+export const lispify = (result) =>
+  typeof result === 'function'
+    ? `(λ)`
+    : Array.isArray(result)
+    ? JSON.stringify(result, (_, value) => {
+        switch (typeof value) {
+          case 'number':
+            return Number(value)
+          case 'function':
+            return 'λ'
+          case 'undefined':
+          case 'symbol':
+            return 0
+          case 'boolean':
+            return +value
+          default:
+            return value
+        }
+      })
+        .replace(new RegExp(/\[/g), `(Array `)
+        .replace(new RegExp(/\]/g), ')')
+        .replace(new RegExp(/\,/g), ' ')
+        .replace(new RegExp(/"λ"/g), 'λ')
+    : typeof result === 'string'
+    ? `"${result}"`
+    : result == undefined
+    ? '(void)'
+    : result
+export const stringifyArgs = (args) =>
+  args
+    .map((x) =>
+      Array.isArray(x)
+        ? `(${stringifyArgs(x)})`
+        : x[TYPE] === APPLY || x[TYPE] === WORD
+        ? x[VALUE]
+        : JSON.stringify(x[VALUE])
+            .replace(new RegExp(/\[/g), '(')
+            .replace(new RegExp(/\]/g), ')')
+            .replace(new RegExp(/\,/g), ' ')
+            .replace(new RegExp(/"/g), '')
+    )
+    .join(' ')
+export const isForbiddenVariableName = (name) => {
+  switch (name) {
+    case '_':
+    case TOKENS.CAST_TYPE:
+    case TOKENS.DEFINE_VARIABLE:
+      // case TOKENS.DESTRUCTURING_ASSIGMENT:
+      return true
+    default:
+      return false
+  }
+}
+export const isAtom = (arg, env) => {
+  if (arg[TYPE] === ATOM) return 1
+  else {
+    const atom = evaluate(arg, env)
+    return +(typeof atom === 'number' || typeof atom === 'string')
+  }
+}
+export const isEqual = (a, b) =>
+  +(
+    (Array.isArray(a) &&
+      a.length === b.length &&
+      !a.some((_, i) => !isEqual(a.at(i), b.at(i)))) ||
+    a === b ||
+    0
+  )
+export const isEqualTypes = (a, b) =>
+  (typeof a !== 'object' && typeof b !== 'object' && typeof a === typeof b) ||
+  (Array.isArray(a) &&
+    Array.isArray(b) &&
+    (!a.length ||
+      !b.length ||
+      !(a.length > b.length ? a : b).some(
+        (_, i, bigger) =>
+          !isEqualTypes(
+            bigger.at(i),
+            (a.length > b.length ? b : a).at(
+              i % (a.length > b.length ? b : a).length
+            )
+          )
+      ))) ||
+  false
+export const isPartialTypes = (a, b) =>
+  (typeof a !== 'object' && typeof b !== 'object' && typeof a === typeof b) ||
+  (Array.isArray(a) &&
+    Array.isArray(b) &&
+    (!a.length ||
+      !b.length ||
+      !(a.length < b.length ? a : b).some(
+        (_, i, smaller) =>
+          !isEqualTypes(
+            smaller.at(i),
+            (a.length < b.length ? b : a).at(
+              i % (a.length < b.length ? b : a).length
+            )
+          )
+      ))) ||
+  false
 export const handleUnbalancedParens = (source) => {
   const diff = isBalancedParenthesis(removeNoCode(source))
   if (diff !== 0)
@@ -46,12 +168,12 @@ export const treeShake = (ast, stds) => {
   dfs(stds.filter((x) => visited.has(x.at(1)[VALUE])).map((x) => x.at(-1)))
   return stds.filter((x) => visited.has(x.at(1)[VALUE]))
 }
-export const runFromCompiled = (source, Extensions = {}, helpers = {}) => {
+export const runFromCompiled = (source) => {
   const tree = parse(
     handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
   )
   if (Array.isArray(tree)) {
-    const compiled = compileToJs(tree, Extensions, helpers)
+    const compiled = comp(tree)
     const JavaScript = `${compiled.top}${compiled.program}`
     return eval(JavaScript)
   }
@@ -62,43 +184,11 @@ export const runFromInterpreted = (source, env = {}) => {
   )
   if (Array.isArray(tree)) return run(tree, env)
 }
-
-export const quick = (source, library = [], env = Object.create(null)) => {
-  try {
-    return run(
-      [
-        ...library,
-        ...parse(
-          handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-        ),
-      ],
-      env
-    )
-  } catch (error) {
-    logError(error.message)
-  }
+export const dfs = (tree, callback) => {
+  if (Array.isArray(tree)) for (const branch of tree) dfs(branch)
+  else callback(tree)
 }
-
-export const quickjs = (
-  source,
-  library = [],
-  Extensions = [],
-  Helpers = {},
-  Tops = []
-) => {
-  const { top, program } = compileToJs(
-    [
-      ...library,
-      ...parse(
-        handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-      ),
-    ],
-    Extensions,
-    Helpers,
-    Tops
-  )
-  return `${top}${program}`
-}
+export const deepClone = (ast) => JSON.parse(JSON.stringify(ast))
 export const fez = (source, options = {}) => {
   const env = options.env ?? {}
   try {
@@ -115,12 +205,54 @@ export const fez = (source, options = {}) => {
         : std
       : []
     const ast = [...standard, ...parsed]
-    if (options.compile) return comp(ast)
+    if (options.compile) return Object.values(comp(deepClone(ast))).join('')
     return run(ast, env)
   } catch (error) {
     if (options.errors) {
-      console.log('\x1b[31m', error.message, '\x1b[0m')
+      logError(error.message)
     }
     return error.message
   }
 }
+
+export const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
+export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
+export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
+export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
+export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
+export const questionMarkToLodash = (name) =>
+  name.replace(new RegExp(/\?/g), 'Predicate')
+export const exclamationMarkMarkToLodash = (name) =>
+  name.replace(new RegExp(/\!/g), 'Effect')
+export const toCamelCase = (name) => {
+  let out = name[0]
+  for (let i = 1; i < name.length; ++i) {
+    const current = name[i],
+      prev = name[i - 1]
+    if (current === '-') continue
+    else if (prev === '-') out += current.toUpperCase()
+    else out += current
+  }
+  return out
+}
+export const deepRename = (name, newName, tree) => {
+  if (Array.isArray(tree))
+    for (const branch of tree) {
+      // Figure out a non mutable solution so
+      // I can get rid of deep copy
+      if (branch[VALUE] === name) branch[VALUE] = `()=>${newName}`
+      deepRename(name, newName, branch)
+    }
+}
+export const lispToJavaScriptVariableName = (name) =>
+  toCamelCase(
+    arrowToTo(
+      dotNamesToEmpty(
+        colonNamesTo$(
+          exclamationMarkMarkToLodash(
+            questionMarkToLodash(commaToLodash(earMuffsToLodashes(name)))
+          )
+        )
+      )
+    )
+  )

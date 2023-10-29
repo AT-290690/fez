@@ -1,109 +1,14 @@
-import { APPLY, ATOM, TYPE, VALUE, WORD, PLACEHOLDER, TOKENS } from './enums.js'
+import { TYPE, VALUE, WORD, TOKENS } from './enums.js'
 import { evaluate } from './interpreter.js'
-export const stringifyType = (type) =>
-  Array.isArray(type)
-    ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
-    : typeof type
-export const lispify = (result) =>
-  typeof result === 'function'
-    ? `(λ)`
-    : Array.isArray(result)
-    ? JSON.stringify(result, (_, value) => {
-        switch (typeof value) {
-          case 'number':
-            return Number(value)
-          case 'function':
-            return 'λ'
-          case 'undefined':
-          case 'symbol':
-            return 0
-          case 'boolean':
-            return +value
-          default:
-            return value
-        }
-      })
-        .replace(new RegExp(/\[/g), `(Array `)
-        .replace(new RegExp(/\]/g), ')')
-        .replace(new RegExp(/\,/g), ' ')
-        .replace(new RegExp(/"λ"/g), 'λ')
-    : typeof result === 'string'
-    ? `"${result}"`
-    : result == undefined
-    ? '(void)'
-    : result
-export const stringifyArgs = (args) =>
-  args
-    .map((x) =>
-      Array.isArray(x)
-        ? `(${stringifyArgs(x)})`
-        : x[TYPE] === APPLY || x[TYPE] === WORD
-        ? x[VALUE]
-        : JSON.stringify(x[VALUE])
-            .replace(new RegExp(/\[/g), '(')
-            .replace(new RegExp(/\]/g), ')')
-            .replace(new RegExp(/\,/g), ' ')
-            .replace(new RegExp(/"/g), '')
-    )
-    .join(' ')
-export const isForbiddenVariableName = (name) => {
-  switch (name) {
-    case '_':
-    case TOKENS.CAST_TYPE:
-    case TOKENS.DEFINE_VARIABLE:
-      // case TOKENS.DESTRUCTURING_ASSIGMENT:
-      return true
-    default:
-      return false
-  }
-}
-export const isAtom = (arg, env) => {
-  if (arg[TYPE] === ATOM) return 1
-  else {
-    const atom = evaluate(arg, env)
-    return +(typeof atom === 'number' || typeof atom === 'string')
-  }
-}
-export const isEqual = (a, b) =>
-  +(
-    (Array.isArray(a) &&
-      a.length === b.length &&
-      !a.some((_, i) => !isEqual(a.at(i), b.at(i)))) ||
-    a === b ||
-    0
-  )
-export const isEqualTypes = (a, b) =>
-  (typeof a !== 'object' && typeof b !== 'object' && typeof a === typeof b) ||
-  (Array.isArray(a) &&
-    Array.isArray(b) &&
-    (!a.length ||
-      !b.length ||
-      !(a.length > b.length ? a : b).some(
-        (_, i, bigger) =>
-          !isEqualTypes(
-            bigger.at(i),
-            (a.length > b.length ? b : a).at(
-              i % (a.length > b.length ? b : a).length
-            )
-          )
-      ))) ||
-  false
-export const isPartialTypes = (a, b) =>
-  (typeof a !== 'object' && typeof b !== 'object' && typeof a === typeof b) ||
-  (Array.isArray(a) &&
-    Array.isArray(b) &&
-    (!a.length ||
-      !b.length ||
-      !(a.length < b.length ? a : b).some(
-        (_, i, smaller) =>
-          !isEqualTypes(
-            smaller.at(i),
-            (a.length < b.length ? b : a).at(
-              i % (a.length < b.length ? b : a).length
-            )
-          )
-      ))) ||
-  false
+import {
+  isAtom,
+  isEqual,
+  isEqualTypes,
+  isForbiddenVariableName,
+  lispify,
+  stringifyArgs,
+} from './utils.js'
+
 const tokens = {
   [TOKENS.CONCATENATION]: (args, env) => {
     if (args.length < 2)

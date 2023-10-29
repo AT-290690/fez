@@ -1,22 +1,6 @@
 import { APPLY, ATOM, TYPE, VALUE, WORD } from './enums.js'
-const escape = (char) => {
-  switch (char) {
-    case '\\':
-      return '\\'
-    case 'n':
-      return '\n'
-    case 'r':
-      return '\r'
-    case 't':
-      return '\t'
-    case 's':
-      return '\\s'
-    case '"':
-      return '"'
-    default:
-      return ''
-  }
-}
+import { escape } from './utils.js'
+
 export const parse = (source) => {
   const tree = []
   let head = tree,

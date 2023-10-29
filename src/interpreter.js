@@ -1,5 +1,7 @@
 import { APPLY, ATOM, TOKENS, TYPE, VALUE, WORD } from './enums.js'
-import { stringifyArgs, tokens } from './tokeniser.js'
+import { tokens } from './tokeniser.js'
+import { stringifyArgs } from './utils.js'
+
 export const evaluate = (expression, env) => {
   if (expression == undefined) return 0
   const [first, ...rest] = Array.isArray(expression) ? expression : [expression]
@@ -17,7 +19,6 @@ export const evaluate = (expression, env) => {
         throw new TypeError(`${first[VALUE]} is not a (function).`)
       return apply(rest, env)
     case ATOM:
-      if (rest.length) throw new TypeError(`Atoms can't have arguments.`)
       return first[VALUE]
     default:
       throw new ReferenceError(

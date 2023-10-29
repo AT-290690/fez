@@ -1,45 +1,5 @@
 import { APPLY, ATOM, PLACEHOLDER, TOKENS, TYPE, VALUE, WORD } from './enums.js'
-export const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
-export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
-export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
-export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
-export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
-export const questionMarkToLodash = (name) =>
-  name.replace(new RegExp(/\?/g), 'Predicate')
-export const exclamationMarkMarkToLodash = (name) =>
-  name.replace(new RegExp(/\!/g), 'Effect')
-export const toCamelCase = (name) => {
-  let out = name[0]
-  for (let i = 1; i < name.length; ++i) {
-    const current = name[i],
-      prev = name[i - 1]
-    if (current === '-') continue
-    else if (prev === '-') out += current.toUpperCase()
-    else out += current
-  }
-  return out
-}
-export const deepRename = (name, newName, tree) => {
-  if (Array.isArray(tree))
-    for (const branch of tree) {
-      if (branch[VALUE] === name) branch[VALUE] = `()=>${newName}`
-      deepRename(name, newName, branch)
-    }
-}
-export const lispToJavaScriptVariableName = (name) =>
-  toCamelCase(
-    arrowToTo(
-      dotNamesToEmpty(
-        colonNamesTo$(
-          exclamationMarkMarkToLodash(
-            questionMarkToLodash(commaToLodash(earMuffsToLodashes(name)))
-          )
-        )
-      )
-    )
-  )
-const Extensions = {}
-// const INPUT_UNIQUE_NAME = performance.now().toString().replace('.', 7)
+import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {
   log: `var logEffect=(msg)=>{console.log(msg);return msg}`,
   _merge: `_merge=(...arrays)=>arrays.reduce((a,b)=>a.concat(b),[])`,
@@ -361,11 +321,7 @@ const compile = (tree, Variables) => {
         return ''
       default: {
         const camleCasedToken = lispToJavaScriptVariableName(token)
-        if (camleCasedToken in Extensions)
-          return `${Extensions[camleCasedToken](
-            parseArgs(Arguments, Variables)
-          )}`
-        else return `${camleCasedToken}(${parseArgs(Arguments, Variables)});`
+        return `${camleCasedToken}(${parseArgs(Arguments, Variables)});`
       }
     }
   } else if (first[TYPE] === ATOM)
@@ -377,26 +333,6 @@ const compile = (tree, Variables) => {
 
 const HelperSources = Object.values(Helpers).join(',')
 
-export const compileToJs = (AST, extensions = {}, helpers = {}, tops = []) => {
-  for (const ext in extensions)
-    Extensions[lispToJavaScriptVariableName(ext)] = extensions[ext]
-  for (const hlp in helpers)
-    Helpers[lispToJavaScriptVariableName(hlp)] = helpers[hlp]
-  const Variables = new Set()
-  const raw = AST.map((tree) => compile(tree, Variables))
-    .filter(Boolean)
-    .join('\n')
-  let program = ''
-  for (let i = 0; i < raw.length; ++i) {
-    const current = raw[i]
-    const next = raw[i + 1]
-    if (!semiColumnEdgeCases.has(current + next)) program += current
-  }
-  const top = `${tops.join('\n')}${HelperSources};\n${
-    Variables.size ? `var ${[...Variables].join(',')};` : ''
-  }`
-  return { top, program }
-}
 export const comp = (ast) => {
   const Variables = new Set()
   const raw = ast
@@ -412,5 +348,6 @@ export const comp = (ast) => {
   const top = `${HelperSources};\n${
     Variables.size ? `var ${[...Variables].join(',')};` : ''
   }`
-  return `${top}${program}`
+
+  return { top, program }
 }
