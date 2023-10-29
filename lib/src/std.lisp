@@ -1,10 +1,10 @@
 (let E 2.718281828459045)
 (let PI 3.141592653589793)
 
-(let* iterate (lambda array callback  
+(let* iteration (lambda array callback  
                                 (when (length array) 
                                   (do (callback (car array)) 
-                                      (iterate (cdr array) callback)))))
+                                      (iteration (cdr array) callback)))))
 
 (let scan (lambda array callback (do
                   (let* iterate (lambda array out  

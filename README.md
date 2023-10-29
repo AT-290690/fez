@@ -90,7 +90,10 @@ eval(
         (range 1 11) 
         (scan (lambda x (* x x))) 
         (log!)))`,
-    { std: true, compile: true }
+    // include standart library
+    // compile fez to JavaScript
+    // tree shake standart library
+    { std: true, compile: true, shake: true }
   )
 )
 ```

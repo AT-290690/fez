@@ -33,30 +33,18 @@ export const handleUnbalancedQuotes = (source) => {
   if (diff !== 0) throw new SyntaxError(`Quotes are unbalanced "`)
   return source
 }
-export const treeShake = (deps, stds) => {
-  const mods = []
-  for (const [key, value] of deps) {
-    const depSet = new Set(value)
-    for (const std of stds) {
-      const parsed = std.at(-1).at(-1).slice(1)
-      parsed.pop()
-      mods.push(
-        parsed.filter(
-          ([dec, name]) =>
-            dec[TYPE] === APPLY &&
-            dec[VALUE] === TOKENS.DEFINE_VARIABLE &&
-            name[TYPE] === WORD &&
-            depSet.has(lispToJavaScriptVariableName(name[VALUE]))
-        )
-      )
-    }
-  }
-  const JavaScript = `${
-    mods.length
-      ? `\n${mods.map((x) => compileToJs(x).program).join('\n')}\n`
-      : '\n'
-  }`
-  return JavaScript
+export const treeShake = (ast, stds) => {
+  const deps = stds.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
+  const visited = new Map()
+  const dfs = (tree) =>
+    Array.isArray(tree)
+      ? tree.forEach((a) => dfs(a))
+      : (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
+        deps.has(tree[VALUE]) &&
+        visited.set(tree[VALUE], tree[VALUE])
+  dfs(ast)
+  dfs(stds.filter((x) => visited.has(x.at(1)[VALUE])).map((x) => x.at(-1)))
+  return stds.filter((x) => visited.has(x.at(1)[VALUE]))
 }
 export const runFromCompiled = (source, Extensions = {}, helpers = {}) => {
   const tree = parse(
@@ -112,8 +100,6 @@ export const quickjs = (
   return `${top}${program}`
 }
 export const fez = (source, options = {}) => {
-  const libraries = options.libraries ? options.libraries.flat(1) : []
-  const standard = options.std ? std : []
   const env = options.env ?? {}
   try {
     let code
@@ -123,7 +109,12 @@ export const fez = (source, options = {}) => {
       )
     else code = removeNoCode(source)
     const parsed = parse(code)
-    const ast = [...libraries, ...standard, ...parsed]
+    const standard = options.std
+      ? options.shake
+        ? treeShake(parsed, std)
+        : std
+      : []
+    const ast = [...standard, ...parsed]
     if (options.compile) return comp(ast)
     return run(ast, env)
   } catch (error) {

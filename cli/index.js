@@ -11,6 +11,7 @@ import {
   handleUnbalancedQuotes,
   logError,
   removeNoCode,
+  treeShake,
 } from '../src/utils.js'
 export default async () => {
   const [, , ...argv] = process.argv
@@ -85,12 +86,10 @@ export default async () => {
 
       case '-compile':
         {
-          const tree = [
-            ...STD,
-            ...parse(
-              handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(file)))
-            ),
-          ]
+          const parsed = parse(
+            handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(file)))
+          )
+          const tree = [...treeShake(parsed, STD), ...parsed]
           if (Array.isArray(tree)) {
             const { top, program } = compileToJs(
               tree,
@@ -108,17 +107,10 @@ export default async () => {
         break
       case '-run':
         try {
-          run(
-            [
-              ...STD,
-              ...parse(
-                handleUnbalancedQuotes(
-                  handleUnbalancedParens(removeNoCode(file))
-                )
-              ),
-            ],
-            env
+          const parsed = parse(
+            handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(file)))
           )
+          run([...treeShake(parsed, STD), ...parsed], env)
         } catch (err) {
           logError('Error')
           logError(err.message)
@@ -138,17 +130,12 @@ export default async () => {
               if (!input || input[0] === ';') return
               try {
                 let out = `${source}\n${file}\n(do ${input})`
-                const result = run(
-                  [
-                    ...STD,
-                    ...parse(
-                      handleUnbalancedQuotes(
-                        handleUnbalancedParens(removeNoCode(out))
-                      )
-                    ),
-                  ],
-                  env
+                const parsed = parse(
+                  handleUnbalancedQuotes(
+                    handleUnbalancedParens(removeNoCode(out))
+                  )
                 )
+                const result = run([...treeShake(parsed, STD), ...parsed], env)
                 if (typeof result === 'function') {
                   console.log(inpColor, `(λ)`)
                 } else if (Array.isArray(result)) {
