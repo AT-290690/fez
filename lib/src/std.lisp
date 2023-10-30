@@ -130,7 +130,7 @@
 (let floor (safety lambda n (| n 0)))
 (let round (safety lambda n (| (+ n 0.5) 0)))
 (let empty? (safety lambda arr (not (length arr))))
-(let arr-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
+(let Array-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
 
 (let String->Array (safety lambda str (type str Array)))
 (let Array->String (lambda arr (fold arr (safety lambda a x (concatenate a (type x String))) "")))
@@ -275,7 +275,7 @@
       (merge (sort left callback) (Array pivot) (sort right callback)))))))
 
   (let set (lambda arr i value 
-      (if (arr-in-bounds? arr i) 
+      (if (Array-in-bounds? arr i) 
           (scan (sequence arr) (lambda x (if (= x i) value (get arr x))))
   (throw (concatenate (type i String) " is outside of the arr bounds.")))))
   
