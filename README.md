@@ -97,3 +97,15 @@ eval(
   )
 )
 ```
+```js
+import { fez } from '../index.js'
+fez(`(let fizz-buzz (lambda n
+    (cond
+      (= (mod n 15) 0) "Fizz Buzz"
+      (= (mod n 3) 0) "Fizz"
+      (= (mod n 5) 0) "Buzz"
+      (*) n)))
+
+  (go (range 1 100) (scan fizz-buzz) (log!))`,
+{ std: true, errors: true, compile: false, shake: true })
+```
