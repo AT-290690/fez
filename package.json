@@ -1,6 +1,6 @@
 {
-  "name": "fez",
-  "description": "Immutable Lisp compiled to JavaScript",
+  "name": "fez-lisp",
+  "description": "Immutable Lisp interpreted & compiled to JavaScript",
   "author": "AT290690",
   "version": "1.0.0",
   "type": "module",

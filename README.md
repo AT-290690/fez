@@ -71,19 +71,24 @@
 <p align="center">
 <img width="64" src="./js.svg"/>
 </p>
+Installation:
+
+```
+npm i fez-lisp
+```
 
 ```js
-import { fez } from '../index.js'
+import { fez } from 'fez-lisp'
 fez(`(log! "Hello World!")`)
 ```
 
 ```js
-import { fez } from '../index.js'
+import { fez } from 'fez-lisp'
 fez(`(+ 1 "2")`, { errors: true })
 ```
 
 ```js
-import { fez } from '../index.js'
+import { fez } from 'fez-lisp'
 eval(
   fez(
     `(go 
@@ -97,9 +102,11 @@ eval(
   )
 )
 ```
+
 ```js
-import { fez } from '../index.js'
-fez(`(let fizz-buzz (lambda n
+import { fez } from 'fez-lisp'
+fez(
+  `(let fizz-buzz (lambda n
     (cond
       (= (mod n 15) 0) "Fizz Buzz"
       (= (mod n 3) 0) "Fizz"
@@ -107,5 +114,6 @@ fez(`(let fizz-buzz (lambda n
       (*) n)))
 
   (go (range 1 100) (scan fizz-buzz) (log!))`,
-{ std: true, errors: true, compile: false, shake: true })
+  { std: true, errors: true, compile: false, shake: true }
+)
 ```
