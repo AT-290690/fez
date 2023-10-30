@@ -12,7 +12,7 @@ export const KEYWORDS = {
   STRING_TYPE: 'String',
   NUMBER_TYPE: 'Number',
   BOOLEAN_TYPE: 'Boolean',
-  FUNCTION_TYPE: 'Function',
+  FUNCTION_TYPE: 'Lambda',
   ARRAY_TYPE: 'Array',
   CHAR_CODE_TYPE: 'Char-Code',
   CHAR_TYPE: 'Char',
@@ -23,7 +23,7 @@ export const KEYWORDS = {
   IS_ARRAY: 'Array?',
   IS_NUMBER: 'Number?',
   IS_STRING: 'String?',
-  IS_FUNCTION: 'Function?',
+  IS_FUNCTION: 'Lambda?',
 
   ADDITION: '+',
   SUBTRACTION: '-',

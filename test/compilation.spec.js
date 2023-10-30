@@ -112,16 +112,16 @@ describe('Compilation', () => {
       (let empty? (safety lambda array (not (length array))))
       (let array-in-bounds? (safety lambda array index (and (< index (length array)) (>= index 0))))
       
-      (let string->array (safety lambda string (type string Array)))
-      (let array->string (lambda array (fold array (safety lambda a x (concatenate a (type x String))) "")))
-      (let string->number (safety lambda string (type string Number)))
-      (let number->string (safety lambda number (type number String)))
-      (let strings->numbers (lambda array (scan array (safety lambda x (type x Number)))))
-      (let numbers->strings (lambda array (scan array (safety lambda x (type x String)))))
-      (let string->charcodes (lambda string (go string (type Array) (scan (lambda x (type x Char-Code))))))
-      (let chars->charcodes (lambda array (go array (scan (lambda x (type x Char-Code))))))
-      (let charcodes->chars (lambda array (go array (scan (lambda x (type x Char))))))
-      (let charcodes->string (lambda array (go array (scan (lambda x (type x Char))) (array->string))))
+      (let String->Array (safety lambda string (type string Array)))
+      (let Array->String (lambda array (fold array (safety lambda a x (concatenate a (type x String))) "")))
+      (let String->Number (safety lambda string (type string Number)))
+      (let Number->String (safety lambda number (type number String)))
+      (let Strings->Numbers (lambda array (scan array (safety lambda x (type x Number)))))
+      (let Numbers->Strings (lambda array (scan array (safety lambda x (type x String)))))
+      (let String->Char-Codes (lambda string (go string (type Array) (scan (lambda x (type x Char-Code))))))
+      (let Chars->Char-Codes (lambda array (go array (scan (lambda x (type x Char-Code))))))
+      (let Char-Codes->Chars (lambda array (go array (scan (lambda x (type x Char))))))
+      (let Char-Codes->String (lambda array (go array (scan (lambda x (type x Char))) (Array->String))))
       
       (let power (lambda base exp 
         (if (< exp 0) 
@@ -228,7 +228,7 @@ describe('Compilation', () => {
             (if (Number? b)
             (merge a (Array (slice input (- b first) b)))
             a)) ())
-          (scan (lambda x (array->string x)))))))
+          (scan (lambda x (Array->String x)))))))
       
       (let join (lambda array delim (fold (zip array (sequence array)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
       
@@ -300,7 +300,7 @@ describe('Compilation', () => {
     ; 514579
     (go *input*
         (split "\n")
-        (strings->numbers)
+        (Strings->Numbers)
         (sort ascending?)
         (solve (lambda x (- 2020 x)))
         (product))))`,

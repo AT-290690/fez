@@ -1,87 +1,87 @@
 (let E 2.718281828459045)
 (let PI 3.141592653589793)
 
-(let* iteration (lambda array callback  
-                                (when (length array) 
-                                  (do (callback (car array)) 
-                                      (iteration (cdr array) callback)))))
+(let* iteration (lambda arr callback  
+                                (when (length arr) 
+                                  (do (callback (car arr)) 
+                                      (iteration (cdr arr) callback)))))
 
-(let scan (lambda array callback (do
-                  (let* iterate (lambda array out  
-                        (if (length array) 
-                              (iterate (cdr array) 
-                                (merge out (Array (callback (car array)))))
+(let scan (lambda arr callback (do
+                  (let* iterate (lambda arr out  
+                        (if (length arr) 
+                              (iterate (cdr arr) 
+                                (merge out (Array (callback (car arr)))))
                               out)))
-                      (iterate array ()))))
+                      (iterate arr ()))))
 
-(let select (lambda array callback (do
-                  (let* iterate (lambda array out  
-                        (if (length array)
-                            (iterate (cdr array) 
-                                      (if (callback (car array)) 
-                                            (merge out (Array (car array))) 
+(let select (lambda arr callback (do
+                  (let* iterate (lambda arr out  
+                        (if (length arr)
+                            (iterate (cdr arr) 
+                                      (if (callback (car arr)) 
+                                            (merge out (Array (car arr))) 
                                             out))
                             out)))
-                      (iterate array ()))))
+                      (iterate arr ()))))
 
-(let exclude (lambda array callback (do
-                  (let* iterate (lambda array out  
-                        (if (length array)
-                            (iterate (cdr array) 
-                                      (if (not (callback (car array))) 
-                                            (merge out (Array (car array))) 
+(let exclude (lambda arr callback (do
+                  (let* iterate (lambda arr out  
+                        (if (length arr)
+                            (iterate (cdr arr) 
+                                      (if (not (callback (car arr))) 
+                                            (merge out (Array (car arr))) 
                                             out))
                             out)))
-                      (iterate array ()))))
+                      (iterate arr ()))))
                                             
-(let fold (lambda array callback initial (do
-                  (let* iterate (lambda array out  
-                        (if (length array)
-                            (iterate (cdr array) (callback out (car array)))
+(let fold (lambda arr callback initial (do
+                  (let* iterate (lambda arr out  
+                        (if (length arr)
+                            (iterate (cdr arr) (callback out (car arr)))
                             out)))
-                      (iterate array initial))))
+                      (iterate arr initial))))
 
-(let every? (lambda array callback (do
-                    (let* iterate (lambda array  
-                          (if (and (length array) (callback (car array))) 
-                              (iterate (cdr array))
-                              (not (length array)))))
-                        (iterate array))))
+(let every? (lambda arr callback (do
+                    (let* iterate (lambda arr  
+                          (if (and (length arr) (callback (car arr))) 
+                              (iterate (cdr arr))
+                              (not (length arr)))))
+                        (iterate arr))))
 
-(let some? (lambda array callback (do
-                    (let* iterate (lambda array  
-                          (if (and (length array) (not (callback (car array)))) 
-                              (iterate (cdr array))
-                              (type (length array) Boolean))))
-                        (iterate array))))
+(let some? (lambda arr callback (do
+                    (let* iterate (lambda arr  
+                          (if (and (length arr) (not (callback (car arr)))) 
+                              (iterate (cdr arr))
+                              (type (length arr) Boolean))))
+                        (iterate arr))))
 
-(let find (lambda array callback (do
-                    (let* iterate (lambda array  
-                          (when (length array) 
-                              (if (callback (car array)) (car array) (iterate (cdr array))))))
-                        (iterate array))))
+(let find (lambda arr callback (do
+                    (let* iterate (lambda arr  
+                          (when (length arr) 
+                              (if (callback (car arr)) (car arr) (iterate (cdr arr))))))
+                        (iterate arr))))
 
-(let has? (lambda array callback (do
-                    (let* iterate (lambda array  
-                          (when (length array) 
-                              (if (callback (car array)) 1 (iterate (cdr array))))))
-                        (iterate array))))
+(let has? (lambda arr callback (do
+                    (let* iterate (lambda arr  
+                          (when (length arr) 
+                              (if (callback (car arr)) 1 (iterate (cdr arr))))))
+                        (iterate arr))))
 
-(let reverse (lambda array (do
-                    (let* iterate (lambda array out 
-                          (if (length array) 
-                              (iterate (cdr array) 
-                              (merge (Array (car array)) out)) 
+(let reverse (lambda arr (do
+                    (let* iterate (lambda arr out 
+                          (if (length arr) 
+                              (iterate (cdr arr) 
+                              (merge (Array (car arr)) out)) 
                           out)))
-                        (iterate array ()))))
+                        (iterate arr ()))))
 
 (let range (lambda start end (do 
                           (let* iterate (lambda out count
                           (if (<= count end) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () start))))
 
-(let sequence (lambda array (do 
-                          (let end (length array))
+(let sequence (lambda arr (do 
+                          (let end (length arr))
                           (let* iterate (lambda out count
                           (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () 0))))
@@ -91,8 +91,8 @@
                           (if (< (length out) n) (iterate (merge out (Array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
-(let unique (lambda array (go 
-      (let sorted (sort array (safety lambda a b (> a b)))) 
+(let unique (lambda arr (go 
+      (let sorted (sort arr (safety lambda a b (> a b)))) 
       (zip (sequence sorted))
       (select (lambda x 
                (or (not (let index (car (cdr x))))
@@ -119,29 +119,29 @@
         (callback x) 
         (iterate x (lambda y (traverse y callback))))))
 
-(let summation (lambda array (fold array (safety lambda a b (+ a b)) 0)))
-(let product (lambda array (fold array (safety lambda a b (* a b)) 1)))
-(let maximum (lambda array (fold array (safety lambda a b (if (> a b) a b)) (car array))))
-(let minimum (lambda array (fold array (safety lambda a b (if (< a b) a b)) (car array))))
+(let summation (lambda arr (fold arr (safety lambda a b (+ a b)) 0)))
+(let product (lambda arr (fold arr (safety lambda a b (* a b)) 1)))
+(let maximum (lambda arr (fold arr (safety lambda a b (if (> a b) a b)) (car arr))))
+(let minimum (lambda arr (fold arr (safety lambda a b (if (< a b) a b)) (car arr))))
 (let max (lambda a b (if (> a b) a b)))
 (let min (lambda a b (if (< a b) a b)))
-(let count-of (lambda array callback (go array (select callback) (length))))
+(let count-of (lambda arr callback (go arr (select callback) (length))))
 (let increment (safety lambda i (+ i 1)))
 (let floor (safety lambda n (| n 0)))
 (let round (safety lambda n (| (+ n 0.5) 0)))
-(let empty? (safety lambda array (not (length array))))
-(let array-in-bounds? (safety lambda array index (and (< index (length array)) (>= index 0))))
+(let empty? (safety lambda arr (not (length arr))))
+(let arr-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
 
-(let string->array (safety lambda string (type string Array)))
-(let array->string (lambda array (fold array (safety lambda a x (concatenate a (type x String))) "")))
-(let string->number (safety lambda string (type string Number)))
-(let number->string (safety lambda number (type number String)))
-(let strings->numbers (lambda array (scan array (safety lambda x (type x Number)))))
-(let numbers->strings (lambda array (scan array (safety lambda x (type x String)))))
-(let string->charcodes (lambda string (go string (type Array) (scan (lambda x (type x Char-Code))))))
-(let chars->charcodes (lambda array (go array (scan (lambda x (type x Char-Code))))))
-(let charcodes->chars (lambda array (go array (scan (lambda x (type x Char))))))
-(let charcodes->string (lambda array (go array (scan (lambda x (type x Char))) (array->string))))
+(let String->Array (safety lambda str (type str Array)))
+(let Array->String (lambda arr (fold arr (safety lambda a x (concatenate a (type x String))) "")))
+(let String->Number (safety lambda str (type str Number)))
+(let Number->String (safety lambda number (type number String)))
+(let Strings->Numbers (lambda arr (scan arr (safety lambda x (type x Number)))))
+(let Numbers->Strings (lambda arr (scan arr (safety lambda x (type x String)))))
+(let String->Char-Codes (lambda str (go str (type Array) (scan (lambda x (type x Char-Code))))))
+(let Chars->Char-Codes (lambda arr (go arr (scan (lambda x (type x Char-Code))))))
+(let Char-Codes->Chars (lambda arr (go arr (scan (lambda x (type x Char))))))
+(let Char-Codes->String (lambda arr (go arr (scan (lambda x (type x Char))) (Array->String))))
 
 (let power (lambda base exp 
   (if (< exp 0) 
@@ -200,16 +200,16 @@
             (if (and (<= i end) it-is) (iter (+ i 1) end) it-is))))
             (or (= n 2) (iter 2 (sqrt n)))))))
 
-(let slice (safety lambda array start end (do 
+(let slice (safety lambda arr start end (do 
         (let bounds (- end start))
         (let* iterate (lambda i out
           (if (< i bounds) 
-              (iterate (+ i 1) (merge out (Array (get array (+ start i)))))
+              (iterate (+ i 1) (merge out (Array (get arr (+ start i)))))
               out)))
         (iterate 0 ()))))
 
 (let binary-search
-        (lambda array target (do
+        (lambda arr target (do
   (let* search
         (lambda arr target start end (do
     (when (<= start end) (do
@@ -219,7 +219,7 @@
           (if (> current target)
             (search arr target start (- index 1))
             (search arr target (+ index 1) end))))))))
-   (search array target 0 (length array)))))
+   (search arr target 0 (length arr)))))
 
 (let zip (safety lambda A B (do 
   (let* iterate (lambda a b output
@@ -234,8 +234,8 @@
         (= (length a) (length b)) 
           (not (some? (sequence a) (lambda i (not (equal? (get a i) (get b i))))))))))
 
-(let split (lambda string delim (do 
-    (let input (type (concatenate string delim) Array))
+(let split (lambda str delim (do 
+    (let input (type (concatenate str delim) Array))
     (let marks 
     (go 
       input
@@ -248,16 +248,16 @@
       (if (Number? b)
       (merge a (Array (slice input (- b first) b)))
       a)) ())
-    (scan (lambda x (array->string x)))))))
+    (scan (lambda x (Array->String x)))))))
 
-(let join (lambda array delim (fold (zip array (sequence array)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
+(let join (lambda arr delim (fold (zip arr (sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
 
-(let flat (lambda array (do
+(let flat (lambda arr (do
   (let flatten (lambda item 
     (if (and (Array? item) (length item))
         (fold item (lambda a b (merge a (flatten b))) ())
         (Array item))))
-  (flatten array))))
+  (flatten arr))))
 
   (let sort (lambda arr callback (do
     (if (<= (length arr) 1) arr (do
@@ -274,16 +274,16 @@
       (let right (car (cdr sorted)))
       (merge (sort left callback) (Array pivot) (sort right callback)))))))
 
-  (let set (lambda array i value 
-      (if (array-in-bounds? array i) 
-          (scan (sequence array) (lambda x (if (= x i) value (get array x))))
-  (throw (concatenate (type i String) " is outside of the array bounds.")))))
+  (let set (lambda arr i value 
+      (if (arr-in-bounds? arr i) 
+          (scan (sequence arr) (lambda x (if (= x i) value (get arr x))))
+  (throw (concatenate (type i String) " is outside of the arr bounds.")))))
   
-  (let adjacent-difference (lambda array callback (do 
-    (let len (length array))
+  (let adjacent-difference (lambda arr callback (do 
+    (let len (length arr))
     (unless (= len 1) 
       (do 
-       (Array (car array))
+       (Array (car arr))
        (let* iterate (lambda i result (if (< i len) (do 
-       (iterate (+ i 1) (set result i (callback (get array (- i 1)) (get array i))))) result)))
-       (iterate 1 array)) array))))
+       (iterate (+ i 1) (set result i (callback (get arr (- i 1)) (get arr i))))) result)))
+       (iterate 1 arr)) arr))))

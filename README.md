@@ -25,15 +25,15 @@
 675
 1456")
 ; solve part 1
-(let solve (lambda array cb
-     (fold array (lambda a b (do
-        (let res (binary-search array (cb b)))
+(let solve (lambda arr cb
+     (fold arr (lambda a b (do
+        (let res (binary-search arr (cb b)))
         (if res (merge a (Array res)) a)))
      ())))
 ; 514579
 (go *input*
     (split "\n")
-    (strings->numbers)
+    (Strings->Numbers)
     (sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (product)
@@ -54,9 +54,9 @@
 ```
 
 ```lisp
-; remove duplicate elements in the array
-(let unique (lambda array (go
-      (let sorted (sort array (safety lambda a b (> a b))))
+; remove duplicate elements in the arr
+(let unique (lambda arr (go
+      (let sorted (sort arr (safety lambda a b (> a b))))
       (zip (sequence sorted))
       (select (lambda x
                (or (not (let index (car (cdr x))))
