@@ -365,7 +365,7 @@ const keywords = {
       )
     if (index > array.length - 1 || index * -1 > array.length)
       throw new RangeError(
-        `Second argument of (${KEYWORDS.GET_ARRAY}) is outside of let (${
+        `Second argument of (${KEYWORDS.GET_ARRAY}) is outside of (${
           KEYWORDS.ARRAY_TYPE
         }) bounds (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}).`
       )

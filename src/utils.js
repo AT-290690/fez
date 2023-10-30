@@ -204,7 +204,6 @@ export const fez = (source, options = {}) => {
         ? treeShake(parsed, std)
         : std
       : []
-    console.log(JSON.stringify(parsed))
     const ast = [...standard, ...parsed]
     if (options.compile) return Object.values(comp(deepClone(ast))).join('')
     return run(ast, env)
