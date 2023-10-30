@@ -14,8 +14,14 @@ export const evaluate = (expression, env) => {
     }
     case APPLY:
       const apply = env[first[VALUE]]
+      if (apply == undefined)
+        throw new ReferenceError(
+          `Undefined (${KEYWORDS.ANONYMOUS_FUNCTION}) ${first[VALUE]}.`
+        )
       if (typeof apply !== 'function')
-        throw new TypeError(`${first[VALUE]} is not a (function).`)
+        throw new TypeError(
+          `${first[VALUE]} is not a (${KEYWORDS.ANONYMOUS_FUNCTION}).`
+        )
       return apply(rest, env)
     case ATOM:
       return first[VALUE]

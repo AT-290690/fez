@@ -273,3 +273,17 @@
       (let left (car sorted))
       (let right (car (cdr sorted)))
       (merge (sort left callback) (Array pivot) (sort right callback)))))))
+
+  (let set (lambda array i value 
+      (if (array-in-bounds? array i) 
+          (scan (sequence array) (lambda x (if (= x i) value (get array x))))
+  (throw (concatenate (type i String) " is outside of the array bounds.")))))
+  
+  (let adjacent-difference (lambda array callback (do 
+    (let len (length array))
+    (unless (= len 1) 
+      (do 
+       (Array (car array))
+       (let* iterate (lambda i result (if (< i len) (do 
+       (iterate (+ i 1) (set result i (callback (get array (- i 1)) (get array i))))) result)))
+       (iterate 1 array)) array))))

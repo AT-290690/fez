@@ -155,19 +155,34 @@ export const handleUnbalancedQuotes = (source) => {
   if (diff !== 0) throw new SyntaxError(`Quotes are unbalanced "`)
   return source
 }
+
 export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
-  const visited = new Map()
-  const dfs = (tree) =>
-    Array.isArray(tree)
-      ? tree.forEach((a) => dfs(a))
-      : (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
-        deps.has(tree[VALUE]) &&
-        visited.set(tree[VALUE], tree[VALUE])
+  const visited = new Set()
+
+  const dfs = (tree) => {
+    if (Array.isArray(tree)) {
+      tree.forEach((a) => dfs(a))
+    } else if (
+      (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
+      deps.has(tree[VALUE]) &&
+      !visited.has(tree[VALUE])
+    ) {
+      visited.add(tree[VALUE])
+      // Recursively explore the dependencies of the current node
+      const dependencyLib = libs.find((x) => x.at(1)[VALUE] === tree[VALUE])
+      if (dependencyLib) {
+        dfs(dependencyLib.at(-1))
+      }
+    }
+  }
+
   dfs(ast)
-  dfs(libs.filter((x) => visited.has(x.at(1)[VALUE])).map((x) => x.at(-1)))
+
+  // Filter out libraries that are not in the visited set
   return libs.filter((x) => visited.has(x.at(1)[VALUE]))
 }
+
 export const runFromCompiled = (source) => {
   const tree = parse(
     handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))

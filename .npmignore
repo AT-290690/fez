@@ -3,6 +3,5 @@ examples
 .gitignore
 main.js
 playground
-test
-lib/std.lisp
+lib/src/
 lib/builder.js
