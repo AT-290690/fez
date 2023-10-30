@@ -1,9 +1,8 @@
-import { APPLY, ATOM, TOKENS, TYPE, VALUE, WORD } from './enums.js'
-import { tokens } from './tokeniser.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
+import { keywords } from './tokeniser.js'
 import { stringifyArgs } from './utils.js'
 
 export const evaluate = (expression, env) => {
-  if (expression == undefined) return 0
   const [first, ...rest] = Array.isArray(expression) ? expression : [expression]
   if (first == undefined) return []
   switch (first[TYPE]) {
@@ -27,4 +26,4 @@ export const evaluate = (expression, env) => {
   }
 }
 export const run = (tree, env = {}) =>
-  tokens[TOKENS.BLOCK](tree, { ...tokens, ...env })
+  keywords[KEYWORDS.BLOCK](tree, { ...keywords, ...env })

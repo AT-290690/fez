@@ -1,4 +1,12 @@
-import { APPLY, ATOM, PLACEHOLDER, TOKENS, TYPE, VALUE, WORD } from './enums.js'
+import {
+  APPLY,
+  ATOM,
+  PLACEHOLDER,
+  KEYWORDS,
+  TYPE,
+  VALUE,
+  WORD,
+} from './enums.js'
 import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {
   log: `var logEffect=(msg)=>{console.log(msg);return msg}`,
@@ -94,7 +102,7 @@ const compile = (tree, Variables) => {
   const token = first[VALUE]
   if (first[TYPE] === APPLY) {
     switch (token) {
-      case TOKENS.BLOCK: {
+      case KEYWORDS.BLOCK: {
         if (Arguments.length > 1) {
           return `(${Arguments.map((x) =>
             (compile(x, Variables) ?? '').toString().trimStart()
@@ -106,7 +114,7 @@ const compile = (tree, Variables) => {
           return res !== undefined ? res.toString().trim() : ''
         }
       }
-      case TOKENS.CALL_FUNCTION: {
+      case KEYWORDS.CALL_FUNCTION: {
         const [first, ...rest] = Arguments
         const apply = compile(first, Variables)
         return `${
@@ -115,7 +123,7 @@ const compile = (tree, Variables) => {
             : apply
         }(${parseArgs(rest, Variables)})`
       }
-      case TOKENS.DEFINE_VARIABLE: {
+      case KEYWORDS.DEFINE_VARIABLE: {
         let name,
           out = '(('
         if (Arguments[0][TYPE] === WORD) {
@@ -126,50 +134,50 @@ const compile = (tree, Variables) => {
         out += `),${name});`
         return out
       }
-      case TOKENS.IS_STRING:
+      case KEYWORDS.IS_STRING:
         return handleBoolean(
           `(typeof(${compile(Arguments[0], Variables)})==='string');`
         )
-      case TOKENS.IS_NUMBER:
+      case KEYWORDS.IS_NUMBER:
         return handleBoolean(
           `(typeof(${compile(Arguments[0], Variables)})==='number');`
         )
-      case TOKENS.IS_FUNCTION:
+      case KEYWORDS.IS_FUNCTION:
         return `(typeof(${compile(Arguments[0], Variables)})==='function');`
-      case TOKENS.IS_ARRAY:
+      case KEYWORDS.IS_ARRAY:
         return `(Array.isArray(${compile(Arguments[0], Variables)}));`
-      case TOKENS.NUMBER_TYPE:
+      case KEYWORDS.NUMBER_TYPE:
         return '0'
-      case TOKENS.INTEGER_TYPE:
+      case KEYWORDS.INTEGER_TYPE:
         return '0n'
-      case TOKENS.BOOLEAN_TYPE:
+      case KEYWORDS.BOOLEAN_TYPE:
         return '1'
-      case TOKENS.STRING_TYPE:
+      case KEYWORDS.STRING_TYPE:
         return '""'
-      case TOKENS.ARRAY_TYPE:
+      case KEYWORDS.ARRAY_TYPE:
         return Arguments.length === 2 &&
           Arguments[1][TYPE] === WORD &&
           Arguments[1][VALUE] === 'length'
           ? `(new Array(${compile(Arguments[0], Variables)}).fill(0))`
           : `[${parseArgs(Arguments, Variables)}];`
-      case TOKENS.FUNCTION_TYPE:
+      case KEYWORDS.FUNCTION_TYPE:
         return '(()=>{});'
-      case TOKENS.ARRAY_OR_STRING_LENGTH:
+      case KEYWORDS.ARRAY_OR_STRING_LENGTH:
         return `(${compile(Arguments[0], Variables)}).length`
-      case TOKENS.IS_ATOM:
+      case KEYWORDS.IS_ATOM:
         return handleBoolean(`_isAtom(${compile(Arguments[0], Variables)});`)
-      case TOKENS.FIRST_ARRAY:
+      case KEYWORDS.FIRST_ARRAY:
         return `${compile(Arguments[0], Variables)}.at(0);`
-      case TOKENS.REST_ARRAY:
+      case KEYWORDS.REST_ARRAY:
         return `${compile(Arguments[0], Variables)}.slice(1);`
-      case TOKENS.GET_ARRAY:
+      case KEYWORDS.GET_ARRAY:
         return `${compile(Arguments[0], Variables)}.at(${compile(
           Arguments[1],
           Variables
         )});`
-      case TOKENS.MERGE:
+      case KEYWORDS.MERGE:
         return `_merge(${parseArgs(Arguments, Variables)});`
-      case TOKENS.ANONYMOUS_FUNCTION: {
+      case KEYWORDS.ANONYMOUS_FUNCTION: {
         const functionArgs = Arguments
         const body = Arguments.pop()
         const Variables = new Set()
@@ -184,7 +192,7 @@ const compile = (tree, Variables) => {
           Variables
         )})=>{${vars}return ${evaluatedBody.toString().trimStart()}});`
       }
-      case TOKENS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: {
+      case KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: {
         let name,
           newName,
           out = '(('
@@ -208,80 +216,80 @@ const compile = (tree, Variables) => {
         out += `, ${newName}))), ${name});`
         return out
       }
-      case TOKENS.AND:
+      case KEYWORDS.AND:
         return `(${parseArgs(Arguments, Variables, '&&')});`
-      case TOKENS.OR:
+      case KEYWORDS.OR:
         return `((${parseArgs(Arguments, Variables, '||')}) || 0);`
-      case TOKENS.CONCATENATION:
+      case KEYWORDS.CONCATENATION:
         return '(' + parseArgs(Arguments, Variables, '+') + ');'
-      case TOKENS.EQUAL:
+      case KEYWORDS.EQUAL:
         return handleBoolean(`(${parseArgs(Arguments, Variables, '===')});`)
-      case TOKENS.GREATHER_THAN_OR_EQUAL:
-      case TOKENS.LESS_THAN_OR_EQUAL:
-      case TOKENS.GREATHER_THAN:
-      case TOKENS.LESS_THAN:
+      case KEYWORDS.GREATHER_THAN_OR_EQUAL:
+      case KEYWORDS.LESS_THAN_OR_EQUAL:
+      case KEYWORDS.GREATHER_THAN:
+      case KEYWORDS.LESS_THAN:
         return handleBoolean(`(${parseArgs(Arguments, Variables, token)});`)
-      case TOKENS.SUBTRACTION:
+      case KEYWORDS.SUBTRACTION:
         return Arguments.length === 1
           ? `(-${compile(Arguments[0], Variables)});`
           : `(${parse(Arguments, Variables)
               // Add space so it doesn't consider it 2--1 but 2- -1
               .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
               .join(token)});`
-      case TOKENS.MULTIPLICATION:
+      case KEYWORDS.MULTIPLICATION:
         return Arguments.length
           ? `(${parseArgs(Arguments, Variables, token)});`
           : `(1);`
-      case TOKENS.DIVISION:
+      case KEYWORDS.DIVISION:
         return Arguments.length
           ? Arguments.length === 1
             ? `(1/${compile(Arguments[0], Variables)});`
             : `(${parseArgs(Arguments, Variables, token)});`
           : `(0);`
-      case TOKENS.ADDITION:
-      case TOKENS.BITWISE_AND:
-      case TOKENS.BITWISE_OR:
-      case TOKENS.BITWISE_XOR:
-      case TOKENS.BITWISE_LEFT_SHIFT:
-      case TOKENS.BITWISE_RIGHT_SHIFT:
-      case TOKENS.BITWISE_UNSIGNED_RIGHT_SHIFT:
+      case KEYWORDS.ADDITION:
+      case KEYWORDS.BITWISE_AND:
+      case KEYWORDS.BITWISE_OR:
+      case KEYWORDS.BITWISE_XOR:
+      case KEYWORDS.BITWISE_LEFT_SHIFT:
+      case KEYWORDS.BITWISE_RIGHT_SHIFT:
+      case KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT:
         return `(${parseArgs(Arguments, Variables, token)});`
-      case TOKENS.REMAINDER_OF_DIVISION:
+      case KEYWORDS.REMAINDER_OF_DIVISION:
         return `(${compile(Arguments[0], Variables)}%${compile(
           Arguments[1],
           Variables
         )});`
-      case TOKENS.BIT_TYPE:
+      case KEYWORDS.BIT_TYPE:
         return `(${compile(Arguments[0], Variables)}>>>0).toString(2)`
-      case TOKENS.BITWISE_NOT:
+      case KEYWORDS.BITWISE_NOT:
         return `~(${compile(Arguments[0], Variables)})`
-      case TOKENS.NOT:
+      case KEYWORDS.NOT:
         return `(${handleBoolean(`!${compile(Arguments[0], Variables)}`)})`
-      case TOKENS.IF: {
+      case KEYWORDS.IF: {
         return `(${compile(Arguments[0], Variables)}?${compile(
           Arguments[1],
           Variables
         )}:${compile(Arguments[2], Variables)});`
       }
-      case TOKENS.WHEN: {
+      case KEYWORDS.WHEN: {
         return `(${compile(Arguments[0], Variables)}?${compile(
           Arguments[1],
           Variables
         )}:0);`
       }
-      case TOKENS.UNLESS: {
+      case KEYWORDS.UNLESS: {
         return `(${compile(Arguments[0], Variables)}?${compile(
           Arguments[2],
           Variables
         )}:${compile(Arguments[1], Variables)});`
       }
-      case TOKENS.OTHERWISE: {
+      case KEYWORDS.OTHERWISE: {
         return `(${compile(Arguments[0], Variables)}?0:${compile(
           Arguments[1],
           Variables
         )});`
       }
-      case TOKENS.CONDITION: {
+      case KEYWORDS.CONDITION: {
         let out = '('
         for (let i = 0; i < Arguments.length; i += 2)
           out += `${compile(Arguments[i], Variables)}?${compile(
@@ -291,37 +299,37 @@ const compile = (tree, Variables) => {
         out += '0);'
         return out
       }
-      case TOKENS.CAST_TYPE:
+      case KEYWORDS.CAST_TYPE:
         return `_cast("${Arguments[1][VALUE]}", ${compile(
           Arguments[0],
           Variables
         )})`
-      case TOKENS.PIPE: {
+      case KEYWORDS.PIPE: {
         let inp = Arguments[0]
         for (let i = 1; i < Arguments.length; ++i)
           inp = [Arguments[i].shift(), inp, ...Arguments[i]]
         return compile(inp, Variables)
       }
-      case TOKENS.THROW_ERROR: {
+      case KEYWORDS.THROW_ERROR: {
         return `_error(${compile(Arguments[0], Variables)})`
       }
-      case TOKENS.IMMUTABLE_FUNCTION: {
+      case KEYWORDS.IMMUTABLE_FUNCTION: {
         const [first, ...rest] = Arguments
         return compile(
           [{ [TYPE]: APPLY, [VALUE]: first[VALUE] }, ...rest],
           Variables
         )
       }
-      case TOKENS.SERIALISE:
+      case KEYWORDS.SERIALISE:
         return `_serialise(${compile(Arguments[0], Variables)});`
-      case TOKENS.NOT_COMPILED_BLOCK:
-      case TOKENS.ATOM:
-      case TOKENS.TEST_CASE:
-      case TOKENS.TEST_BED:
+      case KEYWORDS.NOT_COMPILED_BLOCK:
+      case KEYWORDS.ATOM:
+      case KEYWORDS.TEST_CASE:
+      case KEYWORDS.TEST_BED:
         return ''
       default: {
-        const camleCasedToken = lispToJavaScriptVariableName(token)
-        return `${camleCasedToken}(${parseArgs(Arguments, Variables)});`
+        const camelCased = lispToJavaScriptVariableName(token)
+        return `${camelCased}(${parseArgs(Arguments, Variables)});`
       }
     }
   } else if (first[TYPE] === ATOM)

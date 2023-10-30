@@ -6,8 +6,8 @@ export const TYPE = 't'
 export const ATOM = 'a'
 // tokeniser enums
 export const PLACEHOLDER = '.'
-// tokens aliases
-export const TOKENS = {
+// keywords aliases
+export const KEYWORDS = {
   BIT_TYPE: 'Bit',
   STRING_TYPE: 'String',
   NUMBER_TYPE: 'Number',

@@ -1,6 +1,6 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import { APPLY, ATOM, TOKENS, TYPE, VALUE, WORD } from './enums.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
 import { evaluate, run } from './interpreter.js'
 import { parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
@@ -31,7 +31,7 @@ export const escape = (char) => {
     case 't':
       return '\t'
     case 's':
-      return '\\s'
+      return ' '
     case '"':
       return '"'
     default:
@@ -87,9 +87,9 @@ export const stringifyArgs = (args) =>
 export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
-    case TOKENS.CAST_TYPE:
-    case TOKENS.DEFINE_VARIABLE:
-      // case TOKENS.DESTRUCTURING_ASSIGMENT:
+    case KEYWORDS.CAST_TYPE:
+    case KEYWORDS.DEFINE_VARIABLE:
+      // case KEYWORDS.DESTRUCTURING_ASSIGMENT:
       return true
     default:
       return false
@@ -155,8 +155,8 @@ export const handleUnbalancedQuotes = (source) => {
   if (diff !== 0) throw new SyntaxError(`Quotes are unbalanced "`)
   return source
 }
-export const treeShake = (ast, stds) => {
-  const deps = stds.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
+export const treeShake = (ast, libs) => {
+  const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
   const visited = new Map()
   const dfs = (tree) =>
     Array.isArray(tree)
@@ -165,8 +165,8 @@ export const treeShake = (ast, stds) => {
         deps.has(tree[VALUE]) &&
         visited.set(tree[VALUE], tree[VALUE])
   dfs(ast)
-  dfs(stds.filter((x) => visited.has(x.at(1)[VALUE])).map((x) => x.at(-1)))
-  return stds.filter((x) => visited.has(x.at(1)[VALUE]))
+  dfs(libs.filter((x) => visited.has(x.at(1)[VALUE])).map((x) => x.at(-1)))
+  return libs.filter((x) => visited.has(x.at(1)[VALUE]))
 }
 export const runFromCompiled = (source) => {
   const tree = parse(
@@ -204,6 +204,7 @@ export const fez = (source, options = {}) => {
         ? treeShake(parsed, std)
         : std
       : []
+    console.log(JSON.stringify(parsed))
     const ast = [...standard, ...parsed]
     if (options.compile) return Object.values(comp(deepClone(ast))).join('')
     return run(ast, env)
