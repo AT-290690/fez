@@ -20,32 +20,8 @@ return result
   error: `_error=(error)=>{ 
     throw new Error(error)
 }`,
-  serialise: `_serialise=(result)=>{
-    return typeof result==='function'?'λ':Array.isArray(result)?JSON.stringify(result,(_,value)=>{
-          switch(typeof value){
-            case 'number':
-              return Number(value)
-            case 'function':
-              return 'λ'
-            case 'undefined':
-            case 'symbol':
-              return 0
-            case 'boolean':
-              return +value
-            default:
-              return value
-          }
-        })
-          .replace(new RegExp(/\\[/g),"(Array ")
-          .replace(new RegExp(/\\]/g),')')
-          .replace(new RegExp(/\\,/g),' ')
-          .replace(new RegExp(/"λ"/g),'λ')
-      :typeof result==='string'
-      ?'"'+result+'"'
-      :result==undefined
-      ?'(void)'
-      :result 
-  }`,
+  serialise:
+    "_serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(Array ${ast.map(stringify).join(' ')})`\n else\n return `(Array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
   cast: `_cast=(type,value)=>{
     switch (type) {
       case 'Number':
