@@ -95,7 +95,7 @@ export default async () => {
                 )
                 const result = run([...treeShake(parsed, STD), ...parsed], env)
                 if (typeof result === 'function') {
-                  console.log(inpColor, `(λ)`)
+                  console.log(inpColor, `λ`)
                 } else if (Array.isArray(result)) {
                   console.log(
                     outColor,

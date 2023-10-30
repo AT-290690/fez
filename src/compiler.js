@@ -21,7 +21,7 @@ return result
     throw new Error(error)
 }`,
   serialise: `_serialise=(result)=>{
-    return typeof result==='function'?'(λ)':Array.isArray(result)?JSON.stringify(result,(_,value)=>{
+    return typeof result==='function'?'λ':Array.isArray(result)?JSON.stringify(result,(_,value)=>{
           switch(typeof value){
             case 'number':
               return Number(value)

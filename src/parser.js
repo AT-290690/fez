@@ -43,3 +43,15 @@ export const parse = (source) => {
   }
   return tree
 }
+export const stringify = (ast) => {
+  if (ast == undefined) return '()'
+  else if (typeof ast === 'object')
+    if (Array.isArray(ast)) return `(Array ${ast.map(stringify).join(' ')})`
+    else
+      return `(Array ${Object.entries(ast)
+        .map(([key, value]) => `("${key}" ${stringify(value)})`)
+        .join(' ')})`
+  else if (typeof ast === 'string') return `"${ast}"`
+  else if (typeof ast === 'function') return '()'
+  else return ast
+}

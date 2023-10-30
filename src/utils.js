@@ -42,34 +42,6 @@ export const stringifyType = (type) =>
   Array.isArray(type)
     ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
     : typeof type
-export const lispify = (result) =>
-  typeof result === 'function'
-    ? `(λ)`
-    : Array.isArray(result)
-    ? JSON.stringify(result, (_, value) => {
-        switch (typeof value) {
-          case 'number':
-            return Number(value)
-          case 'function':
-            return 'λ'
-          case 'undefined':
-          case 'symbol':
-            return 0
-          case 'boolean':
-            return +value
-          default:
-            return value
-        }
-      })
-        .replace(new RegExp(/\[/g), `(Array `)
-        .replace(new RegExp(/\]/g), ')')
-        .replace(new RegExp(/\,/g), ' ')
-        .replace(new RegExp(/"λ"/g), 'λ')
-    : typeof result === 'string'
-    ? `"${result}"`
-    : result == undefined
-    ? '(void)'
-    : result
 export const stringifyArgs = (args) =>
   args
     .map((x) =>
@@ -159,26 +131,20 @@ export const handleUnbalancedQuotes = (source) => {
 export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
   const visited = new Set()
-
   const dfs = (tree) => {
-    if (Array.isArray(tree)) {
-      tree.forEach((a) => dfs(a))
-    } else if (
+    if (Array.isArray(tree)) tree.forEach((a) => dfs(a))
+    else if (
       (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
       deps.has(tree[VALUE]) &&
       !visited.has(tree[VALUE])
     ) {
       visited.add(tree[VALUE])
       // Recursively explore the dependencies of the current node
-      const dependencyLib = libs.find((x) => x.at(1)[VALUE] === tree[VALUE])
-      if (dependencyLib) {
-        dfs(dependencyLib.at(-1))
-      }
+      const dependency = libs.find((x) => x.at(1)[VALUE] === tree[VALUE])
+      if (dependency) dfs(dependency.at(-1))
     }
   }
-
   dfs(ast)
-
   // Filter out libraries that are not in the visited set
   return libs.filter((x) => visited.has(x.at(1)[VALUE]))
 }

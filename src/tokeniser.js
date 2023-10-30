@@ -1,11 +1,11 @@
 import { TYPE, VALUE, WORD, KEYWORDS } from './enums.js'
 import { evaluate } from './interpreter.js'
+import { stringify } from './parser.js'
 import {
   isAtom,
   isEqual,
   isEqualTypes,
   isForbiddenVariableName,
-  lispify,
   stringifyArgs,
 } from './utils.js'
 
@@ -1004,14 +1004,14 @@ const keywords = {
               '\x1b[31m',
               `${describe} Failed:\n`,
 
-              `${rest[0]} => ${lispify(rest[1])} != ${lispify(rest[2])}`,
+              `${rest[0]} => ${stringify(rest[1])} != ${stringify(rest[2])}`,
               '\n',
               '\x1b[0m'
             )
           : console.log(
               '\x1b[32m',
               `${describe} Passed:\n`,
-              `${rest[0]} => ${lispify(rest[1])}`,
+              `${rest[0]} => ${stringify(rest[1])}`,
               '\n',
               '\x1b[0m'
             )
@@ -1019,9 +1019,11 @@ const keywords = {
     } catch (err) {
       console.log('\x1b[31m', 'Tests failed: \n', err.toString())
     }
-    !tests.length || tests.some(([t]) => !t)
+    const result = !tests.length || tests.some(([t]) => !t)
+    result
       ? console.log('\x1b[31m', 'Some tests failed!', '\n', '\x1b[0m')
       : console.log('\x1b[32m', 'All tests passed!', '\n', '\x1b[0m')
+    return +!result
   },
   [KEYWORDS.SERIALISE]: (args, env) => {
     if (!args.length)
@@ -1029,7 +1031,7 @@ const keywords = {
         `Invalid number of arguments for (${KEYWORDS.SERIALISE})`
       )
     const data = evaluate(args[0], env)
-    return lispify(data)
+    return stringify(data)
   },
 }
 keywords[KEYWORDS.NOT_COMPILED_BLOCK] = keywords[KEYWORDS.BLOCK]
