@@ -12,7 +12,10 @@
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (go (range 1 100) (scan fizz-buzz) (log!))
+  (go
+    (math::range 1 100)
+    (array::scan fizz-buzz)
+    (log!))
 ```
 
 ```lisp
@@ -26,26 +29,26 @@
 1456")
 ; solve part 1
 (let solve (lambda arr cb
-     (fold arr (lambda a b (do
-        (let res (binary-search arr (cb b)))
+     (array::fold arr (lambda a b (do
+        (let res (array::binary-search arr (cb b)))
         (if res (merge a (Array res)) a)))
      ())))
 ; 514579
 (go *input*
-    (split "\n")
-    (Strings->Numbers)
-    (sort (lambda a b (> a b)))
+    (string::split "\n")
+    (cast::Strings->Numbers)
+    (array::sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
-    (product)
+    (math::product)
     (log!))
 ```
 
 ```lisp
 ; https://leetcode.com/problems/maximum-count-of-positive-integer-and-negative-integer/description/
 (let max-count-of (lambda nums
-  (max
-    (count-of nums positive?)
-    (count-of nums negative?))))
+  (math::max
+    (array::count-of nums math::positive?)
+    (array::count-of nums math::negative?))))
 
 (go
   (Array -2 -1 -1 0 0 1 2)
@@ -56,12 +59,12 @@
 ```lisp
 ; remove duplicate elements in the arr
 (let unique (lambda arr (go
-      (let sorted (sort arr (safety lambda a b (> a b))))
-      (zip (sequence sorted))
-      (select (lambda x
+      (let sorted (array::sort arr (safety lambda a b (> a b))))
+      (array::zip (math::sequence sorted))
+      (array::select (lambda x
                (or (not (let index (car (cdr x))))
                   (not (= (get sorted (- index 1)) (get sorted index))))))
-      (scan car))))
+      (array::scan car))))
 ; tests
 (assert
    (case "test 1" (unique (Array 1)) (Array 1))
@@ -92,8 +95,8 @@ import { fez } from 'fez-lisp'
 eval(
   fez(
     `(go 
-        (range 1 11) 
-        (scan (lambda x (* x x))) 
+        (math::range 1 11) 
+        (array::scan (lambda x (* x x))) 
         (log!)))`,
     // include standard library
     // compile fez to JavaScript
@@ -113,7 +116,7 @@ fez(
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (go (range 1 100) (scan fizz-buzz) (log!))`,
+  (go (math::range 1 100) (array::scan fizz-buzz) (log!))`,
   { std: true, errors: true, compile: false, shake: true }
 )
 ```
