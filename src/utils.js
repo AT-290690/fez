@@ -132,7 +132,7 @@ export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
   const visited = new Set()
   const dfs = (tree) => {
-    if (Array.isArray(tree)) tree.forEach((a) => dfs(a))
+    if (Array.isArray(tree)) tree.forEach(dfs)
     else if (
       (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
       deps.has(tree[VALUE]) &&
