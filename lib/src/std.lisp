@@ -287,3 +287,13 @@
        (let* iterate (lambda i result (if (< i len) (do 
        (iterate (+ i 1) (set result i (callback (get arr (- i 1)) (get arr i))))) result)))
        (iterate 1 arr)) arr))))
+
+  (let adjacent-find (lambda arr callback (do 
+    (let len (length arr))
+    (otherwise (= len 1) (do 
+       (let* iterate (lambda i 
+       (when (< i len)
+       (if (callback (let prev (get arr (- i 1))) (let current (get arr i)))
+       prev
+       (iterate (+ i 1))))))
+       (iterate 1))))))
