@@ -9,32 +9,32 @@ describe('Compilation', () => {
 
 (Array (go
 (Array 1 2 3 4 5) 
-(scan (safety lambda x (* x 2))) 
-(select (safety lambda x (> x 4))) 
-(fold (safety lambda a b (+ a b)) 0))
-(Array (flat (Array 1 2 3 4))) (flat (Array (Array 1 2 3 4) 2 3 (Array 1 2 3 4)))
+(array::scan (safety lambda x (* x 2))) 
+(array::select (safety lambda x (> x 4))) 
+(array::fold (safety lambda a b (+ a b)) 0))
+(Array (array::flat (Array 1 2 3 4))) (array::flat (Array (Array 1 2 3 4) 2 3 (Array 1 2 3 4)))
 (Array 
   (go 
   (let arr (Array "a" "b" "c"))
-  (zip (range 1 (length arr)))
-  (scan (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) String)))))
+  (array::zip (math::range 1 (length arr)))
+  (array::scan (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) String)))))
 
-(sort (Array 1 2 3 4 5 6) ascending?)
-(sort (Array 6 5 4 3 2 1) ascending?)
-(sort (Array 3 1 2 5 4 6) ascending?)
+(array::sort (Array 1 2 3 4 5 6) ascending?)
+(array::sort (Array 6 5 4 3 2 1) ascending?)
+(array::sort (Array 3 1 2 5 4 6) ascending?)
 
-(sort (Array 1 2 3 4 5 6) descending?)
-(sort (Array 6 5 4 3 2 1) descending?)
-(sort (Array 3 1 2 5 4 6) descending?)
+(array::sort (Array 1 2 3 4 5 6) descending?)
+(array::sort (Array 6 5 4 3 2 1) descending?)
+(array::sort (Array 3 1 2 5 4 6) descending?)
 
-(binary-search (Array 3 1 2 5 4 6) 4)
+(array::binary-search (Array 3 1 2 5 4 6) 4)
 
-(slice (Array 1 2 3 4 5 6) 1 3)
-(zip (Array 1 2 3 4) (Array "A" "B" "C"))
-(cartesian-product (Array 1 2 3 4) (Array "A" "B" "C"))
-(equal? (Array 1 2 3) (Array 1 2 2))
-(equal? (Array 1 2 3) (Array 1 2 3))
-(equal? (Array 1 2 3 4) (Array 1 2 3)))
+(array::slice (Array 1 2 3 4 5 6) 1 3)
+(array::zip (Array 1 2 3 4) (Array "A" "B" "C"))
+(math::cartesian-product (Array 1 2 3 4) (Array "A" "B" "C"))
+(array::equal? (Array 1 2 3) (Array 1 2 2))
+(array::equal? (Array 1 2 3) (Array 1 2 3))
+(array::equal? (Array 1 2 3 4) (Array 1 2 3)))
 (do (let *input* "1721
     979
     366
@@ -43,24 +43,24 @@ describe('Compilation', () => {
     1456")
     ; solve part 1
     (let solve (lambda array cb
-         (fold array (lambda a b (do
-            (let res (binary-search array (cb b)))
+         (array::fold array (lambda a b (do
+            (let res (array::binary-search array (cb b)))
             (if res (merge a (Array res)) a)))
          ())))
     ; 514579
     (go *input*
-        (split "\n")
-        (Strings->Numbers)
-        (sort ascending?)
+        (string::split "\n")
+        (cast::Strings->Numbers)
+        (array::sort ascending?)
         (solve (lambda x (- 2020 x)))
-        (product))))`,
+        (math::product))))`,
       `(let fibonacci (lambda n
   (if (< n 2) n (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
 (fibonacci 10)`,
       `(let max-count-of (lambda nums
-  (max
-    (count-of nums positive?)
-    (count-of nums negative?))))
+  (math::max
+    (array::count-of nums math::positive?)
+    (array::count-of nums math::negative?))))
 (go
   (Array -2 -1 -1 0 0 1 2)
   (max-count-of))`,

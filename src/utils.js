@@ -20,8 +20,8 @@ export const isBalancedParenthesis = (sourceCode) => {
     else if (str[i] in pairs) if (stack.pop() !== pairs[str[i]]) ++count
   return count - stack.length
 }
-export const escape = (char) => {
-  switch (char) {
+export const escape = (Char) => {
+  switch (Char) {
     case '\\':
       return '\\'
     case 'n':
@@ -201,6 +201,8 @@ export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
 export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
 export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
 export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
+export const moduleNameToNothing = (name) => name.replace(new RegExp(/::/g), '')
+
 export const questionMarkToLodash = (name) =>
   name.replace(new RegExp(/\?/g), 'Predicate')
 export const exclamationMarkMarkToLodash = (name) =>
@@ -231,7 +233,9 @@ export const lispToJavaScriptVariableName = (name) =>
       dotNamesToEmpty(
         colonNamesTo$(
           exclamationMarkMarkToLodash(
-            questionMarkToLodash(commaToLodash(earMuffsToLodashes(name)))
+            questionMarkToLodash(
+              commaToLodash(moduleNameToNothing(earMuffsToLodashes(name)))
+            )
           )
         )
       )

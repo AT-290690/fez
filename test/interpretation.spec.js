@@ -6,9 +6,9 @@ describe('Interpretation', () => {
       fez(
         `(Array (go
 (Array 1 2 3 4 5) 
-(scan (safety lambda x (* x 2))) 
-(select (safety lambda x (> x 4))) 
-(fold (safety lambda a b (+ a b)) 0)))`,
+(array::scan (safety lambda x (* x 2))) 
+(array::select (safety lambda x (> x 4))) 
+(array::fold (safety lambda a b (+ a b)) 0)))`,
         { std: true, shake: true }
       ),
       [24]
@@ -25,8 +25,8 @@ describe('Interpretation', () => {
         
         ; log fizz buzz for 100 numbers
           (go 
-            (range 1 15) 
-            (scan fizz-buzz))`,
+            (math::range 1 15) 
+            (array::scan fizz-buzz))`,
         { std: true, shake: true }
       ),
       [
@@ -59,9 +59,9 @@ describe('Interpretation', () => {
     strictEqual(
       fez(
         `(let max-count-of (lambda nums
-      (max
-        (count-of nums positive?)
-        (count-of nums negative?))))
+      (math::max
+        (array::count-of nums math::positive?)
+        (array::count-of nums math::negative?))))
     
     (go
       (Array -2 -1 -1 0 0 1 2)
