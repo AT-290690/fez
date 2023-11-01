@@ -14,7 +14,7 @@
 
   (go
     (math::range 1 100)
-    (array::scan fizz-buzz)
+    (array::map fizz-buzz)
     (log!))
 ```
 
@@ -31,12 +31,12 @@
 (let solve (lambda arr cb
      (array::fold arr (lambda a b (do
         (let res (array::binary-search arr (cb b)))
-        (if res (merge a (Array res)) a)))
+        (if res (merge a (array res)) a)))
      ())))
 ; 514579
 (go *input*
     (string::split "\n")
-    (cast::Strings->Numbers)
+    (cast::strings->numbers)
     (array::sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (math::product)
@@ -51,7 +51,7 @@
     (array::count-of nums math::negative?))))
 
 (go
-  (Array -2 -1 -1 0 0 1 2)
+  (array -2 -1 -1 0 0 1 2)
   (max-count-of)
   (log!)) ; 3
 ```
@@ -64,11 +64,11 @@
       (array::select (lambda x
                (or (not (let index (car (cdr x))))
                   (not (= (get sorted (- index 1)) (get sorted index))))))
-      (array::scan car))))
+      (array::map car))))
 ; tests
 (assert
-   (case "test 1" (unique (Array 1)) (Array 1))
-   (case "test 2" (unique (Array 1 2 2 4 5 9 5 12 14 1)) (Array 1 2 4 5 9 12 14)))
+   (case "test 1" (unique (array 1)) (array 1))
+   (case "test 2" (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
 ```
 
 <p align="center">
@@ -96,7 +96,7 @@ eval(
   fez(
     `(go 
         (math::range 1 11) 
-        (array::scan (lambda x (* x x))) 
+        (array::map (lambda x (* x x))) 
         (log!)))`,
     // include standard library
     // compile fez to JavaScript
@@ -116,7 +116,7 @@ fez(
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (go (math::range 1 100) (array::scan fizz-buzz) (log!))`,
+  (go (math::range 1 100) (array::map fizz-buzz) (log!))`,
   { std: true, errors: true, compile: false, shake: true }
 )
 ```

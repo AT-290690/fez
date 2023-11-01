@@ -4,9 +4,9 @@ describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
-        `(Array (go
-(Array 1 2 3 4 5) 
-(array::scan (safety lambda x (* x 2))) 
+        `(array (go
+(array 1 2 3 4 5) 
+(array::map (safety lambda x (* x 2))) 
 (array::select (safety lambda x (> x 4))) 
 (array::fold (safety lambda a b (+ a b)) 0)))`,
         { std: true, shake: true }
@@ -26,7 +26,7 @@ describe('Interpretation', () => {
         ; log fizz buzz for 100 numbers
           (go 
             (math::range 1 15) 
-            (array::scan fizz-buzz))`,
+            (array::map fizz-buzz))`,
         { std: true, shake: true }
       ),
       [
@@ -64,11 +64,15 @@ describe('Interpretation', () => {
         (array::count-of nums math::negative?))))
     
     (go
-      (Array -2 -1 -1 0 0 1 2)
+      (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
         { std: true, shake: true }
       ),
       3
+    )
+    strictEqual(
+      fez(`(array::join (array 1 2 3) "-")`, { std: true, shake: true }),
+      '1-2-3'
     )
   })
 })

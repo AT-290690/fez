@@ -650,7 +650,6 @@ const keywords = {
   [KEYWORDS.STRING_TYPE]: () => '',
   [KEYWORDS.NUMBER_TYPE]: () => 0,
   [KEYWORDS.BOOLEAN_TYPE]: () => 1,
-  [KEYWORDS.FUNCTION_TYPE]: () => () => {},
   [KEYWORDS.CAST_TYPE]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
@@ -678,12 +677,8 @@ const keywords = {
         }
         case KEYWORDS.STRING_TYPE:
           return value.toString()
-        case KEYWORDS.BIT_TYPE:
-          return parseInt(value, 2)
         case KEYWORDS.BOOLEAN_TYPE:
           return +!!value
-        case KEYWORDS.FUNCTION_TYPE:
-          return () => value
         case KEYWORDS.ARRAY_TYPE: {
           if (typeof value === 'number')
             return [...Number(value).toString()].map(Number)
@@ -731,30 +726,14 @@ const keywords = {
           throw new TypeError(
             `Can only cast (or ${KEYWORDS.NUMBER_TYPE} ${
               KEYWORDS.STRING_TYPE
-            } ${KEYWORDS.ARRAY_TYPE} ${KEYWORDS.BIT_TYPE} ${
-              KEYWORDS.BOOLEAN_TYPE
-            } ${KEYWORDS.CHAR_TYPE} ${KEYWORDS.CHAR_CODE_TYPE}) at (${
+            } ${KEYWORDS.ARRAY_TYPE} ${KEYWORDS.BOOLEAN_TYPE} ${
+              KEYWORDS.CHAR_TYPE
+            } ${KEYWORDS.CHAR_CODE_TYPE}) at (${KEYWORDS.CAST_TYPE}) (${
               KEYWORDS.CAST_TYPE
-            }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)}).`
+            } ${stringifyArgs(args)}).`
           )
       }
     }
-  },
-  [KEYWORDS.BIT_TYPE]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.BIT_TYPE}) (1 required). (${
-          KEYWORDS.BIT_TYPE
-        } ${stringifyArgs(args)})`
-      )
-    const operand = evaluate(args[0], env)
-    if (typeof operand !== 'number')
-      throw new TypeError(
-        `Argument of (${KEYWORDS.BIT_TYPE}) is not a (${
-          KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BIT_TYPE} ${stringifyArgs(args)}).`
-      )
-    return (operand >>> 0).toString(2)
   },
   [KEYWORDS.BITWISE_AND]: (args, env) => {
     if (args.length < 2)
@@ -886,7 +865,7 @@ const keywords = {
       if (!Array.isArray(args[i]))
         throw new TypeError(
           `Argument at position (${i}) of (${KEYWORDS.PIPE}) is not a (${
-            KEYWORDS.FUNCTION_TYPE
+            KEYWORDS.ANONYMOUS_FUNCTION
           }). (${KEYWORDS.PIPE} ${stringifyArgs(args)})`
         )
       const [first, ...rest] = args[i]

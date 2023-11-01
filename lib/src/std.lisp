@@ -6,11 +6,11 @@
                                   (do (callback (car arr)) 
                                       (array::iteration (cdr arr) callback)))))
 
-(let array::scan (lambda arr callback (do
+(let array::map (lambda arr callback (do
                   (let* iterate (lambda arr out  
-                        (if (length arr) 
+                        (if  (length arr) 
                               (iterate (cdr arr) 
-                                (merge out (Array (callback (car arr)))))
+                                (merge out (array (callback (car arr)))))
                               out)))
                       (iterate arr ()))))
 
@@ -19,7 +19,7 @@
                         (if (length arr)
                             (iterate (cdr arr) 
                                       (if (callback (car arr)) 
-                                            (merge out (Array (car arr))) 
+                                            (merge out (array (car arr))) 
                                             out))
                             out)))
                       (iterate arr ()))))
@@ -29,11 +29,11 @@
                         (if (length arr)
                             (iterate (cdr arr) 
                                       (if (not (callback (car arr))) 
-                                            (merge out (Array (car arr))) 
+                                            (merge out (array (car arr))) 
                                             out))
                             out)))
                       (iterate arr ()))))
-                                            
+
 (let array::fold (lambda arr callback initial (do
                   (let* iterate (lambda arr out  
                         (if (length arr)
@@ -52,7 +52,7 @@
                     (let* iterate (lambda arr  
                           (if (and (length arr) (not (callback (car arr)))) 
                               (iterate (cdr arr))
-                              (type (length arr) Boolean))))
+                              (type (length arr) boolean))))
                         (iterate arr))))
 
 (let array::find (lambda arr callback (do
@@ -71,24 +71,24 @@
                     (let* iterate (lambda arr out 
                           (if (length arr) 
                               (iterate (cdr arr) 
-                              (merge (Array (car arr)) out)) 
+                              (merge (array (car arr)) out)) 
                           out)))
                         (iterate arr ()))))
 
 (let math::range (lambda start end (do 
                           (let* iterate (lambda out count
-                          (if (<= count end) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (if (<= count end) (iterate (merge out (array count)) (+ count 1)) out)))
                           (iterate () start))))
 
 (let math::sequence (lambda arr (do 
                           (let end (length arr))
                           (let* iterate (lambda out count
-                          (if (< (length out) end) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (if (< (length out) end) (iterate (merge out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
 (let math::sequence-n (lambda n (do 
                           (let* iterate (lambda out count
-                          (if (< (length out) n) (iterate (merge out (Array count)) (+ count 1)) out)))
+                          (if (< (length out) n) (iterate (merge out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
 (let array::unique (lambda arr (go 
@@ -97,7 +97,7 @@
       (array::select (lambda x 
                (or (not (let index (car (cdr x))))
                   (not (= (get sorted (- index 1)) (get sorted index))))))
-      (array::scan car))))
+      (array::map car))))
 
 (let array::for-range (lambda start end callback (do 
                           (let* iterate (lambda i
@@ -108,7 +108,7 @@
                           (iterate start))))
 
 (let array::traverse (lambda x callback 
-    (if (Atom? x) 
+    (if (atom? x) 
         (callback x) 
         (iterate x (lambda y (array::traverse y callback))))))
 
@@ -123,18 +123,18 @@
 (let math::floor (safety lambda n (| n 0)))
 (let math::round (safety lambda n (| (+ n 0.5) 0)))
 (let array::empty? (safety lambda arr (not (length arr))))
-(let array::Array-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
+(let array::array-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
 
-(let cast::String->Array (safety lambda str (type str Array)))
-(let cast::Array->String (lambda arr (array::fold arr (safety lambda a x (concatenate a (type x String))) "")))
-(let cast::String->Number (safety lambda str (type str Number)))
-(let cast::Number->String (safety lambda number (type number String)))
-(let cast::Strings->Numbers (lambda arr (array::scan arr (safety lambda x (type x Number)))))
-(let cast::Numbers->Strings (lambda arr (array::scan arr (safety lambda x (type x String)))))
-(let cast::String->Char-Codes (lambda str (go str (type Array) (array::scan (lambda x (type x Char-Code))))))
-(let cast::Chars->Char-Codes (lambda arr (go arr (array::scan (lambda x (type x Char-Code))))))
-(let cast::Char-Codes->Chars (lambda arr (go arr (array::scan (lambda x (type x Char))))))
-(let cast::Char-Codes->String (lambda arr (go arr (array::scan (lambda x (type x Char))) (csat::Array->String))))
+(let cast::string->array (safety lambda str (type str array)))
+(let cast::array->string (lambda arr (array::fold arr (safety lambda a x (concatenate a (type x string))) "")))
+(let cast::string->number (safety lambda str (type str number)))
+(let cast::number->string (safety lambda n (type n string)))
+(let cast::strings->numbers (lambda arr (array::map arr (safety lambda x (type x number)))))
+(let cast::numbers->strings (lambda arr (array::map arr (safety lambda x (type x string)))))
+(let cast::string->char-codes (lambda str (go str (type array) (array::map (lambda x (type x char-code))))))
+(let cast::chars->char-codes (lambda arr (go arr (array::map (lambda x (type x char-code))))))
+(let cast::char-codes->chars (lambda arr (go arr (array::map (lambda x (type x char))))))
+(let cast::char-codes->string (lambda arr (go arr (array::map (lambda x (type x char))) (cast::array->string))))
 
 (let math::power (lambda base exp 
   (if (< exp 0) 
@@ -189,15 +189,15 @@
         (< n 0) 0
         (*) (do 
         (let* iter (lambda i end (do 
-            (let it-is (not (= (mod n i) 0)))
-            (if (and (<= i end) it-is) (iter (+ i 1) end) it-is))))
+            (let is-prime (not (= (mod n i) 0)))
+            (if (and (<= i end) is-prime) (iter (+ i 1) end) is-prime))))
             (or (= n 2) (iter 2 (math::sqrt n)))))))
 
 (let array::slice (safety lambda arr start end (do 
         (let bounds (- end start))
         (let* iterate (lambda i out
           (if (< i bounds) 
-              (iterate (+ i 1) (merge out (Array (get arr (+ start i)))))
+              (iterate (+ i 1) (merge out (array (get arr (+ start i)))))
               out)))
         (iterate 0 ()))))
 
@@ -216,40 +216,40 @@
 
 (let array::zip (safety lambda A B (do 
   (let* iterate (lambda a b output
-    (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (merge output (Array (Array (car a) (car b))))) output)))
+    (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (merge output (array (array (car a) (car b))))) output)))
   (iterate A B ()))))
 
-(let math::cartesian-product (lambda a b (array::fold a (lambda p x (merge p (array::scan b (lambda y (Array x y))))) ())))
+(let math::cartesian-product (lambda a b (array::fold a (lambda p x (merge p (array::map b (lambda y (array x y))))) ())))
 
 (let array::equal? (lambda a b 
-  (or (and (Atom? a) (Atom? b) (= a b)) 
-  (and (Array? a) 
+  (or (and (atom? a) (atom? b) (= a b)) 
+  (and (array? a) 
         (= (length a) (length b)) 
           (not (array::some? (math::sequence a) (lambda i (not (array::equal? (get a i) (get b i))))))))))
 
 (let string::split (lambda str delim (do 
-    (let input (type (concatenate str delim) Array))
+    (let input (type (concatenate str delim) array))
     (let marks 
     (go 
       input
       (array::zip (math::sequence input)) 
-      (array::scan (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
-    (let first (array::find marks (lambda x (Number? x))))
+      (array::map (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
+    (let first (array::find marks (lambda x (number? x))))
   (go 
     marks
     (array::fold (lambda a b 
-      (if (Number? b)
-      (merge a (Array (array::slice input (- b first) b)))
+      (if (number? b)
+      (merge a (array (array::slice input (- b first) b)))
       a)) ())
-    (array::scan (lambda x (cast::Array->String x)))))))
+    (array::map (lambda x (cast::array->string x)))))))
 
-(let array::join (lambda arr delim (array::fold (zip arr (math::sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) String)) (type (car b) String))) "")))
+(let array::join (lambda arr delim (array::fold (array::zip arr (math::sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) string)) (type (car b) string))) "")))
 
 (let array::flat (lambda arr (do
   (let flatten (lambda item 
-    (if (and (Array? item) (length item))
+    (if (and (array? item) (length item))
         (array::fold item (lambda a b (merge a (flatten b))) ())
-        (Array item))))
+        (array item))))
   (flatten arr))))
 
   (let array::sort (lambda arr callback (do
@@ -258,25 +258,25 @@
       (let* iterate (lambda i bounds a b (do
           (let current (get arr i))
           (let predicate (callback current pivot))
-          (let left (if (= predicate 0) (merge a (Array current)) a))
-          (let right (if (= predicate 1) (merge b (Array current)) b))
+          (let left (if (= predicate 0) (merge a (array current)) a))
+          (let right (if (= predicate 1) (merge b (array current)) b))
           (if (< i bounds) (iterate (+ i 1) bounds left right)
-          (Array left right)))))
+          (array left right)))))
       (let sorted (iterate 1 (- (length arr) 1) () ()))
       (let left (car sorted))
       (let right (car (cdr sorted)))
-      (merge (array::sort left callback) (Array pivot) (array::sort right callback)))))))
+      (merge (array::sort left callback) (array pivot) (array::sort right callback)))))))
 
-  (let array::set (lambda arr i value 
-      (if (array::Array-in-bounds? arr i) 
-          (array::scan (math::sequence arr) (lambda x (if (= x i) value (get arr x))))
-  (throw (concatenate (type i String) " is outside of the arr bounds.")))))
+  (let array::update (lambda arr i value 
+      (if (array::array-in-bounds? arr i) 
+          (array::map (math::sequence arr) (lambda x (if (= x i) value (get arr x))))
+  (throw (concatenate (type i string) " is outside of the array bounds.")))))
   
   (let array::adjacent-difference (lambda arr callback (do 
     (let len (length arr))
     (unless (= len 1) 
       (do 
-       (Array (car arr))
+       (array (car arr))
        (let* iterate (lambda i result (if (< i len) (do 
        (iterate (+ i 1) (set result i (callback (get arr (- i 1)) (get arr i))))) result)))
        (iterate 1 arr)) arr))))

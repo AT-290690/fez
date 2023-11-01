@@ -21,24 +21,22 @@ return result
     throw new Error(error)
 }`,
   serialise:
-    "_serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(Array ${ast.map(stringify).join(' ')})`\n else\n return `(Array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
+    "_serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`\n else\n return `(array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
   cast: `_cast=(type,value)=>{
     switch (type) {
-      case 'Number':
+      case '${KEYWORDS.NUMBER_TYPE}':
          return Number(value)
-      case 'String':
+      case '${KEYWORDS.STRING_TYPE}':
          return value.toString()
-      case 'Array':
+      case '${KEYWORDS.ARRAY_TYPE}':
         return typeof value==='number'?[...Number(value).toString()].map(Number):[...value]
-      case 'Bit':
-         return parseInt(value,2)
-      case 'Boolean':
+      case '${KEYWORDS.BOOLEAN_TYPE}':
           return +!!value
-      case 'Function':
+      case '${KEYWORDS.ANONYMOUS_FUNCTION}':
           return ()=>value
-      case 'Char-Code':
+      case '${KEYWORDS.CHAR_CODE_TYPE}':
         return String.fromCharCode(value)
-      case 'Char':
+      case '${KEYWORDS.CHAR_TYPE}':
         return value.charCodeAt(0)
        default:
          return 0
@@ -136,8 +134,6 @@ const compile = (tree, Variables) => {
           Arguments[1][VALUE] === 'length'
           ? `(new Array(${compile(Arguments[0], Variables)}).fill(0))`
           : `[${parseArgs(Arguments, Variables)}];`
-      case KEYWORDS.FUNCTION_TYPE:
-        return '(()=>{});'
       case KEYWORDS.ARRAY_OR_STRING_LENGTH:
         return `(${compile(Arguments[0], Variables)}).length`
       case KEYWORDS.IS_ATOM:
