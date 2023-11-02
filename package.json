@@ -2,7 +2,7 @@
   "name": "fez-lisp",
   "description": "Immutable Lisp interpreted & compiled to JavaScript",
   "author": "AT290690",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "main": "index.js",
   "keywords": [

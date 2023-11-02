@@ -7,14 +7,14 @@ describe('Compilation', () => {
 (let ascending? (lambda a b (> a b)))
 (let descending? (lambda a b (< a b)))
 
-(array (go
+(array (pi
 (array 1 2 3 4 5) 
 (array::map (safety lambda x (* x 2))) 
 (array::select (safety lambda x (> x 4))) 
 (array::fold (safety lambda a b (+ a b)) 0))
 (array (array::flat (array 1 2 3 4))) (array::flat (array (array 1 2 3 4) 2 3 (array 1 2 3 4)))
 (array 
-  (go 
+  (pi 
   (let arr (array "a" "b" "c"))
   (array::zip (math::range 1 (length arr)))
   (array::map (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) string)))))
@@ -48,7 +48,7 @@ describe('Compilation', () => {
             (if res (merge a (array res)) a)))
          ())))
     ; 514579
-    (go *input*
+    (pi *input*
         (string::split "\n")
         (cast::strings->numbers)
         (array::sort ascending?)
@@ -61,7 +61,7 @@ describe('Compilation', () => {
   (math::max
     (array::count-of nums math::positive?)
     (array::count-of nums math::negative?))))
-(go
+(pi
   (array -2 -1 -1 0 0 1 2)
   (max-count-of))`,
     ].forEach((source) =>

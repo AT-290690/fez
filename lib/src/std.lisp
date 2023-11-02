@@ -91,7 +91,7 @@
                           (if (< (length out) n) (iterate (merge out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
-(let array::unique (lambda arr (go 
+(let array::unique (lambda arr (pi 
       (let sorted (array::sort arr (safety lambda a b (> a b)))) 
       (zip (math::sequence sorted))
       (array::select (lambda x 
@@ -118,7 +118,7 @@
 (let math::minimum (lambda arr (array::fold arr (safety lambda a b (if (< a b) a b)) (car arr))))
 (let math::max (lambda a b (if (> a b) a b)))
 (let math::min (lambda a b (if (< a b) a b)))
-(let array::count-of (lambda arr callback (go arr (array::select callback) (length))))
+(let array::count-of (lambda arr callback (pi arr (array::select callback) (length))))
 (let math::increment (safety lambda i (+ i 1)))
 (let math::floor (safety lambda n (| n 0)))
 (let math::round (safety lambda n (| (+ n 0.5) 0)))
@@ -131,10 +131,10 @@
 (let cast::number->string (safety lambda n (type n string)))
 (let cast::strings->numbers (lambda arr (array::map arr (safety lambda x (type x number)))))
 (let cast::numbers->strings (lambda arr (array::map arr (safety lambda x (type x string)))))
-(let cast::string->char-codes (lambda str (go str (type array) (array::map (lambda x (type x char-code))))))
-(let cast::chars->char-codes (lambda arr (go arr (array::map (lambda x (type x char-code))))))
-(let cast::char-codes->chars (lambda arr (go arr (array::map (lambda x (type x char))))))
-(let cast::char-codes->string (lambda arr (go arr (array::map (lambda x (type x char))) (cast::array->string))))
+(let cast::string->char-codes (lambda str (pi str (type array) (array::map (lambda x (type x char-code))))))
+(let cast::chars->char-codes (lambda arr (pi arr (array::map (lambda x (type x char-code))))))
+(let cast::char-codes->chars (lambda arr (pi arr (array::map (lambda x (type x char))))))
+(let cast::char-codes->string (lambda arr (pi arr (array::map (lambda x (type x char))) (cast::array->string))))
 
 (let math::power (lambda base exp 
   (if (< exp 0) 
@@ -230,12 +230,12 @@
 (let string::split (lambda str delim (do 
     (let input (type (concatenate str delim) array))
     (let marks 
-    (go 
+    (pi 
       input
       (array::zip (math::sequence input)) 
       (array::map (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
     (let first (array::find marks number?))
-  (go 
+  (pi 
     marks
     (array::fold (lambda a b 
       (if (number? b)

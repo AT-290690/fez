@@ -4,7 +4,7 @@ describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
-        `(array (go
+        `(array (pi
 (array 1 2 3 4 5) 
 (array::map (safety lambda x (* x 2))) 
 (array::select (safety lambda x (> x 4))) 
@@ -24,7 +24,7 @@ describe('Interpretation', () => {
               (*) n)))
         
         ; log fizz buzz for 100 numbers
-          (go 
+          (pi 
             (math::range 1 15) 
             (array::map fizz-buzz))`,
         { std: true, shake: true }
@@ -63,7 +63,7 @@ describe('Interpretation', () => {
         (array::count-of nums math::positive?)
         (array::count-of nums math::negative?))))
     
-    (go
+    (pi
       (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
         { std: true, shake: true }
