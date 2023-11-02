@@ -16,7 +16,11 @@ let result=fn(...args)
 while(typeof result==='function')result=result()
 return result
   }`,
-  atom: `_isAtom=(value)=>typeof value==='number'||typeof value==='string'`,
+  isNumber: `numberPredicate=(number)=>typeof number==='number'`,
+  isString: `stringPredicate=(string)=>typeof number==='string'`,
+  isLambda: `lambdaPredicate=(lambda)=>typeof lambda==='function'`,
+  isArray: `arrayPredicate=(array)=>Array.isArray(array)`,
+  isAtom: `atomPredicate=(value)=>typeof value==='number'||typeof value==='string'`,
   error: `_error=(error)=>{ 
     throw new Error(error)
 }`,
@@ -110,20 +114,22 @@ const compile = (tree, Variables) => {
       }
       case KEYWORDS.IS_STRING:
         return handleBoolean(
-          `(typeof(${compile(Arguments[0], Variables)})==='string');`
+          `stringPredicate(${compile(Arguments[0], Variables)});`
         )
       case KEYWORDS.IS_NUMBER:
         return handleBoolean(
-          `(typeof(${compile(Arguments[0], Variables)})==='number');`
+          `numberPredicate(${compile(Arguments[0], Variables)});`
         )
       case KEYWORDS.IS_FUNCTION:
-        return `(typeof(${compile(Arguments[0], Variables)})==='function');`
+        return handleBoolean(
+          `lambdaPredicate(${compile(Arguments[0], Variables)});`
+        )
       case KEYWORDS.IS_ARRAY:
-        return `(Array.isArray(${compile(Arguments[0], Variables)}));`
+        return handleBoolean(
+          `arrayPredicate(${compile(Arguments[0], Variables)});`
+        )
       case KEYWORDS.NUMBER_TYPE:
         return '0'
-      case KEYWORDS.INTEGER_TYPE:
-        return '0n'
       case KEYWORDS.BOOLEAN_TYPE:
         return '1'
       case KEYWORDS.STRING_TYPE:
@@ -137,7 +143,9 @@ const compile = (tree, Variables) => {
       case KEYWORDS.ARRAY_OR_STRING_LENGTH:
         return `(${compile(Arguments[0], Variables)}).length`
       case KEYWORDS.IS_ATOM:
-        return handleBoolean(`_isAtom(${compile(Arguments[0], Variables)});`)
+        return handleBoolean(
+          `atomPredicate(${compile(Arguments[0], Variables)});`
+        )
       case KEYWORDS.FIRST_ARRAY:
         return `${compile(Arguments[0], Variables)}.at(0);`
       case KEYWORDS.REST_ARRAY:

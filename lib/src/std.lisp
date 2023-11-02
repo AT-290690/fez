@@ -234,7 +234,7 @@
       input
       (array::zip (math::sequence input)) 
       (array::map (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
-    (let first (array::find marks (lambda x (number? x))))
+    (let first (array::find marks number?))
   (go 
     marks
     (array::fold (lambda a b 
