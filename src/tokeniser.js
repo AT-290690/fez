@@ -274,7 +274,7 @@ const keywords = {
         )
       return new Array(N).fill(0)
     }
-    return args.map((x) => evaluate(x, env))
+    return Object.freeze(args.map((x) => evaluate(x, env)))
   },
   [KEYWORDS.IS_ATOM]: (args, env) => {
     if (args.length !== 1)
@@ -681,7 +681,7 @@ const keywords = {
           return +!!value
         case KEYWORDS.ARRAY_TYPE: {
           if (typeof value === 'number')
-            return [...Number(value).toString()].map(Number)
+            return Object.freeze([...Number(value).toString()].map(Number))
           else if (typeof value[Symbol.iterator] !== 'function')
             throw new TypeError(
               `Arguments are not iterable for ${KEYWORDS.ARRAY_TYPE} at (${
@@ -1011,6 +1011,74 @@ const keywords = {
       )
     const data = evaluate(args[0], env)
     return stringify(data)
+  },
+  [KEYWORDS.SET_ARRAY]: (args, env) => {
+    if (args.length !== 2 && args.length !== 3)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.SET_ARRAY
+        }) (or 2 3) required (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+      )
+    const array = evaluate(args[0], env)
+    if (!Array.isArray(array))
+      throw new TypeError(
+        `First argument of (${KEYWORDS.SET_ARRAY}) must be an (${
+          KEYWORDS.ARRAY_TYPE
+        }) but got (${array}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)}).`
+      )
+    const index = evaluate(args[1], env)
+    if (!Number.isInteger(index))
+      throw new TypeError(
+        `Second argument of (${KEYWORDS.SET_ARRAY}) must be an (${
+          KEYWORDS.NUMBER_TYPE
+        } integer) (${index}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)}).`
+      )
+    if (index > array.length)
+      throw new RangeError(
+        `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
+          KEYWORDS.ARRAY_TYPE
+        }) bounds (index ${index} bounds ${array.length}) (${
+          KEYWORDS.SET_ARRAY
+        } ${stringifyArgs(args)}).`
+      )
+    if (index < 0) {
+      if (args.length !== 2)
+        throw new RangeError(
+          `Invalid number of arguments for (${
+            KEYWORDS.SET_ARRAY
+          }) (if (< index 0) then 2 required) (${
+            KEYWORDS.SET_ARRAY
+          } ${stringifyArgs(args)})`
+        )
+      if (index * -1 > array.length)
+        throw new RangeError(
+          `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
+            KEYWORDS.ARRAY_TYPE
+          }) bounds (index ${index} bounds ${array.length}) (${
+            KEYWORDS.SET_ARRAY
+          } ${stringifyArgs(args)})`
+        )
+      const target = array.length + index
+      while (array.length !== target) array.pop()
+    } else {
+      if (args.length !== 3)
+        throw new RangeError(
+          `Invalid number of arguments for (${
+            KEYWORDS.SET_ARRAY
+          }) (if (>= index 0) then 3 required) (${
+            KEYWORDS.SET_ARRAY
+          } ${stringifyArgs(args)})`
+        )
+      const value = evaluate(args[2], env)
+      if (value == undefined)
+        throw new RangeError(
+          `Trying to set a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
+            KEYWORDS.SET_ARRAY
+          }). (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+        )
+      array[index] = value
+    }
+    return array
   },
 }
 keywords[KEYWORDS.NOT_COMPILED_BLOCK] = keywords[KEYWORDS.BLOCK]

@@ -227,22 +227,6 @@
         (= (length a) (length b)) 
           (not (array::some? (math::sequence a) (lambda i (not (array::equal? (get a i) (get b i))))))))))
 
-(let string::split (lambda str delim (do 
-    (let input (type (concatenate str delim) array))
-    (let marks 
-    (pi 
-      input
-      (array::zip (math::sequence input)) 
-      (array::map (lambda x (if (= (car x) delim) (car (cdr x)) (car x))))))
-    (let first (array::find marks number?))
-  (pi 
-    marks
-    (array::fold (lambda a b 
-      (if (number? b)
-      (merge a (array (array::slice input (- b first) b)))
-      a)) ())
-    (array::map (lambda x (cast::array->string x)))))))
-
 (let array::join (lambda arr delim (array::fold (array::zip arr (math::sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) string)) (type (car b) string))) "")))
 
 (let array::flat (lambda arr (do
@@ -267,7 +251,7 @@
       (let right (car (cdr sorted)))
       (merge (array::sort left callback) (array pivot) (array::sort right callback)))))))
 
-  (let array::update (lambda arr i value 
+  (let array::set (lambda arr i value 
       (if (array::array-in-bounds? arr i) 
           (array::map (math::sequence arr) (lambda x (if (= x i) value (get arr x))))
   (throw (concatenate (type i string) " is outside of the array bounds.")))))
@@ -278,7 +262,7 @@
       (do 
        (array (car arr))
        (let* iterate (lambda i result (if (< i len) (do 
-       (iterate (+ i 1) (set result i (callback (get arr (- i 1)) (get arr i))))) result)))
+       (iterate (+ i 1) (set! result i (callback (get arr (- i 1)) (get arr i))))) result)))
        (iterate 1 arr)) arr))))
 
   (let array::adjacent-find (lambda arr callback (do 
@@ -290,3 +274,31 @@
        prev
        (iterate (+ i 1))))))
        (iterate 1))))))
+
+  (let array::partition (lambda arr n (array::fold (array::zip arr (math::sequence arr)) (lambda a b (do 
+        (let x (car b))
+        (let i (car (cdr b)))
+        (if (mod i n) (set! (let last-a (get a -1)) (length last-a) x) (set! a (length a) (do (let mut-arr ()) (set! mut-arr (length mut-arr) x)))) a)) 
+        ())))
+
+(let string::split (lambda str delim (do
+  (let locals ())
+  (let delim-arr (type delim array))
+  (set! locals (length locals) delim-arr)
+  (set! locals (length locals) (type str array))
+  (set! locals (length locals) (length delim-arr))
+  (set! locals (length locals) "")
+  (let* iterate (lambda result i bounds
+    (if 
+      (< (if (array::every? (array::zip (get locals 0) (math::sequence locals)) 
+                                              (lambda item (do 
+                                                  (let y (car item)) 
+                                                  (let j (car (cdr item))) 
+                                                  (or (<= (length (get locals 1)) (+ i j)) (= (get (get locals 1) (+ i j)) y)))))
+          (do 
+            (set! result (length result) (get locals 3))
+            (set! locals 3 "")
+            (+ i (get locals 2) -1))
+          (do (set! locals 3 (concatenate (get locals 3) (get (get locals 1) i))) i)) bounds) 
+              (iterate result (+ i 1) bounds) result)))
+      (set! (let iteration-result (iterate () 0 (- (length (get locals 1)) 1))) (length iteration-result) (get locals 3)))))

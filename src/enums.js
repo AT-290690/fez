@@ -74,4 +74,6 @@ export const KEYWORDS = {
   TEST_CASE: 'case',
   TEST_BED: 'assert',
   SERIALISE: 'serialise',
+
+  SET_ARRAY: 'set!',
 }

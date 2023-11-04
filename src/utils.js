@@ -189,10 +189,13 @@ export const fez = (source, options = {}) => {
     if (options.compile) return Object.values(comp(deepClone(ast))).join('')
     return run(ast, env)
   } catch (error) {
+    const err = error.message
+      .replace("'[object Array]'", '(array)')
+      .replace('object', '(array)')
     if (options.errors) {
-      logError(error.message)
+      logError(err)
     }
-    return error.message
+    return err
   }
 }
 
@@ -201,7 +204,8 @@ export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
 export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
 export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
 export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
-export const moduleNameToNothing = (name) => name.replace(new RegExp(/::/g), '')
+export const moduleNameToNothing = (name) =>
+  name.replace(new RegExp(/::/g), '_')
 
 export const questionMarkToLodash = (name) =>
   name.replace(new RegExp(/\?/g), 'Predicate')

@@ -24,6 +24,13 @@ return result
   error: `_error=(error)=>{ 
     throw new Error(error)
 }`,
+  setArray: `setEffect=(array,index,value)=>{ 
+    if (index < 0) {
+     const target = array.length + index
+     while (array.length !== target) array.pop()
+    } else array[index] = value; 
+    return array 
+}`,
   serialise:
     "_serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`\n else\n return `(array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
   cast: `_cast=(type,value)=>{
@@ -302,6 +309,8 @@ const compile = (tree, Variables) => {
       }
       case KEYWORDS.SERIALISE:
         return `_serialise(${compile(Arguments[0], Variables)});`
+      case KEYWORDS.SET_ARRAY:
+        return `setEffect(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.NOT_COMPILED_BLOCK:
       case KEYWORDS.ATOM:
       case KEYWORDS.TEST_CASE:
