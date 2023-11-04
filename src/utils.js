@@ -186,7 +186,11 @@ export const fez = (source, options = {}) => {
         : std
       : []
     const ast = [...standard, ...parsed]
-    if (options.compile) return Object.values(comp(deepClone(ast))).join('')
+    if (options.compile) {
+      const js = Object.values(comp(deepClone(ast))).join('')
+      return options.eval ? eval(js) : js
+    }
+
     return run(ast, env)
   } catch (error) {
     const err = error.message

@@ -688,7 +688,7 @@ const keywords = {
                 KEYWORDS.CAST_TYPE
               }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)}).`
             )
-          return [...value]
+          return Object.freeze([...value])
         }
         case KEYWORDS.CHAR_TYPE: {
           const index = evaluate(args[0], env)
@@ -904,7 +904,7 @@ const keywords = {
           KEYWORDS.MERGE
         } ${stringifyArgs(args)}).`
       )
-    return arrays.reduce((a, b) => a.concat(b), [])
+    return Object.freeze(arrays.reduce((a, b) => a.concat(b), []))
   },
   [KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION]: (args, env) => {
     if (!args.length)

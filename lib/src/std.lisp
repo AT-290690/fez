@@ -1,10 +1,10 @@
 (let math::E 2.718281828459045)
 (let math::PI 3.141592653589793)
 
-(let* array::iteration (lambda arr callback  
+(let* array::for (lambda arr callback  
                                 (when (length arr) 
                                   (do (callback (car arr)) 
-                                      (array::iteration (cdr arr) callback)))))
+                                      (array::for (cdr arr) callback)))))
 
 (let array::map (lambda arr callback (do
                   (let* iterate (lambda arr out  
@@ -107,6 +107,7 @@
                                   (iterate (+ i 1))))))
                           (iterate start))))
 
+
 (let array::traverse (lambda x callback 
     (if (atom? x) 
         (callback x) 
@@ -124,6 +125,28 @@
 (let math::round (safety lambda n (| (+ n 0.5) 0)))
 (let array::empty? (safety lambda arr (not (length arr))))
 (let array::array-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
+
+(let math::largest-power (lambda N (do 
+  ; changing all right side bits to 1.
+  (let N1 (| N (>> N 1)))
+  (let N2 (| N1 (>> N1 2)))
+  (let N3 (| N2 (>> N2 4)))
+  (let N4 (| N3 (>> N3 8)))
+  ; as now the number is 2 * x-1,
+  ; where x is required answer,
+  ; so adding 1 and dividing it by
+  (>> (+ N4 1) 1))))
+
+(let math::set-bit (lambda n bit (| n (<< 1 bit))))
+(let math::clear-bit (lambda n bit (& n (~ (<< 1 bit)))))
+(let math::odd-bit? (lambda n (= (& n 1) 1)))
+(let math::average-bit (lambda a b (>> (+ a b) 1)))
+(let math::toggle-bit (lambda n a b (^ a b n)))
+(let math::same-sign-bit? (lambda a b (>= (^ a b) 0)))
+(let math::max-bit (lambda a b (- a (& (- a b) (>> (- a b) 31)))))
+(let math::min-bit (lambda a b (- a (& (- a b) (>> (- b a) 31)))))
+(let math::modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
+(let math::n-one-bit? (lambda N nth (type (& N (<< 1 nth)) Boolean)))
 
 (let cast::string->array (safety lambda str (type str array)))
 (let cast::array->string (lambda arr (array::fold arr (safety lambda a x (concatenate a (type x string))) "")))
@@ -302,3 +325,6 @@
           (do (set! locals 3 (concatenate (get locals 3) (get (get locals 1) i))) i)) bounds) 
               (iterate result (+ i 1) bounds) result)))
       (set! (let iteration-result (iterate () 0 (- (length (get locals 1)) 1))) (length iteration-result) (get locals 3)))))
+
+(let array::mut! (lambda arr (array::fold arr (lambda a b (set! a (length a) b)) ())))
+(let array::merge! (lambda a b (do (array::for b (lambda x (set! a (length a) x))) a)))
