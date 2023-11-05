@@ -113,8 +113,8 @@
         (callback x) 
         (iterate x (lambda y (array::traverse y callback))))))
 
-(let math::summation (lambda arr (array::fold arr (safety lambda a b (+ a b)) 0)))
-(let math::product (lambda arr (array::fold arr (safety lambda a b (* a b)) 1)))
+(let math::summation (lambda arr (array::fold arr (safety lambda a b (+ a b)) (+))))
+(let math::product (lambda arr (array::fold arr (safety lambda a b (* a b)) (*))))
 (let math::maximum (lambda arr (array::fold arr (safety lambda a b (if (> a b) a b)) (car arr))))
 (let math::minimum (lambda arr (array::fold arr (safety lambda a b (if (< a b) a b)) (car arr))))
 (let math::max (lambda a b (if (> a b) a b)))

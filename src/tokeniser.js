@@ -142,11 +142,12 @@ const keywords = {
     return +(typeof evaluate(args[0], env) === 'function')
   },
   [KEYWORDS.ADDITION]: (args, env) => {
+    if (!args.length) return 0 // identity
     if (args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.ADDITION
-        }), expected > 1 but got ${args.length}. (${
+        }), expected (or (> 1) (= 0)) but got ${args.length}. (${
           KEYWORDS.ADDITION
         } ${stringifyArgs(args)}).`
       )
@@ -160,7 +161,7 @@ const keywords = {
     return operands.reduce((a, b) => a + b)
   },
   [KEYWORDS.MULTIPLICATION]: (args, env) => {
-    if (!args.length) return 1
+    if (!args.length) return 1 // identity
     if (args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${KEYWORDS.MULTIPLICATION}), expected (or (> 1) (= 0)) but got ${args.length}.`

@@ -234,6 +234,9 @@ const compile = (tree, Variables) => {
             : `(${parseArgs(Arguments, Variables, token)});`
           : `(0);`
       case KEYWORDS.ADDITION:
+        return Arguments.length
+          ? `(${parseArgs(Arguments, Variables, token)});`
+          : `(0);`
       case KEYWORDS.BITWISE_AND:
       case KEYWORDS.BITWISE_OR:
       case KEYWORDS.BITWISE_XOR:
