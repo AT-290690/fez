@@ -5,7 +5,6 @@ export const consoleEditorContainer = document.getElementById(
   'console-editor-container'
 )
 export const editorContainer = document.getElementById('editor-container')
-export const labelContainer = document.getElementById('labels-container')
 export const execButton = document.getElementById('exe')
 export const keyButton = document.getElementById('key')
 export const editor = CodeMirror(editorContainer, {})
@@ -26,6 +25,8 @@ const run = () => {
     std: true,
     errors: true,
   })
+  consoleEditor.setSize(window.innerWidth, window.innerHeight * C)
+  editor.setSize(window.innerWidth, window.innerHeight * E)
   consoleEditor.setValue(stringify(res).toString())
 }
 const comp = () => {

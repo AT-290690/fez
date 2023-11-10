@@ -6,7 +6,7 @@
   --background-secondary: #d6c09636;
   --gutters-border: 1px solid transparent;
   --border-width: 1px;
-  --error: #e93838;
+  --error: #ee4f4f;
   --warning: #ffed2b;
   --success: #6de46d;
   --icons: #6b84b0;
@@ -30,7 +30,7 @@
 }
 @font-face {
   font-family: 'Fantastic';
-  src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
+  src: url(../assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
   font-display: swap;
 }
 
@@ -102,7 +102,7 @@ main {
 .toolbar {
   position: absolute;
   top: 5px;
-  right: 0;
+  right: 5px;
   display: grid;
   /* justify-content: space-between; */
 }
