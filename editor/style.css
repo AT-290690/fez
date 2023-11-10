@@ -114,10 +114,6 @@ body {
   height: 100vh;
 }
 
-#consoleEditorContainer {
-  display: none;
-}
-
 #console-editor-container,
 #editor-container {
   z-index: 1;

@@ -10,32 +10,25 @@ export const execButton = document.getElementById('exe')
 export const keyButton = document.getElementById('key')
 export const editor = CodeMirror(editorContainer, {})
 export const consoleEditor = CodeMirror(consoleEditorContainer, {})
-consoleEditor.setSize(window.innerWidth, window.innerHeight / 2)
-editor.setSize(window.innerWidth, window.innerHeight)
+const E = 0.75
+const C = 0.25
+consoleEditor.setSize(window.innerWidth, window.innerHeight * C)
+editor.setSize(window.innerWidth, window.innerHeight * E)
 
 window.addEventListener('resize', () =>
-  consoleEditorContainer.style.display !== 'none'
-    ? editor.setSize(window.innerWidth, window.innerHeight / 2)
-    : editor.setSize(window.innerWidth, window.innerHeight)
+  editor.setSize(window.innerWidth, window.innerHeight * E)
 )
-window.addEventListener(
-  'resize',
-  () =>
-    consoleEditorContainer.style.display !== 'none' &&
-    consoleEditor.setSize(window.innerWidth, window.innerHeight / 2)
+window.addEventListener('resize', () =>
+  consoleEditor.setSize(window.innerWidth, window.innerHeight * C)
 )
 const run = () => {
-  editor.setSize(window.innerWidth, window.innerHeight)
   const res = fez(editor.getValue(), {
     std: true,
     errors: true,
   })
   consoleEditor.setValue(stringify(res).toString())
-  consoleEditorContainer.style.display = 'block'
-  editor.setSize(window.innerWidth, window.innerHeight / 2)
 }
 const comp = () => {
-  editor.setSize(window.innerWidth, window.innerHeight)
   const res = eval(
     fez(editor.getValue(), {
       std: true,
@@ -44,8 +37,6 @@ const comp = () => {
     })
   )
   consoleEditor.setValue(stringify(res).toString())
-  consoleEditorContainer.style.display = 'block'
-  editor.setSize(window.innerWidth, window.innerHeight / 2)
 }
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
