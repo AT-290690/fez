@@ -7,7 +7,11 @@ export const consoleEditorContainer = document.getElementById(
 export const editorContainer = document.getElementById('editor-container')
 export const execButton = document.getElementById('exe')
 export const keyButton = document.getElementById('key')
-export const editor = CodeMirror(editorContainer, {})
+export const editor = CodeMirror(editorContainer, {
+  autocomplete: true,
+  linenumbers: true,
+  search: true,
+})
 export const consoleEditor = CodeMirror(consoleEditorContainer, {})
 const E = 0.75
 const C = 0.25

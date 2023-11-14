@@ -114,11 +114,8 @@ body {
   height: 100vh;
 }
 
-#console-editor-container,
 #editor-container {
-  z-index: 1;
-  border: solid 1px var(--border);
-  /* border-bottom: solid 1px var(--border); */
+  border-bottom: solid 2px var(--border);
 }
 
 .svgIcon:active {
@@ -170,8 +167,6 @@ body {
   border: none;
   padding-inline-start: 2px;
   font-size: 12px;
-  /* border-bottom: 1px solid var(--border);
-  border-bottom: none; */
 }
 .header-button {
   cursor: pointer;
