@@ -93,7 +93,7 @@
 
 (let array::unique (lambda arr (pi 
       (let sorted (array::sort arr (safety lambda a b (> a b)))) 
-      (zip (math::sequence sorted))
+      (array::zip (math::sequence sorted))
       (array::select (lambda x 
                (or (not (let index (car (cdr x))))
                   (not (= (get sorted (- index 1)) (get sorted index))))))
