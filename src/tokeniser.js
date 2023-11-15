@@ -455,14 +455,15 @@ const keywords = {
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
-    if (
-      Array.isArray(a) ||
-      Array.isArray(b) ||
-      typeof a === 'function' ||
-      typeof b === 'function'
-    )
+    if (Array.isArray(a) || typeof a === 'function')
       throw new TypeError(
-        `Invalid use of (${KEYWORDS.EQUAL}), some arguments are not an ${
+        `Invalid use of (${KEYWORDS.EQUAL}), first argument are not an ${
+          KEYWORDS.ATOM
+        } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
+      )
+    if (Array.isArray(b) || typeof b === 'function')
+      throw new TypeError(
+        `Invalid use of (${KEYWORDS.EQUAL}), second argument are not an ${
           KEYWORDS.ATOM
         } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
@@ -477,15 +478,16 @@ const keywords = {
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
-    if (
-      Array.isArray(a) ||
-      Array.isArray(b) ||
-      typeof a === 'function' ||
-      typeof b === 'function'
-    )
+    if (typeof a !== 'number')
       throw new TypeError(
-        `Invalid use of (${KEYWORDS.LESS_THAN}), some arguments are not an ${
-          KEYWORDS.ATOM
+        `Invalid use of (${KEYWORDS.LESS_THAN}), first arguments are not an ${
+          KEYWORDS.NUMBER_TYPE
+        } (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
+      )
+    if (typeof b !== 'number')
+      throw new TypeError(
+        `Invalid use of (${KEYWORDS.LESS_THAN}), second argument are not an ${
+          KEYWORDS.NUMBER_TYPE
         } (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     return +(a < b)
@@ -499,16 +501,19 @@ const keywords = {
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
-    if (
-      Array.isArray(a) ||
-      Array.isArray(b) ||
-      typeof a === 'function' ||
-      typeof b === 'function'
-    )
+    if (typeof a !== 'number')
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN
-        }), some arguments are not an ${KEYWORDS.ATOM} (${
+        }), first arguments are not an ${KEYWORDS.NUMBER_TYPE} (${
+          KEYWORDS.GREATHER_THAN
+        } ${stringifyArgs(args)})`
+      )
+    if (typeof b !== 'number')
+      throw new TypeError(
+        `Invalid use of (${
+          KEYWORDS.GREATHER_THAN
+        }), second argument are not an ${KEYWORDS.NUMBER_TYPE} (${
           KEYWORDS.GREATHER_THAN
         } ${stringifyArgs(args)})`
       )
@@ -525,16 +530,19 @@ const keywords = {
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
-    if (
-      Array.isArray(a) ||
-      Array.isArray(b) ||
-      typeof a === 'function' ||
-      typeof b === 'function'
-    )
+    if (typeof a !== 'number')
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }), some arguments are not an ${KEYWORDS.ATOM} (${
+        }), first arguments are not an ${KEYWORDS.NUMBER_TYPE} (${
+          KEYWORDS.GREATHER_THAN_OR_EQUAL
+        } ${stringifyArgs(args)})`
+      )
+    if (typeof b !== 'number')
+      throw new TypeError(
+        `Invalid use of (${
+          KEYWORDS.GREATHER_THAN_OR_EQUAL
+        }), second argument are not an ${KEYWORDS.NUMBER_TYPE} (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -549,16 +557,19 @@ const keywords = {
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
-    if (
-      Array.isArray(a) ||
-      Array.isArray(b) ||
-      typeof a === 'function' ||
-      typeof b === 'function'
-    )
+    if (typeof a !== 'number')
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }), some arguments are not an ${KEYWORDS.ATOM} (${
+        }), first arguments are not an ${KEYWORDS.NUMBER_TYPE} (${
+          KEYWORDS.LESS_THAN_OR_EQUAL
+        } ${stringifyArgs(args)})`
+      )
+    if (typeof b !== 'number')
+      throw new TypeError(
+        `Invalid use of (${
+          KEYWORDS.LESS_THAN_OR_EQUAL
+        }), second argument are not an ${KEYWORDS.NUMBER_TYPE} (${
           KEYWORDS.LESS_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )

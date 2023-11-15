@@ -328,3 +328,25 @@
 
 (let array::mut! (lambda arr (array::fold arr (lambda a b (set! a (length a) b)) ())))
 (let array::merge! (lambda a b (do (array::for b (lambda x (set! a (length a) x))) a)))
+
+(let set::add! (lambda set element (unless (array::has? set (lambda x (= x element))) (set! set (length set) element) set)))
+(let set::has? (lambda set element (array::has? set (lambda x (= x element)))))
+
+(let set::intersection (lambda a b (array::fold b (lambda out element 
+                                      (do (when (set::has? a element) 
+                                                (set::add! out element)) out)) ())))
+(let set::difference (lambda a b 
+                        (array::fold a (lambda out element 
+                                        (do (when (not (set::has? b element)) 
+                                                       (set::add! out element)) out)) ())))
+(let set::xor (lambda a b (do 
+                              (let out ())
+                              (array::for a (lambda element (when (not (set::has? b element)) (set::add! out element))))
+                              (array::for b (lambda element (when (not (set::has? a element)) (set::add! out element))))
+                              out)))
+
+(let set::union (lambda a b (do 
+                            (let out ())
+                            (array::for a (lambda element (set::add! out element)))
+                            (array::for b (lambda element (set::add! out element)))
+                            out)))

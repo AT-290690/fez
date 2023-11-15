@@ -4,6 +4,37 @@ describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
+        `
+    (let A ())
+    (let B ())
+    (set::add! A 1)
+    (set::add! A 2)
+    (set::add! A 3)
+    (set::add! B 1)
+    (set::add! B 2)
+    (set::add! B 4)
+    (set::add! B 5)
+    (array (set::xor A B) (set::difference A B) (set::difference B A) (set::intersection B A))
+`,
+        { std: true, shake: true }
+      ),
+      [[3, 4, 5], [3], [4, 5], [1, 2]]
+    )
+    deepStrictEqual(
+      fez(
+        `(let set ())
+    (set::add! set 1)
+    (set::add! set 1)
+    (set::add! set 2)
+    (set::add! set 2)
+    (set::add! set 3)
+    `,
+        { std: true, shake: true }
+      ),
+      [1, 2, 3]
+    )
+    deepStrictEqual(
+      fez(
         `(array (pi
 (array 1 2 3 4 5) 
 (array::map (safety lambda x (* x 2))) 
