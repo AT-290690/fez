@@ -446,6 +446,17 @@ const keywords = {
       )
     return +!evaluate(args[0], env)
   },
+  [KEYWORDS.EQUALITY]: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError(
+        `Invalid number of arguments for (${KEYWORDS.EQUAL}) (2 required) (${
+          KEYWORDS.EQUAL
+        } ${stringifyArgs(args)})`
+      )
+    const a = evaluate(args[0], env)
+    const b = evaluate(args[1], env)
+    return +(a === b)
+  },
   [KEYWORDS.EQUAL]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
@@ -455,16 +466,16 @@ const keywords = {
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
-    if (Array.isArray(a) || typeof a === 'function')
+    if (typeof a !== 'number')
       throw new TypeError(
-        `Invalid use of (${KEYWORDS.EQUAL}), first argument are not an ${
-          KEYWORDS.ATOM
+        `Invalid use of (${KEYWORDS.EQUAL}), first arguments are not an ${
+          KEYWORDS.NUMBER_TYPE
         } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
-    if (Array.isArray(b) || typeof b === 'function')
+    if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.EQUAL}), second argument are not an ${
-          KEYWORDS.ATOM
+          KEYWORDS.NUMBER_TYPE
         } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
     return +(a === b)

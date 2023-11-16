@@ -54,6 +54,7 @@ export const KEYWORDS = {
   CONDITION: 'cond',
 
   NOT: 'not',
+  EQUALITY: 'eq',
   EQUAL: '=',
   LESS_THAN: '<',
   GREATHER_THAN: '>',

@@ -210,6 +210,7 @@ const compile = (tree, Variables) => {
       case KEYWORDS.CONCATENATION:
         return '(' + parseArgs(Arguments, Variables, '+') + ');'
       case KEYWORDS.EQUAL:
+      case KEYWORDS.EQUALITY:
         return handleBoolean(`(${parseArgs(Arguments, Variables, '===')});`)
       case KEYWORDS.GREATHER_THAN_OR_EQUAL:
       case KEYWORDS.LESS_THAN_OR_EQUAL:

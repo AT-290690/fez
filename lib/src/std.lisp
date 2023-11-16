@@ -317,7 +317,7 @@
                                               (lambda item (do 
                                                   (let y (car item)) 
                                                   (let j (car (cdr item))) 
-                                                  (or (<= (length (get locals 1)) (+ i j)) (= (get (get locals 1) (+ i j)) y)))))
+                                                  (or (<= (length (get locals 1)) (+ i j)) (= (type (get (get locals 1) (+ i j)) char-code) (type y char-code))))))
           (do 
             (set! result (length result) (get locals 3))
             (set! locals 3 "")
@@ -350,3 +350,13 @@
                             (array::for a (lambda element (set::add! out element)))
                             (array::for b (lambda element (set::add! out element)))
                             out)))
+
+(let array::swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
+
+(let array::index-of (lambda arr item (do
+                    (let* iterate (lambda arr i 
+                          (when (length arr) 
+                              (if (= (car arr) item) i (iterate (cdr arr) (+ i 1))))))
+                        (iterate arr 0))))
+
+(let set::remove! (lambda set element (array::swap-remove! set (array::index-of set element))))
