@@ -57,8 +57,9 @@
 
 (let array::find (lambda arr callback (do
                     (let* iterate (lambda arr  
-                          (when (length arr) 
-                              (if (callback (car arr)) (car arr) (iterate (cdr arr))))))
+                          (if (length arr) 
+                              (if (callback (car arr)) (car arr) (iterate (cdr arr)))
+                              ())))
                         (iterate arr))))
 
 (let array::has? (lambda arr callback (do
@@ -292,10 +293,10 @@
     (let len (length arr))
     (otherwise (= len 1) (do 
        (let* iterate (lambda i 
-       (when (< i len)
+       (if (< i len)
        (if (callback (let prev (get arr (- i 1))) (let current (get arr i)))
        prev
-       (iterate (+ i 1))))))
+       (iterate (+ i 1))) ())))
        (iterate 1))))))
 
   (let array::partition (lambda arr n (array::fold (array::zip arr (math::sequence arr)) (lambda a b (do 
@@ -355,8 +356,12 @@
 
 (let array::index-of (lambda arr item (do
                     (let* iterate (lambda arr i 
-                          (when (length arr) 
-                              (if (= (car arr) item) i (iterate (cdr arr) (+ i 1))))))
+                          (if (length arr) 
+                              (if (= (car arr) item) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
 
 (let set::remove! (lambda set element (array::swap-remove! set (array::index-of set element))))
+(let set::insert! (lambda set arr (do (array::for arr (lambda element (set::add! set element))) set)))
+
+(let new::set (lambda items (set::insert! () items)))
+(let new::array (lambda items (type items array)))
