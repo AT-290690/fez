@@ -6,6 +6,7 @@ export const consoleEditorContainer = document.getElementById(
 )
 export const editorContainer = document.getElementById('editor-container')
 export const execButton = document.getElementById('exe')
+export const runButton = document.getElementById('run')
 export const keyButton = document.getElementById('key')
 export const editor = CodeMirror(editorContainer, {
   autocomplete: true,
@@ -53,4 +54,23 @@ document.addEventListener('keydown', (e) => {
   }
 })
 execButton.addEventListener('click', () => comp())
-keyButton.addEventListener('click', () => run())
+runButton.addEventListener('click', () => run())
+keyButton.addEventListener('click', () => {
+  const compressed = LZString.compressToBase64(editor.getValue())
+  const newurl =
+    window.location.protocol +
+    '//' +
+    window.location.host +
+    window.location.pathname +
+    `?l=${encodeURIComponent(compressed)}`
+  window.history.pushState({ path: newurl }, '', newurl)
+})
+const initial = new URLSearchParams(location.search).get('l') ?? ''
+if (initial) {
+  try {
+    const decompressed = LZString.decompressFromBase64(initial)
+    editor.setValue(decodeURIComponent(decompressed))
+  } catch (e) {
+    consoleEditor.setValue(e instanceof Error ? e.message : e)
+  }
+}

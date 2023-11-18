@@ -66,29 +66,34 @@ main {
 }
 
 #exe:active,
-#key:active {
+#key:active,
+#run:active {
   transform: scale(0.9);
 }
 
 #exe > svg:hover,
-#key > svg:hover {
+#key > svg:hover,
+#run > svg:hover {
   transform: scale(1.2);
   fill: var(--hover);
   stroke: var(--hover);
 }
 #key > svg,
-#exe > svg {
+#exe > svg,
+#run > svg {
   stroke: var(--color-thirdly);
   fill: var(--color-thirdly);
 }
 #key > svg,
-#exe > svg {
+#exe > svg,
+#run > svg {
   stroke: var(--color-thirdly);
   fill: var(--color-thirdly);
   /* path: var(--color-thirdly); */
 }
 #exe,
-#key {
+#key,
+#run {
   transition-property: all;
   transition-property: transform;
   background: transparent;
@@ -101,7 +106,7 @@ main {
 
 .toolbar {
   position: absolute;
-  top: 5px;
+  top: 15px;
   right: 5px;
   display: grid;
   /* justify-content: space-between; */

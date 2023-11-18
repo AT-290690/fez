@@ -4,6 +4,20 @@ describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
+        `(let people (array 
+      (array (array "name" "Anthony"))
+      (array (array "name" "John"))
+    ))
+    (array (map:set! (get people 0) "name" (concatenate (map:get (get people 0) "name") " " "Tonev")) people)`,
+        { std: true, shake: true }
+      ),
+      [
+        [['name', 'Anthony Tonev']],
+        [[['name', 'Anthony Tonev']], [['name', 'John']]],
+      ]
+    )
+    deepStrictEqual(
+      fez(
         `
     (let A ())
     (let B ())

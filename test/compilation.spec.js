@@ -4,6 +4,13 @@ describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
       `
+    (let people (array 
+      (array (array "name" "Anthony"))
+      (array (array "name" "John"))
+    ))
+    (array (map:set! (get people 0) "name" (concatenate (map:get (get people 0) "name") " " "Tonev")) people)
+    `,
+      `
 (let ascending? (lambda a b (> a b)))
 (let descending? (lambda a b (< a b)))
 

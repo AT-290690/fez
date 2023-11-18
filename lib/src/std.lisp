@@ -333,6 +333,9 @@
 (let set:add! (lambda set element (unless (array:has? set (lambda x (= x element))) (set! set (length set) element) set)))
 (let set:has? (lambda set element (array:has? set (lambda x (= x element)))))
 
+(let set:remove! (lambda set element (unless (= (let index (array:index-of set element)) -1) (array:swap-remove! set index) set)))
+(let set:insert! (lambda set arr (do (array:for arr (lambda element (set:add! set element))) set)))
+
 (let set:intersection (lambda a b (array:fold b (lambda out element 
                                       (do (when (set:has? a element) 
                                                 (set:add! out element)) out)) ())))
@@ -352,6 +355,16 @@
                             (array:for b (lambda element (set:add! out element)))
                             out)))
 
+(let map:set! (lambda map key element (do 
+                                       (let found (array:find map (lambda x (eq (car x) key))))
+                                       (if (length found) 
+                                         (set! found 1 element)
+                                         (set! map (length map) (array key element)))
+                                       map)))
+(let map:get (lambda map key (car (cdr (array:find map (lambda x (eq (car x) key)))))))
+(let map:has? (lambda map key (array:has? map (lambda x (eq (car x) key)))))
+(let map:remove! (lambda map key (unless (= (let index (array:find-index map (lambda x (eq (car x) key)))) -1) (array:swap-remove! map index) map)))
+
 (let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
 
 (let array:index-of (safety lambda arr item (do
@@ -359,12 +372,14 @@
                           (if (length arr) 
                               (if (= (car arr) item) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
-
+(let array:find-index (safety lambda arr callback (do
+                    (let* iterate (lambda arr i 
+                          (if (length arr) 
+                              (if (callback (car arr)) i (iterate (cdr arr) (+ i 1))) -1)))
+                        (iterate arr 0))))
 (let array:remove (lambda arr i 
       (array:fold arr (safety lambda a x (do (unless (= x i) (merge a (array x)) a))) (array))))
 
-(let set:remove! (lambda set element (unless (= (let index (array:index-of set element)) -1) (array:swap-remove! set index) set)))
-(let set:insert! (lambda set arr (do (array:for arr (lambda element (set:add! set element))) set)))
 
 (let new:set (lambda items (set:insert! () items)))
 (let new:array (safety lambda items (type items array)))
