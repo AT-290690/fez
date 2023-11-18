@@ -120,5 +120,43 @@ describe('Interpretation', () => {
       fez(`(array:join (array 1 2 3) "-")`, { std: true, shake: true }),
       '1-2-3'
     )
+
+    deepStrictEqual(
+      fez(
+        `(let n-queen (lambda n (do
+(let solutions ())
+(let cols ())
+(let positive-diagonal ())
+(let negative-diagonal ())
+(let board (array:map (array n length) (lambda . (array:map (array n length) (lambda . ".")))))
+(let backtrack (lambda row 
+  (if (= row n) 
+      (set! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
+      (do
+        (array:for-range 0 n (lambda col 
+          (otherwise 
+            (or 
+              (set:has? cols col) 
+              (set:has? positive-diagonal (+ row col))
+              (set:has? negative-diagonal (- row col)))
+            (do 
+              (set:add! cols col)
+              (set:add! positive-diagonal (+ row col))
+              (set:add! negative-diagonal (- row col))
+              (set! (get board row) col "Q")
+              (backtrack (+ row 1)) 
+              (set:remove! cols col)
+              (set:remove! positive-diagonal (+ row col))
+              (set:remove! negative-diagonal (- row col))
+              (set! (get board row) col ".")))))))))
+(backtrack 0)
+solutions)))
+(array 
+(car (case "N=1" (n-queen 1) (array (array "Q"))))
+(car (case "N=4" (n-queen 4) (array (array ".Q.." "...Q" "Q..." "..Q.") (array "..Q." "Q..." "...Q" ".Q..")))))`,
+        { std: true }
+      ),
+      [1, 1]
+    )
   })
 })

@@ -246,7 +246,7 @@
 (let math:cartesian-product (lambda a b (array:fold a (lambda p x (merge p (array:map b (lambda y (array x y))))) ())))
 
 (let array:equal? (lambda a b 
-  (or (and (atom? a) (atom? b) (= a b)) 
+  (or (and (atom? a) (atom? b) (eq a b)) 
   (and (array? a) 
         (= (length a) (length b)) 
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
@@ -380,6 +380,31 @@
 (let array:remove (lambda arr i 
       (array:fold arr (safety lambda a x (do (unless (= x i) (merge a (array x)) a))) (array))))
 
+(let array:pad-right (lambda a b (if (> (length a) (length b)) 
+     (merge b (array (- (length a) (length b)) length))
+     (merge a (array (- (length b) (length a)) length)))))
+
+(let array:pad-left (lambda a b (if (> (length a) (length b)) 
+     (merge (array (- (length a) (length b)) length) b)
+     (merge (array (- (length b) (length a)) length) a))))
+
+(let string:lesser? (lambda L R (do 
+  (let a (cast:string->char-codes (type R string)))
+  (let b (cast:string->char-codes (type L string)))
+  (pi 
+   (array:pad-right a b)
+   (array:zip (if (> (length a) (length b)) a b))
+   (array:some? (lambda x (> (car x) (car (cdr x)))))))))
+
+(let string:greather? (lambda L R (not (string:lesser? L R))))
+
+(let string:equal? (lambda L R (when (= (length L) (length R)) (do 
+  (let a (cast:string->char-codes (type R string)))
+  (let b (cast:string->char-codes (type L string)))
+  (pi 
+   a
+   (array:zip b)
+   (array:every? (lambda x (= (car x) (car (cdr x))))))))))
 
 (let new:set (lambda items (set:insert! () items)))
 (let new:array (safety lambda items (type items array)))
