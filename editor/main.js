@@ -63,6 +63,7 @@ keyButton.addEventListener('click', () => {
     window.location.host +
     window.location.pathname +
     `?l=${encodeURIComponent(compressed)}`
+  consoleEditor.setValue(newurl)
   window.history.pushState({ path: newurl }, '', newurl)
 })
 const initial = new URLSearchParams(location.search).get('l') ?? ''
