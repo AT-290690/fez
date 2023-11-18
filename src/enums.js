@@ -77,4 +77,5 @@ export const KEYWORDS = {
   SERIALISE: 'serialise',
 
   SET_ARRAY: 'set!',
+  SET_IMMUTABLE_ARRAY: 'set',
 }

@@ -17,14 +17,14 @@ const keywords = {
           keywords.CONCATENATION
         }), expected > 1 but got ${args.length}. (${
           keywords.CONCATENATION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const operands = args.map((x) => evaluate(x, env))
     if (operands.some((x) => typeof x !== 'string'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.CONCATENATION}) are (${
           KEYWORDS.STRING_TYPE
-        }) (${KEYWORDS.CONCATENATION} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.CONCATENATION} ${stringifyArgs(args)})`
       )
     return operands.reduce((a, b) => a + b, '')
   },
@@ -35,14 +35,14 @@ const keywords = {
           KEYWORDS.REMAINDER_OF_DIVISION
         }), expected > 1 but got ${args.length}. (${
           KEYWORDS.REMAINDER_OF_DIVISION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const [a, b] = args.map((x) => evaluate(x, env))
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.REMAINDER_OF_DIVISION}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
       )
     if (b === 0)
       throw new TypeError(
@@ -50,7 +50,7 @@ const keywords = {
           KEYWORDS.REMAINDER_OF_DIVISION
         }) can't be a (0) (division by 0 is not allowed) (${
           KEYWORDS.REMAINDER_OF_DIVISION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
 
     return a % b
@@ -63,7 +63,7 @@ const keywords = {
         throw new TypeError(
           `Arguments of (${KEYWORDS.DIVISION}) is not a (${
             KEYWORDS.NUMBER_TYPE
-          }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)}).`
+          }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
         )
       if (number === 0)
         throw new TypeError(
@@ -71,7 +71,7 @@ const keywords = {
             KEYWORDS.DIVISION
           }) can't be a (0) (division by 0 is not allowed) (${
             KEYWORDS.DIVISION
-          } ${stringifyArgs(args)}).`
+          } ${stringifyArgs(args)})`
         )
       return 1 / number
     }
@@ -80,7 +80,7 @@ const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.DIVISION}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
     return operands.reduce((a, b) => a / b)
   },
@@ -91,7 +91,7 @@ const keywords = {
           KEYWORDS.ARRAY_OR_STRING_LENGTH
         }) (1 required) (${KEYWORDS.ARRAY_OR_STRING_LENGTH} ${stringifyArgs(
           args
-        )}).`
+        )})`
       )
     const array = evaluate(args[0], env)
     if (!(Array.isArray(array) || typeof array === 'string'))
@@ -100,7 +100,7 @@ const keywords = {
           KEYWORDS.ARRAY_OR_STRING_LENGTH
         }) must be an (or ${KEYWORDS.ARRAY_TYPE} ${KEYWORDS.STRING_TYPE}) (${
           KEYWORDS.ARRAY_OR_STRING_LENGTH
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     return array.length
   },
@@ -109,7 +109,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${KEYWORDS.IS_ARRAY}) (1 required) (${
           KEYWORDS.IS_ARRAY
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     return +Array.isArray(array)
@@ -119,7 +119,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_NUMBER
-        }) (1 required) (${KEYWORDS.IS_NUMBER} ${stringifyArgs(args)}).`
+        }) (1 required) (${KEYWORDS.IS_NUMBER} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'number')
   },
@@ -128,7 +128,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_STRING
-        }) (1 required) (${KEYWORDS.IS_STRING} ${stringifyArgs(args)}).`
+        }) (1 required) (${KEYWORDS.IS_STRING} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'string')
   },
@@ -137,7 +137,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_FUNCTION
-        }) (1 required) (${KEYWORDS.IS_FUNCTION} ${stringifyArgs(args)}).`
+        }) (1 required) (${KEYWORDS.IS_FUNCTION} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'function')
   },
@@ -149,14 +149,14 @@ const keywords = {
           KEYWORDS.ADDITION
         }), expected (or (> 1) (= 0)) but got ${args.length}. (${
           KEYWORDS.ADDITION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const operands = args.map((x) => evaluate(x, env))
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.ADDITION}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.ADDITION} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
       )
     return operands.reduce((a, b) => a + b)
   },
@@ -171,7 +171,7 @@ const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.MULTIPLICATION}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
       )
     return operands.reduce((a, b) => a * b)
   },
@@ -182,14 +182,14 @@ const keywords = {
           KEYWORDS.SUBTRACTION
         }), expected >= 1 but got ${args.length}. (${
           KEYWORDS.SUBTRACTION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const operands = args.map((x) => evaluate(x, env))
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.SUBTRACTION}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
       )
     return args.length === 1 ? -operands[0] : operands.reduce((a, b) => a - b)
   },
@@ -200,7 +200,7 @@ const keywords = {
           KEYWORDS.IF
         }), expected (= 3) but got ${args.length} (${
           KEYWORDS.IF
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     return evaluate(args[0], env)
       ? evaluate(args[1], env)
@@ -213,7 +213,7 @@ const keywords = {
           KEYWORDS.UNLESS
         }), expected (= 3)  but got ${args.length} (${
           KEYWORDS.UNLESS
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     return evaluate(args[0], env)
       ? evaluate(args[2], env)
@@ -226,7 +226,7 @@ const keywords = {
           KEYWORDS.WHEN
         }), expected 2 but got ${args.length} (${KEYWORDS.WHEN} ${stringifyArgs(
           args
-        )}).`
+        )})`
       )
     return evaluate(args[0], env) ? evaluate(args[1], env) : 0
   },
@@ -237,7 +237,7 @@ const keywords = {
           KEYWORDS.OTHERWISE
         }), expected 2 but got ${args.length} (${
           KEYWORDS.OTHERWISE
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     return evaluate(args[0], env) ? 0 : evaluate(args[1], env)
   },
@@ -248,7 +248,7 @@ const keywords = {
           KEYWORDS.CONDITION
         }), expected (> 2 required) but got ${args.length} (${
           KEYWORDS.CONDITION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     for (let i = 0; i < args.length; i += 2) {
       if (evaluate(args[i], env)) return evaluate(args[i + 1], env)
@@ -275,14 +275,14 @@ const keywords = {
         )
       return new Array(N).fill(0)
     }
-    return Object.freeze(args.map((x) => evaluate(x, env)))
+    return args.map((x) => evaluate(x, env))
   },
   [KEYWORDS.IS_ATOM]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
         `Invalid number of arguments for (${KEYWORDS.IS_ATOM}) (1 required) (${
           KEYWORDS.IS_ATOM
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     return isAtom(args[0], env)
   },
@@ -291,27 +291,27 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.FIRST_ARRAY
-        }) (1 required) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)}).`
+        }) (1 required) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError(
         `Argument of (${KEYWORDS.FIRST_ARRAY}) must be an (${
           KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
       )
     if (array.length === 0)
       throw new RangeError(
         `Argument of (${KEYWORDS.FIRST_ARRAY}) is an empty (${
           KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
       )
     const value = array.at(0)
     if (value == undefined)
       throw new RangeError(
         `Trying to get a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
           KEYWORDS.FIRST_ARRAY
-        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
       )
     return value
   },
@@ -327,13 +327,13 @@ const keywords = {
       throw new TypeError(
         `Argument of (${KEYWORDS.REST_ARRAY}) must be an (${
           KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
       )
     if (array.length === 0)
       throw new RangeError(
         `Argument of (${KEYWORDS.REST_ARRAY}) is an empty (${
           KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
       )
     return array.slice(1)
   },
@@ -349,33 +349,33 @@ const keywords = {
       throw new TypeError(
         `First argument of (${KEYWORDS.GET_ARRAY}) must be an (${
           KEYWORDS.ARRAY_TYPE
-        })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}).`
+        })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     if (array.length === 0)
       throw new RangeError(
         `First argument of (${KEYWORDS.GET_ARRAY}) is an empty (${
           KEYWORDS.ARRAY_TYPE
-        })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})).`
+        })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}))`
       )
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
       throw new TypeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) must be an (32 bit ${
           KEYWORDS.NUMBER_TYPE
-        }) (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}).`
+        }) (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     if (index > array.length - 1 || index * -1 > array.length)
       throw new RangeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) is outside of (${
           KEYWORDS.ARRAY_TYPE
-        }) bounds (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}).`
+        }) bounds (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     const value = array.at(index)
     if (value == undefined)
       throw new RangeError(
         `Trying to get a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
           KEYWORDS.GET_ARRAY
-        }) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     return value
   },
@@ -389,20 +389,6 @@ const keywords = {
     const expressions = args.map((x) => evaluate(x, env))
     console.log(...expressions)
     return expressions.at(-1)
-  },
-  [KEYWORDS.READ]: (args, env) => {
-    if (args.length)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.READ}) (= 0 required) (${
-          KEYWORDS.READ
-        } ${stringifyArgs(args)})`
-      )
-    const inp = env[KEYWORDS.INPUT]
-    if (inp.length) return inp
-    else
-      throw new ReferenceError(
-        `${KEYWORDS.INPUT} is empty! at (${KEYWORDS.READ})`
-      )
   },
   [KEYWORDS.BLOCK]: (args, env) => {
     if (!args.length)
@@ -694,7 +680,7 @@ const keywords = {
                 KEYWORDS.NUMBER_TYPE
               } ("${value}") to a ${KEYWORDS.NUMBER_TYPE} at (${
                 KEYWORDS.CAST_TYPE
-              }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)}).`
+              }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)})`
             )
           return num
         }
@@ -704,14 +690,14 @@ const keywords = {
           return +!!value
         case KEYWORDS.ARRAY_TYPE: {
           if (typeof value === 'number')
-            return Object.freeze([...Number(value).toString()].map(Number))
+            return [...Number(value).toString()].map(Number)
           else if (typeof value[Symbol.iterator] !== 'function')
             throw new TypeError(
               `Arguments are not iterable for ${KEYWORDS.ARRAY_TYPE} at (${
                 KEYWORDS.CAST_TYPE
-              }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)}).`
+              }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)})`
             )
-          return Object.freeze([...value])
+          return [...value]
         }
         case KEYWORDS.CHAR_TYPE: {
           const index = evaluate(args[0], env)
@@ -721,7 +707,7 @@ const keywords = {
                 KEYWORDS.CHAR_TYPE
               } at (${KEYWORDS.CAST_TYPE}) (${
                 KEYWORDS.CAST_TYPE
-              } ${stringifyArgs(args)}).`
+              } ${stringifyArgs(args)})`
             )
           return String.fromCharCode(index)
         }
@@ -733,7 +719,7 @@ const keywords = {
                 KEYWORDS.CHAR_CODE_TYPE
               } at (${KEYWORDS.CAST_TYPE}) (${
                 KEYWORDS.CAST_TYPE
-              } ${stringifyArgs(args)}).`
+              } ${stringifyArgs(args)})`
             )
           if (string.length !== 1)
             throw new RangeError(
@@ -741,7 +727,7 @@ const keywords = {
                 KEYWORDS.CHAR_CODE_TYPE
               } at (${KEYWORDS.CAST_TYPE}) (${
                 KEYWORDS.CAST_TYPE
-              } ${stringifyArgs(args)}).`
+              } ${stringifyArgs(args)})`
             )
           return string.charCodeAt(0)
         }
@@ -753,7 +739,7 @@ const keywords = {
               KEYWORDS.CHAR_TYPE
             } ${KEYWORDS.CHAR_CODE_TYPE}) at (${KEYWORDS.CAST_TYPE}) (${
               KEYWORDS.CAST_TYPE
-            } ${stringifyArgs(args)}).`
+            } ${stringifyArgs(args)})`
           )
       }
     }
@@ -770,7 +756,7 @@ const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_AND}) are ${
           KEYWORDS.NUMBER_TYPE
-        } (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)}).`
+        } (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc & x)
   },
@@ -786,7 +772,7 @@ const keywords = {
       throw new TypeError(
         `Argument of (${KEYWORDS.BITWISE_NOT}) is not a (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
       )
     return ~operand
   },
@@ -802,7 +788,7 @@ const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_OR}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc | x)
   },
@@ -811,14 +797,14 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_XOR
-        }) (>= 2 required). (${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)}).`
+        }) (>= 2 required). (${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
       )
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_XOR}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc ^ x)
   },
@@ -829,14 +815,14 @@ const keywords = {
           KEYWORDS.BITWISE_LEFT_SHIFT
         }) (>= 2 required). (${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(
           args
-        )}).`
+        )})`
       )
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_LEFT_SHIFT}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc << x)
   },
@@ -847,14 +833,14 @@ const keywords = {
           KEYWORDS.BITWISE_RIGHT_SHIFT
         }) (>= 2 required). (${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(
           args
-        )}).`
+        )})`
       )
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_RIGHT_SHIFT}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc >> x)
   },
@@ -865,14 +851,14 @@ const keywords = {
           KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
         }) (>= 2 required). (${
           KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const operands = args.map((a) => evaluate(a, env))
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT}) are (${
           KEYWORDS.NUMBER_TYPE
-        }) (${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc >>> x)
   },
@@ -902,14 +888,14 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.THROW_ERROR
-        }) (1 required). (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)}).`
+        }) (1 required). (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)})`
       )
     const string = evaluate(args[0], env)
     if (typeof string !== 'string')
       throw new TypeError(
         `First argument of (${KEYWORDS.THROW_ERROR}) must be an (${
           KEYWORDS.STRING_TYPE
-        }) (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)}).`
+        }) (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)})`
       )
     throw new Error(string)
   },
@@ -918,16 +904,16 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${KEYWORDS.MERGE}) (>= 2 required). (${
           KEYWORDS.MERGE
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     const arrays = args.map((arg) => evaluate(arg, env))
     if (arrays.some((maybe) => !Array.isArray(maybe)))
       throw new TypeError(
         `Arguments of (${KEYWORDS.MERGE}) must be (${KEYWORDS.ARRAY_TYPE}) (${
           KEYWORDS.MERGE
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
-    return Object.freeze(arrays.reduce((a, b) => a.concat(b), []))
+    return arrays.reduce((a, b) => a.concat(b), [])
   },
   [KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION]: (args, env) => {
     if (!args.length)
@@ -936,7 +922,7 @@ const keywords = {
           KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
         }) (>= 2 required). (${
           KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     // TODO: Add validation for TCO recursion
     return keywords[KEYWORDS.DEFINE_VARIABLE](args, env)
@@ -948,7 +934,7 @@ const keywords = {
           KEYWORDS.IMMUTABLE_FUNCTION
         }) (>= 2 required). (${KEYWORDS.IMMUTABLE_FUNCTION} ${stringifyArgs(
           args
-        )}).`
+        )})`
       )
     const [definition, ...functionArgs] = args
     const token = definition[VALUE]
@@ -1047,14 +1033,14 @@ const keywords = {
       throw new TypeError(
         `First argument of (${KEYWORDS.SET_ARRAY}) must be an (${
           KEYWORDS.ARRAY_TYPE
-        }) but got (${array}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)}).`
+        }) but got (${array}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
       throw new TypeError(
         `Second argument of (${KEYWORDS.SET_ARRAY}) must be an (${
           KEYWORDS.NUMBER_TYPE
-        } integer) (${index}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)}).`
+        } integer) (${index}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     if (index > array.length)
       throw new RangeError(
@@ -1062,7 +1048,7 @@ const keywords = {
           KEYWORDS.ARRAY_TYPE
         }) bounds (index ${index} bounds ${array.length}) (${
           KEYWORDS.SET_ARRAY
-        } ${stringifyArgs(args)}).`
+        } ${stringifyArgs(args)})`
       )
     if (index < 0) {
       if (args.length !== 2)
@@ -1098,6 +1084,86 @@ const keywords = {
           `Trying to set a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
             KEYWORDS.SET_ARRAY
           }). (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+        )
+      array[index] = value
+    }
+    return array
+  },
+
+  [KEYWORDS.SET_IMMUTABLE_ARRAY]: (args, env) => {
+    if (args.length !== 2 && args.length !== 3)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.SET_IMMUTABLE_ARRAY
+        }) (or 2 3) required (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(
+          args
+        )})`
+      )
+    let array = evaluate(args[0], env)
+    if (!Array.isArray(array))
+      throw new TypeError(
+        `First argument of (${KEYWORDS.SET_IMMUTABLE_ARRAY}) must be an (${
+          KEYWORDS.ARRAY_TYPE
+        }) but got (${array}) (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(
+          args
+        )})`
+      )
+    array = [...array]
+    const index = evaluate(args[1], env)
+    if (!Number.isInteger(index))
+      throw new TypeError(
+        `Second argument of (${KEYWORDS.SET_IMMUTABLE_ARRAY}) must be an (${
+          KEYWORDS.NUMBER_TYPE
+        } integer) (${index}) (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(
+          args
+        )})`
+      )
+    if (index > array.length)
+      throw new RangeError(
+        `Second argument of (${
+          KEYWORDS.SET_IMMUTABLE_ARRAY
+        }) is outside of the (${
+          KEYWORDS.ARRAY_TYPE
+        }) bounds (index ${index} bounds ${array.length}) (${
+          KEYWORDS.SET_IMMUTABLE_ARRAY
+        } ${stringifyArgs(args)})`
+      )
+    if (index < 0) {
+      if (args.length !== 2)
+        throw new RangeError(
+          `Invalid number of arguments for (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          }) (if (< index 0) then 2 required) (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          } ${stringifyArgs(args)})`
+        )
+      if (index * -1 > array.length)
+        throw new RangeError(
+          `Second argument of (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          }) is outside of the (${
+            KEYWORDS.ARRAY_TYPE
+          }) bounds (index ${index} bounds ${array.length}) (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          } ${stringifyArgs(args)})`
+        )
+      const target = array.length + index
+      while (array.length !== target) array.pop()
+    } else {
+      if (args.length !== 3)
+        throw new RangeError(
+          `Invalid number of arguments for (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          }) (if (>= index 0) then 3 required) (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          } ${stringifyArgs(args)})`
+        )
+      const value = evaluate(args[2], env)
+      if (value == undefined)
+        throw new RangeError(
+          `Trying to set a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
+            KEYWORDS.SET_IMMUTABLE_ARRAY
+          }). (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(args)})`
         )
       array[index] = value
     }

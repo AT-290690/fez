@@ -13,8 +13,8 @@
       (*) n)))
 
   (pi
-    (math::range 1 100)
-    (array::map fizz-buzz)
+    (math:range 1 100)
+    (array:map fizz-buzz)
     (log!))
 ```
 
@@ -29,26 +29,26 @@
 1456")
 ; solve part 1
 (let solve (lambda arr cb
-     (array::fold arr (lambda a b (do
-        (let res (array::binary-search arr (cb b)))
+     (array:fold arr (lambda a b (do
+        (let res (array:binary-search arr (cb b)))
         (if res (merge a (array res)) a)))
      ())))
 ; 514579
 (pi *input*
-    (string::split "\n")
-    (cast::strings->numbers)
-    (array::sort (lambda a b (> a b)))
+    (string:split "\n")
+    (cast:strings->numbers)
+    (array:sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
-    (math::product)
+    (math:product)
     (log!))
 ```
 
 ```lisp
 ; https://leetcode.com/problems/maximum-count-of-positive-integer-and-negative-integer/description/
 (let max-count-of (lambda nums
-  (math::max
-    (array::count-of nums math::positive?)
-    (array::count-of nums math::negative?))))
+  (math:max
+    (array:count-of nums math:positive?)
+    (array:count-of nums math:negative?))))
 
 (pi
   (array -2 -1 -1 0 0 1 2)
@@ -59,12 +59,12 @@
 ```lisp
 ; remove duplicate elements in the arr
 (let unique (lambda arr (pi
-      (let sorted (array::sort arr (safety lambda a b (> a b))))
-      (array::zip (math::sequence sorted))
-      (array::select (lambda x
+      (let sorted (array:sort arr (safety lambda a b (> a b))))
+      (array:zip (math:sequence sorted))
+      (array:select (lambda x
                (or (not (let index (car (cdr x))))
                   (not (= (get sorted (- index 1)) (get sorted index))))))
-      (array::map car))))
+      (array:map car))))
 ; tests
 (assert
    (case "test 1" (unique (array 1)) (array 1))
@@ -95,8 +95,8 @@ import { fez } from 'fez-lisp'
 eval(
   fez(
     `(pi 
-        (math::range 1 11) 
-        (array::map (lambda x (* x x))) 
+        (math:range 1 11) 
+        (array:map (lambda x (* x x))) 
         (log!)))`,
     // include standard library
     // compile fez to JavaScript
@@ -116,7 +116,7 @@ fez(
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (pi (math::range 1 100) (array::map fizz-buzz) (log!))`,
+  (pi (math:range 1 100) (array:map fizz-buzz) (log!))`,
   { std: true, errors: true, compile: false, shake: true }
 )
 ```

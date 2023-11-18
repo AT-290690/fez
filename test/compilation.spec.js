@@ -9,32 +9,32 @@ describe('Compilation', () => {
 
 (array (pi
 (array 1 2 3 4 5) 
-(array::map (safety lambda x (* x 2))) 
-(array::select (safety lambda x (> x 4))) 
-(array::fold (safety lambda a b (+ a b)) 0))
-(array (array::flat (array 1 2 3 4))) (array::flat (array (array 1 2 3 4) 2 3 (array 1 2 3 4)))
+(array:map (safety lambda x (* x 2))) 
+(array:select (safety lambda x (> x 4))) 
+(array:fold (safety lambda a b (+ a b)) 0))
+(array (array:flat (array 1 2 3 4))) (array:flat (array (array 1 2 3 4) 2 3 (array 1 2 3 4)))
 (array 
   (pi 
   (let arr (array "a" "b" "c"))
-  (array::zip (math::range 1 (length arr)))
-  (array::map (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) string)))))
+  (array:zip (math:range 1 (length arr)))
+  (array:map (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) string)))))
 
-(array::sort (array 1 2 3 4 5 6) ascending?)
-(array::sort (array 6 5 4 3 2 1) ascending?)
-(array::sort (array 3 1 2 5 4 6) ascending?)
+(array:sort (array 1 2 3 4 5 6) ascending?)
+(array:sort (array 6 5 4 3 2 1) ascending?)
+(array:sort (array 3 1 2 5 4 6) ascending?)
 
-(array::sort (array 1 2 3 4 5 6) descending?)
-(array::sort (array 6 5 4 3 2 1) descending?)
-(array::sort (array 3 1 2 5 4 6) descending?)
+(array:sort (array 1 2 3 4 5 6) descending?)
+(array:sort (array 6 5 4 3 2 1) descending?)
+(array:sort (array 3 1 2 5 4 6) descending?)
 
-(array::binary-search (array 3 1 2 5 4 6) 4)
+(array:binary-search (array 3 1 2 5 4 6) 4)
 
-(array::slice (array 1 2 3 4 5 6) 1 3)
-(array::zip (array 1 2 3 4) (array "A" "B" "C"))
-(math::cartesian-product (array 1 2 3 4) (array "A" "B" "C"))
-(array::equal? (array 1 2 3) (array 1 2 2))
-(array::equal? (array 1 2 3) (array 1 2 3))
-(array::equal? (array 1 2 3 4) (array 1 2 3)))
+(array:slice (array 1 2 3 4 5 6) 1 3)
+(array:zip (array 1 2 3 4) (array "A" "B" "C"))
+(math:cartesian-product (array 1 2 3 4) (array "A" "B" "C"))
+(array:equal? (array 1 2 3) (array 1 2 2))
+(array:equal? (array 1 2 3) (array 1 2 3))
+(array:equal? (array 1 2 3 4) (array 1 2 3)))
 (do (let *input* "1721
     979
     366
@@ -43,24 +43,24 @@ describe('Compilation', () => {
     1456")
     ; solve part 1
     (let solve (lambda arr cb
-         (array::fold arr (lambda a b (do
-            (let res (array::binary-search arr (cb b)))
+         (array:fold arr (lambda a b (do
+            (let res (array:binary-search arr (cb b)))
             (if res (merge a (array res)) a)))
          ())))
     ; 514579
     (pi *input*
-        (string::split "\n")
-        (cast::strings->numbers)
-        (array::sort ascending?)
+        (string:split "\n")
+        (cast:strings->numbers)
+        (array:sort ascending?)
         (solve (lambda x (- 2020 x)))
-        (math::product))))`,
+        (math:product))))`,
       `(let fibonacci (lambda n
   (if (< n 2) n (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
 (fibonacci 10)`,
       `(let max-count-of (lambda nums
-  (math::max
-    (array::count-of nums math::positive?)
-    (array::count-of nums math::negative?))))
+  (math:max
+    (array:count-of nums math:positive?)
+    (array:count-of nums math:negative?))))
 (pi
   (array -2 -1 -1 0 0 1 2)
   (max-count-of))`,

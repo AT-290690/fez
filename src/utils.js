@@ -127,7 +127,7 @@ export const handleUnbalancedQuotes = (source) => {
   if (diff !== 0) throw new SyntaxError(`Quotes are unbalanced "`)
   return source
 }
-
+export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
 export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
   const visited = new Set()
@@ -179,6 +179,7 @@ export const fez = (source, options = {}) => {
         handleUnbalancedParens(removeNoCode(source))
       )
     else code = removeNoCode(source)
+    if (options.immutable) code = removeMutation(code)
     const parsed = parse(code)
     const standard = options.std
       ? options.shake
@@ -190,7 +191,6 @@ export const fez = (source, options = {}) => {
       const js = Object.values(comp(deepClone(ast))).join('')
       return options.eval ? eval(js) : js
     }
-
     return run(ast, env)
   } catch (error) {
     const err = error.message
@@ -208,8 +208,8 @@ export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
 export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
 export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
 export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
-export const moduleNameToNothing = (name) =>
-  name.replace(new RegExp(/::/g), '_')
+export const moduleNameToLodashes = (name) =>
+  name.replace(new RegExp(/:/g), '_')
 
 export const questionMarkToLodash = (name) =>
   name.replace(new RegExp(/\?/g), 'Predicate')
@@ -242,7 +242,7 @@ export const lispToJavaScriptVariableName = (name) =>
         colonNamesTo$(
           exclamationMarkMarkToLodash(
             questionMarkToLodash(
-              commaToLodash(moduleNameToNothing(earMuffsToLodashes(name)))
+              commaToLodash(moduleNameToLodashes(earMuffsToLodashes(name)))
             )
           )
         )

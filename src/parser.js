@@ -46,7 +46,8 @@ export const parse = (source) => {
 export const stringify = (ast) => {
   if (ast == undefined) return '()'
   else if (typeof ast === 'object')
-    if (Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`
+    if (Array.isArray(ast))
+      return ast.length ? `(array ${ast.map(stringify).join(' ')})` : '()'
     else
       return `(array ${Object.entries(ast)
         .map(([key, value]) => `("${key}" ${stringify(value)})`)
