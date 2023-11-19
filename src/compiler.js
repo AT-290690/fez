@@ -54,9 +54,9 @@ return result
       case '${KEYWORDS.ANONYMOUS_FUNCTION}':
           return ()=>value
       case '${KEYWORDS.CHAR_CODE_TYPE}':
-        return String.fromCharCode(value)
-      case '${KEYWORDS.CHAR_TYPE}':
         return value.charCodeAt(0)
+      case '${KEYWORDS.CHAR_TYPE}':
+        return String.fromCharCode(value)
        default:
          return 0
       }
@@ -321,7 +321,7 @@ const compile = (tree, Variables) => {
       case KEYWORDS.SERIALISE:
         return `_serialise(${compile(Arguments[0], Variables)});`
       case KEYWORDS.SET_IMMUTABLE_ARRAY:
-        return `set(${parseArgs(Arguments, Variables)}));`
+        return `set(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.SET_ARRAY:
         return `setEffect(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.NOT_COMPILED_BLOCK:

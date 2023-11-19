@@ -5,9 +5,9 @@ describe('Compilation', () => {
     [
       `(let n-queen (lambda n (do
         (let solutions ())
-        (let cols ())
-        (let positive-diagonal ())
-        (let negative-diagonal ())
+        (let cols (array () () () () () () ()))
+        (let positive-diagonal (array () () () () () () ()))
+        (let negative-diagonal (array () () () () () () ()))
         (let board (array:map (array n length) (lambda . (array:map (array n length) (lambda . ".")))))
         (let backtrack (lambda row 
           (if (= row n) 
@@ -32,15 +32,13 @@ describe('Compilation', () => {
         (backtrack 0)
         solutions)))
         (array 
-        (array (n-queen 1))
-        (array (n-queen 4)))`,
+          (n-queen 1)
+          (n-queen 4))`,
       `
-    (let people (array 
-      (array (array "name" "Anthony"))
-      (array (array "name" "John"))
-    ))
-    (array (map:set! (get people 0) "name" (concatenate (map:get (get people 0) "name") " " "Tonev")) people)
-    `,
+      (let people (array () () () ()))
+      (map:set! people "name" "Anthony")
+      (array (map:set! people "name" (concatenate (map:get people "name") " " "Tonev")))
+      (cast:table->array people) `,
       `
 (let ascending? (lambda a b (> a b)))
 (let descending? (lambda a b (< a b)))
@@ -106,6 +104,73 @@ describe('Compilation', () => {
       `(array:equal? (array 1 "10") (array 1 "10"))`,
       `(array:equal? (array 1 (array 1 "10")) (array 1 (array 1 "10")))`,
       `(array:equal? (array 1 (array 1 "10")) (array 1 (array "1" 10)))`,
+      `(let sample 
+"Player 1:
+9
+2
+6
+3
+1
+
+Player 2:
+5
+8
+4
+7
+10")
+(let parsed (string:split sample "\n"))
+(let index (array:find-index parsed (lambda x (string:equal? x ""))))
+(let a (pi (array:slice parsed 1 index) (cast:strings->numbers)))
+(let b (pi (array:slice parsed (+ index 2) (length parsed)) (cast:strings->numbers)))
+
+(let combat (lambda a b
+(if 
+(and (length a) (length b)) 
+(do (if (> (car a) (car b)) 
+      (array:merge! a (array (car a) (car b)))
+      (array:merge! b (array (car b) (car a))))
+(combat (cdr a) (cdr b)))
+(if (> (length a) (length b)) a b))))
+
+(let rec-combat (lambda a b visited
+(if 
+(and (length a) (length b)) 
+(if 
+  ; recursive case 
+  (set:has? visited (let key (concatenate (array:join a " ") " | " (array:join b " ")))) (array 1 a)
+  ; sumb game case
+  (do 
+      (let da (cdr a))
+      (let db (cdr b))
+    (if 
+      (if 
+        (and 
+            (set:add! visited key) 
+            (>= (length da) (car a)) 
+            (>= (length db) (car b))) 
+        (car (rec-combat (array:slice da 0 (car a)) (array:slice db 0 (car b)) (array () () () ())))
+        ; normal case
+        (> (car a) (car b)))
+            (array:merge! da (array (car a) (car b)))
+            (array:merge! db (array (car b) (car a)))) 
+      (rec-combat da db visited)))
+(if (length a) (Array 1 a) (array 0 b)))))
+
+(let solve-1 (lambda (do 
+(pi 
+(let winner (combat (type a array) (type b array))) 
+(array:zip (array:reverse (math:range 1 (length winner)))) 
+(array:map (lambda x (* (car x) (car (cdr x))))) 
+(math:summation)))))
+
+(let solve-2 (lambda (do 
+(pi 
+(let winner (car (cdr (rec-combat a b (array () () () ())))))
+(array:zip (array:reverse (math:range 1 (length winner))))
+(array:map (lambda x (* (car x) (car (cdr x))))) 
+(math:summation)))))
+
+(array (solve-1) (solve-2))`,
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { std: true, compile: false, shake: true }),
