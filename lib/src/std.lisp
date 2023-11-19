@@ -172,7 +172,7 @@
 
 (let math:greatest-common-divisor (lambda a b (do 
     (let* gcd (lambda a b 
-          (if (= b 0) a (gcd b (mod a b)))) (gcd a b)))))
+          (if (= b 0) a (gcd b (mod a b))))) (gcd a b))))
 
 (let math:least-common-divisor (lambda a b (* a b (/ (math:greatest-common-divisor a b)))))
 
