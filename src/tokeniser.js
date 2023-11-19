@@ -432,17 +432,6 @@ const keywords = {
       )
     return +!evaluate(args[0], env)
   },
-  [KEYWORDS.EQUALITY]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.EQUAL}) (2 required) (${
-          KEYWORDS.EQUAL
-        } ${stringifyArgs(args)})`
-      )
-    const a = evaluate(args[0], env)
-    const b = evaluate(args[1], env)
-    return +(a === b)
-  },
   [KEYWORDS.EQUAL]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(

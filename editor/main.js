@@ -16,22 +16,22 @@ export const editor = CodeMirror(editorContainer, {
 export const consoleEditor = CodeMirror(consoleEditorContainer, {})
 const E = 0.75
 const C = 0.25
-consoleEditor.setSize(window.innerWidth, window.innerHeight * C)
-editor.setSize(window.innerWidth, window.innerHeight * E)
+consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
+editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
 
 window.addEventListener('resize', () =>
-  editor.setSize(window.innerWidth, window.innerHeight * E)
+  editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
 )
 window.addEventListener('resize', () =>
-  consoleEditor.setSize(window.innerWidth, window.innerHeight * C)
+  consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
 )
 const run = () => {
   const res = fez(editor.getValue(), {
     std: true,
     errors: true,
   })
-  consoleEditor.setSize(window.innerWidth, window.innerHeight * C)
-  editor.setSize(window.innerWidth, window.innerHeight * E)
+  consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
+  editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
   consoleEditor.setValue(stringify(res).toString())
 }
 const comp = () => {

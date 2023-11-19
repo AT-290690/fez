@@ -3,6 +3,34 @@ import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      fez(`(array:equal? (array "10") (array "10"))`, {
+        std: true,
+        shake: true,
+      }),
+      1
+    )
+    deepStrictEqual(
+      fez(`(array:equal? (array 1 "10") (array 1 "10"))`, {
+        std: true,
+        shake: true,
+      }),
+      1
+    )
+    deepStrictEqual(
+      fez(`(array:equal? (array 1 (array 1 "10")) (array 1 (array 1 "10")))`, {
+        std: true,
+        shake: true,
+      }),
+      1
+    )
+    deepStrictEqual(
+      fez(`(array:equal? (array 1 (array 1 "10")) (array 1 (array "1" 10)))`, {
+        std: true,
+        shake: true,
+      }),
+      0
+    )
+    deepStrictEqual(
       fez(
         `(let people (array 
       (array (array "name" "Anthony"))

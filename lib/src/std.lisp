@@ -246,7 +246,9 @@
 (let math:cartesian-product (lambda a b (array:fold a (lambda p x (merge p (array:map b (lambda y (array x y))))) ())))
 
 (let array:equal? (lambda a b 
-  (or (and (atom? a) (atom? b) (eq a b)) 
+  (or 
+  (and (number? a) (number? b) (= a b)) 
+  (and (string? a) (string? b) (string:equal? a b)) 
   (and (array? a) 
         (= (length a) (length b)) 
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
@@ -356,14 +358,14 @@
                             out)))
 
 (let map:set! (lambda map key element (do 
-                                       (let found (array:find map (lambda x (eq (car x) key))))
+                                       (let found (array:find map (lambda x (string:equal? (car x) key))))
                                        (if (length found) 
                                          (set! found 1 element)
                                          (set! map (length map) (array key element)))
                                        map)))
-(let map:get (lambda map key (car (cdr (array:find map (lambda x (eq (car x) key)))))))
-(let map:has? (lambda map key (array:has? map (lambda x (eq (car x) key)))))
-(let map:remove! (lambda map key (unless (= (let index (array:find-index map (lambda x (eq (car x) key)))) -1) (array:swap-remove! map index) map)))
+(let map:get (lambda map key (car (cdr (array:find map (lambda x (string:equal? (car x) key)))))))
+(let map:has? (lambda map key (array:has? map (lambda x (string:equal? (car x) key)))))
+(let map:remove! (lambda map key (unless (= (let index (array:find-index map (lambda x (string:equal? (car x) key)))) -1) (array:swap-remove! map index) map)))
 
 (let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
 
@@ -388,15 +390,25 @@
      (merge (array (- (length a) (length b)) length) b)
      (merge (array (- (length b) (length a)) length) a))))
 
-(let string:lesser? (lambda L R (do 
-  (let a (cast:string->char-codes (type R string)))
-  (let b (cast:string->char-codes (type L string)))
+(let string:greather? (lambda L R (otherwise (string:equal? L R) (do
+  (let A (cast:string->char-codes (type L string)))
+  (let B (cast:string->char-codes (type R string)))
+  (let a (if (< (length A) (length B)) (merge A (array (- (length B) (length A)) length)) A))
+  (let b (if (> (length A) (length B)) (merge B (array (- (length A) (length B)) length)) B))
   (pi 
-   (array:pad-right a b)
-   (array:zip (if (> (length a) (length b)) a b))
-   (array:some? (lambda x (> (car x) (car (cdr x)))))))))
+   a
+   (array:zip b)
+   (array:fold (lambda acc pair (if (> (car pair) (car (cdr pair))) 0 acc)) 1))))))
 
-(let string:greather? (lambda L R (not (string:lesser? L R))))
+(let string:lesser? (lambda L R (otherwise (string:equal? L R) (do
+  (let A (cast:string->char-codes (type L string)))
+  (let B (cast:string->char-codes (type R string)))
+  (let a (if (< (length A) (length B)) (merge A (array (- (length B) (length A)) length)) A))
+  (let b (if (> (length A) (length B)) (merge B (array (- (length A) (length B)) length)) B))
+  (pi 
+   a
+   (array:zip b)
+   (array:fold (lambda acc pair (if (< (car pair) (car (cdr pair))) 0 acc)) 1))))))
 
 (let string:equal? (lambda L R (when (= (length L) (length R)) (do 
   (let a (cast:string->char-codes (type R string)))

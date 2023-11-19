@@ -102,6 +102,10 @@ describe('Compilation', () => {
 (pi
   (array -2 -1 -1 0 0 1 2)
   (max-count-of))`,
+      `(array:equal? (array "10") (array "10"))`,
+      `(array:equal? (array 1 "10") (array 1 "10"))`,
+      `(array:equal? (array 1 (array 1 "10")) (array 1 (array 1 "10")))`,
+      `(array:equal? (array 1 (array 1 "10")) (array 1 (array "1" 10)))`,
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { std: true, compile: false, shake: true }),

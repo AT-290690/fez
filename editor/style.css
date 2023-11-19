@@ -1,9 +1,9 @@
 :root {
   --gutters: #ebe7e5;
   --linenumbers: #565f89;
-  --border: #d6c096;
+  --border: #565f89;
   --background-primary: #1a1b26;
-  --background-secondary: #d6c09636;
+  --background-secondary: #ff000036;
   --gutters-border: 1px solid transparent;
   --border-width: 1px;
   --error: #ee4f4f;
@@ -11,20 +11,22 @@
   --success: #6de46d;
   --icons: #6b84b0;
   --font-primary: 'Fantastic';
-  --hover: #f67072;
+  --hover: #f9869b;
+
+  --icons: #565f89;
 
   --comment: #546a90;
-  --operator: #f79a9c;
-  --icons: #b44637;
-  /* #B44637
-  #8E2F22 */
+  --operator: #f5bb79;
   --number: #95d8f5;
-  --keyword: #ebddc2;
+  --keyword: #d09ff1;
+  /* --variable: #3dd8ff; */
+  --variable: #f9869b;
+
   --string: #bbe7c4;
   --bracket: #7b8baf;
-  --color-primary: #6b84b0;
+  --color-primary: #f7f6f3;
   --color-secondary: #96aad6;
-  --color-thirdly: #d6c096;
+  --color-thirdly: #f9869b;
   --color-fourtly: #75ff91;
   --color-fiftly: #2eff85;
 }
@@ -81,14 +83,14 @@ main {
 #key > svg,
 #exe > svg,
 #run > svg {
-  stroke: var(--color-thirdly);
-  fill: var(--color-thirdly);
+  stroke: var(--icons);
+  fill: var(--icons);
 }
 #key > svg,
 #exe > svg,
 #run > svg {
-  stroke: var(--color-thirdly);
-  fill: var(--color-thirdly);
+  stroke: var(--icons);
+  fill: var(--icons);
   /* path: var(--color-thirdly); */
 }
 #exe,

@@ -17,7 +17,7 @@ while(typeof result==='function')result=result()
 return result
   }`,
   isNumber: `numberPredicate=(number)=>typeof number==='number'`,
-  isString: `stringPredicate=(string)=>typeof number==='string'`,
+  isString: `stringPredicate=(string)=>typeof string==='string'`,
   isLambda: `lambdaPredicate=(lambda)=>typeof lambda==='function'`,
   isArray: `arrayPredicate=(array)=>Array.isArray(array)`,
   isAtom: `atomPredicate=(value)=>typeof value==='number'||typeof value==='string'`,
@@ -218,7 +218,6 @@ const compile = (tree, Variables) => {
       case KEYWORDS.CONCATENATION:
         return '(' + parseArgs(Arguments, Variables, '+') + ');'
       case KEYWORDS.EQUAL:
-      case KEYWORDS.EQUALITY:
         return handleBoolean(`(${parseArgs(Arguments, Variables, '===')});`)
       case KEYWORDS.GREATHER_THAN_OR_EQUAL:
       case KEYWORDS.LESS_THAN_OR_EQUAL:
