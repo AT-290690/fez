@@ -16,17 +16,22 @@
   --icons: #565f89;
 
   --comment: #546a90;
-  --operator: #f5bb79;
+  --operator: #14f2dc;
   --number: #95d8f5;
   --keyword: #d09ff1;
+
+  --effect: #79aefd;
+  --predicate: #f9869b;
+  --type: #9aadd9;
+
   /* --variable: #3dd8ff; */
-  --variable: #f9869b;
+  --variable: #ffdf8e;
 
   --string: #bbe7c4;
   --bracket: #7b8baf;
   --color-primary: #f7f6f3;
   --color-secondary: #96aad6;
-  --color-thirdly: #f9869b;
+  --color-thirdly: #d09ff1;
   --color-fourtly: #75ff91;
   --color-fiftly: #2eff85;
 }

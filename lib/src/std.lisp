@@ -149,8 +149,8 @@
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (type (& N (<< 1 nth)) Boolean)))
 
-(let cast:string->array (safety lambda str (type str array)))
-(let cast:array->string (lambda arr (array:fold arr (safety lambda a x (concatenate a (type x string))) "")))
+(let cast:string->chars (safety lambda str (type str array)))
+(let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (concatenate a (type x string))) "")))
 (let cast:string->number (safety lambda str (type str number)))
 (let cast:number->string (safety lambda n (type n string)))
 (let cast:strings->numbers (lambda arr (array:map arr (safety lambda x (type x number)))))
