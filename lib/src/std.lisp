@@ -125,7 +125,7 @@
 (let math:floor (safety lambda n (| n 0)))
 (let math:round (safety lambda n (| (+ n 0.5) 0)))
 (let array:empty? (safety lambda arr (not (length arr))))
-(let array:array-in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
+(let array:in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
 
 (let math:largest-power (lambda N (do 
   ; changing all right side bits to 1.
@@ -158,7 +158,7 @@
 (let cast:string->char-codes (lambda str (pi str (type array) (array:map (lambda x (type x char-code))))))
 (let cast:chars->char-codes (lambda arr (pi arr (array:map (lambda x (type x char-code))))))
 (let cast:char-codes->chars (lambda arr (pi arr (array:map (lambda x (type x char))))))
-(let cast:char-codes->string (lambda arr (pi arr (array:map (lambda x (type x char))) (cast:array->string))))
+(let cast:char-codes->string (lambda arr (pi arr (array:map (lambda x (type x char))) (cast:chars->string))))
 
 (let math:power (lambda base exp 
   (if (< exp 0) 
@@ -278,7 +278,7 @@
       (merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
 
   (let array:set (lambda arr i value 
-      (if (array:array-in-bounds? arr i) 
+      (if (array:in-bounds? arr i) 
           (array:map (math:sequence arr) (lambda x (if (= x i) value (get arr x))))
   (throw (concatenate (type i string) " is outside of the array bounds")))))
   
