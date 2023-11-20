@@ -501,10 +501,15 @@
           (when (array:in-bounds? table idx) 
             (do
               (let current (get table idx))
-              (pi current
-                (array:find (lambda x (string:equal? key (pi x (get 0)))))
-                (get 1)))))))
+              (let found (array:find current (lambda x (string:equal? (type key string) (type (get x 0) string)))))
+              (when (length found) (get found 1)))))))
 
+  (let cast:map->string (lambda table (pi 
+    table 
+    (array:select length) 
+    (array:map (lambda x (array:join (array:map x (lambda y (array:join y " -> "))) " "))) 
+    (array:join "\n"))))
+    
 (let map:has? (lambda table key 
       (and (array:in-bounds? table 
         (let idx (set:index table key))) 
