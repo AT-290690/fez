@@ -127,6 +127,7 @@ body {
 }
 
 #editor-container {
+  border-top: 2px solid var(--border);
   border-bottom: solid 2px var(--border);
 }
 
