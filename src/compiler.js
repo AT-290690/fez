@@ -10,6 +10,7 @@ import {
 import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {
   log: `var logEffect=(msg)=>{console.log(msg);return msg}`,
+  clear: `clearEffect=()=>{console.clear();return 0}`,
   _merge: `_merge=(...arrays)=>arrays.reduce((a,b)=>a.concat(b),[])`,
   tco: `tco=fn=>(...args)=>{
 let result=fn(...args)

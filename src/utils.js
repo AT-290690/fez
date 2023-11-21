@@ -179,7 +179,7 @@ export const fez = (source, options = {}) => {
         handleUnbalancedParens(removeNoCode(source))
       )
     else code = removeNoCode(source)
-    if (options.immutable) code = removeMutation(code)
+    if (!options.mutation) code = removeMutation(code)
     const parsed = parse(code)
     const standard = options.std
       ? options.shake

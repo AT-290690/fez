@@ -71,36 +71,26 @@ main {
   border: var(--border-width) solid var(--comment);
   color: var(--color-primary);
 }
-
-#exe:active,
-#key:active,
-#run:active {
+#mutation {
+  position: absolute;
+  bottom: 0px;
+  left: 5px;
+}
+.button:active {
   transform: scale(0.9);
 }
 
-#exe > svg:hover,
-#key > svg:hover,
-#run > svg:hover {
+.button > svg:hover {
   transform: scale(1.2);
   fill: var(--hover);
   stroke: var(--hover);
 }
-#key > svg,
-#exe > svg,
-#run > svg {
+.button > svg {
   stroke: var(--icons);
   fill: var(--icons);
 }
-#key > svg,
-#exe > svg,
-#run > svg {
-  stroke: var(--icons);
-  fill: var(--icons);
-  /* path: var(--color-thirdly); */
-}
-#exe,
-#key,
-#run {
+
+.button {
   transition-property: all;
   transition-property: transform;
   background: transparent;

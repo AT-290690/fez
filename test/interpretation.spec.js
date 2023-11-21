@@ -4,29 +4,29 @@ describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(`(array:equal? (array "10") (array "10"))`, {
-        std: true,
-        shake: true,
+        std: 1,
+        shake: 1,
       }),
       1
     )
     deepStrictEqual(
       fez(`(array:equal? (array 1 "10") (array 1 "10"))`, {
-        std: true,
-        shake: true,
+        std: 1,
+        shake: 1,
       }),
       1
     )
     deepStrictEqual(
       fez(`(array:equal? (array 1 (array 1 "10")) (array 1 (array 1 "10")))`, {
-        std: true,
-        shake: true,
+        std: 1,
+        shake: 1,
       }),
       1
     )
     deepStrictEqual(
       fez(`(array:equal? (array 1 (array 1 "10")) (array 1 (array "1" 10)))`, {
-        std: true,
-        shake: true,
+        std: 1,
+        shake: 1,
       }),
       0
     )
@@ -37,7 +37,7 @@ describe('Interpretation', () => {
         (array (map:set! people "name" (concatenate (map:get people "name") " " "Tonev")))
         (cast:table->array people)
         `,
-        { std: true, shake: true }
+        { std: 1, shake: 1, mutation: 1 }
       ),
       ['name', 'Anthony Tonev']
     )
@@ -55,7 +55,7 @@ describe('Interpretation', () => {
         (set:add! B 5)
         (array (cast:table->array (set:xor A B)) (cast:table->array (set:difference A B)) (cast:table->array (set:difference B A)) (cast:table->array (set:intersection B A)))
     `,
-        { std: true, shake: true }
+        { std: 1, shake: 1, mutation: 1 }
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
     )
@@ -69,7 +69,7 @@ describe('Interpretation', () => {
     (set:add! set 3)
     (array:flat set)
     `,
-        { std: true, shake: true }
+        { std: 1, shake: 1, mutation: 1 }
       ),
       [3, 1, 2]
     )
@@ -81,7 +81,7 @@ describe('Interpretation', () => {
 (array:map (safety lambda x (* x 2))) 
 (array:select (safety lambda x (> x 4))) 
 (array:fold (safety lambda a b (+ a b)) 0)))`,
-        { std: true, shake: true }
+        { std: 1, shake: 1 }
       ),
       [24]
     )
@@ -99,7 +99,7 @@ describe('Interpretation', () => {
           (pi 
             (math:range 1 15) 
             (array:map fizz-buzz))`,
-        { std: true, shake: true }
+        { std: 1, shake: 1 }
       ),
       [
         1,
@@ -124,7 +124,7 @@ describe('Interpretation', () => {
         `(let fibonacci (lambda n
     (if (< n 2) n (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
     (fibonacci 10)`,
-        { std: false }
+        { std: 0 }
       ),
       55
     )
@@ -138,12 +138,12 @@ describe('Interpretation', () => {
     (pi
       (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
-        { std: true, shake: true }
+        { std: 1, shake: 1 }
       ),
       3
     )
     strictEqual(
-      fez(`(array:join (array 1 2 3) "-")`, { std: true, shake: true }),
+      fez(`(array:join (array 1 2 3) "-")`, { std: 1, shake: 1 }),
       '1-2-3'
     )
 
@@ -180,7 +180,7 @@ describe('Interpretation', () => {
 (array 
 (car (case "N=1" (n-queen 1) (array (array "Q"))))
 (car (case "N=4" (n-queen 4) (array (array ".Q.." "...Q" "Q..." "..Q.") (array "..Q." "Q..." "...Q" ".Q..")))))`,
-        { std: true }
+        { std: 1, mutation: 1 }
       ),
       [1, 1]
     )
@@ -254,7 +254,7 @@ Player 2:
     (math:summation)))))
 
 (array (solve-1) (solve-2))`,
-        { std: true }
+        { std: 1, mutation: 1 }
       ),
       [306, 291]
     )

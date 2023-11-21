@@ -173,8 +173,8 @@ Player 2:
 (array (solve-1) (solve-2))`,
     ].forEach((source) =>
       deepStrictEqual(
-        fez(source, { std: true, compile: false, shake: true }),
-        eval(fez(source, { std: true, compile: true, shake: true }))
+        fez(source, { std: 1, compile: 0, shake: 1, mutation: 1 }),
+        eval(fez(source, { std: 1, compile: 1, shake: 1, mutation: 1 }))
       )
     ))
 })

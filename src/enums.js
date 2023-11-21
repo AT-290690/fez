@@ -70,6 +70,7 @@ export const KEYWORDS = {
   IMMUTABLE_FUNCTION: 'safety',
   NOT_COMPILED_BLOCK: 'void',
   LOG: 'log!',
+  CLEAR_CONSOLE: 'clear!',
 
   TEST_CASE: 'case',
   TEST_BED: 'assert',

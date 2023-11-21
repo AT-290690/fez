@@ -390,6 +390,16 @@ const keywords = {
     console.log(...expressions)
     return expressions.at(-1)
   },
+  [KEYWORDS.CLEAR_CONSOLE]: (args) => {
+    if (args.length)
+      throw new RangeError(
+        `Invalid number of arguments to (${
+          KEYWORDS.CLEAR_CONSOLE
+        }) (0 required) (${KEYWORDS.CLEAR_CONSOLE} ${stringifyArgs(args)})`
+      )
+    console.clear()
+    return 0
+  },
   [KEYWORDS.BLOCK]: (args, env) => {
     if (!args.length)
       throw new RangeError(
