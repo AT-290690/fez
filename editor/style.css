@@ -71,11 +71,23 @@ main {
   border: var(--border-width) solid var(--comment);
   color: var(--color-primary);
 }
+#mutation:active {
+  transform: scale(0.9);
+}
 #mutation {
   position: absolute;
   bottom: 0px;
   left: 5px;
+  transition-property: all;
+  transition-property: transform;
+  background: transparent;
+  /* color: var(--comment); */
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1000;
 }
+
 .button:active {
   transform: scale(0.9);
 }
