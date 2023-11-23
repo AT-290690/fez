@@ -11,7 +11,7 @@ describe('Compilation', () => {
         (let board (array:map (array n length) (lambda . (array:map (array n length) (lambda . ".")))))
         (let backtrack (lambda row 
           (if (= row n) 
-              (set! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
+              (array:set! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
               (do
                 (array:for-range 0 n (lambda col 
                   (otherwise 
@@ -23,12 +23,12 @@ describe('Compilation', () => {
                       (set:add! cols col)
                       (set:add! positive-diagonal (+ row col))
                       (set:add! negative-diagonal (- row col))
-                      (set! (get board row) col "Q")
+                      (array:set! (get board row) col "Q")
                       (backtrack (+ row 1)) 
                       (set:remove! cols col)
                       (set:remove! positive-diagonal (+ row col))
                       (set:remove! negative-diagonal (- row col))
-                      (set! (get board row) col ".")))))))))
+                      (array:set! (get board row) col ".")))))))))
         (backtrack 0)
         solutions)))
         (array 

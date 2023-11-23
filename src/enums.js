@@ -76,6 +76,6 @@ export const KEYWORDS = {
   TEST_BED: 'assert',
   SERIALISE: 'serialise',
 
-  SET_ARRAY: 'set!',
-  SET_IMMUTABLE_ARRAY: 'set',
+  SET_ARRAY: 'array:set!',
+  SET_IMMUTABLE_ARRAY: 'array:set',
 }

@@ -35,7 +35,11 @@ const run = () => {
   })
   consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
   editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
-  consoleEditor.setValue(stringify(res).toString())
+  try {
+    consoleEditor.setValue(stringify(res).toString())
+  } catch (e) {
+    consoleEditor.setValue(e instanceof Error ? e.message : e)
+  }
 }
 const comp = () => {
   const res = eval(
@@ -46,7 +50,11 @@ const comp = () => {
       mutation: MUTATION,
     })
   )
-  consoleEditor.setValue(stringify(res).toString())
+  try {
+    consoleEditor.setValue(stringify(res).toString())
+  } catch (e) {
+    consoleEditor.setValue(e instanceof Error ? e.message : e)
+  }
 }
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
