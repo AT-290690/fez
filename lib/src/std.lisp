@@ -10,7 +10,7 @@
                   (let* iterate (lambda arr out  
                         (if  (length arr) 
                               (iterate (cdr arr) 
-                                (merge out (array (callback (car arr)))))
+                                (array:merge out (array (callback (car arr)))))
                               out)))
                       (iterate arr ()))))
 
@@ -19,7 +19,7 @@
                         (if (length arr)
                             (iterate (cdr arr) 
                                       (if (callback (car arr)) 
-                                            (merge out (array (car arr))) 
+                                            (array:merge out (array (car arr))) 
                                             out))
                             out)))
                       (iterate arr ()))))
@@ -29,7 +29,7 @@
                         (if (length arr)
                             (iterate (cdr arr) 
                                       (if (not (callback (car arr))) 
-                                            (merge out (array (car arr))) 
+                                            (array:merge out (array (car arr))) 
                                             out))
                             out)))
                       (iterate arr ()))))
@@ -72,24 +72,24 @@
                     (let* iterate (lambda arr out 
                           (if (length arr) 
                               (iterate (cdr arr) 
-                              (merge (array (car arr)) out)) 
+                              (array:merge (array (car arr)) out)) 
                           out)))
                         (iterate arr ()))))
 
 (let math:range (lambda start end (do 
                           (let* iterate (lambda out count
-                          (if (<= count end) (iterate (merge out (array count)) (+ count 1)) out)))
+                          (if (<= count end) (iterate (array:merge out (array count)) (+ count 1)) out)))
                           (iterate () start))))
 
 (let math:sequence (lambda arr (do 
                           (let end (length arr))
                           (let* iterate (lambda out count
-                          (if (< (length out) end) (iterate (merge out (array count)) (+ count 1)) out)))
+                          (if (< (length out) end) (iterate (array:merge out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
 (let math:sequence-n (lambda n (do 
                           (let* iterate (lambda out count
-                          (if (< (length out) n) (iterate (merge out (array count)) (+ count 1)) out)))
+                          (if (< (length out) n) (iterate (array:merge out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
 
 (let array:unique (lambda arr (pi 
@@ -224,7 +224,7 @@
         (let bounds (- end start))
         (let* iterate (lambda i out
           (if (< i bounds) 
-              (iterate (+ i 1) (merge out (array (get arr (+ start i)))))
+              (iterate (+ i 1) (array:merge out (array (get arr (+ start i)))))
               out)))
         (iterate 0 ()))))
 
@@ -243,10 +243,10 @@
 
 (let array:zip (safety lambda A B (do 
   (let* iterate (lambda a b output
-    (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (merge output (array (array (car a) (car b))))) output)))
+    (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (array:merge output (array (array (car a) (car b))))) output)))
   (iterate A B ()))))
 
-(let math:cartesian-product (lambda a b (array:fold a (lambda p x (merge p (array:map b (lambda y (array x y))))) ())))
+(let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge p (array:map b (lambda y (array x y))))) ())))
 
 (let array:equal? (lambda a b 
   (or 
@@ -261,7 +261,7 @@
 (let array:flat (lambda arr (do
   (let flatten (lambda item 
     (if (and (array? item) (length item))
-        (array:fold item (lambda a b (merge a (flatten b))) ())
+        (array:fold item (lambda a b (array:merge a (flatten b))) ())
         (array item))))
   (flatten arr))))
 
@@ -271,14 +271,14 @@
       (let* iterate (lambda i bounds a b (do
           (let current (get arr i))
           (let predicate (callback current pivot))
-          (let left (if (= predicate 0) (merge a (array current)) a))
-          (let right (if (= predicate 1) (merge b (array current)) b))
+          (let left (if (= predicate 0) (array:merge a (array current)) a))
+          (let right (if (= predicate 1) (array:merge b (array current)) b))
           (if (< i bounds) (iterate (+ i 1) bounds left right)
           (array left right)))))
       (let sorted (iterate 1 (- (length arr) 1) () ()))
       (let left (car sorted))
       (let right (car (cdr sorted)))
-      (merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
+      (array:merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
 
   (let array:set (lambda arr i value 
       (if (array:in-bounds? arr i) 
@@ -348,21 +348,21 @@
                               (if (callback (car arr)) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
 (let array:remove (lambda arr i 
-      (array:fold arr (safety lambda a x (do (unless (= x i) (merge a (array x)) a))) (array))))
+      (array:fold arr (safety lambda a x (do (unless (= x i) (array:merge a (array x)) a))) (array))))
 
 (let array:pad-right (lambda a b (if (> (length a) (length b)) 
-     (merge b (array (- (length a) (length b)) length))
-     (merge a (array (- (length b) (length a)) length)))))
+     (array:merge b (array (- (length a) (length b)) length))
+     (array:merge a (array (- (length b) (length a)) length)))))
 
 (let array:pad-left (lambda a b (if (> (length a) (length b)) 
-     (merge (array (- (length a) (length b)) length) b)
-     (merge (array (- (length b) (length a)) length) a))))
+     (array:merge (array (- (length a) (length b)) length) b)
+     (array:merge (array (- (length b) (length a)) length) a))))
 
 (let string:greater? (lambda L R (otherwise (string:equal? L R) (do
   (let A (cast:string->char-codes (type L string)))
   (let B (cast:string->char-codes (type R string)))
-  (let a (if (< (length A) (length B)) (merge A (array (- (length B) (length A)) length)) A))
-  (let b (if (> (length A) (length B)) (merge B (array (- (length A) (length B)) length)) B))
+  (let a (if (< (length A) (length B)) (array:merge A (array (- (length B) (length A)) length)) A))
+  (let b (if (> (length A) (length B)) (array:merge B (array (- (length A) (length B)) length)) B))
   (pi 
    a
    (array:zip b)
@@ -371,8 +371,8 @@
 (let string:lesser? (lambda L R (otherwise (string:equal? L R) (do
   (let A (cast:string->char-codes (type L string)))
   (let B (cast:string->char-codes (type R string)))
-  (let a (if (< (length A) (length B)) (merge A (array (- (length B) (length A)) length)) A))
-  (let b (if (> (length A) (length B)) (merge B (array (- (length A) (length B)) length)) B))
+  (let a (if (< (length A) (length B)) (array:merge A (array (- (length B) (length A)) length)) A))
+  (let b (if (> (length A) (length B)) (array:merge B (array (- (length A) (length B)) length)) B))
   (pi 
    a
    (array:zip b)

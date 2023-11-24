@@ -44,7 +44,7 @@ export const KEYWORDS = {
 
   BLOCK: 'do',
 
-  MERGE: 'merge',
+  MERGE: 'array:merge',
   ANONYMOUS_FUNCTION: 'lambda',
 
   IF: 'if',
