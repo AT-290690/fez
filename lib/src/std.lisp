@@ -161,6 +161,7 @@
 (let cast:char-codes->chars (lambda arr (pi arr (array:map (lambda x (type x char))))))
 (let cast:char-codes->string (lambda arr (pi arr (array:map (lambda x (type x char))) (cast:chars->string))))
 
+(let math:square (lambda x (* x x)))
 (let math:power (lambda base exp 
   (if (< exp 0) 
       (if (= base 0) 
@@ -170,16 +171,13 @@
             (= exp 0) 1
             (= exp 1) base
             (*) (* base (math:power base (- exp 1)))))))
-
 (let math:greatest-common-divisor (lambda a b (do 
     (let* gcd (lambda a b 
           (if (= b 0) a (gcd b (mod a b))))) (gcd a b))))
-
 (let math:least-common-divisor (lambda a b (* a b (/ (math:greatest-common-divisor a b)))))
-
 (let math:sqrt (lambda x (do 
-  (let is-good-enough (lambda g x (< (math:abs (- (square g) x)) 0.01))
-        improve-guess (lambda g x (math:average g (* x (/ g)))))
+  (let is-good-enough (lambda g x (< (math:abs (- (math:square g) x)) 0.01)))
+  (let improve-guess (lambda g x (math:average g (* x (/ g)))))
   (let* math:sqrt-iter (lambda g x 
       (if (is-good-enough g x) g
           (math:sqrt-iter (improve-guess g x) x))))
