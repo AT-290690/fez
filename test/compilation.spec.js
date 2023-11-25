@@ -3,6 +3,60 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(let sample "389125467")
+      (let input "562893147")
+        
+        (let part1 (lambda inp (do 
+          (let parsed (pi inp (type array) (cast:strings->numbers)))
+          (let size (length parsed))
+          (let *offset* (- (length parsed) 3))
+            ; the highest value on any cup's label 
+          (let max-cup (math:maximum parsed))
+          (let min-cup (math:minimum parsed))
+          
+            ; The crab selects a destination cup: the cup with a label equal to the current cup's label minus one. 
+            ; If this would select one of the cups that was just picked up, the crab will keep subtracting one until it finds a cup that wasn't just picked up. 
+            ; If at any point in this process the value goes below the lowest value on any cup's label, 
+            ; it wraps around to the highest value on any cup's label instead.
+          
+          (let* destination (lambda current picks (do
+          (let sub (if (< (- current 1) min-cup) max-cup (- current 1)))
+          (if (array:some? picks (lambda x (= sub x))) (destination sub picks) sub))))
+          
+          (let move (lambda i *cups* 
+            ; Before the crab starts, it will designate the first cup in your list as the current cup. The crab is then going to do 100 moves.
+          (if (< i 100)
+            (do 
+              ; The crab picks up the three cups that are immediately clockwise of the current cup. 
+              ; They are removed from the circle; cup spacing is adjusted as necessary to maintain the circle.
+              (let cups (array:rotate-left *cups* 1))
+              (let current (array:get cups 0))
+              (let a (array:get cups 1))
+              (let b (array:get cups 2))
+              (let c (array:get cups 3))
+          
+              (let dest (destination current (array a b c)))
+          
+              ; The crab places the cups it just picked up so that they are immediately clockwise of the destination cup. 
+              ; They keep the same order as when they were picked up.
+              (let excludes (array:exclude cups (lambda x (or (= x a) (= x b) (= x c)))))
+              (let index (array:index-of excludes dest))
+              (let arr (array:slice excludes 0 index))
+              ; (array:set! arr (length arr) current)
+              (array:set! arr (length arr) dest)
+              (array:set! arr (length arr) a)
+              (array:set! arr (length arr) b)
+              (array:set! arr (length arr) c)
+              (array:merge! arr (array:slice excludes (+ index 1) (length excludes)))
+            
+            (move (+ i 1) arr))
+            (do 
+            (let index (array:index-of *cups* 1))
+            (let A (array:slice *cups* 0 index))
+            (let B (array:slice *cups* (+ index 1) (length *cups*)))
+            (array:join (array:rotate-right (array:merge A B) (length B)) "")
+            )))) (move 0 (array:rotate-right parsed 1)))))
+        (array (type (part1 sample) number) (type (part1 input) number))`,
       `(let n-queen (lambda n (do
         (let solutions ())
         (let cols (array () () () () () () ()))
@@ -23,12 +77,12 @@ describe('Compilation', () => {
                       (set:add! cols col)
                       (set:add! positive-diagonal (+ row col))
                       (set:add! negative-diagonal (- row col))
-                      (array:set! (get board row) col "Q")
+                      (array:set! (array:get board row) col "Q")
                       (backtrack (+ row 1)) 
                       (set:remove! cols col)
                       (set:remove! positive-diagonal (+ row col))
                       (set:remove! negative-diagonal (- row col))
-                      (array:set! (get board row) col ".")))))))))
+                      (array:set! (array:get board row) col ".")))))))))
         (backtrack 0)
         solutions)))
         (array 

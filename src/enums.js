@@ -40,7 +40,7 @@ export const KEYWORDS = {
   IS_ATOM: 'atom?',
   FIRST_ARRAY: 'car',
   REST_ARRAY: 'cdr',
-  GET_ARRAY: 'get',
+  GET_ARRAY: 'array:get',
 
   BLOCK: 'do',
 

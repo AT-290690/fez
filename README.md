@@ -63,7 +63,7 @@
       (array:zip (math:sequence sorted))
       (array:select (lambda x
                (or (not (let index (car (cdr x))))
-                  (not (= (get sorted (- index 1)) (get sorted index))))))
+                  (not (= (array:get sorted (- index 1)) (array:get sorted index))))))
       (array:map car))))
 ; tests
 (assert

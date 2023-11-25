@@ -97,7 +97,7 @@
       (array:zip (math:sequence sorted))
       (array:select (lambda x 
                (or (not (let index (car (cdr x))))
-                  (not (= (get sorted (- index 1)) (get sorted index))))))
+                  (not (= (array:get sorted (- index 1)) (array:get sorted index))))))
       (array:map car))))
 
 (let array:for-range (lambda start end callback (do 
@@ -224,7 +224,7 @@
         (let bounds (- end start))
         (let* iterate (lambda i out
           (if (< i bounds) 
-              (iterate (+ i 1) (array:merge out (array (get arr (+ start i)))))
+              (iterate (+ i 1) (array:merge out (array (array:get arr (+ start i)))))
               out)))
         (iterate 0 ()))))
 
@@ -234,7 +234,7 @@
         (lambda arr target start end (do
     (when (<= start end) (do
         (let index (math:floor (* (+ start end) 0.5)))
-        (let current (get arr index))
+        (let current (array:get arr index))
         (if (= target current) target
           (if (> current target)
             (search arr target start (- index 1))
@@ -254,7 +254,7 @@
   (and (string? a) (string? b) (string:equal? a b)) 
   (and (array? a) 
         (= (length a) (length b)) 
-          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
+          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) string)) (type (car b) string))) "")))
 
@@ -269,7 +269,7 @@
     (if (<= (length arr) 1) arr (do
       (let pivot (car arr))
       (let* iterate (lambda i bounds a b (do
-          (let current (get arr i))
+          (let current (array:get arr i))
           (let predicate (callback current pivot))
           (let left (if (= predicate 0) (array:merge a (array current)) a))
           (let right (if (= predicate 1) (array:merge b (array current)) b))
@@ -282,7 +282,7 @@
 
   (let array:set (lambda arr i value 
       (if (array:in-bounds? arr i) 
-          (array:map (math:sequence arr) (lambda x (if (= x i) value (get arr x))))
+          (array:map (math:sequence arr) (lambda x (if (= x i) value (array:get arr x))))
   (throw (concatenate (type i string) " is outside of the array bounds")))))
   
   (let array:adjacent-difference (lambda arr callback (do 
@@ -291,7 +291,7 @@
       (do 
        (array (car arr))
        (let* iterate (lambda i result (if (< i len) (do 
-       (iterate (+ i 1) (array:set! result i (callback (get arr (- i 1)) (get arr i))))) result)))
+       (iterate (+ i 1) (array:set! result i (callback (array:get arr (- i 1)) (array:get arr i))))) result)))
        (iterate 1 arr)) arr))))
 
   (let array:adjacent-find (lambda arr callback (do 
@@ -299,7 +299,7 @@
     (otherwise (= len 1) (do 
        (let* iterate (lambda i 
        (if (< i len)
-       (if (callback (let prev (get arr (- i 1))) (let current (get arr i)))
+       (if (callback (let prev (array:get arr (- i 1))) (let current (array:get arr i)))
        prev
        (iterate (+ i 1))) ())))
        (iterate 1))))))
@@ -307,7 +307,7 @@
   (let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do 
         (let x (car b))
         (let i (car (cdr b)))
-        (if (mod i n) (array:set! (let last-a (get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a)) 
+        (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a)) 
         ())))
 
 (let string:split (lambda str delim (do
@@ -319,23 +319,23 @@
   (array:set! locals (length locals) "")
   (let* iterate (lambda result i bounds
     (if 
-      (< (if (array:every? (array:zip (get locals 0) (math:sequence locals)) 
+      (< (if (array:every? (array:zip (array:get locals 0) (math:sequence locals)) 
                                               (lambda item (do 
                                                   (let y (car item)) 
                                                   (let j (car (cdr item))) 
-                                                  (or (<= (length (get locals 1)) (+ i j)) (= (type (get (get locals 1) (+ i j)) char-code) (type y char-code))))))
+                                                  (or (<= (length (array:get locals 1)) (+ i j)) (= (type (array:get (array:get locals 1) (+ i j)) char-code) (type y char-code))))))
           (do 
-            (array:set! result (length result) (get locals 3))
+            (array:set! result (length result) (array:get locals 3))
             (array:set! locals 3 "")
-            (+ i (get locals 2) -1))
-          (do (array:set! locals 3 (concatenate (get locals 3) (get (get locals 1) i))) i)) bounds) 
+            (+ i (array:get locals 2) -1))
+          (do (array:set! locals 3 (concatenate (array:get locals 3) (array:get (array:get locals 1) i))) i)) bounds) 
               (iterate result (+ i 1) bounds) result)))
-      (array:set! (let iteration-result (iterate () 0 (- (length (get locals 1)) 1))) (length iteration-result) (get locals 3)))))
+      (array:set! (let iteration-result (iterate () 0 (- (length (array:get locals 1)) 1))) (length iteration-result) (array:get locals 3)))))
 
 (let array:copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) b)) ())))
 (let array:merge! (lambda a b (do (array:for b (lambda x (array:set! a (length a) x))) a)))
 
-(let array:swap-remove! (lambda arr i (do (array:set! arr i (get arr (- (length arr) 1))) (array:set! arr -1))))
+(let array:swap-remove! (lambda arr i (do (array:set! arr i (array:get arr (- (length arr) 1))) (array:set! arr -1))))
 
 (let array:index-of (safety lambda arr item (do
                     (let* iterate (lambda arr i 
@@ -388,10 +388,11 @@
 
 (let new:set (lambda items (set:insert! () items)))
 (let new:array (safety lambda items (type items array)))
+(let new:list (safety lambda value (array () value ())))
 
 (let binary-tree:node (safety lambda value (do (let arr ()) (array:set! arr 0 value) (array:set! arr 1 ()) (array:set! arr 2 ()) arr)))
-(let binary-tree:left (safety lambda node (get node 1)))
-(let binary-tree:right (safety lambda node (get node 2)))
+(let binary-tree:left (safety lambda node (array:get node 1)))
+(let binary-tree:right (safety lambda node (array:get node 2)))
 (let binary-tree:left! (safety lambda tree node (array:set! tree 1 node))) 
 (let binary-tree:right! (safety lambda tree node (array:set! tree 2 node))) 
 (let binary-tree:value (safety lambda node (car node)))
@@ -403,7 +404,7 @@
       (let key-arr (type (type key string) array))
       (let total (array 0))
       (let* find-hash-index (lambda i bounds (do 
-        (let letter (get key-arr i))
+        (let letter (array:get key-arr i))
         (let value (- (type letter char-code) 96))
         (array:set! total 0 (math:euclidean-mod (+ (* (car total) prime-num) value) (length table)))
         (if (< i bounds) (find-hash-index (+ i 1) bounds) (car total)))))
@@ -414,7 +415,7 @@
         (do
           (let idx (set:index table key))
           (otherwise (array:in-bounds? table idx) (array:set! table idx (array)))
-          (let current (get table idx))
+          (let current (array:get table idx))
           (let len (length current))
           (let index (if len (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) -1))
           (let entry key)
@@ -427,17 +428,17 @@
       (do
         (let idx (set:index table key))
         (otherwise (array:in-bounds? table idx) (array:set! table idx (Array)))
-        (let current (get table idx))
+        (let current (array:get table idx))
         (let len (length current))
         (let index (if len (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) -1))
         (let entry key)
-        (otherwise (= index -1) (and (array:set! current index (get current -1)) (array:set! current -1)))
+        (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
         table)))
 
 (let set:has? (lambda table key 
       (and (array:in-bounds? table 
               (let idx (set:index table key))) 
-                   (and (length (let current (get table idx))) 
+                   (and (length (let current (array:get table idx))) 
                         (>= (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) 0)))))
 
 (let set:intersection (lambda a b 
@@ -474,7 +475,7 @@
         (do
           (let idx (set:index table key))
           (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
-          (let current (get table idx))
+          (let current (array:get table idx))
           (let len (length current))
           (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
           (let entry (array key value))
@@ -488,10 +489,10 @@
         (do
           (let idx (set:index table key))
           (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
-          (let current (get table idx))
+          (let current (array:get table idx))
           (let len (length current))
           (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
-          (otherwise (= index -1) (and (array:set! current index (get current -1)) (array:set! current -1)))
+          (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
           table)))
 
    (let map:get
@@ -500,9 +501,9 @@
           (let idx (set:index table key))
           (when (array:in-bounds? table idx) 
             (do
-              (let current (get table idx))
-              (let found (array:find current (lambda x (string:equal? (type key string) (type (get x 0) string)))))
-              (when (length found) (get found 1)))))))
+              (let current (array:get table idx))
+              (let found (array:find current (lambda x (string:equal? (type key string) (type (array:get x 0) string)))))
+              (when (length found) (array:get found 1)))))))
 
   (let cast:map->string (lambda table (pi 
     table 
@@ -513,8 +514,15 @@
 (let map:has? (lambda table key 
       (and (array:in-bounds? table 
         (let idx (set:index table key))) 
-          (and (length (let current (get table idx))) 
+          (and (length (let current (array:get table idx))) 
             (>= (array:find-index (car current) 
               (lambda x 
                 (string:equal? (type x string) (type key string)))) 0)))))
 
+(let list:prev! (safety lambda list node (array:set! list 0 (array:set! node 2 list))))
+(let list:next! (safety lambda list node (array:set! list 2 (array:set! node 0 list))))
+(let list:prev (safety lambda list (array:get list 0)))
+(let list:next (safety lambda list (array:get list 2)))
+(let list:value (lambda node (array:get node 1)))
+(let array:rotate-right (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (safety lambda a b (array:set! a (mod (+ (car (cdr b)) n) (length arr)) (car b))) (array (length arr) length)))))
+(let array:rotate-left (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (safety lambda a b (array:set! a (mod (+ (car (cdr b)) (- (length arr) n)) (length arr)) (car b))) (array (length arr) length)))))
