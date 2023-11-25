@@ -522,5 +522,5 @@
 (let list:prev (safety lambda list (array:get list 0)))
 (let list:next (safety lambda list (array:get list 2)))
 (let list:value (lambda node (array:get node 1)))
-(let array:rotate-right (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (safety lambda a b (array:set! a (mod (+ (car (cdr b)) n) (length arr)) (car b))) (array (length arr) length)))))
-(let array:rotate-left (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (safety lambda a b (array:set! a (mod (+ (car (cdr b)) (- (length arr) n)) (length arr)) (car b))) (array (length arr) length)))))
+(let array:rotate-right (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) n) (length arr)) (car b))) (array (length arr) length)))))
+(let array:rotate-left (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) (- (length arr) n)) (length arr)) (car b))) (array (length arr) length)))))
