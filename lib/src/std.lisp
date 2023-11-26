@@ -388,7 +388,7 @@
 (let new:array (safety lambda items (type items array)))
 (let new:list (safety lambda value (array () value ())))
 
-(let binary-tree:node (safety lambda value (do (let arr ()) (array:set! arr 0 value) (array:set! arr 1 ()) (array:set! arr 2 ()) arr)))
+(let new:binary-tree (safety lambda value (do (let arr ()) (array:set! arr 0 value) (array:set! arr 1 ()) (array:set! arr 2 ()) arr)))
 (let binary-tree:left (safety lambda node (array:get node 1)))
 (let binary-tree:right (safety lambda node (array:get node 2)))
 (let binary-tree:left! (safety lambda tree node (array:set! tree 1 node))) 
