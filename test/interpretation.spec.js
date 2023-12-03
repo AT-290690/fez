@@ -199,7 +199,7 @@ Player 2:
                     (array:merge! da (array (car a) (car b)))
                     (array:merge! db (array (car b) (car a)))) 
               (rec-combat da db visited)))
-        (if (length a) (Array 1 a) (array 0 b)))))
+        (if (length a) (array 1 a) (array 0 b)))))
         
         (let solve-1 (lambda (do 
         (pi 

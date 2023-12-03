@@ -340,11 +340,29 @@
                           (if (length arr) 
                               (if (= (car arr) item) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
+
+(let string:index-of-char (lambda str character (do
+                    (let* iterate (lambda arr i 
+                          (if (length arr) 
+                              (if (string:equal? (car arr) character) i (iterate (cdr arr) (+ i 1))) -1)))
+                        (iterate (type str array) 0))))
+
+(let string:match (lambda str word (do
+                    (let string-arr (type str array))
+                    (let* iterate (lambda arr i 
+                          (if (length arr) 
+                                (if (string:equal? 
+                                  (pi string-arr (array:slice i (+ i (length word))) (array:join "")) 
+                                  word) i (iterate (cdr arr) (+ i 1)))
+                               -1)))
+                        (iterate toArr 0))))
+
 (let array:find-index (safety lambda arr callback (do
                     (let* iterate (lambda arr i 
                           (if (length arr) 
                               (if (callback (car arr)) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
+
 (let array:remove (lambda arr i 
       (array:fold arr (safety lambda a x (do (unless (= x i) (array:merge a (array x)) a))) (array))))
 
