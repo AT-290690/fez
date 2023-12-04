@@ -546,3 +546,8 @@
 (let list:value (lambda node (array:get node 1)))
 (let array:rotate-right (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) n) (length arr)) (car b))) (array (length arr) length)))))
 (let array:rotate-left (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) (- (length arr) n)) (length arr)) (car b))) (array (length arr) length)))))
+
+(let var:def (lambda val (array val)))
+(let var:get (lambda variable (car variable)))
+(let var:set! (lambda variable value (array:set! variable 0 value)))
+(let var:del! (lambda variable (array:set! variable -1)))
