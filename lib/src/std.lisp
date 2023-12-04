@@ -158,6 +158,10 @@
 (let cast:numbers->strings (lambda arr (array:map arr (safety lambda x (type x string)))))
 (let cast:string->char-codes (lambda str (pi str (type array) (array:map (lambda x (type x char-code))))))
 (let cast:chars->char-codes (lambda arr (pi arr (array:map (lambda x (type x char-code))))))
+(let cast:chars->numbers (lambda arr (pi arr (array:map (lambda x (type x number))))))
+(let cast:char->number (lambda ch (type ch number)))
+(let cast:char->char-code (lambda ch (type ch char-code)))
+(let cast:char-code->char (lambda ch (type ch char)))
 (let cast:char-codes->chars (lambda arr (pi arr (array:map (lambda x (type x char))))))
 (let cast:char-codes->string (lambda arr (pi arr (array:map (lambda x (type x char))) (cast:chars->string))))
 
@@ -402,7 +406,7 @@
    (array:zip b)
    (array:every? (lambda x (= (car x) (car (cdr x))))))))))
 
-(let new:set (lambda items (set:insert! () items)))
+(let new:set (lambda items (set:add! (array () () () ()) items)))
 (let new:array (safety lambda items (type items array)))
 (let new:list (safety lambda value (array () value ())))
 
