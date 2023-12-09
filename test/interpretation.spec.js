@@ -282,5 +282,15 @@ Player 2:
       ),
       [67384529, 38925764]
     )
+    deepStrictEqual(
+      fez(
+        `(array
+  (string:trim-right "  12 3  4  ") 
+  (string:trim-left "  12 3  4  ") 
+  (string:trim " 12 3  4    "))`,
+        { std: 1, shake: 1, mutation: 1 }
+      ),
+      ['  12 3  4', '12 3  4  ', '12 3  4']
+    )
   })
 })

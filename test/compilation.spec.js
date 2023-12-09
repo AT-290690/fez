@@ -3,6 +3,10 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(array
+        (string:trim-right "  12 3  4  ") 
+        (string:trim-left "  12 3  4  ") 
+        (string:trim " 12 3  4    "))`,
       `(let sample "389125467")
       (let input "562893147")
         

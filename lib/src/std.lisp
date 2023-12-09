@@ -266,21 +266,21 @@
         (array:fold item (lambda a b (array:merge a (flatten b))) ())
         (array item))))
   (flatten arr))))
-
-  (let array:sort (lambda arr callback (do
-    (if (<= (length arr) 1) arr (do
-      (let pivot (car arr))
-      (let* iterate (lambda i bounds a b (do
-          (let current (array:get arr i))
-          (let predicate (callback current pivot))
-          (let left (if (= predicate 0) (array:merge a (array current)) a))
-          (let right (if (= predicate 1) (array:merge b (array current)) b))
-          (if (< i bounds) (iterate (+ i 1) bounds left right)
-          (array left right)))))
-      (let sorted (iterate 1 (- (length arr) 1) () ()))
-      (let left (car sorted))
-      (let right (car (cdr sorted)))
-      (array:merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
+ 
+(let array:sort (lambda arr callback (do
+  (if (<= (length arr) 1) arr (do
+    (let pivot (car arr))
+    (let* iterate (lambda i bounds a b (do
+        (let current (array:get arr i))
+        (let predicate (callback current pivot))
+        (let left (if (= predicate 0) (array:merge a (array current)) a))
+        (let right (if (= predicate 1) (array:merge b (array current)) b))
+        (if (< i bounds) (iterate (+ i 1) bounds left right)
+        (array left right)))))
+    (let sorted (iterate 1 (- (length arr) 1) () ()))
+    (let left (car sorted))
+    (let right (car (cdr sorted)))
+    (array:merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
 
   (let array:set (lambda arr i value 
       (if (array:in-bounds? arr i) 
@@ -547,7 +547,29 @@
 (let array:rotate-right (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) n) (length arr)) (car b))) (array (length arr) length)))))
 (let array:rotate-left (lambda arr n (pi arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) (- (length arr) n)) (length arr)) (car b))) (array (length arr) length)))))
 
-(let var:def (lambda val (array val)))
-(let var:get (lambda variable (car variable)))
-(let var:set! (lambda variable value (array:set! variable 0 value)))
-(let var:del! (lambda variable (array:set! variable -1)))
+(let var:def (safety lambda val (array val)))
+(let var:get (safety lambda variable (car variable)))
+(let var:set! (safety lambda variable value (array:set! variable 0 value)))
+(let var:del! (safety lambda variable (array:set! variable -1)))
+
+(let array:first (safety lambda arr (array:get arr 0)))
+(let array:last (safety lambda arr (array:get arr -1)))
+
+(let string:trim-left (lambda str (do 
+  (let tr (array 1))
+(pi str (type array) (array:fold (lambda a b (if 
+(and (car tr) (string:equal? b " ")) a
+  (do 
+    (when (car tr) (array:set! tr 0 0)) 
+    (concatenate a b))
+)) "")))))
+
+(let string:trim-right (lambda str (do 
+  (let tr (array 1))
+  (pi str (type array) (array:reverse) (array:fold (lambda a b (if 
+  (and (car tr) (string:equal? b " ")) a
+    (do 
+      (when (car tr) (array:set! tr 0 0)) 
+      (concatenate b a)))) "")))))
+
+(let string:trim (lambda str (pi str (string:trim-left) (string:trim-right))))
