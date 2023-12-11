@@ -573,3 +573,12 @@
       (concatenate b a)))) "")))))
 
 (let string:trim (lambda str (pi str (string:trim-left) (string:trim-right))))
+(let array:enumerate (lambda arr (array:zip (math:sequence arr) arr)))
+(let string:lines (lambda str (pi str (type array) 
+                      (array:fold (lambda a b (do 
+                      (let prev (array:get a -1))
+                       (if (string:equal? b "\n") 
+                           (array:set! a (length a) ())
+                           (array:set! prev (length prev) b)) a)) 
+                      (array ()))
+                      (array:map (lambda x (array:join x ""))))))
