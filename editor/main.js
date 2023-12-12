@@ -30,6 +30,7 @@ window.addEventListener('resize', () =>
 const run = () => {
   const res = fez(editor.getValue(), {
     std: 1,
+    shake: 1,
     errors: 1,
     mutation: MUTATION,
   })
@@ -45,6 +46,7 @@ const comp = () => {
   const res = eval(
     fez(editor.getValue(), {
       std: 1,
+      shake: 1,
       errors: 0,
       compile: 1,
       mutation: MUTATION,
