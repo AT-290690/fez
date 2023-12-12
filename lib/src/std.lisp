@@ -128,7 +128,7 @@
 (let array:empty! (safety lambda arr (do (let* iterate (lambda (if (length arr) (do (array:set! arr -1) (iterate)) arr))) (iterate))))
 (let array:in-bounds? (safety lambda arr index (and (< index (length arr)) (>= index 0))))
 
-(let math:largest-power (lambda N (do 
+(let math:largest-power (safety lambda N (do 
   ; changing all right side bits to 1.
   (let N1 (| N (>> N 1)))
   (let N2 (| N1 (>> N1 2)))
@@ -139,16 +139,16 @@
   ; so adding 1 and dividing it by
   (>> (+ N4 1) 1))))
 
-(let math:set-bit (lambda n bit (| n (<< 1 bit))))
-(let math:clear-bit (lambda n bit (& n (~ (<< 1 bit)))))
-(let math:odd-bit? (lambda n (= (& n 1) 1)))
-(let math:average-bit (lambda a b (>> (+ a b) 1)))
-(let math:toggle-bit (lambda n a b (^ a b n)))
-(let math:same-sign-bit? (lambda a b (>= (^ a b) 0)))
-(let math:max-bit (lambda a b (- a (& (- a b) (>> (- a b) 31)))))
-(let math:min-bit (lambda a b (- a (& (- a b) (>> (- b a) 31)))))
-(let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
-(let math:n-one-bit? (lambda N nth (type (& N (<< 1 nth)) Boolean)))
+(let math:set-bit (safety lambda n bit (| n (<< 1 bit))))
+(let math:clear-bit (safety lambda n bit (& n (~ (<< 1 bit)))))
+(let math:odd-bit? (safety lambda n (= (& n 1) 1)))
+(let math:average-bit (safety lambda a b (>> (+ a b) 1)))
+(let math:toggle-bit (safety lambda n a b (^ a b n)))
+(let math:same-sign-bit? (safety lambda a b (>= (^ a b) 0)))
+(let math:max-bit (safety lambda a b (- a (& (- a b) (>> (- a b) 31)))))
+(let math:min-bit (safety lambda a b (- a (& (- a b) (>> (- b a) 31)))))
+(let math:modulo-bit (safety lambda numerator divisor (& numerator (- divisor 1))))
+(let math:n-one-bit? (safety lambda N nth (type (& N (<< 1 nth)) boolean)))
 
 (let cast:string->chars (safety lambda str (type str array)))
 (let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (concatenate a (type x string))) "")))
@@ -156,16 +156,16 @@
 (let cast:number->string (safety lambda n (type n string)))
 (let cast:strings->numbers (lambda arr (array:map arr (safety lambda x (type x number)))))
 (let cast:numbers->strings (lambda arr (array:map arr (safety lambda x (type x string)))))
-(let cast:string->char-codes (lambda str (pi str (type array) (array:map (lambda x (type x char-code))))))
-(let cast:chars->char-codes (lambda arr (pi arr (array:map (lambda x (type x char-code))))))
-(let cast:chars->numbers (lambda arr (pi arr (array:map (lambda x (type x number))))))
-(let cast:char->number (lambda ch (type ch number)))
-(let cast:char->char-code (lambda ch (type ch char-code)))
-(let cast:char-code->char (lambda ch (type ch char)))
-(let cast:char-codes->chars (lambda arr (pi arr (array:map (lambda x (type x char))))))
-(let cast:char-codes->string (lambda arr (pi arr (array:map (lambda x (type x char))) (cast:chars->string))))
+(let cast:string->char-codes (lambda str (pi str (type array) (array:map (safety lambda x (type x char-code))))))
+(let cast:chars->char-codes (lambda arr (pi arr (array:map (safety lambda x (type x char-code))))))
+(let cast:chars->numbers (lambda arr (pi arr (array:map (safety lambda x (type x number))))))
+(let cast:char->number (safety lambda ch (type ch number)))
+(let cast:char->char-code (safety lambda ch (type ch char-code)))
+(let cast:char-code->char (safety lambda ch (type ch char)))
+(let cast:char-codes->chars (lambda arr (pi arr (array:map (safety lambda x (type x char))))))
+(let cast:char-codes->string (lambda arr (pi arr (array:map (safety lambda x (type x char))) (cast:chars->string))))
 
-(let math:square (lambda x (* x x)))
+(let math:square (safety lambda x (* x x)))
 (let math:power (lambda base exp 
   (if (< exp 0) 
       (if (= base 0) 
@@ -186,7 +186,7 @@
       (if (is-good-enough g x) g
           (math:sqrt-iter (improve-guess g x) x))))
   (math:sqrt-iter 1.0 x))))
-(let math:circumference (lambda radius (* PI (* radius 2))))
+(let math:circumference (lambda radius (* math:PI (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (safety lambda n (- (^ n (>> n 31)) (>> n 31))))
 (let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0.5)))
@@ -198,7 +198,7 @@
 (let math:odd? (safety lambda x (= (mod x 2) 1)))
 (let math:even? (safety lambda x (= (mod x 2) 0)))
 (let math:sign (safety lambda n (if (< n 0) -1 1)))
-(let math:radians (lambda deg (* deg PI (/ 180))))
+(let math:radians (lambda deg (* deg math:PI (/ 180))))
 (let math:average (safety lambda x y (* (+ x y) 0.5)))
 (let math:euclidean-mod (safety lambda a b (mod (+ (mod a b) b) b)))
 (let math:euclidean-distance (lambda x1 y1 x2 y2 (do
@@ -582,3 +582,21 @@
                            (array:set! prev (length prev) b)) a)) 
                       (array ()))
                       (array:map (lambda x (array:join x ""))))))
+
+(let string:words (lambda str (pi str (type array) 
+              (array:fold (lambda a b (do 
+              (let prev (array:get a -1))
+                (if (string:equal? b " ") 
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a)) 
+              (array ()))
+              (array:map (lambda x (array:join x ""))))))
+
+(let string:seprator (lambda str separator (pi str (type array)
+              (array:fold (lambda a b (do 
+              (let prev (array:get a -1))
+                (if (string:equal? b separator) 
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a)) 
+              (array ()))
+              (array:map (lambda x (array:join x ""))))))

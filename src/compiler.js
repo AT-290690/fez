@@ -11,7 +11,11 @@ import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {
   log: `var logEffect=(msg)=>{console.log(msg);return msg}`,
   clear: `clearEffect=()=>{console.clear();return 0}`,
-  _merge: `_merge=(...arrays)=>arrays.reduce((a,b)=>a.concat(b),[])`,
+  array_merge: `array_merge=(...arrays)=>arrays.reduce((a,b)=>a.concat(b),[])`,
+  car: 'car=(arr)=>arr.at(0)',
+  cdr: 'cdr=(arr)=>arr.slice(1)',
+  array_get: 'array_get=(arr,i)=>arr.at(i)',
+  length: 'length=(arr)=>arr.length',
   tco: `tco=fn=>(...args)=>{
 let result=fn(...args)
 while(typeof result==='function')result=result()
@@ -41,7 +45,7 @@ return result
     return array 
 }`,
   serialise:
-    "_serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`\n else\n return `(array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
+    "serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`\n else\n return `(array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
   cast: `_cast=(type,value)=>{
     switch (type) {
       case '${KEYWORDS.NUMBER_TYPE}':
@@ -157,22 +161,22 @@ const compile = (tree, Variables) => {
           ? `(new Array(${compile(Arguments[0], Variables)}).fill(0))`
           : `[${parseArgs(Arguments, Variables)}];`
       case KEYWORDS.ARRAY_OR_STRING_LENGTH:
-        return `(${compile(Arguments[0], Variables)}).length`
+        return `length(${compile(Arguments[0], Variables)})`
       case KEYWORDS.IS_ATOM:
         return handleBoolean(
           `atomPredicate(${compile(Arguments[0], Variables)});`
         )
       case KEYWORDS.FIRST_ARRAY:
-        return `${compile(Arguments[0], Variables)}.at(0);`
+        return `car(${compile(Arguments[0], Variables)});`
       case KEYWORDS.REST_ARRAY:
-        return `${compile(Arguments[0], Variables)}.slice(1);`
+        return `cdr(${compile(Arguments[0], Variables)});`
       case KEYWORDS.GET_ARRAY:
-        return `${compile(Arguments[0], Variables)}.at(${compile(
+        return `array_get(${compile(Arguments[0], Variables)}, ${compile(
           Arguments[1],
           Variables
         )});`
       case KEYWORDS.MERGE:
-        return `_merge(${parseArgs(Arguments, Variables)});`
+        return `array_merge(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.ANONYMOUS_FUNCTION: {
         const functionArgs = Arguments
         const body = Arguments.pop()
@@ -320,7 +324,7 @@ const compile = (tree, Variables) => {
         )
       }
       case KEYWORDS.SERIALISE:
-        return `_serialise(${compile(Arguments[0], Variables)});`
+        return `serialise(${compile(Arguments[0], Variables)});`
       case KEYWORDS.SET_IMMUTABLE_ARRAY:
         return `arraySet(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.SET_ARRAY:

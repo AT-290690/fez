@@ -229,6 +229,89 @@ Player 2:
 (math:summation)))))
 
 (array (solve-1) (solve-2))`,
+      `(let sample1 
+"RL
+
+AAA=BBB,CCC
+BBB=DDD,EEE
+CCC=ZZZ,GGG
+DDD=DDD,DDD
+EEE=EEE,EEE
+GGG=GGG,GGG
+ZZZ=ZZZ,ZZZ")
+        (let parse (lambda input (do 
+          (let split (string:split input "\n"))
+          (let path (car split))
+          (let list (cdr (cdr split)))
+          
+          (let dirs (pi path (cast:string->chars) (array:map (lambda x (string:equal? x "R")))))
+          (let adj (pi list (array:map (lambda x (string:split x "=")))))
+          
+          (array 
+            dirs 
+            (array:fold adj (lambda object entry (do 
+            (let key (car entry))
+            (let value (car (cdr entry)))
+            (map:set! object key (string:split value ","))))
+            (array () () () ()))
+            adj
+            ))))
+    
+(let sample2 "LLR
+
+AAA=BBB,BBB
+BBB=AAA,ZZZ
+ZZZ=ZZZ,ZZZ")
+        
+(let sample3 "LR
+
+11A=11B,XXX
+11B=XXX,11Z
+11Z=11B,XXX
+22A=22B,XXX
+22B=22C,22C
+22C=22Z,22Z
+22Z=22B,22B
+XXX=XXX,XXX")
+    
+        (let part1 (lambda input (do 
+          (let dirs (car input))
+          (let adj (car (cdr input)))
+          (let* move (lambda source target step (do 
+            (let node (array:get (map:get adj source) (array:get dirs (mod step (length dirs)))))
+            (if (string:equal? node target)
+                step 
+                (move node target (+ step 1))))))
+          (+ (move "AAA" "ZZZ" 0) 1))))
+        
+        
+        (let part2 (lambda input (do 
+        
+          (let dirs (car input))
+          (let adj (car (cdr input)))
+          (let keys (car (cdr (cdr input))))
+          
+          (let* move (lambda source target step (do 
+            (let node (array:get (map:get adj source) (array:get dirs (mod step (length dirs)))))
+            (if (string:equal? (array:get (cast:string->chars node) -1) target)
+                step 
+                (move node target (+ step 1))))))
+        
+          (pi 
+            keys
+            (array:map car)
+            (array:select (lambda source 
+              (pi source 
+                  (cast:string->chars) 
+                  (array:get -1)
+                  (string:equal? "A"))))
+            (array:map (lambda source (+ (move source "Z" 0) 1)))
+            (array:fold math:least-common-divisor 1)))))
+        
+          (array 
+           (part1 (parse sample1))
+           (part1 (parse sample2))
+           (part2 (parse sample3)))`,
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { std: 1, compile: 0, shake: 1, mutation: 1 }),
