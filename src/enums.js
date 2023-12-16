@@ -16,7 +16,7 @@ export const KEYWORDS = {
   CHAR_TYPE: 'char',
 
   CAST_TYPE: 'type',
-  CONCATENATION: 'concatenate',
+  CONCATENATION: 'string:merge',
   ARRAY_OR_STRING_LENGTH: 'length',
   IS_ARRAY: 'array?',
   IS_NUMBER: 'number?',

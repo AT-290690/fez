@@ -34,7 +34,7 @@ describe('Interpretation', () => {
       fez(
         `(let people (array () () () ()))
         (map:set! people "name" "Anthony")
-        (array (map:set! people "name" (concatenate (map:get people "name") " " "Tonev")))
+        (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
         (cast:table->array people)
         `,
         { std: 1, shake: 1, mutation: 1 }
@@ -182,7 +182,7 @@ Player 2:
         (and (length a) (length b)) 
         (if 
           ; recursive case 
-          (set:has? visited (let key (concatenate (array:join a " ") " | " (array:join b " ")))) (array 1 a)
+          (set:has? visited (let key (string:merge (array:join a " ") " | " (array:join b " ")))) (array 1 a)
           ; sumb game case
           (do 
               (let da (cdr a))

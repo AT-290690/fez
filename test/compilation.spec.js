@@ -95,7 +95,7 @@ describe('Compilation', () => {
       `
       (let people (array () () () ()))
       (map:set! people "name" "Anthony")
-      (array (map:set! people "name" (concatenate (map:get people "name") " " "Tonev")))
+      (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
       (cast:table->array people) `,
       `
 (let ascending? (lambda a b (> a b)))
@@ -111,7 +111,7 @@ describe('Compilation', () => {
   (pi 
   (let arr (array "a" "b" "c"))
   (array:zip (math:range 1 (length arr)))
-  (array:map (safety lambda x (concatenate (car x) "-" (type (car (cdr x)) string)))))
+  (array:map (safety lambda x (string:merge (car x) "-" (type (car (cdr x)) string)))))
 
 (array:sort (array 1 2 3 4 5 6) ascending?)
 (array:sort (array 6 5 4 3 2 1) ascending?)
@@ -195,7 +195,7 @@ Player 2:
 (and (length a) (length b)) 
 (if 
   ; recursive case 
-  (set:has? visited (let key (concatenate (array:join a " ") " | " (array:join b " ")))) (array 1 a)
+  (set:has? visited (let key (string:merge (array:join a " ") " | " (array:join b " ")))) (array 1 a)
   ; sumb game case
   (do 
       (let da (cdr a))

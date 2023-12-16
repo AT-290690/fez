@@ -151,7 +151,7 @@
 (let math:n-one-bit? (safety lambda N nth (type (& N (<< 1 nth)) boolean)))
 
 (let cast:string->chars (safety lambda str (type str array)))
-(let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (concatenate a (type x string))) "")))
+(let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (string:merge a (type x string))) "")))
 (let cast:string->number (safety lambda str (type str number)))
 (let cast:number->string (safety lambda n (type n string)))
 (let cast:strings->numbers (lambda arr (array:map arr (safety lambda x (type x number)))))
@@ -258,7 +258,7 @@
         (= (length a) (length b)) 
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 
-(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (concatenate a delim (type (car b) string)) (type (car b) string))) "")))
+(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a delim (type (car b) string)) (type (car b) string))) "")))
 
 (let array:flat (lambda arr (do
   (let flatten (lambda item 
@@ -285,7 +285,7 @@
   (let array:set (lambda arr i value 
       (if (array:in-bounds? arr i) 
           (array:map (math:sequence arr) (lambda x (if (= x i) value (array:get arr x))))
-  (throw (concatenate (type i string) " is outside of the array bounds")))))
+  (throw (string:merge (type i string) " is outside of the array bounds")))))
   
   (let array:adjacent-difference (lambda arr callback (do 
     (let len (length arr))
@@ -330,7 +330,7 @@
             (array:set! result (length result) (array:get locals 3))
             (array:set! locals 3 "")
             (+ i (array:get locals 2) -1))
-          (do (array:set! locals 3 (concatenate (array:get locals 3) (array:get (array:get locals 1) i))) i)) bounds) 
+          (do (array:set! locals 3 (string:merge (array:get locals 3) (array:get (array:get locals 1) i))) i)) bounds) 
               (iterate result (+ i 1) bounds) result)))
       (array:set! (let iteration-result (iterate () 0 (- (length (array:get locals 1)) 1))) (length iteration-result) (array:get locals 3)))))
 
@@ -561,7 +561,7 @@
 (and (car tr) (string:equal? b " ")) a
   (do 
     (when (car tr) (array:set! tr 0 0)) 
-    (concatenate a b))
+    (string:merge a b))
 )) "")))))
 
 (let string:trim-right (lambda str (do 
@@ -570,7 +570,7 @@
   (and (car tr) (string:equal? b " ")) a
     (do 
       (when (car tr) (array:set! tr 0 0)) 
-      (concatenate b a)))) "")))))
+      (string:merge b a)))) "")))))
 
 (let string:trim (lambda str (pi str (string:trim-left) (string:trim-right))))
 (let array:enumerate (lambda arr (array:zip (math:sequence arr) arr)))
