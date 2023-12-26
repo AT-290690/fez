@@ -1,6 +1,7 @@
-import { APPLY, ATOM, TYPE, VALUE, WORD } from './enums.js'
+import { APPLY, ATOM, WORD } from './enums.js'
 import { escape } from './utils.js'
-
+export const leaf = (type, value) => [type, value]
+export const isLeaf = (tree) => typeof tree[0] === 'string'
 export const parse = (source) => {
   const tree = []
   let head = tree,
@@ -25,18 +26,12 @@ export const parse = (source) => {
       let token = acc
       acc = ''
       if (token) {
-        if (!head.length) head.push({ [TYPE]: APPLY, [VALUE]: token })
+        if (!head.length) head.push(leaf(APPLY, token))
         else if (token.match(/^"([^"]*)"/))
-          head.push({
-            [TYPE]: ATOM,
-            [VALUE]: token.substring(1, token.length - 1),
-          })
+          head.push(leaf(ATOM, token.substring(1, token.length - 1)))
         else if (token.match(/^-?[0-9]\d*(\.\d+)?$/))
-          head.push({
-            [TYPE]: ATOM,
-            [VALUE]: Number(token),
-          })
-        else head.push({ [TYPE]: WORD, [VALUE]: token })
+          head.push(leaf(ATOM, Number(token)))
+        else head.push(leaf(WORD, token))
       }
       if (cursor === ')') head = stack.pop()
     } else acc += cursor
@@ -46,10 +41,10 @@ export const parse = (source) => {
 export const stringify = (ast) => {
   if (ast == undefined) return '()'
   else if (typeof ast === 'object')
-    if (Array.isArray(ast))
+    if (!isLeaf(ast))
       return ast.length ? `(array ${ast.map(stringify).join(' ')})` : '()'
     else
-      return `(array ${Object.entries(ast)
+      return `(array ${ast
         .map(([key, value]) => `("${key}" ${stringify(value)})`)
         .join(' ')})`
   else if (typeof ast === 'string') return `"${ast}"`

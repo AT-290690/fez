@@ -1,6 +1,6 @@
-import { TYPE, VALUE, WORD, KEYWORDS } from './enums.js'
+import { TYPE, VALUE, WORD, KEYWORDS, APPLY } from './enums.js'
 import { evaluate } from './interpreter.js'
-import { stringify } from './parser.js'
+import { isLeaf, stringify } from './parser.js'
 import {
   isAtom,
   isEqual,
@@ -870,11 +870,13 @@ const keywords = {
       )
     let inp = args[0]
     for (let i = 1; i < args.length; ++i) {
-      if (!Array.isArray(args[i]))
+      if (!args[i].length || args[i][0][TYPE] !== APPLY)
         throw new TypeError(
-          `Argument at position (${i}) of (${KEYWORDS.PIPE}) is not a (${
-            KEYWORDS.ANONYMOUS_FUNCTION
-          }). (${KEYWORDS.PIPE} ${stringifyArgs(args)})`
+          `Argument at position (${i}) of (${
+            KEYWORDS.PIPE
+          }) is not an invoked (${KEYWORDS.ANONYMOUS_FUNCTION}). (${
+            KEYWORDS.PIPE
+          } ${stringifyArgs(args)})`
         )
       const [first, ...rest] = args[i]
       const arr = [first, inp, ...rest]

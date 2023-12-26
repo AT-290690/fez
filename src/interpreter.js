@@ -1,9 +1,10 @@
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
+import { isLeaf } from './parser.js'
 import { keywords } from './tokeniser.js'
 import { stringifyArgs } from './utils.js'
 
 export const evaluate = (exp, env) => {
-  const [first, ...rest] = Array.isArray(exp) ? exp : [exp]
+  const [first, ...rest] = !isLeaf(exp) ? exp : [exp]
   if (first == undefined) return []
   switch (first[TYPE]) {
     case WORD: {

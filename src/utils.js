@@ -1,8 +1,16 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
+import {
+  APPLY,
+  ATOM,
+  KEYWORDS,
+  PLACEHOLDER,
+  TYPE,
+  VALUE,
+  WORD,
+} from './enums.js'
 import { evaluate, run } from './interpreter.js'
-import { parse } from './parser.js'
+import { isLeaf, parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const removeNoCode = (source) =>
@@ -39,13 +47,13 @@ export const escape = (Char) => {
   }
 }
 export const stringifyType = (type) =>
-  Array.isArray(type)
+  !isLeaf(type)
     ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
     : typeof type
 export const stringifyArgs = (args) =>
   args
     .map((x) =>
-      Array.isArray(x)
+      !isLeaf(x)
         ? `(${stringifyArgs(x)})`
         : x[TYPE] === APPLY || x[TYPE] === WORD
         ? x[VALUE]
@@ -132,7 +140,7 @@ export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
   const visited = new Set()
   const dfs = (tree) => {
-    if (Array.isArray(tree)) tree.forEach(dfs)
+    if (!isLeaf(tree)) tree.forEach(dfs)
     else if (
       (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
       deps.has(tree[VALUE]) &&
@@ -153,20 +161,18 @@ export const runFromCompiled = (source) => {
   const tree = parse(
     handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
   )
-  if (Array.isArray(tree)) {
-    const compiled = comp(tree)
-    const JavaScript = `${compiled.top}${compiled.program}`
-    return eval(JavaScript)
-  }
+  const compiled = comp(tree)
+  const JavaScript = `${compiled.top}${compiled.program}`
+  return eval(JavaScript)
 }
 export const runFromInterpreted = (source, env = {}) => {
   const tree = parse(
     handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
   )
-  if (Array.isArray(tree)) return run(tree, env)
+  run(tree, env)
 }
 export const dfs = (tree, callback) => {
-  if (Array.isArray(tree)) for (const branch of tree) dfs(branch)
+  if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
 }
 export const deepClone = (ast) => JSON.parse(JSON.stringify(ast))
@@ -227,12 +233,12 @@ export const toCamelCase = (name) => {
   return out
 }
 export const deepRename = (name, newName, tree) => {
-  if (Array.isArray(tree))
-    for (const branch of tree) {
+  if (!isLeaf(tree))
+    for (const leaf of tree) {
       // Figure out a non mutable solution so
       // I can get rid of deep copy
-      if (branch[VALUE] === name) branch[VALUE] = `()=>${newName}`
-      deepRename(name, newName, branch)
+      if (leaf[VALUE] === name) leaf[VALUE] = `()=>${newName}`
+      deepRename(name, newName, leaf)
     }
 }
 export const lispToJavaScriptVariableName = (name) =>

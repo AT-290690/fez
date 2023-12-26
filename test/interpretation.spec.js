@@ -146,7 +146,10 @@ describe('Interpretation', () => {
       fez(`(array:join (array 1 2 3) "-")`, { std: 1, shake: 1 }),
       '1-2-3'
     )
-
+    deepStrictEqual(
+      fez(`(array:exclude (array 1 2 3 4 5) math:even?)`, { std: 1, shake: 1 }),
+      [1, 3, 5]
+    )
     deepStrictEqual(
       fez(
         `(let sample 

@@ -7,6 +7,7 @@ import {
   VALUE,
   WORD,
 } from './enums.js'
+import { leaf, isLeaf } from './parser.js'
 import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {
   log: `var logEffect=(msg)=>{console.log(msg);return msg}`,
@@ -45,7 +46,7 @@ return result
     return array 
 }`,
   serialise:
-    "serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeofast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`\n else\n return `(array ${Object.entries(ast).map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeofast==='string') return `\"${ast}\"`\n else if(typeofast==='function') return '()'\n else return ast\n}",
+    "serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeof ast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(stringify).join(' ')})`\n else\n return `(array ${ast.map(([key, value]) => `(\"${key}\" ${stringify(value)})`).join(' ')})`\n else if(typeof ast==='string') return `\"${ast}\"`\n else if(typeof ast==='function') return '()'\n else return ast\n}",
   cast: `_cast=(type,value)=>{
     switch (type) {
       case '${KEYWORDS.NUMBER_TYPE}':
@@ -95,7 +96,7 @@ const parseArgs = (Arguments, Variables, separator = ',') =>
   parse(Arguments, Variables).join(separator)
 const compile = (tree, Variables) => {
   if (!tree) return ''
-  const [first, ...Arguments] = Array.isArray(tree) ? tree : [tree]
+  const [first, ...Arguments] = !isLeaf(tree) ? tree : [tree]
   if (first == undefined) return '[];'
   const token = first[VALUE]
   if (first[TYPE] === APPLY) {
@@ -186,8 +187,8 @@ const compile = (tree, Variables) => {
         return `((${parseArgs(
           functionArgs.map((node, index) =>
             node[VALUE] === PLACEHOLDER
-              ? { [TYPE]: node[TYPE], [VALUE]: `_${index}` }
-              : { [TYPE]: node[TYPE], [VALUE]: node[VALUE] }
+              ? leaf(node[TYPE], `_${index}`)
+              : leaf(node[TYPE], node[VALUE])
           ),
           Variables
         )})=>{${vars}return ${evaluatedBody.toString().trimStart()}});`
@@ -318,10 +319,7 @@ const compile = (tree, Variables) => {
       }
       case KEYWORDS.IMMUTABLE_FUNCTION: {
         const [first, ...rest] = Arguments
-        return compile(
-          [{ [TYPE]: APPLY, [VALUE]: first[VALUE] }, ...rest],
-          Variables
-        )
+        return compile([leaf(APPLY, first[VALUE]), ...rest], Variables)
       }
       case KEYWORDS.SERIALISE:
         return `serialise(${compile(Arguments[0], Variables)});`
