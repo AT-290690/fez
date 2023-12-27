@@ -186,7 +186,12 @@ export const fez = (source, options = {}) => {
       )
     else code = removeNoCode(source)
     if (!options.mutation) code = removeMutation(code)
+    if (!code.length && options.throw) throw new Error('Nothing to parse!')
     const parsed = parse(code)
+    if (parsed.length === 0 && options.throw)
+      throw new Error(
+        'Top level expressions need to be wrapped in a (do) block'
+      )
     const standard = options.std
       ? options.shake
         ? treeShake(parsed, std)
@@ -202,9 +207,8 @@ export const fez = (source, options = {}) => {
     const err = error.message
       .replace("'[object Array]'", '(array)')
       .replace('object', '(array)')
-    if (options.errors) {
-      logError(err)
-    }
+    if (options.errors) logError(err)
+    if (options.throw) throw err
     return err
   }
 }
