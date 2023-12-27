@@ -14,9 +14,9 @@ const keywords = {
     if (args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${
-          keywords.CONCATENATION
+          KEYWORDS.CONCATENATION
         }), expected > 1 but got ${args.length}. (${
-          keywords.CONCATENATION
+          KEYWORDS.CONCATENATION
         } ${stringifyArgs(args)})`
       )
     const operands = args.map((x) => evaluate(x, env))
