@@ -1,5 +1,6 @@
-import { stringify } from '../src/parser.js'
-import { fez } from '../src/utils.js'
+import { format } from '../src/formatter.js'
+import { parse, stringify } from '../src/parser.js'
+import { compress, decompress, fez, removeNoCode } from '../src/utils.js'
 import { CodeMirror } from './fez.editor.bundle.js'
 let MUTATION = 1
 export const consoleEditorContainer = document.getElementById(
@@ -29,7 +30,8 @@ window.addEventListener('resize', () =>
 )
 const run = () => {
   try {
-    const res = fez(editor.getValue(), {
+    const src = editor.getValue()
+    const res = fez(src, {
       std: 1,
       shake: 1,
       throw: 1,
@@ -65,13 +67,16 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     run()
+    editor.setValue(format(parse(removeNoCode(editor.getValue()))).trim())
     return
   }
 })
 execButton.addEventListener('click', () => comp())
 runButton.addEventListener('click', () => run())
 keyButton.addEventListener('click', () => {
-  const compressed = LZString.compressToBase64(editor.getValue())
+  const compressed = LZString.compressToBase64(
+    compress(removeNoCode(editor.getValue()))
+  )
   const newurl =
     window.location.protocol +
     '//' +
@@ -84,7 +89,7 @@ keyButton.addEventListener('click', () => {
 const initial = new URLSearchParams(location.search).get('l') ?? ''
 if (initial) {
   try {
-    const decompressed = LZString.decompressFromBase64(initial)
+    const decompressed = decompress(LZString.decompressFromBase64(initial))
     editor.setValue(decodeURIComponent(decompressed))
   } catch (e) {
     consoleEditor.setValue(e instanceof Error ? e.message : e)

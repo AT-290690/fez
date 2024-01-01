@@ -259,7 +259,7 @@
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a delim (type (car b) string)) (type (car b) string))) "")))
-(let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a b)) ())))
+(let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item 
     (if (and (array? item) (length item))

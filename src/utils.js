@@ -245,6 +245,38 @@ export const deepRename = (name, newName, tree) => {
       deepRename(name, newName, leaf)
     }
 }
+
+export const compress = (source) => {
+  let { result, occurance } = source.split('').reduce(
+    (acc, item) => {
+      if (item === ')') acc.occurance++
+      else {
+        if (acc.occurance < 3) {
+          acc.result += ')'.repeat(acc.occurance)
+          acc.occurance = 0
+        } else {
+          acc.result += '·' + acc.occurance
+          acc.occurance = 0
+        }
+        acc.result += item
+      }
+      return acc
+    },
+    { result: '', occurance: 0 }
+  )
+  if (occurance > 0) result += '·' + occurance
+  return result
+}
+export const decompress = (raw) => {
+  const suffix = [...new Set(raw.match(/·+?\d+/g))]
+  const runes = suffix.reduce(
+    (acc, m) => acc.split(m).join(')'.repeat(parseInt(m.substring(1)))),
+    raw
+  )
+  let result = ''
+  for (const tok of runes) result += tok
+  return result
+}
 export const lispToJavaScriptVariableName = (name) =>
   toCamelCase(
     arrowToTo(
