@@ -281,12 +281,7 @@
     (let left (car sorted))
     (let right (car (cdr sorted)))
     (array:merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
-
-  (let array:set (lambda arr i value 
-      (if (array:in-bounds? arr i) 
-          (array:map (math:sequence arr) (lambda x (if (= x i) value (array:get arr x))))
-  (throw (string:merge (type i string) " is outside of the array bounds")))))
-  
+  (let array:set (lambda arr index item (array:set! (type arr array) index item)))
   (let array:adjacent-difference (lambda arr callback (do 
     (let len (length arr))
     (unless (= len 1) 
@@ -587,7 +582,6 @@
     (do 
       (when (car tr) (array:set! tr 0 0)) 
       (string:merge b a)))) "")))))
-
 (let string:trim (lambda str (pi str (string:trim-left) (string:trim-right))))
 (let array:enumerate (lambda arr (array:zip (math:sequence arr) arr)))
 (let string:lines (lambda str (pi str (type array) 
@@ -726,6 +720,22 @@ q)))
    (when (< index bounds) (rigth (+ index 1) bounds)))))
  (rigth half (- (length initial) 1))
     q)))
+(let brray:slice (lambda entity s e (do 
+      (let len (brray:length entity))
+      (let start (if (< s 0) (math:max (+ len s) 0) (math:min s len)))
+      (let end (if (< e 0) (math:max (+ len e) 0) (math:min e len)))
+      (let slice (new:brray))
+      (let slice-len (math:max (- end start) 0))
+      (let half (math:floor (* slice-len 0.5)))
+      (let* left (lambda index (do
+         (brray:add-to-left! slice (brray:get entity (+ start index)))
+         (when (> index 0) (left (- index 1))))))
+      (left (- half 1))
+      (let* rigth (lambda index bounds (do
+         (brray:add-to-right! slice (brray:get entity (+ start index)))
+         (when (< index bounds) (rigth (+ index 1) bounds)))))
+      (rigth half (- slice-len 1))
+      slice)))
 
 (let date:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))
 (let date:add-minutes (lambda date-time minutes (+ date-time (* minutes 1000 60))))

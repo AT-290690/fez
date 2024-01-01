@@ -30,14 +30,6 @@ return result
   error: `_error=(error)=>{ 
     throw new Error(error)
 }`,
-  arraySet: `arraySet=(array,index,value)=>{ 
-  array=[...array]
-  if (index < 0) {
-   const target = array.length + index
-   while (array.length !== target) array.pop()
-  } else array[index] = value; 
-  return array 
-}`,
   arraySetEffect: `arraySetEffect=(array,index,value)=>{ 
     if (index < 0) {
      const target = array.length + index
@@ -323,8 +315,6 @@ const compile = (tree, Variables) => {
       }
       case KEYWORDS.SERIALISE:
         return `serialise(${compile(Arguments[0], Variables)});`
-      case KEYWORDS.SET_IMMUTABLE_ARRAY:
-        return `arraySet(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.SET_ARRAY:
         return `arraySetEffect(${parseArgs(Arguments, Variables)});`
       case KEYWORDS.NOT_COMPILED_BLOCK:

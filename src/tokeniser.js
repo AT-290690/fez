@@ -1,6 +1,6 @@
 import { TYPE, VALUE, WORD, KEYWORDS, APPLY } from './enums.js'
 import { evaluate } from './interpreter.js'
-import { isLeaf, stringify } from './parser.js'
+import { stringify } from './parser.js'
 import {
   isAtom,
   isEqual,
@@ -1085,86 +1085,6 @@ const keywords = {
           `Trying to set a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
             KEYWORDS.SET_ARRAY
           }). (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
-        )
-      array[index] = value
-    }
-    return array
-  },
-
-  [KEYWORDS.SET_IMMUTABLE_ARRAY]: (args, env) => {
-    if (args.length !== 2 && args.length !== 3)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.SET_IMMUTABLE_ARRAY
-        }) (or 2 3) required (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(
-          args
-        )})`
-      )
-    let array = evaluate(args[0], env)
-    if (!Array.isArray(array))
-      throw new TypeError(
-        `First argument of (${KEYWORDS.SET_IMMUTABLE_ARRAY}) must be an (${
-          KEYWORDS.ARRAY_TYPE
-        }) but got (${array}) (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(
-          args
-        )})`
-      )
-    array = [...array]
-    const index = evaluate(args[1], env)
-    if (!Number.isInteger(index))
-      throw new TypeError(
-        `Second argument of (${KEYWORDS.SET_IMMUTABLE_ARRAY}) must be an (${
-          KEYWORDS.NUMBER_TYPE
-        } integer) (${index}) (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(
-          args
-        )})`
-      )
-    if (index > array.length)
-      throw new RangeError(
-        `Second argument of (${
-          KEYWORDS.SET_IMMUTABLE_ARRAY
-        }) is outside of the (${
-          KEYWORDS.ARRAY_TYPE
-        }) bounds (index ${index} bounds ${array.length}) (${
-          KEYWORDS.SET_IMMUTABLE_ARRAY
-        } ${stringifyArgs(args)})`
-      )
-    if (index < 0) {
-      if (args.length !== 2)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          }) (if (< index 0) then 2 required) (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          } ${stringifyArgs(args)})`
-        )
-      if (index * -1 > array.length)
-        throw new RangeError(
-          `Second argument of (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          }) is outside of the (${
-            KEYWORDS.ARRAY_TYPE
-          }) bounds (index ${index} bounds ${array.length}) (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          } ${stringifyArgs(args)})`
-        )
-      const target = array.length + index
-      while (array.length !== target) array.pop()
-    } else {
-      if (args.length !== 3)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          }) (if (>= index 0) then 3 required) (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          } ${stringifyArgs(args)})`
-        )
-      const value = evaluate(args[2], env)
-      if (value == undefined)
-        throw new RangeError(
-          `Trying to set a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
-            KEYWORDS.SET_IMMUTABLE_ARRAY
-          }). (${KEYWORDS.SET_IMMUTABLE_ARRAY} ${stringifyArgs(args)})`
         )
       array[index] = value
     }
