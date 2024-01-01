@@ -89,7 +89,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.ARRAY_OR_STRING_LENGTH
-        }) (1 required) (${KEYWORDS.ARRAY_OR_STRING_LENGTH} ${stringifyArgs(
+        }) (= 1 required) (${KEYWORDS.ARRAY_OR_STRING_LENGTH} ${stringifyArgs(
           args
         )})`
       )
@@ -107,9 +107,9 @@ const keywords = {
   [KEYWORDS.IS_ARRAY]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.IS_ARRAY}) (1 required) (${
+        `Invalid number of arguments for (${
           KEYWORDS.IS_ARRAY
-        } ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.IS_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     return +Array.isArray(array)
@@ -119,7 +119,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_NUMBER
-        }) (1 required) (${KEYWORDS.IS_NUMBER} ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.IS_NUMBER} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'number')
   },
@@ -128,7 +128,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_STRING
-        }) (1 required) (${KEYWORDS.IS_STRING} ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.IS_STRING} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'string')
   },
@@ -137,7 +137,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_FUNCTION
-        }) (1 required) (${KEYWORDS.IS_FUNCTION} ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.IS_FUNCTION} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'function')
   },
@@ -280,9 +280,9 @@ const keywords = {
   [KEYWORDS.IS_ATOM]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.IS_ATOM}) (1 required) (${
+        `Invalid number of arguments for (${
           KEYWORDS.IS_ATOM
-        } ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.IS_ATOM} ${stringifyArgs(args)})`
       )
     return isAtom(args[0], env)
   },
@@ -291,7 +291,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.FIRST_ARRAY
-        }) (1 required) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
@@ -320,7 +320,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.REST_ARRAY
-        }) (1 required) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
+        }) (= 1 required) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
@@ -342,7 +342,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.GET_ARRAY
-        }) (2 required) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
+        }) (= 2 required) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
@@ -378,27 +378,6 @@ const keywords = {
         }) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     return value
-  },
-  [KEYWORDS.LOG]: (args, env) => {
-    if (!args.length)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.LOG}) (>= 1 required) (${
-          KEYWORDS.LOG
-        } ${stringifyArgs(args)})`
-      )
-    const expressions = args.map((x) => evaluate(x, env))
-    console.log(...expressions)
-    return expressions.at(-1)
-  },
-  [KEYWORDS.CLEAR_CONSOLE]: (args) => {
-    if (args.length)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.CLEAR_CONSOLE
-        }) (0 required) (${KEYWORDS.CLEAR_CONSOLE} ${stringifyArgs(args)})`
-      )
-    console.clear()
-    return 0
   },
   [KEYWORDS.BLOCK]: (args, env) => {
     if (!args.length)
@@ -436,7 +415,7 @@ const keywords = {
   [KEYWORDS.NOT]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.NOT}) (1 required) (${
+        `Invalid number of arguments for (${KEYWORDS.NOT}) (= 1 required) (${
           KEYWORDS.NOT
         } ${stringifyArgs(args)})`
       )
@@ -445,7 +424,7 @@ const keywords = {
   [KEYWORDS.EQUAL]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.EQUAL}) (2 required) (${
+        `Invalid number of arguments for (${KEYWORDS.EQUAL}) (= 2 required) (${
           KEYWORDS.EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -470,7 +449,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.LESS_THAN
-        }) (2 required) (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
+        }) (= 2 required) (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -493,7 +472,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.GREATHER_THAN
-        }) (2 required) (${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
+        }) (= 2 required) (${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -520,7 +499,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }) (2 required) (${KEYWORDS.GREATHER_THAN_OR_EQUAL} ${stringifyArgs(
+        }) (= 2 required) (${KEYWORDS.GREATHER_THAN_OR_EQUAL} ${stringifyArgs(
           args
         )})`
       )
@@ -549,7 +528,9 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }) (2 required) (${KEYWORDS.LESS_THAN_OR_EQUAL} ${stringifyArgs(args)})`
+        }) (= 2 required) (${KEYWORDS.LESS_THAN_OR_EQUAL} ${stringifyArgs(
+          args
+        )})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -764,7 +745,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_NOT
-        }) (1 required). (${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
+        }) (= 1 required). (${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
       )
     const operand = evaluate(args[0], env)
     if (typeof operand !== 'number')
@@ -889,7 +870,7 @@ const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.THROW_ERROR
-        }) (1 required). (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)})`
+        }) (= 1 required). (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)})`
       )
     const string = evaluate(args[0], env)
     if (typeof string !== 'string')
@@ -915,18 +896,6 @@ const keywords = {
         } ${stringifyArgs(args)})`
       )
     return arrays.reduce((a, b) => a.concat(b), [])
-  },
-  [KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION]: (args, env) => {
-    if (!args.length)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
-        }) (>= 2 required). (${
-          KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
-        } ${stringifyArgs(args)})`
-      )
-    // TODO: Add validation for TCO recursion
-    return keywords[KEYWORDS.DEFINE_VARIABLE](args, env)
   },
   [KEYWORDS.IMMUTABLE_FUNCTION]: (args, env) => {
     if (!args.length)
@@ -968,6 +937,18 @@ const keywords = {
       }
       return evaluate(body, localEnv)
     }
+  },
+  [KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION]: (args, env) => {
+    if (!args.length)
+      throw new RangeError(
+        `Invalid number of arguments to (${
+          KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
+        }) (>= 2 required). (${
+          KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
+        } ${stringifyArgs(args)})`
+      )
+    // TODO: Add validation for TCO recursion
+    return keywords[KEYWORDS.DEFINE_VARIABLE](args, env)
   },
   [KEYWORDS.TEST_CASE]: (args, env) => {
     if (args.length !== 3)
@@ -1089,6 +1070,27 @@ const keywords = {
       array[index] = value
     }
     return array
+  },
+  [KEYWORDS.LOG]: (args, env) => {
+    if (!args.length)
+      throw new RangeError(
+        `Invalid number of arguments to (${KEYWORDS.LOG}) (>= 1 required) (${
+          KEYWORDS.LOG
+        } ${stringifyArgs(args)})`
+      )
+    const expressions = args.map((x) => evaluate(x, env))
+    console.log(...expressions)
+    return expressions.at(-1)
+  },
+  [KEYWORDS.CLEAR_CONSOLE]: (args) => {
+    if (args.length)
+      throw new RangeError(
+        `Invalid number of arguments to (${
+          KEYWORDS.CLEAR_CONSOLE
+        }) (= 0 required) (${KEYWORDS.CLEAR_CONSOLE} ${stringifyArgs(args)})`
+      )
+    console.clear()
+    return 0
   },
 }
 keywords[KEYWORDS.NOT_COMPILED_BLOCK] = keywords[KEYWORDS.BLOCK]

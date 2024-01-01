@@ -3,6 +3,29 @@ import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      fez(
+        `(let arr (array (array 1 2 3) (array 1 (array 1 2) 3))) 
+(let cloned (array:deep-copy arr)) 
+(array:set! (array:get (array:get cloned 1) 1) 1 20000) 
+(array arr cloned)`,
+        {
+          std: 1,
+          shake: 1,
+          mutation: 1,
+        }
+      ),
+      [
+        [
+          [1, 2, 3],
+          [1, [1, 2], 3],
+        ],
+        [
+          [1, 2, 3],
+          [1, [1, 20000], 3],
+        ],
+      ]
+    )
+    deepStrictEqual(
       fez(`(array:equal? (array "10") (array "10"))`, {
         std: 1,
         shake: 1,

@@ -259,7 +259,7 @@
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a delim (type (car b) string)) (type (car b) string))) "")))
-
+(let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a b)) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item 
     (if (and (array? item) (length item))
@@ -337,11 +337,10 @@
               (iterate result (+ i 1) bounds) result)))
       (array:set! (let iteration-result (iterate () 0 (- (length (array:get locals 1)) 1))) (length iteration-result) (array:get locals 3)))))
 
-(let array:copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) b)) ())))
+(let array:shallow-copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) b)) ())))
+(let array:deep-copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) (if (array? b) (array:deep-copy b) b))) ())))
 (let array:merge! (lambda a b (do (array:for b (lambda x (array:set! a (length a) x))) a)))
-
 (let array:swap-remove! (lambda arr i (do (array:set! arr i (array:get arr (- (length arr) 1))) (array:set! arr -1))))
-
 (let array:index-of (safety lambda arr item (do
                     (let* iterate (lambda arr i 
                           (if (length arr) 
@@ -650,6 +649,19 @@
       (callback (brray:get q index))
       (when (< index bounds) (iter (+ index 1) bounds)))))
     (iter 0 (brray:length q)))))
+(let brray:map (lambda q callback (do 
+  (let result (new:brray))
+  (let len (brray:length q))
+  (let half (math:floor (* len 0.5)))
+  (let* left (lambda index (do
+    (brray:add-to-left! result (callback (brray:get q index)))
+   (when (> index 0) (left (- index 1))))))
+ (left (- half 1))
+(let* rigth (lambda index bounds (do
+   (brray:add-to-right! result (callback (brray:get q index)))
+   (when (< index bounds) (rigth (+ index 1) bounds)))))
+ (rigth half (- len 1))
+ result)))
 (let cast:brray->array (lambda q (do
   (let out ())
   (let* iter (lambda index bounds (do
@@ -659,19 +671,19 @@
     out)))
 (let brray:balance? (lambda q (= (+ (brray:offset-right q) (brray:offset-left q)) 0)))
 (let brray:balance! (lambda q 
-                     (if (brray:balance? q) q (do
-                       (let initial (cast:brray->array q))
-                       (brray:empty! q)
-                       (let half (math:floor (* (length initial) 0.5)))
-                       (let* left (lambda index (do
-                          (brray:add-to-left! q (array:get initial index))
-                         (when (> index 0) (left (- index 1))))))
-                       (left (- half 1))
-                      (let* rigth (lambda index bounds (do
-                         (brray:add-to-right! q (array:get initial index))
-                         (when (< index bounds) (rigth (+ index 1) bounds)))))
-                       (rigth half (- (length initial) 1))
-                      q))))
+    (if (brray:balance? q) q (do
+      (let initial (cast:brray->array q))
+      (brray:empty! q)
+      (let half (math:floor (* (length initial) 0.5)))
+      (let* left (lambda index (do
+        (brray:add-to-left! q (array:get initial index))
+        (when (> index 0) (left (- index 1))))))
+      (left (- half 1))
+    (let* rigth (lambda index bounds (do
+        (brray:add-to-right! q (array:get initial index))
+        (when (< index bounds) (rigth (+ index 1) bounds)))))
+      (rigth half (- (length initial) 1))
+    q))))
 (let brray:append! (lambda q item (do (brray:add-to-right! q item) q)))
 (let brray:prepend! (lambda q item (do (brray:add-to-left! q item) q)))
 (let brray:head! (lambda q (do 
@@ -721,21 +733,21 @@ q)))
  (rigth half (- (length initial) 1))
     q)))
 (let brray:slice (lambda entity s e (do 
-      (let len (brray:length entity))
-      (let start (if (< s 0) (math:max (+ len s) 0) (math:min s len)))
-      (let end (if (< e 0) (math:max (+ len e) 0) (math:min e len)))
-      (let slice (new:brray))
-      (let slice-len (math:max (- end start) 0))
-      (let half (math:floor (* slice-len 0.5)))
-      (let* left (lambda index (do
-         (brray:add-to-left! slice (brray:get entity (+ start index)))
-         (when (> index 0) (left (- index 1))))))
-      (left (- half 1))
-      (let* rigth (lambda index bounds (do
-         (brray:add-to-right! slice (brray:get entity (+ start index)))
-         (when (< index bounds) (rigth (+ index 1) bounds)))))
-      (rigth half (- slice-len 1))
-      slice)))
+  (let len (brray:length entity))
+  (let start (if (< s 0) (math:max (+ len s) 0) (math:min s len)))
+  (let end (if (< e 0) (math:max (+ len e) 0) (math:min e len)))
+  (let slice (new:brray))
+  (let slice-len (math:max (- end start) 0))
+  (let half (math:floor (* slice-len 0.5)))
+  (let* left (lambda index (do
+      (brray:add-to-left! slice (brray:get entity (+ start index)))
+      (when (> index 0) (left (- index 1))))))
+  (left (- half 1))
+  (let* rigth (lambda index bounds (do
+      (brray:add-to-right! slice (brray:get entity (+ start index)))
+      (when (< index bounds) (rigth (+ index 1) bounds)))))
+  (rigth half (- slice-len 1))
+  slice)))
 
 (let date:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))
 (let date:add-minutes (lambda date-time minutes (+ date-time (* minutes 1000 60))))
@@ -749,3 +761,9 @@ q)))
 (let date:sub-days (lambda date-time days (- date-time (* days 1000 60 60 24))))
 (let date:sub-months (lambda date-time months (- date-time (* months 1000 60 60 24 30))))
 (let date:sub-years (lambda date-time years (- date-time (* years 1000 60 60 24 365))))
+
+(let math:permutations (lambda xs 
+  (unless (length xs) 
+              (array ())
+              (pi xs (array:flat-one) (array:map (lambda x (pi
+                              xs (array:exclude (lambda y (= x y))) (math:permutations) (array:map (lambda vs (array:fold vs (lambda a b (array:merge! a b)) (array x)))))))))))

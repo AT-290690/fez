@@ -3,6 +3,10 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(let arr (array (array 1 2 3) (array 1 (array 1 2) 3))) 
+(let cloned (array:deep-copy arr)) 
+(array:set! (array:get (array:get cloned 1) 1) 1 20000) 
+(array arr cloned)`,
       `(array
         (string:trim-right "  12 3  4  ") 
         (string:trim-left "  12 3  4  ") 

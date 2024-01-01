@@ -120,3 +120,28 @@ fez(
   { std: true, errors: true, compile: false, shake: true }
 )
 ```
+
+Tail Call Optimization:
+
+There are no loop constructs (like a "for" or "while" loop in other languages).
+That's because we don't quite need one: looping in fez is done by recursion — and the interpreter already supports that.
+But because each procedure call calls evaluate, recursing over a large number of items blows up the call stack of the interpreter.
+
+This optimization technique works only by declaring the variable with let\*
+and only when compiled to JavaScript.
+
+```lisp
+(let* sum-to (lambda n acc (if (= n 0) acc (sum-to (- n 1) (+ n acc)))))
+(sum-to 10000 0)
+```
+
+```js
+console.log(
+  fez(
+    `(let* sum-to (lambda n acc (if (= n 0) acc (sum-to (- n 1) (+ n acc)))))
+(sum-to 10000 0)`,
+    { compile: 1, eval: 1 }
+  )
+)
+// 50005000
+```
