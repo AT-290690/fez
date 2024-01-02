@@ -7,7 +7,8 @@ import {
   VALUE,
   WORD,
 } from './enums.js'
-import { isLeaf } from './parser.js'
+import { isLeaf, parse } from './parser.js'
+import { removeNoCode } from './utils.js'
 const tops = []
 const indent = (level) => ' '.repeat(level)
 const singleArg = (Arguments) => (Arguments.length === 0 ? '' : ' ')
@@ -36,14 +37,16 @@ const traverse = (exp, level = 0) => {
       case KEYWORDS.ARRAY_TYPE:
       case KEYWORDS.CHAR_CODE_TYPE:
       case KEYWORDS.CHAR_TYPE:
+      case KEYWORDS.CALL_FUNCTION:
+      case KEYWORDS.DEFINE_VARIABLE:
         return `(${token}${singleArg(Arguments)}${Arguments.map((x) =>
           traverse(x).toString()
         ).join(' ')})`
-      case KEYWORDS.CALL_FUNCTION:
-      case KEYWORDS.DEFINE_VARIABLE:
-        return `\n${indent(level)}(${token}${singleArg(
-          Arguments
-        )}${Arguments.map((x) => traverse(x, ++level)).join(' ')})`
+      // case KEYWORDS.CALL_FUNCTION:
+      // case KEYWORDS.DEFINE_VARIABLE:
+      //   return `\n${indent(level)}(${token}${singleArg(
+      //     Arguments
+      //   )}${Arguments.map((x) => traverse(x, ++level)).join(' ')})`
       default: {
         return `\n${indent(level)}(${token}${singleArg(
           Arguments
@@ -64,4 +67,25 @@ export const format = (AST) => {
     /\n\s*\n\s*\n/g,
     ''
   )}`
+}
+
+export const formatWithPreservedComments = (source) => {
+  const commentIdentifier = '(array "_comment_"'
+  const value = source
+    .split('\n')
+    .map((x) =>
+      x.trim()[0] === ';' ? `${commentIdentifier} "${x.replace(';', '')}")` : x
+    )
+    .join('\n')
+
+  return format(parse(removeNoCode(value)))
+    .split('\n')
+    .map((x) => {
+      if (x.includes(commentIdentifier)) {
+        const str = x.replace(commentIdentifier, '')
+        return `;${str.substring(2, str.length - 2)}`
+      } else return x
+    })
+    .join('\n')
+    .trim()
 }

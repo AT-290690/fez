@@ -409,8 +409,8 @@
    (array:fold (lambda acc pair (if (< (car pair) (car (cdr pair))) 0 acc)) 1))))))
 
 (let string:equal? (lambda L R (when (= (length L) (length R)) (do 
-  (let a (cast:string->char-codes (type R string)))
-  (let b (cast:string->char-codes (type L string)))
+  (let a (cast:string->char-codes R))
+  (let b (cast:string->char-codes L))
   (pi 
    a
    (array:zip b)
@@ -601,7 +601,7 @@
               (array ()))
               (array:map (lambda x (array:join x ""))))))
 
-(let string:seprator (lambda str separator (pi str (type array)
+(let string:separator (lambda str separator (pi str (type array)
               (array:fold (lambda a b (do 
               (let prev (array:get a -1))
                 (if (string:equal? b separator) 

@@ -321,6 +321,7 @@ const compile = (tree, Variables) => {
       case KEYWORDS.ATOM:
       case KEYWORDS.TEST_CASE:
       case KEYWORDS.TEST_BED:
+      case KEYWORDS.DOC:
         return ''
       default: {
         const camelCased = lispToJavaScriptVariableName(token)

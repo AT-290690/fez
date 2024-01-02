@@ -77,4 +77,5 @@ export const KEYWORDS = {
   SERIALISE: 'serialise',
 
   SET_ARRAY: 'array:set!',
+  DOC: 'fez-manual',
 }
