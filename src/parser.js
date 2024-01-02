@@ -49,5 +49,6 @@ export const stringify = (ast) => {
         .join(' ')})`
   else if (typeof ast === 'string') return `"${ast}"`
   else if (typeof ast === 'function') return '()'
+  else if (typeof ast === 'boolean') return +ast
   else return ast
 }

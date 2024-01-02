@@ -1,5 +1,5 @@
-import { format, formatWithPreservedComments } from '../src/formatter.js'
-import { parse, stringify } from '../src/parser.js'
+import { formatWithPreservedComments } from '../src/formatter.js'
+import { stringify } from '../src/parser.js'
 import { compress, decompress, fez, removeNoCode } from '../src/utils.js'
 import { CodeMirror } from './fez.editor.bundle.js'
 let MUTATION = 1
