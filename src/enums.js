@@ -69,13 +69,14 @@ export const KEYWORDS = {
   TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
   IMMUTABLE_FUNCTION: 'safety',
   NOT_COMPILED_BLOCK: 'void',
-  LOG: 'log!',
-  CLEAR_CONSOLE: 'clear!',
 
   TEST_CASE: 'case',
   TEST_BED: 'assert',
   SERIALISE: 'serialise',
 
+  LOG: 'log!',
+  CLEAR_CONSOLE: 'clear!',
   SET_ARRAY: 'array:set!',
+
   DOC: 'fez-manual',
 }
