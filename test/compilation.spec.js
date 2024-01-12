@@ -3,6 +3,18 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `; solve fizz-buzz for a single number
+      (let fizz-buzz (lambda n
+          (cond
+            (= (mod n 15) 0) "Fizz Buzz"
+            (= (mod n 3) 0) "Fizz"
+            (= (mod n 5) 0) "Buzz"
+            (*) n)))
+      
+      ; log fizz buzz for 100 numbers
+        (pi
+          (math:range 1 15)
+          (array:map fizz-buzz))`,
       `(let arr (array (array 1 2 3) (array 1 (array 1 2) 3))) 
 (let cloned (array:deep-copy arr)) 
 (array:set! (array:get (array:get cloned 1) 1) 1 20000) 

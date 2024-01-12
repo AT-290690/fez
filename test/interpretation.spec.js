@@ -119,8 +119,8 @@ describe('Interpretation', () => {
               (*) n)))
         
         ; log fizz buzz for 100 numbers
-          (pi 
-            (math:range 1 15) 
+          (pi
+            (math:range 1 15)
             (array:map fizz-buzz))`,
         { std: 1, shake: 1 }
       ),
