@@ -1,4 +1,4 @@
-import { formatWithPreservedComments } from '../src/formatter.js'
+// import { formatWithPreservedComments } from '../src/formatter.js'
 import { stringify } from '../src/parser.js'
 import { compress, decompress, fez, removeNoCode } from '../src/utils.js'
 import { CodeMirror } from './fez.editor.bundle.js'
@@ -66,7 +66,7 @@ document.addEventListener('keydown', (e) => {
     e = e || window.event
     e.preventDefault()
     e.stopPropagation()
-    editor.setValue(formatWithPreservedComments(editor.getValue()))
+    editor.setValue(editor.getValue())
     run()
     return
   }
