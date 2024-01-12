@@ -66,7 +66,6 @@ document.addEventListener('keydown', (e) => {
     e = e || window.event
     e.preventDefault()
     e.stopPropagation()
-    editor.setValue(editor.getValue())
     run()
     return
   }
