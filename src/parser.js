@@ -1,7 +1,7 @@
 import { APPLY, ATOM, WORD } from './enums.js'
 import { escape } from './utils.js'
 export const leaf = (type, value) => [type, value]
-export const isLeaf = (tree) => typeof tree[0] === 'string'
+export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
 export const parse = (source) => {
   const tree = []
   let head = tree,

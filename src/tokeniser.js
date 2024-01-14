@@ -1,9 +1,8 @@
 import std from '../lib/baked/std.js'
 import { TYPE, VALUE, WORD, KEYWORDS, APPLY } from './enums.js'
-import { evaluate } from './interpreter.js'
+import { evaluate, isAtom } from './interpreter.js'
 import { stringify } from './parser.js'
 import {
-  isAtom,
   isEqual,
   isEqualTypes,
   isForbiddenVariableName,
@@ -251,9 +250,8 @@ const keywords = {
           KEYWORDS.CONDITION
         } ${stringifyArgs(args)})`
       )
-    for (let i = 0; i < args.length; i += 2) {
+    for (let i = 0; i < args.length; i += 2)
       if (evaluate(args[i], env)) return evaluate(args[i + 1], env)
-    }
     return 0
   },
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {

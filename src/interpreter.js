@@ -4,7 +4,7 @@ import { keywords } from './tokeniser.js'
 import { stringifyArgs } from './utils.js'
 
 export const evaluate = (exp, env) => {
-  const [first, ...rest] = !isLeaf(exp) ? exp : [exp]
+  const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
   switch (first[TYPE]) {
     case WORD: {
@@ -30,6 +30,13 @@ export const evaluate = (exp, env) => {
       throw new ReferenceError(
         `Attempting to acces Undefined near ${stringifyArgs(exp)}`
       )
+  }
+}
+export const isAtom = (arg, env) => {
+  if (arg[TYPE] === ATOM) return 1
+  else {
+    const atom = evaluate(arg, env)
+    return +(typeof atom === 'number' || typeof atom === 'string')
   }
 }
 export const run = (tree, env = {}) =>

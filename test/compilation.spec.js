@@ -3,6 +3,23 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(let logic-a (lambda a b
+        (if (or (= b -1) (> a b)) "a"
+            (if (and (> b 2) (< a 4)) "b" "c"))))
+     
+     ; De Morgan's First Law: ¬(P ∧ Q) is equivalent to (¬P ∨ ¬Q)
+     ; De Morgan's Second Law: ¬(P ∨ Q) is equivalent to (¬P ∧ ¬Q)
+     (let logic-b (lambda a b
+         ; Swapping the consequent with the alternative in the condition by using (unless) instead of (if)
+         ; The condition (or (= b -1) (> a b)) has been changed to (and (not (= b -1)) (not (> a b))), applying De Morgan's First Law.
+         ; The condition (and (> b 2) (< a 4)) has been changed to (or (not (> b 2)) (not (< a 4))), applying De Morgan's Second Law.
+         (unless (and (not (= b -1)) (not (> a b))) "a"
+                 (unless (or (not (> b 2)) (not (< a 4))) "b" "c"))))
+     
+     (array
+        (logic-a 0 -1) (logic-b 0 -1)
+        (logic-a 1 3) (logic-b 1 3)
+        (logic-a 1 2) (logic-b 1 2))`,
       `; solve fizz-buzz for a single number
       (let fizz-buzz (lambda n
           (cond

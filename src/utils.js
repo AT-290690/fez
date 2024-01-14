@@ -9,7 +9,8 @@ import {
   VALUE,
   WORD,
 } from './enums.js'
-import { evaluate, run } from './interpreter.js'
+import { run } from './interpreter.js'
+import { run as runPlain } from './plain/interpreter.js'
 import { isLeaf, parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
@@ -73,13 +74,6 @@ export const isForbiddenVariableName = (name) => {
       return true
     default:
       return false
-  }
-}
-export const isAtom = (arg, env) => {
-  if (arg[TYPE] === ATOM) return 1
-  else {
-    const atom = evaluate(arg, env)
-    return +(typeof atom === 'number' || typeof atom === 'string')
   }
 }
 export const isEqual = (a, b) =>
@@ -171,6 +165,12 @@ export const runFromInterpreted = (source, env = {}) => {
   )
   run(tree, env)
 }
+export const runFromInterpretedPlain = (source, env = {}) => {
+  const tree = parse(
+    handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
+  )
+  runPlain(tree, env)
+}
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
@@ -202,7 +202,7 @@ export const fez = (source, options = {}) => {
       const js = Object.values(comp(deepClone(ast))).join('')
       return options.eval ? eval(js) : js
     }
-    return run(ast, env)
+    return options.errors ? run(ast, env) : runPlain(ast, env)
   } catch (error) {
     const err = error.message
       .replace("'[object Array]'", '(array)')
@@ -277,6 +277,8 @@ export const decompress = (raw) => {
   for (const tok of runes) result += tok
   return result
 }
+// shake(parse(removeNoCode(source)), std)
+export const shake = (parsed, std) => [...treeShake(parsed, std), ...parsed]
 export const lispToJavaScriptVariableName = (name) =>
   toCamelCase(
     arrowToTo(

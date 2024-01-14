@@ -35,7 +35,7 @@ const run = () => {
       std: 1,
       shake: 1,
       throw: 1,
-      errors: 0,
+      errors: 1,
       mutation: MUTATION,
     })
     consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
