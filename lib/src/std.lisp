@@ -93,8 +93,6 @@
 (let math:negative? (safety lambda num (< num 0)))
 (let math:zero? (safety lambda num (= num 0)))
 (let math:divisible? (safety lambda a b (= (mod a b) 0)))
-(let math:ascending? (lambda a b (> a b)))
-(let math:descending? (lambda a b (< a b)))
 (let math:prime? (lambda n 
       (cond 
         (= n 1) 0
