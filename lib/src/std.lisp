@@ -16,7 +16,7 @@
 (let math:permutations (lambda xs 
   (unless (length xs) 
               (array ())
-              (pi xs (array:flat-one) (array:map (lambda x (pi
+              (pi xs (array:flat-one) (array:unique) (array:map (lambda x (pi
                               xs (array:exclude (lambda y (= x y))) (math:permutations) (array:map (lambda vs (array:fold vs (lambda a b (array:merge! a b)) (array x)))))))))))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
