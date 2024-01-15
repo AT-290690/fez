@@ -3,6 +3,10 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(pi (array 1 2 3 4 5)
+      (array:enumerated-map (lambda x i (* x i)))
+      (array:enumerated-select (lambda . i (> i 2))))`,
+      `(math:permutations (array 1 2 3 4))`,
       `(let logic-a (lambda a b
         (if (or (= b -1) (> a b)) "a"
             (if (and (> b 2) (< a 4)) "b" "c"))))

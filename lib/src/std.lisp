@@ -16,8 +16,10 @@
 (let math:permutations (lambda xs 
   (unless (length xs) 
               (array ())
-              (pi xs (array:flat-one) (array:unique) (array:map (lambda x (pi
-                              xs (array:exclude (lambda y (= x y))) (math:permutations) (array:map (lambda vs (array:fold vs (lambda a b (array:merge! a b)) (array x)))))))))))
+              (pi xs (array:enumerated-map (lambda x i (pi
+                              xs (array:enumerated-exclude (lambda . j (= i j))) 
+                                 (math:permutations) 
+                                 (array:map (lambda vs (array:merge (array x) vs)))))) (array:flat-one)))))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
 (let math:lesser-or-equal? (lambda a b (<= a b)))
@@ -335,6 +337,37 @@
                               (if (= (car arr) item) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
 (let array:enumerate (lambda arr (array:zip (math:sequence arr) arr)))
+(let array:enumerated-map (lambda arr callback (do
+                  (let* iterate (lambda arr i out  
+                        (if  (length arr) 
+                              (iterate (cdr arr) (+ i 1)
+                                (array:merge! out (array (callback (car arr) i))))
+                              out)))
+                      (iterate arr 0 ()))))
+(let array:enumerated-select (lambda arr callback (do
+                  (let* iterate (lambda arr i out  
+                        (if (length arr)
+                            (iterate (cdr arr) (+ i 1) 
+                                      (if (callback (car arr) i) 
+                                            (array:merge! out (array (car arr))) 
+                                            out))
+                            out)))
+                      (iterate arr 0 ()))))
+(let array:enumerated-exclude (lambda arr callback (do
+                  (let* iterate (lambda arr i out  
+                        (if (length arr)
+                            (iterate (cdr arr) (+ i 1) 
+                                      (if (not (callback (car arr) i)) 
+                                            (array:merge! out (array (car arr))) 
+                                            out))
+                            out)))
+                      (iterate arr 0 ()))))
+(let array:enumerated-fold (lambda arr callback initial (do
+                  (let* iterate (lambda arr i out
+                        (if (length arr)
+                            (iterate (cdr arr) (+ i 1) (callback out (car arr) i))
+                            out)))
+                      (iterate arr 0 initial))))
 (let array:find-index (safety lambda arr callback (do
                     (let* iterate (lambda arr i 
                           (if (length arr) 

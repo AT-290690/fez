@@ -3,6 +3,45 @@ import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      fez(
+        ` (pi (array 1 2 3 4 5)
+  (array:enumerated-map (lambda x i (* x i)))
+  (array:enumerated-select (lambda . i (> i 2)))
+)`,
+        { std: 1, shake: 1 }
+      ),
+      [12, 20]
+    )
+    deepStrictEqual(
+      fez(`(math:permutations (array 1 2 3 4))`, { std: 1, shake: 1 }),
+      [
+        [1, 2, 3, 4],
+        [1, 2, 4, 3],
+        [1, 3, 2, 4],
+        [1, 3, 4, 2],
+        [1, 4, 2, 3],
+        [1, 4, 3, 2],
+        [2, 1, 3, 4],
+        [2, 1, 4, 3],
+        [2, 3, 1, 4],
+        [2, 3, 4, 1],
+        [2, 4, 1, 3],
+        [2, 4, 3, 1],
+        [3, 1, 2, 4],
+        [3, 1, 4, 2],
+        [3, 2, 1, 4],
+        [3, 2, 4, 1],
+        [3, 4, 1, 2],
+        [3, 4, 2, 1],
+        [4, 1, 2, 3],
+        [4, 1, 3, 2],
+        [4, 2, 1, 3],
+        [4, 2, 3, 1],
+        [4, 3, 1, 2],
+        [4, 3, 2, 1],
+      ]
+    )
+    deepStrictEqual(
       fez(`(let logic-a (lambda a b
       (if (or (= b -1) (> a b)) "a"
           (if (and (> b 2) (< a 4)) "b" "c"))))
