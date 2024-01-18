@@ -236,6 +236,28 @@ export const toCamelCase = (name) => {
   }
   return out
 }
+export const keywordToHelper = (name) => {
+  switch (name) {
+    case KEYWORDS.ADDITION:
+      return '__add'
+    case KEYWORDS.MULTIPLICATION:
+      return '__mult'
+    case KEYWORDS.SUBTRACTION:
+      return '__sub'
+    case KEYWORDS.GREATHER_THAN:
+      return '__gt'
+    case KEYWORDS.EQUAL:
+      return '__eq'
+    case KEYWORDS.GREATHER_THAN_OR_EQUAL:
+      return '__gteq'
+    case KEYWORDS.LESS_THAN:
+      return '__lt'
+    case KEYWORDS.LESS_THAN_OR_EQUAL:
+      return '__lteq'
+    default:
+      return name
+  }
+}
 export const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
     for (const leaf of tree) {
@@ -286,7 +308,9 @@ export const lispToJavaScriptVariableName = (name) =>
         colonNamesTo$(
           exclamationMarkMarkToLodash(
             questionMarkToLodash(
-              commaToLodash(moduleNameToLodashes(earMuffsToLodashes(name)))
+              commaToLodash(
+                moduleNameToLodashes(earMuffsToLodashes(keywordToHelper(name)))
+              )
             )
           )
         )
