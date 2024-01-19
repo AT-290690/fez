@@ -3,6 +3,58 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `
+(let sample
+"0 3 6 9 12 15
+1 3 6 10 15 21
+10 13 16 21 30 45")
+(let parse (lambda input (pi input (string:split "\n") (array:map (lambda x (pi x (string:split " ") (cast:strings->numbers)))))))
+(let append (lambda out arr (do 
+      (if (array:some? arr (safety lambda x (not (= x 0)))) 
+        (do 
+          (let seq (array:fold 
+            (array:zip arr (array:slice arr 1 (length arr)))
+            (safety lambda a b (array:merge a (array (- (car (cdr b)) (car b)))))
+            ()))
+          (append (array:merge out (array arr)) seq))
+      (array:merge out (array arr)))
+    )))
+    
+(let part1 (lambda input (do 
+  (pi 
+    input 
+    (array:map (lambda x (append () x)))
+    (array:fold (lambda a b 
+      (array:merge a 
+        (array (array:fold b (safety lambda a b (+ a (array:get b -1))) 0)))) ())
+    (math:summation)))))
+
+(let part2 (lambda input (do 
+  (pi 
+    input 
+    (array:map (lambda x (append () x)))
+    (array:fold (lambda a b 
+      (array:merge a 
+        (array (array:fold (array:reverse b) (safety lambda a b (- (array:get b 0) a)) 0)))) ())
+    (math:summation)))))
+(array (part1 (parse sample)) (part2 (parse sample)) 2))`,
+      `(let parse (lambda input (string:split input "\n")))
+      (let part1 (lambda input (pi 
+                                input 
+                                (array:map (lambda str (do 
+                                    (let num (pi 
+                                              str 
+                                              (cast:string->char-codes)
+                                              (array:select (lambda char (< char (cast:char->char-code "a"))))
+                                              (cast:char-codes->chars)))
+                                    (cast:string->number (string:merge (array:get num 0) (array:get num -1))))))
+                                (math:summation))))
+(let sample "1abc2
+pqr3stu8vwx
+a1b2c3d4e5f
+treb7uchet")
+(pi sample (parse) (part1))
+      `,
       `(pi (array 1 2 3 4 5)
       (array:enumerated-map (lambda x i (* x i)))
       (array:enumerated-select (lambda . i (> i 2))))`,
