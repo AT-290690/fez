@@ -2,6 +2,23 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
+    strictEqual(
+      fez(
+        `(let me (array () () () ()))
+(map:set! me "name" "Anthony")
+(map:set! me "age" "100")
+(map:set! me "job" "programmer")
+(map:set! me "interests" (array "animation" "lisp"))
+
+(let copy (array:deep-copy me))
+(map:remove! copy "name")
+(cast:map->string copy)`,
+        { std: 1, shake: 1, errors: 1, mutation: 1 }
+      ),
+      `job -> programmer
+interests -> animation,lisp
+age -> 100`
+    )
     deepStrictEqual(
       fez(
         `(let sample

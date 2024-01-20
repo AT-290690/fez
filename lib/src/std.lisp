@@ -302,6 +302,13 @@
 (let cast:char-code->char (safety lambda ch (type ch char)))
 (let cast:char-codes->chars (lambda arr (pi arr (array:map (safety lambda x (type x char))))))
 (let cast:char-codes->string (lambda arr (pi arr (array:map (safety lambda x (type x char))) (cast:chars->string))))
+(let cast:table->array (lambda set (array:select (array:flat set) atom?)))
+(let cast:map->string (lambda table (pi 
+  table 
+  (array:select length)
+  (array:flat-one)
+  (array:map (lambda y (array:join y " -> ")))
+  (array:join "\n"))))
 (let cast:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
@@ -579,8 +586,6 @@
         (pi b (cast:table->array) (array:for (lambda element (set:add! out element))))
         out)))
 
-(let cast:table->array (lambda set (array:select (array:flat set) atom?)))
-
 (let set:empty! (lambda table (array:map table empty!)))
 (let map:empty! (lambda table (array:map table empty!)))
 
@@ -618,11 +623,6 @@
               (let found (array:find current (lambda x (string:equal? (type key string) (type (array:get x 0) string)))))
               (when (length found) (array:get found 1)))))))
 
-  (let cast:map->string (lambda table (pi 
-    table 
-    (array:select length) 
-    (array:map (lambda x (array:join (array:map x (lambda y (array:join y " -> "))) " "))) 
-    (array:join "\n"))))
     
 (let map:has? (lambda table key 
       (and (array:in-bounds? table 

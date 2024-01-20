@@ -3,6 +3,15 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(let me (array () () () ()))
+(map:set! me "name" "Anthony")
+(map:set! me "age" "33")
+(map:set! me "job" "programmer")
+(map:set! me "interests" (array "animation" "lisp"))
+
+(let copy (array:deep-copy me))
+(map:remove! copy "name")
+(cast:map->string copy)`,
       `
 (let sample
 "0 3 6 9 12 15
