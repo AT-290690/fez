@@ -80,6 +80,8 @@
 (let math:clamp (safety lambda x limit (if (> x limit) limit x)))
 (let math:odd? (safety lambda x (= (mod x 2) 1)))
 (let math:even? (safety lambda x (= (mod x 2) 0)))
+(let math:enumerated-odd? (safety lambda . i (= (mod i 2) 1)))
+(let math:enumerated-even? (safety lambda . i (= (mod i 2) 0)))
 (let math:sign (safety lambda n (if (< n 0) -1 1)))
 (let math:radians (lambda deg (* deg math:PI (/ 180))))
 (let math:average (safety lambda x y (* (+ x y) 0.5)))
@@ -257,6 +259,9 @@
     (let left (car sorted))
     (let right (car (cdr sorted)))
     (array:merge (array:sort left callback) (array pivot) (array:sort right callback)))))))
+(let array:sorted-ascending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (>= x (array:get arr (- i 1))))))))
+(let array:sorted-descending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (<= x (array:get arr (- i 1))))))))
+(let array:sorted-by? (lambda arr callback (array:enumerated-every? arr (lambda x i (or (= i 0) (callback x (array:get arr (- i 1))))))))
 (let array:set (lambda arr index item (array:set! (type arr array) index item)))
 (let array:adjacent-difference (lambda arr callback (do 
   (let len (length arr))
@@ -401,6 +406,18 @@
                     (let* iterate (lambda arr i 
                           (if (length arr) 
                               (if (callback (car arr) i) i (iterate (cdr arr) (+ i 1))) -1)))
+                        (iterate arr 0))))
+(let array:enumerated-every? (safety lambda arr callback (do
+                    (let* iterate (lambda arr i 
+                          (if (and (length arr) (callback (car arr) i)) 
+                              (iterate (cdr arr) (+ i 1))
+                              (not (length arr)))))
+                        (iterate arr 0))))
+(let array:enumerated-some? (safety lambda arr callback (do
+                    (let* iterate (lambda arr i 
+                          (if (and (length arr) (not (callback (car arr) i))) 
+                              (iterate (cdr arr) (+ i 1))
+                              (type (length arr) boolean))))
                         (iterate arr 0))))
 (let array:find-index (safety lambda arr callback (do
                     (let* iterate (lambda arr i 

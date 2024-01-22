@@ -49,11 +49,11 @@ let result=fn(...args)
 while(typeof result==='function')result=result()
 return result
   }`,
-  numberPredicate: `numberPredicate=(number)=>typeof number==='number'`,
-  stringPredicate: `stringPredicate=(string)=>typeof string==='string'`,
-  lambdaPredicate: `lambdaPredicate=(lambda)=>typeof lambda==='function'`,
-  arrayPredicate: `arrayPredicate=(array)=>Array.isArray(array)`,
-  atomPredicate: `atomPredicate=(value)=>typeof value==='number'||typeof value==='string'`,
+  numberPredicate: `numberPredicate=(number)=>+(typeof number==='number')`,
+  stringPredicate: `stringPredicate=(string)=>+(typeof string==='string')`,
+  lambdaPredicate: `lambdaPredicate=(lambda)=>+(typeof lambda==='function')`,
+  arrayPredicate: `arrayPredicate=(array)=>+Array.isArray(array)`,
+  atomPredicate: `atomPredicate=(value)=>+(typeof value==='number'||typeof value==='string')`,
   error: `error=(error)=>{ 
     throw new Error(error)
 }`,
@@ -87,7 +87,6 @@ return result
       }
     }`,
 }
-const handleBoolean = (source) => `+${source}`
 const semiColumnEdgeCases = new Set([
   ';)',
   ';-',
@@ -109,10 +108,10 @@ const semiColumnEdgeCases = new Set([
   ';]',
 ])
 
-const parse = (Arguments, Drills) => Arguments.map((x) => compile(x, Drills))
-const parseArgs = (Arguments, Drills, separator = ',') =>
-  parse(Arguments, Drills).join(separator)
-const compile = (tree, Drills) => {
+const parse = (Arguments, Drill) => Arguments.map((x) => compile(x, Drill))
+const parseArgs = (Arguments, Drill, separator = ',') =>
+  parse(Arguments, Drill).join(separator)
+const compile = (tree, Drill) => {
   if (!tree) return ''
   const [first, ...Arguments] = !isLeaf(tree) ? tree : [tree]
   if (first == undefined) return '[];'
@@ -122,55 +121,47 @@ const compile = (tree, Drills) => {
       case KEYWORDS.BLOCK: {
         if (Arguments.length > 1) {
           return `(${Arguments.map((x) =>
-            (compile(x, Drills) ?? '').toString().trimStart()
+            (compile(x, Drill) ?? '').toString().trimStart()
           )
             .filter(Boolean)
             .join(',')});`
         } else {
-          const res = compile(Arguments[0], Drills)
+          const res = compile(Arguments[0], Drill)
           return res !== undefined ? res.toString().trim() : ''
         }
       }
       case KEYWORDS.CALL_FUNCTION: {
         const [first, ...rest] = Arguments
-        const apply = compile(first, Drills)
+        const apply = compile(first, Drill)
         return `${
           apply[apply.length - 1] === ';'
             ? apply.substring(0, apply.length - 1)
             : apply
-        }(${parseArgs(rest, Drills)})`
+        }(${parseArgs(rest, Drill)})`
       }
       case KEYWORDS.DEFINE_VARIABLE: {
         let name,
           out = '(('
         if (Arguments[0][TYPE] === WORD) {
           name = lispToJavaScriptVariableName(Arguments[0][VALUE])
-          Drills.Variables.add(name)
+          Drill.Variables.add(name)
         }
-        out += `${name}=${compile(Arguments[1], Drills)}`
+        out += `${name}=${compile(Arguments[1], Drill)}`
         out += `),${name});`
         return out
       }
       case KEYWORDS.IS_STRING:
-        Drills.Helpers.add('stringPredicate')
-        return handleBoolean(
-          `stringPredicate(${compile(Arguments[0], Drills)});`
-        )
+        Drill.Helpers.add('stringPredicate')
+        return `stringPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.IS_NUMBER:
-        Drills.Helpers.add('numberPredicate')
-        return handleBoolean(
-          `numberPredicate(${compile(Arguments[0], Drills)});`
-        )
+        Drill.Helpers.add('numberPredicate')
+        return `numberPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.IS_FUNCTION:
-        Drills.Helpers.add('lambdaPredicate')
-        return handleBoolean(
-          `lambdaPredicate(${compile(Arguments[0], Drills)});`
-        )
+        Drill.Helpers.add('lambdaPredicate')
+        return `lambdaPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.IS_ARRAY:
-        Drills.Helpers.add('arrayPredicate')
-        return handleBoolean(
-          `arrayPredicate(${compile(Arguments[0], Drills)});`
-        )
+        Drill.Helpers.add('arrayPredicate')
+        return `arrayPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.NUMBER_TYPE:
         return '0'
       case KEYWORDS.BOOLEAN_TYPE:
@@ -181,33 +172,33 @@ const compile = (tree, Drills) => {
         return Arguments.length === 2 &&
           Arguments[1][TYPE] === WORD &&
           Arguments[1][VALUE] === 'length'
-          ? `(new Array(${compile(Arguments[0], Drills)}).fill(0))`
-          : `[${parseArgs(Arguments, Drills)}];`
+          ? `(new Array(${compile(Arguments[0], Drill)}).fill(0))`
+          : `[${parseArgs(Arguments, Drill)}];`
       case KEYWORDS.ARRAY_OR_STRING_LENGTH:
-        Drills.Helpers.add('length')
-        return `length(${compile(Arguments[0], Drills)})`
+        Drill.Helpers.add('length')
+        return `length(${compile(Arguments[0], Drill)})`
       case KEYWORDS.IS_ATOM:
-        Drills.Helpers.add('atomPredicate')
-        return handleBoolean(`atomPredicate(${compile(Arguments[0], Drills)});`)
+        Drill.Helpers.add('atomPredicate')
+        return `atomPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.FIRST_ARRAY:
-        Drills.Helpers.add('car')
-        return `car(${compile(Arguments[0], Drills)});`
+        Drill.Helpers.add('car')
+        return `car(${compile(Arguments[0], Drill)});`
       case KEYWORDS.REST_ARRAY:
-        Drills.Helpers.add('cdr')
-        return `cdr(${compile(Arguments[0], Drills)});`
+        Drill.Helpers.add('cdr')
+        return `cdr(${compile(Arguments[0], Drill)});`
       case KEYWORDS.GET_ARRAY:
-        Drills.Helpers.add('array_get')
-        return `array_get(${compile(Arguments[0], Drills)}, ${compile(
+        Drill.Helpers.add('array_get')
+        return `array_get(${compile(Arguments[0], Drill)}, ${compile(
           Arguments[1],
-          Drills
+          Drill
         )});`
       case KEYWORDS.MERGE:
-        Drills.Helpers.add('array_merge')
-        return `array_merge(${parseArgs(Arguments, Drills)});`
+        Drill.Helpers.add('array_merge')
+        return `array_merge(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.ANONYMOUS_FUNCTION: {
         const functionArgs = Arguments
         const body = Arguments.pop()
-        const InnerDrills = { Variables: new Set(), Helpers: Drills.Helpers }
+        const InnerDrills = { Variables: new Set(), Helpers: Drill.Helpers }
         const evaluatedBody = compile(body, InnerDrills)
         const vars = InnerDrills.Variables.size
           ? `var ${[...InnerDrills.Variables].join(',')};`
@@ -228,12 +219,12 @@ const compile = (tree, Drills) => {
         const arg = Arguments[0]
         name = lispToJavaScriptVariableName(arg[VALUE])
         newName = `rec_${performance.now().toString().replace('.', 7)}`
-        Drills.Variables.add(name)
-        Drills.Variables.add(newName)
-        Drills.Helpers.add('__tco')
+        Drill.Variables.add(name)
+        Drill.Variables.add(newName)
+        Drill.Helpers.add('__tco')
         const functionArgs = Arguments[1].slice(1)
         const body = functionArgs.pop()
-        const FunctionDrills = { Variables: new Set(), Helpers: Drills.Helpers }
+        const FunctionDrills = { Variables: new Set(), Helpers: Drill.Helpers }
         deepRename(arg[VALUE], newName, body)
         const evaluatedBody = compile(body, FunctionDrills)
         const vars = FunctionDrills.Variables.size
@@ -241,44 +232,44 @@ const compile = (tree, Drills) => {
           : ''
         out += `${name}=(__tco(${newName}=(${parseArgs(
           functionArgs,
-          Drills
+          Drill
         )})=>{${vars}return ${evaluatedBody.toString().trimStart()}};`
         out += `, ${newName}))), ${name});`
         return out
       }
       case KEYWORDS.AND:
-        return `(${parseArgs(Arguments, Drills, '&&')});`
+        return `(${parseArgs(Arguments, Drill, '&&')});`
       case KEYWORDS.OR:
-        return `((${parseArgs(Arguments, Drills, '||')}) || 0);`
+        return `((${parseArgs(Arguments, Drill, '||')}) || 0);`
       case KEYWORDS.CONCATENATION:
-        return '(' + parseArgs(Arguments, Drills, '+') + ');'
+        return '(' + parseArgs(Arguments, Drill, '+') + ');'
       case KEYWORDS.EQUAL:
-        return handleBoolean(`(${parseArgs(Arguments, Drills, '===')});`)
+        return `+(${parseArgs(Arguments, Drill, '===')});`
       case KEYWORDS.GREATHER_THAN_OR_EQUAL:
       case KEYWORDS.LESS_THAN_OR_EQUAL:
       case KEYWORDS.GREATHER_THAN:
       case KEYWORDS.LESS_THAN:
-        return handleBoolean(`(${parseArgs(Arguments, Drills, token)});`)
+        return `+(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.SUBTRACTION:
         return Arguments.length === 1
-          ? `(-${compile(Arguments[0], Drills)});`
-          : `(${parse(Arguments, Drills)
+          ? `(-${compile(Arguments[0], Drill)});`
+          : `(${parse(Arguments, Drill)
               // Add space so it doesn't consider it 2--1 but 2- -1
               .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
               .join(token)});`
       case KEYWORDS.MULTIPLICATION:
         return Arguments.length
-          ? `(${parseArgs(Arguments, Drills, token)});`
+          ? `(${parseArgs(Arguments, Drill, token)});`
           : `(1);`
       case KEYWORDS.DIVISION:
         return Arguments.length
           ? Arguments.length === 1
-            ? `(1/${compile(Arguments[0], Drills)});`
-            : `(${parseArgs(Arguments, Drills, token)});`
+            ? `(1/${compile(Arguments[0], Drill)});`
+            : `(${parseArgs(Arguments, Drill, token)});`
           : `(0);`
       case KEYWORDS.ADDITION:
         return Arguments.length
-          ? `(${parseArgs(Arguments, Drills, token)});`
+          ? `(${parseArgs(Arguments, Drill, token)});`
           : `(0);`
       case KEYWORDS.BITWISE_AND:
       case KEYWORDS.BITWISE_OR:
@@ -286,74 +277,71 @@ const compile = (tree, Drills) => {
       case KEYWORDS.BITWISE_LEFT_SHIFT:
       case KEYWORDS.BITWISE_RIGHT_SHIFT:
       case KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT:
-        return `(${parseArgs(Arguments, Drills, token)});`
+        return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.REMAINDER_OF_DIVISION:
-        return `(${compile(Arguments[0], Drills)}%${compile(
+        return `(${compile(Arguments[0], Drill)}%${compile(
           Arguments[1],
-          Drills
+          Drill
         )});`
       case KEYWORDS.BIT_TYPE:
-        return `(${compile(Arguments[0], Drills)}>>>0).toString(2)`
+        return `(${compile(Arguments[0], Drill)}>>>0).toString(2)`
       case KEYWORDS.BITWISE_NOT:
-        return `~(${compile(Arguments[0], Drills)})`
+        return `~(${compile(Arguments[0], Drill)})`
       case KEYWORDS.NOT:
-        return `(${handleBoolean(`!${compile(Arguments[0], Drills)}`)})`
+        return `(+!${compile(Arguments[0], Drill)})`
       case KEYWORDS.IF: {
-        return `(${compile(Arguments[0], Drills)}?${compile(
+        return `(${compile(Arguments[0], Drill)}?${compile(
           Arguments[1],
-          Drills
-        )}:${compile(Arguments[2], Drills)});`
+          Drill
+        )}:${compile(Arguments[2], Drill)});`
       }
       case KEYWORDS.WHEN: {
-        return `(${compile(Arguments[0], Drills)}?${compile(
+        return `(${compile(Arguments[0], Drill)}?${compile(
           Arguments[1],
-          Drills
+          Drill
         )}:0);`
       }
       case KEYWORDS.UNLESS: {
-        return `(${compile(Arguments[0], Drills)}?${compile(
+        return `(${compile(Arguments[0], Drill)}?${compile(
           Arguments[2],
-          Drills
-        )}:${compile(Arguments[1], Drills)});`
+          Drill
+        )}:${compile(Arguments[1], Drill)});`
       }
       case KEYWORDS.OTHERWISE: {
-        return `(${compile(Arguments[0], Drills)}?0:${compile(
+        return `(${compile(Arguments[0], Drill)}?0:${compile(
           Arguments[1],
-          Drills
+          Drill
         )});`
       }
       case KEYWORDS.CONDITION: {
         let out = '('
         for (let i = 0; i < Arguments.length; i += 2)
-          out += `${compile(Arguments[i], Drills)}?${compile(
+          out += `${compile(Arguments[i], Drill)}?${compile(
             Arguments[i + 1],
-            Drills
+            Drill
           )}:`
         out += '0);'
         return out
       }
       case KEYWORDS.CAST_TYPE:
-        Drills.Helpers.add('cast')
-        return `cast("${Arguments[1][VALUE]}", ${compile(
-          Arguments[0],
-          Drills
-        )})`
+        Drill.Helpers.add('cast')
+        return `cast("${Arguments[1][VALUE]}", ${compile(Arguments[0], Drill)})`
       case KEYWORDS.PIPE: {
         let inp = Arguments[0]
         for (let i = 1; i < Arguments.length; ++i)
           inp = [Arguments[i].shift(), inp, ...Arguments[i]]
-        return compile(inp, Drills)
+        return compile(inp, Drill)
       }
       case KEYWORDS.IMMUTABLE_FUNCTION: {
         const [first, ...rest] = Arguments
-        return compile([leaf(APPLY, first[VALUE]), ...rest], Drills)
+        return compile([leaf(APPLY, first[VALUE]), ...rest], Drill)
       }
       // case KEYWORDS.SERIALISE:
-      //   Drills.Helpers.add('serialise')
-      //   return `serialise(${compile(Arguments[0], Drills)});`
+      //   Drill.Helpers.add('serialise')
+      //   return `serialise(${compile(Arguments[0], Drill)});`
       // case KEYWORDS.SET_ARRAY:
-      //   Drills.Helpers.add('arraySetEffect')
-      //   return `arraySetEffect(${parseArgs(Arguments, Drills)});`
+      //   Drill.Helpers.add('arraySetEffect')
+      //   return `arraySetEffect(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.NOT_COMPILED_BLOCK:
       case KEYWORDS.ATOM:
       case KEYWORDS.TEST_CASE:
@@ -362,8 +350,8 @@ const compile = (tree, Drills) => {
         return ''
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
-        if (camelCased in Helpers) Drills.Helpers.add(camelCased)
-        return `${camelCased}(${parseArgs(Arguments, Drills)});`
+        if (camelCased in Helpers) Drill.Helpers.add(camelCased)
+        return `${camelCased}(${parseArgs(Arguments, Drill)});`
       }
     }
   } else if (first[TYPE] === ATOM)
@@ -372,15 +360,15 @@ const compile = (tree, Drills) => {
       : first[VALUE]
   else if (first[TYPE] === WORD) {
     const camelCased = lispToJavaScriptVariableName(token)
-    if (camelCased in Helpers) Drills.Helpers.add(camelCased)
+    if (camelCased in Helpers) Drill.Helpers.add(camelCased)
     return camelCased
   }
 }
 const HelpersEntries = new Map(Object.entries(Helpers))
 export const comp = (ast) => {
-  const Drills = { Variables: new Set(), Helpers: new Set() }
+  const Drill = { Variables: new Set(), Helpers: new Set() }
   const raw = ast
-    .map((tree) => compile(tree, Drills))
+    .map((tree) => compile(tree, Drill))
     .filter(Boolean)
     .join('\n')
   let program = ''
@@ -389,13 +377,13 @@ export const comp = (ast) => {
     const next = raw[i + 1]
     if (!semiColumnEdgeCases.has(current + next)) program += current
   }
-  const help = Drills.Helpers.size
-    ? `var ${[...Drills.Helpers.keys()]
+  const help = Drill.Helpers.size
+    ? `var ${[...Drill.Helpers.keys()]
         .map((x) => HelpersEntries.get(x))
         .join(',')};\n`
     : ''
-  const vars = Drills.Variables.size
-    ? `var ${[...Drills.Variables].join(',')};`
+  const vars = Drill.Variables.size
+    ? `var ${[...Drill.Variables].join(',')};`
     : ''
   const top = `${help}${vars}`
   return { top, program }

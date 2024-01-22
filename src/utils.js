@@ -1,14 +1,6 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import {
-  APPLY,
-  ATOM,
-  KEYWORDS,
-  PLACEHOLDER,
-  TYPE,
-  VALUE,
-  WORD,
-} from './enums.js'
+import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
 import { run } from './interpreter.js'
 import { run as runPlain } from './plain/interpreter.js'
 import { isLeaf, parse } from './parser.js'
@@ -217,10 +209,9 @@ export const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
 export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
 export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
 export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
-export const arrowToTo = (name) => name.replace(new RegExp(/->/g), '-to-')
+export const arrowFromTo = (name) => name.replace(new RegExp(/->/g), '-to-')
 export const moduleNameToLodashes = (name) =>
   name.replace(new RegExp(/:/g), '_')
-
 export const questionMarkToLodash = (name) =>
   name.replace(new RegExp(/\?/g), 'Predicate')
 export const exclamationMarkMarkToLodash = (name) =>
@@ -303,7 +294,7 @@ export const decompress = (raw) => {
 export const shake = (parsed, std) => [...treeShake(parsed, std), ...parsed]
 export const lispToJavaScriptVariableName = (name) =>
   toCamelCase(
-    arrowToTo(
+    arrowFromTo(
       dotNamesToEmpty(
         colonNamesTo$(
           exclamationMarkMarkToLodash(
