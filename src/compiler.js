@@ -224,11 +224,11 @@ const compile = (tree, Drill) => {
         Drill.Helpers.add('__tco')
         const functionArgs = Arguments[1].slice(1)
         const body = functionArgs.pop()
-        const FunctionDrills = { Variables: new Set(), Helpers: Drill.Helpers }
+        const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
         deepRename(arg[VALUE], newName, body)
-        const evaluatedBody = compile(body, FunctionDrills)
-        const vars = FunctionDrills.Variables.size
-          ? `var ${[...FunctionDrills.Variables].join(',')};`
+        const evaluatedBody = compile(body, FunctionDrill)
+        const vars = FunctionDrill.Variables.size
+          ? `var ${[...FunctionDrill.Variables].join(',')};`
           : ''
         out += `${name}=(__tco(${newName}=(${parseArgs(
           functionArgs,

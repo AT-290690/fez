@@ -1,12 +1,4 @@
-import {
-  APPLY,
-  ATOM,
-  PLACEHOLDER,
-  KEYWORDS,
-  TYPE,
-  VALUE,
-  WORD,
-} from './enums.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
 import { isLeaf, parse } from './parser.js'
 import { removeNoCode } from './utils.js'
 const tops = []
