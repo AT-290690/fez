@@ -295,7 +295,6 @@ const keywords = {
           ? console.log(
               '\x1b[31m',
               `${describe} Failed:\n`,
-
               `${rest[0]} => ${stringify(rest[1])} != ${stringify(rest[2])}`,
               '\n',
               '\x1b[0m'

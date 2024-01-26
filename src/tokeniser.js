@@ -966,13 +966,22 @@ const keywords = {
   [KEYWORDS.TEST_BED]: (args, env) => {
     let tests = []
     try {
+      if (
+        args.some(
+          ([[type, car]]) => !(type === APPLY && car === KEYWORDS.TEST_CASE)
+        )
+      )
+        throw new TypeError(
+          `Arguments of (${KEYWORDS.TEST_BED}) must be (${
+            KEYWORDS.TEST_CASE
+          }) (${KEYWORDS.TEST_BED} ${stringifyArgs(args)})`
+        )
       tests = args.map((x) => evaluate(x, env))
       tests.forEach(([state, describe, ...rest]) =>
         !state
           ? console.log(
               '\x1b[31m',
               `${describe} Failed:\n`,
-
               `${rest[0]} => ${stringify(rest[1])} != ${stringify(rest[2])}`,
               '\n',
               '\x1b[0m'
