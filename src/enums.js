@@ -65,7 +65,7 @@ export const KEYWORDS = {
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'let',
 
-  PIPE: 'pi',
+  PIPE: '|>',
   THROW_ERROR: 'throw',
   TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
   IMMUTABLE_FUNCTION: 'safety',

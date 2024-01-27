@@ -5,7 +5,7 @@ describe('Interpretation', () => {
     strictEqual(
       fez(
         `(let parse (lambda input
-      (pi
+      (|>
           input
           (string:trim)
           (string:lines)
@@ -14,15 +14,15 @@ describe('Interpretation', () => {
               (let N (car splitted))
               (let cubes (car (cdr splitted)))
               (array
-                  (pi (string:words N) (array:last) (cast:string->number))
-                  (pi cubes (string:split "; ")
+                  (|> (string:words N) (array:last) (cast:string->number))
+                  (|> cubes (string:split "; ")
                       (array:map (lambda hand
-                          (pi
+                          (|>
                               hand
                               (string:trim)
                               (string:split ", ")
                               (array:map (lambda x (do
-                                  (let words (pi x (string:trim) (string:words)))
+                                  (let words (|> x (string:trim) (string:words)))
                                   (array (cast:string->number (car words)) (car (cdr words)))))))))))))))))
   
   (let sample "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
@@ -38,10 +38,10 @@ describe('Interpretation', () => {
   (map:set! rules "blue" 14)
   
   (let part1 (lambda input
-      (pi
+      (|>
           input
           (parse)
-          (array:select (lambda x (pi
+          (array:select (lambda x (|>
               (car (cdr x))
               (array:every? (lambda hand
                   (not (array:some? hand (lambda y
@@ -77,7 +77,7 @@ age -> 100`
 "0 3 6 9 12 15
 1 3 6 10 15 21
 10 13 16 21 30 45")
-(let parse (lambda input (pi input (string:split "\n") (array:map (lambda x (pi x (string:split " ") (cast:strings->numbers)))))))
+(let parse (lambda input (|> input (string:split "\n") (array:map (lambda x (|> x (string:split " ") (cast:strings->numbers)))))))
 (let append (lambda out arr
   (if (array:some? arr (safety lambda x (not (= x 0)))) 
     (do 
@@ -89,7 +89,7 @@ age -> 100`
   (array:merge out (array arr)))))
 
 (let part1 (lambda input
-(pi 
+(|> 
 input 
 (array:map (lambda x (append () x)))
 (array:fold (lambda a b 
@@ -98,7 +98,7 @@ input
 (math:summation))))
 
 (let part2 (lambda input
-(pi 
+(|> 
 input 
 (array:map (lambda x (append () x)))
 (array:fold (lambda a b 
@@ -114,10 +114,10 @@ input
       fez(
         `
 (let parse (lambda input (string:split input "\n")))
-(let part1 (lambda input (pi 
+(let part1 (lambda input (|> 
                           input 
                           (array:map (lambda str (do 
-                              (let num (pi 
+                              (let num (|> 
                                         str 
                                         (cast:string->char-codes)
                                         (array:select (lambda char (< char (cast:char->char-code "a"))))
@@ -129,14 +129,14 @@ pqr3stu8vwx
 a1b2c3d4e5f
 treb7uchet")
         
-          (pi sample (parse) (part1))`,
+          (|> sample (parse) (part1))`,
         { std: 1, shake: 1 }
       ),
       142
     )
     deepStrictEqual(
       fez(
-        ` (pi (array 1 2 3 4 5)
+        ` (|> (array 1 2 3 4 5)
   (array:enumerated-map (lambda x i (* x i)))
   (array:enumerated-select (lambda . i (> i 2)))
 )`,
@@ -290,7 +290,7 @@ treb7uchet")
 
     deepStrictEqual(
       fez(
-        `(array (pi
+        `(array (|>
 (array 1 2 3 4 5) 
 (array:map (safety lambda x (* x 2))) 
 (array:select (safety lambda x (> x 4))) 
@@ -310,7 +310,7 @@ treb7uchet")
               (*) n)))
         
         ; log fizz buzz for 100 numbers
-          (pi
+          (|>
             (math:range 1 15)
             (array:map fizz-buzz))`,
         { std: 1, shake: 1 }
@@ -349,7 +349,7 @@ treb7uchet")
         (array:count-of nums math:positive?)
         (array:count-of nums math:negative?))))
     
-    (pi
+    (|>
       (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
         { std: 1, shake: 1 }
@@ -382,8 +382,8 @@ Player 2:
 10")
         (let parsed (string:split sample "\n"))
         (let index (array:find-index parsed (lambda x (string:equal? x ""))))
-        (let a (pi (array:slice parsed 1 index) (cast:strings->numbers)))
-        (let b (pi (array:slice parsed (+ index 2) (length parsed)) (cast:strings->numbers)))
+        (let a (|> (array:slice parsed 1 index) (cast:strings->numbers)))
+        (let b (|> (array:slice parsed (+ index 2) (length parsed)) (cast:strings->numbers)))
         
         (let combat (lambda a b
         (if 
@@ -419,14 +419,14 @@ Player 2:
         (if (length a) (array 1 a) (array 0 b)))))
         
         (let solve-1 (lambda (do 
-        (pi 
+        (|> 
         (let winner (combat (type a array) (type b array))) 
         (array:zip (array:reverse (math:range 1 (length winner)))) 
         (array:map (lambda x (* (car x) (car (cdr x))))) 
         (math:summation)))))
         
         (let solve-2 (lambda (do 
-        (pi 
+        (|> 
         (let winner (car (cdr (rec-combat a b (array () () () ())))))
         (array:zip (array:reverse (math:range 1 (length winner))))
         (array:map (lambda x (* (car x) (car (cdr x))))) 
@@ -444,7 +444,7 @@ Player 2:
 (let input "562893147")
   
   (let part1 (lambda inp (do 
-    (let parsed (pi inp (type array) (cast:strings->numbers)))
+    (let parsed (|> inp (type array) (cast:strings->numbers)))
     (let size (length parsed))
     (let *offset* (- (length parsed) 3))
       ; the highest value on any cup's label 
@@ -527,8 +527,8 @@ ZZZ=ZZZ,ZZZ")
         (let path (car split))
         (let list (cdr (cdr split)))
         
-        (let dirs (pi path (cast:string->chars) (array:map (lambda x (string:equal? x "R")))))
-        (let adj (pi list (array:map (lambda x (string:split x "=")))))
+        (let dirs (|> path (cast:string->chars) (array:map (lambda x (string:equal? x "R")))))
+        (let adj (|> list (array:map (lambda x (string:split x "=")))))
         
         (array 
           dirs 
@@ -580,11 +580,11 @@ XXX=XXX,XXX")
               step 
               (move node target (+ step 1))))))
       
-        (pi 
+        (|> 
           keys
           (array:map car)
           (array:select (lambda source 
-            (pi source 
+            (|> source 
                 (cast:string->chars) 
                 (array:get -1)
                 (string:equal? "A"))))

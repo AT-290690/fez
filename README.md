@@ -12,7 +12,7 @@
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (pi
+  (|>
     (math:range 1 100)
     (array:map fizz-buzz)
     (log!))
@@ -34,7 +34,7 @@
         (if res (array:merge a (array res)) a)))
      ())))
 ; 514579
-(pi *input*
+(|> *input*
     (string:split "\n")
     (cast:strings->numbers)
     (array:sort (lambda a b (> a b)))
@@ -50,7 +50,7 @@
     (array:count-of nums math:positive?)
     (array:count-of nums math:negative?))))
 
-(pi
+(|>
   (array -2 -1 -1 0 0 1 2)
   (max-count-of)
   (log!)) ; 3
@@ -58,7 +58,7 @@
 
 ```lisp
 ; remove duplicate elements in the arr
-(let unique (lambda arr (pi
+(let unique (lambda arr (|>
       (let sorted (array:sort arr (safety lambda a b (> a b))))
       (array:zip (math:sequence sorted))
       (array:select (lambda x
@@ -94,7 +94,7 @@ fez(`(+ 1 "2")`, { errors: true })
 import { fez } from 'fez-lisp'
 eval(
   fez(
-    `(pi 
+    `(|> 
         (math:range 1 11) 
         (array:map (lambda x (* x x))) 
         (log!)))`,
@@ -116,7 +116,7 @@ fez(
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
-  (pi (math:range 1 100) (array:map fizz-buzz) (log!))`,
+  (|> (math:range 1 100) (array:map fizz-buzz) (log!))`,
   { std: true, errors: true, compile: false, shake: true }
 )
 ```

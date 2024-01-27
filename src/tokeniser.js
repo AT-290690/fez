@@ -82,6 +82,14 @@ const keywords = {
           KEYWORDS.NUMBER_TYPE
         }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
+    if (operands.slice(1).some((x) => x === 0))
+      throw new TypeError(
+        `Argument of (${
+          KEYWORDS.DIVISION
+        }) can't be a (0) (division by 0 is not allowed) (${
+          KEYWORDS.DIVISION
+        } ${stringifyArgs(args)})`
+      )
     return operands.reduce((a, b) => a / b)
   },
   [KEYWORDS.ARRAY_OR_STRING_LENGTH]: (args, env) => {

@@ -2,7 +2,7 @@
   "name": "fez-lisp",
   "description": "Lisp interpreted & compiled to JavaScript",
   "author": "AT290690",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "type": "module",
   "main": "index.js",
   "keywords": [
