@@ -14,7 +14,7 @@ export const mutationToggle = document.getElementById('mutation')
 export const editor = CodeMirror(editorContainer, {
   autocomplete: true,
   linenumbers: true,
-  search: true,
+  search: true
 })
 export const consoleEditor = CodeMirror(consoleEditorContainer, {})
 const E = 0.75
@@ -36,7 +36,7 @@ const run = () => {
       shake: 1,
       throw: 1,
       errors: 1,
-      mutation: MUTATION,
+      mutation: MUTATION
     })
     consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
     editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
@@ -52,7 +52,7 @@ const comp = () => {
       shake: 1,
       errors: 0,
       compile: 1,
-      mutation: MUTATION,
+      mutation: MUTATION
     })
   )
   try {

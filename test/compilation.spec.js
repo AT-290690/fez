@@ -3,6 +3,52 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(let parse (lambda input
+        (pi
+            input
+            (string:trim)
+            (string:lines)
+            (array:map (lambda x (do
+                (let splitted (string:split x ": "))
+                (let N (car splitted))
+                (let cubes (car (cdr splitted)))
+                (array
+                    (pi (string:words N) (array:last) (cast:string->number))
+                    (pi cubes (string:split "; ")
+                        (array:map (lambda hand
+                            (pi
+                                hand
+                                (string:trim)
+                                (string:split ", ")
+                                (array:map (lambda x (do
+                                    (let words (pi x (string:trim) (string:words)))
+                                    (array (cast:string->number (car words)) (car (cdr words)))))))))))))))))
+    
+    (let sample "Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+    Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+    Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+    Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+    Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green")
+    
+  
+    (let rules (array () () ()))
+    (map:set! rules "red" 12)
+    (map:set! rules "green" 13)
+    (map:set! rules "blue" 14)
+    
+    (let part1 (lambda input
+        (pi
+            input
+            (parse)
+            (array:select (lambda x (pi
+                (car (cdr x))
+                (array:every? (lambda hand
+                    (not (array:some? hand (lambda y
+                            (< (map:get rules (car (cdr y))) (car y))))))))))
+            (array:map car)
+            (math:summation))))
+    
+    (part1 sample)`,
       `(let me (array () () () ()))
 (map:set! me "name" "Anthony")
 (map:set! me "age" "33")
@@ -409,7 +455,7 @@ XXX=XXX,XXX")
           (array 
            (part1 (parse sample1))
            (part1 (parse sample2))
-           (part2 (parse sample3)))`,
+           (part2 (parse sample3)))`
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { std: 1, compile: 0, shake: 1, mutation: 1 }),

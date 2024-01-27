@@ -79,5 +79,5 @@ export const KEYWORDS = {
   CLEAR_CONSOLE: 'clear!',
   SET_ARRAY: 'array:set!',
 
-  DOC: 'fez-manual',
+  DOC: 'fez-manual'
 }

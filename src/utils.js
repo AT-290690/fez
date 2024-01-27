@@ -8,7 +8,8 @@ export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const removeNoCode = (source) =>
   source
-    .replace(/;.+/g, '')
+    // .replace(/;.+/g, '')
+    .replace(/;(?=(?:(?:[^"]*"){2})*[^"]*$).+/g, '')
     .replace(/[\s\s]+(?=[^"]*(?:"[^"]*"[^"]*)*$)/g, ' ')
     .trim()
 export const isBalancedParenthesis = (sourceCode) => {

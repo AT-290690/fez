@@ -114,7 +114,7 @@ const keywords = {
       for (let i = 0; i < props.length; ++i) {
         Object.defineProperty(localEnv, params[i][VALUE], {
           value: evaluate(props[i], scope),
-          writable: true,
+          writable: true
         })
       }
       return evaluate(body, localEnv)
@@ -177,7 +177,7 @@ const keywords = {
     name = word[VALUE]
     Object.defineProperty(env, name, {
       value: evaluate(args[1], env),
-      writable: false,
+      writable: false
     })
     return env[name]
   },
@@ -269,7 +269,7 @@ const keywords = {
       for (let i = 0; i < props.length; ++i) {
         Object.defineProperty(localEnv, params[i][VALUE], {
           value: evaluate(props[i], scope),
-          writable: true,
+          writable: true
         })
       }
       return evaluate(body, localEnv)
@@ -340,7 +340,7 @@ const keywords = {
   [KEYWORDS.CLEAR_CONSOLE]: (args) => {
     console.clear()
     return 0
-  },
+  }
 }
 keywords[KEYWORDS.NOT_COMPILED_BLOCK] = keywords[KEYWORDS.BLOCK]
 keywords[KEYWORDS.DOC] = (args, env) => {

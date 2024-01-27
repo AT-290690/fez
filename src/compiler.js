@@ -5,7 +5,7 @@ import {
   KEYWORDS,
   TYPE,
   VALUE,
-  WORD,
+  WORD
 } from './enums.js'
 import { leaf, isLeaf } from './parser.js'
 import { deepRename, lispToJavaScriptVariableName } from './utils.js'
@@ -85,7 +85,7 @@ return result
        default:
          return 0
       }
-    }`,
+    }`
 }
 const semiColumnEdgeCases = new Set([
   ';)',
@@ -105,7 +105,7 @@ const semiColumnEdgeCases = new Set([
   ';?',
   ',,',
   ';;',
-  ';]',
+  ';]'
 ])
 
 const parse = (Arguments, Drill) => Arguments.map((x) => compile(x, Drill))

@@ -2,7 +2,7 @@
   "name": "fez-lisp",
   "description": "Lisp interpreted & compiled to JavaScript",
   "author": "AT290690",
-  "version": "1.0.33",
+  "version": "1.0.34",
   "type": "module",
   "main": "index.js",
   "keywords": [
@@ -18,7 +18,8 @@
   },
   "prettier": {
     "semi": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "trailingComma": "none"
   },
   "scripts": {
     "build": "node ./lib/builder.js",
