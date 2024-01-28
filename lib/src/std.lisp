@@ -514,6 +514,14 @@
                     (array:set! prev (length prev) b)) a))
               (array ()))
               (array:map (lambda x (array:join x ""))))))
+(let string:commas (lambda str (|> str (type array)
+              (array:fold (lambda a b (do
+              (let prev (array:get a -1))
+                (if (string:equal? b ",")
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a))
+              (array ()))
+              (array:map (lambda x (array:join x ""))))))
 (let string:separator (lambda str separator (|> str (type array)
               (array:fold (lambda a b (do
               (let prev (array:get a -1))
@@ -522,7 +530,8 @@
                     (array:set! prev (length prev) b)) a))
               (array ()))
               (array:map (lambda x (array:join x ""))))))
-
+(let string:append (lambda a b (string:merge a b)))
+(let string:prepend (lambda a b (string:merge b a)))
 (let new:set (lambda (array () () () ())))
 (let new:array (safety lambda items (type items array)))
 (let new:list (safety lambda value (array () value ())))

@@ -172,35 +172,43 @@ export const deepClone = (ast) => JSON.parse(JSON.stringify(ast))
 export const fez = (source, options = {}) => {
   const env = options.env ?? {}
   try {
-    let code
-    if (options.errors)
-      code = handleUnbalancedQuotes(
-        handleUnbalancedParens(removeNoCode(source))
-      )
-    else code = removeNoCode(source)
-    if (!options.mutation) code = removeMutation(code)
-    if (!code.length && options.throw) throw new Error('Nothing to parse!')
-    const parsed = parse(code)
-    if (parsed.length === 0 && options.throw)
-      throw new Error(
-        'Top level expressions need to be wrapped in a (do) block'
-      )
-    const standard = options.std
-      ? options.shake
-        ? treeShake(parsed, std)
-        : std
-      : []
-    const ast = [...standard, ...parsed]
-    if (options.compile) {
-      const js = Object.values(comp(deepClone(ast))).join('')
-      return options.eval ? eval(js) : js
+    if (typeof source === 'string') {
+      let code
+      if (options.check)
+        code = handleUnbalancedQuotes(
+          handleUnbalancedParens(removeNoCode(source))
+        )
+      else code = removeNoCode(source)
+      if (!options.mutation) code = removeMutation(code)
+      if (!code.length && options.throw) throw new Error('Nothing to parse!')
+      const parsed = parse(code)
+      if (parsed.length === 0 && options.throw)
+        throw new Error(
+          'Top level expressions need to be wrapped in a (do) block'
+        )
+      const ast = [...(options.std ? treeShake(parsed, std) : []), ...parsed]
+      if (options.compile) {
+        const js = Object.values(comp(deepClone(ast))).join('')
+        return options.eval ? eval(js) : js
+      }
+      return options.check ? run(ast, env) : runPlain(ast, env)
+    } else if (Array.isArray(source)) {
+      const ast = !options.mutation
+        ? JSON.parse(JSON.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
+        : source
+      if (options.compile) {
+        const js = Object.values(comp(deepClone(ast))).join('')
+        return options.eval ? eval(js) : js
+      }
+      return options.check ? run(ast, env) : runPlain(ast, env)
+    } else {
+      throw new Error('Source has to be either a lisp source code or an AST')
     }
-    return options.errors ? run(ast, env) : runPlain(ast, env)
   } catch (error) {
     const err = error.message
       .replace("'[object Array]'", '(array)')
       .replace('object', '(array)')
-    if (options.errors) logError(err)
+    if (options.check) logError(err)
     if (options.throw) throw err
     return err
   }
@@ -293,6 +301,8 @@ export const decompress = (raw) => {
 }
 // shake(parse(removeNoCode(source)), std)
 export const shake = (parsed, std) => [...treeShake(parsed, std), ...parsed]
+export const tree = (source, std) =>
+  std ? shake(parse(removeNoCode(source)), std) : parse(removeNoCode(source))
 export const lispToJavaScriptVariableName = (name) =>
   toCamelCase(
     arrowFromTo(

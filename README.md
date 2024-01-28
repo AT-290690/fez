@@ -87,7 +87,7 @@ fez(`(log! "Hello World!")`)
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(+ 1 "2")`, { errors: true })
+fez(`(+ 1 "2")`, { check: true })
 ```
 
 ```js
@@ -101,7 +101,7 @@ eval(
     // include standard library
     // compile fez to JavaScript
     // tree shake standard library
-    { std: true, compile: true, shake: true }
+    { std: true, compile: true }
   )
 )
 ```
@@ -117,7 +117,7 @@ fez(
       (*) n)))
 
   (|> (math:range 1 100) (array:map fizz-buzz) (log!))`,
-  { std: true, errors: true, compile: false, shake: true }
+  { std: true, check: true, compile: false }
 )
 ```
 
@@ -166,4 +166,42 @@ console.log(
   )
 )
 // 50005000
+```
+
+Pass tree source as text:
+
+```js
+import { fez, parse } from '../index.js'
+const source = `(|> 
+  (array 1 2 3 4)
+  (math:permutations)
+  (array:flat-one)
+  (math:summation)
+  (log!))`
+fez(source, {
+  std: 1,
+  check: 1,
+  mutation: 1
+})
+```
+
+Pass tree instead of a source:
+
+```js
+import { fez, tree, std } from '../index.js'
+const source = `(|> 
+  (array 1 2 3 4)
+  (math:permutations)
+  (array:flat-one)
+  (math:summation)
+  (log!))`
+const ast = tree(source, std)
+fez(ast, { mutation: 1, check: 1 })
+```
+
+If passing AST and STD is not used then use tree with a single arugment
+
+```js
+import { fez, tree } from '../index.js'
+console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ```

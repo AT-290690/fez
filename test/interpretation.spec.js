@@ -595,7 +595,7 @@ XXX=XXX,XXX")
          (part1 (parse sample1))
          (part1 (parse sample2))
          (part2 (parse sample3)))`,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, mutation: 1 }
       ),
       [2, 6, 6]
     )
