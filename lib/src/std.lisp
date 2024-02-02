@@ -359,6 +359,8 @@
 (let array:deep-copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) (if (array? b) (array:deep-copy b) b))) ())))
 (let array:merge! (lambda a b (do (array:for b (lambda x (array:set! a (length a) x))) a)))
 (let array:swap-remove! (lambda arr i (do (array:set! arr i (array:get arr (- (length arr) 1))) (array:set! arr -1))))
+(let array:swap! (lambda arr i j (do (let temp (array:get arr i)) (array:set! arr i (array:get arr j)) (array:set! arr j temp))))
+
 (let array:index-of (safety lambda arr item (do
                     (let* iterate (lambda arr i
                           (if (length arr)

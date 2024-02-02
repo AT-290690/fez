@@ -82,12 +82,12 @@ npm i fez-lisp
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(log! "Hello World!")`)
+fez(`(log! "Hello World!")`) // Hello World!
 ```
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(+ 1 "2")`, { check: true })
+fez(`(+ 1 "2")`) // Not all arguments of (+) are (number) (+ 1 2)
 ```
 
 ```js
@@ -117,7 +117,7 @@ fez(
       (*) n)))
 
   (|> (math:range 1 100) (array:map fizz-buzz) (log!))`,
-  { std: true, check: true, compile: false }
+  { std: true, compile: false }
 )
 ```
 
@@ -180,7 +180,6 @@ const source = `(|>
   (log!))`
 fez(source, {
   std: 1,
-  check: 1,
   mutation: 1
 })
 ```
@@ -196,7 +195,7 @@ const source = `(|>
   (math:summation)
   (log!))`
 const ast = tree(source, std)
-fez(ast, { mutation: 1, check: 1 })
+fez(ast, { mutation: 1 })
 ```
 
 If passing AST and STD is not used then use tree with a single arugment

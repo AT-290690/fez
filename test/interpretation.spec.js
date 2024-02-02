@@ -50,7 +50,7 @@ describe('Interpretation', () => {
           (math:summation))))
   
   (part1 sample)`,
-        { std: 1, shake: 1, errors: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, errors: 1, mutation: 1 }
       ),
       8
     )
@@ -65,7 +65,7 @@ describe('Interpretation', () => {
 (let copy (array:deep-copy me))
 (map:remove! copy "name")
 (cast:map->string copy)`,
-        { std: 1, shake: 1, errors: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, errors: 1, mutation: 1 }
       ),
       `job -> programmer
 interests -> animation,lisp
@@ -105,8 +105,8 @@ input
   (array:merge a 
     (array (array:fold (array:reverse b) (safety lambda a b (- (array:get b 0) a)) 0)))) ())
 (math:summation))))
-(array (part1 (parse sample)) (part2 (parse sample))))`,
-        { std: 1, shake: 1 }
+(array (part1 (parse sample)) (part2 (parse sample)))`,
+        { std: 1, compile: 0, shake: 1 }
       ),
       [114, 2]
     )
@@ -130,7 +130,7 @@ a1b2c3d4e5f
 treb7uchet")
         
           (|> sample (parse) (part1))`,
-        { std: 1, shake: 1 }
+        { std: 1, compile: 0, shake: 1 }
       ),
       142
     )
@@ -140,12 +140,16 @@ treb7uchet")
   (array:enumerated-map (lambda x i (* x i)))
   (array:enumerated-select (lambda . i (> i 2)))
 )`,
-        { std: 1, shake: 1 }
+        { std: 1, compile: 0, shake: 1 }
       ),
       [12, 20]
     )
     deepStrictEqual(
-      fez(`(math:permutations (array 1 2 3 4))`, { std: 1, shake: 1 }),
+      fez(`(math:permutations (array 1 2 3 4))`, {
+        std: 1,
+        compile: 0,
+        shake: 1
+      }),
       [
         [1, 2, 3, 4],
         [1, 2, 4, 3],
@@ -201,6 +205,7 @@ treb7uchet")
 (array arr cloned)`,
         {
           std: 1,
+          compile: 0,
           shake: 1,
           mutation: 1
         }
@@ -219,6 +224,7 @@ treb7uchet")
     deepStrictEqual(
       fez(`(array:equal? (array "10") (array "10"))`, {
         std: 1,
+        compile: 0,
         shake: 1
       }),
       1
@@ -226,6 +232,7 @@ treb7uchet")
     deepStrictEqual(
       fez(`(array:equal? (array 1 "10") (array 1 "10"))`, {
         std: 1,
+        compile: 0,
         shake: 1
       }),
       1
@@ -233,6 +240,7 @@ treb7uchet")
     deepStrictEqual(
       fez(`(array:equal? (array 1 (array 1 "10")) (array 1 (array 1 "10")))`, {
         std: 1,
+        compile: 0,
         shake: 1
       }),
       1
@@ -240,6 +248,7 @@ treb7uchet")
     deepStrictEqual(
       fez(`(array:equal? (array 1 (array 1 "10")) (array 1 (array "1" 10)))`, {
         std: 1,
+        compile: 0,
         shake: 1
       }),
       0
@@ -251,7 +260,7 @@ treb7uchet")
         (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
         (cast:table->array people)
         `,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, mutation: 1 }
       ),
       ['name', 'Anthony Tonev']
     )
@@ -269,7 +278,7 @@ treb7uchet")
         (set:add! B 5)
         (array (cast:table->array (set:xor A B)) (cast:table->array (set:difference A B)) (cast:table->array (set:difference B A)) (cast:table->array (set:intersection B A)))
     `,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, mutation: 1 }
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
     )
@@ -283,7 +292,7 @@ treb7uchet")
     (set:add! set 3)
     (array:flat set)
     `,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, mutation: 1 }
       ),
       [3, 1, 2]
     )
@@ -295,7 +304,7 @@ treb7uchet")
 (array:map (safety lambda x (* x 2))) 
 (array:select (safety lambda x (> x 4))) 
 (array:fold (safety lambda a b (+ a b)) 0)))`,
-        { std: 1, shake: 1 }
+        { std: 1, compile: 0, shake: 1 }
       ),
       [24]
     )
@@ -313,7 +322,7 @@ treb7uchet")
           (|>
             (math:range 1 15)
             (array:map fizz-buzz))`,
-        { std: 1, shake: 1 }
+        { std: 1, compile: 0, shake: 1 }
       ),
       [
         1,
@@ -352,16 +361,20 @@ treb7uchet")
     (|>
       (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
-        { std: 1, shake: 1 }
+        { std: 1, compile: 0, shake: 1 }
       ),
       3
     )
     strictEqual(
-      fez(`(array:join (array 1 2 3) "-")`, { std: 1, shake: 1 }),
+      fez(`(array:join (array 1 2 3) "-")`, { std: 1, compile: 0, shake: 1 }),
       '1-2-3'
     )
     deepStrictEqual(
-      fez(`(array:exclude (array 1 2 3 4 5) math:even?)`, { std: 1, shake: 1 }),
+      fez(`(array:exclude (array 1 2 3 4 5) math:even?)`, {
+        std: 1,
+        compile: 0,
+        shake: 1
+      }),
       [1, 3, 5]
     )
     deepStrictEqual(
@@ -433,7 +446,7 @@ Player 2:
         (math:summation)))))
         
         (array (solve-1) (solve-2))`,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, mutation: 1 }
       ),
       [306, 291]
     )
@@ -495,7 +508,7 @@ Player 2:
       )))) (move 0 (array:rotate-right parsed 1)))))
   (array (type (part1 sample) number) (type (part1 input) number))
         `,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, mutation: 1 }
       ),
       [67384529, 38925764]
     )
@@ -505,7 +518,7 @@ Player 2:
   (string:trim-right "  12 3  4  ") 
   (string:trim-left "  12 3  4  ") 
   (string:trim " 12 3  4    "))`,
-        { std: 1, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, shake: 1, mutation: 1 }
       ),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )
@@ -595,7 +608,7 @@ XXX=XXX,XXX")
          (part1 (parse sample1))
          (part1 (parse sample2))
          (part2 (parse sample3)))`,
-        { std: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       [2, 6, 6]
     )

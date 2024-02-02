@@ -2,7 +2,6 @@ import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
 import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
 import { run } from './interpreter.js'
-import { run as runPlain } from './plain/interpreter.js'
 import { isLeaf, parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
@@ -158,12 +157,6 @@ export const runFromInterpreted = (source, env = {}) => {
   )
   run(tree, env)
 }
-export const runFromInterpretedPlain = (source, env = {}) => {
-  const tree = parse(
-    handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-  )
-  runPlain(tree, env)
-}
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
@@ -174,7 +167,7 @@ export const fez = (source, options = {}) => {
   try {
     if (typeof source === 'string') {
       let code
-      if (options.check)
+      if (!options.compile)
         code = handleUnbalancedQuotes(
           handleUnbalancedParens(removeNoCode(source))
         )
@@ -191,7 +184,7 @@ export const fez = (source, options = {}) => {
         const js = Object.values(comp(deepClone(ast))).join('')
         return options.eval ? eval(js) : js
       }
-      return options.check ? run(ast, env) : runPlain(ast, env)
+      return run(ast, env)
     } else if (Array.isArray(source)) {
       const ast = !options.mutation
         ? JSON.parse(JSON.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
@@ -200,7 +193,7 @@ export const fez = (source, options = {}) => {
         const js = Object.values(comp(deepClone(ast))).join('')
         return options.eval ? eval(js) : js
       }
-      return options.check ? run(ast, env) : runPlain(ast, env)
+      return run(ast, env)
     } else {
       throw new Error('Source has to be either a lisp source code or an AST')
     }
@@ -208,7 +201,7 @@ export const fez = (source, options = {}) => {
     const err = error.message
       .replace("'[object Array]'", '(array)')
       .replace('object', '(array)')
-    if (options.check) logError(err)
+    logError(err)
     if (options.throw) throw err
     return err
   }

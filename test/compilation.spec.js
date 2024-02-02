@@ -92,7 +92,7 @@ describe('Compilation', () => {
       (array:merge a 
         (array (array:fold (array:reverse b) (safety lambda a b (- (array:get b 0) a)) 0)))) ())
     (math:summation)))))
-(array (part1 (parse sample)) (part2 (parse sample)) 2))`,
+(array (part1 (parse sample)) (part2 (parse sample)))`,
       `(let parse (lambda input (string:split input "\n")))
       (let part1 (lambda input (|> 
                                 input 
