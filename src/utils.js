@@ -2,7 +2,7 @@ import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
 import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
 import { run } from './interpreter.js'
-import { isLeaf, parse } from './parser.js'
+import { AST, isLeaf, parse } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const removeNoCode = (source) =>
@@ -161,7 +161,7 @@ export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
 }
-export const deepClone = (ast) => JSON.parse(JSON.stringify(ast))
+export const deepClone = (ast) => AST.parse(AST.stringify(ast))
 export const fez = (source, options = {}) => {
   const env = options.env ?? {}
   try {
@@ -187,7 +187,7 @@ export const fez = (source, options = {}) => {
       return run(ast, env)
     } else if (Array.isArray(source)) {
       const ast = !options.mutation
-        ? JSON.parse(JSON.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
+        ? AST.parse(AST.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
         : source
       if (options.compile) {
         const js = Object.values(comp(deepClone(ast))).join('')
