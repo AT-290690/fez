@@ -43,10 +43,12 @@ export const LISP = {
     if (ast == undefined) return '()'
     else if (typeof ast === 'object')
       if (Array.isArray(ast))
-        return ast.length ? `(array ${ast.map(stringify).join(' ')})` : '()'
+        return ast.length
+          ? `(array ${ast.map(LISP.stringify).join(' ')})`
+          : '()'
       else
         return `(array ${ast
-          .map(([key, value]) => `("${key}" ${stringify(value)})`)
+          .map(([key, value]) => `("${key}" ${LISP.stringify(value)})`)
           .join(' ')})`
     else if (typeof ast === 'string') return `"${ast}"`
     else if (typeof ast === 'function') return '()'

@@ -1,5 +1,5 @@
 // import { formatWithPreservedComments } from '../src/formatter.js'
-import { stringify } from '../src/parser.js'
+import { LISP } from '../src/parser.js'
 import { compress, decompress, fez, removeNoCode } from '../src/utils.js'
 import { CodeMirror } from './fez.editor.bundle.js'
 let MUTATION = 1
@@ -40,7 +40,7 @@ const run = () => {
     })
     consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
     editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
-    consoleEditor.setValue(stringify(res).toString())
+    consoleEditor.setValue(LISP.stringify(res).toString())
   } catch (e) {
     consoleEditor.setValue(e instanceof Error ? e.message : e)
   }
@@ -56,7 +56,7 @@ const comp = () => {
     })
   )
   try {
-    consoleEditor.setValue(stringify(res).toString())
+    consoleEditor.setValue(LISP.stringify(res).toString())
   } catch (e) {
     consoleEditor.setValue(e instanceof Error ? e.message : e)
   }
