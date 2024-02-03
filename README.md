@@ -171,7 +171,7 @@ console.log(
 Pass tree source as text:
 
 ```js
-import { fez, parse } from '../index.js'
+import { fez } from '../index.js'
 const source = `(|> 
   (array 1 2 3 4)
   (math:permutations)

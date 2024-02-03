@@ -1,7 +1,7 @@
 import std from '../lib/baked/std.js'
 import { TYPE, VALUE, WORD, KEYWORDS, APPLY } from './enums.js'
 import { evaluate, isAtom } from './interpreter.js'
-import { stringify } from './parser.js'
+import { LISP } from './parser.js'
 import {
   isEqual,
   isEqualTypes,
@@ -990,14 +990,16 @@ const keywords = {
           ? console.log(
               '\x1b[31m',
               `${describe} Failed:\n`,
-              `${rest[0]} => ${stringify(rest[1])} != ${stringify(rest[2])}`,
+              `${rest[0]} => ${LISP.stringify(rest[1])} != ${LISP.stringify(
+                rest[2]
+              )}`,
               '\n',
               '\x1b[0m'
             )
           : console.log(
               '\x1b[32m',
               `${describe} Passed:\n`,
-              `${rest[0]} => ${stringify(rest[1])}`,
+              `${rest[0]} => ${LISP.stringify(rest[1])}`,
               '\n',
               '\x1b[0m'
             )
@@ -1017,7 +1019,7 @@ const keywords = {
         `Invalid number of arguments for (${KEYWORDS.SERIALISE})`
       )
     const data = evaluate(args[0], env)
-    return stringify(data)
+    return LISP.stringify(data)
   },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
     if (args.length !== 2 && args.length !== 3)

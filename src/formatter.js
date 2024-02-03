@@ -1,5 +1,5 @@
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
-import { isLeaf, parse } from './parser.js'
+import { isLeaf, LISP } from './parser.js'
 import { removeNoCode } from './utils.js'
 const tops = []
 const indent = (level) => ' '.repeat(level)
@@ -70,7 +70,7 @@ export const formatWithPreservedComments = (source) => {
     )
     .join('\n')
 
-  return format(parse(removeNoCode(value)))
+  return format(LISP.parse(removeNoCode(value)))
     .split('\n')
     .map((x) => {
       if (x.includes(commentIdentifier)) {

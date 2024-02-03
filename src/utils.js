@@ -2,7 +2,7 @@ import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
 import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
 import { run } from './interpreter.js'
-import { AST, isLeaf, parse } from './parser.js'
+import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const removeNoCode = (source) =>
@@ -142,21 +142,6 @@ export const treeShake = (ast, libs) => {
   // Filter out libraries that are not in the visited set
   return libs.filter((x) => visited.has(x.at(1)[VALUE]))
 }
-
-export const runFromCompiled = (source) => {
-  const tree = parse(
-    handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-  )
-  const compiled = comp(tree)
-  const JavaScript = `${compiled.top}${compiled.program}`
-  return eval(JavaScript)
-}
-export const runFromInterpreted = (source, env = {}) => {
-  const tree = parse(
-    handleUnbalancedQuotes(handleUnbalancedParens(removeNoCode(source)))
-  )
-  run(tree, env)
-}
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
@@ -174,7 +159,7 @@ export const fez = (source, options = {}) => {
       else code = removeNoCode(source)
       if (!options.mutation) code = removeMutation(code)
       if (!code.length && options.throw) throw new Error('Nothing to parse!')
-      const parsed = parse(code)
+      const parsed = LISP.parse(code)
       if (parsed.length === 0 && options.throw)
         throw new Error(
           'Top level expressions need to be wrapped in a (do) block'
@@ -292,10 +277,12 @@ export const decompress = (raw) => {
   for (const tok of runes) result += tok
   return result
 }
-// shake(parse(removeNoCode(source)), std)
+// shake(LISP.parse(removeNoCode(source)), std)
 export const shake = (parsed, std) => [...treeShake(parsed, std), ...parsed]
 export const tree = (source, std) =>
-  std ? shake(parse(removeNoCode(source)), std) : parse(removeNoCode(source))
+  std
+    ? shake(LISP.parse(removeNoCode(source)), std)
+    : LISP.parse(removeNoCode(source))
 export const lispToJavaScriptVariableName = (name) =>
   toCamelCase(
     arrowFromTo(
