@@ -2,6 +2,36 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      fez(
+        `(|>
+      (math:range 0 100)
+      (array:map cast:number->string)
+      (array:select (lambda x (string:has? x "3"))))`,
+        { std: 1 }
+      ),
+      [
+        '3',
+        '13',
+        '23',
+        '30',
+        '31',
+        '32',
+        '33',
+        '34',
+        '35',
+        '36',
+        '37',
+        '38',
+        '39',
+        '43',
+        '53',
+        '63',
+        '73',
+        '83',
+        '93'
+      ]
+    )
     strictEqual(
       fez(
         `(let parse (lambda input
@@ -50,7 +80,7 @@ describe('Interpretation', () => {
           (math:summation))))
   
   (part1 sample)`,
-        { std: 1, compile: 0, shake: 1, errors: 1, mutation: 1 }
+        { std: 1, compile: 0, errors: 1, mutation: 1 }
       ),
       8
     )
@@ -65,7 +95,7 @@ describe('Interpretation', () => {
 (let copy (array:deep-copy me))
 (map:remove! copy "name")
 (cast:map->string copy)`,
-        { std: 1, compile: 0, shake: 1, errors: 1, mutation: 1 }
+        { std: 1, compile: 0, errors: 1, mutation: 1 }
       ),
       `job -> programmer
 interests -> animation,lisp
@@ -206,7 +236,7 @@ treb7uchet")
         {
           std: 1,
           compile: 0,
-          shake: 1,
+
           mutation: 1
         }
       ),
@@ -260,7 +290,7 @@ treb7uchet")
         (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
         (cast:table->array people)
         `,
-        { std: 1, compile: 0, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       ['name', 'Anthony Tonev']
     )
@@ -278,7 +308,7 @@ treb7uchet")
         (set:add! B 5)
         (array (cast:table->array (set:xor A B)) (cast:table->array (set:difference A B)) (cast:table->array (set:difference B A)) (cast:table->array (set:intersection B A)))
     `,
-        { std: 1, compile: 0, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
     )
@@ -292,7 +322,7 @@ treb7uchet")
     (set:add! set 3)
     (array:flat set)
     `,
-        { std: 1, compile: 0, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       [3, 1, 2]
     )
@@ -446,7 +476,7 @@ Player 2:
         (math:summation)))))
         
         (array (solve-1) (solve-2))`,
-        { std: 1, compile: 0, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       [306, 291]
     )
@@ -508,7 +538,7 @@ Player 2:
       )))) (move 0 (array:rotate-right parsed 1)))))
   (array (type (part1 sample) number) (type (part1 input) number))
         `,
-        { std: 1, compile: 0, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       [67384529, 38925764]
     )
@@ -518,7 +548,7 @@ Player 2:
   (string:trim-right "  12 3  4  ") 
   (string:trim-left "  12 3  4  ") 
   (string:trim " 12 3  4    "))`,
-        { std: 1, compile: 0, shake: 1, mutation: 1 }
+        { std: 1, compile: 0, mutation: 1 }
       ),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )

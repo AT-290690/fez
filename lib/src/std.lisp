@@ -52,7 +52,7 @@
 (let math:power (lambda base exp
   (if (< exp 0)
       (if (= base 0)
-      (throw "Attempting to divide by 0 in (math:power)")
+      (throw (string:merge "Attempting to divide by 0 in (math:power " (type base string) " " (type exp string) ")"))
       (/ (* base (math:power base (- (* exp -1) 1)))))
         (cond
             (= exp 0) 1
@@ -94,6 +94,7 @@
 (let math:positive? (safety lambda num (> num 0)))
 (let math:negative? (safety lambda num (< num 0)))
 (let math:zero? (safety lambda num (= num 0)))
+(let math:negative-one? (safety lambda num (= num -1)))
 (let math:divisible? (safety lambda a b (= (mod a b) 0)))
 (let math:prime? (lambda n
       (cond
@@ -450,15 +451,32 @@
                           (if (length arr)
                               (if (string:equal? (car arr) character) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate (type str array) 0))))
-(let string:match (lambda str word (do
-                    (let string-arr (type str array))
-                    (let* iterate (lambda arr i
-                          (if (length arr)
-                                (if (string:equal?
-                                  (|> string-arr (array:slice i (+ i (length word))) (array:join ""))
-                                  word) i (iterate (cdr arr) (+ i 1)))
-                               -1)))
-                        (iterate toArr 0))))
+(let string:match (lambda str word (cond 
+                                    (< (length str) (length word)) -1
+                                    (string:equal? str word) 0
+                                    (*) (do
+                                          (let string-arr (type str array))
+                                          (let* iterate (lambda arr i
+                                                (if (and (length arr) (>= (length arr) (length word)))
+                                                      (if (string:equal?
+                                                        (|> string-arr (array:slice i (+ i (length word))) (array:join ""))
+                                                        word) i (iterate (cdr arr) (+ i 1)))
+                                                    -1)))
+                                              (iterate string-arr 0)))))
+(let string:has? (lambda str word (cond 
+                                    (< (length str) (length word)) 0
+                                    (string:equal? str word) 1
+                                    (*) (do
+                                          (let string-arr (type str array))
+                                          (let* iterate (lambda arr i
+                                                (when (and (length arr) (>= (length arr) (length word)))
+                                                      (if (string:equal?
+                                                        (|> string-arr (array:slice i (+ i (length word))) (array:join ""))
+                                                        word) 
+                                                        1 
+                                                        (iterate (cdr arr) (+ i 1)))
+                                                    )))
+                                              (iterate string-arr 0)))))
 (let string:greater? (lambda L R (otherwise (string:equal? L R) (do
   (let A (cast:string->char-codes (type L string)))
   (let B (cast:string->char-codes (type R string)))

@@ -3,6 +3,10 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(|>
+      (math:range 0 100)
+      (array:map cast:number->string)
+      (array:select (lambda x (string:has? x "3"))))`,
       `(let parse (lambda input
         (|>
             input

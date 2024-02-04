@@ -71,9 +71,6 @@
    (case "test 2" (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
 ```
 
-<p align="center">
-<img width="64" src="./js.svg"/>
-</p>
 Installation:
 
 ```
