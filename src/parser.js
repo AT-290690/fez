@@ -1,5 +1,5 @@
-import { APPLY, ATOM, WORD } from './enums.js'
-import { escape } from './utils.js'
+import { APPLY, ATOM, TYPE, WORD, VALUE } from './enums.js'
+import { escape, preserveEscape } from './utils.js'
 export const leaf = (type, value) => [type, value]
 export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
 export const LISP = {
@@ -39,21 +39,44 @@ export const LISP = {
     }
     return tree
   },
-  stringify: (ast) => {
-    if (ast == undefined) return '()'
-    else if (typeof ast === 'object')
-      if (Array.isArray(ast))
-        return ast.length
-          ? `(array ${ast.map(LISP.stringify).join(' ')})`
+  stringify: (array) => {
+    if (array == undefined) return '()'
+    else if (typeof array === 'object')
+      if (Array.isArray(array))
+        return array.length
+          ? `(array ${array.map(LISP.stringify).join(' ')})`
           : '()'
       else
-        return `(array ${ast
+        return `(array ${array
           .map(([key, value]) => `("${key}" ${LISP.stringify(value)})`)
           .join(' ')})`
-    else if (typeof ast === 'string') return `"${ast}"`
-    else if (typeof ast === 'function') return '()'
-    else if (typeof ast === 'boolean') return +ast
-    else return ast
+    else if (typeof array === 'string') return `"${array}"`
+    else if (typeof array === 'function') return '()'
+    else if (typeof array === 'boolean') return +array
+    else return array
+  },
+  source: (ast) => {
+    const dfs = (exp) => {
+      let out = ''
+      const [first, ...rest] = isLeaf(exp) ? [exp] : exp
+      if (first == undefined) return (out += '()')
+      switch (first[TYPE]) {
+        case WORD:
+          out += first[VALUE]
+          break
+        case ATOM:
+          out +=
+            typeof first[VALUE] === 'string'
+              ? `"${preserveEscape(first[VALUE])}"`
+              : first[VALUE]
+          break
+        case APPLY:
+          out += `(${first[VALUE]} ${rest.map(dfs).join(' ')})`
+          break
+      }
+      return out
+    }
+    return ast.map(dfs).join(' ')
   }
 }
 export const AST = {
@@ -94,6 +117,6 @@ export const AST = {
     typeof ast === 'object'
       ? `[${ast.map(AST.stringify).join(',')}]`
       : typeof ast === 'string'
-      ? `"${ast}"`
+      ? `"${preserveEscape(ast)}"`
       : ast
 }

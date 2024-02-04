@@ -39,6 +39,15 @@ export const escape = (Char) => {
       return ''
   }
 }
+const escapeChars = {
+  '\n': '\\n',
+  '\r': '\\r',
+  '\t': '\\t',
+  s: '\\s',
+  '"': '\\"'
+}
+export const preserveEscape = (str) =>
+  str.replace(/[\n\r\t\s\"]/g, (match) => escapeChars[match] || match)
 export const stringifyType = (type) =>
   !isLeaf(type)
     ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
