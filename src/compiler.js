@@ -39,7 +39,7 @@ const Helpers = {
   }`,
   logEffect: `logEffect=(msg)=>{console.log(msg);return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
-  array_merge: `array_merge=(...arrays)=>arrays.reduce((a,b)=>a.concat(b),[])`,
+  array_cons: `array_cons=(a,b)=>a.concat(b)`,
   car: 'car=(arr)=>arr.at(0)',
   cdr: 'cdr=(arr)=>arr.slice(1)',
   array_get: 'array_get=(arr,i)=>arr.at(i)',
@@ -192,9 +192,9 @@ const compile = (tree, Drill) => {
           Arguments[1],
           Drill
         )});`
-      case KEYWORDS.MERGE:
-        Drill.Helpers.add('array_merge')
-        return `array_merge(${parseArgs(Arguments, Drill)});`
+      case KEYWORDS.CONS:
+        Drill.Helpers.add('array_cons')
+        return `array_cons(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.ANONYMOUS_FUNCTION: {
         const functionArgs = Arguments
         const body = Arguments.pop()

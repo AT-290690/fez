@@ -75,10 +75,10 @@ describe('Utils', () => {
         (do 
           (let seq (array:fold 
             (array:zip arr (array:slice arr 1 (length arr)))
-            (safety lambda a b (array:merge a (array (- (car (cdr b)) (car b)))))
+            (safety lambda a b (cons a (array (- (car (cdr b)) (car b)))))
             ()))
-          (append (array:merge out (array arr)) seq))
-      (array:merge out (array arr)))
+          (append (cons out (array arr)) seq))
+      (cons out (array arr)))
     )))
     
 (let part1 (lambda input (do 
@@ -86,7 +86,7 @@ describe('Utils', () => {
     input 
     (array:map (lambda x (append () x)))
     (array:fold (lambda a b 
-      (array:merge a 
+      (cons a 
         (array (array:fold b (safety lambda a b (+ a (array:get b -1))) 0)))) ())
     (math:summation)))))
 
@@ -95,7 +95,7 @@ describe('Utils', () => {
     input 
     (array:map (lambda x (append () x)))
     (array:fold (lambda a b 
-      (array:merge a 
+      (cons a 
         (array (array:fold (array:reverse b) (safety lambda a b (- (array:get b 0) a)) 0)))) ())
     (math:summation)))))
 (array (part1 (parse sample)) (part2 (parse sample)))`,
@@ -208,7 +208,7 @@ treb7uchet")
             (let index (array:index-of *cups* 1))
             (let A (array:slice *cups* 0 index))
             (let B (array:slice *cups* (+ index 1) (length *cups*)))
-            (array:join (array:rotate-right (array:merge A B) (length B)) "")
+            (array:join (array:rotate-right (cons A B) (length B)) "")
             )))) (move 0 (array:rotate-right parsed 1)))))
         (array (type (part1 sample) number) (type (part1 input) number))`,
       `(let n-queen (lambda n (do
@@ -289,7 +289,7 @@ treb7uchet")
     (let solve (lambda arr cb
          (array:fold arr (lambda a b (do
             (let res (array:binary-search arr (cb b)))
-            (if res (array:merge a (array res)) a)))
+            (if res (cons a (array res)) a)))
          ())))
     ; 514579
     (|> *input*

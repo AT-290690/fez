@@ -904,6 +904,29 @@ const keywords = {
       )
     return arrays.reduce((a, b) => a.concat(b), [])
   },
+  [KEYWORDS.CONS]: (args, env) => {
+    if (args.length !== 2)
+      throw new RangeError(
+        `Invalid number of arguments to (${KEYWORDS.CONS}) (= 2 required). (${
+          KEYWORDS.CONS
+        } ${stringifyArgs(args)})`
+      )
+    const array = evaluate(args[0], env)
+    if (!Array.isArray(array))
+      throw new TypeError(
+        `First Argument of (${KEYWORDS.CONS}) must be (${
+          KEYWORDS.ARRAY_TYPE
+        }) (${KEYWORDS.CONS} ${stringifyArgs(args)})`
+      )
+    const other = evaluate(args[1], env)
+    if (!Array.isArray(other))
+      throw new TypeError(
+        `Second Argument of (${KEYWORDS.CONS}) must be (${
+          KEYWORDS.ARRAY_TYPE
+        }) (${KEYWORDS.CONS} ${stringifyArgs(args)})`
+      )
+    return array.concat(other)
+  },
   [KEYWORDS.IMMUTABLE_FUNCTION]: (args, env) => {
     if (!args.length)
       throw new RangeError(

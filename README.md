@@ -31,7 +31,7 @@
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
         (let res (array:binary-search arr (cb b)))
-        (if res (array:merge a (array res)) a)))
+        (if res (cons a (array res)) a)))
      ())))
 ; 514579
 (|> *input*
