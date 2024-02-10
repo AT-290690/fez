@@ -40,6 +40,7 @@
 (let math:round (safety lambda n (| (+ n 0.5) 0)))
 (let math:set-bit (safety lambda n bit (| n (<< 1 bit))))
 (let math:clear-bit (safety lambda n bit (& n (~ (<< 1 bit)))))
+(let math:power-of-two-bits (safety lambda n (<< 2 (- n 1))))
 (let math:odd-bit? (safety lambda n (= (& n 1) 1)))
 (let math:average-bit (safety lambda a b (>> (+ a b) 1)))
 (let math:toggle-bit (safety lambda n a b (^ a b n)))
@@ -96,6 +97,18 @@
 (let math:zero? (safety lambda num (= num 0)))
 (let math:negative-one? (safety lambda num (= num -1)))
 (let math:divisible? (safety lambda a b (= (mod a b) 0)))
+(let math:prime-factors (lambda N (do 
+  (let a ()) 
+  (let n (var:def N))
+  (let f (var:def 2))
+  (let* iterate (lambda (if (> (var:get n) 1) (do 
+    (if (= (mod (var:get n) (var:get f)) 0) 
+      (do 
+        (array:set! a (length a) (var:get f))
+        (var:set! n (* (var:get n) (/ (var:get f)))))
+      (var:set! f (+ (var:get f) 1)))
+    (iterate)) a)))
+    (var:get (iterate)))))
 (let math:prime? (lambda n
       (cond
         (= n 1) 0
@@ -293,6 +306,7 @@
         (let i (car (cdr b)))
         (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a))
         ())))
+(let cast:any->boolean (safety lambda val (not (not bool))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:string->chars (safety lambda str (type str array)))
 (let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (string:merge a (type x string))) "")))
@@ -424,7 +438,23 @@
 (let array:rotate-left (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (array:set! a (mod (+ (car (cdr b)) (- (length arr) n)) (length arr)) (car b))) (array (length arr) length)))))
 (let array:first (safety lambda arr (array:get arr 0)))
 (let array:last (safety lambda arr (array:get arr -1)))
-
+(let string:character-occurances (lambda str letter (do
+  (let arr (type str array))
+  (let bitmask (var:def 0))
+  (let zero (type "a" char-code))
+  (let count (var:def 0))
+  (let at-least-one? (var:def 0))
+  (let* iterate (lambda i bounds (do
+      (let ch (array:get arr i))
+      (let code (- (type ch char-code) zero))
+      (let mask (<< 1 code))
+      (if (and (when (string:equal? ch letter) (var:set! at-least-one? 1))
+          (not (= (& (var:get bitmask) mask) 0))) 
+          (var:set! count (+ (var:get count) 1))
+          (var:set! bitmask (| (var:get bitmask) mask)))
+      (if (< i bounds) (iterate (+ i 1) bounds) 
+      (+ (var:get count) (var:get at-least-one?))))))
+      (iterate 0 (- (length arr) 1)))))
 (let string:split (lambda str delim (do
   (let locals ())
   (let delim-arr (type delim array))
@@ -552,6 +582,14 @@
               (array:map (lambda x (array:join x ""))))))
 (let string:append (lambda a b (string:merge a b)))
 (let string:prepend (lambda a b (string:merge b a)))
+(let string:pad-left (lambda str N ch (do 
+  (let n (- N (length str)))
+  (let* pad (lambda i str (if (< i n) (pad (+ i 1) (string:merge ch str)) str)))
+  (pad 0 str))))
+(let string:pad-right (lambda str N ch (do 
+  (let n (- N (length str)))
+  (let* pad (lambda i str (if (< i n) (pad (+ i 1) (string:merge str ch)) str)))
+  (pad 0 str))))
 (let string:upper (lambda str (do
     (let arr ()) 
     (let n (length str))
@@ -714,6 +752,10 @@
 (let var:get (safety lambda variable (car variable)))
 (let var:set! (safety lambda variable value (array:set! variable 0 value)))
 (let var:del! (safety lambda variable (array:set! variable -1)))
+
+(let bool:def (safety lambda val (array (not (not val)))))
+(let bool:get (safety lambda variable (car variable)))
+(let bool:set! (safety lambda variable value (array:set! variable 0 (not (not value)))))
 
 (let new:brray (lambda (array (array ()) ())))
 (let brray:offset-left (lambda q (* (- (length (array:get q 0)) 1) -1)))
