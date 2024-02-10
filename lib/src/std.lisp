@@ -532,6 +532,11 @@
    a
    (array:zip b)
    (array:every? (lambda x (= (car x) (car (cdr x))))))))))
+(let char:equal? (lambda a b (= (type a char-code) (type b char-code))))
+(let char:lesser? (lambda a b (< (type a char-code) (type b char-code))))
+(let char:greater? (lambda a b (> (type a char-code) (type b char-code))))
+(let char:greater-or-equal? (lambda a b (>= (type a char-code) (type b char-code))))
+(let char:lesser-or-equal? (lambda a b (<= (type a char-code) (type b char-code))))
 (let string:trim-left (lambda str (do
   (let tr (array 1))
 (|> str (type array) (array:fold (lambda a b (if
