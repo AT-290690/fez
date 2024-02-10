@@ -334,28 +334,6 @@
       (when (< index bounds) (iter (+ index 1) bounds)))))
     (iter 0 (- (brray:length q) 1))
     out)))
-(let string:split (lambda str delim (do
-  (let locals ())
-  (let delim-arr (type delim array))
-  (array:set! locals (length locals) delim-arr)
-  (array:set! locals (length locals) (type str array))
-  (array:set! locals (length locals) (length delim-arr))
-  (array:set! locals (length locals) "")
-  (let* iterate (lambda result i bounds
-    (if
-      (< (if (array:every? (array:zip (array:get locals 0) (math:sequence locals))
-                                              (lambda item (do
-                                                  (let y (car item))
-                                                  (let j (car (cdr item)))
-                                                  (or (<= (length (array:get locals 1)) (+ i j)) (= (type (array:get (array:get locals 1) (+ i j)) char-code) (type y char-code))))))
-          (do
-            (array:set! result (length result) (array:get locals 3))
-            (array:set! locals 3 "")
-            (+ i (array:get locals 2) -1))
-          (do (array:set! locals 3 (string:merge (array:get locals 3) (array:get (array:get locals 1) i))) i)) bounds)
-              (iterate result (+ i 1) bounds) result)))
-      (array:set! (let iteration-result (iterate () 0 (- (length (array:get locals 1)) 1))) (length iteration-result) (array:get locals 3)))))
-
 (let array:shallow-copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) b)) ())))
 (let array:deep-copy (lambda arr (array:fold arr (lambda a b (array:set! a (length a) (if (array? b) (array:deep-copy b) b))) ())))
 (let array:merge! (lambda a b (do (array:for b (lambda x (array:set! a (length a) x))) a)))
@@ -447,6 +425,27 @@
 (let array:first (safety lambda arr (array:get arr 0)))
 (let array:last (safety lambda arr (array:get arr -1)))
 
+(let string:split (lambda str delim (do
+  (let locals ())
+  (let delim-arr (type delim array))
+  (array:set! locals (length locals) delim-arr)
+  (array:set! locals (length locals) (type str array))
+  (array:set! locals (length locals) (length delim-arr))
+  (array:set! locals (length locals) "")
+  (let* iterate (lambda result i bounds
+    (if
+      (< (if (array:every? (array:zip (array:get locals 0) (math:sequence locals))
+                                              (lambda item (do
+                                                  (let y (car item))
+                                                  (let j (car (cdr item)))
+                                                  (or (<= (length (array:get locals 1)) (+ i j)) (= (type (array:get (array:get locals 1) (+ i j)) char-code) (type y char-code))))))
+          (do
+            (array:set! result (length result) (array:get locals 3))
+            (array:set! locals 3 "")
+            (+ i (array:get locals 2) -1))
+          (do (array:set! locals 3 (string:merge (array:get locals 3) (array:get (array:get locals 1) i))) i)) bounds)
+              (iterate result (+ i 1) bounds) result)))
+      (array:set! (let iteration-result (iterate () 0 (- (length (array:get locals 1)) 1))) (length iteration-result) (array:get locals 3)))))
 (let string:index-of-char (lambda str character (do
                     (let* iterate (lambda arr i
                           (if (length arr)
@@ -553,6 +552,32 @@
               (array:map (lambda x (array:join x ""))))))
 (let string:append (lambda a b (string:merge a b)))
 (let string:prepend (lambda a b (string:merge b a)))
+(let string:upper (lambda str (do
+    (let arr ()) 
+    (let n (length str))
+    (let codes (cast:string->char-codes str))
+    (let* iter (lambda i (if (< i n) (do
+      (let current-char (array:get codes i))
+      (array:set! arr i 
+        (if (and (>= current-char 97) (<= current-char 122))
+          (- current-char 32)
+          current-char))
+      (iter (+ i 1))) 
+      (cast:char-codes->string arr)))
+      ) (iter 0))))
+(let string:lower (lambda str (do
+    (let arr ()) 
+    (let n (length str))
+    (let codes (cast:string->char-codes str))
+    (let* iter (lambda i (if (< i n) (do
+      (let current-char (array:get codes i))
+      (array:set! arr i 
+        (if (and (>= current-char 65) (<= current-char 90))
+          (+ current-char 32)
+          current-char))
+      (iter (+ i 1))) 
+      (cast:char-codes->string arr)))
+      ) (iter 0))))
 (let new:set (lambda (array () () () ())))
 (let new:array (safety lambda items (type items array)))
 (let new:list (safety lambda value (array () value ())))
