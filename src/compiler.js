@@ -64,8 +64,6 @@ return result
     } else array[index] = value; 
     return array 
 }`,
-  serialise:
-    "serialise=(ast)=>{\n if(ast==undefined) return '()'\n else if(typeof ast==='object')\n if(Array.isArray(ast)) return `(array ${ast.map(serialise).join(' ')})`\n else\n return `(array ${ast.map(([key, value]) => `(\"${key}\" ${serialise(value)})`).join(' ')})`\n else if(typeof ast==='string') return `\"${ast}\"`\n else if(typeof ast==='function') return '()'\n else return ast\n}",
   cast: `cast=(type,value)=>{
     switch (type) {
       case '${KEYWORDS.NUMBER_TYPE}':
@@ -336,14 +334,7 @@ const compile = (tree, Drill) => {
         const [first, ...rest] = Arguments
         return compile([leaf(APPLY, first[VALUE]), ...rest], Drill)
       }
-      // case KEYWORDS.SERIALISE:
-      //   Drill.Helpers.add('serialise')
-      //   return `serialise(${compile(Arguments[0], Drill)});`
-      // case KEYWORDS.SET_ARRAY:
-      //   Drill.Helpers.add('arraySetEffect')
-      //   return `arraySetEffect(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.NOT_COMPILED_BLOCK:
-      case KEYWORDS.ATOM:
       case KEYWORDS.TEST_CASE:
       case KEYWORDS.TEST_BED:
       case KEYWORDS.DOC:

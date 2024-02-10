@@ -1036,14 +1036,6 @@ const keywords = {
       : console.log('\x1b[32m', 'All tests passed!', '\n', '\x1b[0m')
     return +!result
   },
-  [KEYWORDS.SERIALISE]: (args, env) => {
-    if (!args.length)
-      throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.SERIALISE})`
-      )
-    const data = evaluate(args[0], env)
-    return LISP.stringify(data)
-  },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
     if (args.length !== 2 && args.length !== 3)
       throw new RangeError(

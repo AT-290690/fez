@@ -15,7 +15,6 @@ export const KEYWORDS = {
   ARRAY_TYPE: 'array',
   CHAR_CODE_TYPE: 'char-code',
   CHAR_TYPE: 'char',
-
   CAST_TYPE: 'type',
   CONCATENATION: 'string:merge',
   ARRAY_OR_STRING_LENGTH: 'length',
@@ -23,13 +22,12 @@ export const KEYWORDS = {
   IS_NUMBER: 'number?',
   IS_STRING: 'string?',
   IS_FUNCTION: 'lambda?',
-
+  IS_ATOM: 'atom?',
   ADDITION: '+',
   SUBTRACTION: '-',
   MULTIPLICATION: '*',
   DIVISION: '/',
   REMAINDER_OF_DIVISION: 'mod',
-
   BITWISE_AND: '&',
   BITWISE_OR: '|',
   BITWISE_NOT: '~',
@@ -37,23 +35,17 @@ export const KEYWORDS = {
   BITWISE_LEFT_SHIFT: '<<',
   BITWISE_RIGHT_SHIFT: '>>',
   BITWISE_UNSIGNED_RIGHT_SHIFT: '>>>',
-  ATOM: 'atom',
-  IS_ATOM: 'atom?',
   FIRST_ARRAY: 'car',
   REST_ARRAY: 'cdr',
   GET_ARRAY: 'array:get',
-
-  BLOCK: 'do',
-
   CONS: 'cons',
+  BLOCK: 'do',
   ANONYMOUS_FUNCTION: 'lambda',
-
   IF: 'if',
   UNLESS: 'unless',
   WHEN: 'when',
   OTHERWISE: 'otherwise',
   CONDITION: 'cond',
-
   NOT: 'not',
   EQUAL: '=',
   LESS_THAN: '<',
@@ -64,20 +56,15 @@ export const KEYWORDS = {
   OR: 'or',
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'let',
-
   PIPE: '|>',
   THROW_ERROR: 'throw',
   TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
   IMMUTABLE_FUNCTION: 'safety',
   NOT_COMPILED_BLOCK: 'void',
-
   TEST_CASE: 'case',
   TEST_BED: 'assert',
-  SERIALISE: 'serialise',
-
   LOG: 'log!',
   CLEAR_CONSOLE: 'clear!',
   SET_ARRAY: 'array:set!',
-
   DOC: 'fez-manual'
 }

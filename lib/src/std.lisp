@@ -13,6 +13,8 @@
                           (let* iterate (lambda out count
                           (if (< (length out) n) (iterate (array:merge! out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
+(let math:between? (safety v min max (and (> v min) (< v max))))
+(let math:overlap? (safety v min max (and (>= v min) (<= v max))))
 (let math:permutations (lambda xs
   (unless (length xs)
               (array ())
@@ -537,6 +539,8 @@
 (let char:greater? (lambda a b (> (type a char-code) (type b char-code))))
 (let char:greater-or-equal? (lambda a b (>= (type a char-code) (type b char-code))))
 (let char:lesser-or-equal? (lambda a b (<= (type a char-code) (type b char-code))))
+(let char? (safety lambda ch (and (string? ch) (= (length ch) 1))))
+(let char-code? (safety lambda cc (and (number? cc) (>= cc 0) (< cc 65535))))
 (let string:trim-left (lambda str (do
   (let tr (array 1))
 (|> str (type array) (array:fold (lambda a b (if
