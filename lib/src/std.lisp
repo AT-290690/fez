@@ -761,6 +761,11 @@
 (let bool:def (safety lambda val (array (not (not val)))))
 (let bool:get (safety lambda variable (car variable)))
 (let bool:set! (safety lambda variable value (array:set! variable 0 (not (not value)))))
+(let bool:toggle! (safety lambda variable (array:set! variable 0 (not (car variable)))))
+(let bool:true (safety lambda (array 1)))
+(let bool:false (safety lambda (array 0)))
+(let bool:true! (safety lambda variable (array:set! variable 0 1)))
+(let bool:false! (safety lambda variable (array:set! variable 0 0)))
 
 (let new:brray (lambda (array (array ()) ())))
 (let brray:offset-left (lambda q (* (- (length (array:get q 0)) 1) -1)))
