@@ -1,10 +1,10 @@
-# fez
+# Fez [Lisp Evaluator in JavaScript](https://medium.com/@antony.k.tonev/lisp-evaluator-in-javascript-b7ee0d817a58)
 
 <p align="center">
 <img width="64" src="./logo.svg"/>
 </p>
 
-[Fez - Lisp Evaluator in JavaScript](https://medium.com/@antony.k.tonev/lisp-evaluator-in-javascript-b7ee0d817a58)
+
 
 ```lisp
 (let fizz-buzz (lambda n
