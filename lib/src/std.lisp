@@ -166,11 +166,19 @@
   ; so adding 1 and dividing it by
   (>> (+ N4 1) 1))))
 (let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) ())))
-
+(let math:enumeration (lambda (do 
+  (let I (var:def -1))
+  (let inc (lambda (do (let i (+ (var:get I) 1)) (var:set! I i) i))))))
 (let* array:for (lambda arr callback
                                 (when (length arr)
                                   (do (callback (car arr))
                                       (array:for (cdr arr) callback)))))
+(let* array:fill (lambda n callback (do 
+(let* iter (lambda arr i (if (= i 0) arr (iter (cons arr (array (callback))) (- i 1)))))
+(iter () n))))
+(let* array:of (lambda n callback (do 
+  (let* iter (lambda arr i (if (= i n) arr (iter (cons arr (array (callback i))) (+ i 1)))))
+  (iter () 0))))
 (let array:map (lambda arr callback (do
                   (let* iterate (lambda arr out
                         (if  (length arr)
@@ -351,6 +359,7 @@
    (iter num ""))))
 (let cast:any->boolean (safety lambda val (not (not bool))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
+(let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
 (let cast:string->chars (safety lambda str (type str array)))
 (let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (string:merge a (type x string))) "")))
 (let cast:string->number (safety lambda str (type str number)))
@@ -397,7 +406,6 @@
 (let array:merge (lambda a b (do (let out ()) (array:for b (lambda x (array:set! out (length out) x))) out)))
 (let array:swap-remove! (lambda arr i (do (array:set! arr i (array:get arr (- (length arr) 1))) (array:set! arr -1))))
 (let array:swap! (lambda arr i j (do (let temp (array:get arr i)) (array:set! arr i (array:get arr j)) (array:set! arr j temp))))
-
 (let array:index-of (safety lambda arr item (do
                     (let* iterate (lambda arr i
                           (if (length arr)
@@ -665,9 +673,10 @@
       (iter (+ i 1))) 
       (cast:char-codes->string arr)))
       ) (iter 0))))
-(let new:set (lambda (array () () () ())))
+(let new:set4 (lambda (array () () () ())))
 (let new:array (safety lambda items (type items array)))
 (let new:list (safety lambda value (array () value ())))
+(let new:set-n (lambda n (array:map (array n length) (lambda . ()))))
 
 (let new:binary-tree (safety lambda value (do (let arr ()) (array:set! arr 0 value) (array:set! arr 1 ()) (array:set! arr 2 ()) arr)))
 (let binary-tree:left (safety lambda node (array:get node 1)))
@@ -944,3 +953,5 @@ q)))
 (let date:sub-days (lambda date-time days (- date-time (* days 1000 60 60 24))))
 (let date:sub-months (lambda date-time months (- date-time (* months 1000 60 60 24 30))))
 (let date:sub-years (lambda date-time years (- date-time (* years 1000 60 60 24 365))))
+
+(let identity (lambda x x))
