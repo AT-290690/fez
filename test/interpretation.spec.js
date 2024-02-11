@@ -4,6 +4,37 @@ describe('Interpretation', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
+        `(do
+(let arr (array 0.1 3.14 1 2 3 4 10))
+(let *FACTOR* 17)
+(let sin (lambda x (math:sine x *FACTOR*)))
+(let cos (lambda x (math:cosine x *FACTOR*)))
+(array (array:map arr sin) (array:map arr cos)))`,
+        {
+          std: 1
+        }
+      ),
+      [
+        [
+          0.09983341664682817, 0.001592652916487223, 0.8414709848078965,
+          0.9092974268256817, 0.1411200080598671, -0.7568024953079275,
+          -0.5440217912425812
+        ],
+        [
+          0.9950041652780258, -0.9999987317275395, 0.5403023058681397,
+          -0.41614683654714246, -0.9899924966004455, -0.6536436208636125,
+          -0.8390740376799477
+        ]
+      ]
+    )
+    strictEqual(
+      fez(`(string:character-occurances "dsadasdawadasdwadaefsdwasa" "a")`, {
+        std: 1
+      }),
+      9
+    )
+    deepStrictEqual(
+      fez(
         `(|>
       (math:range 0 100)
       (array:map cast:number->string)

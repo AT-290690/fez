@@ -99,6 +99,31 @@
 (let math:zero? (safety lambda num (= num 0)))
 (let math:negative-one? (safety lambda num (= num -1)))
 (let math:divisible? (safety lambda a b (= (mod a b) 0)))
+(let math:factorial (lambda n (if (<= n 0) 1 (* n (math:factorial (- n 1))))))
+(let math:sine (lambda rad terms (do
+    (let sine (var:def 0))
+    (let* inc (lambda i 
+      (do 
+        (var:set! sine 
+          (+ (var:get sine) 
+            (* 
+              (/ (math:factorial (+ (* 2 i) 1))) 
+              (math:power -1 i) 
+              (math:power rad (+ (* 2 i) 1))))) 
+        (if (< i terms) (inc (+ i 1)) (var:get sine)))))
+      (inc 0))))
+(let math:cosine (lambda rad terms (do
+    (let cosine (var:def 0))
+    (let* inc (lambda i 
+      (do 
+        (var:set! cosine 
+          (+ (var:get cosine) 
+            (* 
+              (/ (math:factorial (* 2 i))) 
+              (math:power -1 i) 
+              (math:power rad (* 2 i))))) 
+        (if (< i terms) (inc (+ i 1)) (var:get cosine)))))
+      (inc 0))))
 (let math:prime-factors (lambda N (do 
   (let a ()) 
   (let n (var:def N))
@@ -303,11 +328,11 @@
           (when
             (and (array:in-bounds? arr dy) (array:in-bounds? (array:get arr dy) dx))
               (callback (array:get (array:get arr dy) dx) dir)))))))
-  (let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do
-        (let x (car b))
-        (let i (car (cdr b)))
-        (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a))
-        ())))
+(let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do
+      (let x (car b))
+      (let i (car (cdr b)))
+      (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a))
+      ())))
 (let cast:any->boolean (safety lambda val (not (not bool))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:string->chars (safety lambda str (type str array)))
@@ -450,7 +475,7 @@
       (let ch (array:get arr i))
       (let code (- (type ch char-code) zero))
       (let mask (<< 1 code))
-      (if (and (when (string:equal? ch letter) (var:set! at-least-one? 1))
+      (if (and (when (char:equal? ch letter) (var:set! at-least-one? 1))
           (not (= (& (var:get bitmask) mask) 0))) 
           (var:set! count (+ (var:get count) 1))
           (var:set! bitmask (| (var:get bitmask) mask)))
@@ -495,7 +520,7 @@
                                                         word) i (iterate (cdr arr) (+ i 1)))
                                                     -1)))
                                               (iterate string-arr 0)))))
-(let string:has? (lambda str word (cond 
+(let string:has? (lambda str word (cond
                                     (< (length str) (length word)) 0
                                     (string:equal? str word) 1
                                     (*) (do
@@ -506,8 +531,7 @@
                                                         (|> string-arr (array:slice i (+ i (length word))) (array:join ""))
                                                         word) 
                                                         1 
-                                                        (iterate (cdr arr) (+ i 1)))
-                                                    )))
+                                                        (iterate (cdr arr) (+ i 1))))))
                                               (iterate string-arr 0)))))
 (let string:greater? (lambda L R (otherwise (string:equal? L R) (do
   (let A (cast:string->char-codes (type L string)))
@@ -662,17 +686,17 @@
             (array:set! current (length current) entry)
             (array:set! current index entry)) table)))
 
-  (let set:remove!
-    (lambda table key
-      (do
-        (let idx (set:index table key))
-        (otherwise (array:in-bounds? table idx) (array:set! table idx (Array)))
-        (let current (array:get table idx))
-        (let len (length current))
-        (let index (if len (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) -1))
-        (let entry key)
-        (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
-        table)))
+(let set:remove!
+  (lambda table key
+    (do
+      (let idx (set:index table key))
+      (otherwise (array:in-bounds? table idx) (array:set! table idx (Array)))
+      (let current (array:get table idx))
+      (let len (length current))
+      (let index (if len (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) -1))
+      (let entry key)
+      (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
+      table)))
 
 (let set:has? (lambda table key
       (and (array:in-bounds? table
@@ -721,26 +745,26 @@
             (array:set! current index entry))
           table)))
 
-  (let map:remove!
-      (lambda table key
-        (do
-          (let idx (set:index table key))
-          (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
-          (let current (array:get table idx))
-          (let len (length current))
-          (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
-          (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
-          table)))
+(let map:remove!
+    (lambda table key
+      (do
+        (let idx (set:index table key))
+        (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
+        (let current (array:get table idx))
+        (let len (length current))
+        (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
+        (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
+        table)))
 
-   (let map:get
-      (lambda table key
+(let map:get
+  (lambda table key
+    (do
+      (let idx (set:index table key))
+      (when (array:in-bounds? table idx)
         (do
-          (let idx (set:index table key))
-          (when (array:in-bounds? table idx)
-            (do
-              (let current (array:get table idx))
-              (let found (array:find current (lambda x (string:equal? (type key string) (type (array:get x 0) string)))))
-              (when (length found) (array:get found 1)))))))
+          (let current (array:get table idx))
+          (let found (array:find current (lambda x (string:equal? (type key string) (type (array:get x 0) string)))))
+          (when (length found) (array:get found 1)))))))
 
 
 (let map:has? (lambda table key
