@@ -51,6 +51,15 @@
 (let math:min-bit (safety lambda a b (- a (& (- a b) (>> (- b a) 31)))))
 (let math:modulo-bit (safety lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (safety lambda N nth (type (& N (<< 1 nth)) boolean)))
+(let math:count-leading-zero-bits32 (lambda x (when (>= x 0) (- 32 (length (cast:number->bit x))))))
+(let math:bit-count32 (safety lambda n0 (do 
+  (let n1 (- n0 (& (>> n0 1) 1431655765)))
+  (let n2 (+ (& n1 858993459) (& (>> n1 2) 858993459)))
+  (>> (* (& (+ n2 (>> n2 4)) 252645135) 16843009) 24)
+)))
+(let math:bit-count (lambda n (do 
+  (let* iter (lambda n bits (if (= n 0) bits (iter (/ n 4294967296) (+ bits (math:bit-count32 (| n 0)))))))
+  (iter n 0))))
 (let math:square (safety lambda x (* x x)))
 (let math:power (lambda base exp
   (if (< exp 0)
@@ -73,6 +82,7 @@
           (math:sqrt-iter (improve-guess g x) x))))
   (math:sqrt-iter 1.0 x))))
 (let math:circumference (lambda radius (* math:PI (* radius 2))))
+(let math:number-of-digits (safety lambda n (length (type (| n 0) string))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (safety lambda n (- (^ n (>> n 31)) (>> n 31))))
 (let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0.5)))
@@ -333,6 +343,12 @@
       (let i (car (cdr b)))
       (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a))
       ())))
+(let cast:number->bits (lambda num (do 
+  (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0))) res)))
+  (array:reverse (iter num ())))))
+(let cast:number->bit (lambda num (do 
+  (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (string:merge (type (| (mod num 2) 0) string) res)) res)))
+   (iter num ""))))
 (let cast:any->boolean (safety lambda val (not (not bool))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:string->chars (safety lambda str (type str array)))
