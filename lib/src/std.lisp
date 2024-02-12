@@ -145,7 +145,8 @@
         (var:set! n (* (var:get n) (/ (var:get f)))))
       (var:set! f (+ (var:get f) 1)))
     (iterate)) a)))
-    (var:get (iterate)))))
+    (iterate)
+    a)))
 (let math:prime? (lambda n
       (cond
         (= n 1) 0
