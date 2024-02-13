@@ -246,7 +246,7 @@ treb7uchet")
       (let people (array () () () ()))
       (map:set! people "name" "Anthony")
       (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
-      (cast:table->array people) `,
+      (cast:map->array people) `,
       `
 (let ascending? (lambda a b (> a b)))
 (let descending? (lambda a b (< a b)))

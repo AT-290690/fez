@@ -20,19 +20,19 @@ const Helpers = {
   __lt: '__lt=(a,b)=>+(a<b)',
   not: 'not=(a)=>+!a',
   and: `and=(...args)=>{
-    let circuit
-    for (let i = 0; i < args.length - 1; ++i) {
-      circuit = args[i]
-      if (circuit) continue
+    let circuit;
+    for(let i=0; i<args.length-1;++i){
+      circuit=args[i]
+      if(circuit) continue
       else return circuit
     }
     return args.at(-1) 
   }`,
-  or: `and=(...args)=>{
-    let circuit
-    for (let i = 0; i < args.length - 1; ++i) {
+  or: `or=(...args)=>{
+    let circuit;
+    for(let i=0;i<args.length-1;++i) {
       circuit = args[i]
-      if (circuit) return circuit
+      if(circuit)return circuit
       else continue
     }
     return args.at(-1) 
@@ -44,46 +44,15 @@ const Helpers = {
   cdr: 'cdr=(arr)=>arr.slice(1)',
   array_get: 'array_get=(arr,i)=>arr.at(i)',
   length: 'length=(arr)=>arr.length',
-  __tco: `__tco=fn=>(...args)=>{
-let result=fn(...args)
-while(typeof result==='function')result=result()
-return result
-  }`,
+  __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   numberPredicate: `numberPredicate=(number)=>+(typeof number==='number')`,
   stringPredicate: `stringPredicate=(string)=>+(typeof string==='string')`,
   lambdaPredicate: `lambdaPredicate=(lambda)=>+(typeof lambda==='function')`,
   arrayPredicate: `arrayPredicate=(array)=>+Array.isArray(array)`,
   atomPredicate: `atomPredicate=(value)=>+(typeof value==='number'||typeof value==='string')`,
-  error: `error=(error)=>{ 
-    throw new Error(error)
-}`,
-  array_setEffect: `array_setEffect=(array,index,value)=>{ 
-    if (index < 0) {
-     const target = array.length + index
-     while (array.length !== target) array.pop()
-    } else array[index] = value; 
-    return array 
-}`,
-  cast: `cast=(type,value)=>{
-    switch (type) {
-      case '${KEYWORDS.NUMBER_TYPE}':
-         return Number(value)
-      case '${KEYWORDS.STRING_TYPE}':
-         return value.toString()
-      case '${KEYWORDS.ARRAY_TYPE}':
-        return typeof value==='number'?[...Number(value).toString()].map(Number):[...value]
-      case '${KEYWORDS.BOOLEAN_TYPE}':
-          return +!!value
-      case '${KEYWORDS.ANONYMOUS_FUNCTION}':
-          return ()=>value
-      case '${KEYWORDS.CHAR_CODE_TYPE}':
-        return value.charCodeAt(0)
-      case '${KEYWORDS.CHAR_TYPE}':
-        return String.fromCharCode(value)
-       default:
-         return 0
-      }
-    }`
+  error: `error=(error)=>{throw new Error(error)}`,
+  array_setEffect: `array_setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`,
+  cast: `cast=(type,value)=>{switch(type){case '${KEYWORDS.NUMBER_TYPE}':return Number(value);case '${KEYWORDS.STRING_TYPE}':return value.toString();case '${KEYWORDS.ARRAY_TYPE}':return typeof value==='number'?[...Number(value).toString()].map(Number):[...value];case '${KEYWORDS.BOOLEAN_TYPE}':return +!!value;case '${KEYWORDS.ANONYMOUS_FUNCTION}':return ()=>value;case '${KEYWORDS.CHAR_CODE_TYPE}':return value.charCodeAt(0);case '${KEYWORDS.CHAR_TYPE}':return String.fromCharCode(value);default:return 0}}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',

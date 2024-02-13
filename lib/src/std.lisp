@@ -145,8 +145,7 @@
         (var:set! n (* (var:get n) (/ (var:get f)))))
       (var:set! f (+ (var:get f) 1)))
     (iterate)) a)))
-    (iterate)
-    a)))
+    (iterate))))
 (let math:prime? (lambda n
       (cond
         (= n 1) 0
@@ -358,7 +357,7 @@
 (let cast:number->bit (lambda num (do 
   (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (string:merge (type (| (mod num 2) 0) string) res)) res)))
    (iter num ""))))
-(let cast:any->boolean (safety lambda val (not (not bool))))
+(let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
 (let cast:string->chars (safety lambda str (type str array)))
@@ -375,7 +374,8 @@
 (let cast:char-code->char (safety lambda ch (type ch char)))
 (let cast:char-codes->chars (lambda arr (|> arr (array:map (safety lambda x (type x char))))))
 (let cast:char-codes->string (lambda arr (|> arr (array:map (safety lambda x (type x char))) (cast:chars->string))))
-(let cast:table->array (lambda set (array:select (array:flat set) atom?)))
+(let cast:set->array (lambda set (array:select (array:flat set) atom?)))
+(let cast:map->array (lambda set (array:select (array:flat set) atom?)))
 (let cast:map->string (lambda table (|>
   table
   (array:select length)
@@ -732,27 +732,27 @@
 
 (let set:intersection (lambda a b
         (|> b
-          (cast:table->array)
+          (cast:set->array)
           (array:fold (lambda out element
           (do (when (set:has? a element)
                     (set:add! out element)) out)) (array () () () () ())))))
 
 (let set:difference (lambda a b
       (|> a
-        (cast:table->array)
+        (cast:set->array)
         (array:fold (lambda out element
                         (do (when (not (set:has? b element))
                                         (set:add! out element)) out)) (array () () () () ())))))
 (let set:xor (lambda a b (do
         (let out (array () () () () ()))
-        (|> a (cast:table->array) (array:for (lambda element (when (not (set:has? b element)) (set:add! out element)))))
-        (|> b (cast:table->array) (array:for (lambda element (when (not (set:has? a element)) (set:add! out element)))))
+        (|> a (cast:set->array) (array:for (lambda element (when (not (set:has? b element)) (set:add! out element)))))
+        (|> b (cast:set->array) (array:for (lambda element (when (not (set:has? a element)) (set:add! out element)))))
         out)))
 
 (let set:union (lambda a b (do
         (let out (array () () () () ()))
-        (|> a (cast:table->array) (array:for (lambda element (set:add! out element))))
-        (|> b (cast:table->array) (array:for (lambda element (set:add! out element))))
+        (|> a (cast:set->array) (array:for (lambda element (set:add! out element))))
+        (|> b (cast:set->array) (array:for (lambda element (set:add! out element))))
         out)))
 
 (let set:empty! (lambda table (array:map table empty!)))

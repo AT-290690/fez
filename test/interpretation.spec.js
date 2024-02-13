@@ -319,7 +319,7 @@ treb7uchet")
         `(let people (array () () () ()))
         (map:set! people "name" "Anthony")
         (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
-        (cast:table->array people)
+        (cast:map->array people)
         `,
         { std: 1, compile: 0, mutation: 1 }
       ),
@@ -337,7 +337,7 @@ treb7uchet")
         (set:add! B 2)
         (set:add! B 4)
         (set:add! B 5)
-        (array (cast:table->array (set:xor A B)) (cast:table->array (set:difference A B)) (cast:table->array (set:difference B A)) (cast:table->array (set:intersection B A)))
+        (array (cast:map->array (set:xor A B)) (cast:map->array (set:difference A B)) (cast:set->array (set:difference B A)) (cast:set->array (set:intersection B A)))
     `,
         { std: 1, compile: 0, mutation: 1 }
       ),

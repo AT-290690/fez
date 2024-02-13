@@ -3,6 +3,11 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(array 
+        (array:fold (array 1 2 3) + 0)
+        (array:fold (array 1 2 3) * 1)
+        (array:sort (array 1 2 3) <)
+      )`,
       `(|>
       (math:range 0 100)
       (array:map cast:number->string)
@@ -244,7 +249,7 @@ treb7uchet")
       (let people (array () () () ()))
       (map:set! people "name" "Anthony")
       (array (map:set! people "name" (string:merge (map:get people "name") " " "Tonev")))
-      (cast:table->array people) `,
+      (cast:map->array people) `,
       `
 (let ascending? (lambda a b (> a b)))
 (let descending? (lambda a b (< a b)))
