@@ -2,6 +2,14 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
+    strictEqual(
+      fez(
+        `(let arr (array (array "Heloo" "Nurse") (array 1 2 3) ()))
+    (array:serialise arr)`,
+        { std: 1 }
+      ),
+      '(array (array "Heloo" "Nurse") (array 1 2 3) ())'
+    )
     deepStrictEqual(
       fez(
         `(do

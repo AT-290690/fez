@@ -5,6 +5,13 @@ import std from '../lib/baked/std.js'
 describe('Utils', () => {
   it('Should work correctly', () =>
     [
+      `(let arr (array (array "Heloo" "Nurse") (array 1 2 3) ()))
+      (array:serialise arr)`,
+      `(array 
+        (array:fold (array 1 2 3) + 0)
+        (array:fold (array 1 2 3) * 1)
+        (array:sort (array 1 2 3) <)
+      )`,
       `(|>
       (math:range 0 100)
       (array:map cast:number->string)

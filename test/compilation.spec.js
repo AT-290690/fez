@@ -3,6 +3,8 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(let arr (array (array "Heloo" "Nurse") (array 1 2 3) ()))
+      (array:serialise arr)`,
       `(array 
         (array:fold (array 1 2 3) + 0)
         (array:fold (array 1 2 3) * 1)

@@ -74,7 +74,6 @@ const semiColumnEdgeCases = new Set([
   ';;',
   ';]'
 ])
-
 const parse = (Arguments, Drill) => Arguments.map((x) => compile(x, Drill))
 const parseArgs = (Arguments, Drill, separator = ',') =>
   parse(Arguments, Drill).join(separator)
@@ -180,29 +179,35 @@ const compile = (tree, Drill) => {
         )})=>{${vars}return ${evaluatedBody.toString().trimStart()}});`
       }
       case KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: {
-        let name,
-          newName,
-          out = '(('
         const arg = Arguments[0]
-        name = lispToJavaScriptVariableName(arg[VALUE])
-        newName = `rec_${performance.now().toString().replace('.', 7)}`
-        Drill.Variables.add(name)
-        Drill.Variables.add(newName)
-        Drill.Helpers.add('__tco')
-        const functionArgs = Arguments[1].slice(1)
-        const body = functionArgs.pop()
-        const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-        deepRename(arg[VALUE], newName, body)
-        const evaluatedBody = compile(body, FunctionDrill)
-        const vars = FunctionDrill.Variables.size
-          ? `var ${[...FunctionDrill.Variables].join(',')};`
-          : ''
-        out += `${name}=(__tco(${newName}=(${parseArgs(
-          functionArgs,
-          Drill
-        )})=>{${vars}return ${evaluatedBody.toString().trimStart()}};`
-        out += `, ${newName}))), ${name});`
-        return out
+        if (arg[0] === APPLY && arg[1] === KEYWORDS.ANONYMOUS_FUNCTION) {
+          let name,
+            newName,
+            out = '(('
+          name = lispToJavaScriptVariableName(arg[VALUE])
+          newName = `rec_${performance.now().toString().replace('.', 7)}`
+          Drill.Variables.add(name)
+          Drill.Variables.add(newName)
+          Drill.Helpers.add('__tco')
+          const functionArgs = Arguments[1].slice(1)
+          const body = functionArgs.pop()
+          const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
+          deepRename(arg[VALUE], newName, body)
+          const evaluatedBody = compile(body, FunctionDrill)
+          const vars = FunctionDrill.Variables.size
+            ? `var ${[...FunctionDrill.Variables].join(',')};`
+            : ''
+          out += `${name}=(__tco(${newName}=(${parseArgs(
+            functionArgs,
+            Drill
+          )})=>{${vars}return ${evaluatedBody.toString().trimStart()}};`
+          out += `, ${newName}))), ${name});`
+          return out
+        } else
+          return compile(
+            [[APPLY, KEYWORDS.DEFINE_VARIABLE], ...Arguments],
+            Drill
+          )
       }
       case KEYWORDS.AND:
         return `(${parseArgs(Arguments, Drill, '&&')});`

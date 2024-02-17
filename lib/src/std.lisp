@@ -1,5 +1,7 @@
 (let math:E 2.718281828459045)
 (let math:PI 3.141592653589793)
+(let string:DOUBLE-QUOTE-CHAR (type 34 char))
+(let string:NEW-LINE-CHAR (type 10 char))
 (let math:range (lambda start end (do
                           (let* iterate (lambda out count
                           (if (<= count end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
@@ -297,6 +299,15 @@
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a delim (type (car b) string)) (type (car b) string))) "")))
+(let array:words (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a " " (type (car b) string)) (type (car b) string))) "")))
+(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a string:NEW-LINE-CHAR (type (car b) string)) (type (car b) string))) "")))
+(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a "," (type (car b) string)) (type (car b) string))) "")))
+(let array:serialise (lambda arg 
+    (cond 
+        (array? arg) (if (length arg) (string:merge "(array " (array:words (array:map arg array:serialise)) ")") "()")
+        (number? arg) (type arg string)
+        (string? arg) (string:merge string:DOUBLE-QUOTE-CHAR arg string:DOUBLE-QUOTE-CHAR)
+        (*) "")))
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item
@@ -381,7 +392,7 @@
   (array:select length)
   (array:flat-one)
   (array:map (lambda y (array:join y " -> ")))
-  (array:join "\n"))))
+  (array:join string:NEW-LINE-CHAR))))
 (let cast:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
@@ -609,7 +620,7 @@
 (let string:lines (lambda str (|> str (type array)
                       (array:fold (lambda a b (do
                       (let prev (array:get a -1))
-                       (if (string:equal? b "\n")
+                       (if (string:equal? b string:NEW-LINE-CHAR)
                            (array:set! a (length a) ())
                            (array:set! prev (length prev) b)) a))
                       (array ()))
