@@ -5,6 +5,18 @@ import std from '../lib/baked/std.js'
 describe('Utils', () => {
   it('Should work correctly', () =>
     [
+      `(let arr (array 0.1 3.14 1 2 3 4 10))
+      (let *FACTOR* 17)
+      (let sin (lambda x (math:sine x *FACTOR*)))
+      (let cos (lambda x (math:cosine x *FACTOR*)))
+      (array (array:map arr sin) (array:map arr cos))`,
+      `(|> 
+        (array 1 2 3)
+        (cons 
+            (array () (array 1 2 3 "4")))
+        (cons 
+            (array "hello" "nurse"))
+        (array:serialise))`,
       `(let arr (array (array "Heloo" "Nurse") (array 1 2 3) ()))
       (array:serialise arr)`,
       `(array 

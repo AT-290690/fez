@@ -872,22 +872,6 @@ const keywords = {
     }
     return evaluate(inp, env)
   },
-  [KEYWORDS.THROW_ERROR]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.THROW_ERROR
-        }) (= 1 required). (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)})`
-      )
-    const string = evaluate(args[0], env)
-    if (typeof string !== 'string')
-      throw new TypeError(
-        `First argument of (${KEYWORDS.THROW_ERROR}) must be an (${
-          KEYWORDS.STRING_TYPE
-        }) (${KEYWORDS.THROW_ERROR} ${stringifyArgs(args)})`
-      )
-    throw new Error(string)
-  },
   [KEYWORDS.MERGE]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(

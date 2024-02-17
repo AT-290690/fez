@@ -66,7 +66,9 @@
 (let math:power (lambda base exp
   (if (< exp 0)
       (if (= base 0)
-      (throw (string:merge "Attempting to divide by 0 in (math:power " (type base string) " " (type exp string) ")"))
+        (do 
+          (log! (string:merge "Attempting to divide by 0 in (math:power " (type base string) " " (type exp string) ")"))
+          ())
       (/ (* base (math:power base (- (* exp -1) 1)))))
         (cond
             (= exp 0) 1
@@ -709,7 +711,6 @@
         (array:set! total 0 (math:euclidean-mod (+ (* (car total) prime-num) value) (length table)))
         (if (< i bounds) (find-hash-index (+ i 1) bounds) (car total)))))
       (find-hash-index 0 (if (< (- (length key-arr) 1) 100) (- (length key-arr) 1) 100)))))
-
 (let set:add!
       (lambda table key
         (do
@@ -722,7 +723,6 @@
           (if (= index -1)
             (array:set! current (length current) entry)
             (array:set! current index entry)) table)))
-
 (let set:remove!
   (lambda table key
     (do
@@ -734,20 +734,17 @@
       (let entry key)
       (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
       table)))
-
 (let set:has? (lambda table key
       (and (array:in-bounds? table
               (let idx (set:index table key)))
                    (and (length (let current (array:get table idx)))
                         (>= (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) 0)))))
-
 (let set:intersection (lambda a b
         (|> b
           (cast:set->array)
           (array:fold (lambda out element
           (do (when (set:has? a element)
                     (set:add! out element)) out)) (array () () () () ())))))
-
 (let set:difference (lambda a b
       (|> a
         (cast:set->array)
@@ -759,16 +756,13 @@
         (|> a (cast:set->array) (array:for (lambda element (when (not (set:has? b element)) (set:add! out element)))))
         (|> b (cast:set->array) (array:for (lambda element (when (not (set:has? a element)) (set:add! out element)))))
         out)))
-
 (let set:union (lambda a b (do
         (let out (array () () () () ()))
         (|> a (cast:set->array) (array:for (lambda element (set:add! out element))))
         (|> b (cast:set->array) (array:for (lambda element (set:add! out element))))
         out)))
-
 (let set:empty! (lambda table (array:map table empty!)))
 (let map:empty! (lambda table (array:map table empty!)))
-
 (let map:set! (lambda table key value
         (do
           (let idx (set:index table key))
@@ -781,7 +775,6 @@
             (array:set! current (length current) entry)
             (array:set! current index entry))
           table)))
-
 (let map:remove!
     (lambda table key
       (do
@@ -792,7 +785,6 @@
         (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
         (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
         table)))
-
 (let map:get
   (lambda table key
     (do
@@ -802,8 +794,6 @@
           (let current (array:get table idx))
           (let found (array:find current (lambda x (string:equal? (type key string) (type (array:get x 0) string)))))
           (when (length found) (array:get found 1)))))))
-
-
 (let map:has? (lambda table key
       (and (array:in-bounds? table
         (let idx (set:index table key)))
@@ -831,6 +821,8 @@
 (let bool:false (safety lambda (array 0)))
 (let bool:true! (safety lambda variable (array:set! variable 0 1)))
 (let bool:false! (safety lambda variable (array:set! variable 0 0)))
+(let bool:true? (safety lambda variable (= (array:get variable 0) 1)))
+(let bool:false? (safety lambda variable (= (array:get variable 0) 0)))
 
 (let new:brray (lambda (array (array ()) ())))
 (let brray:offset-left (lambda q (* (- (length (array:get q 0)) 1) -1)))
@@ -953,17 +945,17 @@ q)))
   (rigth half (- slice-len 1))
   slice)))
 
-(let date:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))
-(let date:add-minutes (lambda date-time minutes (+ date-time (* minutes 1000 60))))
-(let date:add-hours (lambda date-time hours (+ date-time (* hours 1000 60 60))))
-(let date:add-days (lambda date-time days (+ date-time (* days 1000 60 60 24))))
-(let date:add-months (lambda date-time months (+ date-time (* months 1000 60 60 24 30))))
-(let date:add-years (lambda date-time years (+ date-time (* years 1000 60 60 24 365))))
-(let date:sub-seconds (lambda date-time seconds (- date-time (* seconds 1000))))
-(let date:sub-minutes (lambda date-time minutes (- date-time (* minutes 1000 60))))
-(let date:sub-hours (lambda date-time hours (- date-time (* hours 1000 60 60))))
-(let date:sub-days (lambda date-time days (- date-time (* days 1000 60 60 24))))
-(let date:sub-months (lambda date-time months (- date-time (* months 1000 60 60 24 30))))
-(let date:sub-years (lambda date-time years (- date-time (* years 1000 60 60 24 365))))
+(let date:add-seconds (safety lambda date-time seconds (+ date-time (* seconds 1000))))
+(let date:add-minutes (safety lambda date-time minutes (+ date-time (* minutes 1000 60))))
+(let date:add-hours (safety lambda date-time hours (+ date-time (* hours 1000 60 60))))
+(let date:add-days (safety lambda date-time days (+ date-time (* days 1000 60 60 24))))
+(let date:add-months (safety lambda date-time months (+ date-time (* months 1000 60 60 24 30))))
+(let date:add-years (safety lambda date-time years (+ date-time (* years 1000 60 60 24 365))))
+(let date:sub-seconds (safety lambda date-time seconds (- date-time (* seconds 1000))))
+(let date:sub-minutes (safety lambda date-time minutes (- date-time (* minutes 1000 60))))
+(let date:sub-hours (safety lambda date-time hours (- date-time (* hours 1000 60 60))))
+(let date:sub-days (safety lambda date-time days (- date-time (* days 1000 60 60 24))))
+(let date:sub-months (safety lambda date-time months (- date-time (* months 1000 60 60 24 30))))
+(let date:sub-years (safety lambda date-time years (- date-time (* years 1000 60 60 24 365))))
 
-(let identity (lambda x x))
+(let identity (safety lambda x x))
