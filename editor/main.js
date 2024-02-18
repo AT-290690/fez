@@ -1,125 +1,103 @@
-// import { formatWithPreservedComments } from '../src/formatter.js'
-import { LISP } from '../src/parser.js'
-import { compress, decompress, fez, removeNoCode } from '../src/utils.js'
-import { CodeMirror } from './fez.editor.bundle.js'
-let MUTATION = 1
-export const consoleEditorContainer = document.getElementById(
-  'console-editor-container'
-)
-export const editorContainer = document.getElementById('editor-container')
-export const execButton = document.getElementById('exe')
-export const runButton = document.getElementById('run')
-export const keyButton = document.getElementById('key')
-export const mutationToggle = document.getElementById('mutation')
-export const editor = CodeMirror(editorContainer, {
-  autocomplete: true,
-  linenumbers: true,
-  search: true
+import { fez } from '../src/utils.js'
+const editor = ace.edit('editor')
+editor.setOptions({
+  fontFamily: 'Fantastic',
+  fontSize: '10pt'
 })
-export const consoleEditor = CodeMirror(consoleEditorContainer, {})
-const E = 0.75
-const C = 0.25
-consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
-editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
+const EDITOR_THEME = 'tomorrow_night_bright'
+const TERMINAL_THEME = 'gob'
+// 'ambiance' => 'Ambiance',
+// 'chaos' => 'Chaos',
+// 'clouds_midnight' => 'Clouds Midnight',
+// 'cobalt' => 'Cobalt',
+// 'dracula' => 'Dracula',
+// 'gob' => 'Greeon on Black',
+// 'gruvbox' => 'Gruvbox',
+// 'idle_fingers' => 'idle Fingers',
+// 'kr_theme' => 'krTheme',
+// 'merbivore' => 'Merbivore',
+// 'merbivore_soft' => 'Merbivore Soft',
+// 'mono_industrial' => 'Mono Industrial',
+// 'monokai' => 'Monokai',
+// 'pastel_on_dark' => 'Pastel on Dark',
+// 'solarized_dark' => 'Solarized Dark',
+// 'terminal' => 'Terminal',
+// 'tomorrow_night' => 'Tomorrow Night',
+// 'tomorrow_night_blue' => 'Tomorrow Night Blue',
+// 'tomorrow_night_bright' => 'Tomorrow Night Bright',
+// 'tomorrow_night_eighties' => 'Tomorrow Night 80s',
+// 'twilight' => 'Twilight',
+// 'vibrant_ink' => 'Vibrant Ink'
+editor.renderer.setShowGutter(false)
+editor.setTheme(`ace/theme/${EDITOR_THEME}`)
+editor.setShowPrintMargin(false)
+editor.session.setMode('ace/mode/lisp')
+editor.renderer.setScrollMargin(10, 10)
+// editor.setOptions({});
+editor.session.setUseWrapMode(true)
 
-window.addEventListener('resize', () =>
-  editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
-)
-window.addEventListener('resize', () =>
-  consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
-)
-const run = () => {
-  try {
-    const src = editor.getValue()
-    const res = fez(src, {
-      std: 1,
-      shake: 1,
-      throw: 1,
-      errors: 1,
-      mutation: MUTATION
-    })
-    consoleEditor.setSize(window.innerWidth - 10, window.innerHeight * C - 10)
-    editor.setSize(window.innerWidth - 10, window.innerHeight * E - 10)
-    consoleEditor.setValue(LISP.stringify(res).toString())
-  } catch (e) {
-    consoleEditor.setValue(e instanceof Error ? e.message : e)
-  }
-}
-const comp = () => {
-  const res = eval(
-    fez(editor.getValue(), {
-      std: 1,
-      shake: 1,
-      errors: 0,
-      compile: 1,
-      mutation: MUTATION
-    })
-  )
-  try {
-    consoleEditor.setValue(LISP.stringify(res).toString())
-  } catch (e) {
-    consoleEditor.setValue(e instanceof Error ? e.message : e)
-  }
-}
-document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey)) {
-    e = e || window.event
-    e.preventDefault()
-    e.stopPropagation()
-    run()
-    return
-  }
+const terminal = ace.edit('terminal')
+terminal.setOptions({
+  fontFamily: 'Fantastic',
+  fontSize: '10pt'
 })
-execButton.addEventListener('click', () => comp())
-runButton.addEventListener('click', () => run())
-keyButton.addEventListener('click', () => {
-  const compressed = LZString.compressToBase64(
-    compress(removeNoCode(editor.getValue()))
-  )
-  const newurl =
-    window.location.protocol +
-    '//' +
-    window.location.host +
-    window.location.pathname +
-    `?l=${encodeURIComponent(compressed)}`
-  consoleEditor.setValue(newurl)
-  window.history.pushState({ path: newurl }, '', newurl)
-})
+terminal.renderer.setShowGutter(false)
+terminal.setTheme(`ace/theme/${TERMINAL_THEME}`)
+terminal.setShowPrintMargin(false)
+terminal.session.setMode('ace/mode/lisp')
+terminal.renderer.setScrollMargin(10, 10)
+terminal.session.setUseWrapMode(true)
 const initial = new URLSearchParams(location.search).get('l') ?? ''
 if (initial) {
   try {
-    const decompressed = decompress(LZString.decompressFromBase64(initial))
-    editor.setValue(decodeURIComponent(decompressed))
+    const decompressed = LZString.decompressFromBase64(initial)
+    const source = decodeURIComponent(decompressed)
+    editor.setValue(source)
+    editor.clearSelection()
   } catch (e) {
-    consoleEditor.setValue(e instanceof Error ? e.message : e)
+    alert(e instanceof Error ? e.message : e)
   }
 }
-mutationToggle.addEventListener('click', () => {
-  const state = +mutationToggle.getAttribute('toggled')
-  mutationToggle.setAttribute('toggled', state ^ 1)
-  mutationToggle.title = state ? 'Mutation is allowed' : 'Mutation is forbidden'
-  MUTATION = state
-  mutationToggle.innerHTML = state
-    ? `<svg
-  width="18"
-  height="18"
-  viewBox="0 0 144 128"
-  xmlns="http://www.w3.org/2000/svg"
-  >
-  <path d="M128 0H0V128H128V0Z" fill="#565F89" />
-  <path d="M128 0H96V128H128V0Z" fill="#343D67" />
-  <path d="M112 0H128V64H112V0Z" fill="#D09FF1" />
-  <path d="M128 64H144V80H128V64Z" fill="#D09FF1" />
-  </svg>`
-    : `<svg
-width="18"
-height="18"
-viewBox="0 0 144 128"
-xmlns="http://www.w3.org/2000/svg"
->
-<path d="M128 0H0V128H128V0Z" fill="#B44637"/>
-<path d="M128 0H96V128H128V0Z" fill="#8E2F22"/>
-<path d="M112 0H128V64H112V0Z" fill="#D6C096"/>
-<path d="M128 64H144V80H128V64Z" fill="#D6C096"/>
-</svg>`
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
+    e.preventDefault()
+    e.stopPropagation()
+    const value = editor.getValue()
+    if (value.trim()) {
+      const compressed = LZString.compressToBase64(editor.getValue())
+      terminal.setValue(
+        fez(`(array:serialise (do ${editor.getValue()}))`, {
+          std: 1,
+          mutation: 1
+        })
+      )
+      terminal.clearSelection()
+      const newurl =
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        window.location.pathname +
+        `?l=${encodeURIComponent(compressed)}`
+      window.history.pushState({ path: newurl }, '', newurl)
+    }
+  } else if (
+    e.key.toLowerCase() === 's' &&
+    e.shiftKey &&
+    (e.ctrlKey || e.metaKey)
+  ) {
+    e.preventDefault()
+    e.stopPropagation()
+    const value = editor.getValue()
+    if (value.trim()) {
+      terminal.setValue(
+        fez(`(array:serialise (do ${editor.getValue()}))`, {
+          std: 1,
+          compile: 1,
+          eval: 1,
+          mutation: 1
+        })
+      )
+      terminal.clearSelection()
+    }
+  }
 })
