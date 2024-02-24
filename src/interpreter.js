@@ -980,6 +980,7 @@ const keywords = {
   },
   [KEYWORDS.TEST_BED]: (args, env) => {
     let tests = []
+    let res
     try {
       if (
         args.some(
@@ -992,33 +993,25 @@ const keywords = {
           }) (${KEYWORDS.TEST_BED} ${stringifyArgs(args)})`
         )
       tests = args.map((x) => evaluate(x, env))
-      tests.forEach(([state, describe, ...rest]) =>
-        !state
-          ? console.log(
-              '\x1b[31m',
-              `${describe} Failed:\n`,
-              `${rest[0]} => ${LISP.stringify(rest[1])} != ${LISP.stringify(
-                rest[2]
-              )}`,
-              '\n',
-              '\x1b[0m'
-            )
-          : console.log(
-              '\x1b[32m',
-              `${describe} Passed:\n`,
-              `${rest[0]} => ${LISP.stringify(rest[1])}`,
-              '\n',
-              '\x1b[0m'
-            )
+      res = tests.reduce(
+        (acc, [state, describe, ...rest]) =>
+          `${acc}${
+            !state
+              ? `- ${describe} Failed:\n  ${rest[0]} => ${LISP.stringify(
+                  rest[1]
+                )} != ${LISP.stringify(rest[2])}\n`
+              : `+ ${describe} Passed:\n  ${rest[0]} => ${LISP.stringify(
+                  rest[1]
+                )}\n`
+          }`,
+        ''
       )
     } catch (err) {
-      console.log('\x1b[31m', 'Tests failed: \n', err.toString())
+      res = `${err.toString()}`
     }
     const result = !tests.length || tests.some(([t]) => !t)
-    result
-      ? console.log('\x1b[31m', 'Some tests failed!', '\n', '\x1b[0m')
-      : console.log('\x1b[32m', 'All tests passed!', '\n', '\x1b[0m')
-    return +!result
+    res = `${result ? 'Some tests failed!\n\n' : 'All tests passed!\n\n'}${res}`
+    return [+!result, res]
   },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
     if (args.length !== 2 && args.length !== 3)
