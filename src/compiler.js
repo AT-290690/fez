@@ -6,7 +6,7 @@ import {
   TYPE,
   VALUE,
   WORD
-} from './enums.js'
+} from './keywords.js'
 import { leaf, isLeaf } from './parser.js'
 import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {

@@ -1,4 +1,4 @@
-import { APPLY, ATOM, TYPE, WORD, VALUE } from './enums.js'
+import { APPLY, ATOM, TYPE, WORD, VALUE } from './keywords.js'
 import { escape, preserveEscape } from './utils.js'
 export const leaf = (type, value) => [type, value]
 export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD

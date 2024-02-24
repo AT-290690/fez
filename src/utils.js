@@ -1,7 +1,7 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './enums.js'
-import { run } from './interpreter.js'
+import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import { run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
