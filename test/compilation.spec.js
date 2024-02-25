@@ -3,6 +3,10 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match interpretation', () =>
     [
+      `(|> 
+        (array () (array (array 1 (array "a") 3) 3 4) () (array 1 2 3 4))
+        (array:flat)   
+       )`,
       `(let arr (array 0.1 3.14 1 2 3 4 10))
         (let *FACTOR* 17)
         (let sin (lambda x (math:sine x *FACTOR*)))

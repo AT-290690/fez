@@ -997,10 +997,10 @@ const keywords = {
         (acc, [state, describe, ...rest]) =>
           `${acc}${
             !state
-              ? `- ${describe} Failed:\n  ${rest[0]} => ${LISP.stringify(
+              ? `x ${describe} Failed:\n ${rest[0]}\n + ${LISP.stringify(
                   rest[1]
-                )} != ${LISP.stringify(rest[2])}\n`
-              : `+ ${describe} Passed:\n  ${rest[0]} => ${LISP.stringify(
+                )}\n - ${LISP.stringify(rest[2])}\n`
+              : `✓ ${describe} Passed:\n ${rest[0]}\n + ${LISP.stringify(
                   rest[1]
                 )}\n`
           }`,

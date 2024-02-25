@@ -5,6 +5,16 @@ describe('Interpretation', () => {
     deepStrictEqual(
       fez(
         `(|> 
+      (array () (array (array 1 (array "a") 3) 3 4) () (array 1 2 3 4))
+      (array:flat)   
+     )`,
+        { std: 1 }
+      ),
+      [1, 'a', 3, 3, 4, 1, 2, 3, 4]
+    )
+    deepStrictEqual(
+      fez(
+        `(|> 
       (array 1 2 3)
       (cons 
           (array () (array 1 2 3 "4")))

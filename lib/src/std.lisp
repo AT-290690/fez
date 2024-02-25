@@ -313,7 +313,7 @@
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item
-    (if (and (array? item) (length item))
+    (if (array? item)
         (array:fold item (lambda a b (array:merge! a (flatten b))) ())
         (array item))))
   (flatten arr))))
