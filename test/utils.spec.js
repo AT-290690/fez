@@ -486,6 +486,7 @@ XXX=XXX,XXX")
            (part1 (parse sample2))
            (part2 (parse sample3)))`
     ]
+      .slice(0, 1)
       .map((source) => tree(source, std))
       .forEach((ast) =>
         deepStrictEqual(

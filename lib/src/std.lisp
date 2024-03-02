@@ -1,7 +1,9 @@
 (let math:E 2.718281828459045)
 (let math:PI 3.141592653589793)
-(let string:DOUBLE-QUOTE-CHAR (type 34 char))
-(let string:NEW-LINE-CHAR (type 10 char))
+(let char:EMPTY (type 0 char))
+(let char:DOUBLE-QUOTE (type 34 char))
+(let char:NEW-LINE (type 10 char))
+(let char:SPACE (type 32 char))
 (let math:range (lambda start end (do
                           (let* iterate (lambda out count
                           (if (<= count end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
@@ -65,10 +67,7 @@
 (let math:square (safety lambda x (* x x)))
 (let math:power (lambda base exp
   (if (< exp 0)
-      (if (= base 0)
-        (do 
-          (log! (string:merge "Attempting to divide by 0 in (math:power " (type base string) " " (type exp string) ")"))
-          ())
+      (if (= base 0) ()
       (/ (* base (math:power base (- (* exp -1) 1)))))
         (cond
             (= exp 0) 1
@@ -302,13 +301,13 @@
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a delim (type (car b) string)) (type (car b) string))) "")))
 (let array:words (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a " " (type (car b) string)) (type (car b) string))) "")))
-(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a string:NEW-LINE-CHAR (type (car b) string)) (type (car b) string))) "")))
+(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a char:NEW-LINE (type (car b) string)) (type (car b) string))) "")))
 (let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a "," (type (car b) string)) (type (car b) string))) "")))
 (let array:serialise (lambda arg 
     (cond 
         (array? arg) (if (length arg) (string:merge "(array " (array:words (array:map arg array:serialise)) ")") "()")
         (number? arg) (type arg string)
-        (string? arg) (string:merge string:DOUBLE-QUOTE-CHAR arg string:DOUBLE-QUOTE-CHAR)
+        (string? arg) (string:merge char:DOUBLE-QUOTE arg char:DOUBLE-QUOTE)
         (*) "")))
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
@@ -394,7 +393,7 @@
   (array:select length)
   (array:flat-one)
   (array:map (lambda y (array:join y " -> ")))
-  (array:join string:NEW-LINE-CHAR))))
+  (array:join char:NEW-LINE))))
 (let cast:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
@@ -617,7 +616,7 @@
 (let string:lines (lambda str (|> str (type array)
                       (array:fold (lambda a b (do
                       (let prev (array:get a -1))
-                       (if (string:equal? b string:NEW-LINE-CHAR)
+                       (if (string:equal? b char:NEW-LINE)
                            (array:set! a (length a) ())
                            (array:set! prev (length prev) b)) a))
                       (array ()))
