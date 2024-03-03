@@ -1019,3 +1019,12 @@ q)))
 (let date:sub-years (safety lambda date-time years (- date-time (* years 1000 60 60 24 365))))
 
 (let identity (safety lambda x x))
+(let truthy? (lambda x
+    (cond
+     (number? x) (not (= x 0))
+     (array? x) (> (length x) 0)
+     (*) 1)))
+(let falsy? (lambda x
+    (cond
+     (number? x) (= x 0)
+     (array? x) (= (length x) 0))))
