@@ -4,9 +4,7 @@
 <img width="64" src="./logo.svg"/>
 </p>
 
-
-
-```lisp
+````lisp
 (let fizz-buzz (lambda n
     (cond
       (= (mod n 15) 0) "Fizz Buzz"
@@ -14,21 +12,39 @@
       (= (mod n 5) 0) "Buzz"
       (*) n)))
 
+(|>
+(math:range 1 100)
+(array:map fizz-buzz)
+(log!))
+```
+
+```lisp
+(let Fizz (string char:F char:i char:z char:z))
+(let Buzz (string char:B char:u char:z char:z))
+(let FizzBuzz (string Fizz Buzz))
+
+(let fizz-buzz (lambda n
+    (cond
+      (= (mod n 15) 0) FizzBuzz
+      (= (mod n 3) 0) Fizz
+      (= (mod n 5) 0) Buzz
+      (*) n)))
+
   (|>
     (math:range 1 100)
     (array:map fizz-buzz)
     (log!))
-```
+````
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
 (let *input*
-"1721
-979
-366
-299
-675
-1456")
+(string
+    char:1 char:7 char:2 char:1 char:new-line
+    char:3 char:6 char:6 char:new-line
+    char:2 char:9 char:9 char:new-line
+    char:6 char:7 char:5 char:new-line
+    char:1 char:4 char:5 char:6))
 ; solve part 1
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
@@ -37,8 +53,24 @@
      ())))
 ; 514579
 (|> *input*
-    (string:split "\n")
-    (cast:strings->numbers)
+    (string:lines)
+    (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
+    (array:sort (lambda a b (> a b)))
+    (solve (lambda x (- 2020 x)))
+    (math:product)
+    (log!))
+```
+
+```lisp
+(let *input* "1721,979,366,299,675,1456")
+(let solve (lambda arr cb
+     (array:fold arr (lambda a b (do
+        (let res (array:binary-search arr (cb b)))
+        (if res (cons a (array res)) a)))
+     ())))
+(|> *input*
+    (string:commas)
+    (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
     (array:sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (math:product)
@@ -69,8 +101,8 @@
       (array:map car))))
 ; tests
 (assert
-   (case "test 1" (unique (array 1)) (array 1))
-   (case "test 2" (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
+   (case (unique (array 1)) (array 1))
+   (case (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
 ```
 
 Installation:
@@ -81,12 +113,12 @@ npm i fez-lisp
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(log! "Hello World!")`) // Hello World!
+fez(`(log! "Hello World!")`, { strings: true }) // Hello World!
 ```
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(+ 1 "2")`) // Not all arguments of (+) are (number) (+ 1 2)
+fez(`(+ 1 (array 2))`) // Not all arguments of (+) are (number) (+ 1 (array 2))
 ```
 
 ```js
@@ -108,11 +140,16 @@ eval(
 ```js
 import { fez } from 'fez-lisp'
 fez(
-  `(let fizz-buzz (lambda n
+  `
+(let Fizz (string char:F char:i char:z char:z))
+(let Buzz (string char:B char:u char:z char:z))
+(let FizzBuzz (string Fizz Buzz))
+
+(let fizz-buzz (lambda n
     (cond
-      (= (mod n 15) 0) "Fizz Buzz"
-      (= (mod n 3) 0) "Fizz"
-      (= (mod n 5) 0) "Buzz"
+      (= (mod n 15) 0) FizzBuzz
+      (= (mod n 3) 0) Fizz
+      (= (mod n 5) 0) Buzz
       (*) n)))
 
   (|> (math:range 1 100) (array:map fizz-buzz) (log!))`,
@@ -124,8 +161,8 @@ Many logical operators
 
 ```lisp
 (let logic-a (lambda a b
-   (if (or (= b -1) (> a b)) "a"
-       (if (and (> b 2) (< a 4)) "b" "c"))))
+   (if (or (= b -1) (> a b)) char:a
+       (if (and (> b 2) (< a 4)) char:b char:c))))
 
 ; De Morgan's First Law: ¬(P ∧ Q) is equivalent to (¬P ∨ ¬Q)
 ; De Morgan's Second Law: ¬(P ∨ Q) is equivalent to (¬P ∧ ¬Q)
@@ -133,13 +170,13 @@ Many logical operators
     ; Swapping the consequent with the alternative in the condition by using (unless) instead of (if)
     ; The condition (or (= b -1) (> a b)) has been changed to (and (not (= b -1)) (not (> a b))), applying De Morgan's First Law.
     ; The condition (and (> b 2) (< a 4)) has been changed to (or (not (> b 2)) (not (< a 4))), applying De Morgan's Second Law.
-    (unless (and (not (= b -1)) (not (> a b))) "a"
-            (unless (or (not (> b 2)) (not (< a 4))) "b" "c"))))
+    (unless (and (not (= b -1)) (not (> a b))) char:a
+            (unless (or (not (> b 2)) (not (< a 4))) char:b char:c))))
 
 (assert
-   (case "a=0 b=-1" (logic-a 0 -1) (logic-b 0 -1))
-   (case "a=1 b=3" (logic-a 1 3) (logic-b 1 3))
-   (case "a=1 b=2" (logic-a 1 2) (logic-b 1 2)))
+   (case (logic-a 0 -1) (logic-b 0 -1))
+   (case (logic-a 1 3) (logic-b 1 3))
+   (case (logic-a 1 2) (logic-b 1 2)))
 ```
 
 Tail Call Optimization:

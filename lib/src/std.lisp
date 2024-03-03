@@ -1,9 +1,72 @@
-(let math:E 2.718281828459045)
-(let math:PI 3.141592653589793)
-(let char:EMPTY (type 0 char))
-(let char:DOUBLE-QUOTE (type 34 char))
-(let char:NEW-LINE (type 10 char))
-(let char:SPACE (type 32 char))
+(let math:e 2.718281828459045)
+(let math:pi 3.141592653589793)
+(let char:A 65)
+(let char:B 66)
+(let char:C 67)
+(let char:D 68)
+(let char:E 69)
+(let char:F 70)
+(let char:G 71)
+(let char:H 72)
+(let char:I 73)
+(let char:J 74)
+(let char:K 75)
+(let char:L 76)
+(let char:M 77)
+(let char:N 78)
+(let char:O 79)
+(let char:P 80)
+(let char:Q 81)
+(let char:R 82)
+(let char:S 83)
+(let char:T 84)
+(let char:U 85)
+(let char:V 86)
+(let char:W 87)
+(let char:X 88)
+(let char:Y 89)
+(let char:Z 90)
+(let char:a 97)
+(let char:b 98)
+(let char:c 99)
+(let char:d 100)
+(let char:e 101)
+(let char:f 102)
+(let char:g 103)
+(let char:h 104)
+(let char:i 105)
+(let char:j 106)
+(let char:k 107)
+(let char:l 108)
+(let char:m 109)
+(let char:n 110)
+(let char:o 111)
+(let char:p 112)
+(let char:q 113)
+(let char:r 114)
+(let char:s 115)
+(let char:t 116)
+(let char:u 117)
+(let char:v 118)
+(let char:w 119)
+(let char:x 120)
+(let char:y 121)
+(let char:z 122)
+(let char:0 48)
+(let char:1 49)
+(let char:2 50)
+(let char:3 51)
+(let char:4 52)
+(let char:5 53)
+(let char:6 54)
+(let char:7 55)
+(let char:8 56)
+(let char:9 57)
+(let char:empty 0)
+(let char:double-quote 34)
+(let char:new-line 10)
+(let char:space 32)
+(let char:comma 44)
 (let math:range (lambda start end (do
                           (let* iterate (lambda out count
                           (if (<= count end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
@@ -54,7 +117,7 @@
 (let math:max-bit (safety lambda a b (- a (& (- a b) (>> (- a b) 31)))))
 (let math:min-bit (safety lambda a b (- a (& (- a b) (>> (- b a) 31)))))
 (let math:modulo-bit (safety lambda numerator divisor (& numerator (- divisor 1))))
-(let math:n-one-bit? (safety lambda N nth (type (& N (<< 1 nth)) boolean)))
+(let math:n-one-bit? (safety lambda N nth (not (not (& N (<< 1 nth))))))
 (let math:count-leading-zero-bits32 (lambda x (when (>= x 0) (- 32 (length (cast:number->bit x))))))
 (let math:bit-count32 (safety lambda n0 (do 
   (let n1 (- n0 (& (>> n0 1) 1431655765)))
@@ -84,8 +147,7 @@
       (if (is-good-enough g x) g
           (math:sqrt-iter (improve-guess g x) x))))
   (math:sqrt-iter 1.0 x))))
-(let math:circumference (lambda radius (* math:PI (* radius 2))))
-(let math:number-of-digits (safety lambda n (length (type (| n 0) string))))
+(let math:circumference (lambda radius (* math:pi (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (safety lambda n (- (^ n (>> n 31)) (>> n 31))))
 (let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0.5)))
@@ -99,7 +161,7 @@
 (let math:enumerated-odd? (safety lambda . i (= (mod i 2) 1)))
 (let math:enumerated-even? (safety lambda . i (= (mod i 2) 0)))
 (let math:sign (safety lambda n (if (< n 0) -1 1)))
-(let math:radians (lambda deg (* deg math:PI (/ 180))))
+(let math:radians (lambda deg (* deg math:pi (/ 180))))
 (let math:average (safety lambda x y (* (+ x y) 0.5)))
 (let math:euclidean-mod (safety lambda a b (mod (+ (mod a b) b) b)))
 (let math:euclidean-distance (lambda x1 y1 x2 y2 (do
@@ -223,7 +285,7 @@
                     (let* iterate (lambda arr
                           (if (and (length arr) (not (callback (car arr))))
                               (iterate (cdr arr))
-                              (type (length arr) boolean))))
+                              (not (not (length arr))))))
                         (iterate arr))))
 (let array:find (safety lambda arr callback (do
                     (let* iterate (lambda arr
@@ -262,7 +324,7 @@
                                   (iterate (+ i 1))))))
                           (iterate start))))
 (let array:traverse (lambda x callback
-    (if (atom? x)
+    (if (number? x)
         (callback x)
         (iterate x (lambda y (array:traverse y callback))))))
 (let array:empty? (safety lambda arr (not (length arr))))
@@ -295,20 +357,12 @@
 (let array:equal? (lambda a b
   (or
   (and (number? a) (number? b) (= a b))
-  (and (string? a) (string? b) (string:equal? a b))
   (and (array? a)
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
-(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a delim (type (car b) string)) (type (car b) string))) "")))
-(let array:words (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a " " (type (car b) string)) (type (car b) string))) "")))
-(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a char:NEW-LINE (type (car b) string)) (type (car b) string))) "")))
-(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (string:merge a "," (type (car b) string)) (type (car b) string))) "")))
-(let array:serialise (lambda arg 
-    (cond 
-        (array? arg) (if (length arg) (string:merge "(array " (array:words (array:map arg array:serialise)) ")") "()")
-        (number? arg) (type arg string)
-        (string? arg) (string:merge char:DOUBLE-QUOTE arg char:DOUBLE-QUOTE)
-        (*) "")))
+(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons delim) (cons (car b))) (car b))) ())))
+(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons char:new-line) (cons (car b))) (car b))) ())))
+(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons char:comma) (cons (car b))) (car b))) ())))
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item
@@ -333,7 +387,7 @@
 (let array:sorted-ascending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (>= x (array:get arr (- i 1))))))))
 (let array:sorted-descending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (<= x (array:get arr (- i 1))))))))
 (let array:sorted-by? (lambda arr callback (array:enumerated-every? arr (lambda x i (or (= i 0) (callback x (array:get arr (- i 1))))))))
-(let array:set (lambda arr index item (array:set! (type arr array) index item)))
+(let array:set (lambda arr index item (array:set! (array:shallow-copy arr) index item)))
 (let array:adjacent-difference (lambda arr callback (do
   (let len (length arr))
   (unless (= len 1)
@@ -363,37 +417,60 @@
       (let i (car (cdr b)))
       (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a))
       ())))
+(let cast:digit->char (lambda d 
+  (cond 
+    (= d 0) char:0 
+    (= d 1) char:1
+    (= d 2) char:2
+    (= d 3) char:3
+    (= d 4) char:4
+    (= d 5) char:5
+    (= d 6) char:6
+    (= d 7) char:7
+    (= d 8) char:8
+    (= d 9) char:9 
+    (*) ())))
+(let cast:char->digit (lambda c 
+  (cond 
+    (= c char:0) 0
+    (= c char:1) 1 
+    (= c char:2) 2
+    (= c char:3) 3
+    (= c char:4) 4 
+    (= c char:5) 5
+    (= c char:6) 6 
+    (= c char:7) 7 
+    (= c char:8) 8 
+    (= c char:9) 9
+    (*) ())))
+(let cast:chars->digits (lambda chars (array:map chars (lambda ch (cast:char->digit ch)))))
+(let cast:digits->chars (lambda numbers (array:map numbers (lambda digit (cast:digit->char digit)))))
+(let cast:digits->number (lambda digits (do 
+    (let* iter (lambda rem num base (if (length rem) (iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
+    (iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
+(let cast:number->digits (lambda num (do 
+  (let* iter (lambda num res (if (>= num 1) (iter (/ num 10) (array:set! res (length res) (| (mod num 10) 0))) res)))
+  (array:reverse (iter num ())))))
 (let cast:number->bits (lambda num (do 
   (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0))) res)))
   (array:reverse (iter num ())))))
-(let cast:number->bit (lambda num (do 
-  (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (string:merge (type (| (mod num 2) 0) string) res)) res)))
-   (iter num ""))))
+(let math:number-of-digits (lambda n 
+  (cond 
+    (= n 0) 1
+    (< n 0) (length (cast:number->digits (| (* n -1) 0)))
+    (*) (length (cast:number->digits (| n 0))))))
 (let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
-(let cast:string->chars (safety lambda str (type str array)))
-(let cast:chars->string (lambda arr (array:fold arr (safety lambda a x (string:merge a (type x string))) "")))
-(let cast:string->number (safety lambda str (type str number)))
-(let cast:number->string (safety lambda n (type n string)))
-(let cast:strings->numbers (lambda arr (array:map arr (safety lambda x (type x number)))))
-(let cast:numbers->strings (lambda arr (array:map arr (safety lambda x (type x string)))))
-(let cast:string->char-codes (lambda str (|> str (type array) (array:map (safety lambda x (type x char-code))))))
-(let cast:chars->char-codes (lambda arr (|> arr (array:map (safety lambda x (type x char-code))))))
-(let cast:chars->numbers (lambda arr (|> arr (array:map (safety lambda x (type x number))))))
-(let cast:char->number (safety lambda ch (type ch number)))
-(let cast:char->char-code (safety lambda ch (type ch char-code)))
-(let cast:char-code->char (safety lambda ch (type ch char)))
-(let cast:char-codes->chars (lambda arr (|> arr (array:map (safety lambda x (type x char))))))
-(let cast:char-codes->string (lambda arr (|> arr (array:map (safety lambda x (type x char))) (cast:chars->string))))
-(let cast:set->array (lambda set (array:select (array:flat set) atom?)))
-(let cast:map->array (lambda set (array:select (array:flat set) atom?)))
-(let cast:map->string (lambda table (|>
-  table
-  (array:select length)
-  (array:flat-one)
-  (array:map (lambda y (array:join y " -> ")))
-  (array:join char:NEW-LINE))))
+(let cast:set->array (lambda set (array:select (array:flat-one set) length)))
+(let cast:map->array (lambda set (array:select (array:flat-one set) length)))
+(let cast:set->numbers (lambda set (|> set (cast:set->array) (array:map (lambda x (|> x (cast:chars->digits) (cast:digits->number)))))))
+; (let cast:map->string (lambda table (|>
+;   table
+;   (array:select length)
+;   (array:flat-one)
+;   (array:map (lambda y (array:join y (array char:space))))
+;   (array:join (array char:new-line)))))
 (let cast:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
@@ -477,7 +554,7 @@
                     (let* iterate (lambda arr i
                           (if (and (length arr) (not (callback (car arr) i)))
                               (iterate (cdr arr) (+ i 1))
-                              (type (length arr) boolean))))
+                              (not (not (length arr))))))
                         (iterate arr 0))))
 (let array:find-index (safety lambda arr callback (do
                     (let* iterate (lambda arr i
@@ -503,16 +580,16 @@
 (let array:first (safety lambda arr (array:get arr 0)))
 (let array:last (safety lambda arr (array:get arr -1)))
 (let string:character-occurances (lambda str letter (do
-  (let arr (type str array))
+  (let arr str)
   (let bitmask (var:def 0))
-  (let zero (type "a" char-code))
+  (let zero char:a)
   (let count (var:def 0))
   (let at-least-one? (var:def 0))
   (let* iterate (lambda i bounds (do
       (let ch (array:get arr i))
-      (let code (- (type ch char-code) zero))
+      (let code (- ch zero))
       (let mask (<< 1 code))
-      (if (and (when (char:equal? ch letter) (var:set! at-least-one? 1))
+      (if (and (when (= ch letter) (var:set! at-least-one? 1))
           (not (= (& (var:get bitmask) mask) 0))) 
           (var:set! count (+ (var:get count) 1))
           (var:set! bitmask (| (var:get bitmask) mask)))
@@ -521,76 +598,67 @@
       (iterate 0 (- (length arr) 1)))))
 (let string:split (lambda str delim (do
   (let locals ())
-  (let delim-arr (type delim array))
-  (array:set! locals (length locals) delim-arr)
-  (array:set! locals (length locals) (type str array))
-  (array:set! locals (length locals) (length delim-arr))
-  (array:set! locals (length locals) "")
+  (array:set! locals (length locals) delim)
+  (array:set! locals (length locals) str)
+  (array:set! locals (length locals) (length delim))
+  (array:set! locals (length locals) ())
   (let* iterate (lambda result i bounds
     (if
       (< (if (array:every? (array:zip (array:get locals 0) (math:sequence locals))
                                               (lambda item (do
                                                   (let y (car item))
                                                   (let j (car (cdr item)))
-                                                  (or (<= (length (array:get locals 1)) (+ i j)) (= (type (array:get (array:get locals 1) (+ i j)) char-code) (type y char-code))))))
+                                                  (or (<= (length (array:get locals 1)) (+ i j)) (= (array:get (array:get locals 1) (+ i j)) y)))))
           (do
             (array:set! result (length result) (array:get locals 3))
-            (array:set! locals 3 "")
+            (array:set! locals 3 ())
             (+ i (array:get locals 2) -1))
-          (do (array:set! locals 3 (string:merge (array:get locals 3) (array:get (array:get locals 1) i))) i)) bounds)
+          (do (array:set! locals 3 (cons (array:get locals 3) (array (array:get (array:get locals 1) i)))) i)) bounds)
               (iterate result (+ i 1) bounds) result)))
       (array:set! (let iteration-result (iterate () 0 (- (length (array:get locals 1)) 1))) (length iteration-result) (array:get locals 3)))))
 (let string:index-of-char (lambda str character (do
                     (let* iterate (lambda arr i
                           (if (length arr)
                               (if (string:equal? (car arr) character) i (iterate (cdr arr) (+ i 1))) -1)))
-                        (iterate (type str array) 0))))
+                        (iterate (array:shallow-copy str array) 0))))
 (let string:match (lambda str word (cond 
                                     (< (length str) (length word)) -1
                                     (string:equal? str word) 0
                                     (*) (do
-                                          (let string-arr (type str array))
                                           (let* iterate (lambda arr i
                                                 (if (and (length arr) (>= (length arr) (length word)))
                                                       (if (string:equal?
-                                                        (|> string-arr (array:slice i (+ i (length word))) (array:join ""))
+                                                        (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                         word) i (iterate (cdr arr) (+ i 1)))
                                                     -1)))
-                                              (iterate string-arr 0)))))
+                                              (iterate str 0)))))
 (let string:has? (lambda str word (cond
                                     (< (length str) (length word)) 0
                                     (string:equal? str word) 1
                                     (*) (do
-                                          (let string-arr (type str array))
                                           (let* iterate (lambda arr i
                                                 (when (and (length arr) (>= (length arr) (length word)))
                                                       (if (string:equal?
-                                                        (|> string-arr (array:slice i (+ i (length word))) (array:join ""))
+                                                        (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                         word) 
                                                         1 
                                                         (iterate (cdr arr) (+ i 1))))))
-                                              (iterate string-arr 0)))))
-(let string:greater? (lambda L R (otherwise (string:equal? L R) (do
-  (let A (cast:string->char-codes (type L string)))
-  (let B (cast:string->char-codes (type R string)))
+                                              (iterate str 0)))))
+(let string:greater? (lambda A B (otherwise (string:equal? A B) (do
   (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
   (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
   (|>
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (> (car pair) (car (cdr pair))) 0 acc)) 1))))))
-(let string:lesser? (lambda L R (otherwise (string:equal? L R) (do
-  (let A (cast:string->char-codes (type L string)))
-  (let B (cast:string->char-codes (type R string)))
+(let string:lesser? (lambda A B (otherwise (string:equal? A B) (do
   (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
   (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
   (|>
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (< (car pair) (car (cdr pair))) 0 acc)) 1))))))
-(let string:equal? (lambda L R (when (= (length L) (length R)) (do
-  (let a (cast:string->char-codes R))
-  (let b (cast:string->char-codes L))
+(let string:equal? (lambda a b (when (= (length a) (length b)) (do
   (|>
    a
    (array:zip b)
@@ -599,99 +667,89 @@
 (let string:max (lambda a b (if (string:lesser? a b) b a)))
 (let string:trim-left (lambda str (do
   (let tr (array 1))
-(|> str (type array) (array:fold (lambda a b (if
+(|> str (array:fold (lambda a b (if
 (and (car tr) (string:equal? b " ")) a
   (do
     (when (car tr) (array:set! tr 0 0))
-    (string:merge a b))
-)) "")))))
+    (cons a b))
+)) char:empty)))))
 (let string:trim-right (lambda str (do
   (let tr (array 1))
-  (|> str (type array) (array:reverse) (array:fold (lambda a b (if
+  (|> str (array:reverse) (array:fold (lambda a b (if
   (and (car tr) (string:equal? b " ")) a
     (do
       (when (car tr) (array:set! tr 0 0))
-      (string:merge b a)))) "")))))
+      (cons b a)))) char:empty)))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
-(let string:lines (lambda str (|> str (type array)
+(let string:lines (lambda str (|> str
                       (array:fold (lambda a b (do
                       (let prev (array:get a -1))
-                       (if (string:equal? b char:NEW-LINE)
+                       (if (string:equal? (array b) (array char:new-line))
                            (array:set! a (length a) ())
                            (array:set! prev (length prev) b)) a))
                       (array ()))
-                      (array:map (lambda x (array:join x ""))))))
-(let string:words (lambda str (|> str (type array)
+                      (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:words (lambda str (|> str
               (array:fold (lambda a b (do
               (let prev (array:get a -1))
-                (if (string:equal? b " ")
+                (if (string:equal? (array b) (array char:space))
                     (array:set! a (length a) ())
                     (array:set! prev (length prev) b)) a))
               (array ()))
-              (array:map (lambda x (array:join x ""))))))
-(let string:commas (lambda str (|> str (type array)
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:commas (lambda str (|> str
               (array:fold (lambda a b (do
               (let prev (array:get a -1))
-                (if (string:equal? b ",")
+                (if (string:equal? (array b) (array char:comma))
                     (array:set! a (length a) ())
                     (array:set! prev (length prev) b)) a))
               (array ()))
-              (array:map (lambda x (array:join x ""))))))
-(let string:separator (lambda str separator (|> str (type array)
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:separator (lambda str separator (|> str
               (array:fold (lambda a b (do
               (let prev (array:get a -1))
-                (if (string:equal? b separator)
+                (if (string:equal? (array b) separator)
                     (array:set! a (length a) ())
                     (array:set! prev (length prev) b)) a))
               (array ()))
-              (array:map (lambda x (array:join x ""))))))
-(let string:append (lambda a b (string:merge a b)))
-(let string:prepend (lambda a b (string:merge b a)))
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:append (lambda a b (cons a b)))
+(let string:prepend (lambda a b (cons b a)))
 (let string:pad-left (lambda str N ch (do 
   (let n (- N (length str)))
-  (let* pad (lambda i str (if (< i n) (pad (+ i 1) (string:merge ch str)) str)))
+  (let* pad (lambda i str (if (< i n) (pad (+ i 1) (cons ch str)) str)))
   (pad 0 str))))
 (let string:pad-right (lambda str N ch (do 
   (let n (- N (length str)))
-  (let* pad (lambda i str (if (< i n) (pad (+ i 1) (string:merge str ch)) str)))
+  (let* pad (lambda i str (if (< i n) (pad (+ i 1) (cons str ch)) str)))
   (pad 0 str))))
 (let string:upper (lambda str (do
     (let arr ()) 
     (let n (length str))
-    (let codes (cast:string->char-codes str))
     (let* iter (lambda i (if (< i n) (do
-      (let current-char (array:get codes i))
+      (let current-char (array:get str i))
       (array:set! arr i 
         (if (and (>= current-char 97) (<= current-char 122))
           (- current-char 32)
           current-char))
       (iter (+ i 1))) 
-      (cast:char-codes->string arr)))
+      arr))
       ) (iter 0))))
 (let string:lower (lambda str (do
     (let arr ()) 
     (let n (length str))
-    (let codes (cast:string->char-codes str))
     (let* iter (lambda i (if (< i n) (do
-      (let current-char (array:get codes i))
+      (let current-char (array:get str i))
       (array:set! arr i 
         (if (and (>= current-char 65) (<= current-char 90))
           (+ current-char 32)
           current-char))
       (iter (+ i 1))) 
-      (cast:char-codes->string arr)))
+      arr))
       ) (iter 0))))
-(let char:equal? (lambda a b (= (type a char-code) (type b char-code))))
-(let char:lesser? (lambda a b (< (type a char-code) (type b char-code))))
-(let char:greater? (lambda a b (> (type a char-code) (type b char-code))))
-(let char:greater-or-equal? (lambda a b (>= (type a char-code) (type b char-code))))
-(let char:lesser-or-equal? (lambda a b (<= (type a char-code) (type b char-code))))
-(let char:max (lambda a b (if (> (type a char-code) (type b char-code)) a b)))
-(let char:min (lambda a b (if (< (type a char-code) (type b char-code)) a b)))
-(let char? (safety lambda ch (and (string? ch) (= (length ch) 1))))
-(let char-code? (safety lambda cc (and (number? cc) (>= cc 0) (< cc 65535))))
+(let char? (safety lambda cc (and (number? cc) (>= cc 0) (< cc 65535))))
 (let new:set4 (lambda (array () () () ())))
-(let new:array (safety lambda items (type items array)))
+(let new:array (safety lambda items (array:shallow-copy items)))
 (let new:list (safety lambda value (array () value ())))
 (let new:set-n (lambda n (array:map (array n length) (lambda . ()))))
 
@@ -706,14 +764,13 @@
   (lambda table key
     (do
       (let prime-num 31)
-      (let key-arr (type (type key string) array))
       (let total (array 0))
       (let* find-hash-index (lambda i bounds (do
-        (let letter (array:get key-arr i))
-        (let value (- (type letter char-code) 96))
+        (let letter (array:get key i))
+        (let value (- letter 96))
         (array:set! total 0 (math:euclidean-mod (+ (* (car total) prime-num) value) (length table)))
         (if (< i bounds) (find-hash-index (+ i 1) bounds) (car total)))))
-      (find-hash-index 0 (if (< (- (length key-arr) 1) 100) (- (length key-arr) 1) 100)))))
+      (find-hash-index 0 (if (< (- (length key) 1) 100) (- (length key) 1) 100)))))
 (let set:add!
       (lambda table key
         (do
@@ -721,7 +778,7 @@
           (otherwise (array:in-bounds? table idx) (array:set! table idx (array)))
           (let current (array:get table idx))
           (let len (length current))
-          (let index (if len (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) -1))
+          (let index (if len (array:find-index current (lambda x (string:equal? x key))) -1))
           (let entry key)
           (if (= index -1)
             (array:set! current (length current) entry)
@@ -733,7 +790,7 @@
       (otherwise (array:in-bounds? table idx) (array:set! table idx (Array)))
       (let current (array:get table idx))
       (let len (length current))
-      (let index (if len (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) -1))
+      (let index (if len (array:find-index current (lambda x (string:equal? x key))) -1))
       (let entry key)
       (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
       table)))
@@ -741,7 +798,7 @@
       (and (array:in-bounds? table
               (let idx (set:index table key)))
                    (and (length (let current (array:get table idx)))
-                        (>= (array:find-index current (lambda x (string:equal? (type x string) (type key string)))) 0)))))
+                        (>= (array:find-index current (lambda x (string:equal? x key))) 0)))))
 (let set:intersection (lambda a b
         (|> b
           (cast:set->array)
@@ -772,7 +829,7 @@
           (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
           (let current (array:get table idx))
           (let len (length current))
-          (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
+          (let index (if len (array:find-index current (lambda x (string:equal? (car x) key))) -1))
           (let entry (array key value))
           (if (= index -1)
             (array:set! current (length current) entry)
@@ -785,7 +842,7 @@
         (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
         (let current (array:get table idx))
         (let len (length current))
-        (let index (if len (array:find-index current (lambda x (string:equal? (type (car x) string) (type key string)))) -1))
+        (let index (if len (array:find-index current (lambda x (string:equal? (car x) key))) -1))
         (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
         table)))
 (let map:get
@@ -795,7 +852,7 @@
       (when (array:in-bounds? table idx)
         (do
           (let current (array:get table idx))
-          (let found (array:find current (lambda x (string:equal? (type key string) (type (array:get x 0) string)))))
+          (let found (array:find current (lambda x (string:equal? key (array:get x 0)))))
           (when (length found) (array:get found 1)))))))
 (let map:has? (lambda table key
       (and (array:in-bounds? table
@@ -803,7 +860,7 @@
           (and (length (let current (array:get table idx)))
             (>= (array:find-index (car current)
               (lambda x
-                (string:equal? (type x string) (type key string)))) 0)))))
+                (string:equal? x key))) 0)))))
 
 (let list:prev! (safety lambda list node (array:set! list 0 (array:set! node 2 list))))
 (let list:next! (safety lambda list node (array:set! list 2 (array:set! node 0 list))))
@@ -962,3 +1019,12 @@ q)))
 (let date:sub-years (safety lambda date-time years (- date-time (* years 1000 60 60 24 365))))
 
 (let identity (safety lambda x x))
+(let truthy? (lambda x
+    (cond
+     (number? x) (not (= x 0))
+     (array? x) (> (length x) 0)
+     (*) 1)))
+(let falsy? (lambda x
+    (cond
+     (number? x) (= x 0)
+     (array? x) (= (length x) 0))))

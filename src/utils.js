@@ -5,16 +5,29 @@ import { run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
+export const replaceStrings = (source) => {
+  const quotes = source.match(/"(.*?)"/g)
+  if (quotes)
+    for (const q of quotes)
+      source = source.replaceAll(
+        q,
+        `(string ${[...q]
+          .slice(1, -1)
+          .map((x) => x.charCodeAt(0))
+          .join(' ')})`
+      )
+  return source
+}
 export const removeNoCode = (source) =>
   source
-    // .replace(/;.+/g, '')
-    .replace(/;(?=(?:(?:[^"]*"){2})*[^"]*$).+/g, '')
-    .replace(/[\s\s]+(?=[^"]*(?:"[^"]*"[^"]*)*$)/g, ' ')
+    .replace(/;.+/g, '')
+    .replace(/[\s\s]/g, ' ')
     .trim()
+
 export const isBalancedParenthesis = (sourceCode) => {
   let count = 0
   const stack = []
-  const str = sourceCode.match(/[/\(|\)](?=[^"]*(?:"[^"]*"[^"]*)*$)/g) ?? []
+  const str = sourceCode.match(/[/\(|\)]/g) ?? []
   for (let i = 0; i < str.length; ++i)
     if (str[i] === '(') stack.push(str[i])
     else if (str[i] === ')') if (stack.pop() !== '(') ++count
@@ -38,15 +51,6 @@ export const escape = (Char) => {
       return ''
   }
 }
-const escapeChars = {
-  '\n': '\\n',
-  '\r': '\\r',
-  '\t': '\\t',
-  s: '\\s',
-  '"': '\\"'
-}
-export const preserveEscape = (str) =>
-  str.replace(/[\n\r\t\s\"]/g, (match) => escapeChars[match] || match)
 export const stringifyType = (type) =>
   !isLeaf(type)
     ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
@@ -157,6 +161,7 @@ export const dfs = (tree, callback) => {
 export const deepClone = (ast) => AST.parse(AST.stringify(ast))
 export const fez = (source, options = {}) => {
   const env = options.env ?? {}
+  if (options.strings) source = replaceStrings(source)
   try {
     if (typeof source === 'string') {
       let code

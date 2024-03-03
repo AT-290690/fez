@@ -1,5 +1,4 @@
 import { APPLY, ATOM, TYPE, WORD, VALUE } from './keywords.js'
-import { escape, preserveEscape } from './utils.js'
 export const leaf = (type, value) => [type, value]
 export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
 export const LISP = {
@@ -10,15 +9,6 @@ export const LISP = {
       acc = ''
     for (let i = 0; i < source.length; ++i) {
       const cursor = source[i]
-      if (cursor === '"') {
-        acc += '"'
-        ++i
-        while (source[i] !== '"') {
-          if (source[i] === '\\') acc += escape(source[++i])
-          else acc += source[i]
-          ++i
-        }
-      }
       if (cursor === '(') {
         head.push([])
         stack.push(head)
@@ -28,8 +18,6 @@ export const LISP = {
         acc = ''
         if (token) {
           if (!head.length) head.push(leaf(APPLY, token))
-          else if (token.match(/^"([^"]*)"/))
-            head.push(leaf(ATOM, token.substring(1, token.length - 1)))
           else if (token.match(/^-?[0-9]\d*(\.\d+)?$/))
             head.push(leaf(ATOM, Number(token)))
           else head.push(leaf(WORD, token))
@@ -50,7 +38,6 @@ export const LISP = {
         return `(array ${array
           .map(([key, value]) => `("${key}" ${LISP.stringify(value)})`)
           .join(' ')})`
-    else if (typeof array === 'string') return `"${array}"`
     else if (typeof array === 'function') return '()'
     else if (typeof array === 'boolean') return +array
     else return array
@@ -65,10 +52,7 @@ export const LISP = {
           out += first[VALUE]
           break
         case ATOM:
-          out +=
-            typeof first[VALUE] === 'string'
-              ? `"${preserveEscape(first[VALUE])}"`
-              : first[VALUE]
+          out += first[VALUE]
           break
         case APPLY:
           out += `(${first[VALUE]} ${rest.map(dfs).join(' ')})`
@@ -117,6 +101,6 @@ export const AST = {
     typeof ast === 'object'
       ? `[${ast.map(AST.stringify).join(',')}]`
       : typeof ast === 'string'
-      ? `"${preserveEscape(ast)}"`
+      ? `"${ast}"`
       : ast
 }

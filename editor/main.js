@@ -58,6 +58,16 @@ if (initial) {
     alert(e instanceof Error ? e.message : e)
   }
 }
+const serialise = (arg) => {
+  if (typeof arg === 'number' || typeof arg === 'string') return arg.toString()
+  else if (arg.isString) {
+    return `"${arg.map((x) => String.fromCharCode(x)).join('')}"`
+  } else if (Array.isArray(arg))
+    return arg.length
+      ? `(array ${arg.map((a) => serialise(a)).join(' ')})`
+      : '()'
+  else return ''
+}
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
     e.preventDefault()
@@ -66,10 +76,13 @@ document.addEventListener('keydown', (e) => {
     if (value.trim()) {
       const compressed = LZString.compressToBase64(editor.getValue())
       terminal.setValue(
-        fez(`(array:serialise (do ${editor.getValue()}))`, {
-          std: 1,
-          mutation: 1
-        })
+        serialise(
+          fez(`(do ${editor.getValue()})`, {
+            std: 1,
+            mutation: 1,
+            strings: 1
+          })
+        )
       )
       terminal.clearSelection()
       const newurl =
@@ -90,12 +103,15 @@ document.addEventListener('keydown', (e) => {
     const value = editor.getValue()
     if (value.trim()) {
       terminal.setValue(
-        fez(`(array:serialise (do ${editor.getValue()}))`, {
-          std: 1,
-          compile: 1,
-          eval: 1,
-          mutation: 1
-        })
+        serialise(
+          fez(`(do ${editor.getValue()})`, {
+            std: 1,
+            compile: 1,
+            eval: 1,
+            mutation: 1,
+            strings: 1
+          })
+        )
       )
       terminal.clearSelection()
     }

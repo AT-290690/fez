@@ -10,6 +10,7 @@ import {
 import { leaf, isLeaf } from './parser.js'
 import { deepRename, lispToJavaScriptVariableName } from './utils.js'
 const Helpers = {
+  __string: `__string=(...args)=>{const str=args.flat();str.isString=true;return str}`,
   __add: `__add=(...numbers)=>{return numbers.reduce((a,b)=>a+b,0)}`,
   __sub: `__sub=(...numbers)=>{return numbers.reduce((a,b)=>a-b,0)}`,
   __mult: `__mult=(...numbers)=>{return numbers.reduce((a,b)=>a*b,1)}`,
@@ -46,13 +47,10 @@ const Helpers = {
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   numberPredicate: `numberPredicate=(number)=>+(typeof number==='number')`,
-  stringPredicate: `stringPredicate=(string)=>+(typeof string==='string')`,
   lambdaPredicate: `lambdaPredicate=(lambda)=>+(typeof lambda==='function')`,
   arrayPredicate: `arrayPredicate=(array)=>+Array.isArray(array)`,
-  atomPredicate: `atomPredicate=(value)=>+(typeof value==='number'||typeof value==='string')`,
   error: `error=(error)=>{throw new Error(error)}`,
-  array_setEffect: `array_setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`,
-  cast: `cast=(type,value)=>{switch(type){case '${KEYWORDS.NUMBER_TYPE}':return Number(value);case '${KEYWORDS.STRING_TYPE}':return value.toString();case '${KEYWORDS.ARRAY_TYPE}':return typeof value==='number'?[...Number(value).toString()].map(Number):[...value];case '${KEYWORDS.BOOLEAN_TYPE}':return +!!value;case '${KEYWORDS.ANONYMOUS_FUNCTION}':return ()=>value;case '${KEYWORDS.CHAR_CODE_TYPE}':return value.charCodeAt(0);case '${KEYWORDS.CHAR_TYPE}':return String.fromCharCode(value);default:return 0}}`
+  array_setEffect: `array_setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',
@@ -116,9 +114,6 @@ const compile = (tree, Drill) => {
         out += `),${name});`
         return out
       }
-      case KEYWORDS.IS_STRING:
-        Drill.Helpers.add('stringPredicate')
-        return `stringPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.IS_NUMBER:
         Drill.Helpers.add('numberPredicate')
         return `numberPredicate(${compile(Arguments[0], Drill)});`
@@ -133,19 +128,17 @@ const compile = (tree, Drill) => {
       case KEYWORDS.BOOLEAN_TYPE:
         return '1'
       case KEYWORDS.STRING_TYPE:
-        return '""'
+        Drill.Helpers.add('__string')
+        return `__string(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.ARRAY_TYPE:
         return Arguments.length === 2 &&
           Arguments[1][TYPE] === WORD &&
           Arguments[1][VALUE] === 'length'
-          ? `(new Array(${compile(Arguments[0], Drill)}).fill(0))`
+          ? `(new Array(${compile(Arguments[0], Drill)}).fill(0));`
           : `[${parseArgs(Arguments, Drill)}];`
-      case KEYWORDS.ARRAY_OR_STRING_LENGTH:
+      case KEYWORDS.ARRAY_LENGTH:
         Drill.Helpers.add('length')
         return `length(${compile(Arguments[0], Drill)})`
-      case KEYWORDS.IS_ATOM:
-        Drill.Helpers.add('atomPredicate')
-        return `atomPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.FIRST_ARRAY:
         Drill.Helpers.add('car')
         return `car(${compile(Arguments[0], Drill)});`
@@ -295,9 +288,6 @@ const compile = (tree, Drill) => {
         out += '0);'
         return out
       }
-      case KEYWORDS.CAST_TYPE:
-        Drill.Helpers.add('cast')
-        return `cast("${Arguments[1][VALUE]}", ${compile(Arguments[0], Drill)})`
       case KEYWORDS.PIPE: {
         let inp = Arguments[0]
         for (let i = 1; i < Arguments.length; ++i)
