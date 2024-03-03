@@ -9,20 +9,13 @@ export const ATOM = 2
 export const PLACEHOLDER = '.'
 // keywords aliases
 export const KEYWORDS = {
-  STRING_TYPE: 'string',
   NUMBER_TYPE: 'number',
-  BOOLEAN_TYPE: 'boolean',
+  STRING_TYPE: 'string',
   ARRAY_TYPE: 'array',
-  CHAR_CODE_TYPE: 'char-code',
-  CHAR_TYPE: 'char',
-  CAST_TYPE: 'type',
-  CONCATENATION: 'string:merge',
-  ARRAY_OR_STRING_LENGTH: 'length',
+  ARRAY_LENGTH: 'length',
   IS_ARRAY: 'array?',
   IS_NUMBER: 'number?',
-  IS_STRING: 'string?',
   IS_FUNCTION: 'lambda?',
-  IS_ATOM: 'atom?',
   ADDITION: '+',
   SUBTRACTION: '-',
   MULTIPLICATION: '*',

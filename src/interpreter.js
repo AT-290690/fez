@@ -8,26 +8,7 @@ import {
   isForbiddenVariableName,
   stringifyArgs
 } from './utils.js'
-
 const keywords = {
-  [KEYWORDS.CONCATENATION]: (args, env) => {
-    if (args.length < 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.CONCATENATION
-        }), expected > 1 but got ${args.length}. (${
-          KEYWORDS.CONCATENATION
-        } ${stringifyArgs(args)})`
-      )
-    const operands = args.map((x) => evaluate(x, env))
-    if (operands.some((x) => typeof x !== 'string'))
-      throw new TypeError(
-        `Not all arguments of (${KEYWORDS.CONCATENATION}) are (${
-          KEYWORDS.STRING_TYPE
-        }) (${KEYWORDS.CONCATENATION} ${stringifyArgs(args)})`
-      )
-    return operands.reduce((a, b) => a + b, '')
-  },
   [KEYWORDS.REMAINDER_OF_DIVISION]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
@@ -92,23 +73,19 @@ const keywords = {
       )
     return operands.reduce((a, b) => a / b)
   },
-  [KEYWORDS.ARRAY_OR_STRING_LENGTH]: (args, env) => {
+  [KEYWORDS.ARRAY_LENGTH]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
         `Invalid number of arguments for (${
-          KEYWORDS.ARRAY_OR_STRING_LENGTH
-        }) (= 1 required) (${KEYWORDS.ARRAY_OR_STRING_LENGTH} ${stringifyArgs(
-          args
-        )})`
+          KEYWORDS.ARRAY_LENGTH
+        }) (= 1 required) (${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
-    if (!(Array.isArray(array) || typeof array === 'string'))
+    if (!Array.isArray(array))
       throw new TypeError(
-        `First argument of (${
-          KEYWORDS.ARRAY_OR_STRING_LENGTH
-        }) must be an (or ${KEYWORDS.ARRAY_TYPE} ${KEYWORDS.STRING_TYPE}) (${
-          KEYWORDS.ARRAY_OR_STRING_LENGTH
-        } ${stringifyArgs(args)})`
+        `First argument of (${KEYWORDS.ARRAY_LENGTH}) must be a ${
+          KEYWORDS.ARRAY_TYPE
+        } (${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
       )
     return array.length
   },
@@ -130,15 +107,6 @@ const keywords = {
         }) (= 1 required) (${KEYWORDS.IS_NUMBER} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'number')
-  },
-  [KEYWORDS.IS_STRING]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.IS_STRING
-        }) (= 1 required) (${KEYWORDS.IS_STRING} ${stringifyArgs(args)})`
-      )
-    return +(typeof evaluate(args[0], env) === 'string')
   },
   [KEYWORDS.IS_FUNCTION]: (args, env) => {
     if (args.length !== 1)
@@ -262,6 +230,11 @@ const keywords = {
       if (evaluate(args[i], env)) return evaluate(args[i + 1], env)
     return 0
   },
+  [KEYWORDS.STRING_TYPE]: (args, env) => {
+    const str = args.flatMap((x) => evaluate(x, env))
+    str.isString = true
+    return str
+  },
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {
     if (!args.length) return []
     const isCapacity =
@@ -283,15 +256,6 @@ const keywords = {
       return new Array(N).fill(0)
     }
     return args.map((x) => evaluate(x, env))
-  },
-  [KEYWORDS.IS_ATOM]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.IS_ATOM
-        }) (= 1 required) (${KEYWORDS.IS_ATOM} ${stringifyArgs(args)})`
-      )
-    return isAtom(args[0], env)
   },
   [KEYWORDS.FIRST_ARRAY]: (args, env) => {
     if (args.length !== 1)
@@ -439,7 +403,7 @@ const keywords = {
     const b = evaluate(args[1], env)
     if (typeof a !== 'number')
       throw new TypeError(
-        `Invalid use of (${KEYWORDS.EQUAL}), first arguments are not an ${
+        `Invalid use of (${KEYWORDS.EQUAL}), first argument is not an ${
           KEYWORDS.NUMBER_TYPE
         } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
@@ -462,7 +426,7 @@ const keywords = {
     const b = evaluate(args[1], env)
     if (typeof a !== 'number')
       throw new TypeError(
-        `Invalid use of (${KEYWORDS.LESS_THAN}), first arguments are not an ${
+        `Invalid use of (${KEYWORDS.LESS_THAN}), first argument is not an ${
           KEYWORDS.NUMBER_TYPE
         } (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
@@ -485,11 +449,9 @@ const keywords = {
     const b = evaluate(args[1], env)
     if (typeof a !== 'number')
       throw new TypeError(
-        `Invalid use of (${
-          KEYWORDS.GREATHER_THAN
-        }), first arguments are not an ${KEYWORDS.NUMBER_TYPE} (${
-          KEYWORDS.GREATHER_THAN
-        } ${stringifyArgs(args)})`
+        `Invalid use of (${KEYWORDS.GREATHER_THAN}), first argument is not an ${
+          KEYWORDS.NUMBER_TYPE
+        } (${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
@@ -516,7 +478,7 @@ const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }), first arguments are not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), first argument is not an ${KEYWORDS.NUMBER_TYPE} (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -545,7 +507,7 @@ const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }), first arguments are not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), first argument is not an ${KEYWORDS.NUMBER_TYPE} (${
           KEYWORDS.LESS_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -643,7 +605,6 @@ const keywords = {
     })
     return env[name]
   },
-  [KEYWORDS.STRING_TYPE]: () => '',
   [KEYWORDS.NUMBER_TYPE]: () => 0,
   [KEYWORDS.BOOLEAN_TYPE]: () => 1,
   [KEYWORDS.CAST_TYPE]: (args, env) => {
@@ -671,60 +632,13 @@ const keywords = {
             )
           return num
         }
-        case KEYWORDS.STRING_TYPE:
-          return value.toString()
         case KEYWORDS.BOOLEAN_TYPE:
           return +!!value
-        case KEYWORDS.ARRAY_TYPE: {
-          if (typeof value === 'number')
-            return [...Number(value).toString()].map(Number)
-          else if (typeof value[Symbol.iterator] !== 'function')
-            throw new TypeError(
-              `Arguments are not iterable for ${KEYWORDS.ARRAY_TYPE} at (${
-                KEYWORDS.CAST_TYPE
-              }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)})`
-            )
-          return [...value]
-        }
-        case KEYWORDS.CHAR_TYPE: {
-          const index = evaluate(args[0], env)
-          if (!Number.isInteger(index) || index < 0)
-            throw new TypeError(
-              `Arguments are not (+ ${KEYWORDS.NUMBER_TYPE}) for ${
-                KEYWORDS.CHAR_TYPE
-              } at (${KEYWORDS.CAST_TYPE}) (${
-                KEYWORDS.CAST_TYPE
-              } ${stringifyArgs(args)})`
-            )
-          return String.fromCharCode(index)
-        }
-        case KEYWORDS.CHAR_CODE_TYPE: {
-          const string = evaluate(args[0], env)
-          if (typeof string !== 'string')
-            throw new TypeError(
-              `Argument is not (${KEYWORDS.STRING_TYPE}) for ${
-                KEYWORDS.CHAR_CODE_TYPE
-              } at (${KEYWORDS.CAST_TYPE}) (${
-                KEYWORDS.CAST_TYPE
-              } ${stringifyArgs(args)})`
-            )
-          if (string.length !== 1)
-            throw new RangeError(
-              `Argument is not of (= (length ${KEYWORDS.STRING_TYPE}) 1) for ${
-                KEYWORDS.CHAR_CODE_TYPE
-              } at (${KEYWORDS.CAST_TYPE}) (${
-                KEYWORDS.CAST_TYPE
-              } ${stringifyArgs(args)})`
-            )
-          return string.charCodeAt(0)
-        }
         default:
           throw new TypeError(
-            `Can only cast (or ${KEYWORDS.NUMBER_TYPE} ${
-              KEYWORDS.STRING_TYPE
-            } ${KEYWORDS.ARRAY_TYPE} ${KEYWORDS.BOOLEAN_TYPE} ${
-              KEYWORDS.CHAR_TYPE
-            } ${KEYWORDS.CHAR_CODE_TYPE}) at (${KEYWORDS.CAST_TYPE}) (${
+            `Can only cast (or ${KEYWORDS.NUMBER_TYPE} ${KEYWORDS.ARRAY_TYPE} ${
+              KEYWORDS.BOOLEAN_TYPE
+            }) at (${KEYWORDS.CAST_TYPE}) (${
               KEYWORDS.CAST_TYPE
             } ${stringifyArgs(args)})`
           )
@@ -965,18 +879,17 @@ const keywords = {
     return keywords[KEYWORDS.DEFINE_VARIABLE](args, env)
   },
   [KEYWORDS.TEST_CASE]: (args, env) => {
-    if (args.length !== 3)
+    if (args.length !== 2)
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.TEST_CASE
-        }) (= 3 required) (${KEYWORDS.TEST_CASE} ${stringifyArgs(args)})`
+        }) (= 2 required) (${KEYWORDS.TEST_CASE} ${stringifyArgs(args)})`
       )
-    const description = evaluate(args[0], env)
-    const a = evaluate(args[1], env)
-    const b = evaluate(args[2], env)
+    const a = evaluate(args[0], env)
+    const b = evaluate(args[1], env)
     return !isEqualTypes(a, b) || !isEqual(a, b)
-      ? [0, description, stringifyArgs([args[1]]), b, a]
-      : [1, description, stringifyArgs([args[1]]), a]
+      ? [0, stringifyArgs([args[0]]), b, a]
+      : [1, stringifyArgs([args[0]]), a]
   },
   [KEYWORDS.TEST_BED]: (args, env) => {
     let tests = []
@@ -994,15 +907,13 @@ const keywords = {
         )
       tests = args.map((x) => evaluate(x, env))
       res = tests.reduce(
-        (acc, [state, describe, ...rest]) =>
+        (acc, [state, ...rest]) =>
           `${acc}${
             !state
-              ? `x ${describe} Failed:\n ${rest[0]}\n + ${LISP.stringify(
+              ? `x ${rest[0]}\n + ${LISP.stringify(
                   rest[1]
                 )}\n - ${LISP.stringify(rest[2])}\n`
-              : `✓ ${describe} Passed:\n ${rest[0]}\n + ${LISP.stringify(
-                  rest[1]
-                )}\n`
+              : `✓ ${rest[0]}\n + ${LISP.stringify(rest[1])}\n`
           }`,
         ''
       )
