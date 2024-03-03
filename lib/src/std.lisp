@@ -454,8 +454,9 @@
 (let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
-(let cast:set->array (lambda set (array:select (array:flat-one set) number?)))
-(let cast:map->array (lambda set (array:select (array:flat-one set) number?)))
+(let cast:set->array (lambda set (array:select (array:flat-one set) length)))
+(let cast:map->array (lambda set (array:select (array:flat-one set) length)))
+(let cast:set->numbers (lambda set (|> set (cast:set->array) (array:map (lambda x (|> x (cast:chars->digits) (cast:digits->number)))))))
 (let cast:map->string (lambda table (|>
   table
   (array:select length)

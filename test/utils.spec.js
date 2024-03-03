@@ -3,7 +3,7 @@ import { fez, tree } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
 describe('Utils', () => {
-  it('Should work correctly', () =>
+  it('Should be correct', () =>
     [
       `(let Fizz (string char:F char:i char:z char:z))
       (let Buzz (string char:B char:u char:z char:z))

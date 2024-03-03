@@ -11,7 +11,9 @@ describe('Interpretation', () => {
 (let cos (lambda x (math:cosine x *FACTOR*)))
 (array (array:map arr sin) (array:map arr cos)))`,
         {
-          std: 1
+          std: 1,
+          compile: 1,
+          eval: 1
         }
       ),
       [
@@ -33,14 +35,15 @@ describe('Interpretation', () => {
   (array:enumerated-map (lambda x i (* x i)))
   (array:enumerated-select (lambda . i (> i 2)))
 )`,
-        { std: 1, compile: 0, shake: 1 }
+        { std: 1, compile: 1, eval: 1, shake: 1 }
       ),
       [12, 20]
     )
     deepStrictEqual(
       fez(`(math:permutations (array 1 2 3 4))`, {
         std: 1,
-        compile: 0,
+        compile: 1,
+        eval: 1,
         shake: 1
       }),
       [
@@ -78,8 +81,8 @@ describe('Interpretation', () => {
 (array arr cloned)`,
         {
           std: 1,
-          compile: 0,
-
+          compile: 1,
+          eval: 1,
           mutation: 1
         }
       ),
@@ -97,64 +100,99 @@ describe('Interpretation', () => {
     strictEqual(
       fez(`(array:equal? (array 1) (array 10))`, {
         std: 1,
-        compile: 0,
-        shake: 1
+        compile: 1,
+        eval: 1
       }),
       0
     )
     strictEqual(
       fez(`(array:equal? (array 1 10) (array 1 10))`, {
         std: 1,
-        compile: 0,
-        shake: 1
+        compile: 1,
+        eval: 1
       }),
       1
     )
     strictEqual(
       fez(`(array:equal? (array 1 (array 1 10)) (array 1 (array 1 10)))`, {
         std: 1,
-        compile: 0,
-        shake: 1
+        compile: 1,
+        eval: 1
       }),
       1
     )
     strictEqual(
       fez(`(array:equal? (array 1 (array 1 10)) (array 1 (array 2 10)))`, {
         std: 1,
-        compile: 0,
-        shake: 1
+        compile: 1,
+        eval: 1
       }),
       0
     )
     deepStrictEqual(
       fez(
         `
+    (let workers ())
+(let make-worker (lambda name age prof (array:set! workers (length workers) 
+  (|> (array () () () ()) 
+  (map:set! 
+    (array char:n char:a char:m char:e) name) 
+    (map:set! (array char:a char:g char:e) age) 
+    (map:set! (array char:p char:r char:o char:f) prof)))))
+(make-worker (array char:A char:n char:t char:h char:o char:n char:y) 33 (array char:A char:n char:i char:m char:a char:t char:o char:r))
+
+(let map:entries (lambda table (array:select table (lambda x (length x)))))
+(let find-worker-by-name (lambda name 
+          (|> 
+            workers 
+            (array:find (lambda entry (array:equal? (map:get entry (array char:n char:a char:m char:e)) name))) 
+           (map:entries) 
+           (array:flat-one))))
+          (find-worker-by-name (array char:A char:n char:t char:h char:o char:n char:y))
+    `,
+        { std: 1, compile: 1, eval: 1, mutation: 1 }
+      ),
+      [
+        [
+          [112, 114, 111, 102],
+          [65, 110, 105, 109, 97, 116, 111, 114]
+        ],
+        [
+          [110, 97, 109, 101],
+          [65, 110, 116, 104, 111, 110, 121]
+        ],
+        [[97, 103, 101], 33]
+      ]
+    )
+    deepStrictEqual(
+      fez(
+        `
         (let A (array () () ()))
         (let B (array () () ()))
-        (set:add! A (array 1))
-        (set:add! A (array 2))
-        (set:add! A (array 3))
-        (set:add! B (array 1))
-        (set:add! B (array 2))
-        (set:add! B (array 4))
-        (set:add! B (array 5))
-        (array (cast:map->array (set:xor A B)) (cast:map->array (set:difference A B)) (cast:set->array (set:difference B A)) (cast:set->array (set:intersection B A)))
+        (set:add! A (array char:1))
+        (set:add! A (array char:2))
+        (set:add! A (array char:3))
+        (set:add! B (array char:1))
+        (set:add! B (array char:2))
+        (set:add! B (array char:4))
+        (set:add! B (array char:5))
+        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))        
     `,
-        { std: 1, compile: 0, mutation: 1 }
+        { std: 1, compile: 1, eval: 1, mutation: 1 }
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
     )
     deepStrictEqual(
       fez(
         `(let set (array () () ()))
-    (set:add! set 1)
-    (set:add! set 1)
-    (set:add! set 2)
-    (set:add! set 2)
-    (set:add! set 3)
-    (array:flat set)
+    (set:add! set (array char:1))
+    (set:add! set (array char:1))
+    (set:add! set (array char:2))
+    (set:add! set (array char:2))
+    (set:add! set (array char:3))
+    (|> set (array:flat) (cast:chars->digits))
     `,
-        { std: 1, compile: 0, mutation: 1 }
+        { std: 1, compile: 1, eval: 1, mutation: 1 }
       ),
       [3, 1, 2]
     )
@@ -166,15 +204,15 @@ describe('Interpretation', () => {
 (array:map (safety lambda x (* x 2))) 
 (array:select (safety lambda x (> x 4))) 
 (array:fold (safety lambda a b (+ a b)) 0)))`,
-        { std: 1, compile: 0, shake: 1 }
+        { std: 1, compile: 1, eval: 1 }
       ),
       [24]
     )
     deepStrictEqual(
       fez(
-        `(let Fizz (string char:F char:i char:z char:z))
-        (let Buzz (string char:B char:u char:z char:z))
-        (let FizzBuzz (string Fizz Buzz))
+        `(let Fizz (array char:F char:i char:z char:z))
+        (let Buzz (array char:B char:u char:z char:z))
+        (let FizzBuzz (cons Fizz Buzz))
         
         (let fizz-buzz (lambda n
             (cond
@@ -184,26 +222,26 @@ describe('Interpretation', () => {
               (*) n)))
         
           (|>
-            (math:range 1 100)
+            (math:range 1 15)
             (array:map fizz-buzz))`,
-        { std: 1, compile: 0, shake: 1 }
+        { std: 1, compile: 1, eval: 1 }
       ),
       [
         1,
         2,
-        'Fizz',
+        [70, 105, 122, 122],
         4,
-        'Buzz',
-        'Fizz',
+        [66, 117, 122, 122],
+        [70, 105, 122, 122],
         7,
         8,
-        'Fizz',
-        'Buzz',
+        [70, 105, 122, 122],
+        [66, 117, 122, 122],
         11,
-        'Fizz',
+        [70, 105, 122, 122],
         13,
         14,
-        'Fizz Buzz'
+        [70, 105, 122, 122, 66, 117, 122, 122]
       ]
     )
     strictEqual(
@@ -211,7 +249,7 @@ describe('Interpretation', () => {
         `(let fibonacci (lambda n
     (if (< n 2) n (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
     (fibonacci 10)`,
-        { std: 0 }
+        { std: 0, compile: 1, eval: 1 }
       ),
       55
     )
@@ -225,17 +263,44 @@ describe('Interpretation', () => {
     (|>
       (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
-        { std: 1, compile: 0, shake: 1 }
+        { std: 1, compile: 1, eval: 1 }
       ),
       3
     )
     deepStrictEqual(
       fez(`(array:exclude (array 1 2 3 4 5) math:even?)`, {
         std: 1,
-        compile: 0,
-        shake: 1
+        compile: 1,
+        eval: 1
       }),
       [1, 3, 5]
+    )
+
+    strictEqual(
+      fez(
+        `(let *input*
+    (string
+        char:1 char:7 char:2 char:1 char:new-line
+        char:3 char:6 char:6 char:new-line
+        char:2 char:9 char:9 char:new-line
+        char:6 char:7 char:5 char:new-line
+        char:1 char:4 char:5 char:6))
+    ; solve part 1
+    (let solve (lambda arr cb
+         (array:fold arr (lambda a b (do
+            (let res (array:binary-search arr (cb b)))
+            (if res (cons a (array res)) a)))
+         ())))
+    ; 514579
+    (|> *input*
+        (string:lines)
+        (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
+        (array:sort (lambda a b (> a b)))
+        (solve (lambda x (- 2020 x)))
+        (math:product))`,
+        { std: 1, eval: 1, compile: 1 }
+      ),
+      514579
     )
   })
 })

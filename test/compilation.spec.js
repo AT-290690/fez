@@ -1,7 +1,7 @@
 import { deepStrictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Compilation', () => {
-  it('Should match interpretation', () =>
+  it('Should match Interpretation', () =>
     [
       `(let Fizz (string char:F char:i char:z char:z))
     (let Buzz (string char:B char:u char:z char:z))
@@ -36,7 +36,17 @@ describe('Compilation', () => {
               (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
               (array:sort (lambda a b (> a b)))
               (solve (lambda x (- 2020 x)))
-              (math:product))`
+              (math:product))`,
+      `(let A (array () () ()))
+        (let B (array () () ()))
+        (set:add! A (array char:1))
+        (set:add! A (array char:2))
+        (set:add! A (array char:3))
+        (set:add! B (array char:1))
+        (set:add! B (array char:2))
+        (set:add! B (array char:4))
+        (set:add! B (array char:5))
+        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))`
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { std: 1, compile: 0, mutation: 1 }),
