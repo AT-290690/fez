@@ -628,7 +628,7 @@
                                           (let* iterate (lambda arr i
                                                 (if (and (length arr) (>= (length arr) (length word)))
                                                       (if (string:equal?
-                                                        (|> str (array:slice i (+ i (length word))) (array:join char:empty))
+                                                        (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                         word) i (iterate (cdr arr) (+ i 1)))
                                                     -1)))
                                               (iterate str 0)))))
@@ -639,7 +639,7 @@
                                           (let* iterate (lambda arr i
                                                 (when (and (length arr) (>= (length arr) (length word)))
                                                       (if (string:equal?
-                                                        (|> str (array:slice i (+ i (length word))) (array:join char:empty))
+                                                        (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                         word) 
                                                         1 
                                                         (iterate (cdr arr) (+ i 1))))))

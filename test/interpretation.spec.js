@@ -275,7 +275,6 @@ describe('Interpretation', () => {
       }),
       [1, 3, 5]
     )
-
     strictEqual(
       fez(
         `(let *input*
@@ -301,6 +300,24 @@ describe('Interpretation', () => {
         { std: 1, eval: 1, compile: 1 }
       ),
       514579
+    )
+    strictEqual(
+      fez(`(string:has? "It was a dark and stormy night" "dark")`, {
+        std: 1,
+        compile: 1,
+        eval: 1,
+        strings: 1
+      }),
+      1
+    )
+    strictEqual(
+      fez(`(string:has? "It was a dark and stormy night" "day")`, {
+        std: 1,
+        compile: 1,
+        eval: 1,
+        strings: 1
+      }),
+      0
     )
   })
 })
