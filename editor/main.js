@@ -79,7 +79,8 @@ document.addEventListener('keydown', (e) => {
         serialise(
           fez(`(do ${editor.getValue()})`, {
             std: 1,
-            mutation: 1
+            mutation: 1,
+            strings: 1
           })
         )
       )
@@ -107,7 +108,8 @@ document.addEventListener('keydown', (e) => {
             std: 1,
             compile: 1,
             eval: 1,
-            mutation: 1
+            mutation: 1,
+            strings: 1
           })
         )
       )

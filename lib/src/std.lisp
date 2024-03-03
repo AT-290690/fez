@@ -448,21 +448,29 @@
 (let cast:digits->number (lambda digits (do 
     (let* iter (lambda rem num base (if (length rem) (iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
     (iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
+(let cast:number->digits (lambda num (do 
+  (let* iter (lambda num res (if (>= num 1) (iter (/ num 10) (array:set! res (length res) (| (mod num 10) 0))) res)))
+  (array:reverse (iter num ())))))
 (let cast:number->bits (lambda num (do 
   (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0))) res)))
   (array:reverse (iter num ())))))
+(let math:number-of-digits (lambda n 
+  (cond 
+    (= n 0) 1
+    (< n 0) (length (cast:number->digits (| (* n -1) 0)))
+    (*) (length (cast:number->digits (| n 0))))))
 (let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
 (let cast:set->array (lambda set (array:select (array:flat-one set) length)))
 (let cast:map->array (lambda set (array:select (array:flat-one set) length)))
 (let cast:set->numbers (lambda set (|> set (cast:set->array) (array:map (lambda x (|> x (cast:chars->digits) (cast:digits->number)))))))
-(let cast:map->string (lambda table (|>
-  table
-  (array:select length)
-  (array:flat-one)
-  (array:map (lambda y (array:join y char:space)))
-  (array:join char:new-line))))
+; (let cast:map->string (lambda table (|>
+;   table
+;   (array:select length)
+;   (array:flat-one)
+;   (array:map (lambda y (array:join y (array char:space))))
+;   (array:join (array char:new-line)))))
 (let cast:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))

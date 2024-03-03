@@ -5,11 +5,25 @@ import { run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
+export const replaceStrings = (source) => {
+  const quotes = source.match(/"(.*?)"/g)
+  if (quotes)
+    for (const q of quotes)
+      source = source.replaceAll(
+        q,
+        `(string ${[...q]
+          .slice(1, -1)
+          .map((x) => x.charCodeAt(0))
+          .join(' ')})`
+      )
+  return source
+}
 export const removeNoCode = (source) =>
   source
     .replace(/;.+/g, '')
     .replace(/[\s\s]/g, ' ')
     .trim()
+
 export const isBalancedParenthesis = (sourceCode) => {
   let count = 0
   const stack = []
@@ -147,6 +161,7 @@ export const dfs = (tree, callback) => {
 export const deepClone = (ast) => AST.parse(AST.stringify(ast))
 export const fez = (source, options = {}) => {
   const env = options.env ?? {}
+  if (options.strings) source = replaceStrings(source)
   try {
     if (typeof source === 'string') {
       let code

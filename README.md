@@ -4,6 +4,20 @@
 <img width="64" src="./logo.svg"/>
 </p>
 
+````lisp
+(let fizz-buzz (lambda n
+    (cond
+      (= (mod n 15) 0) "Fizz Buzz"
+      (= (mod n 3) 0) "Fizz"
+      (= (mod n 5) 0) "Buzz"
+      (*) n)))
+
+(|>
+(math:range 1 100)
+(array:map fizz-buzz)
+(log!))
+```
+
 ```lisp
 (let Fizz (string char:F char:i char:z char:z))
 (let Buzz (string char:B char:u char:z char:z))
@@ -20,7 +34,7 @@
     (math:range 1 100)
     (array:map fizz-buzz)
     (log!))
-```
+````
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
@@ -40,6 +54,22 @@
 ; 514579
 (|> *input*
     (string:lines)
+    (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
+    (array:sort (lambda a b (> a b)))
+    (solve (lambda x (- 2020 x)))
+    (math:product)
+    (log!))
+```
+
+```lisp
+(let *input* "1721,979,366,299,675,1456")
+(let solve (lambda arr cb
+     (array:fold arr (lambda a b (do
+        (let res (array:binary-search arr (cb b)))
+        (if res (cons a (array res)) a)))
+     ())))
+(|> *input*
+    (string:commas)
     (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
     (array:sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
@@ -83,7 +113,7 @@ npm i fez-lisp
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(log! "Hello World!")`) // Hello World!
+fez(`(log! "Hello World!")`, { strings: true }) // Hello World!
 ```
 
 ```js
