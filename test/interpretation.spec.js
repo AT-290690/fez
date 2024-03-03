@@ -319,5 +319,15 @@ describe('Interpretation', () => {
       }),
       0
     )
+    deepStrictEqual(
+      fez(
+        `(array
+  (string:trim-right "  12 3  4  ")
+  (string:trim-left "  12 3  4  ")
+  (string:trim " 12 3  4    "))`,
+        { std: 1, compile: 0, mutation: 0, strings: 1 }
+      ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
+      ['  12 3  4', '12 3  4  ', '12 3  4']
+    )
   })
 })

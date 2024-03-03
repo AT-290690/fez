@@ -668,18 +668,18 @@
 (let string:trim-left (lambda str (do
   (let tr (array 1))
 (|> str (array:fold (lambda a b (if
-(and (car tr) (string:equal? b " ")) a
+(and (car tr) (= b char:space)) a
   (do
     (when (car tr) (array:set! tr 0 0))
-    (cons a b))
-)) char:empty)))))
+    (cons a (array b)))
+)) ())))))
 (let string:trim-right (lambda str (do
   (let tr (array 1))
   (|> str (array:reverse) (array:fold (lambda a b (if
-  (and (car tr) (string:equal? b " ")) a
+  (and (car tr) (= b char:space)) a
     (do
       (when (car tr) (array:set! tr 0 0))
-      (cons b a)))) char:empty)))))
+      (cons (array b) a)))) ())))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
 (let string:lines (lambda str (|> str
                       (array:fold (lambda a b (do
