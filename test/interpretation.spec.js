@@ -2,6 +2,20 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
+    strictEqual(
+      fez(
+        `(= 
+
+      (|>
+       "Hello World"
+       (cdr)
+       (car))
+      
+      (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
+        { std: 1, compile: 1, eval: 1, strings: 1 }
+      ),
+      1
+    )
     deepStrictEqual(
       fez(
         `(do

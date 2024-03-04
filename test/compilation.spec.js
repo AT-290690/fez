@@ -3,6 +3,12 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match Interpretation', () =>
     [
+      `(= 
+        (|>
+         "Hello World"
+         (cdr)
+         (car))
+        (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
       `(let Fizz (string char:F char:i char:z char:z))
     (let Buzz (string char:B char:u char:z char:z))
     (let FizzBuzz (string Fizz Buzz))
@@ -49,8 +55,8 @@ describe('Compilation', () => {
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))`
     ].forEach((source) =>
       deepStrictEqual(
-        fez(source, { std: 1, compile: 0, mutation: 1 }),
-        eval(fez(source, { std: 1, compile: 1, mutation: 1 }))
+        fez(source, { std: 1, compile: 0, mutation: 1, strings: 1 }),
+        eval(fez(source, { std: 1, compile: 1, mutation: 1, strings: 1 }))
       )
     ))
 })

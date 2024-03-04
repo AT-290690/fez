@@ -1,21 +1,27 @@
 import { deepStrictEqual } from 'assert'
-import { fez, tree } from '../src/utils.js'
+import { fez, replaceStrings, tree } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
 describe('Utils', () => {
   it('Should be correct', () =>
     [
+      `(= 
+      (|>
+       "Hello World"
+       (cdr)
+       (car))
+      (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
       `(let Fizz (string char:F char:i char:z char:z))
       (let Buzz (string char:B char:u char:z char:z))
       (let FizzBuzz (string Fizz Buzz))
-      
+
       (let fizz-buzz (lambda n
           (cond
             (= (mod n 15) 0) FizzBuzz
             (= (mod n 3) 0) Fizz
             (= (mod n 5) 0) Buzz
             (*) n)))
-      
+
         (|>
           (math:range 1 100)
           (array:map fizz-buzz))`,
@@ -41,6 +47,7 @@ describe('Utils', () => {
                 (math:product))`
     ]
       .slice(0, 1)
+      .map(replaceStrings)
       .map((source) => tree(source, std))
       .forEach((ast) =>
         deepStrictEqual(

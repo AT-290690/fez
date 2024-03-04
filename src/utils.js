@@ -161,9 +161,9 @@ export const dfs = (tree, callback) => {
 export const deepClone = (ast) => AST.parse(AST.stringify(ast))
 export const fez = (source, options = {}) => {
   const env = options.env ?? {}
-  if (options.strings) source = replaceStrings(source)
   try {
     if (typeof source === 'string') {
+      if (options.strings) source = replaceStrings(source)
       let code
       if (!options.compile)
         code = handleUnbalancedQuotes(
