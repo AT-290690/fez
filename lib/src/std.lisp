@@ -234,6 +234,10 @@
 (let math:enumeration (lambda (do 
   (let I (var:def -1))
   (let inc (lambda (do (let i (+ (var:get I) 1)) (var:set! I i) i))))))
+(let math:palindrome? (lambda arr (|> arr
+  (array:zip (array:reverse arr))
+  (array:map tuple:subtract)
+  (array:every? math:zero?))))
 (let* array:for (lambda arr callback
                                 (when (length arr)
                                   (do (callback (car arr))
@@ -596,6 +600,22 @@
       (if (< i bounds) (iterate (+ i 1) bounds) 
       (+ (var:get count) (var:get at-least-one?))))))
       (iterate 0 (- (length arr) 1)))))
+(let string:slice-from (lambda a b (do
+  (let index (|> a (string:match b)))
+  (|> a (array:slice index (+ index (- (length a) index)))))))
+(let string:slice-after (lambda a b (do
+  (let index (|> a (string:match b)))
+  (|> a (array:slice (+ index (length b)) (+ index (- (length a) index)))))))
+(let string:slice-to (lambda A B (do
+  (let a (array:reverse A))
+  (let b (array:reverse B))
+  (let index (|> a (string:match b)))
+  (|> a (array:slice index (+ index (- (length a) index))) (array:reverse)))))
+(let string:slice-before (lambda A B (do
+  (let a (array:reverse A))
+  (let b (array:reverse B))
+  (let index (|> a (string:match b)))
+  (|> a (array:slice (+ index (length b)) (+ index (- (length a) index))) (array:reverse)))))
 (let string:split (lambda str delim (do
   (let locals ())
   (array:set! locals (length locals) delim)
@@ -1004,6 +1024,13 @@ q)))
       (when (< index bounds) (rigth (+ index 1) bounds)))))
   (rigth half (- slice-len 1))
   slice)))
+
+(let tuple:apply (lambda x cb (cb (car x) (car (cdr x)))))
+(let tuple:add (lambda x (+ (car x) (car (cdr x)))))
+(let tuple:subtract (lambda x (- (car x) (car (cdr x)))))
+(let tuple:multiply (lambda x (* (car x) (car (cdr x)))))
+(let tuple:divide (lambda x (/ (car x) (car (cdr x)))))
+(let tuple:swap (lambda x (array (car (cdr x) (car x)))))
 
 (let date:add-seconds (safety lambda date-time seconds (+ date-time (* seconds 1000))))
 (let date:add-minutes (safety lambda date-time minutes (+ date-time (* minutes 1000 60))))
