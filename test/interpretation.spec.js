@@ -12,7 +12,7 @@ describe('Interpretation', () => {
        (car))
       
       (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
-        { std: 1, compile: 1, eval: 1, strings: 1 }
+        { compile: 1, eval: 1, strings: 1 }
       ),
       1
     )
@@ -25,7 +25,6 @@ describe('Interpretation', () => {
 (let cos (lambda x (math:cosine x *FACTOR*)))
 (array (array:map arr sin) (array:map arr cos)))`,
         {
-          std: 1,
           compile: 1,
           eval: 1
         }
@@ -49,13 +48,12 @@ describe('Interpretation', () => {
   (array:enumerated-map (lambda x i (* x i)))
   (array:enumerated-select (lambda . i (> i 2)))
 )`,
-        { std: 1, compile: 1, eval: 1, shake: 1 }
+        { compile: 1, eval: 1, shake: 1 }
       ),
       [12, 20]
     )
     deepStrictEqual(
       fez(`(math:permutations (array 1 2 3 4))`, {
-        std: 1,
         compile: 1,
         eval: 1,
         shake: 1
@@ -94,7 +92,6 @@ describe('Interpretation', () => {
 (array:set! (array:get (array:get cloned 1) 1) 1 20000) 
 (array arr cloned)`,
         {
-          std: 1,
           compile: 1,
           eval: 1,
           mutation: 1
@@ -113,7 +110,6 @@ describe('Interpretation', () => {
     )
     strictEqual(
       fez(`(array:equal? (array 1) (array 10))`, {
-        std: 1,
         compile: 1,
         eval: 1
       }),
@@ -121,7 +117,6 @@ describe('Interpretation', () => {
     )
     strictEqual(
       fez(`(array:equal? (array 1 10) (array 1 10))`, {
-        std: 1,
         compile: 1,
         eval: 1
       }),
@@ -129,7 +124,6 @@ describe('Interpretation', () => {
     )
     strictEqual(
       fez(`(array:equal? (array 1 (array 1 10)) (array 1 (array 1 10)))`, {
-        std: 1,
         compile: 1,
         eval: 1
       }),
@@ -137,7 +131,6 @@ describe('Interpretation', () => {
     )
     strictEqual(
       fez(`(array:equal? (array 1 (array 1 10)) (array 1 (array 2 10)))`, {
-        std: 1,
         compile: 1,
         eval: 1
       }),
@@ -164,7 +157,7 @@ describe('Interpretation', () => {
            (array:flat-one))))
           (find-worker-by-name (array char:A char:n char:t char:h char:o char:n char:y))
     `,
-        { std: 1, compile: 1, eval: 1, mutation: 1 }
+        { compile: 1, eval: 1, mutation: 1 }
       ),
       [
         [
@@ -192,7 +185,7 @@ describe('Interpretation', () => {
         (set:add! B (array char:5))
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))        
     `,
-        { std: 1, compile: 1, eval: 1, mutation: 1 }
+        { compile: 1, eval: 1, mutation: 1 }
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
     )
@@ -206,7 +199,7 @@ describe('Interpretation', () => {
     (set:add! set (array char:3))
     (|> set (array:flat) (cast:chars->digits))
     `,
-        { std: 1, compile: 1, eval: 1, mutation: 1 }
+        { compile: 1, eval: 1, mutation: 1 }
       ),
       [3, 1, 2]
     )
@@ -218,7 +211,7 @@ describe('Interpretation', () => {
 (array:map (safety lambda x (* x 2))) 
 (array:select (safety lambda x (> x 4))) 
 (array:fold (safety lambda a b (+ a b)) 0)))`,
-        { std: 1, compile: 1, eval: 1 }
+        { compile: 1, eval: 1 }
       ),
       [24]
     )
@@ -238,7 +231,7 @@ describe('Interpretation', () => {
           (|>
             (math:range 1 15)
             (array:map fizz-buzz))`,
-        { std: 1, compile: 1, eval: 1 }
+        { compile: 1, eval: 1 }
       ),
       [
         1,
@@ -277,13 +270,12 @@ describe('Interpretation', () => {
     (|>
       (array -2 -1 -1 0 0 1 2)
       (max-count-of))`,
-        { std: 1, compile: 1, eval: 1 }
+        { compile: 1, eval: 1 }
       ),
       3
     )
     deepStrictEqual(
       fez(`(array:exclude (array 1 2 3 4 5) math:even?)`, {
-        std: 1,
         compile: 1,
         eval: 1
       }),
@@ -311,13 +303,12 @@ describe('Interpretation', () => {
         (array:sort (lambda a b (> a b)))
         (solve (lambda x (- 2020 x)))
         (math:product))`,
-        { std: 1, eval: 1, compile: 1 }
+        { eval: 1, compile: 1 }
       ),
       514579
     )
     strictEqual(
       fez(`(string:has? "It was a dark and stormy night" "dark")`, {
-        std: 1,
         compile: 1,
         eval: 1,
         strings: 1
@@ -326,7 +317,6 @@ describe('Interpretation', () => {
     )
     strictEqual(
       fez(`(string:has? "It was a dark and stormy night" "day")`, {
-        std: 1,
         compile: 1,
         eval: 1,
         strings: 1
@@ -339,7 +329,7 @@ describe('Interpretation', () => {
   (string:trim-right "  12 3  4  ")
   (string:trim-left "  12 3  4  ")
   (string:trim " 12 3  4    "))`,
-        { std: 1, compile: 0, mutation: 0, strings: 1 }
+        { compile: 0, mutation: 0, strings: 1 }
       ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )

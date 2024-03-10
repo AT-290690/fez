@@ -132,7 +132,7 @@ eval(
     // include standard library
     // compile fez to JavaScript
     // tree shake standard library
-    { std: true, compile: true }
+    { compile: true }
   )
 )
 ```
@@ -153,7 +153,7 @@ fez(
       (*) n)))
 
   (|> (math:range 1 100) (array:map fizz-buzz) (log!))`,
-  { std: true, compile: false }
+  { compile: false }
 )
 ```
 
@@ -215,7 +215,6 @@ const source = `(|>
   (math:summation)
   (log!))`
 fez(source, {
-  std: 1,
   mutation: 1
 })
 ```

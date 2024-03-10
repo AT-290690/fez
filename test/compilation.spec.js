@@ -55,8 +55,8 @@ describe('Compilation', () => {
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))`
     ].forEach((source) =>
       deepStrictEqual(
-        fez(source, { std: 1, compile: 0, mutation: 1, strings: 1 }),
-        eval(fez(source, { std: 1, compile: 1, mutation: 1, strings: 1 }))
+        fez(source, { compile: 0, mutation: 1, strings: 1 }),
+        eval(fez(source, { compile: 1, mutation: 1, strings: 1 }))
       )
     ))
 })

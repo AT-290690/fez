@@ -52,7 +52,6 @@ describe('Utils', () => {
       .forEach((ast) =>
         deepStrictEqual(
           fez(LISP.source(ast), {
-            std: 0,
             mutation: 1,
             compile: 1,
             eval: 1

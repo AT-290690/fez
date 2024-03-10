@@ -160,7 +160,7 @@ export const dfs = (tree, callback) => {
 }
 export const deepClone = (ast) => AST.parse(AST.stringify(ast))
 export const fez = (source, options = {}) => {
-  const env = options.env ?? {}
+  const env = Object.create(null)
   try {
     if (typeof source === 'string') {
       if (options.strings) source = replaceStrings(source)
@@ -177,7 +177,7 @@ export const fez = (source, options = {}) => {
         throw new Error(
           'Top level expressions need to be wrapped in a (do) block'
         )
-      const ast = [...(options.std ? treeShake(parsed, std) : []), ...parsed]
+      const ast = [...treeShake(parsed, std), ...parsed]
       if (options.compile) {
         const js = Object.values(comp(deepClone(ast))).join('')
         return options.eval ? eval(js) : js
