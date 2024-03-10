@@ -8,7 +8,63 @@ import {
   WORD
 } from './keywords.js'
 import { leaf, isLeaf } from './parser.js'
-import { deepRename, lispToJavaScriptVariableName } from './utils.js'
+import { deepRename } from './utils.js'
+const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
+const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
+const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
+const arrowFromTo = (name) => name.replace(new RegExp(/->/g), '-to-')
+const moduleNameToLodashes = (name) => name.replace(new RegExp(/:/g), '_')
+const questionMarkToPredicate = (name) =>
+  name.replace(new RegExp(/\?/g), 'Predicate')
+const exclamationMarkMarkToEffect = (name) =>
+  name.replace(new RegExp(/\!/g), 'Effect')
+const toCamelCase = (name) => {
+  let out = name[0]
+  for (let i = 1; i < name.length; ++i) {
+    const current = name[i],
+      prev = name[i - 1]
+    if (current === '-') continue
+    else if (prev === '-') out += current.toUpperCase()
+    else out += current
+  }
+  return out
+}
+const keywordToHelper = (name) => {
+  switch (name) {
+    case KEYWORDS.ADDITION:
+      return '__add'
+    case KEYWORDS.MULTIPLICATION:
+      return '__mult'
+    case KEYWORDS.SUBTRACTION:
+      return '__sub'
+    case KEYWORDS.GREATHER_THAN:
+      return '__gt'
+    case KEYWORDS.EQUAL:
+      return '__eq'
+    case KEYWORDS.GREATHER_THAN_OR_EQUAL:
+      return '__gteq'
+    case KEYWORDS.LESS_THAN:
+      return '__lt'
+    case KEYWORDS.LESS_THAN_OR_EQUAL:
+      return '__lteq'
+    default:
+      return name
+  }
+}
+const lispToJavaScriptVariableName = (name) =>
+  toCamelCase(
+    arrowFromTo(
+      dotNamesToEmpty(
+        exclamationMarkMarkToEffect(
+          questionMarkToPredicate(
+            commaToLodash(
+              moduleNameToLodashes(earMuffsToLodashes(keywordToHelper(name)))
+            )
+          )
+        )
+      )
+    )
+  )
 const Helpers = {
   __string: `__string=(...args)=>{const str=args.flat();str.isString=true;return str}`,
   __add: `__add=(...numbers)=>{return numbers.reduce((a,b)=>a+b,0)}`,
