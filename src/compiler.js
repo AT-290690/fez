@@ -309,10 +309,7 @@ const compile = (tree, Drill) => {
         return `${camelCased}(${parseArgs(Arguments, Drill)});`
       }
     }
-  } else if (first[TYPE] === ATOM)
-    return typeof first[VALUE] === 'string'
-      ? `\`${first[VALUE]}\``
-      : first[VALUE]
+  } else if (first[TYPE] === ATOM) return first[VALUE]
   else if (first[TYPE] === WORD) {
     const camelCased = lispToJavaScriptVariableName(token)
     if (camelCased in Helpers) Drill.Helpers.add(camelCased)

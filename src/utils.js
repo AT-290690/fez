@@ -207,14 +207,13 @@ export const fez = (source, options = {}) => {
 
 export const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
 export const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
-export const colonNamesTo$ = (name) => name.replace(new RegExp(/\:/g), '$')
 export const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
 export const arrowFromTo = (name) => name.replace(new RegExp(/->/g), '-to-')
 export const moduleNameToLodashes = (name) =>
   name.replace(new RegExp(/:/g), '_')
-export const questionMarkToLodash = (name) =>
+export const questionMarkToPredicate = (name) =>
   name.replace(new RegExp(/\?/g), 'Predicate')
-export const exclamationMarkMarkToLodash = (name) =>
+export const exclamationMarkMarkToEffect = (name) =>
   name.replace(new RegExp(/\!/g), 'Effect')
 export const toCamelCase = (name) => {
   let out = name[0]
@@ -223,6 +222,17 @@ export const toCamelCase = (name) => {
       prev = name[i - 1]
     if (current === '-') continue
     else if (prev === '-') out += current.toUpperCase()
+    else out += current
+  }
+  return out
+}
+export const toSnakeCase = (name) => {
+  let out = name[0]
+  for (let i = 1; i < name.length; ++i) {
+    const current = name[i],
+      prev = name[i - 1]
+    if (current === '-') continue
+    else if (prev === '-') out += '_' + current.toLowerCase()
     else out += current
   }
   return out
@@ -300,12 +310,10 @@ export const lispToJavaScriptVariableName = (name) =>
   toCamelCase(
     arrowFromTo(
       dotNamesToEmpty(
-        colonNamesTo$(
-          exclamationMarkMarkToLodash(
-            questionMarkToLodash(
-              commaToLodash(
-                moduleNameToLodashes(earMuffsToLodashes(keywordToHelper(name)))
-              )
+        exclamationMarkMarkToEffect(
+          questionMarkToPredicate(
+            commaToLodash(
+              moduleNameToLodashes(earMuffsToLodashes(keywordToHelper(name)))
             )
           )
         )
