@@ -4,8 +4,26 @@ editor.setOptions({
   fontFamily: 'Fantastic',
   fontSize: '10pt'
 })
-const EDITOR_THEME = 'tomorrow_night_bright'
-const TERMINAL_THEME = 'gob'
+// tomorrow_night_bright
+// gob
+const EDITOR_THEME = 'pastel_on_dark'
+const TERMINAL_THEME = 'pastel_on_dark'
+// 'chrome' => 'Chrome',
+// 'clouds' => 'Clouds',
+// 'crimson_editor' => 'Crimson Editor',
+// 'dawn' => 'Dawn',
+// 'dreamweaver' => 'Dreamweaver',
+// 'eclipse' => 'Eclipse',
+// 'github' => 'GitHub',
+// 'iplastic' => 'IPlastic',
+// 'katzenmilch' => 'KatzenMilch',
+// 'kuroir' => 'Kuroir',
+// 'solarized_light' => 'Solarized Light',
+// 'sqlserver' => 'SQL Server',
+// 'textmate' => 'TextMate',
+// 'tomorrow' => 'Tomorrow',
+// 'xcode' => 'XCode'
+
 // 'ambiance' => 'Ambiance',
 // 'chaos' => 'Chaos',
 // 'clouds_midnight' => 'Clouds Midnight',
