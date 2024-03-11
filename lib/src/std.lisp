@@ -220,6 +220,11 @@
             (let is-prime (not (= (mod n i) 0)))
             (if (and (<= i end) is-prime) (iter (+ i 1) end) is-prime))))
             (or (= n 2) (iter 2 (math:sqrt n)))))))
+(let math:number-of-digits (lambda n
+  (cond
+    (= n 0) 1
+    (< n 0) (length (cast:number->digits (| (* n -1) 0)))
+    (*) (length (cast:number->digits (| n 0))))))
 (let math:largest-power (safety lambda N (do
   ; changing all right side bits to 1.
   (let N1 (| N (>> N 1)))
@@ -458,11 +463,7 @@
 (let cast:number->bits (lambda num (do 
   (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0))) res)))
   (array:reverse (iter num ())))))
-(let math:number-of-digits (lambda n 
-  (cond 
-    (= n 0) 1
-    (< n 0) (length (cast:number->digits (| (* n -1) 0)))
-    (*) (length (cast:number->digits (| n 0))))))
+(let cast:string->numbers (lambda arr (|> arr (array:map cast:chars->digits) (array:map array:flat-one) (array:select length) (array:map cast:digits->number))))
 (let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))

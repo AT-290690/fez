@@ -1023,6 +1023,8 @@ keywords[KEYWORDS.DOC] = (args, env) => {
       } ${stringifyArgs(args)})`
     )
   const lib = evaluate(args[0], env)
+    .map((x) => String.fromCharCode(x))
+    .join('')
   const kw = Object.keys(env).map((x) => [x])
   const standard = std.map(([_, [_0, name], [_1, ...arg]]) => {
     const args = arg
