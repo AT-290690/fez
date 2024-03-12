@@ -67,6 +67,10 @@
 (let char:new-line 10)
 (let char:space 32)
 (let char:comma 44)
+(let char:dot 46)
+(let char:semi-colon 59)
+(let char:colon 58)
+(let char:dash 45)
 (let math:range (lambda start end (do
                           (let* iterate (lambda out count
                           (if (<= count end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
@@ -370,8 +374,12 @@
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons delim) (cons (car b))) (car b))) ())))
-(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons char:new-line) (cons (car b))) (car b))) ())))
-(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons char:comma) (cons (car b))) (car b))) ())))
+(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:new-line)) (cons (car b))) (car b))) ())))
+(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:comma)) (cons (car b))) (car b))) ())))
+(let array:dots (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:dot)) (cons (car b))) (car b))) ())))
+(let array:colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:colon)) (cons (car b))) (car b))) ())))
+(let array:semi-colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:semi-colon)) (cons (car b))) (car b))) ())))
+(let array:dashes (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:dash)) (cons (car b))) (car b))) ())))
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item
@@ -463,7 +471,7 @@
 (let cast:number->bits (lambda num (do 
   (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0))) res)))
   (array:reverse (iter num ())))))
-(let cast:string->numbers (lambda arr (|> arr (array:map cast:chars->digits) (array:map array:flat-one) (array:select length) (array:map cast:digits->number))))
+(let cast:chars->numbers (lambda arr (|> arr (array:map cast:chars->digits) (array:map array:flat-one) (array:select length) (array:map cast:digits->number))))
 (let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
@@ -710,6 +718,7 @@
                            (array:set! prev (length prev) b)) a))
                       (array ()))
                       (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:chars (lambda str (array:map str (lambda x (array x)))))
 (let string:words (lambda str (|> str
               (array:fold (lambda a b (do
               (let prev (array:get a -1))
@@ -722,6 +731,38 @@
               (array:fold (lambda a b (do
               (let prev (array:get a -1))
                 (if (string:equal? (array b) (array char:comma))
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a))
+              (array ()))
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:dots (lambda str (|> str
+              (array:fold (lambda a b (do
+              (let prev (array:get a -1))
+                (if (string:equal? (array b) (array char:dot))
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a))
+              (array ()))
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:colons (lambda str (|> str
+              (array:fold (lambda a b (do
+              (let prev (array:get a -1))
+                (if (string:equal? (array b) (array char:colon))
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a))
+              (array ()))
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:semi-colons (lambda str (|> str
+              (array:fold (lambda a b (do
+              (let prev (array:get a -1))
+                (if (string:equal? (array b) (array char:semi-colon))
+                    (array:set! a (length a) ())
+                    (array:set! prev (length prev) b)) a))
+              (array ()))
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:dashes (lambda str (|> str
+              (array:fold (lambda a b (do
+              (let prev (array:get a -1))
+                (if (string:equal? (array b) (array char:dash))
                     (array:set! a (length a) ())
                     (array:set! prev (length prev) b)) a))
               (array ()))

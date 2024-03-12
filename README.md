@@ -239,3 +239,13 @@ If passing AST and STD is not used then use tree with a single arugment
 import { fez, tree } from '../index.js'
 console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ```
+
+```lisp
+; all keywords
+(/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>) (|>) (mod)
+(array?) (number?) (lambda?) (lambda) (array) (number) (string)
+(array:set!) (array:get) (car) (cdr) (cons) (length) (do)
+(if) (unless) (not) (and) (or) (when) (otherwise) (cond)
+(apply) (let) (let*) (safety) (case) (assert)
+(log!) (clear!) (void) (fez-manual)
+```

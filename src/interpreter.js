@@ -606,45 +606,6 @@ const keywords = {
     return env[name]
   },
   [KEYWORDS.NUMBER_TYPE]: () => 0,
-  [KEYWORDS.BOOLEAN_TYPE]: () => 1,
-  [KEYWORDS.CAST_TYPE]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.CAST_TYPE}) ${args.length}`
-      )
-    const type = args[1][VALUE]
-    const value = evaluate(args[0], env)
-    if (value == undefined)
-      throw ReferenceError(
-        `Trying to access undefined value at (${KEYWORDS.CAST_TYPE})`
-      )
-    if (args.length === 2) {
-      switch (type) {
-        case KEYWORDS.NUMBER_TYPE: {
-          const num = Number(value)
-          if (isNaN(num))
-            throw new TypeError(
-              `Attempting to convert Not a ${
-                KEYWORDS.NUMBER_TYPE
-              } ("${value}") to a ${KEYWORDS.NUMBER_TYPE} at (${
-                KEYWORDS.CAST_TYPE
-              }) (${KEYWORDS.CAST_TYPE} ${stringifyArgs(args)})`
-            )
-          return num
-        }
-        case KEYWORDS.BOOLEAN_TYPE:
-          return +!!value
-        default:
-          throw new TypeError(
-            `Can only cast (or ${KEYWORDS.NUMBER_TYPE} ${KEYWORDS.ARRAY_TYPE} ${
-              KEYWORDS.BOOLEAN_TYPE
-            }) at (${KEYWORDS.CAST_TYPE}) (${
-              KEYWORDS.CAST_TYPE
-            } ${stringifyArgs(args)})`
-          )
-      }
-    }
-  },
   [KEYWORDS.BITWISE_AND]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
@@ -785,22 +746,6 @@ const keywords = {
       inp = arr
     }
     return evaluate(inp, env)
-  },
-  [KEYWORDS.MERGE]: (args, env) => {
-    if (args.length < 2)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.MERGE}) (>= 2 required). (${
-          KEYWORDS.MERGE
-        } ${stringifyArgs(args)})`
-      )
-    const arrays = args.map((arg) => evaluate(arg, env))
-    if (arrays.some((maybe) => !Array.isArray(maybe)))
-      throw new TypeError(
-        `Arguments of (${KEYWORDS.MERGE}) must be (${KEYWORDS.ARRAY_TYPE}) (${
-          KEYWORDS.MERGE
-        } ${stringifyArgs(args)})`
-      )
-    return arrays.reduce((a, b) => a.concat(b), [])
   },
   [KEYWORDS.CONS]: (args, env) => {
     if (args.length !== 2)
