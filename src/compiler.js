@@ -229,7 +229,8 @@ const compile = (tree, Drill) => {
       }
       case KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: {
         const arg = Arguments[0]
-        if (arg[0] === APPLY && arg[1] === KEYWORDS.ANONYMOUS_FUNCTION) {
+        const val = Arguments[1]
+        if (val[0][0] === APPLY && val[0][1] === KEYWORDS.ANONYMOUS_FUNCTION) {
           let name,
             newName,
             out = '(('

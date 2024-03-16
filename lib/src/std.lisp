@@ -235,7 +235,7 @@
   (let N2 (| N1 (>> N1 2)))
   (let N3 (| N2 (>> N2 4)))
   (let N4 (| N3 (>> N3 8)))
-  ; as now the number is 2 * x-1,
+  ; as now the number is 2 * x - 1,
   ; where x is required answer,
   ; so adding 1 and dividing it by
   (>> (+ N4 1) 1))))
@@ -376,6 +376,7 @@
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons delim) (cons (car b))) (car b))) ())))
 (let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:new-line)) (cons (car b))) (car b))) ())))
 (let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:comma)) (cons (car b))) (car b))) ())))
+(let array:spaces (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:space)) (cons (car b))) (car b))) ())))
 (let array:dots (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:dot)) (cons (car b))) (car b))) ())))
 (let array:colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:colon)) (cons (car b))) (car b))) ())))
 (let array:semi-colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:semi-colon)) (cons (car b))) (car b))) ())))
@@ -962,7 +963,7 @@
        (array:get (array:get q 1) index)
        (array:get (array:get q 0) index)))))
 (let brray:set! (lambda q index value (do
-    (let offset (+ offset (brray:offset-left q)))
+    (let offset (+ index (brray:offset-left q)))
     (if (>= offset 0)
         (array:set! (array:get q 1) offset value)
         (array:set! (array:get q 0) (* offset -1) value))
