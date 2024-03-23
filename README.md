@@ -113,7 +113,7 @@ npm i fez-lisp
 
 ```js
 import { fez } from 'fez-lisp'
-fez(`(log! "Hello World!")`, { strings: true }) // Hello World!
+fez(`(log! "Hello World!")`) // Hello World!
 ```
 
 ```js

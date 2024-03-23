@@ -18,6 +18,7 @@ export const replaceStrings = (source) => {
       )
   return source
 }
+export const replaceQuotes = (source) => source.replaceAll(/\'\(/g, '(array ')
 export const removeNoCode = (source) =>
   source
     .replace(/;.+/g, '')
@@ -161,7 +162,7 @@ export const fez = (source, options = {}) => {
   const env = Object.create(null)
   try {
     if (typeof source === 'string') {
-      if (options.strings) source = replaceStrings(source)
+      source = replaceQuotes(replaceStrings(source))
       let code
       if (!options.compile)
         code = handleUnbalancedQuotes(
@@ -247,5 +248,8 @@ export const decompress = (raw) => {
 export const shake = (parsed, std) => [...treeShake(parsed, std), ...parsed]
 export const tree = (source, std) =>
   std
-    ? shake(LISP.parse(removeNoCode(source)), std)
-    : LISP.parse(removeNoCode(source))
+    ? shake(
+        LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source)))),
+        std
+      )
+    : LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source))))

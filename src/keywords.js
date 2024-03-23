@@ -1,13 +1,9 @@
-// AST enums
 export const TYPE = 0
 export const VALUE = 1
-
 export const APPLY = 0
 export const WORD = 1
 export const ATOM = 2
-// tokeniser enums
 export const PLACEHOLDER = '.'
-// keywords aliases
 export const KEYWORDS = {
   NUMBER_TYPE: 'number',
   STRING_TYPE: 'string',

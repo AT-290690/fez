@@ -81,9 +81,7 @@ const serialise = (arg) => {
   else if (arg.isString) {
     return `"${arg.map((x) => String.fromCharCode(x)).join('')}"`
   } else if (Array.isArray(arg))
-    return arg.length
-      ? `(array ${arg.map((a) => serialise(a)).join(' ')})`
-      : '()'
+    return arg.length ? `(${arg.map((a) => serialise(a)).join(' ')})` : '()'
   else return ''
 }
 document.addEventListener('keydown', (e) => {
@@ -96,9 +94,7 @@ document.addEventListener('keydown', (e) => {
       terminal.setValue(
         serialise(
           fez(`(do ${editor.getValue()})`, {
-            std: 1,
-            mutation: 1,
-            strings: 1
+            mutation: 1
           })
         )
       )
@@ -123,11 +119,9 @@ document.addEventListener('keydown', (e) => {
       terminal.setValue(
         serialise(
           fez(`(do ${editor.getValue()})`, {
-            std: 1,
             compile: 1,
             eval: 1,
-            mutation: 1,
-            strings: 1
+            mutation: 1
           })
         )
       )

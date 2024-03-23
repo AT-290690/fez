@@ -3,6 +3,31 @@ import { fez } from '../src/utils.js'
 describe('Compilation', () => {
   it('Should match Interpretation', () =>
     [
+      `; reverse array
+      ; returns a copy of the array but reversed
+      ; '(1 2 3) -> '(3 2 1)
+      (let reverse (lambda arr (do
+        (let* iter (lambda arr out
+          (if (length arr)
+              (iter (cdr arr) (cons (array (car arr)) out)) 
+              out)))
+        (iter arr ()))))
+      
+      (void 
+        (let test (assert
+            (case (reverse '(1 2 3)) '(3 2 1))
+            (case (reverse '(1)) '(1))
+            (case (reverse ()) ())
+            (case (reverse '('(1 2) 3)) '(3 '(1 2)))
+            (case (reverse
+                    (array:map '('(1 2) '(1 2 3)) reverse)) 
+                              '('(3 2 1) '(2 1)))))
+        (when
+          (not (car test))
+          (log! (car (cdr test)))))
+      
+      (let lazy '(reverse '(1 2 3 4 5 6)))
+      (apply (car lazy) (car (cdr lazy)))`,
       `(= 
         (|>
          "Hello World"
@@ -55,8 +80,8 @@ describe('Compilation', () => {
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))`
     ].forEach((source) =>
       deepStrictEqual(
-        fez(source, { compile: 0, mutation: 1, strings: 1 }),
-        eval(fez(source, { compile: 1, mutation: 1, strings: 1 }))
+        fez(source, { compile: 0, mutation: 1 }),
+        eval(fez(source, { compile: 1, mutation: 1 }))
       )
     ))
 })

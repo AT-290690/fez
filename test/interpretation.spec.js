@@ -2,6 +2,37 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Interpretation', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      fez(
+        `; reverse array
+    ; returns a copy of the array but reversed
+    ; '(1 2 3) -> '(3 2 1)
+    (let reverse (lambda arr (do
+      (let* iter (lambda arr out
+        (if (length arr)
+            (iter (cdr arr) (cons (array (car arr)) out)) 
+            out)))
+      (iter arr ()))))
+    
+    (void 
+      (let test (assert
+          (case (reverse '(1 2 3)) '(3 2 1))
+          (case (reverse '(1)) '(1))
+          (case (reverse ()) ())
+          (case (reverse '('(1 2) 3)) '(3 '(1 2)))
+          (case (reverse
+                  (array:map '('(1 2) '(1 2 3)) reverse)) 
+                            '('(3 2 1) '(2 1)))))
+      (when
+        (not (car test))
+        (log! (car (cdr test)))))
+    
+    (let lazy '(reverse '(1 2 3 4 5 6)))
+    (apply (car lazy) (car (cdr lazy)))`,
+        { compile: 1, eval: 1 }
+      ),
+      [6, 5, 4, 3, 2, 1]
+    )
     strictEqual(
       fez(
         `(= 
@@ -12,7 +43,7 @@ describe('Interpretation', () => {
        (car))
       
       (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
-        { compile: 1, eval: 1, strings: 1 }
+        { compile: 1, eval: 1 }
       ),
       1
     )
@@ -310,16 +341,14 @@ describe('Interpretation', () => {
     strictEqual(
       fez(`(string:has? "It was a dark and stormy night" "dark")`, {
         compile: 1,
-        eval: 1,
-        strings: 1
+        eval: 1
       }),
       1
     )
     strictEqual(
       fez(`(string:has? "It was a dark and stormy night" "day")`, {
         compile: 1,
-        eval: 1,
-        strings: 1
+        eval: 1
       }),
       0
     )
@@ -329,7 +358,7 @@ describe('Interpretation', () => {
   (string:trim-right "  12 3  4  ")
   (string:trim-left "  12 3  4  ")
   (string:trim " 12 3  4    "))`,
-        { compile: 0, mutation: 0, strings: 1 }
+        { compile: 0, mutation: 0 }
       ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )
