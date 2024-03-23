@@ -72,9 +72,7 @@ export const stringifyArgs = (args) =>
 export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
-    case KEYWORDS.CAST_TYPE:
     case KEYWORDS.DEFINE_VARIABLE:
-      // case KEYWORDS.DESTRUCTURING_ASSIGMENT:
       return true
     default:
       return false

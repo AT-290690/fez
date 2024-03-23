@@ -13,7 +13,7 @@ export const evaluate = (exp, env) => {
         throw new ReferenceError(`Undefined variable ${first[VALUE]}`)
       return word
     }
-    case APPLY:
+    case APPLY: {
       const apply = env[first[VALUE]]
       if (apply == undefined)
         throw new ReferenceError(
@@ -24,6 +24,7 @@ export const evaluate = (exp, env) => {
           `${first[VALUE]} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
         )
       return apply(rest, env)
+    }
     case ATOM:
       return first[VALUE]
     default:

@@ -1,6 +1,6 @@
 import std from '../lib/baked/std.js'
 import { TYPE, VALUE, WORD, KEYWORDS, APPLY } from './keywords.js'
-import { evaluate, isAtom } from './evaluator.js'
+import { evaluate } from './evaluator.js'
 import { LISP } from './parser.js'
 import {
   isEqual,
