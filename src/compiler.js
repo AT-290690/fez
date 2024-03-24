@@ -315,19 +315,13 @@ const compile = (tree, Drill) => {
         return `(${compile(Arguments[0], Drill)}?${compile(
           Arguments[1],
           Drill
-        )}:${compile(Arguments[2], Drill)});`
+        )}:${Arguments.length === 3 ? compile(Arguments[2], Drill) : 0});`
       }
       case KEYWORDS.WHEN: {
         return `(${compile(Arguments[0], Drill)}?${compile(
           Arguments[1],
           Drill
         )}:0);`
-      }
-      case KEYWORDS.UNLESS: {
-        return `(${compile(Arguments[0], Drill)}?${compile(
-          Arguments[2],
-          Drill
-        )}:${compile(Arguments[1], Drill)});`
       }
       case KEYWORDS.OTHERWISE: {
         return `(${compile(Arguments[0], Drill)}?0:${compile(

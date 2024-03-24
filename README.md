@@ -245,7 +245,7 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 (/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>) (|>) (mod)
 (array?) (number?) (lambda?) (lambda) (array) (number) (string)
 (array:set!) (array:get) (car) (cdr) (cons) (length) (do)
-(if) (unless) (not) (and) (or) (when) (otherwise) (cond)
+(if) (unless) (not) (and) (or) (cond)
 (apply) (let) (let*) (safety) (case) (assert)
 (log!) (clear!) (void) (fez-manual)
 ```

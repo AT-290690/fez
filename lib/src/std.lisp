@@ -416,7 +416,7 @@
       (iterate 1 arr)) arr))))
 (let array:adjacent-find (lambda arr callback (do
   (let len (length arr))
-  (otherwise (= len 1) (do
+  (if (not (= len 1)) (do
       (let* iterate (lambda i
       (if (< i len)
       (if (callback (let prev (array:get arr (- i 1))) (let current (array:get arr i)))
@@ -674,14 +674,14 @@
                                                         1 
                                                         (iterate (cdr arr) (+ i 1))))))
                                               (iterate str 0)))))
-(let string:greater? (lambda A B (otherwise (string:equal? A B) (do
+(let string:greater? (lambda A B (if (not (string:equal? A B)) (do
   (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
   (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
   (|>
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (> (car pair) (car (cdr pair))) 0 acc)) 1))))))
-(let string:lesser? (lambda A B (otherwise (string:equal? A B) (do
+(let string:lesser? (lambda A B (if (not (string:equal? A B)) (do
   (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
   (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
   (|>
@@ -838,7 +838,7 @@
       (lambda table key
         (do
           (let idx (set:index table key))
-          (otherwise (array:in-bounds? table idx) (array:set! table idx (array)))
+          (if (not (array:in-bounds? table idx)) (array:set! table idx (array)))
           (let current (array:get table idx))
           (let len (length current))
           (let index (if len (array:find-index current (lambda x (string:equal? x key))) -1))
@@ -850,12 +850,12 @@
   (lambda table key
     (do
       (let idx (set:index table key))
-      (otherwise (array:in-bounds? table idx) (array:set! table idx (Array)))
+      (if (not (array:in-bounds? table idx)) (array:set! table idx (Array)))
       (let current (array:get table idx))
       (let len (length current))
       (let index (if len (array:find-index current (lambda x (string:equal? x key))) -1))
       (let entry key)
-      (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
+      (if (not (= index -1)) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
       table)))
 (let set:has? (lambda table key
       (and (array:in-bounds? table
@@ -889,7 +889,7 @@
 (let map:set! (lambda table key value
         (do
           (let idx (set:index table key))
-          (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
+          (if (not (array:in-bounds? table idx)) (array:set! table idx ()))
           (let current (array:get table idx))
           (let len (length current))
           (let index (if len (array:find-index current (lambda x (string:equal? (car x) key))) -1))
@@ -902,11 +902,11 @@
     (lambda table key
       (do
         (let idx (set:index table key))
-        (otherwise (array:in-bounds? table idx) (array:set! table idx ()))
+        (if (not (array:in-bounds? table idx)) (array:set! table idx ()))
         (let current (array:get table idx))
         (let len (length current))
         (let index (if len (array:find-index current (lambda x (string:equal? (car x) key))) -1))
-        (otherwise (= index -1) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
+        (if (not (= index -1)) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
         table)))
 (let map:get
   (lambda table key
