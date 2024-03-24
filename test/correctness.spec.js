@@ -4,6 +4,15 @@ describe('Corretness', () => {
   it('Should be correct', () => {
     strictEqual(
       fez(
+        `(let list (|> (new:list 10) (list:prev! (new:list 8)) (list:next! (new:list 12))))
+    (list:next! (list:next list) (new:list 12121))
+    (list:value (list:next (list:next list)))`,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      12121
+    )
+    strictEqual(
+      fez(
         `(let x (var:def 10))
     (let y (var:def 8))
     (let temp (var:get x))

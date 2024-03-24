@@ -374,6 +374,7 @@
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a delim (car b)) (car b))) ())))
+(let array:chars (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (car b)) (car b))) ())))
 (let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:new-line) (car b)) (car b))) ())))
 (let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:comma) (car b)) (car b))) ())))
 (let array:spaces (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:space) (car b)) (car b))) ())))
