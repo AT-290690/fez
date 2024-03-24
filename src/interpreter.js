@@ -184,19 +184,6 @@ const keywords = {
       ? evaluate(args[2], env)
       : 0
   },
-  [KEYWORDS.UNLESS]: (args, env) => {
-    if (args.length !== 3)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.UNLESS
-        }), expected (= 3)  but got ${args.length} (${
-          KEYWORDS.UNLESS
-        } ${stringifyArgs(args)})`
-      )
-    return evaluate(args[0], env)
-      ? evaluate(args[2], env)
-      : evaluate(args[1], env)
-  },
   [KEYWORDS.WHEN]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
@@ -1002,53 +989,62 @@ export const deSuggar = (ast) => {
       switch (first[TYPE]) {
         case WORD:
           break
-        case APPLY: {
-          switch (first[VALUE]) {
-            case KEYWORDS.PIPE: {
-              if (rest.length < 1)
-                throw new RangeError(
-                  `Invalid number of arguments to (${
-                    KEYWORDS.PIPE
-                  }) (>= 1 required). (${KEYWORDS.PIPE} ${stringifyArgs(rest)})`
-                )
-              let inp = rest[0]
-              exp.length = 0
-              for (let i = 1; i < rest.length; ++i) {
-                if (!rest[i].length || rest[i][0][TYPE] !== APPLY)
-                  throw new TypeError(
-                    `Argument at position (${i}) of (${
-                      KEYWORDS.PIPE
-                    }) is not an invoked (${KEYWORDS.ANONYMOUS_FUNCTION}). (${
-                      KEYWORDS.PIPE
-                    } ${stringifyArgs(rest)})`
-                  )
-                inp = [rest[i].shift(), inp, ...rest[i]]
-              }
-              for (let i = 0; i < inp.length; ++i) exp[i] = inp[i]
-            }
-            // case KEYWORDS.UNLESS: {
-            //   if (rest.length !== 3)
-            //     throw new RangeError(
-            //       `Invalid number of arguments for (${
-            //         KEYWORDS.UNLESS
-            //       }), expected (= 3)  but got ${rest.length} (${
-            //         KEYWORDS.UNLESS
-            //       } ${stringifyArgs(rest)})`
-            //     )
-            //   exp[0][1] = KEYWORDS.IF
-            //   const temp = exp[2]
-            //   exp[2] = exp[3]
-            //   exp[3] = temp
-            // }
-            default:
-              for (const r of rest) evaluate(r)
-          }
-        }
         case ATOM:
+          break
+        case APPLY:
+          {
+            switch (first[VALUE]) {
+              case KEYWORDS.PIPE:
+                {
+                  if (rest.length < 1)
+                    throw new RangeError(
+                      `Invalid number of arguments to (${
+                        KEYWORDS.PIPE
+                      }) (>= 1 required). (${KEYWORDS.PIPE} ${stringifyArgs(
+                        rest
+                      )})`
+                    )
+                  let inp = rest[0]
+                  exp.length = 0
+                  for (let i = 1; i < rest.length; ++i) {
+                    if (!rest[i].length || rest[i][0][TYPE] !== APPLY)
+                      throw new TypeError(
+                        `Argument at position (${i}) of (${
+                          KEYWORDS.PIPE
+                        }) is not an invoked (${
+                          KEYWORDS.ANONYMOUS_FUNCTION
+                        }). (${KEYWORDS.PIPE} ${stringifyArgs(rest)})`
+                      )
+                    inp = [rest[i].shift(), inp, ...rest[i]]
+                  }
+                  for (let i = 0; i < inp.length; ++i) exp[i] = inp[i]
+                }
+                break
+              case KEYWORDS.UNLESS:
+                {
+                  const [_, args] = exp
+                  if (args.length > 3 || args.length < 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        KEYWORDS.UNLESS
+                      }), expected (or (= 3) (= 2)) but got ${args.length} (${
+                        KEYWORDS.UNLESS
+                      } ${stringifyArgs(rest)})`
+                    )
+                  exp[0][1] = KEYWORDS.IF
+                  const temp = exp[2]
+                  exp[2] = exp[3]
+                  exp[3] = temp
+                }
+                break
+            }
+          }
           break
         default:
           for (const e of exp) evaluate(e)
+          break
       }
+      for (const r of rest) evaluate(r)
     }
   }
   evaluate(ast)
