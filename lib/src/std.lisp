@@ -373,15 +373,14 @@
   (and (array? a)
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
-; (let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a delim (array (car b))) (array (car b)))) ())))
-(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons delim) (cons (car b))) (car b))) ())))
-(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:new-line)) (cons (car b))) (car b))) ())))
-(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:comma)) (cons (car b))) (car b))) ())))
-(let array:spaces (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:space)) (cons (car b))) (car b))) ())))
-(let array:dots (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:dot)) (cons (car b))) (car b))) ())))
-(let array:colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:colon)) (cons (car b))) (car b))) ())))
-(let array:semi-colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:semi-colon)) (cons (car b))) (car b))) ())))
-(let array:dashes (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (|> a (cons (array char:dash)) (cons (car b))) (car b))) ())))
+(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a delim (car b)) (car b))) ())))
+(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:new-line) (car b)) (car b))) ())))
+(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:comma) (car b)) (car b))) ())))
+(let array:spaces (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:space) (car b)) (car b))) ())))
+(let array:dots (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:dot) (car b)) (car b))) ())))
+(let array:colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:colon) (car b)) (car b))) ())))
+(let array:semi-colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:semi-colon) (car b)) (car b))) ())))
+(let array:dashes (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (car (cdr b)) 0) (cons a (array char:dash) (car b)) (car b))) ())))
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item
@@ -467,12 +466,19 @@
 (let cast:digits->number (lambda digits (do 
     (let* iter (lambda rem num base (if (length rem) (iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
     (iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
-(let cast:number->digits (lambda num (do 
-  (let* iter (lambda num res (if (>= num 1) (iter (/ num 10) (array:set! res (length res) (| (mod num 10) 0))) res)))
+(let cast:number->digits (lambda num (do
+  (let* iter (lambda num res (cond
+                              (>= num 1) (iter (/ num 10) (array:set! res (length res) (| (mod num 10) 0)))
+                              (= num 0) (array 0)
+                              (*) res)))
   (array:reverse (iter num ())))))
-(let cast:number->bits (lambda num (do 
-  (let* iter (lambda num res (if (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0))) res)))
+(let cast:number->bits (lambda num (do
+  (let* iter (lambda num res (cond
+                              (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0)))
+                              (= num 0) (array 0)
+                              (*) res)))
   (array:reverse (iter num ())))))
+(let cast:numbers->chars (lambda x (array:map x (lambda x (|> x (cast:number->digits) (cast:digits->chars))))))
 (let cast:chars->numbers (lambda arr (|> arr (array:map cast:chars->digits) (array:map array:flat-one) (array:select length) (array:map cast:digits->number))))
 (let cast:any->boolean (safety lambda val (not (not val))))
 (let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
