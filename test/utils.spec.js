@@ -3,7 +3,7 @@ import { fez, replaceStrings, tree } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
 describe('Utils', () => {
-  it('Should be correct', () =>
+  it('Should be work', () =>
     [
       `; reverse array
       ; returns a copy of the array but reversed

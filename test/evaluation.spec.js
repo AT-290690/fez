@@ -1,7 +1,7 @@
 import { deepStrictEqual } from 'assert'
 import { fez } from '../src/utils.js'
-describe('Compilation', () => {
-  it('Should match Interpretation', () =>
+describe('Compilation & Interpretation', () => {
+  it('Should match', () =>
     [
       `; reverse array
       ; returns a copy of the array but reversed

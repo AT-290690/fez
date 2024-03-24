@@ -1,7 +1,7 @@
 import std from '../lib/baked/std.js'
-import { TYPE, VALUE, WORD, KEYWORDS, APPLY } from './keywords.js'
+import { TYPE, VALUE, WORD, KEYWORDS, APPLY, ATOM } from './keywords.js'
 import { evaluate } from './evaluator.js'
-import { LISP } from './parser.js'
+import { LISP, isLeaf } from './parser.js'
 import {
   isEqual,
   isEqualTypes,
@@ -170,17 +170,19 @@ const keywords = {
     return args.length === 1 ? -operands[0] : operands.reduce((a, b) => a - b)
   },
   [KEYWORDS.IF]: (args, env) => {
-    if (args.length !== 3)
+    if (args.length > 3 || args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IF
-        }), expected (= 3) but got ${args.length} (${
+        }), expected (or (= 3) (= 2)) but got ${args.length} (${
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
     return evaluate(args[0], env)
       ? evaluate(args[1], env)
-      : evaluate(args[2], env)
+      : args.length === 3
+      ? evaluate(args[2], env)
+      : 0
   },
   [KEYWORDS.UNLESS]: (args, env) => {
     if (args.length !== 3)
@@ -724,29 +726,29 @@ const keywords = {
       )
     return operands.reduce((acc, x) => acc >>> x)
   },
-  [KEYWORDS.PIPE]: (args, env) => {
-    if (args.length < 1)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.PIPE}) (>= 1 required). (${
-          KEYWORDS.PIPE
-        } ${stringifyArgs(args)})`
-      )
-    let inp = args[0]
-    for (let i = 1; i < args.length; ++i) {
-      if (!args[i].length || args[i][0][TYPE] !== APPLY)
-        throw new TypeError(
-          `Argument at position (${i}) of (${
-            KEYWORDS.PIPE
-          }) is not an invoked (${KEYWORDS.ANONYMOUS_FUNCTION}). (${
-            KEYWORDS.PIPE
-          } ${stringifyArgs(args)})`
-        )
-      const [first, ...rest] = args[i]
-      const arr = [first, inp, ...rest]
-      inp = arr
-    }
-    return evaluate(inp, env)
-  },
+  // [KEYWORDS.PIPE]: (args, env) => {
+  //   if (args.length < 1)
+  //     throw new RangeError(
+  //       `Invalid number of arguments to (${KEYWORDS.PIPE}) (>= 1 required). (${
+  //         KEYWORDS.PIPE
+  //       } ${stringifyArgs(args)})`
+  //     )
+  //   let inp = args[0]
+  //   for (let i = 1; i < args.length; ++i) {
+  //     if (!args[i].length || args[i][0][TYPE] !== APPLY)
+  //       throw new TypeError(
+  //         `Argument at position (${i}) of (${
+  //           KEYWORDS.PIPE
+  //         }) is not an invoked (${KEYWORDS.ANONYMOUS_FUNCTION}). (${
+  //           KEYWORDS.PIPE
+  //         } ${stringifyArgs(args)})`
+  //       )
+  //     const [first, ...rest] = args[i]
+  //     const arr = [first, inp, ...rest]
+  //     inp = arr
+  //   }
+  //   return evaluate(inp, env)
+  // },
   [KEYWORDS.CONS]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
@@ -992,5 +994,64 @@ keywords[KEYWORDS.DOC] = (args, env) => {
         .filter((name) => name[0].includes(lib))
         .map((x) => `(${x.join(' ')})`)
   }
+}
+export const deSuggar = (ast) => {
+  const evaluate = (exp) => {
+    const [first, ...rest] = isLeaf(exp) ? [exp] : exp
+    if (first != undefined) {
+      switch (first[TYPE]) {
+        case WORD:
+          break
+        case APPLY: {
+          switch (first[VALUE]) {
+            case KEYWORDS.PIPE: {
+              if (rest.length < 1)
+                throw new RangeError(
+                  `Invalid number of arguments to (${
+                    KEYWORDS.PIPE
+                  }) (>= 1 required). (${KEYWORDS.PIPE} ${stringifyArgs(rest)})`
+                )
+              let inp = rest[0]
+              exp.length = 0
+              for (let i = 1; i < rest.length; ++i) {
+                if (!rest[i].length || rest[i][0][TYPE] !== APPLY)
+                  throw new TypeError(
+                    `Argument at position (${i}) of (${
+                      KEYWORDS.PIPE
+                    }) is not an invoked (${KEYWORDS.ANONYMOUS_FUNCTION}). (${
+                      KEYWORDS.PIPE
+                    } ${stringifyArgs(rest)})`
+                  )
+                inp = [rest[i].shift(), inp, ...rest[i]]
+              }
+              for (let i = 0; i < inp.length; ++i) exp[i] = inp[i]
+            }
+            // case KEYWORDS.UNLESS: {
+            //   if (rest.length !== 3)
+            //     throw new RangeError(
+            //       `Invalid number of arguments for (${
+            //         KEYWORDS.UNLESS
+            //       }), expected (= 3)  but got ${rest.length} (${
+            //         KEYWORDS.UNLESS
+            //       } ${stringifyArgs(rest)})`
+            //     )
+            //   exp[0][1] = KEYWORDS.IF
+            //   const temp = exp[2]
+            //   exp[2] = exp[3]
+            //   exp[3] = temp
+            // }
+            default:
+              for (const r of rest) evaluate(r)
+          }
+        }
+        case ATOM:
+          break
+        default:
+          for (const e of exp) evaluate(e)
+      }
+    }
+  }
+  evaluate(ast)
+  return ast
 }
 export { keywords }

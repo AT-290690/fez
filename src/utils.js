@@ -1,8 +1,9 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import { APPLY, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
+import { deSuggar } from './interpreter.js'
 export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const replaceStrings = (source) => {
@@ -24,7 +25,6 @@ export const removeNoCode = (source) =>
     .replace(/;.+/g, '')
     .replace(/[\s\s]/g, ' ')
     .trim()
-
 export const isBalancedParenthesis = (sourceCode) => {
   let count = 0
   const stack = []
@@ -171,7 +171,7 @@ export const fez = (source, options = {}) => {
       else code = removeNoCode(source)
       if (!options.mutation) code = removeMutation(code)
       if (!code.length && options.throw) throw new Error('Nothing to parse!')
-      const parsed = LISP.parse(code)
+      const parsed = deSuggar(LISP.parse(code))
       if (parsed.length === 0 && options.throw)
         throw new Error(
           'Top level expressions need to be wrapped in a (do) block'
@@ -253,3 +253,5 @@ export const tree = (source, std) =>
         std
       )
     : LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source))))
+export const minify = (source) =>
+  replaceQuotes(replaceStrings(removeNoCode(source)))

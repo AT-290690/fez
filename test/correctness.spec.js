@@ -1,7 +1,20 @@
 import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
-describe('Interpretation', () => {
+describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      fez(
+        `(let x (var:def 10))
+    (let y (var:def 8))
+    (let temp (var:get x))
+    (var:set! x (var:get y))
+    (var:set! y temp)
+    '((var:get x) (var:get y))
+    (+ (car x) (car y))`,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      18
+    )
     deepStrictEqual(
       fez(
         `; reverse array
