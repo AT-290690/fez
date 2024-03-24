@@ -184,28 +184,6 @@ const keywords = {
       ? evaluate(args[2], env)
       : 0
   },
-  [KEYWORDS.WHEN]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.WHEN
-        }), expected 2 but got ${args.length} (${KEYWORDS.WHEN} ${stringifyArgs(
-          args
-        )})`
-      )
-    return evaluate(args[0], env) ? evaluate(args[1], env) : 0
-  },
-  [KEYWORDS.OTHERWISE]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.OTHERWISE
-        }), expected 2 but got ${args.length} (${
-          KEYWORDS.OTHERWISE
-        } ${stringifyArgs(args)})`
-      )
-    return evaluate(args[0], env) ? 0 : evaluate(args[1], env)
-  },
   [KEYWORDS.CONDITION]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
@@ -737,27 +715,28 @@ const keywords = {
   //   return evaluate(inp, env)
   // },
   [KEYWORDS.CONS]: (args, env) => {
-    if (args.length !== 2)
+    if (args.length < 2)
       throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.CONS}) (= 2 required). (${
+        `Invalid number of arguments to (${KEYWORDS.CONS}) (>= 2 required). (${
           KEYWORDS.CONS
         } ${stringifyArgs(args)})`
       )
-    const array = evaluate(args[0], env)
+    const [first, ...rest] = args
+    const array = evaluate(first, env)
     if (!Array.isArray(array))
       throw new TypeError(
         `First Argument of (${KEYWORDS.CONS}) must be (${
           KEYWORDS.ARRAY_TYPE
         }) (${KEYWORDS.CONS} ${stringifyArgs(args)})`
       )
-    const other = evaluate(args[1], env)
-    if (!Array.isArray(other))
+    const other = rest.map((x) => evaluate(x, env))
+    if (other.some((x) => !Array.isArray(x)))
       throw new TypeError(
-        `Second Argument of (${KEYWORDS.CONS}) must be (${
+        `Following Arguments of (${KEYWORDS.CONS}) must be (${
           KEYWORDS.ARRAY_TYPE
         }) (${KEYWORDS.CONS} ${stringifyArgs(args)})`
       )
-    return array.concat(other)
+    return other.reduce((a, b) => a.concat(b), array)
   },
   [KEYWORDS.IMMUTABLE_FUNCTION]: (args, env) => {
     if (!args.length)
@@ -1022,18 +1001,17 @@ export const deSuggar = (ast) => {
                 break
               case KEYWORDS.UNLESS:
                 {
-                  const [_, args] = exp
-                  if (args.length > 3 || args.length < 2)
+                  if (rest.length > 3 || rest.length < 2)
                     throw new RangeError(
                       `Invalid number of arguments for (${
                         KEYWORDS.UNLESS
-                      }), expected (or (= 3) (= 2)) but got ${args.length} (${
+                      }), expected (or (= 3) (= 2)) but got ${rest.length} (${
                         KEYWORDS.UNLESS
                       } ${stringifyArgs(rest)})`
                     )
                   exp[0][1] = KEYWORDS.IF
                   const temp = exp[2]
-                  exp[2] = exp[3]
+                  exp[2] = exp[3] ?? [2, 0]
                   exp[3] = temp
                 }
                 break

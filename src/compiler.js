@@ -96,7 +96,7 @@ const Helpers = {
   }`,
   logEffect: `logEffect=(msg)=>{console.log(msg);return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
-  array_cons: `array_cons=(a,b)=>a.concat(b)`,
+  array_cons: `array_cons=(A,B)=> B.reduce((a, b) => a.concat(b), A)`,
   car: 'car=(arr)=>arr.at(0)',
   cdr: 'cdr=(arr)=>arr.slice(1)',
   array_get: 'array_get=(arr,i)=>arr.at(i)',
@@ -316,18 +316,6 @@ const compile = (tree, Drill) => {
           Arguments[1],
           Drill
         )}:${Arguments.length === 3 ? compile(Arguments[2], Drill) : 0});`
-      }
-      case KEYWORDS.WHEN: {
-        return `(${compile(Arguments[0], Drill)}?${compile(
-          Arguments[1],
-          Drill
-        )}:0);`
-      }
-      case KEYWORDS.OTHERWISE: {
-        return `(${compile(Arguments[0], Drill)}?0:${compile(
-          Arguments[1],
-          Drill
-        )});`
       }
       case KEYWORDS.CONDITION: {
         let out = '('

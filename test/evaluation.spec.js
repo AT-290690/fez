@@ -22,7 +22,7 @@ describe('Compilation & Interpretation', () => {
             (case (reverse
                     (array:map '('(1 2) '(1 2 3)) reverse)) 
                               '('(3 2 1) '(2 1)))))
-        (when
+        (if
           (not (car test))
           (log! (car (cdr test)))))
       

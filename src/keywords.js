@@ -32,8 +32,6 @@ export const KEYWORDS = {
   ANONYMOUS_FUNCTION: 'lambda',
   IF: 'if',
   UNLESS: 'unless',
-  WHEN: 'when',
-  OTHERWISE: 'otherwise',
   CONDITION: 'cond',
   NOT: 'not',
   EQUAL: '=',

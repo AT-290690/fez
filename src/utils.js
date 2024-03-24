@@ -254,4 +254,6 @@ export const tree = (source, std) =>
       )
     : LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source))))
 export const minify = (source) =>
-  replaceQuotes(replaceStrings(removeNoCode(source)))
+  LISP.source(
+    deSuggar(LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source)))))
+  )
