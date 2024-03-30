@@ -263,8 +263,6 @@ const compile = (tree, Drill) => {
         return `(${parseArgs(Arguments, Drill, '&&')});`
       case KEYWORDS.OR:
         return `((${parseArgs(Arguments, Drill, '||')}) || 0);`
-      case KEYWORDS.CONCATENATION:
-        return '(' + parseArgs(Arguments, Drill, '+') + ');'
       case KEYWORDS.EQUAL:
         return `+(${parseArgs(Arguments, Drill, '===')});`
       case KEYWORDS.GREATHER_THAN_OR_EQUAL:
