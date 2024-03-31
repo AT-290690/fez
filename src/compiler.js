@@ -81,18 +81,18 @@ const Helpers = {
     for(let i=0; i<args.length-1;++i){
       circuit=args[i]
       if(circuit) continue
-      else return circuit
+      else return 0
     }
-    return args.at(-1) 
+    return args.at(-1) ? 1 : 0
   }`,
   or: `or=(...args)=>{
     let circuit;
     for(let i=0;i<args.length-1;++i) {
       circuit = args[i]
-      if(circuit)return circuit
+      if(circuit) return 1
       else continue
     }
-    return args.at(-1) 
+    return args.at(-1) ? 1 : 0
   }`,
   logEffect: `logEffect=(msg)=>{console.log(msg);return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
@@ -260,9 +260,9 @@ const compile = (tree, Drill) => {
           )
       }
       case KEYWORDS.AND:
-        return `(${parseArgs(Arguments, Drill, '&&')});`
+        return `((${parseArgs(Arguments, Drill, '&&')}) ? 1 : 0);`
       case KEYWORDS.OR:
-        return `((${parseArgs(Arguments, Drill, '||')}) || 0);`
+        return `((${parseArgs(Arguments, Drill, '||')}) ? 1 : 0);`
       case KEYWORDS.EQUAL:
         return `+(${parseArgs(Arguments, Drill, '===')});`
       case KEYWORDS.GREATHER_THAN_OR_EQUAL:

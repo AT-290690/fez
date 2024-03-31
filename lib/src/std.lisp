@@ -705,12 +705,11 @@
 (let string:max (lambda a b (if (string:lesser? a b) b a)))
 (let string:trim-left (lambda str (do
   (let tr (array 1))
-(|> str (array:fold (lambda a b (if
-(and (car tr) (= b char:space)) a
-  (do
-    (if (car tr) (array:set! tr 0 0))
-    (cons a (array b)))
-)) ())))))
+  (|> str (array:fold (lambda a b (if
+  (and (car tr) (= b char:space)) a
+    (do
+      (if (car tr) (array:set! tr 0 0))
+      (cons a (array b))))) ())))))
 (let string:trim-right (lambda str (do
   (let tr (array 1))
   (|> str (array:reverse) (array:fold (lambda a b (if
@@ -863,7 +862,7 @@
       (let len (length current))
       (let index (if len (array:find-index current (lambda x (string:equal? x key))) -1))
       (let entry key)
-      (if (not (= index -1)) (and (array:set! current index (array:get current -1)) (array:set! current -1)))
+      (if (not (= index -1)) (do (array:set! current index (array:get current -1)) (array:set! current -1)))
       table)))
 (let set:has? (lambda table key
       (and (array:in-bounds? table
@@ -926,8 +925,7 @@
           (let found (array:find current (lambda x (string:equal? key (array:get x 0)))))
           (if (length found) (array:get found 1)))))))
 (let map:has? (lambda table key
-      (and (array:in-bounds? table
-        (let idx (set:index table key)))
+      (and (array:in-bounds? table (let idx (set:index table key)))
           (and (length (let current (array:get table idx)))
             (>= (array:find-index (car current)
               (lambda x

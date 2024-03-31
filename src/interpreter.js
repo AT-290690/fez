@@ -499,9 +499,9 @@ const keywords = {
     for (let i = 0; i < args.length - 1; ++i) {
       circuit = evaluate(args[i], env)
       if (circuit) continue
-      else return circuit
+      else return 0
     }
-    return evaluate(args.at(-1), env)
+    return evaluate(args.at(-1), env) ? 1 : 0
   },
   [KEYWORDS.OR]: (args, env) => {
     if (args.length < 2)
@@ -513,10 +513,10 @@ const keywords = {
     let circuit
     for (let i = 0; i < args.length - 1; ++i) {
       circuit = evaluate(args[i], env)
-      if (circuit) return circuit
+      if (circuit) return 1
       else continue
     }
-    return evaluate(args.at(-1), env)
+    return evaluate(args.at(-1), env) ? 1 : 0
   },
   [KEYWORDS.CALL_FUNCTION]: (args, env) => {
     if (!args.length)
