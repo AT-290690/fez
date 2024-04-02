@@ -105,7 +105,6 @@ const Helpers = {
   numberPredicate: `numberPredicate=(number)=>+(typeof number==='number')`,
   lambdaPredicate: `lambdaPredicate=(lambda)=>+(typeof lambda==='function')`,
   arrayPredicate: `arrayPredicate=(array)=>+Array.isArray(array)`,
-  error: `error=(error)=>{throw new Error(error)}`,
   array_setEffect: `array_setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
 }
 const semiColumnEdgeCases = new Set([
