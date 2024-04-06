@@ -12,7 +12,7 @@ export const replaceStrings = (source) => {
     for (const q of quotes)
       source = source.replaceAll(
         q,
-        `(string ${[...q]
+        `(array ${[...q]
           .slice(1, -1)
           .map((x) => x.charCodeAt(0))
           .join(' ')})`
@@ -134,7 +134,7 @@ export const handleUnbalancedQuotes = (source) => {
 }
 export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
 export const treeShake = (ast, libs) => {
-  const deps = libs.reduce((a, x) => a.add(x.at(1)[VALUE]), new Set())
+  const deps = libs.reduce((a, x) => a.set(x.at(1)[VALUE], x), new Map())
   const visited = new Set()
   const dfs = (tree) => {
     if (!isLeaf(tree)) tree.forEach(dfs)
@@ -145,13 +145,14 @@ export const treeShake = (ast, libs) => {
     ) {
       visited.add(tree[VALUE])
       // Recursively explore the dependencies of the current node
-      const dependency = libs.find((x) => x.at(1)[VALUE] === tree[VALUE])
+      const dependency = deps.get(tree[VALUE])
       if (dependency) dfs(dependency.at(-1))
     }
   }
   dfs(ast)
   // Filter out libraries that are not in the visited set
-  return libs.filter((x) => visited.has(x.at(1)[VALUE]))
+  // return libs.filter((x) => visited.has(x.at(1)[VALUE]))
+  return [...visited].reverse().map((x) => deps.get(x))
 }
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)

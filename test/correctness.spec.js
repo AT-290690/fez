@@ -337,7 +337,7 @@ describe('Corretness', () => {
     strictEqual(
       fez(
         `(let *input*
-    (string
+    (array
         char:1 char:7 char:2 char:1 char:new-line
         char:3 char:6 char:6 char:new-line
         char:2 char:9 char:9 char:new-line

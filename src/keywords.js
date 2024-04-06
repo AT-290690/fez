@@ -6,7 +6,6 @@ export const ATOM = 2
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
   NUMBER_TYPE: 'number',
-  STRING_TYPE: 'string',
   ARRAY_TYPE: 'array',
   ARRAY_LENGTH: 'length',
   IS_ARRAY: 'array?',
@@ -50,6 +49,7 @@ export const KEYWORDS = {
   TEST_CASE: 'case',
   TEST_BED: 'assert',
   LOG: 'log!',
+  LOG_STRING: 'log-string!',
   CLEAR_CONSOLE: 'clear!',
   SET_ARRAY: 'array:set!',
   DOC: 'fez-manual'

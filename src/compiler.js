@@ -66,7 +66,6 @@ const lispToJavaScriptVariableName = (name) =>
     )
   )
 const Helpers = {
-  __string: `__string=(...args)=>{const str=args.flat();str.isString=true;return str}`,
   __add: `__add=(...numbers)=>{return numbers.reduce((a,b)=>a+b,0)}`,
   __sub: `__sub=(...numbers)=>{return numbers.reduce((a,b)=>a-b,0)}`,
   __mult: `__mult=(...numbers)=>{return numbers.reduce((a,b)=>a*b,1)}`,
@@ -95,6 +94,7 @@ const Helpers = {
     return args.at(-1) ? 1 : 0
   }`,
   logEffect: `logEffect=(msg)=>{console.log(msg);return msg}`,
+  logStringEffect: `logStringEffect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
   array_cons: `array_cons=(A, ...B)=> B.reduce((a, b) => a.concat(b), A)`,
   car: 'car=(arr)=>arr.at(0)',

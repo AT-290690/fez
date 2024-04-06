@@ -78,9 +78,7 @@ if (initial) {
 }
 const serialise = (arg) => {
   if (typeof arg === 'number' || typeof arg === 'string') return arg.toString()
-  else if (arg.isString) {
-    return `"${arg.map((x) => String.fromCharCode(x)).join('')}"`
-  } else if (Array.isArray(arg))
+  else if (Array.isArray(arg))
     return arg.length ? `(${arg.map((a) => serialise(a)).join(' ')})` : '()'
   else return ''
 }

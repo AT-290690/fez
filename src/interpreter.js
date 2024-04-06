@@ -197,11 +197,6 @@ const keywords = {
       if (evaluate(args[i], env)) return evaluate(args[i + 1], env)
     return 0
   },
-  [KEYWORDS.STRING_TYPE]: (args, env) => {
-    const str = args.flatMap((x) => evaluate(x, env))
-    str.isString = true
-    return str
-  },
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {
     if (!args.length) return []
     const isCapacity =
@@ -906,15 +901,26 @@ const keywords = {
     return array
   },
   [KEYWORDS.LOG]: (args, env) => {
-    if (!args.length)
+    if (args.length !== 1)
       throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.LOG}) (>= 1 required) (${
+        `Invalid number of arguments to (${KEYWORDS.LOG}) (= 1 required) (${
           KEYWORDS.LOG
         } ${stringifyArgs(args)})`
       )
-    const expressions = args.map((x) => evaluate(x, env))
-    console.log(...expressions)
-    return expressions.at(-1)
+    const expression = evaluate(args[0], env)
+    console.log(expression)
+    return expression
+  },
+  [KEYWORDS.LOG_STRING]: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError(
+        `Invalid number of arguments to (${
+          KEYWORDS.LOG_STRING
+        }) (= 1 required) (${KEYWORDS.LOG_STRING} ${stringifyArgs(args)})`
+      )
+    const expression = evaluate(args[0], env)
+    console.log(expression.map((x) => String.fromCharCode(x)).join(''))
+    return expression
   },
   [KEYWORDS.CLEAR_CONSOLE]: (args) => {
     if (args.length)

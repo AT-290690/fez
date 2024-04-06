@@ -36,9 +36,9 @@ describe('Utils', () => {
        (cdr)
        (car))
       (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
-      `(let Fizz (string char:F char:i char:z char:z))
-      (let Buzz (string char:B char:u char:z char:z))
-      (let FizzBuzz (string Fizz Buzz))
+      `(let Fizz (array char:F char:i char:z char:z))
+      (let Buzz (array char:B char:u char:z char:z))
+      (let FizzBuzz (cons Fizz Buzz))
 
       (let fizz-buzz (lambda n
           (cond
@@ -51,7 +51,7 @@ describe('Utils', () => {
           (math:range 1 100)
           (array:map fizz-buzz))`,
       `(let *input*
-            (string
+            (array
                 char:1 char:7 char:2 char:1 char:new-line
                 char:3 char:6 char:6 char:new-line
                 char:2 char:9 char:9 char:new-line
