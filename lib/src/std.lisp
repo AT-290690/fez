@@ -84,8 +84,8 @@
                           (let* iterate (lambda out count
                           (if (< (length out) n) (iterate (array:merge! out (array count)) (+ count 1)) out)))
                           (iterate () 0))))
-(let math:between? (safety v min max (and (> v min) (< v max))))
-(let math:overlap? (safety v min max (and (>= v min) (<= v max))))
+(let math:between? (safety lambda v min max (and (> v min) (< v max))))
+(let math:overlap? (safety lambda v min max (and (>= v min) (<= v max))))
 (let math:permutations (lambda xs
   (unless (length xs)
               (array ())
