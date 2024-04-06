@@ -95,9 +95,10 @@
 (let unique (lambda arr (|>
       (let sorted (array:sort arr (safety lambda a b (> a b))))
       (array:zip (math:sequence sorted))
-      (array:select (lambda x
-               (or (not (let index (car (cdr x))))
-                  (not (= (array:get sorted (- index 1)) (array:get sorted index))))))
+      (array:select (lambda x (do
+                  (let index (car (cdr x)))
+                  (or (not index)
+                  (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
       (array:map car))))
 ; tests
 (assert
@@ -247,5 +248,5 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 (array:set!) (array:get) (car) (cdr) (cons) (length) (do)
 (if) (unless) (not) (and) (or) (cond)
 (apply) (let) (let*) (safety) (case) (assert)
-(log!) (clear!) (void) (fez-manual)
+(log!) (log-string!) (clear!) (void) (fez-manual)
 ```

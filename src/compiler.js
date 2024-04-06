@@ -182,9 +182,6 @@ const compile = (tree, Drill) => {
         return '0'
       case KEYWORDS.BOOLEAN_TYPE:
         return '1'
-      case KEYWORDS.STRING_TYPE:
-        Drill.Helpers.add('__string')
-        return `__string(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.ARRAY_TYPE:
         return Arguments.length === 2 &&
           Arguments[1][TYPE] === WORD &&

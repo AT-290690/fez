@@ -325,9 +325,9 @@
 (let array:unique (lambda arr (|>
       (let sorted (array:sort arr (safety lambda a b (> a b))))
       (array:zip (math:sequence sorted))
-      (array:select (lambda x
-               (or (not (let index (car (cdr x))))
-                  (not (= (array:get sorted (- index 1)) (array:get sorted index))))))
+      (array:select (lambda x (do 
+                  (let index (car (cdr x))) (or (not x)
+                  (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
       (array:map car))))
 (let array:for-range (safety lambda start end callback (do
                           (let* iterate (lambda i
@@ -864,11 +864,12 @@
       (let entry key)
       (if (not (= index -1)) (do (array:set! current index (array:get current -1)) (array:set! current -1)))
       table)))
-(let set:has? (lambda table key
-      (and (array:in-bounds? table
-              (let idx (set:index table key)))
-                   (and (length (let current (array:get table idx)))
-                        (>= (array:find-index current (lambda x (string:equal? x key))) 0)))))
+(let set:has? (lambda table key (do 
+      (let idx (set:index table key))
+      (let current (array:get table idx))
+      (and (array:in-bounds? table idx)
+                   (and (length current)
+                        (>= (array:find-index current (lambda x (string:equal? x key))) 0))))))
 (let set:intersection (lambda a b
         (|> b
           (cast:set->array)
@@ -924,12 +925,14 @@
           (let current (array:get table idx))
           (let found (array:find current (lambda x (string:equal? key (array:get x 0)))))
           (if (length found) (array:get found 1)))))))
-(let map:has? (lambda table key
-      (and (array:in-bounds? table (let idx (set:index table key)))
-          (and (length (let current (array:get table idx)))
+(let map:has? (lambda table key (do 
+          (let idx (set:index table key))
+          (let current (array:get table idx))
+          (and (array:in-bounds? table idx)
+          (and (length current)
             (>= (array:find-index (car current)
               (lambda x
-                (string:equal? x key))) 0)))))
+                (string:equal? x key))) 0))))))
 
 (let list:prev! (safety lambda list node (array:set! list 0 (array:set! node 2 list))))
 (let list:next! (safety lambda list node (array:set! list 2 (array:set! node 0 list))))

@@ -137,22 +137,22 @@ export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.set(x.at(1)[VALUE], x), new Map())
   const visited = new Set()
   const dfs = (tree) => {
+    const type = tree[TYPE]
+    const value = tree[VALUE]
     if (!isLeaf(tree)) tree.forEach(dfs)
     else if (
-      (tree[TYPE] === APPLY || tree[TYPE] === WORD) &&
-      deps.has(tree[VALUE]) &&
-      !visited.has(tree[VALUE])
+      (type === APPLY || type === WORD) &&
+      deps.has(value) &&
+      !visited.has(value)
     ) {
-      visited.add(tree[VALUE])
+      visited.add(value)
       // Recursively explore the dependencies of the current node
-      const dependency = deps.get(tree[VALUE])
-      if (dependency) dfs(dependency.at(-1))
+      dfs(deps.get(value).at(-1))
     }
   }
   dfs(ast)
   // Filter out libraries that are not in the visited set
-  // return libs.filter((x) => visited.has(x.at(1)[VALUE]))
-  return [...visited].reverse().map((x) => deps.get(x))
+  return [...visited].map((x) => deps.get(x))
 }
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
