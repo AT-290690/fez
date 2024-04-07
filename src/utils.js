@@ -133,70 +133,68 @@ export const handleUnbalancedQuotes = (source) => {
   return source
 }
 export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
-export const treeShake = (ast, libs) => {
-  const deps = libs.reduce((a, x) => a.set(x.at(1)[VALUE], x), new Map())
-  const visited = new Set()
-  const dfs = (tree, ignore = new Set()) => {
-    const type = tree[TYPE]
-    const value = tree[VALUE]
-    if (!isLeaf(tree)) {
-      const [car, ...rest] = tree
-      if (car == undefined) return
-      if (
-        car[TYPE] === APPLY &&
-        (car[VALUE] === KEYWORDS.DEFINE_VARIABLE ||
-          car[VALUE] === KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION)
-      ) {
-        if (
-          !isLeaf(rest.at(-1)) &&
-          rest
-            .at(-1)
-            .some(
-              (x) =>
-                x[TYPE] === APPLY && x[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-            )
-        ) {
-          const args = rest
-            .at(-1)
-            .filter(
-              (x) =>
-                !(
-                  x[TYPE] === APPLY &&
-                  (x[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION ||
-                    x[VALUE] === KEYWORDS.IMMUTABLE_FUNCTION)
-                )
-            )
-          const body = args.pop()
-          const params = new Set(args.map((x) => x[VALUE]))
-          dfs(body, params)
-        } else rest.forEach((x) => dfs(x, ignore))
-      } else tree.forEach((x) => dfs(x, ignore))
-    } else if (
-      (type === APPLY || type === WORD) &&
-      deps.has(value) &&
-      !visited.has(value) &&
-      !ignore.has(value)
-    ) {
-      visited.add(value)
-      // Recursively explore the dependencies of the current node
-      dfs(deps.get(value), ignore)
-    }
-  }
-  dfs(
-    ast,
-    new Set(
-      ast
-        .filter(
-          ([x]) =>
-            x[TYPE] === APPLY &&
-            (x[VALUE] === KEYWORDS.DEFINE_VARIABLE ||
-              x[VALUE] === KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION)
-        )
-        .map(([_, x]) => x[VALUE])
-    )
+const isDefinition = (x) =>
+  x[TYPE] === APPLY &&
+  (x[VALUE] === KEYWORDS.DEFINE_VARIABLE ||
+    x[VALUE] === KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION)
+const toDeps = (libs) =>
+  libs.reduce(
+    (a, x, i) => a.set(x.at(1)[VALUE], { value: x, index: i }),
+    new Map()
   )
-  // Filter out libraries that are not in the visited set
-  return [...visited].reverse().map((x) => deps.get(x))
+const deepShake = (tree, deps, visited = new Set(), ignored = new Set()) => {
+  const type = tree[TYPE]
+  const value = tree[VALUE]
+  if (!isLeaf(tree)) {
+    const [car, ...rest] = tree
+    if (car == undefined) return
+    if (isDefinition(car)) {
+      if (
+        !isLeaf(rest.at(-1)) &&
+        rest
+          .at(-1)
+          .some(
+            (x) => x[TYPE] === APPLY && x[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+          )
+      ) {
+        const args = rest.at(-1).filter((x) => !isDefinition(x))
+        const body = args.pop()
+        const params = new Set(args.map((x) => x[VALUE]))
+        deepShake(body, deps, visited, params)
+      } else rest.forEach((x) => deepShake(x, deps, visited, ignored))
+    } else tree.forEach((x) => deepShake(x, deps, visited, ignored))
+  } else if (
+    (type === APPLY || type === WORD) &&
+    deps.has(value) &&
+    !visited.has(value) &&
+    !ignored.has(value)
+  ) {
+    visited.add(value)
+    deepShake(deps.get(value).value, deps, visited, ignored)
+  }
+}
+const extractDeps = (visited, deps) =>
+  [...visited]
+    .map((x) => deps.get(x))
+    .sort((a, b) => a.index - b.index)
+    .map((x) => x.value)
+const toIgnore = (ast) =>
+  ast.filter(([x]) => isDefinition(x)).map(([_, x]) => x[VALUE])
+export const treeShake = (ast, libs) => {
+  const deps = toDeps(libs)
+  const visited = new Set()
+  const ignored = new Set(toIgnore(ast))
+  deepShake(ast, deps, visited, ignored)
+  return extractDeps(visited, deps)
+}
+export const shakedList = (ast, libs) => {
+  const deps = toDeps(libs)
+  const visited = new Set()
+  const ignored = new Set(toIgnore(ast))
+  deepShake(ast, deps, visited, ignored)
+  const out = []
+  for (const [key] of deps) if (visited.has(key)) out.push(key)
+  return out
 }
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
@@ -322,6 +320,13 @@ export const ast = (source, deps) => {
     ),
     ...source
   ]
+}
+export const dependencies = (source, deps) => {
+  source = prep(source)
+  return shakedList(
+    source,
+    deps.reduce((a, b) => a.concat(b), [])
+  )
 }
 export const js = (source, deps) => {
   source = prep(source)

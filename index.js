@@ -16,6 +16,7 @@ export {
   src,
   js,
   prep,
+  dependencies,
   LISP,
   AST
 }
