@@ -136,23 +136,67 @@ export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
 export const treeShake = (ast, libs) => {
   const deps = libs.reduce((a, x) => a.set(x.at(1)[VALUE], x), new Map())
   const visited = new Set()
-  const dfs = (tree) => {
+  const dfs = (tree, ignore = new Set()) => {
     const type = tree[TYPE]
     const value = tree[VALUE]
-    if (!isLeaf(tree)) tree.forEach(dfs)
-    else if (
+    if (!isLeaf(tree)) {
+      const [car, ...rest] = tree
+      if (car == undefined) return
+      if (
+        car[TYPE] === APPLY &&
+        (car[VALUE] === KEYWORDS.DEFINE_VARIABLE ||
+          car[VALUE] === KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION)
+      ) {
+        if (
+          !isLeaf(rest.at(-1)) &&
+          rest
+            .at(-1)
+            .some(
+              (x) =>
+                x[TYPE] === APPLY && x[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+            )
+        ) {
+          const args = rest
+            .at(-1)
+            .filter(
+              (x) =>
+                !(
+                  x[TYPE] === APPLY &&
+                  (x[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION ||
+                    x[VALUE] === KEYWORDS.IMMUTABLE_FUNCTION)
+                )
+            )
+          const body = args.pop()
+          const params = new Set(args.map((x) => x[VALUE]))
+          dfs(body, params)
+        } else rest.forEach((x) => dfs(x, ignore))
+      } else tree.forEach((x) => dfs(x, ignore))
+    } else if (
       (type === APPLY || type === WORD) &&
       deps.has(value) &&
-      !visited.has(value)
+      !visited.has(value) &&
+      !ignore.has(value)
     ) {
       visited.add(value)
       // Recursively explore the dependencies of the current node
-      dfs(deps.get(value).at(-1))
+      dfs(deps.get(value), ignore)
     }
   }
-  dfs(ast)
+  dfs(
+    ast,
+    new Set(
+      ast
+        .filter(
+          ([x]) =>
+            x[TYPE] === APPLY &&
+            (x[VALUE] === KEYWORDS.DEFINE_VARIABLE ||
+              x[VALUE] === KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION)
+        )
+        .map(([_, x]) => x[VALUE])
+    )
+  )
   // Filter out libraries that are not in the visited set
-  return [...visited].map((x) => deps.get(x))
+  return [...visited].reverse().map((x) => deps.get(x))
 }
 export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
@@ -213,7 +257,6 @@ export const deepRename = (name, newName, tree) => {
       deepRename(name, newName, leaf)
     }
 }
-
 export const compress = (source) => {
   let { result, occurance } = source.split('').reduce(
     (acc, item) => {
@@ -258,3 +301,36 @@ export const minify = (source) =>
   LISP.source(
     deSuggar(LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source)))))
   )
+export const prep = (source) =>
+  deSuggar(LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source)))))
+export const src = (source, deps) => {
+  source = prep(source)
+  return LISP.source([
+    ...treeShake(
+      source,
+      deps.reduce((a, b) => a.concat(b), [])
+    ),
+    ...source
+  ])
+}
+export const ast = (source, deps) => {
+  source = prep(source)
+  return [
+    ...treeShake(
+      source,
+      deps.reduce((a, b) => a.concat(b), [])
+    ),
+    ...source
+  ]
+}
+export const js = (source, deps) => {
+  source = prep(source)
+  const { top, program } = comp([
+    ...treeShake(
+      source,
+      deps.reduce((a, b) => a.concat(b), [])
+    ),
+    ...source
+  ])
+  return `${top}${program}`
+}
