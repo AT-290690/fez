@@ -261,9 +261,9 @@ describe('Corretness', () => {
       fez(
         `(array (|>
 (array 1 2 3 4 5) 
-(array:map (safety lambda x (* x 2))) 
-(array:select (safety lambda x (> x 4))) 
-(array:fold (safety lambda a b (+ a b)) 0)))`,
+(array:map (lambda x (* x 2))) 
+(array:select (lambda x (> x 4))) 
+(array:fold (lambda a b (+ a b)) 0)))`,
         { compile: 1, eval: 1 }
       ),
       [24]

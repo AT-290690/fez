@@ -93,7 +93,7 @@
 ```lisp
 ; remove duplicate elements in the arr
 (let unique (lambda arr (|>
-      (let sorted (array:sort arr (safety lambda a b (> a b))))
+      (let sorted (array:sort arr (lambda a b (> a b))))
       (array:zip (math:sequence sorted))
       (array:select (lambda x (do
                   (let index (car (cdr x)))
@@ -247,6 +247,6 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 (array?) (number?) (lambda?) (lambda) (array) (number) (string)
 (array:set!) (array:get) (car) (cdr) (cons) (length) (do)
 (if) (unless) (not) (and) (or) (cond)
-(apply) (let) (let*) (safety) (case) (assert)
+(apply) (let) (let*) (case) (assert)
 (log!) (log-string!) (clear!) (void) (fez-manual)
 ```

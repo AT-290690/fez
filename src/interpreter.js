@@ -733,47 +733,6 @@ const keywords = {
       )
     return other.reduce((a, b) => a.concat(b), array)
   },
-  [KEYWORDS.IMMUTABLE_FUNCTION]: (args, env) => {
-    if (!args.length)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.IMMUTABLE_FUNCTION
-        }) (>= 2 required). (${KEYWORDS.IMMUTABLE_FUNCTION} ${stringifyArgs(
-          args
-        )})`
-      )
-    const [definition, ...functionArgs] = args
-    const token = definition[VALUE]
-    if (!(token in keywords))
-      throw new ReferenceError(
-        `There is no such keyword ${token} at (${
-          KEYWORDS.IMMUTABLE_FUNCTION
-        } ${stringifyArgs(args)})`
-      )
-
-    const params = functionArgs.slice(0, -1)
-    const body = functionArgs.at(-1)
-    return (props = [], scope) => {
-      if (props.length !== params.length)
-        throw new RangeError(
-          `Incorrect number of arguments for (${KEYWORDS.IMMUTABLE_FUNCTION} ${
-            KEYWORDS.ANONYMOUS_FUNCTION
-          } ${params.map((x) => x[VALUE]).join(' ')}) are provided. (expects ${
-            params.length
-          } but got ${props.length}) (${KEYWORDS.IMMUTABLE_FUNCTION} ${
-            KEYWORDS.ANONYMOUS_FUNCTION
-          } ${stringifyArgs(args)})`
-        )
-      const localEnv = Object.create({ ...keywords })
-      for (let i = 0; i < props.length; ++i) {
-        Object.defineProperty(localEnv, params[i][VALUE], {
-          value: evaluate(props[i], scope),
-          writable: true
-        })
-      }
-      return evaluate(body, localEnv)
-    }
-  },
   [KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION]: (args, env) => {
     if (!args.length)
       throw new RangeError(

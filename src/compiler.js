@@ -327,10 +327,6 @@ const compile = (tree, Drill) => {
       //     inp = [Arguments[i].shift(), inp, ...Arguments[i]]
       //   return compile(inp, Drill)
       // }
-      case KEYWORDS.IMMUTABLE_FUNCTION: {
-        const [first, ...rest] = Arguments
-        return compile([leaf(APPLY, first[VALUE]), ...rest], Drill)
-      }
       case KEYWORDS.NOT_COMPILED_BLOCK:
       case KEYWORDS.TEST_CASE:
       case KEYWORDS.TEST_BED:

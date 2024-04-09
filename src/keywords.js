@@ -44,7 +44,6 @@ export const KEYWORDS = {
   DEFINE_VARIABLE: 'let',
   PIPE: '|>',
   TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
-  IMMUTABLE_FUNCTION: 'safety',
   NOT_COMPILED_BLOCK: 'void',
   TEST_CASE: 'case',
   TEST_BED: 'assert',
