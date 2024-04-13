@@ -122,7 +122,7 @@
 (let math:min-bit (lambda a b (- a (& (- a b) (>> (- b a) 31)))))
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (not (& N (<< 1 nth))))))
-(let math:count-leading-zero-bits32 (lambda x (if (>= x 0) (- 32 (length (cast:number->bit x))))))
+(let math:count-leading-zero-bits32 (lambda x (if (>= x 0) (- 32 (length (from:number->bit x))))))
 (let math:bit-count32 (lambda n0 (do 
   (let n1 (- n0 (& (>> n0 1) 1431655765)))
   (let n2 (+ (& n1 858993459) (& (>> n1 2) 858993459)))
@@ -227,8 +227,8 @@
 (let math:number-of-digits (lambda n
   (cond
     (= n 0) 1
-    (< n 0) (length (cast:number->digits (| (* n -1) 0)))
-    (*) (length (cast:number->digits (| n 0))))))
+    (< n 0) (length (from:number->digits (| (* n -1) 0)))
+    (*) (length (from:number->digits (| n 0))))))
 (let math:largest-power (lambda N (do
   ; changing all right side bits to 1.
   (let N1 (| N (>> N 1)))
@@ -342,6 +342,7 @@
         (callback x)
         (iterate x (lambda y (array:traverse y callback))))))
 (let array:empty? (lambda arr (not (length arr))))
+(let array:not-empty? (lambda arr (= (not (length arr)) 0)))
 (let array:count-of (lambda arr callback (|> arr (array:select callback) (length))))
 (let array:empty! (lambda arr (do (let* iterate (lambda (if (length arr) (do (array:set! arr -1) (iterate)) arr))) (iterate))))
 (let array:in-bounds? (lambda arr index (and (< index (length arr)) (>= index 0))))
@@ -437,7 +438,7 @@
       (let i (car (cdr b)))
       (if (mod i n) (array:set! (let last-a (array:get a -1)) (length last-a) x) (array:set! a (length a) (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))) a))
       ())))
-(let cast:digit->char (lambda d 
+(let from:digit->char (lambda d 
   (cond 
     (= d 0) char:0 
     (= d 1) char:1
@@ -450,7 +451,7 @@
     (= d 8) char:8
     (= d 9) char:9 
     (*) ())))
-(let cast:char->digit (lambda c 
+(let from:char->digit (lambda c 
   (cond 
     (= c char:0) 0
     (= c char:1) 1 
@@ -463,38 +464,38 @@
     (= c char:8) 8 
     (= c char:9) 9
     (*) ())))
-(let cast:chars->digits (lambda chars (array:map chars (lambda ch (cast:char->digit ch)))))
-(let cast:digits->chars (lambda numbers (array:map numbers (lambda digit (cast:digit->char digit)))))
-(let cast:digits->number (lambda digits (do 
+(let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
+(let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
+(let from:digits->number (lambda digits (do 
     (let* iter (lambda rem num base (if (length rem) (iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
     (iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
-(let cast:number->digits (lambda num (do
+(let from:number->digits (lambda num (do
   (let* iter (lambda num res (cond
                               (>= num 1) (iter (/ num 10) (array:set! res (length res) (| (mod num 10) 0)))
                               (= num 0) (array 0)
                               (*) res)))
   (array:reverse (iter num ())))))
-(let cast:number->bits (lambda num (do
+(let from:number->bits (lambda num (do
   (let* iter (lambda num res (cond
                               (>= num 1) (iter (/ num 2) (array:set! res (length res) (| (mod num 2) 0)))
                               (= num 0) (array 0)
                               (*) res)))
   (array:reverse (iter num ())))))
-(let cast:numbers->chars (lambda x (array:map x (lambda x (|> x (cast:number->digits) (cast:digits->chars))))))
-(let cast:chars->numbers (lambda arr (|> arr (array:map cast:chars->digits) (array:map array:flat-one) (array:select length) (array:map cast:digits->number))))
-(let cast:any->boolean (lambda val (not (not val))))
-(let cast:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
-(let cast:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
-(let cast:set->array (lambda set (array:select (array:flat-one set) length)))
-(let cast:map->array (lambda set (array:select (array:flat-one set) length)))
-(let cast:set->numbers (lambda set (|> set (cast:set->array) (array:map (lambda x (|> x (cast:chars->digits) (cast:digits->number)))))))
-; (let cast:map->string (lambda table (|>
+(let from:numbers->chars (lambda x (array:map x (lambda x (|> x (from:number->digits) (from:digits->chars))))))
+(let from:chars->numbers (lambda arr (|> arr (array:map from:chars->digits) (array:map array:flat-one) (array:select length) (array:map from:digits->number))))
+(let from:any->boolean (lambda val (not (not val))))
+(let from:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
+(let from:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
+(let from:set->array (lambda set (array:select (array:flat-one set) length)))
+(let from:map->array (lambda set (array:select (array:flat-one set) length)))
+(let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
+; (let from:map->string (lambda table (|>
 ;   table
 ;   (array:select length)
 ;   (array:flat-one)
 ;   (array:map (lambda y (array:join y (array char:space))))
 ;   (array:join (array char:new-line)))))
-(let cast:array->brray (lambda initial (do
+(let from:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
  (let* left (lambda index (do
@@ -506,7 +507,7 @@
    (if (< index bounds) (rigth (+ index 1) bounds)))))
  (rigth half (- (length initial) 1))
     q)))
-(let cast:brray->array (lambda q (do
+(let from:brray->array (lambda q (do
   (let out ())
   (let* iter (lambda index bounds (do
       (array:set! out (length out) (brray:get q index))
@@ -873,25 +874,25 @@
                         (>= (array:find-index current (lambda x (string:equal? x key))) 0))))))
 (let set:intersection (lambda a b
         (|> b
-          (cast:set->array)
+          (from:set->array)
           (array:fold (lambda out element
           (do (if (set:has? a element)
                     (set:add! out element)) out)) (array () () () () ())))))
 (let set:difference (lambda a b
       (|> a
-        (cast:set->array)
+        (from:set->array)
         (array:fold (lambda out element
                         (do (if (not (set:has? b element))
                                         (set:add! out element)) out)) (array () () () () ())))))
 (let set:xor (lambda a b (do
         (let out (array () () () () ()))
-        (|> a (cast:set->array) (array:for (lambda element (if (not (set:has? b element)) (set:add! out element)))))
-        (|> b (cast:set->array) (array:for (lambda element (if (not (set:has? a element)) (set:add! out element)))))
+        (|> a (from:set->array) (array:for (lambda element (if (not (set:has? b element)) (set:add! out element)))))
+        (|> b (from:set->array) (array:for (lambda element (if (not (set:has? a element)) (set:add! out element)))))
         out)))
 (let set:union (lambda a b (do
         (let out (array () () () () ()))
-        (|> a (cast:set->array) (array:for (lambda element (set:add! out element))))
-        (|> b (cast:set->array) (array:for (lambda element (set:add! out element))))
+        (|> a (from:set->array) (array:for (lambda element (set:add! out element))))
+        (|> b (from:set->array) (array:for (lambda element (set:add! out element))))
         out)))
 (let set:empty! (lambda table (array:map table empty!)))
 (let map:empty! (lambda table (array:map table empty!)))
@@ -1013,7 +1014,7 @@
 (let brray:balance? (lambda q (= (+ (brray:offset-right q) (brray:offset-left q)) 0)))
 (let brray:balance! (lambda q
     (if (brray:balance? q) q (do
-      (let initial (cast:brray->array q))
+      (let initial (from:brray->array q))
       (brray:empty! q)
       (let half (math:floor (* (length initial) 0.5)))
       (let* left (lambda index (do

@@ -878,6 +878,14 @@ const keywords = {
         }) (= 1 required) (${KEYWORDS.LOG_STRING} ${stringifyArgs(args)})`
       )
     const expression = evaluate(args[0], env)
+    if (!Array.isArray(expression))
+      throw new TypeError(
+        `Argument of (${KEYWORDS.LOG_STRING}) must be an (${
+          KEYWORDS.ARRAY_TYPE
+        }) but got (${expression}) (${KEYWORDS.LOG_STRING} ${stringifyArgs(
+          args
+        )})`
+      )
     console.log(expression.map((x) => String.fromCharCode(x)).join(''))
     return expression
   },

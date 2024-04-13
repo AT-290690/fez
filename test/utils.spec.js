@@ -66,7 +66,7 @@ describe('Utils', () => {
             ; 514579
             (|> *input*
                 (string:lines)
-                (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
+                (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
                 (array:sort (lambda a b (> a b)))
                 (solve (lambda x (- 2020 x)))
                 (math:product))`

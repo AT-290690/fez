@@ -1,6 +1,6 @@
 import { evaluate } from './src/evaluator.js'
 import { LISP, AST } from './src/parser.js'
-import { fez, tree, ast, src, js, prep } from './src/utils.js'
+import { fez, tree, ast, src, js, prep, dependencies } from './src/utils.js'
 import std from './lib/baked/std.js'
 import { keywords } from './src/interpreter.js'
 import { WORD, APPLY, ATOM, VALUE, TYPE } from './src/keywords.js'

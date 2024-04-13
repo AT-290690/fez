@@ -64,7 +64,7 @@ describe('Compilation & Interpretation', () => {
           ; 514579
           (|> *input*
               (string:lines)
-              (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
+              (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
               (array:sort (lambda a b (> a b)))
               (solve (lambda x (- 2020 x)))
               (math:product))`,
@@ -77,7 +77,7 @@ describe('Compilation & Interpretation', () => {
         (set:add! B (array char:2))
         (set:add! B (array char:4))
         (set:add! B (array char:5))
-        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))`
+        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))`
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { compile: 0, mutation: 1 }),

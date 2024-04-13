@@ -4,15 +4,16 @@ export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
 export const LISP = {
   parse: (source) => {
     const tree = []
-    let head = tree,
-      stack = [tree],
-      acc = ''
+    const stack = [tree]
+    let head = tree
+    let acc = ''
     for (let i = 0; i < source.length; ++i) {
       const cursor = source[i]
       if (cursor === '(') {
-        head.push([])
+        const temp = []
+        head.push(temp)
         stack.push(head)
-        head = head.at(-1)
+        head = temp
       } else if (cursor === ')' || cursor === ' ') {
         let token = acc
         acc = ''
@@ -66,9 +67,9 @@ export const LISP = {
 export const AST = {
   parse: (source) => {
     const tree = []
-    let head = tree,
-      stack = [tree],
-      acc = ''
+    const stack = [tree]
+    let head = tree
+    let acc = ''
     for (let i = 0; i < source.length; ++i) {
       const cursor = source[i]
       if (cursor === '"') {
@@ -80,9 +81,10 @@ export const AST = {
         }
       }
       if (cursor === '[') {
-        head.push([])
+        const temp = []
+        head.push(temp)
         stack.push(head)
-        head = head.at(-1)
+        head = temp
       } else if (cursor === ']' || cursor === ',') {
         let token = acc
         acc = ''

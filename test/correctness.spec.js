@@ -236,7 +236,7 @@ describe('Corretness', () => {
         (set:add! B (array char:2))
         (set:add! B (array char:4))
         (set:add! B (array char:5))
-        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map cast:set->numbers))        
+        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))        
     `,
         { compile: 1, eval: 1, mutation: 1 }
       ),
@@ -250,7 +250,7 @@ describe('Corretness', () => {
     (set:add! set (array char:2))
     (set:add! set (array char:2))
     (set:add! set (array char:3))
-    (|> set (array:flat) (cast:chars->digits))
+    (|> set (array:flat) (from:chars->digits))
     `,
         { compile: 1, eval: 1, mutation: 1 }
       ),
@@ -352,7 +352,7 @@ describe('Corretness', () => {
     ; 514579
     (|> *input*
         (string:lines)
-        (array:map (lambda d (|> d (cast:chars->digits) (cast:digits->number))))
+        (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
         (array:sort (lambda a b (> a b)))
         (solve (lambda x (- 2020 x)))
         (math:product))`,
