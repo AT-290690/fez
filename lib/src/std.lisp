@@ -71,6 +71,8 @@
 (let char:semi-colon 59)
 (let char:colon 58)
 (let char:dash 45)
+(let char:left-brace 40)
+(let char:right-brace 41)
 (let math:range (lambda start end (do
                           (let* iterate (lambda out count
                           (if (<= count end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
@@ -160,6 +162,7 @@
 (let math:gauss-sum (lambda n (* n (+ n 1) 0.5)))
 (let math:gauss-sum-sequance (lambda a b (* (+ a b) (+ (- b a) 1) 0.5)))
 (let math:clamp (lambda x limit (if (> x limit) limit x)))
+(let math:clamp-range (lambda x start end (cond (> x end) end (< x start) start (*) x)))
 (let math:odd? (lambda x (= (mod x 2) 1)))
 (let math:even? (lambda x (= (mod x 2) 0)))
 (let math:enumerated-odd? (lambda . i (= (mod i 2) 1)))
@@ -1109,3 +1112,55 @@ q)))
     (cond
      (number? x) (= x 0)
      (array? x) (= (length x) 0))))
+
+(let ast:type 0)
+(let ast:value 1)
+(let ast:apply 0)
+(let ast:word 1)
+(let ast:atom 2)
+(let match:neg? (lambda string (= (car string) char:dash)))
+(let match:number? (lambda string (do 
+  (let is-neg (match:neg? string))
+  (let digits (if is-neg (cdr string) string))
+  (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
+(let ast:leaf (lambda type value (array type value)))
+(let ast:leaf? (lambda arg (do (let c (car arg)) (and (number? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
+(let from:chars->ast (lambda source (do
+    (let tree ())
+    (let stack (array tree))
+    (let head (var:def tree))
+    (let acc ())
+    (array:for-range 0 (length source) (lambda i (do 
+    (let cursor (array:get source i))
+    (if (= cursor char:left-brace) (do 
+        (let temp ())
+        (let h (var:get head))
+        (array:push! h temp)
+        (array:push! stack h)
+        (var:set! head temp))
+    (if (or (= cursor char:right-brace) (= cursor char:space)) (do 
+        (let token (array:shallow-copy acc))
+        (array:empty! acc)
+        (if (length token) (do 
+            (let h (var:get head))
+            (if (array:empty? h) (array:push! h (ast:leaf ast:apply token))
+                (if (match:number? token) 
+                    (array:push! h (ast:leaf ast:atom 
+                        (from:digits->number 
+                            (from:chars->digits token)))) 
+                    (array:push! h (ast:leaf ast:word token))))))
+        (if (= cursor char:right-brace) (var:set! head (array:pop! stack))))
+    (array:push! acc cursor))))))
+    tree)))
+
+(let evaluate (lambda exp env (do 
+  (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
+  (if (length expression) (do 
+    (let first (car expression))
+    (let rest (cdr expression))
+    (let pattern (array:get first ast:type))
+    (cond 
+      (= pattern ast:word) (map:get env (array:get first ast:value))
+      (= pattern ast:apply) (apply (map:get env (array:get first ast:value)) rest env)
+      (= pattern ast:atom) (array:get first ast:value)
+      (*) ())) ()))))
