@@ -546,7 +546,6 @@ const keywords = {
           KEYWORDS.DEFINE_VARIABLE
         }) (= 2 required) (${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
       )
-    let name
     const word = args[0]
     if (word[TYPE] !== WORD)
       throw new SyntaxError(
@@ -560,7 +559,7 @@ const keywords = {
           KEYWORDS.DEFINE_VARIABLE
         } ${stringifyArgs(args)})`
       )
-    name = word[VALUE]
+    const name = word[VALUE]
     Object.defineProperty(env, name, {
       value: evaluate(args[1], env),
       writable: false
@@ -984,7 +983,7 @@ export const deSuggar = (ast) => {
                     )
                   exp[0][1] = KEYWORDS.IF
                   const temp = exp[2]
-                  exp[2] = exp[3] ?? [2, 0]
+                  exp[2] = exp[3] ?? [ATOM, 0]
                   exp[3] = temp
                 }
                 break

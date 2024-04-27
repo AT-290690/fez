@@ -159,8 +159,9 @@ const deepShake = (tree, deps, visited = new Set(), ignored = new Set()) => {
       ) {
         const args = rest.at(-1).filter((x) => !isDefinition(x))
         const body = args.pop()
-        const params = new Set(args.map((x) => x[VALUE]))
-        deepShake(body, deps, visited, params)
+        // const params = new Set(args.map((x) => x[VALUE])
+        for (const arg of args) ignored.add(arg[VALUE])
+        deepShake(body, deps, visited, ignored)
       } else rest.forEach((x) => deepShake(x, deps, visited, ignored))
     } else tree.forEach((x) => deepShake(x, deps, visited, ignored))
   } else if (

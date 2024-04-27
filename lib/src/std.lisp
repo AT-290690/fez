@@ -469,7 +469,7 @@
     (*) ())))
 (let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
-(let from:digits->number (lambda digits (do 
+(let from:digits->number (lambda digits (do
     (let* iter (lambda rem num base (if (length rem) (iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
     (iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
 (let from:number->digits (lambda num (do
@@ -1118,10 +1118,10 @@ q)))
 (let ast:apply 0)
 (let ast:word 1)
 (let ast:atom 2)
-(let match:neg? (lambda string (= (car string) char:dash)))
+(let match:negative? (lambda string (= (car string) char:dash)))
 (let match:number? (lambda string (do 
-  (let is-neg (match:neg? string))
-  (let digits (if is-neg (cdr string) string))
+  (let is-negative (match:negative? string))
+  (let digits (if is-negative (cdr string) string))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
 (let ast:leaf (lambda type value (array type value)))
 (let ast:leaf? (lambda arg (do (let c (car arg)) (and (number? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
