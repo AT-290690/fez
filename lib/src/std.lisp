@@ -75,16 +75,16 @@
 (let char:right-brace 41)
 (let math:range (lambda start end (do
                           (let* iterate (lambda out count
-                          (if (<= count end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
+                          (if (<= count end) (iterate (array:set! out (length out) count) (+ count 1)) out)))
                           (iterate () start))))
 (let math:sequence (lambda arr (do
                           (let end (length arr))
                           (let* iterate (lambda out count
-                          (if (< (length out) end) (iterate (array:merge! out (array count)) (+ count 1)) out)))
+                          (if (< (length out) end) (iterate (array:set! out (length out) count) (+ count 1)) out)))
                           (iterate () 0))))
 (let math:sequence-n (lambda n (do
                           (let* iterate (lambda out count
-                          (if (< (length out) n) (iterate (array:merge! out (array count)) (+ count 1)) out)))
+                          (if (< (length out) n) (iterate (array:set! out (length out) count) (+ count 1)) out)))
                           (iterate () 0))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
@@ -265,7 +265,7 @@
                   (let* iterate (lambda arr out
                         (if  (length arr)
                               (iterate (cdr arr)
-                                (array:merge! out (array (callback (car arr)))))
+                                (array:set! out (length out) (callback (car arr))))
                               out)))
                       (iterate arr ()))))
 (let array:select (lambda arr callback (do
@@ -273,7 +273,7 @@
                         (if (length arr)
                             (iterate (cdr arr)
                                       (if (callback (car arr))
-                                            (array:merge! out (array (car arr)))
+                                            (array:set! out (length out) (car arr))
                                             out))
                             out)))
                       (iterate arr ()))))
@@ -282,7 +282,7 @@
                         (if (length arr)
                             (iterate (cdr arr)
                                       (if (not (callback (car arr)))
-                                            (array:merge! out (array (car arr)))
+                                            (array:set! out (length out) (car arr))
                                             out))
                             out)))
                       (iterate arr ()))))
@@ -341,7 +341,7 @@
                                   (iterate (+ i 1))))))
                           (iterate start))))
 (let array:traverse (lambda x callback
-    (if (number? x)
+    (if (atom? x)
         (callback x)
         (iterate x (lambda y (array:traverse y callback))))))
 (let array:empty? (lambda arr (not (length arr))))
@@ -353,7 +353,7 @@
         (let bounds (- end start))
         (let* iterate (lambda i out
           (if (< i bounds)
-              (iterate (+ i 1) (array:merge! out (array (array:get arr (+ start i)))))
+              (iterate (+ i 1) (array:set! out (length out) (array:get arr (+ start i))))
               out)))
         (iterate 0 ()))))
 (let array:binary-search
@@ -370,11 +370,11 @@
    (search arr target 0 (length arr)))))
 (let array:zip (lambda A B (do
   (let* iterate (lambda a b output
-    (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (array:merge! output (array (array (car a) (car b))))) output)))
+    (if (and (length a) (length b)) (iterate (cdr a) (cdr b) (array:set! output (length output) (array (car a) (car b)))) output)))
   (iterate A B ()))))
 (let array:equal? (lambda a b
   (or
-  (and (number? a) (number? b) (= a b))
+  (and (atom? a) (atom? b) (= a b))
   (and (array? a)
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
@@ -533,7 +533,7 @@
                   (let* iterate (lambda arr i out
                         (if  (length arr)
                               (iterate (cdr arr) (+ i 1)
-                                (array:merge! out (array (callback (car arr) i))))
+                                (array:set! out (length out) (callback (car arr) i)))
                               out)))
                       (iterate arr 0 ()))))
 (let array:enumerated-select (lambda arr callback (do
@@ -541,7 +541,7 @@
                         (if (length arr)
                             (iterate (cdr arr) (+ i 1)
                                       (if (callback (car arr) i)
-                                            (array:merge! out (array (car arr)))
+                                            (array:set! out (length out) (car arr))
                                             out))
                             out)))
                       (iterate arr 0 ()))))
@@ -550,7 +550,7 @@
                         (if (length arr)
                             (iterate (cdr arr) (+ i 1)
                                       (if (not (callback (car arr) i))
-                                            (array:merge! out (array (car arr)))
+                                            (array:set! out (length out) (car arr))
                                             out))
                             out)))
                       (iterate arr 0 ()))))
@@ -589,7 +589,7 @@
                               (if (callback (car arr)) i (iterate (cdr arr) (+ i 1))) -1)))
                         (iterate arr 0))))
 (let array:remove (lambda arr i
-      (array:fold arr (lambda a x (do (unless (= x i) (array:merge! a (array x)) a))) ())))
+      (array:fold arr (lambda a x (do (unless (= x i) (array:set! a (length a) x) a))) ())))
 (let array:pad-right (lambda a b (if (> (length a) (length b))
      (cons b (array (- (length a) (length b)) length))
      (cons a (array (- (length b) (length a)) length)))))
@@ -694,7 +694,21 @@
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (> (car pair) (car (cdr pair))) 0 acc)) 1))))))
+(let string:greater-or-equal? (lambda A B (or (string:equal? A B) (do
+  (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
+  (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
+  (|>
+   a
+   (array:zip b)
+   (array:fold (lambda acc pair (if (> (car pair) (car (cdr pair))) 0 acc)) 1))))))
 (let string:lesser? (lambda A B (if (not (string:equal? A B)) (do
+  (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
+  (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
+  (|>
+   a
+   (array:zip b)
+   (array:fold (lambda acc pair (if (< (car pair) (car (cdr pair))) 0 acc)) 1))))))
+(let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (do
   (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
   (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
   (|>
@@ -822,7 +836,7 @@
       (iter (+ i 1))) 
       arr))
       ) (iter 0))))
-(let char? (lambda cc (and (number? cc) (>= cc 0) (< cc 65535))))
+(let char? (lambda cc (and (atom? cc) (>= cc 0) (< cc 65535))))
 (let new:set4 (lambda (array () () () ())))
 (let new:array (lambda items (array:shallow-copy items)))
 (let new:list (lambda value (array () value ())))
@@ -1105,13 +1119,14 @@ q)))
 (let identity (lambda x x))
 (let truthy? (lambda x
     (cond
-     (number? x) (not (= x 0))
+     (atom? x) (not (= x 0))
      (array? x) (> (length x) 0)
      (*) 1)))
 (let falsy? (lambda x
     (cond
-     (number? x) (= x 0)
+     (atom? x) (= x 0)
      (array? x) (= (length x) 0))))
+(let array? (lambda x (not (atom? x))))
 
 (let ast:type 0)
 (let ast:value 1)
@@ -1124,7 +1139,7 @@ q)))
   (let digits (if is-negative (cdr string) string))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
 (let ast:leaf (lambda type value (array type value)))
-(let ast:leaf? (lambda arg (do (let c (car arg)) (and (number? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
+(let ast:leaf? (lambda arg (do (let c (car arg)) (and (atom? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
 (let from:chars->ast (lambda source (do
     (let tree ())
     (let stack (array tree))

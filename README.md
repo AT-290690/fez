@@ -244,7 +244,7 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ```lisp
 ; all keywords
 (/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>) (|>) (mod)
-(array?) (number?) (lambda?) (lambda) (array) (number) (string)
+(atom?) (lambda) (array) (number) (string)
 (array:set!) (array:get) (car) (cdr) (cons) (length) (do)
 (if) (unless) (not) (and) (or) (cond)
 (apply) (let) (let*) (case) (assert)

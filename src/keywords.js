@@ -8,9 +8,7 @@ export const KEYWORDS = {
   NUMBER_TYPE: 'number',
   ARRAY_TYPE: 'array',
   ARRAY_LENGTH: 'length',
-  IS_ARRAY: 'array?',
-  IS_NUMBER: 'number?',
-  IS_FUNCTION: 'lambda?',
+  IS_ATOM: 'atom?',
   ADDITION: '+',
   SUBTRACTION: '-',
   MULTIPLICATION: '*',
@@ -44,12 +42,14 @@ export const KEYWORDS = {
   DEFINE_VARIABLE: 'let',
   PIPE: '|>',
   TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
+
+  SET_ARRAY: 'array:set!',
+
   NOT_COMPILED_BLOCK: 'void',
   TEST_CASE: 'case',
   TEST_BED: 'assert',
   LOG: 'log!',
   LOG_STRING: 'log-string!',
   CLEAR_CONSOLE: 'clear!',
-  SET_ARRAY: 'array:set!',
   DOC: 'fez-manual'
 }

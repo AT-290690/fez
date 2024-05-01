@@ -89,33 +89,14 @@ const keywords = {
       )
     return array.length
   },
-  [KEYWORDS.IS_ARRAY]: (args, env) => {
+  [KEYWORDS.IS_ATOM]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
         `Invalid number of arguments for (${
-          KEYWORDS.IS_ARRAY
-        }) (= 1 required) (${KEYWORDS.IS_ARRAY} ${stringifyArgs(args)})`
-      )
-    const array = evaluate(args[0], env)
-    return +Array.isArray(array)
-  },
-  [KEYWORDS.IS_NUMBER]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.IS_NUMBER
-        }) (= 1 required) (${KEYWORDS.IS_NUMBER} ${stringifyArgs(args)})`
+          KEYWORDS.IS_ATOM
+        }) (= 1 required) (${KEYWORDS.IS_ATOM} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'number')
-  },
-  [KEYWORDS.IS_FUNCTION]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.IS_FUNCTION
-        }) (= 1 required) (${KEYWORDS.IS_FUNCTION} ${stringifyArgs(args)})`
-      )
-    return +(typeof evaluate(args[0], env) === 'function')
   },
   [KEYWORDS.ADDITION]: (args, env) => {
     if (!args.length) return 0 // identity

@@ -239,6 +239,7 @@ export const fez = (source, options = {}) => {
       throw new Error('Source has to be either a lisp source code or an AST')
     }
   } catch (error) {
+    // console.log(error)
     const err = error.message
       .replace("'[object Array]'", '(array)')
       .replace('object', '(array)')

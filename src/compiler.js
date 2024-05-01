@@ -102,9 +102,7 @@ const Helpers = {
   array_get: 'array_get=(arr,i)=>arr.at(i)',
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
-  numberPredicate: `numberPredicate=(number)=>+(typeof number==='number')`,
-  lambdaPredicate: `lambdaPredicate=(lambda)=>+(typeof lambda==='function')`,
-  arrayPredicate: `arrayPredicate=(array)=>+Array.isArray(array)`,
+  atomPredicate: `atomPredicate=(number)=>+(typeof number==='number')`,
   array_setEffect: `array_setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
 }
 const semiColumnEdgeCases = new Set([
@@ -169,15 +167,9 @@ const compile = (tree, Drill) => {
         out += `),${name});`
         return out
       }
-      case KEYWORDS.IS_NUMBER:
-        Drill.Helpers.add('numberPredicate')
-        return `numberPredicate(${compile(Arguments[0], Drill)});`
-      case KEYWORDS.IS_FUNCTION:
-        Drill.Helpers.add('lambdaPredicate')
-        return `lambdaPredicate(${compile(Arguments[0], Drill)});`
-      case KEYWORDS.IS_ARRAY:
-        Drill.Helpers.add('arrayPredicate')
-        return `arrayPredicate(${compile(Arguments[0], Drill)});`
+      case KEYWORDS.IS_ATOM:
+        Drill.Helpers.add('atomPredicate')
+        return `atomPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.NUMBER_TYPE:
         return '0'
       case KEYWORDS.BOOLEAN_TYPE:
