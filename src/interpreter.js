@@ -713,18 +713,6 @@ const keywords = {
       )
     return other.reduce((a, b) => a.concat(b), array)
   },
-  [KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION]: (args, env) => {
-    if (!args.length)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
-        }) (>= 2 required). (${
-          KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION
-        } ${stringifyArgs(args)})`
-      )
-    // TODO: Add validation for TCO recursion
-    return keywords[KEYWORDS.DEFINE_VARIABLE](args, env)
-  },
   [KEYWORDS.TEST_CASE]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(

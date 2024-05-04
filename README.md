@@ -190,15 +190,15 @@ This optimization technique works only by declaring the variable with let\*
 and only when compiled to JavaScript.
 
 ```lisp
-(let* sum-to (lambda n acc (if (= n 0) acc (sum-to (- n 1) (+ n acc)))))
-(sum-to 10000 0)
+(let rec:sum-to (lambda n acc (if (= n 0) acc (rec:sum-to (- n 1) (+ n acc)))))
+(rec:sum-to 10000 0)
 ```
 
 ```js
 console.log(
   fez(
-    `(let* sum-to (lambda n acc (if (= n 0) acc (sum-to (- n 1) (+ n acc)))))
-(sum-to 10000 0)`,
+    `(let rec:sum-to (lambda n acc (if (= n 0) acc (rec:sum-to (- n 1) (+ n acc)))))
+(rec:sum-to 10000 0)`,
     { compile: 1, eval: 1 }
   )
 )
@@ -247,6 +247,6 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 (atom?) (lambda) (array) (number) (string)
 (array:set!) (array:get) (car) (cdr) (cons) (length) (do)
 (if) (unless) (not) (and) (or) (cond)
-(apply) (let) (let*) (case) (assert)
+(apply) (let) (case) (assert)
 (log!) (log-string!) (clear!) (void) (fez-manual)
 ```

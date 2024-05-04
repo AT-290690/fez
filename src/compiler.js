@@ -157,9 +157,32 @@ const compile = (tree, Drill) => {
         }(${parseArgs(rest, Drill)})`
       }
       case KEYWORDS.DEFINE_VARIABLE: {
-        const name = lispToJavaScriptVariableName(Arguments[0][VALUE])
-        Drill.Variables.add(name)
-        return `(${name}=${compile(Arguments[1], Drill)});`
+        const n = Arguments[0][VALUE]
+        if (n.split(':')[0] === KEYWORDS.RECURSION) {
+          const name = lispToJavaScriptVariableName(n)
+          const newName = `rec_${performance.now().toString().replace('.', 7)}`
+          Drill.Variables.add(name)
+          Drill.Variables.add(newName)
+          Drill.Helpers.add('__tco')
+          const functionArgs = Arguments.at(-1).slice(1)
+          const body = functionArgs.pop()
+          const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
+          deepRename(n, newName, body)
+          const evaluatedBody = compile(body, FunctionDrill)
+          const vars = FunctionDrill.Variables.size
+            ? `var ${[...FunctionDrill.Variables].join(',')};`
+            : ''
+          return `(${name}=(__tco(${newName}=(${parseArgs(
+            functionArgs,
+            Drill
+          )})=>{${vars}return ${evaluatedBody
+            .toString()
+            .trimStart()}}, ${newName})));`
+        } else {
+          const name = lispToJavaScriptVariableName(n)
+          Drill.Variables.add(name)
+          return `(${name}=${compile(Arguments[1], Drill)});`
+        }
       }
       case KEYWORDS.IS_ATOM:
         Drill.Helpers.add('atomPredicate')
@@ -208,35 +231,6 @@ const compile = (tree, Drill) => {
           ),
           InnerDrills
         )})=>{${vars}return ${evaluatedBody.toString().trimStart()}});`
-      }
-      case KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: {
-        const arg = Arguments[0]
-        const val = Arguments[1]
-        if (val[0][0] === APPLY && val[0][1] === KEYWORDS.ANONYMOUS_FUNCTION) {
-          const name = lispToJavaScriptVariableName(arg[VALUE])
-          const newName = `rec_${performance.now().toString().replace('.', 7)}`
-          Drill.Variables.add(name)
-          Drill.Variables.add(newName)
-          Drill.Helpers.add('__tco')
-          const functionArgs = val.slice(1)
-          const body = functionArgs.pop()
-          const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-          deepRename(arg[VALUE], newName, body)
-          const evaluatedBody = compile(body, FunctionDrill)
-          const vars = FunctionDrill.Variables.size
-            ? `var ${[...FunctionDrill.Variables].join(',')};`
-            : ''
-          return `(${name}=(__tco(${newName}=(${parseArgs(
-            functionArgs,
-            Drill
-          )})=>{${vars}return ${evaluatedBody
-            .toString()
-            .trimStart()}}, ${newName})));`
-        } else
-          return compile(
-            [[APPLY, KEYWORDS.DEFINE_VARIABLE], ...Arguments],
-            Drill
-          )
       }
       case KEYWORDS.AND:
         return `((${parseArgs(Arguments, Drill, '&&')}) ? 1 : 0);`

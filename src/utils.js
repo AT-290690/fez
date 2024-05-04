@@ -134,9 +134,7 @@ export const handleUnbalancedQuotes = (source) => {
 }
 export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
 const isDefinition = (x) =>
-  x[TYPE] === APPLY &&
-  (x[VALUE] === KEYWORDS.DEFINE_VARIABLE ||
-    x[VALUE] === KEYWORDS.TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION)
+  x[TYPE] === APPLY && x[VALUE] === KEYWORDS.DEFINE_VARIABLE
 const toDeps = (libs) =>
   libs.reduce(
     (a, x, i) => a.set(x.at(1)[VALUE], { value: x, index: i }),

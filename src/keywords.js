@@ -5,6 +5,7 @@ export const WORD = 1
 export const ATOM = 2
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
+  RECURSION: 'rec',
   NUMBER_TYPE: 'number',
   ARRAY_TYPE: 'array',
   ARRAY_LENGTH: 'length',
@@ -41,7 +42,6 @@ export const KEYWORDS = {
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'let',
   PIPE: '|>',
-  TAIL_CALLS_OPTIMISED_RECURSIVE_FUNCTION: 'let*',
 
   SET_ARRAY: 'array:set!',
 

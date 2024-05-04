@@ -9,11 +9,11 @@ describe('Utils', () => {
       ; returns a copy of the array but reversed
       ; '(1 2 3) -> '(3 2 1)
       (let reverse (lambda arr (do
-        (let* iter (lambda arr out
+        (let rec:iter (lambda arr out
           (if (length arr)
-              (iter (cdr arr) (cons (array (car arr)) out)) 
+              (rec:iter (cdr arr) (cons (array (car arr)) out)) 
               out)))
-        (iter arr ()))))
+        (rec:iter arr ()))))
       
       (void 
         (let test (assert
