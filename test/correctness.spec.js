@@ -384,5 +384,38 @@ describe('Corretness', () => {
       ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )
+
+    strictEqual(
+      fez(
+        `(car
+      (assert
+        (case (string:greater? "a" "a") 0)
+        (case (string:greater? "a" "b") 1)
+        (case (string:greater? "aa" "bb") 1)
+        (case (string:greater? "bb" "aa") 0)
+        (case (string:greater? "aa" "aa") 0)
+        (case (string:greater? "b" "a") 0)
+        (case (string:lesser? "a" "a") 0)
+        (case (string:lesser? "a" "b") 0)
+        (case (string:lesser? "aa" "bb") 0)
+        (case (string:lesser? "bb" "aa") 1)
+        (case (string:lesser? "aa" "aa") 0)
+        (case (string:lesser? "b" "a") 1)
+        (case (string:greater-or-equal? "a" "a") 1)
+        (case (string:greater-or-equal? "a" "b") 1)
+        (case (string:greater-or-equal? "aa" "bb") 1)
+        (case (string:greater-or-equal? "bb" "aa") 0)
+        (case (string:greater-or-equal? "aa" "aa") 1)
+        (case (string:greater-or-equal? "b" "a") 0)
+        (case (string:lesser-or-equal? "a" "a") 1)
+        (case (string:lesser-or-equal? "a" "b") 0)
+        (case (string:lesser-or-equal? "aa" "bb") 0)
+        (case (string:lesser-or-equal? "bb" "aa") 1)
+        (case (string:lesser-or-equal? "aa" "aa") 1)
+        (case (string:lesser-or-equal? "b" "a") 1)))`,
+        { compile: 0, mutation: 0 }
+      ),
+      1
+    )
   })
 })

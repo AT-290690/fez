@@ -157,15 +157,9 @@ const compile = (tree, Drill) => {
         }(${parseArgs(rest, Drill)})`
       }
       case KEYWORDS.DEFINE_VARIABLE: {
-        let name,
-          out = '(('
-        if (Arguments[0][TYPE] === WORD) {
-          name = lispToJavaScriptVariableName(Arguments[0][VALUE])
-          Drill.Variables.add(name)
-        }
-        out += `${name}=${compile(Arguments[1], Drill)}`
-        out += `),${name});`
-        return out
+        const name = lispToJavaScriptVariableName(Arguments[0][VALUE])
+        Drill.Variables.add(name)
+        return `(${name}=${compile(Arguments[1], Drill)});`
       }
       case KEYWORDS.IS_ATOM:
         Drill.Helpers.add('atomPredicate')
@@ -219,11 +213,8 @@ const compile = (tree, Drill) => {
         const arg = Arguments[0]
         const val = Arguments[1]
         if (val[0][0] === APPLY && val[0][1] === KEYWORDS.ANONYMOUS_FUNCTION) {
-          let name,
-            newName,
-            out = '(('
-          name = lispToJavaScriptVariableName(arg[VALUE])
-          newName = `rec_${performance.now().toString().replace('.', 7)}`
+          const name = lispToJavaScriptVariableName(arg[VALUE])
+          const newName = `rec_${performance.now().toString().replace('.', 7)}`
           Drill.Variables.add(name)
           Drill.Variables.add(newName)
           Drill.Helpers.add('__tco')
@@ -235,12 +226,12 @@ const compile = (tree, Drill) => {
           const vars = FunctionDrill.Variables.size
             ? `var ${[...FunctionDrill.Variables].join(',')};`
             : ''
-          out += `${name}=(__tco(${newName}=(${parseArgs(
+          return `(${name}=(__tco(${newName}=(${parseArgs(
             functionArgs,
             Drill
-          )})=>{${vars}return ${evaluatedBody.toString().trimStart()}};`
-          out += `, ${newName}))), ${name});`
-          return out
+          )})=>{${vars}return ${evaluatedBody
+            .toString()
+            .trimStart()}}, ${newName})));`
         } else
           return compile(
             [[APPLY, KEYWORDS.DEFINE_VARIABLE], ...Arguments],
