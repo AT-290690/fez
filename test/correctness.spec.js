@@ -417,5 +417,12 @@ describe('Corretness', () => {
       ),
       1
     )
+    deepStrictEqual(
+      fez(
+        `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`,
+        { compile: 0 }
+      ),
+      [45, 49, 50, 51, 45, 52, 45, 53, 54, 55]
+    )
   })
 })

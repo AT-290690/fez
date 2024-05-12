@@ -4,7 +4,8 @@ import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import { deSuggar } from './interpreter.js'
-export const logError = (error) => console.log('\x1b[31m', error, '\x1b[0m')
+export const logError = (error) =>
+  console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const replaceStrings = (source) => {
   const quotes = source.match(/"(.*?)"/g)
@@ -52,10 +53,28 @@ export const escape = (Char) => {
       return ''
   }
 }
-export const stringifyType = (type) =>
-  !isLeaf(type)
-    ? `(array ${type.map((t) => stringifyType(t)).join(' ')})`
-    : typeof type
+export const stringifyArrayTypes = (type) =>
+  Array.isArray(type)
+    ? `(array${type.length ? ' ' : ''}${type
+        .map((x) => stringifyArrayTypes(x))
+        .join(' ')
+        .trim()})`
+    : 'number'
+export const stringifyType = (type) => {
+  if (!isLeaf(type)) {
+    const [car, ...cdr] = type
+    if (car == undefined) return '(array)'
+    else if (car[TYPE] === APPLY && car[VALUE] === KEYWORDS.ARRAY_TYPE)
+      return `(array ${type
+        .map((t) => stringifyType(t))
+        .join(' ')
+        .trim()})`
+    return type
+      .map((t) => stringifyType(t))
+      .join(' ')
+      .trim()
+  } else if (type[TYPE] === ATOM) return 'number'
+}
 export const stringifyArgs = (args) =>
   args
     .map((x) =>
@@ -219,6 +238,7 @@ export const fez = (source, options = {}) => {
           'Top level expressions need to be wrapped in a (do) block'
         )
       const ast = [...treeShake(parsed, std), ...parsed]
+      // if (options.check) typeCheck(ast)
       if (options.compile) {
         const js = Object.values(comp(deepClone(ast))).join('')
         return options.eval ? eval(js) : js

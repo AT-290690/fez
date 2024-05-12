@@ -73,6 +73,7 @@
 (let char:dash 45)
 (let char:left-brace 40)
 (let char:right-brace 41)
+(let char:hash 35)
 (let math:range (lambda start end (do
                           (let rec:iterate (lambda out count
                           (if (<= count end) (rec:iterate (array:set! out (length out) count) (+ count 1)) out)))
@@ -472,6 +473,15 @@
 (let from:digits->number (lambda digits (do
     (let rec:iter (lambda rem num base (if (length rem) (rec:iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
     (rec:iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
+(let from:negative-or-positive-digits->chars (lambda arr (|>
+  arr
+  (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
+  (array:fold (lambda a x
+  (if (car x)
+      (array:set! a (length a) (from:digit->char (car (cdr x))))
+      (|> a
+        (array:set! (length a) char:dash)
+        (array:set! (length a) (from:digit->char (car (cdr x))))))) ()))))
 (let from:number->digits (lambda num (do
   (let rec:iter (lambda num res (cond
                               (>= num 1) (rec:iter (/ num 10) (array:set! res (length res) (| (mod num 10) 0)))
