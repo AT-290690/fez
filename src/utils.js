@@ -233,10 +233,6 @@ export const fez = (source, options = {}) => {
       if (!options.mutation) code = removeMutation(code)
       if (!code.length && options.throw) throw new Error('Nothing to parse!')
       const parsed = deSuggar(LISP.parse(code))
-      if (parsed.length === 0 && options.throw)
-        throw new Error(
-          'Top level expressions need to be wrapped in a (do) block'
-        )
       const ast = [...treeShake(parsed, std), ...parsed]
       // if (options.check) typeCheck(ast)
       if (options.compile) {

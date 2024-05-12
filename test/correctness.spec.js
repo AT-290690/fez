@@ -71,12 +71,11 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(do
-(let arr (array 0.1 3.14 1 2 3 4 10))
+        `(let arr (array 0.1 3.14 1 2 3 4 10))
 (let *FACTOR* 17)
 (let sin (lambda x (math:sine x *FACTOR*)))
 (let cos (lambda x (math:cosine x *FACTOR*)))
-(array (array:map arr sin) (array:map arr cos)))`,
+(array (array:map arr sin) (array:map arr cos))`,
         {
           compile: 1,
           eval: 1

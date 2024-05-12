@@ -223,14 +223,18 @@ const compile = (tree, Drill) => {
         const vars = InnerDrills.Variables.size
           ? `var ${[...InnerDrills.Variables].join(',')};`
           : ''
-        return `((${parseArgs(
+        const args = parseArgs(
           functionArgs.map((node, index) =>
             node[VALUE] === PLACEHOLDER
               ? leaf(node[TYPE], `_${index}`)
               : leaf(node[TYPE], node[VALUE])
           ),
           InnerDrills
-        )})=>{${vars}return ${evaluatedBody.toString().trimStart()}});`
+        )
+        // const $ = [${args}];
+        return `((${args})=>{${vars}return ${evaluatedBody
+          .toString()
+          .trimStart()}});`
       }
       case KEYWORDS.AND:
         return `((${parseArgs(Arguments, Drill, '&&')}) ? 1 : 0);`

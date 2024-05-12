@@ -5,9 +5,9 @@ export const WORD = 1
 export const ATOM = 2
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
-  RECURSION: 'rec',
   NUMBER_TYPE: 'number',
   ARRAY_TYPE: 'array',
+  IDENTITY: 'identity',
   ARRAY_LENGTH: 'length',
   IS_ATOM: 'atom?',
   ADDITION: '+',

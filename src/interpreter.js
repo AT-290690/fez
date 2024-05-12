@@ -317,9 +317,11 @@ const keywords = {
           } ${stringifyArgs(args)})`
         )
       const localEnv = Object.create(env)
+      // localEnv[KEYWORDS.BLOCK] = block[KEYWORDS.BLOCK]
       for (let i = 0; i < props.length; ++i) {
+        const value = evaluate(props[i], scope)
         Object.defineProperty(localEnv, params[i][VALUE], {
-          value: evaluate(props[i], scope),
+          value,
           writable: true
         })
       }
@@ -902,7 +904,16 @@ keywords[KEYWORDS.DOC] = (args, env) => {
         .map((x) => `(${x.join(' ')})`)
   }
 }
+
 export const deSuggar = (ast) => {
+  if (ast.length === 0)
+    throw new SyntaxError(
+      `Top level ${KEYWORDS.NUMBER_TYPE} need to be wrapped in a (${KEYWORDS.IDENTITY})`
+    )
+  // for (const node of ast)
+  //   if (node[0] && node[0][TYPE] === APPLY && node[0][VALUE] === KEYWORDS.BLOCK)
+  //     throw new SyntaxError(`Top level (${KEYWORDS.BLOCK}) is not allowed`)
+  let prev = undefined
   const evaluate = (exp) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first != undefined) {
@@ -914,6 +925,33 @@ export const deSuggar = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
+              case KEYWORDS.BLOCK:
+                {
+                  if (
+                    prev == undefined ||
+                    (prev &&
+                      prev[TYPE] === APPLY &&
+                      prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
+                  )
+                    throw new SyntaxError(
+                      `Can only use (${KEYWORDS.BLOCK}) as a body of a (${KEYWORDS.ANONYMOUS_FUNCTION})`
+                    )
+                }
+                break
+                // case KEYWORDS.DEFINE_VARIABLE:
+                //   {
+                //     if (
+                //       rest[1] &&
+                //       rest[1][0] &&
+                //       rest[1][0][TYPE] === APPLY &&
+                //       rest[1][0][VALUE] === KEYWORDS.BLOCK
+                //     ) {
+                //       throw new SyntaxError(
+                //         `Can't use (${KEYWORDS.BLOCK}) in (${KEYWORDS.DEFINE_VARIABLE})`
+                //       )
+                //     }
+                //   }
+                break
               case KEYWORDS.PIPE:
                 {
                   if (rest.length < 1)
@@ -957,6 +995,7 @@ export const deSuggar = (ast) => {
                 }
                 break
             }
+            prev = first
           }
           break
         default:
