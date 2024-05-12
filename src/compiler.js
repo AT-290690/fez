@@ -94,6 +94,7 @@ const Helpers = {
     return args.at(-1) ? 1 : 0
   }`,
   logEffect: `logEffect=(msg)=>{console.log(msg);return msg}`,
+  logCharEffect: `logCharEffect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
   logStringEffect: `logStringEffect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
   array_cons: `array_cons=(A, ...B)=> B.reduce((a, b) => a.concat(b), A)`,

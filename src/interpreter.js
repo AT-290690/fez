@@ -859,6 +859,25 @@ const keywords = {
     console.log(expression.map((x) => String.fromCharCode(x)).join(''))
     return expression
   },
+  [KEYWORDS.LOG_CHAR]: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError(
+        `Invalid number of arguments to (${
+          KEYWORDS.LOG_CHAR
+        }) (= 1 required) (${KEYWORDS.LOG_CHAR} ${stringifyArgs(args)})`
+      )
+    const expression = evaluate(args[0], env)
+    if (typeof expression !== 'number')
+      throw new TypeError(
+        `Argument of (${KEYWORDS.LOG_CHAR}) must be a (${
+          KEYWORDS.NUMBER_TYPE
+        }) but got (${expression}) (${KEYWORDS.LOG_CHAR} ${stringifyArgs(
+          args
+        )})`
+      )
+    console.log(String.fromCharCode(expression))
+    return expression
+  },
   [KEYWORDS.CLEAR_CONSOLE]: (args) => {
     if (args.length)
       throw new RangeError(

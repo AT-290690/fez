@@ -50,6 +50,7 @@ export const KEYWORDS = {
   TEST_BED: 'assert',
   LOG: 'log!',
   LOG_STRING: 'log-string!',
+  LOG_CHAR: 'log-char!',
   CLEAR_CONSOLE: 'clear!',
   DOC: 'fez-manual'
 }

@@ -9,6 +9,7 @@ export const logError = (error) =>
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const replaceStrings = (source) => {
   const quotes = source.match(/"(.*?)"/g)
+  // TODO handle escaping
   if (quotes)
     for (const q of quotes)
       source = source.replaceAll(
@@ -20,7 +21,10 @@ export const replaceStrings = (source) => {
       )
   return source
 }
-export const replaceQuotes = (source) => source.replaceAll(/\'\(/g, '(array ')
+export const replaceQuotes = (source) =>
+  source.replaceAll(/\'\(/g, '(array ').replaceAll(/\(\)/g, '(array)')
+// export const replaceEmptyArrays = (source) =>
+//   source
 export const removeNoCode = (source) =>
   source
     .replace(/;.+/g, '')
