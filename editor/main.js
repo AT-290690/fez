@@ -91,7 +91,7 @@ document.addEventListener('keydown', (e) => {
       const compressed = LZString.compressToBase64(editor.getValue())
       terminal.setValue(
         serialise(
-          fez(`${editor.getValue()}`, {
+          fez(editor.getValue(), {
             mutation: 1
           })
         )
@@ -116,7 +116,7 @@ document.addEventListener('keydown', (e) => {
     if (value.trim()) {
       terminal.setValue(
         serialise(
-          fez(`(do ${editor.getValue()})`, {
+          fez(editor.getValue(), {
             compile: 1,
             eval: 1,
             mutation: 1
