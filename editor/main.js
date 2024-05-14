@@ -4,10 +4,11 @@ editor.setOptions({
   fontFamily: 'Fantastic',
   fontSize: '10pt'
 })
-// tomorrow_night_bright
-// gob
-const EDITOR_THEME = 'pastel_on_dark'
-const TERMINAL_THEME = 'pastel_on_dark'
+// pastel_on_dark
+// pastel_on_dark
+const THEME = 'tomorrow_night'
+const EDITOR_THEME = THEME
+const TERMINAL_THEME = THEME
 // 'chrome' => 'Chrome',
 // 'clouds' => 'Clouds',
 // 'crimson_editor' => 'Crimson Editor',

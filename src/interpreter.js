@@ -944,33 +944,35 @@ export const deSuggar = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
-              case KEYWORDS.BLOCK:
-                {
-                  if (
-                    prev == undefined ||
-                    (prev &&
-                      prev[TYPE] === APPLY &&
-                      prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
-                  )
-                    throw new SyntaxError(
-                      `Can only use (${KEYWORDS.BLOCK}) as a body of a (${KEYWORDS.ANONYMOUS_FUNCTION})`
-                    )
-                }
-                break
-                // case KEYWORDS.DEFINE_VARIABLE:
-                //   {
-                //     if (
-                //       rest[1] &&
-                //       rest[1][0] &&
-                //       rest[1][0][TYPE] === APPLY &&
-                //       rest[1][0][VALUE] === KEYWORDS.BLOCK
-                //     ) {
-                //       throw new SyntaxError(
-                //         `Can't use (${KEYWORDS.BLOCK}) in (${KEYWORDS.DEFINE_VARIABLE})`
-                //       )
-                //     }
-                //   }
-                break
+              // case KEYWORDS.BLOCK:
+              //   {
+              //     if (
+              //       prev == undefined ||
+              //       (prev &&
+              //         prev[TYPE] === APPLY &&
+              //         prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
+              //     )
+              //       throw new SyntaxError(
+              //         `Can only use (${KEYWORDS.BLOCK}) as a body of a (${
+              //           KEYWORDS.ANONYMOUS_FUNCTION
+              //         }) (${stringifyArgs(exp)})`
+              //       )
+              //   }
+              //   break
+              // case KEYWORDS.DEFINE_VARIABLE:
+              //   {
+              //     if (
+              //       rest[1] &&
+              //       rest[1][0] &&
+              //       rest[1][0][TYPE] === APPLY &&
+              //       rest[1][0][VALUE] === KEYWORDS.BLOCK
+              //     ) {
+              //       throw new SyntaxError(
+              //         `Can't use (${KEYWORDS.BLOCK}) in (${KEYWORDS.DEFINE_VARIABLE})`
+              //       )
+              //     }
+              //   }
+              // break
               case KEYWORDS.PIPE:
                 {
                   if (rest.length < 1)
