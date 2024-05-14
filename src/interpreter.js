@@ -944,21 +944,21 @@ export const deSuggar = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
-              // case KEYWORDS.BLOCK:
-              //   {
-              //     if (
-              //       prev == undefined ||
-              //       (prev &&
-              //         prev[TYPE] === APPLY &&
-              //         prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
-              //     )
-              //       throw new SyntaxError(
-              //         `Can only use (${KEYWORDS.BLOCK}) as a body of a (${
-              //           KEYWORDS.ANONYMOUS_FUNCTION
-              //         }) (${stringifyArgs(exp)})`
-              //       )
-              //   }
-              //   break
+              case KEYWORDS.BLOCK:
+                {
+                  if (
+                    prev == undefined ||
+                    (prev &&
+                      prev[TYPE] === APPLY &&
+                      prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
+                  )
+                    throw new SyntaxError(
+                      `Can only use (${KEYWORDS.BLOCK}) as a body of a (${
+                        KEYWORDS.ANONYMOUS_FUNCTION
+                      }) (${stringifyArgs(exp)})`
+                    )
+                }
+                break
               // case KEYWORDS.DEFINE_VARIABLE:
               //   {
               //     if (
