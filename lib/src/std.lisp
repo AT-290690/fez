@@ -1,5 +1,3 @@
-(let math:e 2.718281828459045)
-(let math:pi 3.141592653589793)
 (let char:A 65)
 (let char:B 66)
 (let char:C 67)
@@ -74,6 +72,10 @@
 (let char:left-brace 40)
 (let char:right-brace 41)
 (let char:hash 35)
+(let math:e 2.718281828459045)
+(let math:pi 3.141592653589793)
+(let math:min-safe-integer -9007199254740991)
+(let math:max-safe-integer 9007199254740991)
 (let math:range (lambda start end (do
                           (let rec:iterate (lambda out count
                           (if (<= count end) (rec:iterate (array:set! out (length out) count) (+ count 1)) out)))
@@ -225,8 +227,8 @@
         (< n 0) 0
         (*) (apply (lambda (do
         (let rec:iter (lambda i end (do
-            (let is-prime (not (= (mod n i) 0)))
-            (if (and (<= i end) is-prime) (rec:iter (+ i 1) end) is-prime))))
+            (let prime? (not (= (mod n i) 0)))
+            (if (and (<= i end) prime?) (rec:iter (+ i 1) end) prime?))))
             (or (= n 2) (rec:iter 2 (math:sqrt n)))))))))
 (let math:number-of-digits (lambda n
   (cond
@@ -251,14 +253,29 @@
   (array:zip (array:reverse arr))
   (array:map tuple:subtract)
   (array:every? math:zero?))))
+(let math:max-sub-array-sum (lambda arr (do
+    (let get-sum (lambda arr (array:get arr 0)))
+    (let set-sum! (lambda arr value (array:set! arr 0 value)))
+    (let get-max (lambda arr (array:get arr 1)))
+    (let set-max! (lambda arr value (array:set! arr 1 value)))
+    (|> arr
+        (array:fold (lambda a b (do
+            (set-sum! a (+ (get-sum a) b))
+            (if (< (get-max a) (get-sum a))
+                (set-max! a (get-sum a)))
+            (if (< (get-sum a) 0)
+                (set-sum! a 0))
+            a)) (array 0 math:min-safe-integer))
+        (cdr)
+        (car)))))
 (let array:for (lambda arr callback (do 
                     (let rec:iter (lambda out 
                       (if (length out) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
                     (rec:iter arr)
                 arr)))
 (let array:fill (lambda n callback (do 
-(let rec:iter (lambda arr i (if (= i 0) arr (rec:iter (cons arr (array (callback))) (- i 1)))))
-(rec:iter () n))))
+  (let rec:iter (lambda arr i (if (= i 0) arr (rec:iter (cons arr (array (callback))) (- i 1)))))
+  (rec:iter () n))))
 (let array:of (lambda n callback (do 
   (let rec:iter (lambda arr i (if (= i n) arr (rec:iter (cons arr (array (callback i))) (+ i 1)))))
   (rec:iter () 0))))
@@ -441,8 +458,8 @@
       (let x (car b))
       (let i (car (cdr b)))
       (if (mod i n) 
-        (array:set! (let last-a (array:get a -1)) (length last-a) x) 
-        (array:set! a (length a) (apply (lambda (do (let mut-arr ()) (array:set! mut-arr (length mut-arr) x)))))) a))
+        (array:push! (array:get a -1) x) 
+        (array:push! a (array x))) a))
       ())))
 (let from:digit->char (lambda d 
   (cond 
@@ -517,10 +534,10 @@
     (brray:add-to-left! q (array:get initial index))
    (if (> index 0) (rec:left (- index 1))))))
  (rec:left (- half 1))
-(let rec:rigth (lambda index bounds (do
+(let rec:right (lambda index bounds (do
    (brray:add-to-right! q (array:get initial index))
-   (if (< index bounds) (rec:rigth (+ index 1) bounds)))))
- (rec:rigth half (- (length initial) 1))
+   (if (< index bounds) (rec:right (+ index 1) bounds)))))
+ (rec:right half (- (length initial) 1))
     q)))
 (let from:brray->array (lambda q (do
   (let out ())
@@ -1035,10 +1052,10 @@
     (brray:add-to-left! result (callback (brray:get q index)))
    (if (> index 0) (rec:left (- index 1))))))
  (rec:left (- half 1))
-(let rec:rigth (lambda index bounds (do
+(let rec:right (lambda index bounds (do
    (brray:add-to-right! result (callback (brray:get q index)))
-   (if (< index bounds) (rec:rigth (+ index 1) bounds)))))
- (rec:rigth half (- len 1))
+   (if (< index bounds) (rec:right (+ index 1) bounds)))))
+ (rec:right half (- len 1))
  result)))
 (let brray:balance? (lambda q (= (+ (brray:offset-right q) (brray:offset-left q)) 0)))
 (let brray:balance! (lambda q
@@ -1050,10 +1067,10 @@
         (brray:add-to-left! q (array:get initial index))
         (if (> index 0) (rec:left (- index 1))))))
       (rec:left (- half 1))
-    (let rec:rigth (lambda index bounds (do
+    (let rec:right (lambda index bounds (do
         (brray:add-to-right! q (array:get initial index))
-        (if (< index bounds) (rec:rigth (+ index 1) bounds)))))
-      (rec:rigth half (- (length initial) 1))
+        (if (< index bounds) (rec:right (+ index 1) bounds)))))
+      (rec:right half (- (length initial) 1))
     q))))))
 (let brray:append! (lambda q item (do (brray:add-to-right! q item) q)))
 (let brray:prepend! (lambda q item (do (brray:add-to-left! q item) q)))
@@ -1102,10 +1119,10 @@ q)))
       (brray:add-to-left! slice (brray:get entity (+ start index)))
       (if (> index 0) (rec:left (- index 1))))))
   (rec:left (- half 1))
-  (let rec:rigth (lambda index bounds (do
+  (let rec:right (lambda index bounds (do
       (brray:add-to-right! slice (brray:get entity (+ start index)))
-      (if (< index bounds) (rec:rigth (+ index 1) bounds)))))
-  (rec:rigth half (- slice-len 1))
+      (if (< index bounds) (rec:right (+ index 1) bounds)))))
+  (rec:right half (- slice-len 1))
   slice)))
 
 (let tuple:apply (lambda x cb (cb (car x) (car (cdr x)))))
