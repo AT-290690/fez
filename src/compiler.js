@@ -208,8 +208,8 @@ const compile = (tree, Drill) => {
         Drill.Helpers.add('cdr')
         return `cdr(${compile(Arguments[0], Drill)});`
       case KEYWORDS.GET_ARRAY:
-        Drill.Helpers.add('array_get')
-        return `array_get(${compile(Arguments[0], Drill)}, ${compile(
+        Drill.Helpers.add('get')
+        return `get(${compile(Arguments[0], Drill)}, ${compile(
           Arguments[1],
           Drill
         )});`
