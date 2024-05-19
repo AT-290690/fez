@@ -100,11 +100,11 @@ const Helpers = {
   array_cons: `array_cons=(A, ...B)=> B.reduce((a, b) => a.concat(b), A)`,
   car: 'car=(arr)=>arr.at(0)',
   cdr: 'cdr=(arr)=>arr.slice(1)',
-  array_get: 'array_get=(arr,i)=>arr.at(i)',
+  get: 'get=(arr,i)=>arr.at(i)',
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   atomPredicate: `atomPredicate=(number)=>+(typeof number==='number')`,
-  array_setEffect: `array_setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
+  setEffect: `setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',

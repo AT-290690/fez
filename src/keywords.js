@@ -24,7 +24,7 @@ export const KEYWORDS = {
   BITWISE_UNSIGNED_RIGHT_SHIFT: '>>>',
   FIRST_ARRAY: 'car',
   REST_ARRAY: 'cdr',
-  GET_ARRAY: 'array:get',
+  GET_ARRAY: 'get',
   CONS: 'cons',
   BLOCK: 'do',
   ANONYMOUS_FUNCTION: 'lambda',
@@ -43,7 +43,7 @@ export const KEYWORDS = {
   DEFINE_VARIABLE: 'let',
   PIPE: '|>',
 
-  SET_ARRAY: 'array:set!',
+  SET_ARRAY: 'set!',
 
   NOT_COMPILED_BLOCK: 'void',
   TEST_CASE: 'case',
