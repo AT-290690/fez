@@ -530,19 +530,22 @@ const keywords = {
         }) (= 2 required) (${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
       )
     const word = args[0]
-    if (word[TYPE] !== WORD)
+    const type = word[TYPE]
+    const name = word[VALUE]
+    if (type !== WORD)
       throw new SyntaxError(
-        `First argument of (${KEYWORDS.DEFINE_VARIABLE}) must be word but got ${
-          word[TYPE]
-        } (${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
-      )
-    else if (isForbiddenVariableName(word[VALUE]))
-      throw new ReferenceError(
-        `Variable name ${word[VALUE]} is forbidden at (${
+        `First argument of (${
+          KEYWORDS.DEFINE_VARIABLE
+        }) must be word but got ${type} (${
           KEYWORDS.DEFINE_VARIABLE
         } ${stringifyArgs(args)})`
       )
-    const name = word[VALUE]
+    else if (isForbiddenVariableName(name))
+      throw new ReferenceError(
+        `Variable name ${name} is forbidden at (${
+          KEYWORDS.DEFINE_VARIABLE
+        } ${stringifyArgs(args)})`
+      )
     Object.defineProperty(env, name, {
       value: evaluate(args[1], env),
       writable: false
