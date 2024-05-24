@@ -310,10 +310,10 @@ const compile = (tree, Drill) => {
       //   return compile(inp, Drill)
       // }
       case KEYWORDS.NOT_COMPILED_BLOCK:
-      case KEYWORDS.TEST_CASE:
-      case KEYWORDS.TEST_BED:
-      case KEYWORDS.DOC:
-        return ''
+      // case KEYWORDS.TEST_CASE:
+      // case KEYWORDS.TEST_BED:
+      // case KEYWORDS.DOC:
+      //   return ''
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
         if (camelCased in Helpers) Drill.Helpers.add(camelCased)

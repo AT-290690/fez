@@ -46,11 +46,8 @@ export const KEYWORDS = {
   SET_ARRAY: 'set!',
 
   NOT_COMPILED_BLOCK: 'void',
-  TEST_CASE: 'case',
-  TEST_BED: 'assert',
   LOG: 'log!',
   LOG_STRING: 'log-string!',
   LOG_CHAR: 'log-char!',
-  CLEAR_CONSOLE: 'clear!',
-  DOC: 'fez-manual'
+  CLEAR_CONSOLE: 'clear!'
 }

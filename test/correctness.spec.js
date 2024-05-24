@@ -2,6 +2,93 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      fez(
+        `(let sample1 (cons 
+      "RL" '(char:new-line)
+      '(char:new-line)
+      "AAA=BBB,CCC" '(char:new-line)
+      "BBB=DDD,EEE" '(char:new-line)
+      "CCC=ZZZ,GGG" '(char:new-line)
+      "DDD=DDD,DDD" '(char:new-line)
+      "EEE=EEE,EEE" '(char:new-line)
+      "GGG=GGG,GGG" '(char:new-line)
+      "ZZZ=ZZZ,ZZZ"))
+      (let parse (lambda input (do 
+        (let split (string:split input '(char:new-line)))
+        (let path (car split))
+        (let list (cdr (cdr split)))
+        
+        (let dirs (|> path (array:map (lambda x (string:equal? '(x) "R")))))
+        (let adj (|> list (array:map (lambda x (string:split x "=")))))
+        
+        (array 
+          dirs 
+          (array:fold adj (lambda object entry (do 
+          (let key (car entry))
+          (let value (car (cdr entry)))
+          (map:set! object key (string:split value ","))))
+          (array () () () ()))
+          adj))))
+      
+      (let sample2 (cons 
+      "LLR" '(char:new-line)
+      '(char:new-line)
+      "AAA=BBB,BBB" '(char:new-line)
+      "BBB=AAA,ZZZ" '(char:new-line)
+      "ZZZ=ZZZ,ZZZ"))
+      
+      (let sample3 (cons
+      "LR" '(char:new-line)
+      '(char:new-line)
+      "11A=11B,XXX" '(char:new-line)
+      "11B=XXX,11Z" '(char:new-line)
+      "11Z=11B,XXX" '(char:new-line)
+      "22A=22B,XXX" '(char:new-line)
+      "22B=22C,22C" '(char:new-line)
+      "22C=22Z,22Z" '(char:new-line)
+      "22Z=22B,22B" '(char:new-line)
+      "XXX=XXX,XXX"))
+      
+      (let part1 (lambda input (do 
+        (let dirs (car input))
+        (let adj (car (cdr input)))
+        (let rec:move (lambda source target step (do 
+          (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
+          (if (string:equal? node target)
+              step 
+              (rec:move node target (+ step 1))))))
+        (+ (rec:move "AAA" "ZZZ" 0) 1))))
+      
+      
+      (let part2 (lambda input (do 
+      
+        (let dirs (car input))
+        (let adj (car (cdr input)))
+        (let keys (car (cdr (cdr input))))
+        
+        (let rec:move (lambda source target step (do 
+          (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
+          (if (string:equal? '((get node -1)) target)
+              step 
+              (rec:move node target (+ step 1))))))
+      
+        (|> 
+          keys
+          (array:map car)
+          (array:select (lambda source 
+            (|> source 
+                (get -1)
+                '()
+                (string:equal? "A"))))
+          (array:map (lambda source (+ (rec:move source "Z" 0) 1)))
+          (array:fold math:least-common-divisor 1)))))
+      
+         (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      [2, 6, 6]
+    )
     strictEqual(
       fez(
         `(let list (|> (new:list 10) (list:prev! (new:list 8)) (list:next! (new:list 12))))
@@ -35,19 +122,6 @@ describe('Corretness', () => {
             (rec:iter (cdr arr) (cons (array (car arr)) out)) 
             out)))
       (rec:iter arr ()))))
-    
-    (void 
-      (let test (assert
-          (case (reverse '(1 2 3)) '(3 2 1))
-          (case (reverse '(1)) '(1))
-          (case (reverse ()) ())
-          (case (reverse '('(1 2) 3)) '(3 '(1 2)))
-          (case (reverse
-                  (array:map '('(1 2) '(1 2 3)) reverse)) 
-                            '('(3 2 1) '(2 1)))))
-      (if
-        (not (car test))
-        (log! (car (cdr test)))))
     
     (let lazy '(reverse '(1 2 3 4 5 6)))
     (apply (car lazy) (car (cdr lazy)))`,
@@ -386,32 +460,31 @@ describe('Corretness', () => {
 
     strictEqual(
       fez(
-        `(car
-      (assert
-        (case (string:greater? "a" "a") 0)
-        (case (string:greater? "a" "b") 1)
-        (case (string:greater? "aa" "bb") 1)
-        (case (string:greater? "bb" "aa") 0)
-        (case (string:greater? "aa" "aa") 0)
-        (case (string:greater? "b" "a") 0)
-        (case (string:lesser? "a" "a") 0)
-        (case (string:lesser? "a" "b") 0)
-        (case (string:lesser? "aa" "bb") 0)
-        (case (string:lesser? "bb" "aa") 1)
-        (case (string:lesser? "aa" "aa") 0)
-        (case (string:lesser? "b" "a") 1)
-        (case (string:greater-or-equal? "a" "a") 1)
-        (case (string:greater-or-equal? "a" "b") 1)
-        (case (string:greater-or-equal? "aa" "bb") 1)
-        (case (string:greater-or-equal? "bb" "aa") 0)
-        (case (string:greater-or-equal? "aa" "aa") 1)
-        (case (string:greater-or-equal? "b" "a") 0)
-        (case (string:lesser-or-equal? "a" "a") 1)
-        (case (string:lesser-or-equal? "a" "b") 0)
-        (case (string:lesser-or-equal? "aa" "bb") 0)
-        (case (string:lesser-or-equal? "bb" "aa") 1)
-        (case (string:lesser-or-equal? "aa" "aa") 1)
-        (case (string:lesser-or-equal? "b" "a") 1)))`,
+        `(and
+          (= (string:greater? "a" "a") 0)
+          (= (string:greater? "a" "b") 1)
+          (= (string:greater? "aa" "bb") 1)
+          (= (string:greater? "bb" "aa") 0)
+          (= (string:greater? "aa" "aa") 0)
+          (= (string:greater? "b" "a") 0)
+          (= (string:lesser? "a" "a") 0)
+          (= (string:lesser? "a" "b") 0)
+          (= (string:lesser? "aa" "bb") 0)
+          (= (string:lesser? "bb" "aa") 1)
+          (= (string:lesser? "aa" "aa") 0)
+          (= (string:lesser? "b" "a") 1)
+          (= (string:greater-or-equal? "a" "a") 1)
+          (= (string:greater-or-equal? "a" "b") 1)
+          (= (string:greater-or-equal? "aa" "bb") 1)
+          (= (string:greater-or-equal? "bb" "aa") 0)
+          (= (string:greater-or-equal? "aa" "aa") 1)
+          (= (string:greater-or-equal? "b" "a") 0)
+          (= (string:lesser-or-equal? "a" "a") 1)
+          (= (string:lesser-or-equal? "a" "b") 0)
+          (= (string:lesser-or-equal? "aa" "bb") 0)
+          (= (string:lesser-or-equal? "bb" "aa") 1)
+          (= (string:lesser-or-equal? "aa" "aa") 1)
+          (= (string:lesser-or-equal? "b" "a") 1))`,
         { compile: 0, mutation: 0 }
       ),
       1

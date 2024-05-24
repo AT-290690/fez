@@ -101,9 +101,9 @@
                   (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
       (array:map car))))
 ; tests
-(assert
-   (case (unique (array 1)) (array 1))
-   (case (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
+(and
+   (array:equal? (unique (array 1)) (array 1))
+   (array:equal? (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
 ```
 
 Installation:
@@ -174,10 +174,10 @@ Many logical operators
     (unless (and (not (= b -1)) (not (> a b))) char:a
             (unless (or (not (> b 2)) (not (< a 4))) char:b char:c))))
 
-(assert
-   (case (logic-a 0 -1) (logic-b 0 -1))
-   (case (logic-a 1 3) (logic-b 1 3))
-   (case (logic-a 1 2) (logic-b 1 2)))
+(and
+   (= (logic-a 0 -1) (logic-b 0 -1))
+   (= (logic-a 1 3) (logic-b 1 3))
+   (= (logic-a 1 2) (logic-b 1 2)))
 ```
 
 Tail Call Optimization:
@@ -246,6 +246,6 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 (/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>)
 (|>) (mod) (let) (if) (unless) (not) (and) (or) (cond) (atom?) (lambda)
 (car) (cdr) (cons) (length) (do) (array) (set!) (get)
-(apply) (case) (assert) (log!) (log-string!) (log-char!) (clear!)
+(apply)  (log!) (log-string!) (log-char!) (clear!)
 (void) (fez-manual)
 ```

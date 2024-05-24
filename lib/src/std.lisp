@@ -1160,6 +1160,11 @@ q)))
 
 (let array:set! set!)
 (let array:get get)
+(let arrray:length length)
+(let array:head car)
+(let array:tail cdr)
+(let array:concat cons)
+
 (let identity (lambda x x))
 (let truthy? (lambda x
     (cond

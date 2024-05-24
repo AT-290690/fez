@@ -15,19 +15,6 @@ describe('Utils', () => {
               out)))
         (rec:iter arr ()))))
       
-      (void 
-        (let test (assert
-            (case (reverse '(1 2 3)) '(3 2 1))
-            (case (reverse '(1)) '(1))
-            (case (reverse ()) ())
-            (case (reverse '('(1 2) 3)) '(3 '(1 2)))
-            (case (reverse
-                    (array:map '('(1 2) '(1 2 3)) reverse)) 
-                              '('(3 2 1) '(2 1)))))
-        (if
-          (not (car test))
-          (log! (car (cdr test)))))
-      
       (let lazy '(reverse '(1 2 3 4 5 6)))
       (apply (car lazy) (car (cdr lazy)))`,
       `(= 

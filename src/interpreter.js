@@ -1,13 +1,8 @@
 import std from '../lib/baked/std.js'
 import { TYPE, VALUE, WORD, KEYWORDS, APPLY, ATOM } from './keywords.js'
 import { evaluate } from './evaluator.js'
-import { LISP, isLeaf } from './parser.js'
-import {
-  isEqual,
-  isEqualTypes,
-  isForbiddenVariableName,
-  stringifyArgs
-} from './utils.js'
+import { isLeaf } from './parser.js'
+import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 const keywords = {
   [KEYWORDS.REMAINDER_OF_DIVISION]: (args, env) => {
     if (args.length < 2)
@@ -718,52 +713,6 @@ const keywords = {
       )
     return other.reduce((a, b) => a.concat(b), array)
   },
-  [KEYWORDS.TEST_CASE]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.TEST_CASE
-        }) (= 2 required) (${KEYWORDS.TEST_CASE} ${stringifyArgs(args)})`
-      )
-    const a = evaluate(args[0], env)
-    const b = evaluate(args[1], env)
-    return !isEqualTypes(a, b) || !isEqual(a, b)
-      ? [0, stringifyArgs([args[0]]), b, a]
-      : [1, stringifyArgs([args[0]]), a]
-  },
-  [KEYWORDS.TEST_BED]: (args, env) => {
-    let tests = []
-    let res
-    try {
-      if (
-        args.some(
-          ([[type, car]]) => !(type === APPLY && car === KEYWORDS.TEST_CASE)
-        )
-      )
-        throw new TypeError(
-          `Arguments of (${KEYWORDS.TEST_BED}) must be (${
-            KEYWORDS.TEST_CASE
-          }) (${KEYWORDS.TEST_BED} ${stringifyArgs(args)})`
-        )
-      tests = args.map((x) => evaluate(x, env))
-      res = tests.reduce(
-        (acc, [state, ...rest]) =>
-          `${acc}${
-            !state
-              ? `x ${rest[0]}\n + ${LISP.stringify(
-                  rest[1]
-                )}\n - ${LISP.stringify(rest[2])}\n`
-              : `✓ ${rest[0]}\n + ${LISP.stringify(rest[1])}\n`
-          }`,
-        ''
-      )
-    } catch (err) {
-      res = `${err.toString()}`
-    }
-    const result = !tests.length || tests.some(([t]) => !t)
-    res = `${result ? 'Some tests failed!\n\n' : 'All tests passed!\n\n'}${res}`
-    return [+!result, res]
-  },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
     if (args.length !== 2 && args.length !== 3)
       throw new RangeError(
@@ -893,39 +842,6 @@ const keywords = {
   }
 }
 keywords[KEYWORDS.NOT_COMPILED_BLOCK] = keywords[KEYWORDS.BLOCK]
-keywords[KEYWORDS.DOC] = (args, env) => {
-  if (args.length !== 1)
-    throw new RangeError(
-      `Invalid number of arguments to (${KEYWORDS.DOC}) (= 1 required) (${
-        KEYWORDS.DOC
-      } ${stringifyArgs(args)})`
-    )
-  const lib = evaluate(args[0], env)
-    .map((x) => String.fromCharCode(x))
-    .join('')
-  const kw = Object.keys(env).map((x) => [x])
-  const standard = std.map(([_, [_0, name], [_1, ...arg]]) => {
-    const args = arg
-      .slice(0, -1)
-      .map((x) => x[VALUE])
-      .filter((x) => x !== 'lambda')
-
-    return [name, ...args]
-  })
-  const all = [...kw, ...standard]
-  switch (lib) {
-    case '*':
-      return all.map((x) => `(${x.join(' ')})`)
-    case 'keywords':
-      return kw.map((x) => `(${x.join(' ')})`)
-    case 'std':
-      return standard.map((x) => `(${x.join(' ')})`)
-    default:
-      return all
-        .filter((name) => name[0].includes(lib))
-        .map((x) => `(${x.join(' ')})`)
-  }
-}
 
 export const deSuggar = (ast) => {
   if (ast.length === 0)
