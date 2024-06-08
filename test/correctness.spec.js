@@ -4,6 +4,26 @@ describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
+        `
+    (|>
+     (cons 
+        '(1 0 1 0) 
+        '(1 1 1 1)
+        '(0 0 1 0)
+        '(1 0 1 0)
+        '(1 1 1 1)
+        '(0 0 0 0)
+        '(1 0 1 0))
+     (array:map math:flag-flip))`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1,
+        0, 1, 0, 1
+      ]
+    )
+    deepStrictEqual(
+      fez(
         `(let sample1 (cons 
       "RL" '(char:new-line)
       '(char:new-line)

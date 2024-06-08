@@ -92,12 +92,12 @@
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
 (let math:permutations (lambda xs
-  (unless (length xs)
-              (array ())
+  (if (length xs)
               (|> xs (array:enumerated-map (lambda x i (|>
                               xs (array:enumerated-exclude (lambda . j (= i j)))
                                  (math:permutations)
-                                 (array:map (lambda vs (cons (array x) vs)))))) (array:flat-one)))))
+                                 (array:map (lambda vs (cons (array x) vs)))))) (array:flat-one))
+              (array ()))))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
 (let math:lesser-or-equal? (lambda a b (<= a b)))
@@ -121,6 +121,7 @@
 (let math:power-of-two-bits (lambda n (<< 2 (- n 1))))
 (let math:odd-bit? (lambda n (= (& n 1) 1)))
 (let math:average-bit (lambda a b (>> (+ a b) 1)))
+(let math:flag-flip (lambda x (- 1 (* x x))))
 (let math:toggle-bit (lambda n a b (^ a b n)))
 (let math:same-sign-bit? (lambda a b (>= (^ a b) 0)))
 (let math:max-bit (lambda a b (- a (& (- a b) (>> (- a b) 31)))))
@@ -435,12 +436,12 @@
 (let array:set (lambda arr index item (set! (array:shallow-copy arr) index item)))
 (let array:adjacent-difference (lambda arr callback (do
   (let len (length arr))
-  (unless (= len 1)
+  (if (= len 1) arr
     (apply (lambda (do
       (array (car arr))
       (let rec:iterate (lambda i result (if (< i len) (apply (lambda (do
       (rec:iterate (+ i 1) (set! result i (callback (get arr (- i 1)) (get arr i))))))) result)))
-      (rec:iterate 1 arr)))) arr))))
+      (rec:iterate 1 arr))))))))
 (let array:adjacent-find (lambda arr callback (do
   (let len (length arr))
   (if (not (= len 1)) (apply (lambda (do
@@ -624,7 +625,7 @@
                               (if (callback (car arr)) i (rec:iterate (cdr arr) (+ i 1))) -1)))
                         (rec:iterate arr 0))))
 (let array:remove (lambda arr i
-      (array:fold arr (lambda a x (do (unless (= x i) (set! a (length a) x) a))) ())))
+      (array:fold arr (lambda a x (do (if (= x i) a (set! a (length a) x)))) ())))
 (let array:pad-right (lambda a b (if (> (length a) (length b))
      (cons b (array (- (length a) (length b)) length))
      (cons a (array (- (length b) (length a)) length)))))

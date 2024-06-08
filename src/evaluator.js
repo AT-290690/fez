@@ -33,12 +33,5 @@ export const evaluate = (exp, env) => {
       )
   }
 }
-export const isAtom = (arg, env) => {
-  if (arg[TYPE] === ATOM) return 1
-  else {
-    const atom = evaluate(arg, env)
-    return +(typeof atom === 'number')
-  }
-}
 export const run = (tree, env = {}) =>
   keywords[KEYWORDS.BLOCK](tree, { ...keywords, ...env })

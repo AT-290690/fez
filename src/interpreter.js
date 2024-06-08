@@ -1,4 +1,3 @@
-import std from '../lib/baked/std.js'
 import { TYPE, VALUE, WORD, KEYWORDS, APPLY, ATOM } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isLeaf } from './parser.js'
