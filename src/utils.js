@@ -34,9 +34,11 @@ export const isBalancedParenthesis = (sourceCode) => {
   let count = 0
   const stack = []
   const str = sourceCode.match(/[/\(|\)]/g) ?? []
-  for (let i = 0; i < str.length; ++i)
-    if (str[i] === '(') stack.push(str[i])
-    else if (str[i] === ')') if (stack.pop() !== '(') ++count
+  for (let i = 0; i < str.length; ++i) {
+    const current = str[i]
+    if (current === '(') stack.push(current)
+    else if (current === ')') if (stack.pop() !== '(') ++count
+  }
   return count - stack.length
 }
 export const escape = (Char) => {
