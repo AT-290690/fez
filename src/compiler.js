@@ -11,7 +11,6 @@ import { leaf, isLeaf } from './parser.js'
 import { deepRename } from './utils.js'
 const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
 const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
-const commaToLodash = (name) => name.replace(new RegExp(/\,/g), '_')
 const arrowFromTo = (name) => name.replace(new RegExp(/->/g), '-to-')
 const moduleNameToLodashes = (name) => name.replace(new RegExp(/:/g), '_')
 const questionMarkToPredicate = (name) =>
@@ -57,9 +56,7 @@ const lispToJavaScriptVariableName = (name) =>
       dotNamesToEmpty(
         exclamationMarkMarkToEffect(
           questionMarkToPredicate(
-            commaToLodash(
-              moduleNameToLodashes(earMuffsToLodashes(keywordToHelper(name)))
-            )
+            moduleNameToLodashes(earMuffsToLodashes(keywordToHelper(name)))
           )
         )
       )
@@ -182,7 +179,7 @@ const compile = (tree, Drill) => {
         } else {
           const name = lispToJavaScriptVariableName(n)
           Drill.Variables.add(name)
-          return `(${name}=${compile(Arguments[1], Drill)});`
+          return `${name}=${compile(Arguments[1], Drill)};`
         }
       }
       case KEYWORDS.IS_ATOM:
