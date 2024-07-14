@@ -8,7 +8,15 @@ import {
   WORD
 } from './keywords.js'
 import { leaf, isLeaf } from './parser.js'
-import { deepRename } from './utils.js'
+const deepRename = (name, newName, tree) => {
+  if (!isLeaf(tree))
+    for (const leaf of tree) {
+      // Figure out a non mutable solution so
+      // I can get rid of deep copy
+      if (leaf[VALUE] === name) leaf[VALUE] = `()=>${newName}`
+      deepRename(name, newName, leaf)
+    }
+}
 const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
 const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
 const arrowFromTo = (name) => name.replace(new RegExp(/->/g), '-to-')
@@ -306,11 +314,6 @@ const compile = (tree, Drill) => {
       //     inp = [Arguments[i].shift(), inp, ...Arguments[i]]
       //   return compile(inp, Drill)
       // }
-      case KEYWORDS.NOT_COMPILED_BLOCK:
-      // case KEYWORDS.TEST_CASE:
-      // case KEYWORDS.TEST_BED:
-      // case KEYWORDS.DOC:
-      //   return ''
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
         if (camelCased in Helpers) Drill.Helpers.add(camelCased)

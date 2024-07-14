@@ -268,15 +268,6 @@ export const fez = (source, options = {}) => {
     return err
   }
 }
-export const deepRename = (name, newName, tree) => {
-  if (!isLeaf(tree))
-    for (const leaf of tree) {
-      // Figure out a non mutable solution so
-      // I can get rid of deep copy
-      if (leaf[VALUE] === name) leaf[VALUE] = `()=>${newName}`
-      deepRename(name, newName, leaf)
-    }
-}
 export const compress = (source) => {
   let { result, occurance } = source.split('').reduce(
     (acc, item) => {
