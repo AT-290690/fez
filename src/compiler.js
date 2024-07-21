@@ -144,7 +144,7 @@ const compile = (tree, Drill) => {
       case KEYWORDS.BLOCK: {
         if (Arguments.length > 1) {
           return `(${Arguments.map((x) =>
-            (compile(x, Drill) ?? '').toString().trimStart()
+            (compile(x, Drill) ?? '').toString().trim()
           )
             .filter(Boolean)
             .join(',')});`
@@ -183,7 +183,7 @@ const compile = (tree, Drill) => {
             Drill
           )})=>{${vars}return ${evaluatedBody
             .toString()
-            .trimStart()}}, ${newName})));`
+            .trim()}}, ${newName})));`
         } else {
           const name = lispToJavaScriptVariableName(n)
           Drill.Variables.add(name)
@@ -240,7 +240,7 @@ const compile = (tree, Drill) => {
         // const $ = [${args}];
         return `((${args})=>{${vars}return ${evaluatedBody
           .toString()
-          .trimStart()}});`
+          .trim()}});`
       }
       case KEYWORDS.AND:
         return `((${parseArgs(Arguments, Drill, '&&')}) ? 1 : 0);`
