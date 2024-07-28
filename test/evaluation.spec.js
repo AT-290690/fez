@@ -89,7 +89,7 @@ describe('Compilation & Interpretation', () => {
       ; '(1 2 3) -> '(3 2 1)
       (let reverse (lambda arr (do
         (let rec:iter (lambda arr out
-          (if (length arr)
+          (if (> (length arr) 0)
               (rec:iter (cdr arr) (cons (array (car arr)) out)) 
               out)))
         (rec:iter arr ()))))
@@ -127,7 +127,7 @@ describe('Compilation & Interpretation', () => {
           (let solve (lambda arr cb
                (array:fold arr (lambda a b (do
                   (let res (array:binary-search arr (cb b)))
-                  (if res (cons a (array res)) a)))
+                  (if (not (= res 0)) (cons a (array res)) a)))
                ())))
           ; 514579
           (|> *input*

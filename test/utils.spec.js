@@ -10,7 +10,7 @@ describe('Utils', () => {
       ; '(1 2 3) -> '(3 2 1)
       (let reverse (lambda arr (do
         (let rec:iter (lambda arr out
-          (if (length arr)
+          (if (> (length arr) 0)
               (rec:iter (cdr arr) (cons (array (car arr)) out)) 
               out)))
         (rec:iter arr ()))))

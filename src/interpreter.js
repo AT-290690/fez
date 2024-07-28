@@ -1,4 +1,13 @@
-import { TYPE, VALUE, WORD, KEYWORDS, APPLY, ATOM } from './keywords.js'
+import {
+  TYPE,
+  VALUE,
+  WORD,
+  KEYWORDS,
+  APPLY,
+  ATOM,
+  FALSE,
+  TRUE
+} from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isLeaf } from './parser.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
@@ -153,7 +162,12 @@ const keywords = {
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
-    return evaluate(args[0], env)
+    const condition = evaluate(args[0], env)
+    if (condition !== FALSE && condition !== TRUE)
+      throw new TypeError(
+        `Condition of (${KEYWORDS.IF}) must be 0 or 1 but got ${condition}`
+      )
+    return condition
       ? evaluate(args[1], env)
       : args.length === 3
       ? evaluate(args[2], env)
@@ -168,8 +182,14 @@ const keywords = {
           KEYWORDS.CONDITION
         } ${stringifyArgs(args)})`
       )
-    for (let i = 0; i < args.length; i += 2)
-      if (evaluate(args[i], env)) return evaluate(args[i + 1], env)
+    for (let i = 0; i < args.length; i += 2) {
+      const condition = evaluate(args[i], env)
+      if (condition !== FALSE && condition !== TRUE)
+        throw new TypeError(
+          `Condition of (${KEYWORDS.CONDITION}) must be 0 or 1 but got ${condition}`
+        )
+      if (condition) return evaluate(args[i + 1], env)
+    }
     return 0
   },
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {
@@ -470,6 +490,10 @@ const keywords = {
     let circuit
     for (let i = 0; i < args.length - 1; ++i) {
       circuit = evaluate(args[i], env)
+      if (circuit !== FALSE && circuit !== TRUE)
+        throw new TypeError(
+          `Condition of (${KEYWORDS.AND}) must be 0 or 1 but got ${circuit}`
+        )
       if (circuit) continue
       else return 0
     }
@@ -485,6 +509,10 @@ const keywords = {
     let circuit
     for (let i = 0; i < args.length - 1; ++i) {
       circuit = evaluate(args[i], env)
+      if (circuit !== FALSE && circuit !== TRUE)
+        throw new TypeError(
+          `Condition of (${KEYWORDS.OR}) must be 0 or 1 but got ${circuit}`
+        )
       if (circuit) return 1
       else continue
     }
