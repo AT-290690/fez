@@ -497,7 +497,12 @@ const keywords = {
       if (circuit) continue
       else return 0
     }
-    return evaluate(args.at(-1), env) ? 1 : 0
+    const end = evaluate(args.at(-1), env)
+    if (end !== FALSE && end !== TRUE)
+      throw new TypeError(
+        `Condition of (${KEYWORDS.AND}) must be 0 or 1 but got ${end}`
+      )
+    return end
   },
   [KEYWORDS.OR]: (args, env) => {
     if (args.length < 2)
@@ -516,7 +521,12 @@ const keywords = {
       if (circuit) return 1
       else continue
     }
-    return evaluate(args.at(-1), env) ? 1 : 0
+    const end = evaluate(args.at(-1), env)
+    if (end !== FALSE && end !== TRUE)
+      throw new TypeError(
+        `Condition of (${KEYWORDS.OR}) must be 0 or 1 but got ${end}`
+      )
+    return end
   },
   [KEYWORDS.CALL_FUNCTION]: (args, env) => {
     if (!args.length)
