@@ -71,6 +71,7 @@
 (let char:dash 45)
 (let char:left-brace 40)
 (let char:right-brace 41)
+(let char:pipe 124)
 (let char:hash 35)
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
@@ -111,8 +112,16 @@
 (let math:product (lambda arr (array:fold arr (lambda a b (* a b)) (*))))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
-(let math:maximum (lambda arr (array:fold arr max (car arr))))
-(let math:minimum (lambda arr (array:fold arr min (car arr))))
+(let math:maximum (lambda arr (array:fold arr math:max (car arr))))
+(let math:minimum (lambda arr (array:fold arr math:min (car arr))))
+(let math:max-length (lambda arr (array:fold
+    arr
+    (lambda a b 
+        (if (> (length b) a) (length b) a)) 0)))
+(let math:min-length (lambda arr (array:fold
+    arr
+    (lambda a b 
+        (if (< (length b) a) (length b) a)) math:max-safe-integer)))
 (let math:increment (lambda i (+ i 1)))
 (let math:floor (lambda n (| n 0)))
 (let math:round (lambda n (| (+ n 0.5) 0)))
@@ -758,6 +767,35 @@
    (array:every? (lambda x (= (car x) (car (cdr x))))))))))))
 (let string:min (lambda a b (if (string:lesser? a b) a b)))
 (let string:max (lambda a b (if (string:lesser? a b) b a)))
+(let string:join-as-table-with (lambda table colum row (do 
+(let M (math:maximum (array:map table math:max-length)))
+(let row-delimiter2 (array:map (array (length (car table)) length) (lambda . (array:map (array M length) (lambda . row)))))
+(let row-delimiter 
+    (|> 
+     (array (length (car table)) length) 
+     (array:map (lambda . 
+     (array:map (array M length) (lambda . row))
+     ))))
+(|> 
+ table
+ (array:fold (lambda a b
+    (cons a (array b) (array row-delimiter)) 
+ ) ())  
+ (array:map (lambda x (|> x 
+             (array:map (lambda y 
+             (string:pad-right y M (array char:space))))
+             (array:join colum))))
+            
+ (array:join (array char:new-line))))))
+(let string:join-as-table (lambda table (do 
+(let M (math:maximum (array:map table math:max-length)))
+(|> 
+ table
+ (array:map (lambda x (|> x 
+             (array:map (lambda y 
+             (string:pad-right y M (array char:space))))
+             (array:join (array char:space)))))
+ (array:join (array char:new-line))))))
 (let string:trim-left (lambda str (do
   (let tr (array 1))
   (|> str (array:fold (lambda a b (if
