@@ -4,6 +4,21 @@ describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       fez(
+        `(let m (new:set4))
+(let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
+(|> arr 
+    (array:fold (lambda a b (do
+    (let key '((from:digit->char b)))
+    (if (map:has? a key) 
+        (map:set! a key (+ (map:get a key) 1))
+        (map:set! a key 0)
+    ))) m))`,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      [[[[52], 5]], [[[49], 2]], [[[50], 1]], [[[51], 0]]]
+    )
+    deepStrictEqual(
+      fez(
         `
     (|>
      (cons 

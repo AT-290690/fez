@@ -1023,7 +1023,7 @@
           (let idx (set:index table key))
           (let current (get table idx))
           (and (array:in-bounds? table idx)
-          (and (length current)
+          (and (> (length current) 0)
             (>= (array:find-index (car current)
               (lambda x
                 (string:equal? x key))) 0))))))
