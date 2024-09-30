@@ -1021,10 +1021,10 @@
           (if (> (length found) 0) (get found 1)))))))))
 (let map:has? (lambda table key (do 
           (let idx (set:index table key))
-          (let current (get table idx))
+          (let current (array:map (get table idx) (lambda x (car x))))
           (and (array:in-bounds? table idx)
           (and (> (length current) 0)
-            (>= (array:find-index (car current)
+            (>= (array:find-index current
               (lambda x
                 (string:equal? x key))) 0))))))
 

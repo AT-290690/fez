@@ -3,6 +3,19 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(let memo '(() ()))
+(let fibonacci (lambda n (do 
+(let key (|> n (from:number->digits) (from:digits->chars)))
+  (if (< n 2) n
+    (if (map:has? memo key) 
+        (map:get memo key)
+        (apply (lambda (do 
+        (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key)
+        
+        )))
+        )
+))))
+(fibonacci 10)`,
       `(let m (new:set4))
 (let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
 (|> arr 
@@ -155,7 +168,13 @@ describe('Compilation & Interpretation', () => {
         (set:add! B (array char:4))
         (set:add! B (array char:5))
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))`,
-      `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`
+      `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`,
+      `(|> 
+  '(1 2 3 4)
+   (array:swap-remove! 1)
+   (array:swap! 0 1)
+   (math:permutations)
+)`
     ].forEach((source) =>
       deepStrictEqual(
         fez(source, { compile: 0, mutation: 1 }),

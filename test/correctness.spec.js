@@ -214,6 +214,30 @@ describe('Corretness', () => {
       [12, 20]
     )
     deepStrictEqual(
+      fez(
+        `(|> 
+  '(1 2 3 4)
+   (array:swap-remove! 1)
+   (array:swap! 0 1)
+   (math:permutations)
+)`,
+        {
+          compile: 1,
+          eval: 1,
+          shake: 1,
+          mutation: 1
+        }
+      ),
+      [
+        [4, 1, 3],
+        [4, 3, 1],
+        [1, 4, 3],
+        [1, 3, 4],
+        [3, 4, 1],
+        [3, 1, 4]
+      ]
+    )
+    deepStrictEqual(
       fez(`(math:permutations (array 1 2 3 4))`, {
         compile: 1,
         eval: 1,
@@ -418,6 +442,25 @@ describe('Corretness', () => {
     (if (< n 2) n (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
     (fibonacci 10)`,
         { std: 0, compile: 1, eval: 1 }
+      ),
+      55
+    )
+    strictEqual(
+      fez(
+        `(let memo '(() ()))
+(let fibonacci (lambda n (do 
+(let key (|> n (from:number->digits) (from:digits->chars)))
+  (if (< n 2) n
+    (if (map:has? memo key) 
+        (map:get memo key)
+        (apply (lambda (do 
+        (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key)
+        
+        )))
+        )
+))))
+(fibonacci 10)`,
+        { std: 1, compile: 1, eval: 1, mutation: 1 }
       ),
       55
     )
