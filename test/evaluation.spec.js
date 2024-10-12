@@ -9,12 +9,8 @@ describe('Compilation & Interpretation', () => {
   (if (< n 2) n
     (if (map:has? memo key) 
         (map:get memo key)
-        (apply (lambda (do 
         (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key)
-        
-        )))
-        )
-))))
+        )))))
 (fibonacci 10)`,
       `(let m (new:set4))
 (let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
