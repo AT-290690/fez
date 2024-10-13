@@ -79,6 +79,7 @@ const Helpers = {
   __eq: '__eq=(a,b)=>+(a===b)',
   __lteq: '__lteq=(a,b)=>+(a<=b)',
   __lt: '__lt=(a,b)=>+(a<b)',
+  array: 'array=(x)=>[x]',
   not: 'not=(a)=>+!a',
   and: `and=(...args)=>{
     let circuit;

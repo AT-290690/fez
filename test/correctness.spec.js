@@ -649,5 +649,82 @@ describe('Corretness', () => {
       ),
       [21, 525152]
     )
+    deepStrictEqual(
+      fez(
+        `(let samples '(
+    "(())"    ;  result in floor 0.
+    "()()"    ;  result in floor 0.
+    "((("     ; result in floor 3.
+    "(()(()(" ; result in floor 3.
+    "))(((((" ; also results in floor 3.
+    "())"     ; result in floor -1 (the first basement level).
+    "))("     ; result in floor -1 (the first basement level).
+    ")))"     ; result in floor -3.
+    ")())())" ; result in floor -3.
+    ")"       ; causes him to enter the basement at character position 1
+    "()())"   ; causes him to enter the basement at character position 5.
+))
+(let part1 (lambda input (- (array:count input char:left-brace) (array:count input char:right-brace))))
+(let part2 (lambda input (do
+    (let rec:part2 (lambda a out idx
+                      (cond
+                        (= out -1) idx
+                        (array:empty? a) -1
+                        (*) (rec:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
+    (rec:part2 input 0 0))))
+'((|> samples (array:map part1)) (|> samples (array:map part2)))
+`,
+        { eval: 1, compile: 1 }
+      ),
+      [
+        [0, 0, 3, 3, 3, -1, -1, -3, -3, -1, -1],
+        [-1, -1, -1, -1, 1, 3, 1, 1, 1, 1, 5]
+      ]
+    )
+    deepStrictEqual(
+      fez(
+        `(let parse (lambda input (|> input
+                             (string:lines)
+                             (array:map (lambda x (|> x
+                                                    (string:split '(char:x))
+                                                    (array:map (lambda d (|> d
+                                                                            (from:chars->digits)
+                                                                            (from:digits->number))))))))))
+(let sample (cons 
+            "2x3x4" '(char:new-line) 
+            "1x1x10"))
+
+(let part1 (lambda input 
+  (|> input 
+  (array:map (lambda x (do 
+    (let l (car x))
+    (let w (car (cdr x)))
+    (let h (car (cdr (cdr x))))
+    ; 2*l*w + 2*w*h + 2*h*l
+    (let sides '((* l w) (* w h) (* h l)))
+    (let slack (math:minimum sides))
+    (|> sides (array:map (lambda x (* x 2))) (array:fold (lambda a b (+ a b)) slack))
+  )))
+  (math:summation))))
+
+(let part2 (lambda input 
+  (|> input 
+  (array:map (lambda x (do
+    (let l (car x))
+    (let w (car (cdr x)))
+    (let h (car (cdr (cdr x))))
+    ; 2*l*w + 2*w*h + 2*h*l
+    (let m1 (math:minimum x))
+    (let f (array:exclude x (lambda x (= x m1))))
+    (let m2 (if (< (length f) 2) m1 (math:minimum f)))
+    (+ (* m1 2) (* m2 2) (* l w h))
+  ))) 
+  (math:summation))))
+
+'((part1 (parse sample)) (part2 (parse sample)))`,
+        { std: 1, eval: 1, compile: 1 }
+      ),
+      [101, 48]
+    )
   })
 })

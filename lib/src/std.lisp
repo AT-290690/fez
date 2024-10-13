@@ -380,6 +380,7 @@
 (let array:empty? (lambda arr (not (length arr))))
 (let array:not-empty? (lambda arr (not (not (length arr)))))
 (let array:count-of (lambda arr callback (|> arr (array:select callback) (length))))
+(let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
 (let array:empty! (lambda arr (do (let rec:iterate (lambda (if (> (length arr) 0) (apply (lambda (do (set! arr -1) (rec:iterate)))) arr))) (rec:iterate))))
 (let array:in-bounds? (lambda arr index (and (< index (length arr)) (>= index 0))))
 (let array:slice (lambda arr start end (do
