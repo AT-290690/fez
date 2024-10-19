@@ -388,7 +388,6 @@ describe('Corretness', () => {
       ),
       [3, 1, 2]
     )
-
     deepStrictEqual(
       fez(
         `(array (|>
@@ -531,7 +530,6 @@ describe('Corretness', () => {
       ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )
-
     strictEqual(
       fez(
         `(and
@@ -570,7 +568,6 @@ describe('Corretness', () => {
       ),
       [45, 49, 50, 51, 45, 52, 45, 53, 54, 55]
     )
-
     deepStrictEqual(
       fez(
         `(let parse (lambda input
@@ -714,9 +711,9 @@ describe('Corretness', () => {
     (let w (car (cdr x)))
     (let h (car (cdr (cdr x))))
     ; 2*l*w + 2*w*h + 2*h*l
-    (let m1 (math:minimum x))
-    (let f (array:exclude x (lambda x (= x m1))))
-    (let m2 (if (< (length f) 2) m1 (math:minimum f)))
+    (let s (|> x (array:sort >)))
+    (let m1 (car s))
+    (let m2 (car (cdr s)))
     (+ (* m1 2) (* m2 2) (* l w h))
   ))) 
   (math:summation))))
@@ -725,6 +722,126 @@ describe('Corretness', () => {
         { std: 1, eval: 1, compile: 1 }
       ),
       [101, 48]
+    )
+    deepStrictEqual(
+      fez(
+        `(let char:right (car ">"))
+(let char:left (car "<"))
+(let char:down (car "v"))
+(let char:up (car "^"))
+(let walk (lambda map x (array:fold x (lambda a b (do 
+                    (cond 
+                      (= char:right b) (array:increment! a 0 1)
+                      (= char:left b) (array:increment! a 0 -1)
+                      (= char:up b) (array:increment! a 1 1)
+                      (= char:down b) (array:increment! a 1 -1)
+                      (*) a)
+                      (let A (from:digits->chars (from:number->digits (math:abs (car a)))))
+                      (let B (from:digits->chars (from:number->digits (math:abs (car (cdr a))))))
+                      (let key (cons (if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B))
+                      (set:add! map key)
+                      a)) '(0 0))))
+(let part1 (lambda x (do
+  (let map '(() () () () () () () () () () () () () () () ()))
+  (set:add! map "+0,+0")
+  (walk map x)
+  (length (array:flat-one (array:select map array:not-empty?))))))
+(let part2 (lambda x (do
+  (let map '(() () () () () () () () () () () () () () () ()))
+  (set:add! map "+0,+0")
+  (walk map (array:even-indexed x))
+  (walk map (array:odd-indexed x))
+  (length (array:flat-one (array:select map array:not-empty?))))))
+'((|> '(">" "^>v<" "^v^v^v^v^v" "^v") (array:map part1)) (|> '("^v" "^>v<" "^v^v^v^v^v" "^^vv") (array:map part2)))`,
+        { eval: 1, compile: 1, mutation: 1 }
+      ),
+      [
+        [2, 4, 2, 2],
+        [3, 3, 11, 2]
+      ]
+    )
+    strictEqual(
+      fez(
+        `; helpers
+(let keywords (array () () () () () ()))
+(map:set! keywords "let" (lambda args env (do
+  (let name (array:get (car args) ast:value))
+  (let val (evaluate (car (cdr args)) env))
+  (map:set! env name val)
+  val)))
+(map:set! keywords "lambda" (lambda args env (do
+  (let params (array:slice args 0 (- (length args) 1)))
+  (let body (array:get args -1))
+  (lambda props scope (do
+  (let local (array:shallow-copy env))
+  (array:for-range 0 (length props) (lambda i
+    (map:set! local (array:get (array:get params i) ast:value) (evaluate (array:get props i) scope))))
+  (evaluate body local))))))
+(map:set! keywords "=" (lambda args env (do (let a (evaluate (car args) env)) (array:every? (cdr args) (lambda b (= a (evaluate b env)))))))
+(map:set! keywords "+" (lambda args env (array:fold args (lambda a b (+ a (evaluate b env))) 0)))
+(map:set! keywords "*" (lambda args env (array:fold args (lambda a b (* a (evaluate b env))) 1)))
+(map:set! keywords "do" (lambda args env (car (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) ()))))
+(map:set! keywords "if" (lambda args env (if (evaluate (array:get args 0) env)
+                                             (evaluate (array:get args 1) env)
+                                             (if (= (length args) 3)
+                                                 (evaluate (array:get args 2) env)
+                                                 0))))
+(let run (lambda source (apply (map:get keywords "do") (from:chars->ast source) keywords)))
+(run (cons "(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))"))`,
+        { mutation: 1, eval: 1, compile: 1 }
+      ),
+      29
+    )
+    deepStrictEqual(
+      fez(
+        `(let n-queen (lambda n (do
+  (let solutions ())
+  (let cols '(() () () () () () ()))
+  (let positive-diagonal '(() () () () () () ()))
+  (let negative-diagonal '(() () () () () () ()))
+  (let board (array:map (math:zeroes n) (lambda . (array:map (math:zeroes n) (lambda . ".")))))
+  (let backtrack (lambda row 
+    (if (= row n) 
+        (set! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
+        (apply (lambda (do
+          (array:for-range 0 n (lambda col 
+            (unless 
+              (or 
+                (set:has? cols '(col)) 
+                (set:has? positive-diagonal '((+ row col)))
+                (set:has? negative-diagonal '((- row col))))
+              (apply (lambda (do 
+                (set:add! cols '(col))
+                (set:add! positive-diagonal '((+ row col)))
+                (set:add! negative-diagonal '((- row col)))
+                (set! (array:get board row) col "Q")
+                (backtrack (+ row 1)) 
+                (set:remove! cols '(col))
+                (set:remove! positive-diagonal '((+ row col)))
+                (set:remove! negative-diagonal '((- row col)))
+                (set! (array:get board row) col ".")))))))))))))
+  (backtrack 0)
+  solutions)))
+'((n-queen 1) (n-queen 4))`,
+        { mutation: 1, compile: 1, eval: 1 }
+      ),
+      [
+        [[[81]]],
+        [
+          [
+            [46, 81, 46, 46],
+            [46, 46, 46, 81],
+            [81, 46, 46, 46],
+            [46, 46, 81, 46]
+          ],
+          [
+            [46, 46, 81, 46],
+            [81, 46, 46, 46],
+            [46, 46, 46, 81],
+            [46, 81, 46, 46]
+          ]
+        ]
+      ]
     )
   })
 })

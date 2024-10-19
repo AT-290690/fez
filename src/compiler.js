@@ -199,11 +199,7 @@ const compile = (tree, Drill) => {
       case KEYWORDS.BOOLEAN_TYPE:
         return '1'
       case KEYWORDS.ARRAY_TYPE:
-        return Arguments.length === 2 &&
-          Arguments[1][TYPE] === WORD &&
-          Arguments[1][VALUE] === 'length'
-          ? `(new Array(${compile(Arguments[0], Drill)}).fill(0));`
-          : `[${parseArgs(Arguments, Drill)}];`
+        return `[${parseArgs(Arguments, Drill)}];`
       case KEYWORDS.ARRAY_LENGTH:
         Drill.Helpers.add('length')
         return `length(${compile(Arguments[0], Drill)})`

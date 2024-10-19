@@ -193,26 +193,7 @@ const keywords = {
     return 0
   },
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {
-    if (!args.length) return []
-    const isCapacity =
-      args.length === 2 && args[1][TYPE] === WORD && args[1][VALUE] === 'length'
-    if (isCapacity) {
-      if (args.length !== 2)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            KEYWORDS.ARRAY_TYPE
-          }) (= 2 required) (${KEYWORDS.ARRAY_TYPE} ${stringifyArgs(args)})`
-        )
-      const N = evaluate(args[0], env)
-      if (!Number.isInteger(N))
-        throw new TypeError(
-          `Size argument for (${KEYWORDS.ARRAY_TYPE}) has to be an (32 bit ${
-            KEYWORDS.NUMBER_TYPE
-          }) (${KEYWORDS.ARRAY_TYPE} ${stringifyArgs(args)})`
-        )
-      return new Array(N).fill(0)
-    }
-    return args.map((x) => evaluate(x, env))
+    return args.length ? args.map((x) => evaluate(x, env)) : []
   },
   [KEYWORDS.FIRST_ARRAY]: (args, env) => {
     if (args.length !== 1)

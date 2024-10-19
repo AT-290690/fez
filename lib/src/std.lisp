@@ -92,6 +92,14 @@
                           (let rec:iterate (lambda out count
                           (if (< (length out) n) (rec:iterate (set! out (length out) count) (+ count 1)) out)))
                           (rec:iterate () 0))))
+(let math:zeroes (lambda n (do
+                          (let rec:iterate (lambda out
+                          (if (< (length out) n) (rec:iterate (set! out (length out) 0)) out)))
+                          (rec:iterate ()))))
+(let math:ones (lambda n (do
+                          (let rec:iterate (lambda out
+                          (if (< (length out) n) (rec:iterate (set! out (length out) 1)) out)))
+                          (rec:iterate ()))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
 (let math:permutations (lambda xs
@@ -356,6 +364,8 @@
 (let array:tail! (lambda q (set! q -1)))
 (let array:push! (lambda q item (do (set! q (length q) item) item)))
 (let array:pop! (lambda q (do (let l (get q -1)) (set! q -1) l)))
+(let array:even-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:even? i) (array:append! a b) a)) ())))
+(let array:odd-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:odd? i) (array:append! a b) a)) ())))
 (let array:unique (lambda arr (|>
       (let sorted (array:sort arr (lambda a b (> a b))))
       (array:zip (math:sequence sorted))
@@ -445,6 +455,7 @@
 (let array:sorted-ascending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (>= x (get arr (- i 1))))))))
 (let array:sorted-descending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (<= x (get arr (- i 1))))))))
 (let array:sorted-by? (lambda arr callback (array:enumerated-every? arr (lambda x i (or (= i 0) (callback x (get arr (- i 1))))))))
+(let array:increment! (lambda arr idx value (set! arr idx (+ (get arr idx) value))))
 (let array:set (lambda arr index item (set! (array:shallow-copy arr) index item)))
 (let array:adjacent-difference (lambda arr callback (do
   (let len (length arr))
@@ -917,7 +928,7 @@
 (let new:set4 (lambda (array () () () ())))
 (let new:array (lambda items (array:shallow-copy items)))
 (let new:list (lambda value (array () value ())))
-(let new:set-n (lambda n (array:map (array n length) (lambda . ()))))
+(let new:set-n (lambda n (array:map (math:zeroes n) (lambda . ()))))
 (let new:date (lambda year month day (array year month day)))
 
 (let new:binary-tree (lambda value (do (let arr ()) (set! arr 0 value) (set! arr 1 ()) (set! arr 2 ()) arr)))
@@ -1247,7 +1258,7 @@ q)))
     (if (or (= cursor char:right-brace) (= cursor char:space)) (apply (lambda (do 
         (let token (array:shallow-copy acc))
         (array:empty! acc)
-        (if (> (length token) 0) (apply (lambda (do 
+        (if (array:not-empty? token) (apply (lambda (do 
             (let h (var:get head))
             (if (array:empty? h) (array:push! h (ast:leaf ast:apply token))
                 (if (match:number? token) 
@@ -1261,7 +1272,7 @@ q)))
 
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
-  (if (> (length expression) 0) (apply (lambda (do 
+  (if (array:not-empty? expression) (apply (lambda (do 
     (let first (car expression))
     (let rest (cdr expression))
     (let pattern (get first ast:type))
