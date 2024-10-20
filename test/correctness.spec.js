@@ -843,5 +843,47 @@ describe('Corretness', () => {
         ]
       ]
     )
+    strictEqual(
+      fez(
+        `(let sample (cons 
+    "ugknbfddgicrmopn" '(char:new-line)
+    "aaa" '(char:new-line)
+    "jchzalrnumimnmhp" '(char:new-line)
+    "haegwjzuvuyypxyu" '(char:new-line)
+    "dvszwmarrgswjxmb"
+))
+
+(let three-vowels? (lambda str 
+    (|> 
+    "aeiou" 
+    (array:map (lambda v (string:character-occurances str v)))
+    (math:summation) 
+    (> 2))))
+
+(let consecative-pair? (lambda str (do 
+
+    (let rec:iterate (lambda out rest 
+        (if (or (= out 1) (= (length rest) 1)) 
+            out 
+            (rec:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
+    (rec:iterate 0 str)
+)))
+(let nice? (lambda str 
+                    (and 
+                        (consecative-pair? str) 
+                        (three-vowels? str) 
+                        (not 
+                            (or 
+                                (string:has? str "ab") 
+                                (string:has? str "cd") 
+                                (string:has? str "pq") 
+                                (string:has? str "xy"))))))
+(let part1 (lambda input (|> input (string:lines) (array:map nice?) (math:summation))))
+(part1 sample)
+`,
+        { compile: 1, eval: 1 }
+      ),
+      2
+    )
   })
 })

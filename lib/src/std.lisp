@@ -400,6 +400,8 @@
               (rec:iterate (+ i 1) (set! out (length out) (get arr (+ start i))))
               out)))
         (rec:iterate 0 ()))))
+(let array:take (lambda arr n (array:slice arr 0 n)))
+(let array:drop (lambda arr n (array:slice arr n (length arr))))
 (let array:binary-search
         (lambda arr target (do
   (let rec:search
@@ -675,7 +677,7 @@
       (let ch (get arr i))
       (let code (- ch zero))
       (let mask (<< 1 code))
-      (if (and (if (= ch letter) (var:set! at-least-one? 1))
+      (if (and (if (= ch letter) (var:get (var:set! at-least-one? 1)))
           (not (= (& (var:get bitmask) mask) 0))) 
           (var:set! count (+ (var:get count) 1))
           (var:set! bitmask (| (var:get bitmask) mask)))

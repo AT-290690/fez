@@ -101,7 +101,7 @@ export const isForbiddenVariableName = (name) => {
     case KEYWORDS.DEFINE_VARIABLE:
       return true
     default:
-      return false
+      return !isNaN(name[0])
   }
 }
 export const isEqual = (a, b) =>
