@@ -730,7 +730,7 @@
                                     (string:equal? str word) 0
                                     (*) (apply (lambda (do
                                           (let rec:iterate (lambda arr i
-                                                (if (and (length arr) (>= (length arr) (length word)))
+                                                (if (and (> (length arr) 0) (>= (length arr) (length word)))
                                                       (if (string:equal?
                                                         (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                         word) i (rec:iterate (cdr arr) (+ i 1)))
