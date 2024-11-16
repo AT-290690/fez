@@ -948,5 +948,12 @@ describe('Corretness', () => {
         ]
       ]
     )
+    deepStrictEqual(
+      fez(`(|> (math:range 1 10) (array:partition 3))`, {
+        compile: 1,
+        eval: 1
+      }),
+      [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
+    )
   })
 })

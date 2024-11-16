@@ -486,7 +486,7 @@
 (let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do
       (let x (car b))
       (let i (car (cdr b)))
-      (if (mod i n) 
+      (if (> (mod i n) 0)
         (array:push! (get a -1) x) 
         (array:push! a (array x))) a))
       ())))
