@@ -932,7 +932,13 @@
       arr))
       ) (rec:iter 0))))
 (let char? (lambda cc (and (atom? cc) (>= cc 0) (< cc 65535))))
+
 (let new:set4 (lambda (array () () () ())))
+(let new:set8 (lambda (cons (new:set4) (new:set4))))
+(let new:set16 (lambda (cons (new:set8) (new:set8))))
+(let new:set32 (lambda (cons (new:set16) (new:set16))))
+(let new:set64 (lambda (cons (new:set32) (new:set32))))
+
 (let new:array (lambda items (array:shallow-copy items)))
 (let new:list (lambda value (array () value ())))
 (let new:set-n (lambda n (array:map (math:zeroes n) (lambda . ()))))
@@ -1220,7 +1226,7 @@ q)))
 
 (let array:set! set!)
 (let array:get get)
-(let arrray:length length)
+(let array:length length)
 (let array:head car)
 (let array:tail cdr)
 (let array:concat cons)

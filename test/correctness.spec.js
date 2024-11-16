@@ -929,5 +929,24 @@ describe('Corretness', () => {
       ),
       [2, 2, 0, 1]
     )
+    deepStrictEqual(
+      fez(
+        `
+'((|> "abcdef" (array:partition 2) (array:map string:upper) (array:map from:hex->dec))
+(|> "609043" (from:chars->digits) (array:map from:dec->hex)))`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        [171, 205, 239],
+        [
+          [48, 54],
+          [48, 48],
+          [48, 57],
+          [48, 48],
+          [48, 52],
+          [48, 51]
+        ]
+      ]
+    )
   })
 })
