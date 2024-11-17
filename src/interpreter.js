@@ -86,7 +86,7 @@ const keywords = {
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError(
-        `First argument of (${KEYWORDS.ARRAY_LENGTH}) must be a ${
+        `First argument of (${KEYWORDS.ARRAY_LENGTH}) must be an ${
           KEYWORDS.ARRAY_TYPE
         } (${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
       )

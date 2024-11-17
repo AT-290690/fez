@@ -955,5 +955,84 @@ describe('Corretness', () => {
       }),
       [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
     )
+    deepStrictEqual(
+      fez(
+        `(let N 8)
+(let matrix (|> (math:zeroes N) (array:map (lambda x (array:map (math:zeroes N) (lambda . 0))))))
+(let add-glider! (lambda matrix y x (do 
+  (set! (get matrix (+ y 2)) (+ x 1) 1)
+  (set! (get matrix (+ y 2)) (+ x 2) 1)
+  (set! (get matrix (+ y 2)) (+ x 3) 1)
+  (set! (get matrix (+ y 1)) (+ x 3) 1)
+  (set! (get matrix (+ y 0)) (+ x 2) 1)
+  )))
+(add-glider! matrix 0 0)
+
+; (set! (get matrix 6) 2 1)
+; (set! (get matrix 5) 4 1)
+; (set! (get matrix 5) 3 1)
+; (set! (get matrix 3) 3 1)
+
+(let live! (lambda matrix y x (matrix:set! matrix y x 1)))
+(let die! (lambda matrix y x (matrix:set! matrix y x 0)))
+(let gof (lambda matrix (do
+  (let copy (array:deep-copy matrix))
+  (array:for-range 0 N (lambda y (do
+    (array:for-range 0 N (lambda x (do
+      (let cell (get (get matrix y) x))
+      (let score (matrix:sliding-adjacent-sum matrix matrix:adjacent-directions y x +))
+      (cond 
+        (and cell (or (< score 2) (> score 3))) (die! copy y x)
+        (and cell (or (= score 2) (= score 3))) (live! copy y x)
+        (and (not cell) (= score 3)) (live! copy y x)
+        (*) 0)
+    )))
+  )))
+  copy
+)))
+(let render (lambda matrix 
+                  (do (|> matrix 
+                      (array:map (lambda y 
+                        (array:map y (lambda x (cond 
+                                                (= x 0) "." 
+                                                (= x 1) "#"
+                                                (*) ""))))) 
+                              (from:matrix->string)))))
+(|> 
+matrix  
+(gof) 
+(gof) 
+(gof)
+(gof) 
+(gof)
+(gof)
+(gof) 
+(gof)
+; (gof)
+; (gof)
+; (gof)
+; (gof)
+; (gof)
+; (gof)
+; (gof)
+; (gof)
+; (gof)
+; (render)
+; (log-string!)
+)
+`,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      [
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0],
+        [0, 0, 0, 0, 0, 1, 0, 0],
+        [0, 0, 0, 1, 1, 1, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    )
   })
 })
