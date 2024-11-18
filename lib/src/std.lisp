@@ -493,7 +493,7 @@
               (callback a (get (get arr dy) dx)) 
               a)
           )) 0)))
-(let matrix:sliding-adjacent-sum (lambda arr directions y x callback
+(let matrix:sliding-adjacent-sum (lambda arr directions y x N callback
       (array:fold directions (lambda a dir (do
           (let dy (+ (car dir) y))
           (let dx (+ (car (cdr dir)) x))

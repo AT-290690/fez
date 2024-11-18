@@ -980,7 +980,7 @@ describe('Corretness', () => {
   (array:for-range 0 N (lambda y (do
     (array:for-range 0 N (lambda x (do
       (let cell (get (get matrix y) x))
-      (let score (matrix:sliding-adjacent-sum matrix matrix:adjacent-directions y x +))
+      (let score (matrix:sliding-adjacent-sum matrix matrix:adjacent-directions y x N +))
       (cond 
         (and cell (or (< score 2) (> score 3))) (die! copy y x)
         (and cell (or (= score 2) (= score 3))) (live! copy y x)
