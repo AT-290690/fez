@@ -288,6 +288,14 @@
             a)) (array 0 math:min-safe-integer))
         (cdr)
         (car)))))
+(let math:list-maximum (lambda xs
+    (list:fold xs math:max math:min-safe-integer)))
+(let math:list-minimum (lambda xs
+    (list:fold xs math:min math:max-safe-integer)))
+(let math:list-summation (lambda xs
+    (list:fold xs + 0)))
+(let math:list-product (lambda xs
+    (list:fold xs * 1)))
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (get pair 0)))
 (let list:cdr (lambda pair (get pair 1)))
