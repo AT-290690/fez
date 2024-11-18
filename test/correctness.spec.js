@@ -126,9 +126,9 @@ describe('Corretness', () => {
     )
     strictEqual(
       fez(
-        `(let list (|> (new:list 10) (list:prev! (new:list 8)) (list:next! (new:list 12))))
-    (list:next! (list:next list) (new:list 12121))
-    (list:value (list:next (list:next list)))`,
+        `(let list (|> (new:list 10) (doubly-linked-list:prev! (new:list 8)) (doubly-linked-list:next! (new:list 12))))
+    (doubly-linked-list:next! (doubly-linked-list:next list) (new:list 12121))
+    (doubly-linked-list:value (doubly-linked-list:next (doubly-linked-list:next list)))`,
         { compile: 1, eval: 1, mutation: 1 }
       ),
       12121
@@ -1032,6 +1032,68 @@ matrix
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    )
+    deepStrictEqual(
+      fez(
+        `'((from:list->array (from:array->list (array 1 2 3 4)))
+(|> (list:range 1 10) (list:filter math:even?) (from:list->array))
+(from:list->array (list:pair 1 (list:pair 2 (list:pair 3 ()))))
+(from:list->array (list:range 1 10))
+(|> (list:range 1 2) (list:map (lambda x (* x x))) (list:fold + 0))))
+`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        [1, 2, 3, 4],
+        [2, 4, 6, 8, 10],
+        [1, 2, 3],
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        5
+      ]
+    )
+    deepStrictEqual(
+      fez(
+        `(let fizz-buzz (lambda x 
+              (cond 
+                (= (mod x 15) 0) "fizz buzz" 
+                (= (mod x 3) 0) "fizz"
+                (= (mod x 5) 0) "buzz"
+                (*) x)))
+(|> 
+  (list:range 1 25)
+  (list:map fizz-buzz)
+  (from:list->array)
+)
+`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        1,
+        2,
+        [102, 105, 122, 122],
+        4,
+        [98, 117, 122, 122],
+        [102, 105, 122, 122],
+        7,
+        8,
+        [102, 105, 122, 122],
+        [98, 117, 122, 122],
+        11,
+        [102, 105, 122, 122],
+        13,
+        14,
+        [102, 105, 122, 122, 32, 98, 117, 122, 122],
+        16,
+        17,
+        [102, 105, 122, 122],
+        19,
+        [98, 117, 122, 122],
+        [102, 105, 122, 122],
+        22,
+        23,
+        [102, 105, 122, 122],
+        [98, 117, 122, 122]
       ]
     )
   })

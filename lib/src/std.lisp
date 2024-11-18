@@ -288,6 +288,16 @@
             a)) (array 0 math:min-safe-integer))
         (cdr)
         (car)))))
+(let list:pair (lambda first second (array first second)))
+(let list:car (lambda pair (get pair 0)))
+(let list:cdr (lambda pair (get pair 1)))
+(let list:head (lambda pair (get pair 0)))
+(let list:tail (lambda pair (get pair 1)))
+(let list:nil (lambda pair (not (length pair))))
+(let list:range (lambda low high (if (> low high) () (list:pair low (list:range (+ low 1) high)))))
+(let list:map (lambda xs f (if (list:nil xs) () (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
+(let list:filter (lambda xs f (if (list:nil xs) () (if (f (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f)) (list:filter (list:tail xs) f)))))
+(let list:fold (lambda xs f out (if (list:nil xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
 (let array:for (lambda arr callback (do 
                     (let rec:iter (lambda out 
                       (if (> (length out) 0) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
@@ -467,6 +477,13 @@
       (let rec:iterate (lambda i result (if (< i len) (apply (lambda (do
       (rec:iterate (+ i 1) (set! result i (callback (get arr (- i 1)) (get arr i))))))) result)))
       (rec:iterate 1 arr))))))))
+(let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do
+      (let x (car b))
+      (let i (car (cdr b)))
+      (if (> (mod i n) 0)
+        (array:push! (get a -1) x)
+        (array:push! a (array x))) a))
+      ())))
 (let array:adjacent-find (lambda arr callback (do
   (let len (length arr))
   (if (not (= len 1)) (apply (lambda (do
@@ -500,13 +517,12 @@
           (callback a (get (get arr (mod dy N)) (mod dx N))) 
           )) 0)))
 (let matrix:set! (lambda matrix y x value (set! (get matrix y) x value)))
-(let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do
-      (let x (car b))
-      (let i (car (cdr b)))
-      (if (> (mod i n) 0)
-        (array:push! (get a -1) x) 
-        (array:push! a (array x))) a))
-      ())))
+(let from:list->array (lambda list (do
+  (let rec:iter (lambda lst out (if (list:nil lst) out (rec:iter (list:tail lst) (cons out (array (list:head lst)))))))
+  (rec:iter list ()))))
+(let from:array->list (lambda arr (do
+  (let rec:iter (lambda arr out (if (not (length arr)) out (rec:iter (array:tail arr) (list:pair (array:head arr) out)))))
+  (rec:iter (array:reverse arr) ()))))
 (let from:digit->char (lambda d 
   (cond 
     (= d 0) char:0 
@@ -1073,11 +1089,11 @@
               (lambda x
                 (string:equal? x key))) 0))))))
 
-(let list:prev! (lambda list node (set! list 0 (set! node 2 list))))
-(let list:next! (lambda list node (set! list 2 (set! node 0 list))))
-(let list:prev (lambda list (get list 0)))
-(let list:next (lambda list (get list 2)))
-(let list:value (lambda node (get node 1)))
+(let doubly-linked-list:prev! (lambda list node (set! list 0 (set! node 2 list))))
+(let doubly-linked-list:next! (lambda list node (set! list 2 (set! node 0 list))))
+(let doubly-linked-list:prev (lambda list (get list 0)))
+(let doubly-linked-list:next (lambda list (get list 2)))
+(let doubly-linked-list:value (lambda node (get node 1)))
 
 (let var:def (lambda val (array val)))
 (let var:get (lambda variable (car variable)))
@@ -1247,6 +1263,9 @@ q)))
 (let array:length length)
 (let array:head car)
 (let array:tail cdr)
+(let array:car car)
+(let array:cdr cdr)
+(let array:pair cons)
 (let array:concat cons)
 
 (let identity (lambda x x))
