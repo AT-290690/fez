@@ -471,7 +471,7 @@
     (let sorted (rec:iterate 1 (- (length arr) 1) () ()))
     (let left (car sorted))
     (let right (car (cdr sorted)))
-    (cons (array:sort left callback) (array pivot) (array:sort right callback)))))))))
+    (cons (cons (array:sort left callback) (array pivot)) (array:sort right callback)))))))))
 (let array:sorted-ascending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (>= x (get arr (- i 1))))))))
 (let array:sorted-descending? (lambda arr (array:enumerated-every? arr (lambda x i (or (= i 0) (<= x (get arr (- i 1))))))))
 (let array:sorted-by? (lambda arr callback (array:enumerated-every? arr (lambda x i (or (= i 0) (callback x (get arr (- i 1))))))))
@@ -568,9 +568,7 @@
   (array:fold (lambda a x
   (if (car x)
       (set! a (length a) (from:digit->char (car (cdr x))))
-      (|> a
-        (set! (length a) char:dash)
-        (set! (length a) (from:digit->char (car (cdr x))))))) ()))))
+      (set! (set! a (length a) char:dash) (length a) (from:digit->char (car (cdr x)))))) ()))))
 (let from:number->digits (lambda num (do
   (let rec:iter (lambda num res (cond
                               (>= num 1) (rec:iter (/ num 10) (set! res (length res) (| (mod num 10) 0)))
@@ -583,8 +581,8 @@
                               (= num 0) (array 0)
                               (*) res)))
   (array:reverse (rec:iter num ())))))
-(let from:numbers->chars (lambda x (array:map x (lambda x (|> x (from:number->digits) (from:digits->chars))))))
-(let from:chars->numbers (lambda arr (|> arr (array:map from:chars->digits) (array:map array:flat-one) (array:select length) (array:map from:digits->number))))
+(let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:number->digits x))))))
+(let from:chars->numbers (lambda arr (array:map (array:select (array:map (array:map arr from:chars->digits) array:flat-one) length) from:digits->number)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))

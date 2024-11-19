@@ -1096,5 +1096,12 @@ matrix
         [98, 117, 122, 122]
       ]
     )
+    deepStrictEqual(
+      fez(
+        `(array (from:negative-or-positive-digits->chars (array -1)) (from:negative-or-positive-digits->chars (array 1)))`,
+        { compile: 1, eval: 1 }
+      ),
+      [[45, 49], [49]]
+    )
   })
 })
