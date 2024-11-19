@@ -625,7 +625,7 @@
 (let array:shallow-copy (lambda arr (array:fold arr (lambda a b (set! a (length a) b)) ())))
 (let array:deep-copy (lambda arr (array:fold arr (lambda a b (set! a (length a) (if (array? b) (array:deep-copy b) b))) ())))
 (let array:merge! (lambda a b (do (array:for b (lambda x (set! a (length a) x))) a)))
-(let array:merge (lambda a b (do (let out ()) (array:for b (lambda x (set! out (length out) x))) out)))
+(let array:merge (lambda a b (do (let out ()) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
 (let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
 (let array:swap! (lambda arr i j (do (let temp (get arr i)) (set! arr i (get arr j)) (set! arr j temp))))
 (let array:index-of (lambda arr item (do
