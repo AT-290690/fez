@@ -973,23 +973,16 @@ describe('Corretness', () => {
 ; (set! (get matrix 5) 3 1)
 ; (set! (get matrix 3) 3 1)
 
-(let live! (lambda matrix y x (matrix:set! matrix y x 1)))
-(let die! (lambda matrix y x (matrix:set! matrix y x 0)))
 (let gof (lambda matrix (do
-  (let copy (array:deep-copy matrix))
-  (array:for-range 0 N (lambda y (do
-    (array:for-range 0 N (lambda x (do
-      (let cell (get (get matrix y) x))
+  (array:enumerated-map matrix (lambda arr y (do
+    (array:enumerated-map arr (lambda cell x (do
       (let score (matrix:sliding-adjacent-sum matrix matrix:adjacent-directions y x N +))
       (cond 
-        (and cell (or (< score 2) (> score 3))) (die! copy y x)
-        (and cell (or (= score 2) (= score 3))) (live! copy y x)
-        (and (not cell) (= score 3)) (live! copy y x)
-        (*) 0)
-    )))
-  )))
-  copy
-)))
+        (and cell (or (< score 2) (> score 3))) 0
+        (and cell (or (= score 2) (= score 3))) 1
+        (and (not cell) (= score 3)) 1
+        (*) 0))))))))))
+
 (let render (lambda matrix 
                   (do (|> matrix 
                       (array:map (lambda y 
