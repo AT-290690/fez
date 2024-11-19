@@ -419,6 +419,14 @@
               (rec:iterate (+ i 1) (set! out (length out) (get arr (+ start i))))
               out)))
         (rec:iterate 0 ()))))
+(let car (lambda arr (get arr 0)))
+(let cdr (lambda arr (do
+        (let bounds (length arr))
+        (let rec:iterate (lambda i out
+          (if (< i bounds)
+              (rec:iterate (+ i 1) (set! out (length out) (get arr i)))
+              out)))
+        (rec:iterate 1 ()))))
 (let array:take (lambda arr n (array:slice arr 0 n)))
 (let array:drop (lambda arr n (array:slice arr n (length arr))))
 (let array:binary-search
@@ -1273,8 +1281,6 @@ q)))
 (let array:tail cdr)
 (let array:car car)
 (let array:cdr cdr)
-(let array:pair cons)
-(let array:concat cons)
 
 (let identity (lambda x x))
 (let truthy? (lambda x

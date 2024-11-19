@@ -195,57 +195,6 @@ const keywords = {
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {
     return args.length ? args.map((x) => evaluate(x, env)) : []
   },
-  [KEYWORDS.FIRST_ARRAY]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.FIRST_ARRAY
-        }) (= 1 required) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
-      )
-    const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
-      throw new TypeError(
-        `Argument of (${KEYWORDS.FIRST_ARRAY}) must be an (${
-          KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
-      )
-    if (array.length === 0)
-      throw new RangeError(
-        `Argument of (${KEYWORDS.FIRST_ARRAY}) is an empty (${
-          KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
-      )
-    const value = array.at(0)
-    if (value == undefined)
-      throw new RangeError(
-        `Trying to get a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
-          KEYWORDS.FIRST_ARRAY
-        }) (${KEYWORDS.FIRST_ARRAY} ${stringifyArgs(args)})`
-      )
-    return value
-  },
-  [KEYWORDS.REST_ARRAY]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.REST_ARRAY
-        }) (= 1 required) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
-      )
-    const array = evaluate(args[0], env)
-    if (!Array.isArray(array))
-      throw new TypeError(
-        `Argument of (${KEYWORDS.REST_ARRAY}) must be an (${
-          KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
-      )
-    if (array.length === 0)
-      throw new RangeError(
-        `Argument of (${KEYWORDS.REST_ARRAY}) is an empty (${
-          KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.REST_ARRAY} ${stringifyArgs(args)})`
-      )
-    return array.slice(1)
-  },
   [KEYWORDS.GET_ARRAY]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(

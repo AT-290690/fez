@@ -103,8 +103,6 @@ const Helpers = {
   logCharEffect: `logCharEffect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
   logStringEffect: `logStringEffect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
-  car: 'car=(arr)=>arr.at(0)',
-  cdr: 'cdr=(arr)=>arr.slice(1)',
   get: 'get=(arr,i)=>arr.at(i)',
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
@@ -202,12 +200,6 @@ const compile = (tree, Drill) => {
       case KEYWORDS.ARRAY_LENGTH:
         Drill.Helpers.add('length')
         return `length(${compile(Arguments[0], Drill)})`
-      case KEYWORDS.FIRST_ARRAY:
-        Drill.Helpers.add('car')
-        return `car(${compile(Arguments[0], Drill)});`
-      case KEYWORDS.REST_ARRAY:
-        Drill.Helpers.add('cdr')
-        return `cdr(${compile(Arguments[0], Drill)});`
       case KEYWORDS.GET_ARRAY:
         Drill.Helpers.add('get')
         return `get(${compile(Arguments[0], Drill)}, ${compile(
