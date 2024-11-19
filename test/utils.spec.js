@@ -11,7 +11,7 @@ describe('Utils', () => {
       (let reverse (lambda arr (do
         (let rec:iter (lambda arr out
           (if (> (length arr) 0)
-              (rec:iter (cdr arr) (cons (array (car arr)) out)) 
+              (rec:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
         (rec:iter arr ()))))
       
@@ -25,7 +25,7 @@ describe('Utils', () => {
       (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
       `(let Fizz (array char:F char:i char:z char:z))
       (let Buzz (array char:B char:u char:z char:z))
-      (let FizzBuzz (cons Fizz Buzz))
+      (let FizzBuzz (array:merge Fizz Buzz))
 
       (let fizz-buzz (lambda n
           (cond
@@ -48,7 +48,7 @@ describe('Utils', () => {
             (let solve (lambda arr cb
                  (array:fold arr (lambda a b (do
                     (let res (array:binary-search arr (cb b)))
-                    (if res (cons a (array res)) a)))
+                    (if res (array:merge a (array res)) a)))
                  ())))
             ; 514579
             (|> *input*

@@ -103,7 +103,6 @@ const Helpers = {
   logCharEffect: `logCharEffect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
   logStringEffect: `logStringEffect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
   clearEffect: `clearEffect=()=>{console.clear();return 0}`,
-  array_cons: `array_cons=(A, ...B)=> B.reduce((a, b) => a.concat(b), A)`,
   car: 'car=(arr)=>arr.at(0)',
   cdr: 'cdr=(arr)=>arr.slice(1)',
   get: 'get=(arr,i)=>arr.at(i)',
@@ -215,9 +214,6 @@ const compile = (tree, Drill) => {
           Arguments[1],
           Drill
         )});`
-      case KEYWORDS.CONS:
-        Drill.Helpers.add('array_cons')
-        return `array_cons(${parseArgs(Arguments, Drill)});`
       case KEYWORDS.ANONYMOUS_FUNCTION: {
         const functionArgs = Arguments
         const body = Arguments.pop()

@@ -28,7 +28,6 @@ export const KEYWORDS = {
   FIRST_ARRAY: 'car',
   REST_ARRAY: 'cdr',
   GET_ARRAY: 'get',
-  CONS: 'cons',
   BLOCK: 'do',
   ANONYMOUS_FUNCTION: 'lambda',
   IF: 'if',

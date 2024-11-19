@@ -21,7 +21,7 @@ describe('Compilation & Interpretation', () => {
         (map:set! a key (+ (map:get a key) 1))
         (map:set! a key 0)
     ))) m))`,
-      `(let sample1 (cons 
+      `(let sample1 (array:conc '( 
       "RL" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,CCC" '(char:new-line)
@@ -30,7 +30,7 @@ describe('Compilation & Interpretation', () => {
       "DDD=DDD,DDD" '(char:new-line)
       "EEE=EEE,EEE" '(char:new-line)
       "GGG=GGG,GGG" '(char:new-line)
-      "ZZZ=ZZZ,ZZZ"))
+      "ZZZ=ZZZ,ZZZ")))
       (let parse (lambda input (do 
         (let split (string:split input '(char:new-line)))
         (let path (car split))
@@ -48,14 +48,14 @@ describe('Compilation & Interpretation', () => {
           (array () () () ()))
           adj))))
       
-      (let sample2 (cons 
+      (let sample2 (array:conc '( 
       "LLR" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,BBB" '(char:new-line)
       "BBB=AAA,ZZZ" '(char:new-line)
-      "ZZZ=ZZZ,ZZZ"))
+      "ZZZ=ZZZ,ZZZ")))
       
-      (let sample3 (cons
+      (let sample3 (array:conc '(
       "LR" '(char:new-line)
       '(char:new-line)
       "11A=11B,XXX" '(char:new-line)
@@ -65,7 +65,7 @@ describe('Compilation & Interpretation', () => {
       "22B=22C,22C" '(char:new-line)
       "22C=22Z,22Z" '(char:new-line)
       "22Z=22B,22B" '(char:new-line)
-      "XXX=XXX,XXX"))
+      "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
         (let dirs (car input))
@@ -108,7 +108,7 @@ describe('Compilation & Interpretation', () => {
       (let reverse (lambda arr (do
         (let rec:iter (lambda arr out
           (if (> (length arr) 0)
-              (rec:iter (cdr arr) (cons (array (car arr)) out)) 
+              (rec:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
         (rec:iter arr ()))))
       
@@ -122,7 +122,7 @@ describe('Compilation & Interpretation', () => {
         (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
       `(let Fizz (array char:F char:i char:z char:z))
     (let Buzz (array char:B char:u char:z char:z))
-    (let FizzBuzz (cons Fizz Buzz))
+    (let FizzBuzz (array:merge Fizz Buzz))
     
     (let fizz-buzz (lambda n
         (cond
@@ -145,7 +145,7 @@ describe('Compilation & Interpretation', () => {
           (let solve (lambda arr cb
                (array:fold arr (lambda a b (do
                   (let res (array:binary-search arr (cb b)))
-                  (if (not (= res 0)) (cons a (array res)) a)))
+                  (if (not (= res 0)) (array:merge a (array res)) a)))
                ())))
           ; 514579
           (|> *input*

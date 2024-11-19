@@ -49,7 +49,7 @@
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
         (let res (array:binary-search arr (cb b)))
-        (if res (cons a (array res)) a)))
+        (if res (array:merge a (array res)) a)))
      ())))
 ; 514579
 (|> *input*
@@ -66,7 +66,7 @@
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
         (let res (array:binary-search arr (cb b)))
-        (if res (cons a (array res)) a)))
+        (if res (array:merge a (array res)) a)))
      ())))
 (|> *input*
     (string:commas)
@@ -245,7 +245,7 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ; all keywords
 (/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>)
 (|>) (mod) (let) (if) (unless) (not) (and) (or) (cond) (atom?) (lambda)
-(car) (cdr) (cons) (length) (do) (array) (set!) (get)
-(apply)  (log!) (log-string!) (log-char!) (clear!)
+(car) (cdr) (length) (do) (array) (set!) (get)
+(apply) (log!) (log-string!) (log-char!) (clear!)
 (void)
 ```

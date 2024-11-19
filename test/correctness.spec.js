@@ -21,14 +21,14 @@ describe('Corretness', () => {
       fez(
         `
     (|>
-     (cons 
+     (array:conc '( 
         '(1 0 1 0) 
         '(1 1 1 1)
         '(0 0 1 0)
         '(1 0 1 0)
         '(1 1 1 1)
         '(0 0 0 0)
-        '(1 0 1 0))
+        '(1 0 1 0)))
      (array:map math:flag-flip))`,
         { compile: 1, eval: 1 }
       ),
@@ -39,7 +39,7 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(let sample1 (cons 
+        `(let sample1 (array:conc '(
       "RL" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,CCC" '(char:new-line)
@@ -48,7 +48,7 @@ describe('Corretness', () => {
       "DDD=DDD,DDD" '(char:new-line)
       "EEE=EEE,EEE" '(char:new-line)
       "GGG=GGG,GGG" '(char:new-line)
-      "ZZZ=ZZZ,ZZZ"))
+      "ZZZ=ZZZ,ZZZ")))
       (let parse (lambda input (do 
         (let split (string:split input '(char:new-line)))
         (let path (car split))
@@ -66,14 +66,14 @@ describe('Corretness', () => {
           (array () () () ()))
           adj))))
       
-      (let sample2 (cons 
+      (let sample2 (array:conc '( 
       "LLR" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,BBB" '(char:new-line)
       "BBB=AAA,ZZZ" '(char:new-line)
-      "ZZZ=ZZZ,ZZZ"))
+      "ZZZ=ZZZ,ZZZ")))
       
-      (let sample3 (cons
+      (let sample3 (array:conc '(
       "LR" '(char:new-line)
       '(char:new-line)
       "11A=11B,XXX" '(char:new-line)
@@ -83,7 +83,7 @@ describe('Corretness', () => {
       "22B=22C,22C" '(char:new-line)
       "22C=22Z,22Z" '(char:new-line)
       "22Z=22B,22B" '(char:new-line)
-      "XXX=XXX,XXX"))
+      "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
         (let dirs (car input))
@@ -154,7 +154,7 @@ describe('Corretness', () => {
     (let reverse (lambda arr (do
       (let rec:iter (lambda arr out
         (if (> (length arr) 0)
-            (rec:iter (cdr arr) (cons (array (car arr)) out)) 
+            (rec:iter (cdr arr) (array:merge (array (car arr)) out)) 
             out)))
       (rec:iter arr ()))))
     
@@ -403,7 +403,7 @@ describe('Corretness', () => {
       fez(
         `(let Fizz (array char:F char:i char:z char:z))
         (let Buzz (array char:B char:u char:z char:z))
-        (let FizzBuzz (cons Fizz Buzz))
+        (let FizzBuzz (array:merge Fizz Buzz))
         
         (let fizz-buzz (lambda n
             (cond
@@ -493,7 +493,7 @@ describe('Corretness', () => {
     (let solve (lambda arr cb
          (array:fold arr (lambda a b (do
             (let res (array:binary-search arr (cb b)))
-            (if (not (= res 0)) (cons a (array res)) a)))
+            (if (not (= res 0)) (array:merge a (array res)) a)))
          ())))
     ; 514579
     (|> *input*
@@ -582,14 +582,14 @@ describe('Corretness', () => {
         (|> springs (string:chars) (array:flat-one)) 
         (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->number))))))
 ))))))
-(let sample (parse (cons
+(let sample (parse (array:conc '(
   "???.### 1,1,3" '(char:new-line)
   ".??..??...?##. 1,1,3" '(char:new-line)
   "?#?#?#?#?#?#?#? 1,3,1,6" '(char:new-line)
   "????.#...#... 4,1,1" '(char:new-line)
   "????.######..#####. 1,6,5" '(char:new-line)
   "?###???????? 3,2,1"
-)))
+))))
 (let dp (lambda left right (do 
   (if (array:empty? left) (array:empty? right)
   (if (array:empty? right) (not (array:has? left (lambda x (= x char:hash))))
@@ -608,7 +608,7 @@ describe('Corretness', () => {
   )))))
 )))
 (let dpm (lambda left right memo (do 
-  (let key (cons left right))
+  (let key (array:merge left right))
   (if (and (not (array:empty? key)) (map:has? memo key)) (map:get memo key)
     (if (array:empty? left) (array:empty? right)
     (if (array:empty? right) (not (array:has? left (lambda x (= x char:hash))))
@@ -687,9 +687,9 @@ describe('Corretness', () => {
                                                     (array:map (lambda d (|> d
                                                                             (from:chars->digits)
                                                                             (from:digits->number))))))))))
-(let sample (cons 
+(let sample (array:conc '( 
             "2x3x4" '(char:new-line) 
-            "1x1x10"))
+            "1x1x10")))
 
 (let part1 (lambda input 
   (|> input 
@@ -738,7 +738,7 @@ describe('Corretness', () => {
                       (*) a)
                       (let A (from:digits->chars (from:number->digits (math:abs (car a)))))
                       (let B (from:digits->chars (from:number->digits (math:abs (car (cdr a))))))
-                      (let key (cons (if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B))
+                      (let key (array:conc '((if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B)))
                       (set:add! map key)
                       a)) '(0 0))))
 (let part1 (lambda x (do
@@ -787,7 +787,7 @@ describe('Corretness', () => {
                                                  (evaluate (array:get args 2) env)
                                                  0))))
 (let run (lambda source (apply (map:get keywords "do") (from:chars->ast source) keywords)))
-(run (cons "(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))"))`,
+(run (array:conc '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`,
         { mutation: 1, eval: 1, compile: 1 }
       ),
       29
@@ -845,19 +845,19 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(let sample (cons 
+        `(let sample (array:conc '(
     "ugknbfddgicrmopn" '(char:new-line)
     "aaa" '(char:new-line)
     "jchzalrnumimnmhp" '(char:new-line)
     "haegwjzuvuyypxyu" '(char:new-line)
     "dvszwmarrgswjxmb"
-))
-(let sample2 (cons 
+)))
+(let sample2 (array:conc '(
     "qjhvhtzxzqqjkmpb" '(char:new-line)
     "xxyxx" '(char:new-line)
     "uurcxstgmygtbstg" '(char:new-line)
     "ieodomkazucvgmuy"
-))
+)))
 
 (let sample3 "aaa")
 (let sample4 "xyxy")

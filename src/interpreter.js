@@ -707,30 +707,6 @@ const keywords = {
   //   }
   //   return evaluate(inp, env)
   // },
-  [KEYWORDS.CONS]: (args, env) => {
-    if (args.length < 2)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.CONS}) (>= 2 required). (${
-          KEYWORDS.CONS
-        } ${stringifyArgs(args)})`
-      )
-    const [first, ...rest] = args
-    const array = evaluate(first, env)
-    if (!Array.isArray(array))
-      throw new TypeError(
-        `First Argument of (${KEYWORDS.CONS}) must be (${
-          KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.CONS} ${stringifyArgs(args)})`
-      )
-    const other = rest.map((x) => evaluate(x, env))
-    if (other.some((x) => !Array.isArray(x)))
-      throw new TypeError(
-        `Following Arguments of (${KEYWORDS.CONS}) must be (${
-          KEYWORDS.ARRAY_TYPE
-        }) (${KEYWORDS.CONS} ${stringifyArgs(args)})`
-      )
-    return other.reduce((a, b) => a.concat(b), array)
-  },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
     if (args.length !== 2 && args.length !== 3)
       throw new RangeError(
