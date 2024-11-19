@@ -1030,10 +1030,10 @@ matrix
     deepStrictEqual(
       fez(
         `'((from:list->array (from:array->list (array 1 2 3 4)))
-(|> (list:range 1 10) (list:filter math:even?) (from:list->array))
+(|> (math:list-range 1 10) (list:filter math:even?) (from:list->array))
 (from:list->array (list:pair 1 (list:pair 2 (list:pair 3 ()))))
-(from:list->array (list:range 1 10))
-(|> (list:range 1 2) (list:map (lambda x (* x x))) (list:fold + 0))))
+(from:list->array (math:list-range 1 10))
+(|> (math:list-range 1 2) (list:map (lambda x (* x x))) (list:fold + 0))))
 `,
         { compile: 1, eval: 1 }
       ),
@@ -1054,7 +1054,7 @@ matrix
                 (= (mod x 5) 0) "buzz"
                 (*) x)))
 (|> 
-  (list:range 1 25)
+  (math:list-range 1 25)
   (list:map fizz-buzz)
   (from:list->array)
 )
