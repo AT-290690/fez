@@ -841,7 +841,7 @@
 (|> 
  table
  (array:fold (lambda a b
-    (cons a (array b) (array row-delimiter)) 
+    (cons (cons a (array b)) (array row-delimiter))
  ) ())  
  (array:map (lambda x (|> x 
              (array:map (lambda y 
