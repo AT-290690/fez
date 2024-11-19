@@ -21,7 +21,7 @@ describe('Corretness', () => {
       fez(
         `
     (|>
-     (array:conc '( 
+     (array:concat '( 
         '(1 0 1 0) 
         '(1 1 1 1)
         '(0 0 1 0)
@@ -39,7 +39,7 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(let sample1 (array:conc '(
+        `(let sample1 (array:concat '(
       "RL" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,CCC" '(char:new-line)
@@ -66,14 +66,14 @@ describe('Corretness', () => {
           (array () () () ()))
           adj))))
       
-      (let sample2 (array:conc '( 
+      (let sample2 (array:concat '( 
       "LLR" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,BBB" '(char:new-line)
       "BBB=AAA,ZZZ" '(char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       
-      (let sample3 (array:conc '(
+      (let sample3 (array:concat '(
       "LR" '(char:new-line)
       '(char:new-line)
       "11A=11B,XXX" '(char:new-line)
@@ -582,7 +582,7 @@ describe('Corretness', () => {
         (|> springs (string:chars) (array:flat-one)) 
         (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->number))))))
 ))))))
-(let sample (parse (array:conc '(
+(let sample (parse (array:concat '(
   "???.### 1,1,3" '(char:new-line)
   ".??..??...?##. 1,1,3" '(char:new-line)
   "?#?#?#?#?#?#?#? 1,3,1,6" '(char:new-line)
@@ -687,7 +687,7 @@ describe('Corretness', () => {
                                                     (array:map (lambda d (|> d
                                                                             (from:chars->digits)
                                                                             (from:digits->number))))))))))
-(let sample (array:conc '( 
+(let sample (array:concat '( 
             "2x3x4" '(char:new-line) 
             "1x1x10")))
 
@@ -738,7 +738,7 @@ describe('Corretness', () => {
                       (*) a)
                       (let A (from:digits->chars (from:number->digits (math:abs (car a)))))
                       (let B (from:digits->chars (from:number->digits (math:abs (car (cdr a))))))
-                      (let key (array:conc '((if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B)))
+                      (let key (array:concat '((if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B)))
                       (set:add! map key)
                       a)) '(0 0))))
 (let part1 (lambda x (do
@@ -787,7 +787,7 @@ describe('Corretness', () => {
                                                  (evaluate (array:get args 2) env)
                                                  0))))
 (let run (lambda source (apply (map:get keywords "do") (from:chars->ast source) keywords)))
-(run (array:conc '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`,
+(run (array:concat '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`,
         { mutation: 1, eval: 1, compile: 1 }
       ),
       29
@@ -845,14 +845,14 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(let sample (array:conc '(
+        `(let sample (array:concat '(
     "ugknbfddgicrmopn" '(char:new-line)
     "aaa" '(char:new-line)
     "jchzalrnumimnmhp" '(char:new-line)
     "haegwjzuvuyypxyu" '(char:new-line)
     "dvszwmarrgswjxmb"
 )))
-(let sample2 (array:conc '(
+(let sample2 (array:concat '(
     "qjhvhtzxzqqjkmpb" '(char:new-line)
     "xxyxx" '(char:new-line)
     "uurcxstgmygtbstg" '(char:new-line)

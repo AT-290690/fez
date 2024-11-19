@@ -21,7 +21,7 @@ describe('Compilation & Interpretation', () => {
         (map:set! a key (+ (map:get a key) 1))
         (map:set! a key 0)
     ))) m))`,
-      `(let sample1 (array:conc '( 
+      `(let sample1 (array:concat '( 
       "RL" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,CCC" '(char:new-line)
@@ -48,14 +48,14 @@ describe('Compilation & Interpretation', () => {
           (array () () () ()))
           adj))))
       
-      (let sample2 (array:conc '( 
+      (let sample2 (array:concat '( 
       "LLR" '(char:new-line)
       '(char:new-line)
       "AAA=BBB,BBB" '(char:new-line)
       "BBB=AAA,ZZZ" '(char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       
-      (let sample3 (array:conc '(
+      (let sample3 (array:concat '(
       "LR" '(char:new-line)
       '(char:new-line)
       "11A=11B,XXX" '(char:new-line)
