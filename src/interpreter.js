@@ -859,6 +859,7 @@ export const deSuggar = (ast) => {
                     inp = [rest[i].shift(), inp, ...rest[i]]
                   }
                   for (let i = 0; i < inp.length; ++i) exp[i] = inp[i]
+                  deSuggar(exp)
                 }
                 break
               case KEYWORDS.LIST_TYPE:
@@ -870,6 +871,7 @@ export const deSuggar = (ast) => {
                     temp = temp.at(-1)
                   }
                   temp.push([0, 'array'])
+                  deSuggar(exp)
                 }
                 break
               case KEYWORDS.UNLESS:
