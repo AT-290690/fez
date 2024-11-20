@@ -28,6 +28,7 @@ export const KEYWORDS = {
   BITWISE_UNSIGNED_RIGHT_SHIFT: '>>>',
   GET_ARRAY: 'get',
   BLOCK: 'do',
+  BODY: 'block',
   ANONYMOUS_FUNCTION: 'lambda',
   IF: 'if',
   UNLESS: 'unless',

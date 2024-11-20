@@ -247,5 +247,5 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 (mod) (let) (if) (not) (and) (or) (cond) (atom?) (lambda)
 (length) (do) (array) (set!) (get) (apply) (void)
 (log!) (log-string!) (log-char!) (clear!)
-(|>) (list) (unless)
+(|>) (list) (unless) (block)
 ```

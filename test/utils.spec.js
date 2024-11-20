@@ -57,7 +57,16 @@ describe('Utils', () => {
                 (array:sort (lambda a b (> a b)))
                 (solve (lambda x (- 2020 x)))
                 (math:product))`,
-      `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`
+      `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`,
+      `(let empty! (lambda arr (do 
+      (let rec:iterate (lambda 
+        (unless (= (length arr) 0) 
+          (block (set! arr -1) (rec:iterate))
+        arr))) (rec:iterate))))
+'( 
+  (block 1 2)
+  (empty! '(1 2 3 4 5))
+)`
     ]
       .slice(0, 1)
       .map(replaceStrings)

@@ -806,6 +806,18 @@ export const deSuggar = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
+              case KEYWORDS.BODY:
+                {
+                  exp[0][1] = KEYWORDS.CALL_FUNCTION
+                  exp[0][0] = APPLY
+                  exp.length = 1
+                  exp[1] = [
+                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                    [[APPLY, KEYWORDS.BLOCK], ...rest]
+                  ]
+                  deSuggar(exp)
+                }
+                break
               case KEYWORDS.BLOCK:
                 {
                   if (

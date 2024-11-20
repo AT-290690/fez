@@ -1096,5 +1096,20 @@ matrix
       ),
       [[45, 49], [49]]
     )
+    deepStrictEqual(
+      fez(
+        `(let empty! (lambda arr (do 
+      (let rec:iterate (lambda 
+        (unless (= (length arr) 0) 
+          (block (set! arr -1) (rec:iterate))
+        arr))) (rec:iterate))))
+'( 
+  (block 1 2)
+  (empty! '(1 2 3 4 5))
+)`,
+        { mutation: 1, compile: 1, eval: 1 }
+      ),
+      [2, []]
+    )
   })
 })
