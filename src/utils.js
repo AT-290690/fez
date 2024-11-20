@@ -22,7 +22,10 @@ export const replaceStrings = (source) => {
   return source
 }
 export const replaceQuotes = (source) =>
-  source.replaceAll(/\'\(/g, '(array ').replaceAll(/\(\)/g, '(array)')
+  source
+    .replaceAll(/\'\(/g, '(array ')
+    .replaceAll(/\`\(/g, '(list ')
+    .replaceAll(/\(\)/g, '(array)')
 // export const replaceEmptyArrays = (source) =>
 //   source
 export const removeNoCode = (source) =>

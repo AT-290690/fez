@@ -326,6 +326,11 @@
                               (list:nil? xs) 1
                               (not (f (list:head xs))) 0
                               (*) (list:every? (list:tail xs) f))))
+(let list:for (lambda xs f (if 
+                              (list:nil? xs) ()
+                              (apply (lambda (do 
+                                (f (list:head xs)) 
+                                (list:for (list:tail xs) f)))))))                              
 (let array:for (lambda arr callback (do 
                     (let rec:iter (lambda out 
                       (if (> (length out) 0) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
