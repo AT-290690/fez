@@ -1111,5 +1111,20 @@ matrix
       ),
       [2, []]
     )
+    strictEqual(
+      fez(
+        `(block 
+  (let v1 (var:def 0))
+  (unless (> 2 3)
+            (block 
+              (let v 15)
+              (|> v1 (var:set! (+ v 10))))
+        "Noooo!")
+(var:get v1))
+`,
+        { mutation: 1, compile: 1, eval: 1 }
+      ),
+      25
+    )
   })
 })

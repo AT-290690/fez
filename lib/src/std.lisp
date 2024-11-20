@@ -1152,7 +1152,9 @@
 (let bool:false! (lambda variable (set! variable 0 0)))
 (let bool:true? (lambda variable (= (get variable 0) 1)))
 (let bool:false? (lambda variable (= (get variable 0) 0)))
-
+(let curry:ternary (lambda f b c (lambda a (f a b c))))
+(let curry:binary (lambda f b (lambda a (f a b))))
+(let curry:unary (lambda f (lambda a (f a))))
 (let new:brray (lambda (array (array ()) ())))
 (let brray:offset-left (lambda q (* (- (length (get q 0)) 1) -1)))
 (let brray:offset-right (lambda q (length (get q 1))))
