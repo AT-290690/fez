@@ -861,6 +861,17 @@ export const deSuggar = (ast) => {
                   for (let i = 0; i < inp.length; ++i) exp[i] = inp[i]
                 }
                 break
+              case KEYWORDS.LIST_TYPE:
+                {
+                  exp.length = 0
+                  let temp = exp
+                  for (const item of rest) {
+                    temp.push([0, KEYWORDS.ARRAY_TYPE], item, [])
+                    temp = temp.at(-1)
+                  }
+                  temp.push([0, 'array'])
+                }
+                break
               case KEYWORDS.UNLESS:
                 {
                   if (rest.length > 3 || rest.length < 2)

@@ -9,6 +9,7 @@ export const PLACEHOLDER = '.'
 export const KEYWORDS = {
   RECURSION: 'rec',
   NUMBER_TYPE: 'number',
+  LIST_TYPE: 'list',
   ARRAY_TYPE: 'array',
   IDENTITY: 'identity',
   ARRAY_LENGTH: 'length',
