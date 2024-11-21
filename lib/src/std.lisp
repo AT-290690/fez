@@ -615,15 +615,15 @@
                               (*) res)))
   (array:reverse (rec:iter num ())))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:number->digits x))))))
-(let from:chars->numbers (lambda arr (array:map (array:select (array:map (array:map arr from:chars->digits) array:flat-one) length) from:digits->number)))
+(let from:chars->numbers (lambda arr (array:map (array:select (array:map (array:map arr from:chars->digits) array:flat-one) array:not-empty?) from:digits->number)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))
 (let from:any->boolean (lambda val (not (not val))))
 (let from:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let from:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
-(let from:set->array (lambda set (array:select (array:flat-one set) length)))
-(let from:map->array (lambda set (array:select (array:flat-one set) length)))
+(let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
+(let from:map->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
 ; (let from:map->string (lambda table (|>
 ;   table
@@ -728,19 +728,19 @@
 (let array:remove (lambda arr i
       (array:fold arr (lambda a x (do (if (= x i) a (set! a (length a) x)))) ())))
 (let array:pad-right (lambda a b (if (> (length a) (length b))
-     (array:merge b (array (- (length a) (length b)) length))
-     (array:merge a (array (- (length b) (length a)) length)))))
+     (array:merge b (math:zeroes (- (length a) (length b))))
+     (array:merge a (math:zeroes (- (length b) (length a)))))))
 (let array:pad-left (lambda a b (if (> (length a) (length b))
-     (array:merge (array (- (length a) (length b)) length) b)
-     (array:merge (array (- (length b) (length a)) length) a))))
+     (array:merge (math:zeroes (- (length a) (length b))) b)
+     (array:merge (math:zeroes (- (length b) (length a))) a))))
 (let array:pad-right! (lambda a b (if (> (length a) (length b))
-     (array:merge! b (array (- (length a) (length b)) length))
-     (array:merge! a (array (- (length b) (length a)) length)))))
+     (array:merge! b (math:zeroes (- (length a) (length b))))
+     (array:merge! a (math:zeroes (- (length b) (length a)))))))
 (let array:pad-left! (lambda a b (if (> (length a) (length b))
-     (array:merge! (array (- (length a) (length b)) length) b)
-     (array:merge! (array (- (length b) (length a)) length) a))))
-(let array:rotate-right (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  n) (length arr)) (array:first b) )) (array (length arr) length)))))
-(let array:rotate-left (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  (- (length arr) n)) (length arr)) (array:first b) )) (array (length arr) length)))))
+     (array:merge! (math:zeroes (- (length a) (length b))) b)
+     (array:merge! (math:zeroes (- (length b) (length a))) a))))
+(let array:rotate-right (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  n) (length arr)) (array:first b) )) (math:zeroes (length arr))))))
+(let array:rotate-left (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  (- (length arr) n)) (length arr)) (array:first b) )) (math:zeroes (length arr))))))
 (let array:first (lambda arr (get arr 0)))
 (let array:second (lambda arr (get arr 1)))
 (let array:third (lambda arr (get arr 2)))
@@ -827,29 +827,29 @@
                                                         (rec:iterate (cdr arr) (+ i 1))))))
                                               (rec:iterate str 0)))))))
 (let string:greater? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
-  (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
-  (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
+  (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
+  (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
   (|>
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (> (array:first pair) (array:second pair)) 0 acc)) 1))))))))
 (let string:greater-or-equal? (lambda A B (or (string:equal? A B) (apply (lambda (do
-  (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
-  (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
+  (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
+  (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
   (|>
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (> (array:first pair) (array:second pair)) 0 acc)) 1))))))))
 (let string:lesser? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
-  (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
-  (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
+  (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
+  (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
   (|>
    a
    (array:zip b)
    (array:fold (lambda acc pair (if (< (array:first pair) (array:second pair)) 0 acc)) 1))))))))
 (let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (apply (lambda (do
-  (let a (if (< (length A) (length B)) (array:merge! A (array (- (length B) (length A)) length)) A))
-  (let b (if (> (length A) (length B)) (array:merge! B (array (- (length A) (length B)) length)) B))
+  (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
+  (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
   (|>
    a
    (array:zip b)
@@ -866,12 +866,12 @@
 (let string:max (lambda a b (if (string:lesser? a b) b a)))
 (let string:join-as-table-with (lambda table colum row (do 
 (let M (math:maximum (array:map table math:max-length)))
-(let row-delimiter2 (array:map (array (length (car table)) length) (lambda . (array:map (array M length) (lambda . row)))))
+(let row-delimiter2 (array:map (math:zeroes (length (car table))) (lambda . (array:map (math:zeroes M) (lambda . row)))))
 (let row-delimiter 
     (|> 
-     (array (length (car table)) length) 
+     (math:zeroes (length (car table))) 
      (array:map (lambda . 
-     (array:map (array M length) (lambda . row))
+     (array:map (math:zeroes M) (lambda . row))
      ))))
 (|> 
  table
