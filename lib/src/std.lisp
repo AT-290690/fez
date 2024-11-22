@@ -286,8 +286,7 @@
             (if (< (get-sum a) 0)
                 (set-sum! a 0))
             a)) (array 0 math:min-safe-integer))
-        (cdr)
-        (car)))))
+        (get 0)))))
 (let math:list-maximum (lambda xs
     (list:fold xs math:max math:min-safe-integer)))
 (let math:list-minimum (lambda xs
@@ -326,6 +325,13 @@
                               (list:nil? xs) 1
                               (not (f (list:head xs))) 0
                               (*) (list:every? (list:tail xs) f))))
+(let list:get (lambda list i (do 
+  (let l (list:find list (lambda x (= (list:head (list:tail x)) i))))
+  (if (list:nil? l) l (list:head l))
+)))
+(let list:equal? (lambda a b (array:equal? (from:list->array a) (from:list->array b))))
+(let list:count-of (lambda xs callback (list:fold xs (lambda a b (if (callback b) (+ a 1) a)) 0)))
+(let list:count (lambda input item (list:count-of input (lambda x (= x item)))))
 (let list:for (lambda xs f (if 
                               (list:nil? xs) ()
                               (apply (lambda (do 
