@@ -2,9 +2,16 @@ import { deepStrictEqual } from 'assert'
 import { fez, replaceStrings, tree } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
+import { deSuggar } from '../src/interpreter.js'
 describe('Utils', () => {
   it('Should be work', () =>
     [
+      `(let map (lambda xs f (do
+  (let rec:iter (lambda xs out
+  (if (list:nil? xs) out
+  (rec:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (rec:iter xs ())))))
+  (map (list 2 3 4) math:square)`,
       `; reverse array
       ; returns a copy of the array but reversed
       ; '(1 2 3) -> '(3 2 1)
@@ -68,9 +75,8 @@ describe('Utils', () => {
   (empty! '(1 2 3 4 5))
 )`
     ]
-      .slice(0, 1)
-      .map(replaceStrings)
       .map((source) => tree(source, std))
+      .map((ast) => deSuggar(ast))
       .forEach((ast) =>
         deepStrictEqual(
           fez(LISP.source(ast), {

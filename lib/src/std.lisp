@@ -122,16 +122,12 @@
 (let math:product (lambda arr (array:fold arr (lambda a b (* a b)) (*))))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
-(let math:maximum (lambda arr (array:fold arr math:max (car arr))))
-(let math:minimum (lambda arr (array:fold arr math:min (car arr))))
-(let math:max-length (lambda arr (array:fold
-    arr
-    (lambda a b 
-        (if (> (length b) a) (length b) a)) 0)))
-(let math:min-length (lambda arr (array:fold
-    arr
-    (lambda a b 
-        (if (< (length b) a) (length b) a)) math:max-safe-integer)))
+(let math:maximum (lambda arr (array:fold arr math:max (array:first arr))))
+(let math:minimum (lambda arr (array:fold arr math:min (array:first arr))))
+(let math:maximum-index (lambda arr (array:second (array:enumerated-fold arr (lambda a x i (if (> x (array:first a)) (array x i) a)) (array (array:first arr) math:min-safe-integer)))))
+(let math:minimum-index (lambda arr (array:second (array:enumerated-fold arr (lambda a x i (if (< x (array:first a)) (array x i) a)) (array (array:first arr) math:max-safe-integer)))))
+(let math:max-length (lambda arr (array:fold arr (lambda a b (if (> (length b) a) (length b) a)) math:min-safe-integer)))
+(let math:min-length (lambda arr (array:fold arr (lambda a b (if (< (length b) a) (length b) a)) math:max-safe-integer)))
 (let math:increment (lambda i (+ i 1)))
 (let math:floor (lambda n (| n 0)))
 (let math:round (lambda n (| (+ n 0.5) 0)))
@@ -287,14 +283,10 @@
                 (set-sum! a 0))
             a)) (array 0 math:min-safe-integer))
         (get 0)))))
-(let math:list-maximum (lambda xs
-    (list:fold xs math:max math:min-safe-integer)))
-(let math:list-minimum (lambda xs
-    (list:fold xs math:min math:max-safe-integer)))
-(let math:list-summation (lambda xs
-    (list:fold xs + 0)))
-(let math:list-product (lambda xs
-    (list:fold xs * 1)))
+(let math:list-maximum (lambda xs (list:fold xs math:max math:min-safe-integer)))
+(let math:list-minimum (lambda xs (list:fold xs math:min math:max-safe-integer)))
+(let math:list-summation (lambda xs (list:fold xs + 0)))
+(let math:list-product (lambda xs (list:fold xs * 1)))
 (let math:list-range (lambda low high (if (> low high) () (list:pair low (math:list-range (+ low 1) high)))))
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (get pair 0)))

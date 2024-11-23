@@ -1126,5 +1126,47 @@ matrix
       ),
       25
     )
+
+    deepStrictEqual(
+      fez(
+        `(let map (lambda xs f (do
+  (let rec:iter (lambda xs out
+  (if (list:nil? xs) out
+  (rec:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (rec:iter xs ())))))
+  (map (list 2 3 4) math:square)`,
+        { compile: 1, eval: 1 }
+      ),
+      [4, [9, [16, []]]]
+    )
+    deepStrictEqual(
+      fez(
+        `(|> 
+  '(1 2 3 4 5)
+  (from:array->list)
+  (list:map math:square)
+  (from:list->array)
+  (array:reverse)
+  (from:array->list)
+  (list:reverse)
+  (list:map math:sqrt)
+  (list:map math:floor)
+  (from:list->array)
+)`,
+        { compile: 1, eval: 1 }
+      ),
+      [1, 2, 3, 4, 5]
+    )
+
+    deepStrictEqual(
+      fez(
+        `(array (string:pad-left "aaa" 13 "x") (string:pad-right "aaa" 13 "x"))`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 97, 97, 97],
+        [97, 97, 97, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120]
+      ]
+    )
   })
 })

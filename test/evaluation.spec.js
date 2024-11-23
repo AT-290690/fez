@@ -3,6 +3,12 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(let map (lambda xs f (do
+  (let rec:iter (lambda xs out
+  (if (list:nil? xs) out
+  (rec:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (rec:iter xs ())))))
+  (map (list 2 3 4) math:square)`,
       `(let memo '(() ()))
 (let fibonacci (lambda n (do 
 (let key (|> n (from:number->digits) (from:digits->chars)))
