@@ -321,6 +321,15 @@
   (let l (list:find list (lambda x (= (list:head (list:tail x)) i))))
   (if (list:nil? l) l (list:head l))
 )))
+(let list:end (lambda xs (cond
+                              (list:nil? (list:tail xs)) xs
+                              (*) (list:end (list:tail xs)))))
+(let list:concat! (lambda a b (do (set! (list:end a) 1 b) a)))
+(let list:flatten (lambda xs 
+  (if (list:nil? xs) ()
+  (if (atom? (list:head xs))
+    (list:concat! (list:pair (list:head xs) ()) (list:flatten (list:tail xs)))
+    (list:concat! (list:flatten (list:head xs)) (list:flatten (list:tail xs)))))))
 (let list:equal? (lambda a b (array:equal? (from:list->array a) (from:list->array b))))
 (let list:count-of (lambda xs callback (list:fold xs (lambda a b (if (callback b) (+ a 1) a)) 0)))
 (let list:count (lambda input item (list:count-of input (lambda x (= x item)))))

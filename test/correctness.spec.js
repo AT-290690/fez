@@ -1168,5 +1168,26 @@ matrix
         [97, 97, 97, 120, 120, 120, 120, 120, 120, 120, 120, 120, 120]
       ]
     )
+
+    deepStrictEqual(
+      fez(
+        `
+      (let out \`(\`(1 2 3) \`(4 5 6)))
+'((|>
+ out
+ (list:flatten)
+ (from:list->array)
+) (array:map (from:list->array out) from:list->array))
+      `,
+        { ocmpile: 1, eval: 1 }
+      ),
+      [
+        [1, 2, 3, 4, 5, 6],
+        [
+          [1, 2, 3],
+          [4, 5, 6]
+        ]
+      ]
+    )
   })
 })
