@@ -6,7 +6,8 @@ import {
   APPLY,
   ATOM,
   FALSE,
-  TRUE
+  TRUE,
+  TYPES,
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isLeaf } from './parser.js'
@@ -165,7 +166,7 @@ const keywords = {
     const condition = evaluate(args[0], env)
     if (condition !== FALSE && condition !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.IF}) must be 0 or 1 but got ${condition}`
+        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got ${condition}`
       )
     return condition
       ? evaluate(args[1], env)
@@ -186,7 +187,7 @@ const keywords = {
       const condition = evaluate(args[i], env)
       if (condition !== FALSE && condition !== TRUE)
         throw new TypeError(
-          `Condition of (${KEYWORDS.CONDITION}) must be 0 or 1 but got ${condition}`
+          `Condition of (${KEYWORDS.CONDITION}) must be ${TRUE} or ${FALSE} but got ${condition}`
         )
       if (condition) return evaluate(args[i + 1], env)
     }
@@ -422,7 +423,7 @@ const keywords = {
       circuit = evaluate(args[i], env)
       if (circuit !== FALSE && circuit !== TRUE)
         throw new TypeError(
-          `Condition of (${KEYWORDS.AND}) must be 0 or 1 but got ${circuit}`
+          `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got ${circuit}`
         )
       if (circuit) continue
       else return 0
@@ -430,7 +431,7 @@ const keywords = {
     const end = evaluate(args.at(-1), env)
     if (end !== FALSE && end !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.AND}) must be 0 or 1 but got ${end}`
+        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got ${end}`
       )
     return end
   },
@@ -446,7 +447,7 @@ const keywords = {
       circuit = evaluate(args[i], env)
       if (circuit !== FALSE && circuit !== TRUE)
         throw new TypeError(
-          `Condition of (${KEYWORDS.OR}) must be 0 or 1 but got ${circuit}`
+          `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got ${circuit}`
         )
       if (circuit) return 1
       else continue
@@ -454,7 +455,7 @@ const keywords = {
     const end = evaluate(args.at(-1), env)
     if (end !== FALSE && end !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.OR}) must be 0 or 1 but got ${end}`
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got ${end}`
       )
     return end
   },
@@ -498,7 +499,7 @@ const keywords = {
       throw new SyntaxError(
         `First argument of (${
           KEYWORDS.DEFINE_VARIABLE
-        }) must be word but got ${type} (${
+        }) must be word but got ${TYPES[type]} (${
           KEYWORDS.DEFINE_VARIABLE
         } ${stringifyArgs(args)})`
       )

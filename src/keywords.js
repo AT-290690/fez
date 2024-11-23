@@ -53,3 +53,10 @@ export const KEYWORDS = {
   LOG_CHAR: 'log-char!',
   CLEAR_CONSOLE: 'clear!'
 }
+
+
+export const TYPES = {
+  [APPLY]: 'APPLY',
+  [WORD]: 'WORD',
+  [ATOM]: 'ATOM'
+}
