@@ -578,6 +578,7 @@
       prev
       (rec:iterate (+ i 1))) ())))
       (rec:iterate 1))))))))
+(let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
 (let matrix:adjacent-directions (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
 (let matrix:adjacent (lambda arr directions y x callback
       (array:for directions (lambda dir (do
@@ -602,6 +603,7 @@
           (callback a (get (get arr (mod dy N)) (mod dx N))) 
           )) 0)))
 (let matrix:set! (lambda matrix y x value (set! (get matrix y) x value)))
+(let matrix:get (lambda matrix y x (get (get matrix y) x)))
 (let from:list->array (lambda list (do
   (let rec:iter (lambda lst out (if (list:nil? lst) out (rec:iter (list:tail lst) (array:merge out (array (list:head lst)))))))
   (rec:iter list ()))))

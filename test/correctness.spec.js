@@ -1227,5 +1227,35 @@ matrix
         [1, 3, 4]
       ]
     )
+    deepStrictEqual(
+      fez(
+        `(let units (list 
+ (list "GWh" 1000000 "kWh") 
+ (list "GWh" 1000 "MWh") 
+ (list "kWh" 0.01 "MWh") 
+ (list "MWh" 1000 "kWh") 
+ (list "MWh" 0.01 "GWh") 
+ (list "kWh" 0.000001 "GWh") 
+))
+(let unit-table-key (lambda left-unit right-unit (array:concat-with '(left-unit right-unit) char:dash)))
+(let units-table (|> units 
+  (list:fold (lambda table item (do 
+    (let left-unit (list:head item))
+    (let multiplier (list:head (list:tail item)))
+    (let right-unit (list:head (list:tail (list:tail item))))
+    (let key (unit-table-key left-unit right-unit))
+    (map:set! table key multiplier)
+  )) '('() '() '() '()))))
+
+(let convert (lambda value left-unit right-unit (do 
+    (let key (unit-table-key left-unit right-unit))
+    (if (map:has? units-table key) (* value (map:get units-table key)) (array "Uncovertable units")))))
+
+'((convert 2 "GWh" "kWh") (convert 2 "kWh" "MWh") (convert 2 "GWh" "MWh") (convert 2 "MWh" "kWh"))
+`,
+        { compile: 1, mutation: 1, eval: 1 }
+      ),
+      [2000000, 0.02, 2000, 2000]
+    )
   })
 })
