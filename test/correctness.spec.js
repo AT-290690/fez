@@ -582,14 +582,14 @@ describe('Corretness', () => {
         (|> springs (string:chars) (array:flat-one)) 
         (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->number))))))
 ))))))
-(let sample (parse (array:concat '(
-  "???.### 1,1,3" '(char:new-line)
-  ".??..??...?##. 1,1,3" '(char:new-line)
-  "?#?#?#?#?#?#?#? 1,3,1,6" '(char:new-line)
-  "????.#...#... 4,1,1" '(char:new-line)
-  "????.######..#####. 1,6,5" '(char:new-line)
+(let sample (parse (array:concat-with '(
+  "???.### 1,1,3"
+  ".??..??...?##. 1,1,3"
+  "?#?#?#?#?#?#?#? 1,3,1,6"
+  "????.#...#... 4,1,1"
+  "????.######..#####. 1,6,5"
   "?###???????? 3,2,1"
-))))
+) char:new-line)))
 (let dp (lambda left right (do 
   (if (array:empty? left) (array:empty? right)
   (if (array:empty? right) (not (array:has? left (lambda x (= x char:hash))))
@@ -1191,8 +1191,41 @@ matrix
     )
 
     deepStrictEqual(
-      fez(`(list:slice \`(1 2 3 4 5 6) 1 4)`, { ocmpile: 1, eval: 1 }),
+      fez(`(list:slice \`(1 2 3 4 5 6) 1 4)`, { compile: 1, eval: 1 }),
       [2, [3, [4, []]]]
+    )
+
+    deepStrictEqual(
+      fez(
+        `(|> (list (list 1 2) (list 3 4) (list 5 6) (list 7 8)) (list:concat!) (from:list->array))`,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      [1, 2, 3, 4, 5, 6, 7, 8]
+    )
+
+    deepStrictEqual(
+      fez(
+        `'(
+  (|> '('(2 3) '(3 5) '(5 7) '(11 13) '(17 19) '(21 22) '(29 31) '(41 43)) (array:every? (lambda x (math:coprime? (array:first x) (array:second x)))))
+  (|> '('(2 4) '(4 8) '(4 16)) (array:some? (lambda x (math:coprime? (array:first x) (array:second x)))))
+)`,
+        { compile: 1, eval: 1 }
+      ),
+      [1, 0]
+    )
+
+    deepStrictEqual(
+      fez(
+        `'(
+  (from:list->array (list:insert-at \`(1 2 3 4) 1 10))
+  (from:list->array (list:remove-at \`(1 2 3 4) 1))
+)`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        [1, 10, 2, 3, 4],
+        [1, 3, 4]
+      ]
     )
   })
 })

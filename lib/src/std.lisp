@@ -71,6 +71,10 @@
 (let char:dash 45)
 (let char:left-brace 40)
 (let char:right-brace 41)
+(let char:curly-left-brace 123)
+(let char:curly-right-brace 125)
+(let char:left-bracket 91)
+(let char:right-bracket 93)
 (let char:pipe 124)
 (let char:hash 35)
 (let char:question-mark 63)
@@ -166,6 +170,7 @@
     (let rec:gcd (lambda a b
           (if (= b 0) a (rec:gcd b (mod a b))))) (rec:gcd a b))))
 (let math:least-common-divisor (lambda a b (* a b (/ (math:greatest-common-divisor a b)))))
+(let math:coprime? (lambda a b (= (math:greatest-common-divisor a b) 1)))
 (let math:sqrt (lambda x (do
   (let is-good-enough (lambda g x (< (math:abs (- (math:square g) x)) 0.01)))
   (let improve-guess (lambda g x (math:average g (* x (/ g)))))
@@ -318,6 +323,13 @@
                               (list:nil? xs) 1
                               (not (f (list:head xs))) 0
                               (*) (list:every? (list:tail xs) f))))
+(let list:remove-at (lambda xs pos (do 
+  (let remove (lambda xs ini (if (= pos (- ini 1)) (list:tail xs) (list:pair (list:head xs) (remove (list:tail xs) (+ ini 1))))))
+  (remove xs 1))))
+(let list:insert-at (lambda xs pos elem 
+    (if (or (= pos 0) (list:nil? xs))
+        (list:pair elem xs)
+        (list:pair (list:head xs) (list:insert-at (list:tail xs) (- pos 1) elem)))))
 (let list:get (lambda list i (do 
   (let l (list:find list (lambda x (= (list:head (list:tail x)) i))))
   (if (list:nil? l) l (list:head l))
@@ -325,12 +337,21 @@
 (let list:end (lambda xs (cond
                               (list:nil? (list:tail xs)) xs
                               (*) (list:end (list:tail xs)))))
-(let list:concat! (lambda a b (do (set! (list:end a) 1 b) a)))
+(let list:rotate-left (lambda xs (do
+(let fst (list:head xs))
+(let xss (list:remove-at xs 0))
+(list:insert-at xss (list:length xss) fst))))
+(let list:rotate-right (lambda xs (do
+(let lst (list:head (list:end xs)))
+(let xss (list:remove-at xs (- (list:length xs) 1)))
+(list:insert-at xss 0 lst))))
+(let list:concat! (lambda lists (list:fold (list:tail lists) (lambda a b (list:merge! a b)) (list:head lists))))
+(let list:merge! (lambda a b (do (set! (list:end a) 1 b) a)))
 (let list:flatten (lambda xs 
   (if (list:nil? xs) ()
   (if (atom? (list:head xs))
-    (list:concat! (list:pair (list:head xs) ()) (list:flatten (list:tail xs)))
-    (list:concat! (list:flatten (list:head xs)) (list:flatten (list:tail xs)))))))
+    (list:merge! (list:pair (list:head xs) ()) (list:flatten (list:tail xs)))
+    (list:merge! (list:flatten (list:head xs)) (list:flatten (list:tail xs)))))))
 (let list:equal? (lambda a b (array:equal? (from:list->array a) (from:list->array b))))
 (let list:count-of (lambda xs callback (list:fold xs (lambda a b (if (callback b) (+ a 1) a)) 0)))
 (let list:count (lambda input item (list:count-of input (lambda x (= x item)))))
@@ -681,6 +702,7 @@
 (let array:merge! (lambda a b (do (array:for b (lambda x (set! a (length a) x))) a)))
 (let array:merge (lambda a b (do (let out ()) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
 (let array:concat (lambda arr (array:fold arr array:merge ())))
+(let array:concat-with (lambda arr ch (array:enumerated-fold arr (lambda a b i (if (and (> i 0) (< i (length arr))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) ())))
 (let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
 (let array:swap! (lambda arr i j (do (let temp (get arr i)) (set! arr i (get arr j)) (set! arr j temp))))
 (let array:index-of (lambda arr item (do
@@ -1343,6 +1365,7 @@ q)))
     (cond
      (atom? x) (= x 0)
      (array? x) (= (length x) 0))))
+
 (let array? (lambda x (not (atom? x))))
 
 (let ast:type 0)
