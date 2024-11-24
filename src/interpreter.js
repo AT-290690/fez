@@ -7,7 +7,7 @@ import {
   ATOM,
   FALSE,
   TRUE,
-  TYPES,
+  TYPES
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isLeaf } from './parser.js'
@@ -497,11 +497,9 @@ const keywords = {
     const name = word[VALUE]
     if (type !== WORD)
       throw new SyntaxError(
-        `First argument of (${
-          KEYWORDS.DEFINE_VARIABLE
-        }) must be word but got ${TYPES[type]} (${
-          KEYWORDS.DEFINE_VARIABLE
-        } ${stringifyArgs(args)})`
+        `First argument of (${KEYWORDS.DEFINE_VARIABLE}) must be word but got ${
+          TYPES[type]
+        } (${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
       )
     else if (isForbiddenVariableName(name))
       throw new ReferenceError(

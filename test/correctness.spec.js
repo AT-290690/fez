@@ -1189,5 +1189,10 @@ matrix
         ]
       ]
     )
+
+    deepStrictEqual(
+      fez(`(list:slice \`(1 2 3 4 5 6) 1 4)`, { ocmpile: 1, eval: 1 }),
+      [2, [3, [4, []]]]
+    )
   })
 })

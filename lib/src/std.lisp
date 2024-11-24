@@ -129,6 +129,7 @@
 (let math:max-length (lambda arr (array:fold arr (lambda a b (if (> (length b) a) (length b) a)) math:min-safe-integer)))
 (let math:min-length (lambda arr (array:fold arr (lambda a b (if (< (length b) a) (length b) a)) math:max-safe-integer)))
 (let math:increment (lambda i (+ i 1)))
+(let math:decrement (lambda i (- i 1)))
 (let math:floor (lambda n (| n 0)))
 (let math:round (lambda n (| (+ n 0.5) 0)))
 (let math:set-bit (lambda n bit (| n (<< 1 bit))))
@@ -333,6 +334,21 @@
 (let list:equal? (lambda a b (array:equal? (from:list->array a) (from:list->array b))))
 (let list:count-of (lambda xs callback (list:fold xs (lambda a b (if (callback b) (+ a 1) a)) 0)))
 (let list:count (lambda input item (list:count-of input (lambda x (= x item)))))
+(let list:take (lambda lista pos 
+    (cond 
+      (<= pos 0) ()
+      (list:nil? lista) lista
+      (*) (list:pair (list:head lista) (list:take (list:tail lista) (- pos 1))))))
+(let list:after (lambda lista pos
+  (cond 
+    (<= pos 0) lista
+    (list:nil? lista) ()
+    (*) (list:after (list:tail lista) (- pos 1)))))
+(let list:slice (lambda lista i k 
+    (cond 
+      (<= i 0) (list:take lista k)
+      (list:nil? lista) lista
+      (*) (list:slice (list:tail lista) (- i 1) (- k 1)))))
 (let list:for (lambda xs f (if 
                               (list:nil? xs) ()
                               (apply (lambda (do 
