@@ -579,20 +579,21 @@
       (rec:iterate (+ i 1))) ())))
       (rec:iterate 1))))))))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
-(let matrix:adjacent-directions (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
+(let matrix:moore-neighborhood (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
+(let matrix:von-neumann-neighborhood (array (array 1 0) (array 0 -1) (array 0 1) (array -1 0)))
 (let matrix:adjacent (lambda arr directions y x callback
       (array:for directions (lambda dir (do
           (let dy (+ (array:first dir)  y))
           (let dx (+ (array:second dir)  x))
           (if (matrix:in-bounds? arr dy dx)
-              (callback (matrix:get arr dy dx) dir)))))))
+              (callback (matrix:get arr dy dx) dir dy dx)))))))
 (let matrix:adjacent-sum (lambda arr directions y x callback
       (array:fold directions (lambda a dir (do
           (let dy (+ (array:first dir)  y))
           (let dx (+ (array:second dir)  x))
           (if
             (and (array:in-bounds? arr dy) (array:in-bounds? (get arr dy) dx))
-              (callback a (get (get arr dy) dx)) 
+              (callback a (matrix:get arr dy dx)) 
               a)
           )) 0)))
 (let matrix:sliding-adjacent-sum (lambda arr directions y x N callback
@@ -1263,11 +1264,11 @@
       (let rec:left (lambda index (do
         (brray:add-to-left! q (get initial index))
         (if (> index 0) (rec:left (- index 1))))))
-      (rec:left (- half 1))
     (let rec:right (lambda index bounds (do
         (brray:add-to-right! q (get initial index))
         (if (< index bounds) (rec:right (+ index 1) bounds)))))
       (rec:right half (- (length initial) 1))
+      (if (> (length initial) 1) (rec:left (- half 1)))
     q))))))
 (let brray:append! (lambda q item (do (brray:add-to-right! q item) q)))
 (let brray:prepend! (lambda q item (do (brray:add-to-left! q item) q)))

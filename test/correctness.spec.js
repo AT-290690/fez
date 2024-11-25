@@ -976,7 +976,7 @@ describe('Corretness', () => {
 (let gof (lambda matrix (do
   (array:enumerated-map matrix (lambda arr y (do
     (array:enumerated-map arr (lambda cell x (do
-      (let score (matrix:sliding-adjacent-sum matrix matrix:adjacent-directions y x N +))
+      (let score (matrix:sliding-adjacent-sum matrix matrix:moore-neighborhood y x N +))
       (cond 
         (and cell (or (< score 2) (> score 3))) 0
         (and cell (or (= score 2) (= score 3))) 1
@@ -1229,33 +1229,77 @@ matrix
     )
     deepStrictEqual(
       fez(
-        `(let units (list 
- (list "GWh" 1000000 "kWh") 
- (list "GWh" 1000 "MWh") 
- (list "kWh" 0.01 "MWh") 
- (list "MWh" 1000 "kWh") 
- (list "MWh" 0.01 "GWh") 
- (list "kWh" 0.000001 "GWh") 
-))
-(let unit-table-key (lambda left-unit right-unit (array:concat-with '(left-unit right-unit) char:dash)))
-(let units-table (|> units 
-  (list:fold (lambda table item (do 
-    (let left-unit (list:head item))
-    (let multiplier (list:head (list:tail item)))
-    (let right-unit (list:head (list:tail (list:tail item))))
-    (let key (unit-table-key left-unit right-unit))
-    (map:set! table key multiplier)
-  )) '('() '() '() '()))))
-
-(let convert (lambda value left-unit right-unit (do 
-    (let key (unit-table-key left-unit right-unit))
-    (if (map:has? units-table key) (* value (map:get units-table key)) (array "Uncovertable units")))))
-
-'((convert 2 "GWh" "kWh") (convert 2 "kWh" "MWh") (convert 2 "GWh" "MWh") (convert 2 "MWh" "kWh"))
+        `(let sample (array:concat-with '(
+    "..........."
+    ".....###.#."
+    ".###.##..#."
+    "..#.#...#.."
+    "....#.#...."
+    ".##..S####."
+    ".##..#...#."
+    ".......##.."
+    ".##.#.####."
+    ".##..##.##."
+    "..........."
+) char:new-line))
+(let parse (lambda input (|> input (string:lines))))
+(let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
+(let part1 (lambda matrix (do 
+  (let output (var:def 0))
+  (let width (length (array:first matrix)))
+  (let height (length matrix))
+  (let target 64)
+  (array:for-range 0 height (lambda y 
+    (array:for-range 0 width (lambda x (do 
+      (if (= (matrix:get matrix y x) char:S) (block 
+        (let visited (new:set8))
+        (let steps (new:set8))
+        (let queue (new:brray))
+        (let key (from:yx->key y x))
+        (set:add! visited key)
+        (set:add! steps key)
+        (brray:append! queue (array y x target))
+        (matrix:set! matrix y x char:dot)
+        (let rec:while (lambda (unless (brray:empty? queue) (block 
+          (let chop (brray:pop-right! queue))
+          (let y (array:first chop))
+          (let x (array:second chop))
+          (let step (array:third chop))
+          (if (math:even? step) (set:add! steps (from:yx->key y x)))
+          (matrix:adjacent matrix matrix:von-neumann-neighborhood y x (lambda cell dir dy dx (do 
+              (let key (from:yx->key dy dx))
+              (if (and (= cell char:dot) (not (set:has? visited key))) (block 
+                (brray:append! queue (array dy dx (- step 1)))
+                (set:add! visited key))))))
+          (rec:while)))))
+        (rec:while)
+        (var:set! output (length (array:flat-one steps))))))))))
+  (var:get output))))
+(part1 (parse sample))
 `,
-        { compile: 1, mutation: 1, eval: 1 }
+        { mutation: 1, compile: 1, eval: 1 }
       ),
-      [2000000, 0.02, 2000, 2000]
+      42
+    )
+
+    deepStrictEqual(
+      fez(
+        `(let arr1 (from:array->brray '(1 2 3 4 5)))
+(let arr2 (from:array->brray '(1 2 3 4 5)))
+(brray:tail! arr1)
+(brray:tail! arr1)
+(brray:tail! arr1)
+(brray:tail! arr1)
+(brray:tail! arr1)
+(brray:head! arr2)
+(brray:head! arr2)
+(brray:head! arr2)
+(brray:head! arr2)
+(brray:head! arr2)
+'((brray:length arr1) (brray:length arr2))`,
+        { mutation: 1, compile: 1, eval: 1 }
+      ),
+      [0, 0]
     )
   })
 })
