@@ -584,9 +584,8 @@
       (array:for directions (lambda dir (do
           (let dy (+ (array:first dir)  y))
           (let dx (+ (array:second dir)  x))
-          (if
-            (and (array:in-bounds? arr dy) (array:in-bounds? (get arr dy) dx))
-              (callback (get (get arr dy) dx) dir)))))))
+          (if (matrix:in-bounds? arr dy dx)
+              (callback (matrix:get arr dy dx) dir)))))))
 (let matrix:adjacent-sum (lambda arr directions y x callback
       (array:fold directions (lambda a dir (do
           (let dy (+ (array:first dir)  y))
@@ -1233,7 +1232,7 @@
         (> (length (get q 0)) 0) (set! (get q 0) -1))))))
 (let brray:remove-from-right! (lambda q (do
     (let len (brray:length q))
-    (if len
+    (if (> len 0)
      (cond
         (= len 1) (brray:empty! q)
         (> (length (get q 1)) 0) (set! (get q 1) -1))))))
