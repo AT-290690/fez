@@ -765,8 +765,8 @@ describe('Corretness', () => {
         `; helpers
 (let keywords (array () () () () () ()))
 (map:set! keywords "let" (lambda args env (do
-  (let name (array:get (car args) ast:value))
-  (let val (evaluate (car (cdr args)) env))
+  (let name (array:get (array:first args) ast:value))
+  (let val (evaluate (array:second args) env))
   (map:set! env name val)
   val)))
 (map:set! keywords "lambda" (lambda args env (do
@@ -1245,38 +1245,35 @@ matrix
 (let parse (lambda input (|> input (string:lines))))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
 (let part1 (lambda matrix (do 
-  (let output (var:def 0))
-  (let width (length (array:first matrix)))
-  (let height (length matrix))
-  (let target 64)
-  (array:for-range 0 height (lambda y 
-    (array:for-range 0 width (lambda x (do 
-      (if (= (matrix:get matrix y x) char:S) (block 
+    (let output (var:def 0))
+    (let target 64)
+    (matrix:of matrix (lambda y x
+      (if (= (matrix:get matrix y x) char:S) (block
         (let visited (new:set8))
         (let steps (new:set8))
-        (let queue (new:brray))
+        (let queue (new:queue))
         (let key (from:yx->key y x))
         (set:add! visited key)
         (set:add! steps key)
-        (brray:append! queue (array y x target))
+        (queue:enqueue! queue (array y x target))
         (matrix:set! matrix y x char:dot)
-        (let rec:while (lambda (unless (brray:empty? queue) (block 
-          (let chop (brray:pop-right! queue))
-          (let y (array:first chop))
-          (let x (array:second chop))
-          (let step (array:third chop))
+        (let rec:while (lambda (unless (queue:empty? queue) (block 
+          (let element (queue:peek queue))
+          (queue:dequeue! queue)
+          (let y (array:first element))
+          (let x (array:second element))
+          (let step (array:third element))
           (if (math:even? step) (set:add! steps (from:yx->key y x)))
           (matrix:adjacent matrix matrix:von-neumann-neighborhood y x (lambda cell dir dy dx (do 
               (let key (from:yx->key dy dx))
               (if (and (= cell char:dot) (not (set:has? visited key))) (block 
-                (brray:append! queue (array dy dx (- step 1)))
+                (queue:enqueue! queue (array dy dx (- step 1)))
                 (set:add! visited key))))))
           (rec:while)))))
         (rec:while)
-        (var:set! output (length (array:flat-one steps))))))))))
+        (var:set! output (length (array:flat-one steps)))))))
   (var:get output))))
-(part1 (parse sample))
-`,
+(part1 (parse sample))`,
         { mutation: 1, compile: 1, eval: 1 }
       ),
       42

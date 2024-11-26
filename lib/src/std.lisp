@@ -380,6 +380,9 @@
                       (if (> (length out) 0) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
                     (rec:iter arr)
                 arr)))
+(let array:for-enumerated (lambda arr callback (do 
+  (array:for-range 0 (length arr) (lambda i (callback (get arr i) i)))
+  arr)))
 (let array:fill (lambda n callback (do 
   (let rec:iter (lambda arr i (if (= i 0) arr (rec:iter (array:merge arr (array (callback))) (- i 1)))))
   (rec:iter () n))))
@@ -578,6 +581,23 @@
       prev
       (rec:iterate (+ i 1))) ())))
       (rec:iterate 1))))))))
+(let matrix:for (lambda matrix callback 
+  (array:for matrix (lambda row (array:for row callback)))
+   matrix))
+(let matrix:enumerated-for (lambda matrix callback (do
+  (let width (length (array:first matrix)))
+  (let height (length matrix))
+  (array:for-range 0 height (lambda y 
+    (array:for-range 0 width (lambda x
+      (callback (matrix:get matrix y x) y x)))))
+   matrix)))
+(let matrix:of (lambda matrix callback (do
+  (let width (length (array:first matrix)))
+  (let height (length matrix))
+  (array:for-range 0 height (lambda y 
+    (array:for-range 0 width (lambda x
+      (callback y x)))))
+   matrix)))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
 (let matrix:moore-neighborhood (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
 (let matrix:von-neumann-neighborhood (array (array 1 0) (array 0 -1) (array 0 1) (array -1 0)))
@@ -1322,6 +1342,20 @@ q)))
       (if (< index bounds) (rec:right (+ index 1) bounds)))))
   (rec:right half (- slice-len 1))
   slice)))
+
+(let new:queue new:brray)
+(let queue:empty? brray:empty?)
+(let queue:empty! brray:empty!)
+(let queue:enqueue! (lambda queue item (brray:append! queue item)))
+(let queue:dequeue! (lambda queue (brray:tail! queue)))
+(let queue:peek (lambda queue (brray:first queue)))
+
+(let new:stack new:brray)
+(let stack:empty? brray:empty?)
+(let stack:empty! stack:empty!)
+(let stack:push! (lambda stack item (brray:append! stack item)))
+(let stack:pop! (lambda stack (brray:head! stack)))
+(let stack:peek (lambda stack (brray:last stack)))
 
 (let tuple:apply (lambda x cb (cb (array:first x) (array:second x))))
 (let tuple:add (lambda x (+ (array:first x) (array:second x))))
