@@ -144,7 +144,7 @@ const compile = (tree, Drill) => {
           return `(${Arguments.map((x) =>
             (compile(x, Drill) ?? '').toString().trim()
           )
-            .filter(Boolean)
+            .filter((x) => x !== undefined)
             .join(',')});`
         } else {
           const res = compile(Arguments[0], Drill)
@@ -311,7 +311,7 @@ export const comp = (ast) => {
   const Drill = { Variables: new Set(), Helpers: new Set() }
   const raw = ast
     .map((tree) => compile(tree, Drill))
-    .filter(Boolean)
+    .filter((x) => x !== undefined)
     .join('\n')
   let program = ''
   for (let i = 0; i < raw.length; ++i) {
