@@ -246,19 +246,13 @@ const compile = (tree, Drill) => {
               .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
               .join(token)});`
       case KEYWORDS.MULTIPLICATION:
-        return Arguments.length
-          ? `(${parseArgs(Arguments, Drill, token)});`
-          : `(1);`
+        return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.DIVISION:
-        return Arguments.length
-          ? Arguments.length === 1
-            ? `(1/${compile(Arguments[0], Drill)});`
-            : `(${parseArgs(Arguments, Drill, token)});`
-          : `(0);`
+        return Arguments.length === 1
+          ? `(1/${compile(Arguments[0], Drill)});`
+          : `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.ADDITION:
-        return Arguments.length
-          ? `(${parseArgs(Arguments, Drill, token)});`
-          : `(0);`
+        return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.BITWISE_AND:
       case KEYWORDS.BITWISE_OR:
       case KEYWORDS.BITWISE_XOR:

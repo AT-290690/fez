@@ -41,7 +41,6 @@ const keywords = {
     return a % b
   },
   [KEYWORDS.DIVISION]: (args, env) => {
-    if (!args.length) return 0
     if (args.length === 1) {
       const number = evaluate(args[0], env)
       if (typeof number !== 'number')
@@ -103,7 +102,6 @@ const keywords = {
     return +(typeof evaluate(args[0], env) === 'number')
   },
   [KEYWORDS.ADDITION]: (args, env) => {
-    if (!args.length) return 0 // identity
     if (args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${
@@ -122,7 +120,6 @@ const keywords = {
     return operands.reduce((a, b) => a + b)
   },
   [KEYWORDS.MULTIPLICATION]: (args, env) => {
-    if (!args.length) return 1 // identity
     if (args.length < 2)
       throw new RangeError(
         `Invalid number of arguments for (${KEYWORDS.MULTIPLICATION}), expected (or (> 1) (= 0)) but got ${args.length}.`
@@ -883,6 +880,19 @@ export const deSuggar = (ast) => {
                   }
                   temp.push([0, 'array'])
                   deSuggar(exp)
+                }
+                break
+              case KEYWORDS.MULTIPLICATION:
+                if (!rest.length) {
+                  exp[0][0] = 2
+                  exp[0][1] = 1
+                }
+                break
+              case KEYWORDS.ADDITION:
+              case KEYWORDS.DIVISION:
+                if (!rest.length) {
+                  exp[0][0] = 2
+                  exp[0][1] = 0
                 }
                 break
               case KEYWORDS.UNLESS:
