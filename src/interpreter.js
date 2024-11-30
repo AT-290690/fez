@@ -101,6 +101,15 @@ const keywords = {
       )
     return +(typeof evaluate(args[0], env) === 'number')
   },
+  [KEYWORDS.IS_LAMBDA]: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.IS_LAMBDA
+        }) (= 1 required) (${KEYWORDS.IS_LAMBDA} ${stringifyArgs(args)})`
+      )
+    return +(typeof evaluate(args[0], env) === 'function')
+  },
   [KEYWORDS.ADDITION]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
@@ -177,6 +186,14 @@ const keywords = {
         `Invalid number of arguments for (${
           KEYWORDS.CONDITION
         }), expected (> 2 required) but got ${args.length} (${
+          KEYWORDS.CONDITION
+        } ${stringifyArgs(args)})`
+      )
+    if (args.length % 2 !== 0)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.CONDITION
+        }), expected even number of arguments but got ${args.length} (${
           KEYWORDS.CONDITION
         } ${stringifyArgs(args)})`
       )

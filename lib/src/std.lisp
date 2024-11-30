@@ -79,6 +79,7 @@
 (let char:hash 35)
 (let char:question-mark 63)
 (let char:exclamation-mark 33)
+(let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
@@ -1158,6 +1159,7 @@
         out)))
 (let set:empty! (lambda table (array:map table empty!)))
 (let map:empty! (lambda table (array:map table empty!)))
+(let map:keys (lambda table (|> table (array:flat-one) (array:map array:first))))
 (let map:set! (lambda table key value
         (do
           (let idx (set:index table key))
@@ -1402,7 +1404,7 @@ q)))
      (atom? x) (= x 0)
      (array? x) (= (length x) 0))))
 
-(let array? (lambda x (not (atom? x))))
+(let array? (lambda x (and (not (atom? x)) (not (lambda? x)))))
 
 (let ast:type 0)
 (let ast:value 1)

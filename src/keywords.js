@@ -14,6 +14,7 @@ export const KEYWORDS = {
   IDENTITY: 'identity',
   ARRAY_LENGTH: 'length',
   IS_ATOM: 'atom?',
+  IS_LAMBDA: 'lambda?',
   ADDITION: '+',
   SUBTRACTION: '-',
   MULTIPLICATION: '*',
@@ -53,7 +54,6 @@ export const KEYWORDS = {
   LOG_CHAR: 'log-char!',
   CLEAR_CONSOLE: 'clear!'
 }
-
 
 export const TYPES = {
   [APPLY]: 'APPLY',

@@ -107,6 +107,7 @@ const Helpers = {
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   atomPredicate: `atomPredicate=(number)=>+(typeof number==='number')`,
+  lambdaPredicate: `lambdaPredicate=(fm)=>+(typeof fn==='function')`,
   setEffect: `setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
 }
 const semiColumnEdgeCases = new Set([
@@ -191,6 +192,9 @@ const compile = (tree, Drill) => {
       case KEYWORDS.IS_ATOM:
         Drill.Helpers.add('atomPredicate')
         return `atomPredicate(${compile(Arguments[0], Drill)});`
+      case KEYWORDS.IS_LAMBDA:
+        Drill.Helpers.add('lambdaPredicate')
+        return `lambdaPredicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.NUMBER_TYPE:
         return '0'
       case KEYWORDS.BOOLEAN_TYPE:
