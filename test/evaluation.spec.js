@@ -38,19 +38,19 @@ describe('Compilation & Interpretation', () => {
       "GGG=GGG,GGG" '(char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       (let parse (lambda input (do 
-        (let split (string:split input '(char:new-line)))
+        (let split (string:lines input))
         (let path (car split))
         (let list (cdr (cdr split)))
         
         (let dirs (|> path (array:map (lambda x (string:equal? '(x) "R")))))
-        (let adj (|> list (array:map (lambda x (string:split x "=")))))
+        (let adj (|> list (array:map (lambda x (string:split x (array:first "="))))))
         
         (array 
           dirs 
           (array:fold adj (lambda object entry (do 
           (let key (car entry))
           (let value (car (cdr entry)))
-          (map:set! object key (string:split value ","))))
+          (map:set! object key (string:commas value))))
           (array () () () ()))
           adj))))
       

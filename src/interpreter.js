@@ -819,18 +819,6 @@ export const deSuggar = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
-              case KEYWORDS.BODY:
-                {
-                  exp[0][1] = KEYWORDS.CALL_FUNCTION
-                  exp[0][0] = APPLY
-                  exp.length = 1
-                  exp[1] = [
-                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                    [[APPLY, KEYWORDS.BLOCK], ...rest]
-                  ]
-                  deSuggar(exp)
-                }
-                break
               case KEYWORDS.BLOCK:
                 {
                   if (
@@ -838,12 +826,16 @@ export const deSuggar = (ast) => {
                     (prev &&
                       prev[TYPE] === APPLY &&
                       prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
-                  )
-                    throw new SyntaxError(
-                      `Can only use (${KEYWORDS.BLOCK}) as a body of a (${
-                        KEYWORDS.ANONYMOUS_FUNCTION
-                      }) (${stringifyArgs(exp)})`
-                    )
+                  ) {
+                    exp[0][1] = KEYWORDS.CALL_FUNCTION
+                    exp[0][0] = APPLY
+                    exp.length = 1
+                    exp[1] = [
+                      [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                      [[APPLY, KEYWORDS.BLOCK], ...rest]
+                    ]
+                    deSuggar(exp)
+                  }
                 }
                 break
               // case KEYWORDS.DEFINE_VARIABLE:

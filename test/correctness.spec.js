@@ -50,19 +50,19 @@ describe('Corretness', () => {
       "GGG=GGG,GGG" '(char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       (let parse (lambda input (do 
-        (let split (string:split input '(char:new-line)))
+        (let split (string:lines input))
         (let path (car split))
         (let list (cdr (cdr split)))
         
         (let dirs (|> path (array:map (lambda x (string:equal? '(x) "R")))))
-        (let adj (|> list (array:map (lambda x (string:split x "=")))))
+        (let adj (|> list (array:map (lambda x (string:split x (array:first "="))))))
         
         (array 
           dirs 
           (array:fold adj (lambda object entry (do 
           (let key (car entry))
           (let value (car (cdr entry)))
-          (map:set! object key (string:split value ","))))
+          (map:set! object key (string:commas value))))
           (array () () () ()))
           adj))))
       
@@ -683,7 +683,7 @@ describe('Corretness', () => {
         `(let parse (lambda input (|> input
                              (string:lines)
                              (array:map (lambda x (|> x
-                                                    (string:split '(char:x))
+                                                    (string:split char:x)
                                                     (array:map (lambda d (|> d
                                                                             (from:chars->digits)
                                                                             (from:digits->number))))))))))
@@ -1101,10 +1101,10 @@ matrix
         `(let empty! (lambda arr (do 
       (let rec:iterate (lambda 
         (unless (= (length arr) 0) 
-          (block (set! arr -1) (rec:iterate))
+          (do (set! arr -1) (rec:iterate))
         arr))) (rec:iterate))))
 '( 
-  (block 1 2)
+  (do 1 2)
   (empty! '(1 2 3 4 5))
 )`,
         { mutation: 1, compile: 1, eval: 1 }
@@ -1113,10 +1113,10 @@ matrix
     )
     strictEqual(
       fez(
-        `(block 
+        `(do 
   (let v1 (var:def 0))
   (unless (> 2 3)
-            (block 
+            (do 
               (let v 15)
               (|> v1 (var:set! (+ v 10))))
         "Noooo!")
@@ -1248,7 +1248,7 @@ matrix
     (let output (var:def 0))
     (let target 64)
     (matrix:of matrix (lambda y x
-      (if (= (matrix:get matrix y x) char:S) (block
+      (if (= (matrix:get matrix y x) char:S) (do
         (let visited (new:set8))
         (let steps (new:set8))
         (let queue (new:queue))
@@ -1257,7 +1257,7 @@ matrix
         (set:add! steps key)
         (queue:enqueue! queue (array y x target))
         (matrix:set! matrix y x char:dot)
-        (let rec:while (lambda (unless (queue:empty? queue) (block 
+        (let rec:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
           (let y (array:first element))
@@ -1266,7 +1266,7 @@ matrix
           (if (math:even? step) (set:add! steps (from:yx->key y x)))
           (matrix:adjacent matrix matrix:von-neumann-neighborhood y x (lambda cell dir dy dx (do 
               (let key (from:yx->key dy dx))
-              (if (and (= cell char:dot) (not (set:has? visited key))) (block 
+              (if (and (= cell char:dot) (not (set:has? visited key))) (do 
                 (queue:enqueue! queue (array dy dx (- step 1)))
                 (set:add! visited key))))))
           (rec:while)))))

@@ -846,26 +846,14 @@
   (let b (array:reverse B))
   (let index (|> a (string:match b)))
   (|> a (array:slice (+ index (length b)) (+ index (- (length a) index))) (array:reverse)))))
-(let string:split (lambda str delim (do
-  (let locals ())
-  (set! locals (length locals) delim)
-  (set! locals (length locals) str)
-  (set! locals (length locals) (length delim))
-  (set! locals (length locals) ())
-  (let rec:iterate (lambda result i bounds
-    (if
-      (< (if (array:every? (array:zip (get locals 0) (math:sequence locals))
-                                              (lambda item (do
-                                                  (let y (array:first item))
-                                                  (let j (array:second item))
-                                                  (or (<= (length (get locals 1)) (+ i j)) (= (get (get locals 1) (+ i j)) y)))))
-          (apply (lambda (do
-            (set! result (length result) (get locals 3))
-            (set! locals 3 ())
-            (+ i (get locals 2) -1))))
-          (apply (lambda (do (set! locals 3 (array:merge (get locals 3) (array (get (get locals 1) i)))) i)))) bounds)
-              (rec:iterate result (+ i 1) bounds) result)))
-      (set! (let iteration-result (rec:iterate () 0 (- (length (get locals 1)) 1))) (length iteration-result) (get locals 3)))))
+(let string:split (lambda str char (|> str
+              (array:fold (lambda a b (do
+              (let prev (get a -1))
+                (if (string:equal? (array b) (array char))
+                    (set! a (length a) ())
+                    (set! prev (length prev) b)) a))
+              (array ()))
+              (array:map (lambda x (array:join (array x) (array char:empty)))))))
 (let string:index-of-char (lambda str character (do
                     (let rec:iterate (lambda arr i
                           (if (> (length arr) 0)
@@ -976,71 +964,14 @@
       (if (car tr) (set! tr 0 0))
       (array:merge (array b) a)))))) ())))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
-(let string:lines (lambda str (|> str
-                      (array:fold (lambda a b (do
-                      (let prev (get a -1))
-                       (if (string:equal? (array b) (array char:new-line))
-                           (set! a (length a) ())
-                           (set! prev (length prev) b)) a))
-                      (array ()))
-                      (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:lines (lambda str (string:split str char:new-line)))
 (let string:chars (lambda str (array:map str (lambda x (array x)))))
-(let string:words (lambda str (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) (array char:space))
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:commas (lambda str (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) (array char:comma))
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:dots (lambda str (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) (array char:dot))
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:colons (lambda str (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) (array char:colon))
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:semi-colons (lambda str (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) (array char:semi-colon))
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:dashes (lambda str (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) (array char:dash))
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:separator (lambda str separator (|> str
-              (array:fold (lambda a b (do
-              (let prev (get a -1))
-                (if (string:equal? (array b) separator)
-                    (set! a (length a) ())
-                    (set! prev (length prev) b)) a))
-              (array ()))
-              (array:map (lambda x (array:join (array x) (array char:empty)))))))
+(let string:words (lambda str (string:split str char:space)))
+(let string:commas (lambda str (string:split str char:comma)))
+(let string:dots (lambda str (string:split str char:dot)))
+(let string:colons (lambda str (string:split str char:colon)))
+(let string:semi-colons (lambda str (string:split str char:semi-colon)))
+(let string:dashes (lambda str (string:split str char:dash)))
 (let string:append (lambda a b (array:merge a b)))
 (let string:prepend (lambda a b (array:merge b a)))
 (let string:pad-left (lambda str N ch (do 
