@@ -4,7 +4,7 @@
 <img width="64" src="./logo.svg"/>
 </p>
 
-````lisp
+```lisp
 (let fizz-buzz (lambda n
     (cond
       (= (mod n 15) 0) "Fizz Buzz"
