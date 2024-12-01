@@ -34,7 +34,7 @@
     (math:range 1 100)
     (array:map fizz-buzz)
     (log!))
-````
+```
 
 ```lisp
 ; https://adventofcode.com/2020/day/1
@@ -242,10 +242,11 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ```
 
 ```lisp
-; all keywords
+; Build-in all keywords
 (/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>)
 (mod) (let) (if) (not) (and) (or) (cond) (atom?) (lambda?)
 (length) (do) (array) (set!) (get) (lambda) (apply) (void)
 (log!) (log-string!) (log-char!) (clear!)
-(|>) (list) (unless)
+; Syntactic suggar keywords
+(|>) (list) (unless) (array?) (truthy?) (falsy?) (evaluate) '() `() (!=) (<>)
 ```

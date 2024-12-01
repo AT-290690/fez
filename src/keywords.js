@@ -7,9 +7,7 @@ export const TRUE = 1
 export const FALSE = 0
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
-  RECURSION: 'rec',
   NUMBER_TYPE: 'number',
-  LIST_TYPE: 'list',
   ARRAY_TYPE: 'array',
   IDENTITY: 'identity',
   ARRAY_LENGTH: 'length',
@@ -31,7 +29,6 @@ export const KEYWORDS = {
   BLOCK: 'do',
   ANONYMOUS_FUNCTION: 'lambda',
   IF: 'if',
-  UNLESS: 'unless',
   CONDITION: 'cond',
   NOT: 'not',
   EQUAL: '=',
@@ -41,9 +38,9 @@ export const KEYWORDS = {
   LESS_THAN_OR_EQUAL: '<=',
   AND: 'and',
   OR: 'or',
+
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'let',
-  PIPE: '|>',
 
   SET_ARRAY: 'set!',
 
@@ -51,7 +48,15 @@ export const KEYWORDS = {
   LOG: 'log!',
   LOG_STRING: 'log-string!',
   LOG_CHAR: 'log-char!',
-  CLEAR_CONSOLE: 'clear!'
+  CLEAR_CONSOLE: 'clear!',
+
+  // Syntactic suggars
+  PIPE: '|>',
+  NOT_EQUAL_1: '!=',
+  NOT_EQUAL_2: '<>',
+  UNLESS: 'unless',
+  LIST_TYPE: 'list',
+  RECURSION: 'rec'
 }
 
 export const TYPES = {

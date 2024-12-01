@@ -2,7 +2,7 @@ import { deepStrictEqual } from 'assert'
 import { fez, replaceStrings, tree } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
-import { deSuggar } from '../src/interpreter.js'
+import { deSuggar } from '../src/utils.js'
 describe('Utils', () => {
   it('Should be work', () =>
     [
