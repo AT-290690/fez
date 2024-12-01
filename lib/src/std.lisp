@@ -517,6 +517,7 @@
   (let rec:iterate (lambda a b output
     (if (and (> (length a) 0) (> (length b) 0)) (rec:iterate (cdr a) (cdr b) (set! output (length output) (array (car a) (array:first b) ))) output)))
   (rec:iterate A B ()))))
+(let array:unzip (lambda arr (array (array:map arr array:first) (array:map arr array:second))))
 (let array:equal? (lambda a b
   (or
   (and (atom? a) (atom? b) (= a b))
@@ -1296,6 +1297,12 @@ q)))
 (let tuple:multiply (lambda x (* (array:first x) (array:second x))))
 (let tuple:divide (lambda x (/ (array:first x) (array:second x))))
 (let tuple:swap (lambda x (array (array:second x) (array:first x))))
+(let tuple:swap! (lambda x (do
+ (let temp (array:first x))
+ (set! x 0 (array:second x))
+ (set! x 1 temp))))
+(let tuple:zip (lambda arr (array:zip (array:first arr) (array:second arr))))
+
 
 (let time:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))
 (let time:add-minutes (lambda date-time minutes (+ date-time (* minutes 1000 60))))
