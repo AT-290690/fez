@@ -305,6 +305,7 @@
 (let list:filter (lambda xs f (if (list:nil? xs) () (if (f (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f)) (list:filter (list:tail xs) f)))))
 (let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
 (let list:zip (lambda a b (if (list:nil? a) () (list:pair (list:pair (list:head a) (list:pair (list:head b) ())) (list:zip (list:tail a) (list:tail b))))))
+(let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
 (let list:length (lambda list (list:fold list (lambda a . (+ a 1)) 0)))
 (let list:enumerate (lambda list (list:zip list (math:list-range 0 (list:length list)))))
 (let list:reverse (lambda list (list:fold list (lambda a b (list:pair b a)) ())))
@@ -1302,6 +1303,7 @@ q)))
  (set! x 0 (array:second x))
  (set! x 1 temp))))
 (let tuple:zip (lambda arr (array:zip (array:first arr) (array:second arr))))
+(let tuple:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
 
 
 (let time:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))

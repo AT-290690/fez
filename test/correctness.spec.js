@@ -1345,14 +1345,36 @@ matrix
   (let parts (array:unzip input))
   (let left (array:first parts))
   (let right (array:second parts))
-  (array:fold left (lambda a l (+ a (* l (length (array:select right (lambda r (= l r))))))) 0))))
-  
+  (|> 
+    left 
+    (array:map (lambda l (* l (array:count-of right (lambda r (= l r))))))
+    (math:summation)))))
+
 (let PARSED (parse INPUT))
 (array (part1 PARSED) (part2 PARSED) (part2-better PARSED))
       `,
         { mutation: 1, compile: 1, eval: 1 }
       ),
       [11, 31, 31]
+    )
+    deepStrictEqual(
+      fez(
+        `(let zipped (list:zip \`(1 2 3 4 5) \`(4 5 2 4 6)))
+(|> 
+  zipped
+  (list:unzip)
+  (tuple:list-zip)
+  (list:map from:list->array)
+  (from:list->array))`,
+        { compile: 1, eval: 1 }
+      ),
+      [
+        [1, 4],
+        [2, 5],
+        [3, 2],
+        [4, 4],
+        [5, 6]
+      ]
     )
   })
 })
