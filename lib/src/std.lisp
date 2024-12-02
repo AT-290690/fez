@@ -560,6 +560,7 @@
 (let array:sorted-by? (lambda arr callback (array:enumerated-every? arr (lambda x i (or (= i 0) (callback x (get arr (- i 1))))))))
 (let array:increment! (lambda arr idx value (set! arr idx (+ (get arr idx) value))))
 (let array:set (lambda arr index item (set! (array:shallow-copy arr) index item)))
+(let array:sliding-window (lambda arr size (array:enumerated-fold arr (lambda a b i (if (> (+ i size) (length arr)) a (array:merge a (array (array:slice arr i (+ i size)))))) ())))
 (let array:adjacent-difference (lambda arr callback (do
   (let len (length arr))
   (if (= len 1) arr
@@ -780,13 +781,13 @@
                         (rec:iterate arr 0))))
 (let array:enumerated-every? (lambda arr callback (do
                     (let rec:iterate (lambda arr i
-                          (if (and (length arr) (callback (car arr) i))
+                          (if (and (> (length arr) 0) (callback (car arr) i))
                               (rec:iterate (cdr arr) (+ i 1))
                               (not (length arr)))))
                         (rec:iterate arr 0))))
 (let array:enumerated-some? (lambda arr callback (do
                     (let rec:iterate (lambda arr i
-                          (if (and (length arr) (not (callback (car arr) i)))
+                          (if (and (> (length arr) 0) (not (callback (car arr) i)))
                               (rec:iterate (cdr arr) (+ i 1))
                               (not (not (length arr))))))
                         (rec:iterate arr 0))))

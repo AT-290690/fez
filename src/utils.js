@@ -1,7 +1,7 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
-import { run } from './evaluator.js'
+import { evaluate, run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
@@ -227,6 +227,8 @@ export const dfs = (tree, callback) => {
   else callback(tree)
 }
 export const deepClone = (ast) => AST.parse(AST.stringify(ast))
+export const interpret = (ast, keywords) =>
+  ast.reduce((_, x) => evaluate(x, keywords), 0)
 export const fez = (source, options = {}) => {
   const env = Object.create(null)
   try {

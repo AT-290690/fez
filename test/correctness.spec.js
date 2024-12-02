@@ -1359,6 +1359,37 @@ matrix
     )
     deepStrictEqual(
       fez(
+        `(let INPUT (array:concat-with '(
+"7 6 4 2 1"
+"1 2 7 8 9"
+"9 7 6 2 1"
+"1 3 2 4 5"
+"8 6 4 4 1"
+"1 3 6 7 9"
+) char:new-line))
+(let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (array:map (lambda w (|> w (from:chars->digits) (from:digits->number))))))))))
+
+(let part1 (lambda input (|> input 
+(array:select (lambda line (and 
+  (or (array:sorted-by? line (lambda a b (> a b))) (array:sorted-by? line (lambda a b (< a b)))) 
+  (array:every? (|> line (array:sliding-window 2) (array:map (lambda x (tuple:subtract x)))) (lambda x (or (= (math:abs x) 1) (= (math:abs x) 2) (= (math:abs x) 3)))))))
+(length))))
+
+(let part2 (lambda input (|> input 
+                            (array:map 
+                              (lambda line (|> line 
+                                (array:enumerated-map (lambda . i 
+                                  (array:enumerated-exclude line (lambda . j (= i j))))))))
+                            (array:map (lambda x (not (not (part1 x)))))
+                            (array:count 1))))
+(let PARSED (parse INPUT))
+'((part1 PARSED) (part2 PARSED))`,
+        { compile: 1, eval: 1 }
+      ),
+      [2, 4]
+    )
+    deepStrictEqual(
+      fez(
         `(let zipped (list:zip \`(1 2 3 4 5) \`(4 5 2 4 6)))
 (|> 
   zipped
