@@ -1350,16 +1350,17 @@ q)))
 
 (let array? (lambda x (and (not (atom? x)) (not (lambda? x)))))
 
-(let ast:type 0)
-(let ast:value 1)
-(let ast:apply 0)
-(let ast:word 1)
-(let ast:atom 2)
 (let match:negative? (lambda string (= (car string) char:dash)))
 (let match:number? (lambda string (do 
   (let is-negative (match:negative? string))
   (let digits (if is-negative (cdr string) string))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
+(let match:unsigned-integer? (lambda string (array:every? string (lambda digit (and (>= digit char:0) (<= digit char:9)) ))))
+(let ast:type 0)
+(let ast:value 1)
+(let ast:apply 0)
+(let ast:word 1)
+(let ast:atom 2)
 (let ast:leaf (lambda type value (array type value)))
 (let ast:leaf? (lambda arg (do (let c (car arg)) (and (atom? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
 (let from:chars->ast (lambda source (do
