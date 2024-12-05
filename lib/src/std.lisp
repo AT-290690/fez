@@ -382,7 +382,7 @@
                       (if (> (length out) 0) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
                     (rec:iter arr)
                 arr)))
-(let array:for-enumerated (lambda arr callback (do 
+(let array:enumerated-for (lambda arr callback (do 
   (array:for-range 0 (length arr) (lambda i (callback (get arr i) i)))
   arr)))
 (let array:fill (lambda n callback (do 
@@ -603,18 +603,19 @@
       (callback y x)))))
    matrix)))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
+(let matrix:diagonal-neighborhood (array (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
 (let matrix:moore-neighborhood (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
 (let matrix:von-neumann-neighborhood (array (array 1 0) (array 0 -1) (array 0 1) (array -1 0)))
 (let matrix:adjacent (lambda arr directions y x callback
       (array:for directions (lambda dir (do
-          (let dy (+ (array:first dir)  y))
-          (let dx (+ (array:second dir)  x))
+          (let dy (+ (array:first dir) y))
+          (let dx (+ (array:second dir) x))
           (if (matrix:in-bounds? arr dy dx)
               (callback (matrix:get arr dy dx) dir dy dx)))))))
 (let matrix:adjacent-sum (lambda arr directions y x callback
       (array:fold directions (lambda a dir (do
-          (let dy (+ (array:first dir)  y))
-          (let dx (+ (array:second dir)  x))
+          (let dy (+ (array:first dir) y))
+          (let dx (+ (array:second dir) x))
           (if
             (and (array:in-bounds? arr dy) (array:in-bounds? (get arr dy) dx))
               (callback a (matrix:get arr dy dx)) 
@@ -1355,7 +1356,7 @@ q)))
   (let is-negative (match:negative? string))
   (let digits (if is-negative (cdr string) string))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
-(let match:unsigned-integer? (lambda string (array:every? string (lambda digit (and (>= digit char:0) (<= digit char:9)) ))))
+(let match:unsigned-integer? (lambda string (array:every? string (lambda digit (and (>= digit char:0) (<= digit char:9))))))
 (let ast:type 0)
 (let ast:value 1)
 (let ast:apply 0)
