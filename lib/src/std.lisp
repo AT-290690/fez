@@ -588,6 +588,18 @@
 (let matrix:for (lambda matrix callback 
   (array:for matrix (lambda row (array:for row callback)))
    matrix))
+(let matrix:shallow-copy (lambda matrix (|> matrix (array:map (lambda x (|> x (array:map (lambda y y))))))))
+(let matrix:find-index (lambda matrix callback (do 
+  (let coords (array -1 -1))
+  (set! coords 0 (array:find-index matrix (lambda row (do
+    (let idx (array:find-index row callback))
+    (let predicate (> idx -1))
+    (if predicate (set! coords 1 idx))
+    predicate)))))))
+(let matrix:find (lambda matrix callback (do 
+  (let coords (matrix:find-index matrix callback))
+  (matrix:get matrix (array:first coords) (array:second coords))
+)))
 (let matrix:enumerated-for (lambda matrix callback (do
   (let width (length (array:first matrix)))
   (let height (length matrix))
