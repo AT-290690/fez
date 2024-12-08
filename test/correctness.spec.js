@@ -1856,16 +1856,16 @@ matrix
                      (- out (list:head args)))))))))
                 
 (let part2 (lambda args out (do 
-          (if 
-            (list:nil? (list:tail args)) (= out (list:head args))
-            (or
+          (if (list:nil? (list:tail args)) (= out (list:head args))
+              (or
                 (and (= (mod out (list:head args)) 0) 
                      (part2 (list:tail args) (/ out (list:head args))))
                 (and (> out (list:head args)) 
                      (part2 (list:tail args) (- out (list:head args))))
-                (and (= (math:nth-digit out 1) (list:head args))
-                     (> (math:number-of-digits out) (math:number-of-digits (list:head args)))
-                     (part2 (list:tail args) (math:remove-nth-digits out (+ (math:number-of-digits (list:head args)) 1)))))))))
+                (and (> (math:number-of-digits out) (math:number-of-digits (list:head args)))
+                     (= (math:keep-nth-digits out (math:number-of-digits (list:head args))) (list:head args))
+                     (part2 (list:tail args) (math:remove-nth-digits out (math:number-of-digits (list:head args))))))))))
+
 
 (let PARSED (parse INPUT))
 

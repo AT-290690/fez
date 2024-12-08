@@ -183,7 +183,12 @@
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (lambda n (- (^ n (>> n 31)) (>> n 31))))
 (let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0.5)))
-(let math:remove-nth-digits (lambda digit n (| (/ digit (math:power 10 (- n 1))) 0.5)))
+(let math:remove-nth-digits (lambda digit n (| (/ digit (math:power 10 n)) 0.5)))
+(let math:keep-nth-digits (lambda digit n (do
+    (let rec:iter (lambda i out base 
+                    (if (> i 0) 
+                        (rec:iter (- i 1) (+ out (* base (math:nth-digit digit i))) (* base 0.1)) out)))
+    (rec:iter n 0 (* (math:power 10 n) 0.1)))))
 (let math:normalize (lambda value math:min math:max (* (- value math:min) (/ (- math:max math:min)))))
 (let math:linear-interpolation (lambda a b n (+ (* (- 1 n) a) (* n b))))
 (let math:gauss-sum (lambda n (* n (+ n 1) 0.5)))
