@@ -1745,32 +1745,135 @@ matrix
   "......#..."
 ) char:new-line))
 (let parse (lambda input (|> input (string:lines))))
-(let part1 (lambda input (do 
 (let dir '('(-1 0) '(0 1) '(1 0) '(0 -1)))
-(let starting (matrix:find-index input (lambda x (= x 94))))
-(matrix:set! input (get starting 0) (get starting 1) char:X)
-(let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
-(let rec:step (lambda start angle (do 
-    (let current-dir (get dir (mod angle (length dir))))
-    (let start-copy (array:shallow-copy start))
-    (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
-    (set! start-copy 1 (+ (get start-copy 1) (get current-dir 1)))
-    (let y (get start-copy 0))
-    (let x (get start-copy 1))
-    (if (matrix:in-bounds? input y x) (do 
-    (let current (matrix:get input y x))
-    (if (not (= current char:hash)) (matrix:set! input y x char:X))
-    (cond 
-        (= current char:hash) (rec:step start (+ angle 1))
-        (or (= current char:dot) (= current char:X)) (rec:step start-copy angle))))))
-)
-(rec:step starting 0)
-(|> input (array:flat-one) (array:count char:X))
-)))
+
+(let part1 (lambda input (do
+  (let matrix (matrix:shallow-copy input)) 
+  (let starting (matrix:find-index input (lambda x (= x 94))))
+  (matrix:set! matrix (get starting 0) (get starting 1) char:X)
+  (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
+  (let rec:step (lambda start angle (do 
+      (let current-dir (get dir (mod angle (length dir))))
+      (let start-copy (array:shallow-copy start))
+      (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
+      (set! start-copy 1 (+ (get start-copy 1) (get current-dir 1)))
+      (let y (get start-copy 0))
+      (let x (get start-copy 1))
+      (if (matrix:in-bounds? matrix y x) (do 
+      (let current (matrix:get matrix y x))
+      (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
+      (cond 
+          (= current char:hash) (rec:step start (+ angle 1))
+          (or (= current char:dot) (= current char:X)) (rec:step start-copy angle)))))))
+  (rec:step starting 0)
+  (|> matrix (array:flat-one) (array:count char:X)))))
+
+(let part2 (lambda input (do
+  (let matrix (matrix:shallow-copy input)) 
+  (let loops (var:def 0))
+  (let starting (matrix:find-index matrix (lambda x (= x 94))))
+  (matrix:set! matrix (get starting 0) (get starting 1) char:X)
+  (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
+  (let from:numbers->key (lambda a b (array:concat '((from:digits->chars (from:number->digits a)) '(char:pipe) (from:digits->chars (from:number->digits b))))))
+  (let rec:step (lambda matrix start angle corners (do 
+      (let current-dir (get dir (mod angle (length dir))))
+      (let start-copy (array:shallow-copy start))
+      (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
+      (set! start-copy 1 (+ (get start-copy 1) (get current-dir 1)))
+      (let y (get start-copy 0))
+      (let x (get start-copy 1))
+      (if (matrix:in-bounds? matrix y x) (do 
+      (let current (matrix:get matrix y x))
+      (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
+      (cond 
+          (= current char:hash) (do
+          (let key (from:numbers->key y x))
+          (let c (map:get corners key))
+          (if (= c 4) 
+          (var:set! loops (+ (var:get loops) 1))
+          (rec:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
+          (or (= current char:dot) (= current char:X)) (rec:step matrix start-copy angle corners)))))))
+  (rec:step matrix starting 0 (new:set64))
+  (let path '())
+  (let Y (get starting 0))
+  (let X (get starting 1))
+  (matrix:enumerated-for matrix (lambda current y x (if 
+      (= current char:X) (array:push! path '(y x)))))
+  (array:for path (lambda pos (do 
+      (let copy (matrix:shallow-copy input))
+      (let y (get pos 0))
+      (let x (get pos 1))
+      (matrix:set! copy Y X char:X)
+      (matrix:set! copy y x char:hash)
+      (if (not (and (= y Y) (= x X))) (rec:step copy starting 0 (new:set64))))))
+  (var:get loops))))
+  
 (let PARSED (parse INPUT))
-'((part1 PARSED))`,
+'((part1 PARSED) (part2 PARSED))`,
       { mutation: 1, compile: 1, eval: 1 }
     ),
-    [41]
+    [41, 6]
+  )
+
+  deepStrictEqual(
+    fez(
+      `
+   (let INPUT (array:concat-with '(
+  "190: 10 19"
+  "3267: 81 40 27"
+  "83: 17 5"
+  "156: 15 6"
+  "7290: 6 8 6 15"
+  "161011: 16 10 13"
+  "192: 17 8 14"
+  "21037: 9 7 18 13"
+  "292: 11 6 16 20"
+) char:new-line))
+
+(let parse (lambda input (do 
+    (let lines (|> input (string:lines) (array:map (lambda x (do 
+    (let sides (|> x (string:split (array:first ":"))))
+    (let L (|> sides (array:first) (from:chars->digits) (from:digits->number)))
+    (let R (|> sides (array:second) (string:words) (array:exclude array:empty?) (from:array->list) (list:map (lambda x (|> x (from:chars->digits) (from:digits->number))))))
+    '(L R)))))))))
+
+    
+(let sum (lambda input solution (|> input
+            (array:map (lambda x (do
+            (let left (array:first x))
+            (let right (list:reverse (array:second x)))
+            '(left (solution right left)))))
+            (array:select (lambda x (= (array:second x) 1)))
+            (array:map array:first)
+            (math:summation))))
+
+ (let part1 (lambda args out (do
+          (if (list:nil? (list:tail args)) (= out (list:head args))
+              (or
+                (and (= (mod out (list:head args)) 0)
+                     (part1 (list:tail args) (/ out (list:head args))))
+                (and (> out (list:head args)) (part1 (list:tail args)
+                     (- out (list:head args)))))))))
+                
+(let part2 (lambda args out (do 
+          (if 
+            (list:nil? (list:tail args)) (= out (list:head args))
+            (or
+                (and (= (mod out (list:head args)) 0) 
+                     (part2 (list:tail args) (/ out (list:head args))))
+                (and (> out (list:head args)) 
+                     (part2 (list:tail args) (- out (list:head args))))
+                (and (= (math:nth-digit out 1) (list:head args))
+                     (> (math:number-of-digits out) (math:number-of-digits (list:head args)))
+                     (part2 (list:tail args) (math:remove-nth-digits out (+ (math:number-of-digits (list:head args)) 1)))))))))
+
+(let PARSED (parse INPUT))
+
+'((sum PARSED part1) (sum PARSED part2))
+
+    `,
+      { compile: 1, eval: 1 }
+    ),
+    [3749, 11387]
   )
 })
