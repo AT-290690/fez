@@ -383,13 +383,15 @@
                               (apply (lambda (do 
                                 (f (list:head xs)) 
                                 (list:for (list:tail xs) f)))))))                              
+
+
 (let array:for (lambda arr callback (do 
                     (let rec:iter (lambda out 
                       (if (> (length out) 0) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
                     (rec:iter arr)
                 arr)))
 (let array:enumerated-for (lambda arr callback (do 
-  (array:for-range 0 (length arr) (lambda i (callback (get arr i) i)))
+  (loop:for-n (length arr) (lambda i (callback (get arr i) i)))
   arr)))
 (let array:fill (lambda n callback (do 
   (let rec:iter (lambda arr i (if (= i 0) arr (rec:iter (array:merge arr (array (callback))) (- i 1)))))
@@ -471,19 +473,12 @@
                   (let index (array:second x)) (or (not x)
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
       (array:map car))))
-(let array:for-range (lambda start end callback (do
-                          (let rec:iterate (lambda i
-                          (if (< i end)
-                                (apply (lambda (do
-                                  (callback i)
-                                  (rec:iterate (+ i 1))))))))
-                          (rec:iterate start))))
 (let array:traverse (lambda x callback
     (if (atom? x)
         (callback x)
         (rec:iterate x (lambda y (array:traverse y callback))))))
 (let array:iterate (lambda arr callback (do 
-  (array:for-range 0 (length arr) callback)
+  (loop:for-n (length arr) callback)
   arr)))
 (let array:empty? (lambda arr (not (length arr))))
 (let array:not-empty? (lambda arr (not (not (length arr)))))
@@ -613,15 +608,15 @@
 (let matrix:enumerated-for (lambda matrix callback (do
   (let width (length (array:first matrix)))
   (let height (length matrix))
-  (array:for-range 0 height (lambda y 
-    (array:for-range 0 width (lambda x
+  (loop:for-n height (lambda y 
+    (loop:for-n width (lambda x
       (callback (matrix:get matrix y x) y x)))))
    matrix)))
 (let matrix:of (lambda matrix callback (do
   (let width (length (array:first matrix)))
   (let height (length matrix))
-  (array:for-range 0 height (lambda y 
-    (array:for-range 0 width (lambda x
+  (loop:for-n height (lambda y 
+    (loop:for-n width (lambda x
       (callback y x)))))
    matrix)))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
@@ -1354,6 +1349,22 @@ q)))
 (let date:month-day (lambda date (cdr date)))
 (let date:year-month (lambda date (array (array:first date) (array:second date))))
 
+(let loop:for-range (lambda start end callback (do
+                          (let rec:iterate (lambda i
+                          (if (< i end)
+                                (apply (lambda (do
+                                  (callback i)
+                                  (rec:iterate (+ i 1))))))))
+                          (rec:iterate start))))
+
+(let loop:for-n (lambda n callback (do
+                          (let rec:iterate (lambda i
+                          (if (< i n)
+                                (apply (lambda (do
+                                  (callback i)
+                                  (rec:iterate (+ i 1))))))))
+                          (rec:iterate 0))))
+
 (let array:set! set!)
 (let array:get get)
 (let array:length length)
@@ -1361,6 +1372,7 @@ q)))
 (let array:tail cdr)
 (let array:car car)
 (let array:cdr cdr)
+(let array:for-range loop:for-range)
 
 (let identity (lambda x x))
 (let truthy? (lambda x
@@ -1393,7 +1405,7 @@ q)))
     (let stack (array tree))
     (let head (var:def tree))
     (let acc ())
-    (array:for-range 0 (length source) (lambda i (do 
+    (loop:for-n (length source) (lambda i (do 
     (let cursor (get source i))
     (if (= cursor char:left-brace) (apply (lambda (do 
         (let temp ())

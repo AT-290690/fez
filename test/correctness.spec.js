@@ -774,7 +774,7 @@ describe('Corretness', () => {
   (let body (array:get args -1))
   (lambda props scope (do
   (let local (array:shallow-copy env))
-  (array:for-range 0 (length props) (lambda i
+  (loop:for-n (length props) (lambda i
     (map:set! local (array:get (array:get params i) ast:value) (evaluate (array:get props i) scope))))
   (evaluate body local))))))
 (map:set! keywords "=" (lambda args env (do (let a (evaluate (car args) env)) (array:every? (cdr args) (lambda b (= a (evaluate b env)))))))
@@ -804,7 +804,7 @@ describe('Corretness', () => {
     (if (= row n) 
         (set! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
         (apply (lambda (do
-          (array:for-range 0 n (lambda col 
+          (loop:for-n n (lambda col 
             (unless 
               (or 
                 (set:has? cols '(col)) 
@@ -1919,7 +1919,7 @@ matrix
             (map:set! a (array (array:first b)) (array (array:tail b))))) (new:set8)))
      (let pairs (|> map (array:flat-one) (array:map array:second) (array:exclude (lambda x (= (length x) 1)))))
      (array:enumerated-for pairs (lambda pair i (do
-                (array:for-range 0 (length pair) (lambda i 
+                (loop:for-n (length pair) (lambda i 
                     (array:for-range i (length pair) (lambda j 
                         (if (<> i j) (do
                          (let y1 (array:first (get pair i)))
@@ -1958,7 +1958,7 @@ matrix
             (map:set! a (array (array:first b)) (array (array:tail b))))) (new:set8)))
      (let pairs (|> map (array:flat-one) (array:map array:second) (array:exclude (lambda x (= (length x) 1)))))
      (array:enumerated-for pairs (lambda pair i (do
-                (array:for-range 0 (length pair) (lambda i 
+                (loop:for-n (length pair) (lambda i 
                     (array:for-range i (length pair) (lambda j 
                         (if (<> i j) (do
                          (let y1 (array:first (get pair i)))
