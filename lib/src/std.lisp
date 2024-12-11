@@ -522,7 +522,7 @@
    (rec:search arr target 0 (length arr)))))
 (let array:zip (lambda A B (do
   (let rec:iterate (lambda a b output
-    (if (and (> (length a) 0) (> (length b) 0)) (rec:iterate (cdr a) (cdr b) (set! output (length output) (array (car a) (array:first b) ))) output)))
+    (if (and (> (length a) 0) (> (length b) 0)) (rec:iterate (cdr a) (cdr b) (set! output (length output) (array (car a) (array:first b)))) output)))
   (rec:iterate A B ()))))
 (let array:unzip (lambda arr (array (array:map arr array:first) (array:map arr array:second))))
 (let array:equal? (lambda a b
@@ -531,15 +531,15 @@
   (and (array? a)
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
-(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b) ) (array:first b) )) ())))
-(let array:chars (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b) ) (array:first b) )) ())))
-(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b) ) (array:first b) )) ())))
-(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:comma)) (array:first b) ) (array:first b) )) ())))
-(let array:spaces (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:space)) (array:first b) ) (array:first b) )) ())))
-(let array:dots (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dot)) (array:first b) ) (array:first b) )) ())))
-(let array:colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:colon)) (array:first b) ) (array:first b) )) ())))
-(let array:semi-colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:semi-colon)) (array:first b) ) (array:first b) )) ())))
-(let array:dashes (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dash)) (array:first b) ) (array:first b) )) ())))
+(let array:join (lambda arr delim (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) ())))
+(let array:chars (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) ())))
+(let array:lines (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b)) (array:first b))) ())))
+(let array:commas (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:comma)) (array:first b)) (array:first b))) ())))
+(let array:spaces (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:space)) (array:first b)) (array:first b))) ())))
+(let array:dots (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dot)) (array:first b)) (array:first b))) ())))
+(let array:colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:colon)) (array:first b)) (array:first b))) ())))
+(let array:semi-colons (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:semi-colon)) (array:first b)) (array:first b))) ())))
+(let array:dashes (lambda arr (array:fold (array:zip arr (math:sequence arr)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dash)) (array:first b)) (array:first b))) ())))
 (let array:flat-one (lambda arr (array:fold arr (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
 (let array:flat (lambda arr (do
   (let flatten (lambda item
@@ -576,8 +576,8 @@
       (rec:iterate (+ i 1) (set! result i (callback (get arr (- i 1)) (get arr i))))))) result)))
       (rec:iterate 1 arr))))))))
 (let array:partition (lambda arr n (array:fold (array:zip arr (math:sequence arr)) (lambda a b (do
-      (let x (array:first b) )
-      (let i (array:second b) )
+      (let x (array:first b))
+      (let i (array:second b))
       (if (> (mod i n) 0)
         (array:push! (get a -1) x)
         (array:push! a (array x))) a))
@@ -591,10 +591,14 @@
       prev
       (rec:iterate (+ i 1))) ())))
       (rec:iterate 1))))))))
+(let matrix:points (lambda matrix callback (do 
+   (let coords ())
+   (matrix:enumerated-for matrix (lambda cell y x (if (callback cell) (array:push! coords (array y x))))) 
+    coords)))
 (let matrix:for (lambda matrix callback 
   (array:for matrix (lambda row (array:for row callback)))
    matrix))
-(let matrix:shallow-copy (lambda matrix (|> matrix (array:map (lambda x (|> x (array:map (lambda y y))))))))
+(let matrix:shallow-copy (lambda matrix (|> matrix (array:map (lambda x (|> x (array:map identity)))))))
 (let matrix:find-index (lambda matrix callback (do 
   (let coords (array -1 -1))
   (set! coords 0 (array:find-index matrix (lambda row (do
@@ -647,6 +651,7 @@
           )) 0)))
 (let matrix:set! (lambda matrix y x value (set! (get matrix y) x value)))
 (let matrix:get (lambda matrix y x (get (get matrix y) x)))
+(let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
 (let from:list->array (lambda list (do
   (let rec:iter (lambda lst out (if (list:nil? lst) out (rec:iter (list:tail lst) (array:merge out (array (list:head lst)))))))
   (rec:iter list ()))))
@@ -748,6 +753,7 @@
 (let array:merge (lambda a b (do (let out ()) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
 (let array:concat (lambda arr (array:fold arr array:merge ())))
 (let array:concat-with (lambda arr ch (array:enumerated-fold arr (lambda a b i (if (and (> i 0) (< i (length arr))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) ())))
+(let string:concat-with-lines (lambda arr (array:enumerated-fold arr (lambda a b i (if (and (> i 0) (< i (length arr))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) ())))
 (let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
 (let array:swap! (lambda arr i j (do (let temp (get arr i)) (set! arr i (get arr j)) (set! arr j temp))))
 (let array:index-of (lambda arr item (do
@@ -829,8 +835,8 @@
 (let array:pad-left! (lambda a b (if (> (length a) (length b))
      (array:merge! (math:zeroes (- (length a) (length b))) b)
      (array:merge! (math:zeroes (- (length b) (length a))) a))))
-(let array:rotate-right (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  n) (length arr)) (array:first b) )) (math:zeroes (length arr))))))
-(let array:rotate-left (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  (- (length arr) n)) (length arr)) (array:first b) )) (math:zeroes (length arr))))))
+(let array:rotate-right (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  n) (length arr)) (array:first b))) (math:zeroes (length arr))))))
+(let array:rotate-left (lambda arr n (|> arr (array:zip (math:sequence arr)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  (- (length arr) n)) (length arr)) (array:first b))) (math:zeroes (length arr))))))
 (let array:first (lambda arr (get arr 0)))
 (let array:second (lambda arr (get arr 1)))
 (let array:third (lambda arr (get arr 2)))
