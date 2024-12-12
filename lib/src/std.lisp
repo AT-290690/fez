@@ -1089,6 +1089,9 @@
       (and (array:in-bounds? table idx)
                    (and (> (length current) 0)
                         (>= (array:find-index current (lambda x (string:equal? x key))) 0))))))
+
+(let set:add-and-get! (lambda memo key value (do (set:add! memo key value) value)))
+(let set:remove-and-get! (lambda memo key (do (let value (set:get memo key)) (set:remove! memo key) value)))
 (let set:intersection (lambda a b
         (|> b
           (from:set->array)
@@ -1136,6 +1139,8 @@
         (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
         (if (not (= index -1)) (and (set! current index (get current -1)) (set! current -1)))
         table)))
+(let map:set-and-get! (lambda memo key value (do (map:set! memo key value) value)))
+(let map:remove-and-get! (lambda memo key (do (let value (map:get memo key)) (map:remove! memo key) value)))
 (let map:get
   (lambda table key
     (do
@@ -1164,6 +1169,8 @@
 (let var:get (lambda variable (car variable)))
 (let var:set! (lambda variable value (set! variable 0 value)))
 (let var:del! (lambda variable (set! variable -1)))
+(let var:increment! (lambda variable (set! variable 0 (+ (var:get variable) 1))))
+(let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
 
 (let bool:def (lambda val (array (not (not val)))))
 (let bool:get (lambda variable (car variable)))
