@@ -22,9 +22,9 @@ const dotNamesToEmpty = (name) => name.replace(new RegExp(/\./g), '')
 const arrowFromTo = (name) => name.replace(new RegExp(/->/g), '-to-')
 const moduleNameToLodashes = (name) => name.replace(new RegExp(/:/g), '_')
 const questionMarkToPredicate = (name) =>
-  name.replace(new RegExp(/\?/g), 'Predicate')
+  name.replace(new RegExp(/\?/g), '_predicate')
 const exclamationMarkMarkToEffect = (name) =>
-  name.replace(new RegExp(/\!/g), 'Effect')
+  name.replace(new RegExp(/\!/g), '_effect')
 const toCamelCase = (name) => {
   let out = name[0]
   for (let i = 1; i < name.length; ++i) {
@@ -36,6 +36,7 @@ const toCamelCase = (name) => {
   }
   return out
 }
+const dashToLodashes = (name) => name.replace(new RegExp(/-/g), '_')
 const keywordToHelper = (name) => {
   switch (name) {
     case KEYWORDS.ADDITION:
@@ -59,7 +60,7 @@ const keywordToHelper = (name) => {
   }
 }
 const lispToJavaScriptVariableName = (name) =>
-  toCamelCase(
+  dashToLodashes(
     arrowFromTo(
       dotNamesToEmpty(
         exclamationMarkMarkToEffect(
@@ -99,16 +100,16 @@ const Helpers = {
     }
     return args.at(-1) ? 1 : 0
   }`,
-  logEffect: `logEffect=(msg)=>{console.log(msg);return msg}`,
-  logCharEffect: `logCharEffect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
-  logStringEffect: `logStringEffect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
-  clearEffect: `clearEffect=()=>{console.clear();return 0}`,
+  log_effect: `log_effect=(msg)=>{console.log(msg);return msg}`,
+  log_char_effect: `log_char_effect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
+  log_string_effect: `log_string_effect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
+  clear_effect: `clear_effect=()=>{console.clear();return 0}`,
   get: 'get=(arr,i)=>arr.at(i)',
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
-  atomPredicate: `atomPredicate=(number)=>+(typeof number==='number')`,
-  lambdaPredicate: `lambdaPredicate=(fm)=>+(typeof fn==='function')`,
-  setEffect: `setEffect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
+  atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,
+  lambda_predicate: `lambda_predicate=(fm)=>+(typeof fn==='function')`,
+  set_effect: `set_effect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',
@@ -190,11 +191,11 @@ const compile = (tree, Drill) => {
         }
       }
       case KEYWORDS.IS_ATOM:
-        Drill.Helpers.add('atomPredicate')
-        return `atomPredicate(${compile(Arguments[0], Drill)});`
+        Drill.Helpers.add('atom_predicate')
+        return `atom_predicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.IS_LAMBDA:
-        Drill.Helpers.add('lambdaPredicate')
-        return `lambdaPredicate(${compile(Arguments[0], Drill)});`
+        Drill.Helpers.add('lambda_predicate')
+        return `lambda_predicate(${compile(Arguments[0], Drill)});`
       case KEYWORDS.NUMBER_TYPE:
         return '0'
       case KEYWORDS.BOOLEAN_TYPE:
