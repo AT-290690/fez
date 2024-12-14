@@ -79,6 +79,10 @@
 (let char:hash 35)
 (let char:question-mark 63)
 (let char:exclamation-mark 33)
+(let char:minus 45)
+(let char:plus 43)
+(let char:equal 61)
+(let char:asterix 42)
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
@@ -680,10 +684,25 @@
     (= c char:9) 9
     (*) ())))
 (let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
+(let from:chars->positive-or-negative-digits (lambda chars (do
+    (let current-sign (var:def 1))
+    (|> chars 
+        (array:fold (lambda a ch (do 
+            (if (= ch char:minus) 
+                (var:set! current-sign -1) 
+                (do  
+                    (array:push! a (* (var:get current-sign) (from:char->digit ch))) 
+                    (var:set! current-sign 1)))
+                a)) ())))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 (let from:digits->number (lambda digits (do
     (let rec:iter (lambda rem num base (if (> (length rem) 0) (rec:iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
     (rec:iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
+(let from:positive-or-negative-digits->number (lambda digits-with-sign (do
+    (let negative? (< (car digits-with-sign) 0))
+    (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
+    (let rec:iter (lambda rem num base (if (> (length rem) 0) (rec:iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
+    (* (rec:iter digits 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
 (let from:negative-or-positive-digits->chars (lambda arr (|>
   arr
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))

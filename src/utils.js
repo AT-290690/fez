@@ -234,13 +234,10 @@ export const fez = (source, options = {}) => {
   try {
     if (typeof source === 'string') {
       source = replaceQuotes(replaceStrings(source))
-      let code
-      if (!options.compile)
-        code = handleUnbalancedQuotes(
-          handleUnbalancedParens(removeNoCode(source))
-        )
-      else code = removeNoCode(source)
-      if (!options.mutation) code = removeMutation(code)
+      const valid = handleUnbalancedQuotes(
+        handleUnbalancedParens(removeNoCode(source))
+      )
+      const code = !options.mutation ? removeMutation(valid) : valid
       if (!code.length && options.throw) throw new Error('Nothing to parse!')
       const parsed = deSuggar(LISP.parse(code))
       const ast = [...treeShake(parsed, std), ...parsed]
