@@ -390,9 +390,9 @@
 
 
 (let array:for (lambda arr callback (do 
-                    (let rec:iter (lambda out 
-                      (if (> (length out) 0) (apply (lambda (do (callback (car out)) (rec:iter (cdr out))))))))
-                    (rec:iter arr)
+                    (let rec:iter (lambda i 
+                      (if (> (length arr) i) (apply (lambda (do (callback (get arr i)) (rec:iter (+ i 1))))))))
+                    (rec:iter 0)
                 arr)))
 (let array:enumerated-for (lambda arr callback (do 
   (loop:for-n (length arr) (lambda i (callback (get arr i) i)))
@@ -404,66 +404,66 @@
   (let rec:iter (lambda arr i (if (= i n) arr (rec:iter (array:merge arr (array (callback i))) (+ i 1)))))
   (rec:iter () 0))))
 (let array:map (lambda arr callback (do
-                  (let rec:iterate (lambda arr out
-                        (if (> (length arr) 0)
-                              (rec:iterate (cdr arr)
-                                (set! out (length out) (callback (car arr))))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                              (rec:iterate (+ i 1)
+                                (set! out (length out) (callback (get arr i))))
                               out)))
-                      (rec:iterate arr ()))))
+                      (rec:iterate 0 ()))))
 (let array:select (lambda arr callback (do
-                  (let rec:iterate (lambda arr out
-                        (if (> (length arr) 0)
-                            (rec:iterate (cdr arr)
-                                      (if (callback (car arr))
-                                            (set! out (length out) (car arr))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                            (rec:iterate (+ i 1)
+                                      (if (callback (get arr i))
+                                            (set! out (length out) (get arr i))
                                             out))
                             out)))
-                      (rec:iterate arr ()))))
+                      (rec:iterate 0 ()))))
 (let array:exclude (lambda arr callback (do
-                  (let rec:iterate (lambda arr out
-                        (if (> (length arr) 0)
-                            (rec:iterate (cdr arr)
-                                      (if (not (callback (car arr)))
-                                            (set! out (length out) (car arr))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                            (rec:iterate (+ i 1)
+                                      (if (not (callback (get arr i)))
+                                            (set! out (length out) (get arr i))
                                             out))
                             out)))
-                      (rec:iterate arr ()))))
+                      (rec:iterate 0 ()))))
 (let array:fold (lambda arr callback initial (do
-                  (let rec:iterate (lambda arr out
-                        (if (> (length arr) 0)
-                            (rec:iterate (cdr arr) (callback out (car arr)))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                            (rec:iterate (+ i 1) (callback out (get arr i)))
                             out)))
-                      (rec:iterate arr initial))))
+                      (rec:iterate 0 initial))))
 (let array:every? (lambda arr callback (do
-                    (let rec:iterate (lambda arr
-                          (if (and (> (length arr) 0) (callback (car arr)))
-                              (rec:iterate (cdr arr))
-                              (not (length arr)))))
-                        (rec:iterate arr))))
+                    (let rec:iterate (lambda i
+                          (if (and (> (length arr) i) (callback (get arr i)))
+                              (rec:iterate (+ i 1))
+                              (not (> (length arr) i)))))
+                        (rec:iterate 0))))
 (let array:some? (lambda arr callback (do
-                    (let rec:iterate (lambda arr
-                          (if (and (> (length arr) 0) (not (callback (car arr))))
-                              (rec:iterate (cdr arr))
-                              (not (not (length arr))))))
-                        (rec:iterate arr))))
+                    (let rec:iterate (lambda i
+                          (if (and (> (length arr) i)  (not (callback (get arr i))))
+                              (rec:iterate (+ i 1))
+                              (not (not (> (length arr) i))))))
+                        (rec:iterate 0))))
 (let array:find (lambda arr callback (do
-                    (let rec:iterate (lambda arr
-                          (if (> (length arr) 0)
-                              (if (callback (car arr)) (car arr) (rec:iterate (cdr arr)))
+                    (let rec:iterate (lambda i
+                          (if (> (length arr) i)
+                              (if (callback (get arr i)) (get arr i) (rec:iterate (+ i 1)))
                               ())))
-                        (rec:iterate arr))))
+                        (rec:iterate 0))))
 (let array:has? (lambda arr callback (do
-                    (let rec:iterate (lambda arr
-                          (if (> (length arr) 0)
-                              (if (callback (car arr)) 1 (rec:iterate (cdr arr))))))
-                        (rec:iterate arr))))
+                    (let rec:iterate (lambda i
+                          (if (> (length arr) i)
+                              (if (callback (get arr i)) 1 (rec:iterate (+ i 1))))))
+                        (rec:iterate 0))))
 (let array:reverse (lambda arr (do
-                    (let rec:iterate (lambda arr out
-                          (if (> (length arr) 0)
-                              (rec:iterate (cdr arr)
-                              (array:merge! (array (car arr)) out))
+                    (let rec:iterate (lambda i out
+                          (if (> (length arr) i)
+                              (rec:iterate (+ i 1)
+                              (array:merge! (array (get arr i)) out))
                           out)))
-                        (rec:iterate arr ()))))
+                        (rec:iterate 0 ()))))
 (let array:append! (lambda q item (set! q (length q) item)))
 (let array:tail! (lambda q (set! q -1)))
 (let array:push! (lambda q item (do (set! q (length q) item) item)))
@@ -519,10 +519,10 @@
             (rec:search arr target start (- index 1))
             (rec:search arr target (+ index 1) end))))))))))
    (rec:search arr target 0 (length arr)))))
-(let array:zip (lambda A B (do
-  (let rec:iterate (lambda a b output
-    (if (and (> (length a) 0) (> (length b) 0)) (rec:iterate (cdr a) (cdr b) (set! output (length output) (array (car a) (array:first b)))) output)))
-  (rec:iterate A B ()))))
+(let array:zip (lambda a b (do
+  (let rec:iterate (lambda i j output
+    (if (and (> (length a) i) (> (length b) j)) (rec:iterate (+ i 1) (+ j 1) (set! output (length output) (array (get a i) (get b j)))) output)))
+  (rec:iterate 0 0 ()))))
 (let array:unzip (lambda arr (array (array:map arr array:first) (array:map arr array:second))))
 (let array:equal? (lambda a b
   (or
@@ -696,13 +696,13 @@
                 a)) ())))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 (let from:digits->number (lambda digits (do
-    (let rec:iter (lambda rem num base (if (> (length rem) 0) (rec:iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
-    (rec:iter digits 0 (* (math:power 10 (length digits)) 0.1)))))
+    (let rec:iter (lambda i num base (if (> (length digits) i) (rec:iter (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
+    (rec:iter 0 0 (* (math:power 10 (length digits)) 0.1)))))
 (let from:positive-or-negative-digits->number (lambda digits-with-sign (do
     (let negative? (< (car digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
-    (let rec:iter (lambda rem num base (if (> (length rem) 0) (rec:iter (cdr rem) (+ num (* base (car rem))) (* base 0.1)) num)))
-    (* (rec:iter digits 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
+    (let rec:iter (lambda i num base (if (> (length digits) i) (rec:iter (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
+    (* (rec:iter 0 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
 (let from:negative-or-positive-digits->chars (lambda arr (|>
   arr
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
@@ -771,70 +771,70 @@
 (let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
 (let array:swap! (lambda arr i j (do (let temp (get arr i)) (set! arr i (get arr j)) (set! arr j temp))))
 (let array:index-of (lambda arr item (do
-                    (let rec:iterate (lambda arr i
-                          (if (> (length arr) 0)
-                              (if (= (car arr) item) i (rec:iterate (cdr arr) (+ i 1))) -1)))
-                        (rec:iterate arr 0))))
+                    (let rec:iterate (lambda i
+                          (if (> (length arr) i)
+                              (if (= (get arr i) item) i (rec:iterate (+ i 1))) -1)))
+                        (rec:iterate 0))))
 (let array:enumerate (lambda arr (array:zip (math:sequence arr) arr)))
 (let array:enumerated-map (lambda arr callback (do
-                  (let rec:iterate (lambda arr i out
-                        (if (> (length arr) 0)
-                              (rec:iterate (cdr arr) (+ i 1)
-                                (set! out (length out) (callback (car arr) i)))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                              (rec:iterate (+ i 1)
+                                (set! out (length out) (callback (get arr i) i)))
                               out)))
-                      (rec:iterate arr 0 ()))))
+                      (rec:iterate 0 ()))))
 (let array:enumerated-select (lambda arr callback (do
-                  (let rec:iterate (lambda arr i out
-                        (if (> (length arr) 0)
-                            (rec:iterate (cdr arr) (+ i 1)
-                                      (if (callback (car arr) i)
-                                            (set! out (length out) (car arr))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                            (rec:iterate (+ i 1)
+                                      (if (callback (get arr i) i)
+                                            (set! out (length out) (get arr i))
                                             out))
                             out)))
-                      (rec:iterate arr 0 ()))))
+                      (rec:iterate 0 ()))))
 (let array:enumerated-exclude (lambda arr callback (do
-                  (let rec:iterate (lambda arr i out
-                        (if (> (length arr) 0)
-                            (rec:iterate (cdr arr) (+ i 1)
-                                      (if (not (callback (car arr) i))
-                                            (set! out (length out) (car arr))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                            (rec:iterate (+ i 1)
+                                      (if (not (callback (get arr i) i))
+                                            (set! out (length out) (get arr i))
                                             out))
                             out)))
-                      (rec:iterate arr 0 ()))))
+                      (rec:iterate 0 ()))))
 (let array:enumerated-fold (lambda arr callback initial (do
-                  (let rec:iterate (lambda arr i out
-                        (if (> (length arr) 0)
-                            (rec:iterate (cdr arr) (+ i 1) (callback out (car arr) i))
+                  (let rec:iterate (lambda i out
+                        (if (> (length arr) i)
+                            (rec:iterate (+ i 1) (callback out (get arr i) i))
                             out)))
-                      (rec:iterate arr 0 initial))))
+                      (rec:iterate 0 initial))))
 (let array:enumerated-find (lambda arr callback (do
-                    (let rec:iterate (lambda arr i
-                          (if (> (length arr) 0)
-                              (if (callback (car arr) i) (car arr) (rec:iterate (cdr arr) (+ i 1)))
+                    (let rec:iterate (lambda i
+                          (if (> (length arr) i)
+                              (if (callback (get arr i) i) (get arr i) (rec:iterate (+ i 1)))
                               ())))
-                        (rec:iterate arr 0))))
+                        (rec:iterate 0))))
 (let array:enumerated-find-index (lambda arr callback (do
-                    (let rec:iterate (lambda arr i
-                          (if (> (length arr) 0)
-                              (if (callback (car arr) i) i (rec:iterate (cdr arr) (+ i 1))) -1)))
+                    (let rec:iterate (lambda i
+                          (if (> (length arr) i)
+                              (if (callback (get arr i) i) i (rec:iterate (+ i 1))) -1)))
                         (rec:iterate arr 0))))
 (let array:enumerated-every? (lambda arr callback (do
-                    (let rec:iterate (lambda arr i
-                          (if (and (> (length arr) 0) (callback (car arr) i))
-                              (rec:iterate (cdr arr) (+ i 1))
-                              (not (length arr)))))
-                        (rec:iterate arr 0))))
+                    (let rec:iterate (lambda i
+                          (if (and (> (length arr) i) (callback (get arr i) i))
+                              (rec:iterate (+ i 1))
+                              (not (> (length arr) i)))))
+                        (rec:iterate 0))))
 (let array:enumerated-some? (lambda arr callback (do
-                    (let rec:iterate (lambda arr i
-                          (if (and (> (length arr) 0) (not (callback (car arr) i)))
-                              (rec:iterate (cdr arr) (+ i 1))
-                              (not (not (length arr))))))
-                        (rec:iterate arr 0))))
+                    (let rec:iterate (lambda i
+                          (if (and (> (length arr) i) (not (callback (get arr i) i)))
+                              (rec:iterate (+ i 1))
+                              (not (not (> (length arr) i))))))
+                        (rec:iterate 0))))
 (let array:find-index (lambda arr callback (do
-                    (let rec:iterate (lambda arr i
-                          (if (> (length arr) 0)
-                              (if (callback (car arr)) i (rec:iterate (cdr arr) (+ i 1))) -1)))
-                        (rec:iterate arr 0))))
+                    (let rec:iterate (lambda i
+                          (if (> (length arr) i)
+                              (if (callback (get arr i)) i (rec:iterate (+ i 1))) -1)))
+                        (rec:iterate 0))))
 (let array:remove (lambda arr i
       (array:fold arr (lambda a x (do (if (= x i) a (set! a (length a) x)))) ())))
 (let array:pad-right (lambda a b (if (> (length a) (length b))
@@ -896,11 +896,6 @@
                     (set! prev (length prev) b)) a))
               (array ()))
               (array:map (lambda x (array:join (array x) (array char:empty)))))))
-(let string:index-of-char (lambda str character (do
-                    (let rec:iterate (lambda arr i
-                          (if (> (length arr) 0)
-                              (if (string:equal? (car arr) character) i (rec:iterate (cdr arr) (+ i 1))) -1)))
-                        (rec:iterate (array:shallow-copy str array) 0))))
 (let string:match (lambda str word (cond 
                                     (< (length str) (length word)) -1
                                     (string:equal? str word) 0

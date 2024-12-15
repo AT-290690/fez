@@ -2173,4 +2173,103 @@ matrix
     ),
     [12]
   )
+
+  deepStrictEqual(
+    fez(
+      `(let INPUT "2333133121414131402")
+(let parse (lambda input (from:chars->digits input)))
+(let part1 (lambda input (do
+    (let file-id (var:def -1))
+    (let disk (|> input
+        (array:enumerated-fold (lambda disk ch i 
+        (array:merge! disk
+            (if (math:even? i) (do
+                    (let id (var:get (var:increment! file-id)))
+                    (array:of ch (lambda . id)))
+                    (array:of ch (lambda . -1))))) ())))
+    (let blanks ())
+    (array:enumerated-for disk (lambda x i (if (= x -1) (array:push! blanks i))))
+    (let rec:fragment (lambda ind (do
+        (let i (get blanks ind))
+        (if (= (array:last disk) -1) (do (array:pop! disk) (rec:fragment ind))
+            (unless (<= (length disk) i) (do 
+            (set! disk i (array:pop! disk))
+            (rec:fragment (+ ind 1))))))))
+        (rec:fragment 0)
+        (|> disk (array:enumerated-fold (lambda a b i (+ a (* b i))) 0)))))
+       
+(let PARSED (parse INPUT))
+'((part1 PARSED))`,
+      { mutation: 1, compile: 1, eval: 1 }
+    ),
+    [1928]
+  )
+
+  deepStrictEqual(
+    fez(
+      `(let samples '(
+    "(())"    ; result in floor 0.
+    "()()"    ; result in floor 0.
+    "((("     ; result in floor 3.
+    "(()(()(" ; result in floor 3.
+    "))(((((" ; also results in floor 3.
+    "())"     ; result in floor -1 (the first basement level).
+    "))("     ; result in floor -1 (the first basement level).
+    ")))"     ; result in floor -3.
+    ")())())" ; result in floor -3.
+    ")"       ; causes him to enter the basement at character position 1
+    "()())"   ; causes him to enter the basement at character position 5.
+))
+
+(let part1 (lambda input (- (array:count input char:left-brace) (array:count input char:right-brace))))
+(let part2 (lambda input (do
+    (let rec:iter (lambda a out idx
+                      (cond
+                        (= out -1) idx
+                        (array:empty? a) -1
+                        (*) (rec:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
+    (rec:iter input 0 0))))
+'((|> samples (array:map part1)) (|> samples (array:map part2)))
+`,
+      { compile: 1, eval: 1 }
+    ),
+    [
+      [0, 0, 3, 3, 3, -1, -1, -3, -3, -1, -1],
+      [-1, -1, -1, -1, 1, 3, 1, 1, 1, 1, 5]
+    ]
+  )
+  strictEqual(
+    fez(
+      `(let parse (lambda input (|> input 
+                              (string:lines)
+                              (array:map (lambda line 
+                                                  (|> 
+                                                    line
+                                                    (string:words) 
+                                                    (array:map (lambda chars 
+                                                                      (|> chars 
+                                                                          (from:chars->digits) 
+                                                                          (from:digits->number))))))))))
+(let solve (lambda input (|> (car input)
+                             (array:zip (car (cdr input))) ; pair time with distance
+                             (array:map (lambda input (do
+                                      (let time (car input))
+                                      (let dist (car (cdr input)))
+                                      (|> time
+                                          (math:sequence-n) ; create a sequence starting from 0
+                                          (array:map (lambda hold (* (- time hold) hold))) ; turn sequence into records
+                                          (array:count-of (lambda rec (> rec dist))))))) ; count number of records that beat the distance
+                             (math:product))))
+
+(|> (string:concat-with-lines '( 
+        "7 15 30"
+        "9 40 200")) 
+        (parse)
+        (solve))
+
+`,
+      { compile: 1, eval: 1 }
+    ),
+    288
+  )
 })
