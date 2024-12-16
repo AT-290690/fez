@@ -245,9 +245,5 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ; Build-in all keywords
 (/) (+) (*) (-) (=) (<) (>) (>=) (<=) (&) (~) (|) (^) (<<) (>>) (>>>)
 (mod) (let) (if) (not) (and) (or) (cond) (atom?) (lambda?)
-(length) (do) (array) (set!) (get) (lambda) (apply) (void)
-; Console functions
-(log!) (log-string!) (log-char!) (clear!)
-; Syntactic suggar keywords
-(|>) (list) (unless) (array?) '() `() (!=) (<>)
+(length) (do) (array) (set!) (get) (lambda) (apply)
 ```

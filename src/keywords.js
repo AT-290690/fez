@@ -44,7 +44,6 @@ export const KEYWORDS = {
 
   SET_ARRAY: 'set!',
 
-  NOT_COMPILED_BLOCK: 'void',
   LOG: 'log!',
   LOG_STRING: 'log-string!',
   LOG_CHAR: 'log-char!',

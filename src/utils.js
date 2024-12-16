@@ -70,7 +70,7 @@ export const stringifyArrayTypes = (type) =>
     : 'number'
 export const stringifyType = (type) => {
   if (!isLeaf(type)) {
-    const [car, ...cdr] = type
+    const [car] = type
     if (car == undefined) return '(array)'
     else if (car[TYPE] === APPLY && car[VALUE] === KEYWORDS.ARRAY_TYPE)
       return `(array ${type

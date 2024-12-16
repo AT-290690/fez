@@ -292,12 +292,6 @@ const compile = (tree, Drill) => {
         out += '0);'
         return out
       }
-      // case KEYWORDS.PIPE: {
-      //   let inp = Arguments[0]
-      //   for (let i = 1; i < Arguments.length; ++i)
-      //     inp = [Arguments[i].shift(), inp, ...Arguments[i]]
-      //   return compile(inp, Drill)
-      // }
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
         if (camelCased in Helpers) Drill.Helpers.add(camelCased)

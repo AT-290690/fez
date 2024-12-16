@@ -1,16 +1,5 @@
-import {
-  TYPE,
-  VALUE,
-  WORD,
-  KEYWORDS,
-  APPLY,
-  ATOM,
-  FALSE,
-  TRUE,
-  TYPES
-} from './keywords.js'
+import { TYPE, VALUE, WORD, KEYWORDS, FALSE, TRUE, TYPES } from './keywords.js'
 import { evaluate } from './evaluator.js'
-import { isLeaf } from './parser.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 const keywords = {
   [KEYWORDS.REMAINDER_OF_DIVISION]: (args, env) => {
@@ -797,6 +786,5 @@ const keywords = {
     return 0
   }
 }
-keywords[KEYWORDS.NOT_COMPILED_BLOCK] = keywords[KEYWORDS.BLOCK]
 
 export { keywords }
