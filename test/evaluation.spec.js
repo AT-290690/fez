@@ -170,7 +170,7 @@ describe('Compilation & Interpretation', () => {
         (set:add! B (array char:4))
         (set:add! B (array char:5))
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))`,
-      `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`,
+      `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
       `(|> 
   '(1 2 3 4)
    (array:swap-remove! 1)

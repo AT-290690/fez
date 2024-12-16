@@ -64,7 +64,7 @@ describe('Utils', () => {
                 (array:sort (lambda a b (> a b)))
                 (solve (lambda x (- 2020 x)))
                 (math:product))`,
-      `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`,
+      `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
       `(let empty! (lambda arr (do 
       (let rec:iterate (lambda 
         (unless (= (length arr) 0) 

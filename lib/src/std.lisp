@@ -703,7 +703,7 @@
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
     (let rec:iter (lambda i num base (if (> (length digits) i) (rec:iter (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
     (* (rec:iter 0 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
-(let from:negative-or-positive-digits->chars (lambda arr (|>
+(let from:positive-or-negative-digits->chars (lambda arr (|>
   arr
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
   (array:fold (lambda a x
@@ -716,6 +716,16 @@
                               (= num 0) (array 0)
                               (*) res)))
   (array:reverse (rec:iter num ())))))
+(let from:number->positive-or-negative-digits (lambda positive-or-negative-num (do
+  (let negative? (math:negative? positive-or-negative-num))
+  (let num (if negative? (* positive-or-negative-num -1) positive-or-negative-num))
+  (let rec:iter (lambda num res (cond
+                              (>= num 1) (rec:iter (/ num 10) (set! res (length res) (| (mod num 10) 0)))
+                              (= num 0) (array 0)
+                              (*) res)))
+  (let out (array:reverse (rec:iter num ())))
+  (if negative? (set! out 0 (* (get out 0) -1)))
+  out)))
 (let from:number->bits (lambda num (do
   (let rec:iter (lambda num res (cond
                               (>= num 1) (rec:iter (/ num 2) (set! res (length res) (| (mod num 2) 0)))
@@ -1385,6 +1395,75 @@ q)))
                                   (callback i)
                                   (rec:iterate (+ i 1))))))))
                           (rec:iterate 0))))
+
+(let node:parent (lambda i (- (>>> (+ i 1) 1) 1)))
+(let node:left (lambda i (+ (<< i 1) 1)))
+(let node:right (lambda i (<< (+ i 1) 1)))
+
+(let heap:top 0)
+(let new:heap ())
+(let heap:greater (lambda heap i j callback (callback (get heap i) (get heap j))))
+(let heap:sift-up! (lambda heap callback (do 
+  (let node (var:def (- (length heap) 1)))  
+  (let rec:while (lambda 
+    (if (and (> (var:get node) heap:top) (heap:greater heap (var:get node) (node:parent (var:get node)) callback))
+      (do 
+        (array:swap! heap (var:get node) (node:parent (var:get node)))
+        (var:set! node (node:parent (var:get node)))
+        (rec:while)))))
+  (rec:while))))
+
+(let heap:sift-down! (lambda heap callback (do
+  (let node (var:def heap:top))
+  (let rec:while (lambda 
+    (if (or 
+          (and 
+            (< (node:left (var:get node)) (length heap))
+            (heap:greater heap (node:left (var:get node)) (var:get node) callback))
+          (and 
+            (< (node:right (var:get node)) (length heap))
+            (heap:greater heap (node:right (var:get node)) (var:get node) callback)))
+      (do 
+        (let max-child (if (and 
+                            (< (node:right (var:get node)) (length heap))
+                            (heap:greater heap (node:right (var:get node)) (node:left (var:get node)) callback))
+                            (node:right (var:get node))
+                            (node:left (var:get node))))
+        (array:swap! heap (var:get node) max-child)
+        (var:set! node max-child)
+        (rec:while)))))
+  (rec:while))))
+
+(let heap:peek (lambda heap (get heap heap:top)))
+
+(let heap:push! (lambda heap value callback (do 
+    (set! heap (length heap) value)
+    (heap:sift-up! heap callback)
+    heap)))
+
+(let heap:pop! (lambda heap callback (do 
+  (let bottom (- (length heap) 1))
+  (if (> bottom heap:top) (array:swap! heap heap:top bottom))
+  (array:pop! heap)
+  (heap:sift-down! heap callback)
+  heap)))
+
+(let heap:replace! (lambda heap value callback (do 
+(set! heap heap:top value)
+(heap:sift-down! heap callback)
+heap)))
+
+
+(let heap:empty? array:empty?)
+(let heap:not-empty? array:not-empty?)
+(let heap:empty! array:empty!)
+
+(let from:array->heap (lambda arr callback (do 
+  (let heap ())
+  (array:for arr (lambda x (heap:push! heap x callback)))
+  heap)))
+
+; Fake keywords section
 
 (let array:set! set!)
 (let array:get get)

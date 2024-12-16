@@ -563,7 +563,7 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(from:negative-or-positive-digits->chars (array -1 2 3 -4 -5 6 7))`,
+        `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
         { compile: 0 }
       ),
       [45, 49, 50, 51, 45, 52, 45, 53, 54, 55]
@@ -1090,7 +1090,7 @@ matrix
     )
     deepStrictEqual(
       fez(
-        `(array (from:negative-or-positive-digits->chars (array -1)) (from:negative-or-positive-digits->chars (array 1)))`,
+        `(array (from:positive-or-negative-digits->chars (array -1)) (from:positive-or-negative-digits->chars (array 1)))`,
         { compile: 1, eval: 1 }
       ),
       [[45, 49], [49]]
@@ -2271,5 +2271,22 @@ matrix
       { compile: 1, eval: 1 }
     ),
     288
+  )
+
+  deepStrictEqual(
+    fez(
+      `(let out ())
+(let comp (lambda a b (< a b)))
+(let heap (from:array->heap '(30 10 50 20 40) comp))
+(heap:peek heap)
+(let rec:while (lambda (unless (array:empty? heap) (do 
+(array:push! out (heap:peek heap))
+(heap:pop! heap comp)
+(rec:while)))))
+(rec:while)
+(identity out)`,
+      { mutation: 1, compile: 1, eval: 1 }
+    ),
+    [10, 20, 30, 40, 50]
   )
 })
