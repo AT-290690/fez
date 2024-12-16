@@ -83,6 +83,8 @@
 (let char:plus 43)
 (let char:equal 61)
 (let char:asterix 42)
+(let char:ampersand 38)
+(let char:at 64)
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
@@ -734,6 +736,9 @@
   (array:reverse (rec:iter num ())))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:number->digits x))))))
 (let from:chars->number (lambda n (|> n (from:chars->digits) (from:digits->number))))
+(let from:positive-or-negative-chars->number (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->number))))
+(let from:string->number from:positive-or-negative-chars->number)
+(let from:strings->numbers (lambda strings (array:map strings from:positive-or-negative-chars->number)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))
@@ -1213,6 +1218,7 @@
 (let var:get (lambda variable (car variable)))
 (let var:set! (lambda variable value (set! variable 0 value)))
 (let var:del! (lambda variable (set! variable -1)))
+(let var:set-and-get! (lambda variable value (do (var:set! variable value) value)))
 (let var:increment! (lambda variable (set! variable 0 (+ (var:get variable) 1))))
 (let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
 

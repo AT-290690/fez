@@ -2455,4 +2455,13 @@ matrix
     ),
     [100, 69, 29, 42, [100, 40, 200, 50]]
   )
+
+  strictEqual(
+    fez(
+      `
+(|> '("-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`,
+      { compile: 1, eval: 1 }
+    ),
+    2240
+  )
 })
