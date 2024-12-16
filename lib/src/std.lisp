@@ -742,6 +742,8 @@
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))
+(let from:number->string (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars))))
+(let from:numbers->strings (lambda x (array:map x from:number->string)))
 (let from:any->boolean (lambda val (not (not val))))
 (let from:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let from:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
