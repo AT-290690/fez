@@ -733,7 +733,7 @@
                               (*) res)))
   (array:reverse (rec:iter num ())))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:number->digits x))))))
-(let from:chars->numbers (lambda arr (array:map (array:select (array:map (array:map arr from:chars->digits) array:flat-one) array:not-empty?) from:digits->number)))
+(let from:chars->number (lambda n (|> n (from:chars->digits) (from:digits->number))))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))
@@ -1053,20 +1053,31 @@
       (rec:iter (+ i 1)))))
       arr))
       ) (rec:iter 0))))
-(let char? (lambda cc (and (atom? cc) (>= cc 0) (< cc 65535))))
 
+
+(let new:map (lambda args 
+  (array:enumerated-fold args (lambda a . i 
+    (if (math:even? i) 
+        (map:set! a (get args i) (get args (+ i 1))) 
+        a)) 
+        (array () () () ()))))
+(let new:set (lambda args 
+  (array:fold args (lambda a b (set:add! a b)) (array () () () ()))))
 (let new:set4 (lambda (array () () () ())))
 (let new:set8 (lambda (array:merge (new:set4) (new:set4))))
 (let new:set16 (lambda (array:merge (new:set8) (new:set8))))
 (let new:set32 (lambda (array:merge (new:set16) (new:set16))))
 (let new:set64 (lambda (array:merge (new:set32) (new:set32))))
-
 (let new:array (lambda items (array:shallow-copy items)))
 (let new:list (lambda value (array () value ())))
 (let new:set-n (lambda n (array:map (math:zeroes n) (lambda . ()))))
 (let new:date (lambda year month day (array year month day)))
-
+(let new:heap ())
+(let new:brray (lambda (array (array ()) ())))
+(let new:queue new:brray)
+(let new:stack new:brray)
 (let new:binary-tree (lambda value (do (let arr ()) (set! arr 0 value) (set! arr 1 ()) (set! arr 2 ()) arr)))
+
 (let binary-tree:left (lambda node (get node 1)))
 (let binary-tree:right (lambda node (get node 2)))
 (let binary-tree:left! (lambda tree node (set! tree 1 node)))
@@ -1116,6 +1127,8 @@
 
 (let set:add-and-get! (lambda memo key value (do (set:add! memo key value) value)))
 (let set:remove-and-get! (lambda memo key (do (let value (set:get memo key)) (set:remove! memo key) value)))
+(let set:with! (lambda initial args
+  (array:fold args (lambda a b (set:add! a b)) initial)))
 (let set:intersection (lambda a b
         (|> b
           (from:set->array)
@@ -1139,6 +1152,13 @@
         (|> b (from:set->array) (array:for (lambda element (set:add! out element))))
         out)))
 (let set:empty! (lambda table (array:map table empty!)))
+
+(let map:with! (lambda initial args  
+  (array:enumerated-fold args (lambda a . i 
+    (if (math:even? i) 
+        (map:set! a (get args i) (get args (+ i 1))) 
+        a)) 
+        initial)))
 (let map:empty! (lambda table (array:map table empty!)))
 (let map:keys (lambda table (|> table (array:flat-one) (array:map array:first))))
 (let map:set! (lambda table key value
@@ -1212,7 +1232,7 @@
 (let curry:three (lambda f b c (lambda a (f a b c))))
 (let curry:two (lambda f b (lambda a (f a b))))
 (let curry:one (lambda f (lambda a (f a))))
-(let new:brray (lambda (array (array ()) ())))
+
 (let brray:offset-left (lambda q (* (- (length (get q 0)) 1) -1)))
 (let brray:offset-right (lambda q (length (get q 1))))
 (let brray:length (lambda q (+ (length (get q 0)) (length (get q 1)) -1)))
@@ -1333,14 +1353,12 @@ q)))
   (rec:right half (- slice-len 1))
   slice)))
 
-(let new:queue new:brray)
 (let queue:empty? brray:empty?)
 (let queue:empty! brray:empty!)
 (let queue:enqueue! (lambda queue item (brray:append! queue item)))
 (let queue:dequeue! (lambda queue (brray:tail! queue)))
 (let queue:peek (lambda queue (brray:first queue)))
 
-(let new:stack new:brray)
 (let stack:empty? brray:empty?)
 (let stack:empty! stack:empty!)
 (let stack:push! (lambda stack item (brray:append! stack item)))
@@ -1401,7 +1419,6 @@ q)))
 (let node:right (lambda i (<< (+ i 1) 1)))
 
 (let heap:top 0)
-(let new:heap ())
 (let heap:greater (lambda heap i j callback (callback (get heap i) (get heap j))))
 (let heap:sift-up! (lambda heap callback (do 
   (let node (var:def (- (length heap) 1)))  
@@ -1473,7 +1490,20 @@ heap)))
 (let array:car car)
 (let array:cdr cdr)
 (let array:for-range loop:for-range)
-
+(let console:log! (lambda arg (do (log! arg) ())))
+(let console:log-string! (lambda arg (do (log-string! arg) ())))
+(let console:log-char! (lambda arg (do (log-char! arg) ())))
+(let console:clear! clear!)
+(let print! (lambda arg t (do (cond
+  (string:equal? t (array char:asterix)) (log! arg)
+  (string:equal? t (array 115 116 114 105 110 103)) (log-string! arg)
+  (string:equal? t (array 99 104 97 114)) (log-char! arg)
+  (string:equal? t (array 99 104 97 114 115)) (array:for arg log-char!)
+  (string:equal? t (array 116 97 98 108 101)) (log-string! (array:lines arg))
+  (*) (log! arg)
+)
+())))
+(let progn do)
 (let identity (lambda x x))
 (let truthy? (lambda x
     (cond
@@ -1486,6 +1516,11 @@ heap)))
      (array? x) (= (length x) 0))))
 
 (let array? (lambda x (and (not (atom? x)) (not (lambda? x)))))
+(let char? (lambda cc (and (atom? cc) (>= cc 0) (< cc 65535))))
+
+(let loop (lambda predicate callback (do
+  (let rec:while (lambda (if (predicate) (do (callback) (rec:while))))) 
+  (rec:while))))
 
 (let match:negative? (lambda string (= (car string) char:dash)))
 (let match:number? (lambda string (do 

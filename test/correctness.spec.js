@@ -2289,4 +2289,170 @@ matrix
     ),
     [10, 20, 30, 40, 50]
   )
+
+  strictEqual(
+    fez(
+      `(let INPUT
+    (string:concat-with-lines '(
+        "###############"
+        "#.......#....E#"
+        "#.#.###.#.###.#"
+        "#.....#.#...#.#"
+        "#.###.#####.#.#"
+        "#.#.#.......#.#"
+        "#.#.#####.###.#"
+        "#...........#.#"
+        "###.#.#####.#.#"
+        "#...#.....#.#.#"
+        "#.#.#.###.#.#.#"
+        "#.....#...#.#.#"
+        "#.###.#.#.#.#.#"
+        "#S..#.....#...#"
+        "###############")))
+
+(let parse (lambda input (|> input (string:lines))))
+
+(let part1 (lambda matrix (do 
+
+    (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
+
+    (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
+    (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
+  
+    (let pq '('(0 (array:first start) (array:second start) 0 1)))
+    (let seen (new:set8))
+    (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
+
+    (let lower? (lambda a b (< (array:first a) (array:first b))))
+    (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
+  
+    (let rec:while (lambda (unless (heap:empty? pq) (do
+        (let first (heap:peek pq))
+        (heap:pop! pq lower?)
+        (let cost (get first 0))
+        (let r (get first 1))
+        (let c (get first 2))
+        (let dr (get first 3))
+        (let dc (get first 4))
+        (set:add! seen (from:stats->key '(r c dr dc)))
+        (if (goal? r c) cost
+         (do 
+            (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
+                        '((+ cost 1000) r c dc (- dr))
+                        '((+ cost 1000) r c (- dc) dr)))
+            (array:for dirs (lambda stats (do 
+                            (let new-cost (get stats 0))
+                            (let nr (get stats 1))
+                            (let nc (get stats 2))
+                            (let ndr (get stats 3))
+                            (let ndc (get stats 4))
+                            (if 
+                                (and
+                                    (not (= (matrix:get matrix nr nc) char:hash)) 
+                                    (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
+                                (heap:push! pq stats lower?)))))
+            (rec:while)))))))
+    (rec:while))))
+
+(let PARSED (parse INPUT))
+(part1 PARSED)`,
+      { mutation: 1, compile: 1, eval: 1 }
+    ),
+    7036
+  )
+
+  strictEqual(
+    fez(
+      `
+(let part1 (lambda matrix (do 
+
+    (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
+
+    (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
+    (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
+  
+    (let pq '('(0 (array:first start) (array:second start) 0 1)))
+    (let seen (new:set8))
+    (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
+
+    (let lower? (lambda a b (< (array:first a) (array:first b))))
+    (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
+    (let goal-reached? (bool:false))
+    (let output (var:def 0))
+    (loop 
+        (lambda (and (heap:not-empty? pq) (bool:false? goal-reached?))) 
+        (lambda (do
+            (let first (heap:peek pq))
+            (heap:pop! pq lower?)
+            (let cost (get first 0))
+            (let r (get first 1))
+            (let c (get first 2))
+            (let dr (get first 3))
+            (let dc (get first 4))
+            (set:add! seen (from:stats->key '(r c dr dc)))
+            (if (goal? r c) 
+                (do 
+                    (bool:true! goal-reached?)
+                    (var:set! output cost))
+                (do 
+                    (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
+                                '((+ cost 1000) r c dc (- dr))
+                                '((+ cost 1000) r c (- dc) dr)))
+                    (array:for dirs (lambda stats (do 
+                                    (let new-cost (get stats 0))
+                                    (let nr (get stats 1))
+                                    (let nc (get stats 2))
+                                    (let ndr (get stats 3))
+                                    (let ndc (get stats 4))
+                                    (if 
+                                        (and
+                                            (not (= (matrix:get matrix nr nc) char:hash)) 
+                                            (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
+                                        (heap:push! pq stats lower?))))))))))
+        (var:get output))))
+
+(part1 (string:lines (string:concat-with-lines '(
+        "###############"
+        "#.......#....E#"
+        "#.#.###.#.###.#"
+        "#.....#.#...#.#"
+        "#.###.#####.#.#"
+        "#.#.#.......#.#"
+        "#.#.#####.###.#"
+        "#...........#.#"
+        "###.#.#####.#.#"
+        "#...#.....#.#.#"
+        "#.#.#.###.#.#.#"
+        "#.....#...#.#.#"
+        "#.###.#.#.#.#.#"
+        "#S..#.....#...#"
+        "###############"))))`,
+      { mutation: 1, compile: 1, eval: 1 }
+    ),
+    7036
+  )
+
+  deepStrictEqual(
+    fez(
+      `(let object (new:map '(
+    "x" 69 
+    "y" 29 
+    "price" 42
+    "settings" (new:map '("volume" 100 "colored" 0)))))
+(let A (new:set '("10" "20" "30")))
+(let B (new:set '("20" "40" "50")))
+(let U (set:difference B A))
+(set:with! U '("100" "200"))
+'((|> 
+  object
+  (map:get "settings")
+  (map:get "volume"))
+  (map:get object "x")
+  (map:get object "y")
+  (map:get object "price")
+   (|> U (array:flat-one) (array:map from:chars->number)))`,
+      { mutation: 1, compile: 1, eval: 1 }
+    ),
+    [100, 69, 29, 42, [100, 40, 200, 50]]
+  )
 })
