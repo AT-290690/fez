@@ -109,7 +109,8 @@ const Helpers = {
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,
   lambda_predicate: `lambda_predicate=(fm)=>+(typeof fn==='function')`,
-  set_effect: `set_effect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`
+  set_effect: `set_effect=(array,index,value)=>{if(index<0){const target=array.length+index;while(array.length!==target)array.pop()}else array[index] = value;return array}`,
+  __error: `__error=(error)=>{throw new Error(error.map((x)=>String.fromCharCode(x)).join(''))}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',
@@ -141,6 +142,8 @@ const compile = (tree, Drill) => {
   const token = first[VALUE]
   if (first[TYPE] === APPLY) {
     switch (token) {
+      case KEYWORDS.ASSERT:
+        return '0'
       case KEYWORDS.BLOCK: {
         if (Arguments.length > 1) {
           return `(${Arguments.map((x) =>
@@ -291,6 +294,10 @@ const compile = (tree, Drill) => {
           )}:`
         out += '0);'
         return out
+      }
+      case KEYWORDS.THROW: {
+        Drill.Helpers.add('__error')
+        return `__error(${compile(Arguments[0], Drill)})`
       }
       default: {
         const camelCased = lispToJavaScriptVariableName(token)

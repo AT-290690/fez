@@ -49,6 +49,9 @@ export const KEYWORDS = {
   LOG_CHAR: 'log-char!',
   CLEAR_CONSOLE: 'clear!',
 
+  THROW: 'throw',
+  ASSERT: 'assert',
+
   // Syntactic suggars
   PIPE: '|>',
   NOT_EQUAL_1: '!=',

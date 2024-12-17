@@ -1,4 +1,13 @@
-import { TYPE, VALUE, WORD, KEYWORDS, FALSE, TRUE, TYPES } from './keywords.js'
+import {
+  TYPE,
+  VALUE,
+  WORD,
+  KEYWORDS,
+  FALSE,
+  TRUE,
+  TYPES,
+  APPLY
+} from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 const keywords = {
@@ -161,7 +170,9 @@ const keywords = {
     const condition = evaluate(args[0], env)
     if (condition !== FALSE && condition !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got ${condition}`
+        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.IF
+        } ${stringifyArgs(args)})`
       )
     return condition
       ? evaluate(args[1], env)
@@ -190,7 +201,11 @@ const keywords = {
       const condition = evaluate(args[i], env)
       if (condition !== FALSE && condition !== TRUE)
         throw new TypeError(
-          `Condition of (${KEYWORDS.CONDITION}) must be ${TRUE} or ${FALSE} but got ${condition}`
+          `Condition of (${
+            KEYWORDS.CONDITION
+          }) must be ${TRUE} or ${FALSE} but got (${
+            KEYWORDS.CONDITION
+          } ${stringifyArgs(args)})`
         )
       if (condition) return evaluate(args[i + 1], env)
     }
@@ -426,7 +441,11 @@ const keywords = {
       circuit = evaluate(args[i], env)
       if (circuit !== FALSE && circuit !== TRUE)
         throw new TypeError(
-          `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got ${circuit}`
+          `Condition of (${
+            KEYWORDS.AND
+          }) must be ${TRUE} or ${FALSE} but got (${
+            KEYWORDS.AND
+          } ${stringifyArgs(args)})`
         )
       if (circuit) continue
       else return 0
@@ -434,7 +453,9 @@ const keywords = {
     const end = evaluate(args.at(-1), env)
     if (end !== FALSE && end !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got ${end}`
+        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.AND
+        } ${stringifyArgs(args)})`
       )
     return end
   },
@@ -450,7 +471,9 @@ const keywords = {
       circuit = evaluate(args[i], env)
       if (circuit !== FALSE && circuit !== TRUE)
         throw new TypeError(
-          `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got ${circuit}`
+          `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
+            KEYWORDS.OR
+          } ${stringifyArgs(args)})`
         )
       if (circuit) return 1
       else continue
@@ -458,7 +481,9 @@ const keywords = {
     const end = evaluate(args.at(-1), env)
     if (end !== FALSE && end !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got ${end}`
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.OR
+        } ${stringifyArgs(args)})`
       )
     return end
   },
@@ -783,6 +808,66 @@ const keywords = {
         }) (= 0 required) (${KEYWORDS.CLEAR_CONSOLE} ${stringifyArgs(args)})`
       )
     console.clear()
+    return 0
+  },
+
+  // Not sure about these
+  [KEYWORDS.THROW]: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError(
+        `Invalid number of arguments to (${KEYWORDS.THROW}) (= 1 required) (${
+          KEYWORDS.THROW
+        } ${stringifyArgs(args)})`
+      )
+    const expression = evaluate(args[0], env)
+    if (!Array.isArray(expression))
+      throw new TypeError(
+        `Argument of (${KEYWORDS.THROW}) must be an (${
+          KEYWORDS.ARRAY_TYPE
+        }) but got (${expression}) (${KEYWORDS.THROW} ${stringifyArgs(args)})`
+      )
+    throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
+  },
+
+  [KEYWORDS.ASSERT]: (args, env) => {
+    if (args.length < 2)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.ASSERT
+        }), expected (> 2 required) but got ${args.length} (${
+          KEYWORDS.ASSERT
+        } ${stringifyArgs(args)})`
+      )
+    if (args.length % 2 !== 0)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.ASSERT
+        }), expected even number of arguments but got ${args.length} (${
+          KEYWORDS.ASSERT
+        } ${stringifyArgs(args)})`
+      )
+    for (let i = 0; i < args.length; i += 2) {
+      const condition = evaluate(args[i], env)
+      if (condition !== FALSE && condition !== TRUE)
+        throw new TypeError(
+          `Condition of (${
+            KEYWORDS.ASSERT
+          }) must be ${TRUE} or ${FALSE} but got (${
+            KEYWORDS.ASSERT
+          } ${stringifyArgs(args)})`
+        )
+      if (condition) {
+        const error = args[i + 1]
+        if (error[0][TYPE] === APPLY && error[0][VALUE] === KEYWORDS.THROW)
+          return evaluate(error, env)
+        else
+          throw new TypeError(
+            `Concequence of (${KEYWORDS.ASSERT}) must be (${
+              KEYWORDS.THROW
+            }) but got (${KEYWORDS.ASSERT} ${stringifyArgs(args)})`
+          )
+      }
+    }
     return 0
   }
 }

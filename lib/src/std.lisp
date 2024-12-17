@@ -167,7 +167,7 @@
 (let math:square (lambda x (* x x)))
 (let math:power (lambda base exp
   (if (< exp 0)
-      (if (= base 0) ()
+      (if (= base 0) (throw (array 66 97 115 101 32 99 97 110 39 116 32 98 101 32 48 32 105 102 32 101 120 112 111 110 101 110 116 32 105 115 32 60 32 48))
       (/ (* base (math:power base (- (* exp -1) 1)))))
         (cond
             (= exp 0) 1
@@ -567,6 +567,7 @@
 (let array:sorted-by? (lambda arr callback (array:enumerated-every? arr (lambda x i (or (= i 0) (callback x (get arr (- i 1))))))))
 (let array:increment! (lambda arr idx value (set! arr idx (+ (get arr idx) value))))
 (let array:set (lambda arr index item (set! (array:shallow-copy arr) index item)))
+(let set (lambda arr index item (set! (array:shallow-copy arr) index item)))
 (let array:sliding-window (lambda arr size (array:enumerated-fold arr (lambda a b i (if (> (+ i size) (length arr)) a (array:merge a (array (array:slice arr i (+ i size)))))) ())))
 (let array:adjacent-difference (lambda arr callback (do
   (let len (length arr))
@@ -671,7 +672,7 @@
     (= d 7) char:7
     (= d 8) char:8
     (= d 9) char:9 
-    (*) ())))
+    (*) (throw (array 78 111 110 32 100 105 103 105 116 32 112 97 115 115 101 100 32 116 111 32 40 102 114 111 109 58 100 105 103 105 116 45 62 99 104 97 114 32 d 41)))))
 (let from:char->digit (lambda c 
   (cond 
     (= c char:0) 0
@@ -684,7 +685,7 @@
     (= c char:7) 7 
     (= c char:8) 8 
     (= c char:9) 9
-    (*) ())))
+    (*) (throw (array 78 111 110 32 110 117 109 101 114 105 99 32 99 104 97 114 32 112 97 115 115 101 100 32 116 111 32 40 102 114 111 109 58 99 104 97 114 45 62 100 105 103 105 116 32 c 41)))))
 (let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
 (let from:chars->positive-or-negative-digits (lambda chars (do
     (let current-sign (var:def 1))
@@ -1508,6 +1509,8 @@ heap)))
   (string:equal? t (array 99 104 97 114)) (log-char! arg)
   (string:equal? t (array 99 104 97 114 115)) (array:for arg log-char!)
   (string:equal? t (array 116 97 98 108 101)) (log-string! (array:lines arg))
+  (string:equal? t (array 98 111 111 108 101 97 110)) (log-string! (cond (= arg 1) (array 116 114 117 101) (= arg 0) (array 102 97 108 115 101) (*) (array 105 110 118 97 108 105 100 32 98 111 111 108 101 97 110)))
+  (string:equal? t (array 98 111 111 108 101 97 110 115)) (array:for arg (lambda x (print! x (array 98 111 111 108 101 97 110))))
   (*) (log! arg)
 )
 ())))
@@ -1581,4 +1584,4 @@ heap)))
       (= pattern ast:word) (map:get env (get first ast:value))
       (= pattern ast:apply) (apply (map:get env (get first ast:value)) rest env)
       (= pattern ast:atom) (get first ast:value)
-      (*) ())))) ()))))
+      (*) (throw (array (73 110 118 97 108 105 100 32 97 115 116 32 116 121 112 101 32 112 97 115 115 101 100 32 116 111 32 40 101 118 97 108 117 97 116 101 32 101 120 112 32 101 110 118 41 32 40 61 32 112 97 116 116 101 114 110 32 pattern 41))))))) ()))))
