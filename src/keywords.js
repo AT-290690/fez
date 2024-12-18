@@ -50,7 +50,6 @@ export const KEYWORDS = {
   CLEAR_CONSOLE: 'clear!',
 
   THROW: 'throw',
-  ASSERT: 'assert',
 
   // Syntactic suggars
   PIPE: '|>',

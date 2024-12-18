@@ -2489,8 +2489,9 @@ matrix
     (let get-instruction-pointer (lambda (var:get instruction-pointer)))
     (let move-pointer! (lambda (|> instruction-pointer (var:increment!) (var:increment!))))
     (let set-pointer! (lambda operand (var:set! instruction-pointer operand)))
-    (let log-outputs! (lambda (from:numbers->strings outputs)))
-    (let halt? (lambda (array:in-bounds? program (var:get instruction-pointer))))
+    (let log-outputs! (lambda (log-string! (array:commas (from:numbers->strings outputs)))))
+    ; (let halt? (lambda (not (array:in-bounds? program (var:get instruction-pointer)))))
+    (let halt? (lambda (>= (var:get instruction-pointer) (length program))))
     (let outputs ())
     (let A 0)
     (let B 1)
@@ -2526,7 +2527,7 @@ matrix
             ; The bst instruction (opcode 2) calculates the value of its combo operand modulo 8 
             ; (thereby keeping only its lowest 3 bits), 
             ; then writes that value to the B register.
-            (= opcode 2) (do (set! registers B (mod (combo operand) 8)) (move-pointer!))
+            (= opcode 2) (do (set! registers B (& (combo operand) 7)) (move-pointer!))
             ; The jnz instruction (opcode 3) does nothing if the A register is 0.
             ; However, if the A register is not zero, 
             ; it jumps by setting the instruction pointer to the value of its literal operand;
@@ -2535,14 +2536,14 @@ matrix
             ; The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C, 
             ; then stores the result in register B. 
             ; (For legacy reasons, this instruction reads an operand but ignores it.)
-            (= opcode 4) (do (set! registers A (^ (get registers B) (get registers C))) (move-pointer!))
+            (= opcode 4) (do (set! registers B (^ (get registers B) (get registers C))) (move-pointer!))
             ; The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
             ; then outputs that value. 
             ; (If a program outputs multiple values, they are separated by commas.)
-            (= opcode 5) (do (array:push! outputs (mod (combo operand) 8)) (log-outputs!) (move-pointer!))
+            (= opcode 5) (do (array:push! outputs (& (combo operand) 7)) (move-pointer!))
             ; The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register. 
             ; (The numerator is still read from the A register.)
-            (= opcode 6) (do (set! registers A (>> (get registers A) (combo operand))) (move-pointer!))
+            (= opcode 6) (do (set! registers B (>> (get registers A) (combo operand))) (move-pointer!))
             ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register. 
             ; (The numerator is still read from the A register.)
             (= opcode 7) (do (set! registers C (>> (get registers A) (combo operand))) (move-pointer!))
@@ -2550,7 +2551,7 @@ matrix
         )))
     (let get-opcode (lambda (get program (get-instruction-pointer))))
     (let get-operand (lambda (get program (+ (get-instruction-pointer) 1))))
-    (let rec:process (lambda (if (halt?) (do 
+    (let rec:process (lambda (unless (halt?) (do 
         (let opcode (get-opcode))
         (let operand (get-operand))
         (opcodes opcode operand)
@@ -2558,13 +2559,14 @@ matrix
     ))))
     
     (rec:process)
+    ; (log-outputs!)
     outputs
 )))
 
 (let PARSED (parse I))
 (part1 PARSED)
 ; (part1 (parse INPUT))
-
+; (part1 '('(22571680 0 0) '(2 4 1 3 7 5 0 3 4 3 1 5 5 5 3 0)))
 ; (part1 (parse (string:concat-with-lines '(
 ; "Register A: 10"
 ; "Register B: 0"
@@ -2579,6 +2581,38 @@ matrix
 ; "Register C: 0"
 ; ""
 ; "Program: 0,1,5,4,3,0"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 0"
+; "Register C: 9"
+; ""
+; "Program: 2,6"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 0"
+; "Register C: 9"
+; ""
+; "Program: 2,6"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 29"
+; "Register C: 0"
+; ""
+; "Program: 1,7"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 2024"
+; "Register C: 43690"
+; ""
+; "Program: 4,0"
 ; ))))
 
 `,

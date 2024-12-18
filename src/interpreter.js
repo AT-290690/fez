@@ -1,13 +1,4 @@
-import {
-  TYPE,
-  VALUE,
-  WORD,
-  KEYWORDS,
-  FALSE,
-  TRUE,
-  TYPES,
-  APPLY
-} from './keywords.js'
+import { TYPE, VALUE, WORD, KEYWORDS, FALSE, TRUE, TYPES } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 const keywords = {
@@ -827,48 +818,6 @@ const keywords = {
         }) but got (${expression}) (${KEYWORDS.THROW} ${stringifyArgs(args)})`
       )
     throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
-  },
-
-  [KEYWORDS.ASSERT]: (args, env) => {
-    if (args.length < 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.ASSERT
-        }), expected (> 2 required) but got ${args.length} (${
-          KEYWORDS.ASSERT
-        } ${stringifyArgs(args)})`
-      )
-    if (args.length % 2 !== 0)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.ASSERT
-        }), expected even number of arguments but got ${args.length} (${
-          KEYWORDS.ASSERT
-        } ${stringifyArgs(args)})`
-      )
-    for (let i = 0; i < args.length; i += 2) {
-      const condition = evaluate(args[i], env)
-      if (condition !== FALSE && condition !== TRUE)
-        throw new TypeError(
-          `Condition of (${
-            KEYWORDS.ASSERT
-          }) must be ${TRUE} or ${FALSE} but got (${
-            KEYWORDS.ASSERT
-          } ${stringifyArgs(args)})`
-        )
-      if (condition) {
-        const error = args[i + 1]
-        if (error[0][TYPE] === APPLY && error[0][VALUE] === KEYWORDS.THROW)
-          return evaluate(error, env)
-        else
-          throw new TypeError(
-            `Concequence of (${KEYWORDS.ASSERT}) must be (${
-              KEYWORDS.THROW
-            }) but got (${KEYWORDS.ASSERT} ${stringifyArgs(args)})`
-          )
-      }
-    }
-    return 0
   }
 }
 

@@ -143,8 +143,6 @@ const compile = (tree, Drill) => {
   const token = first[VALUE]
   if (first[TYPE] === APPLY) {
     switch (token) {
-      case KEYWORDS.ASSERT:
-        return '0'
       case KEYWORDS.BLOCK: {
         if (Arguments.length > 1) {
           return `(${Arguments.map((x) =>
