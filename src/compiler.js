@@ -130,7 +130,8 @@ const semiColumnEdgeCases = new Set([
   ';?',
   ',,',
   ';;',
-  ';]'
+  ';]',
+  ';^'
 ])
 const parse = (Arguments, Drill) => Arguments.map((x) => compile(x, Drill))
 const parseArgs = (Arguments, Drill, separator = ',') =>
