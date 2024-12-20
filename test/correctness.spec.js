@@ -39,16 +39,17 @@ describe('Corretness', () => {
     )
     deepStrictEqual(
       fez(
-        `(let sample1 (array:concat '(
-      "RL" '(char:new-line)
-      '(char:new-line)
-      "AAA=BBB,CCC" '(char:new-line)
-      "BBB=DDD,EEE" '(char:new-line)
-      "CCC=ZZZ,GGG" '(char:new-line)
-      "DDD=DDD,DDD" '(char:new-line)
-      "EEE=EEE,EEE" '(char:new-line)
-      "GGG=GGG,GGG" '(char:new-line)
-      "ZZZ=ZZZ,ZZZ")))
+        `
+(let sample1 
+"RL
+
+AAA=BBB,CCC
+BBB=DDD,EEE
+CCC=ZZZ,GGG
+DDD=DDD,DDD
+EEE=EEE,EEE
+GGG=GGG,GGG
+ZZZ=ZZZ,ZZZ")
       (let parse (lambda input (do 
         (let split (string:lines input))
         (let path (car split))
@@ -582,14 +583,13 @@ describe('Corretness', () => {
         (|> springs (string:chars) (array:flat-one)) 
         (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->number))))))
 ))))))
-(let sample (parse (array:concat-with '(
-  "???.### 1,1,3"
-  ".??..??...?##. 1,1,3"
-  "?#?#?#?#?#?#?#? 1,3,1,6"
-  "????.#...#... 4,1,1"
-  "????.######..#####. 1,6,5"
-  "?###???????? 3,2,1"
-) char:new-line)))
+(let sample (parse 
+"???.### 1,1,3
+.??..??...?##. 1,1,3
+?#?#?#?#?#?#?#? 1,3,1,6
+????.#...#... 4,1,1
+????.######..#####. 1,6,5
+?###???????? 3,2,1"))
 (let dp (lambda left right (do 
   (if (array:empty? left) (array:empty? right)
   (if (array:empty? right) (not (array:has? left (lambda x (= x char:hash))))
@@ -1461,7 +1461,7 @@ matrix
                 (bool:false! inside-parens?)) 
                 (bool:true! valid-separator?)))
             (*) (do 
-                (if (match:unsigned-integer? '(cursor)) (do 
+                (if (match:digit? '(cursor)) (do 
                     (array:append! acc cursor)
                     (if (> (length acc) 3) (array:empty! acc))
                     (bool:false! valid-separator?)) (do 
@@ -2467,13 +2467,13 @@ matrix
 
   deepStrictEqual(
     fez(
-      `(let I (string:concat-with-lines '(
-"Register A: 729"
-"Register B: 0"
-"Register C: 0"
-""
-"Program: 0,1,5,4,3,0"
-)))
+      `(let I 
+"Register A: 729
+Register B: 0
+Register C: 0
+
+Program: 0,1,5,4,3,0"
+)
 
 (let parse (lambda input (do
     (let lines (|> input (string:lines)))
@@ -2619,5 +2619,77 @@ matrix
       { mutation: 1, compile: 1, eval: 1 }
     ),
     [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
+  )
+
+  strictEqual(
+    fez(
+      `(let I 
+"5,4
+4,2
+4,5
+3,0
+2,1
+6,3
+2,4
+1,5
+0,6
+3,3
+2,6
+5,1
+1,2
+5,5
+2,5
+6,5
+1,4
+0,4
+6,4
+1,1
+6,1
+1,0
+0,5
+1,6
+2,0")
+
+(let parse (lambda input (|> input (string:lines) (array:map (lambda line (|> line (string:commas) (array:map from:string->number)))))))
+(let part1 (lambda input size (do
+    (let from:stats->key (lambda item (|> item (from:numbers->strings) (array:commas))))
+    (let H (math:maximum (array:map input array:first)))
+    (let W (math:maximum (array:map input array:second)))
+    (let matrix (|> (math:zeroes (+ H 1)) (array:map (lambda . (array:map (math:zeroes (+ W 1)) (lambda . char:dot)) ))))
+    (array:for (array:slice input 0 size) (lambda x (matrix:set! matrix (array:second x) (array:first x) char:hash)))
+    (let start '(0 0))
+    (let end '(H W))
+  
+    (let q (new:queue))
+    (queue:enqueue! q '(0 (array:first start) (array:second start)))
+    (let seen (new:set32))
+    (set:add! seen (from:stats->key '((array:first start) (array:second start))))
+
+    (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
+    (let solution (var:def 0))
+    (let rec:while (lambda (unless (or (heap:empty? q) (> (var:get solution) 0)) (do
+            (let first (queue:peek q))
+            (queue:dequeue! q)
+            (let steps (get first 0))
+            (let r (get first 1))
+            (let c (get first 2))
+            (matrix:adjacent matrix matrix:von-neumann-neighborhood r c 
+                 (lambda current . nr nc (do
+                            (if (and 
+                                    (not (= current char:hash)) 
+                                    (not (set:has? seen (from:stats->key '(nr nc)))))
+                                (if (goal? nr nc) 
+                                    (var:set! solution (+ steps 1))
+                                    (do 
+                                    (queue:enqueue! q '((+ steps 1) nr nc))
+                                    (set:add! seen (from:stats->key '(nr nc)))))))))
+            (rec:while)))))
+    (rec:while)
+    (var:get solution))))
+    
+    (part1 (parse I) 12)`,
+      { mutation: 1, eval: 1, compile: 1 }
+    ),
+    22
   )
 })

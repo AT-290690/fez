@@ -206,7 +206,7 @@
 (let math:enumerated-odd? (lambda . i (= (mod i 2) 1)))
 (let math:enumerated-even? (lambda . i (= (mod i 2) 0)))
 (let math:sign (lambda n (if (< n 0) -1 1)))
-(let math:radians (lambda deg (* deg math:pi (/ 180))))
+(let math:radians (lambda deg (/ (* deg math:pi) 180)))
 (let math:average (lambda x y (* (+ x y) 0.5)))
 (let math:euclidean-mod (lambda a b (mod (+ (mod a b) b) b)))
 (let math:euclidean-distance (lambda x1 y1 x2 y2 (do
@@ -478,7 +478,7 @@
       (array:select (lambda x (do 
                   (let index (array:second x)) (or (not x)
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
-      (array:map car))))
+      (array:map array:first))))
 (let array:traverse (lambda x callback
     (if (atom? x)
         (callback x)
@@ -550,7 +550,7 @@
   (flatten arr))))
 (let array:sort (lambda arr callback (do
   (if (<= (length arr) 1) arr (apply (lambda (do
-    (let pivot (car arr))
+    (let pivot (array:head arr))
     (let rec:iterate (lambda i bounds a b (do
         (let current (get arr i))
         (let predicate (callback current pivot))
@@ -573,7 +573,7 @@
   (let len (length arr))
   (if (= len 1) arr
     (apply (lambda (do
-      (array (car arr))
+      (array (array:first arr))
       (let rec:iterate (lambda i result (if (< i len) (apply (lambda (do
       (rec:iterate (+ i 1) (set! result i (callback (get arr (- i 1)) (get arr i))))))) result)))
       (rec:iterate 1 arr))))))))
@@ -702,7 +702,7 @@
     (let rec:iter (lambda i num base (if (> (length digits) i) (rec:iter (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
     (rec:iter 0 0 (* (math:power 10 (length digits)) 0.1)))))
 (let from:positive-or-negative-digits->number (lambda digits-with-sign (do
-    (let negative? (< (car digits-with-sign) 0))
+    (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
     (let rec:iter (lambda i num base (if (> (length digits) i) (rec:iter (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
     (* (rec:iter 0 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
@@ -922,7 +922,7 @@
                                                 (if (and (> (length arr) 0) (>= (length arr) (length word)))
                                                       (if (string:equal?
                                                         (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
-                                                        word) i (rec:iterate (cdr arr) (+ i 1)))
+                                                        word) i (rec:iterate (array:tail arr) (+ i 1)))
                                                     -1)))
                                               (rec:iterate str 0)))))))
 (let string:has? (lambda str word (cond
@@ -935,7 +935,7 @@
                                                         (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                         word) 
                                                         1 
-                                                        (rec:iterate (cdr arr) (+ i 1))))))
+                                                        (rec:iterate (array:tail arr) (+ i 1))))))
                                               (rec:iterate str 0)))))))
 (let string:greater? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
@@ -977,10 +977,10 @@
 (let string:max (lambda a b (if (string:lesser? a b) b a)))
 (let string:join-as-table-with (lambda table colum row (do 
 (let M (math:maximum (array:map table math:max-length)))
-(let row-delimiter2 (array:map (math:zeroes (length (car table))) (lambda . (array:map (math:zeroes M) (lambda . row)))))
+(let row-delimiter2 (array:map (math:zeroes (length (array:first table))) (lambda . (array:map (math:zeroes M) (lambda . row)))))
 (let row-delimiter 
     (|> 
-     (math:zeroes (length (car table))) 
+     (math:zeroes (length (array:first table))) 
      (array:map (lambda . 
      (array:map (math:zeroes M) (lambda . row))
      ))))
@@ -1007,16 +1007,16 @@
 (let string:trim-left (lambda str (do
   (let tr (array 1))
   (|> str (array:fold (lambda a b (if
-  (and (car tr) (= b char:space)) a
+  (and (array:first tr) (= b char:space)) a
     (apply (lambda (do
-      (if (car tr) (set! tr 0 0))
+      (if (array:first tr) (set! tr 0 0))
       (array:merge a (array b))))))) ())))))
 (let string:trim-right (lambda str (do
   (let tr (array 1))
   (|> str (array:reverse) (array:fold (lambda a b (if
-  (and (car tr) (= b char:space)) a
+  (and (array:first tr) (= b char:space)) a
     (apply (lambda (do
-      (if (car tr) (set! tr 0 0))
+      (if (array:first tr) (set! tr 0 0))
       (array:merge (array b) a)))))) ())))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
 (let string:lines (lambda str (string:split str char:new-line)))
@@ -1090,7 +1090,7 @@
 (let binary-tree:right (lambda node (get node 2)))
 (let binary-tree:left! (lambda tree node (set! tree 1 node)))
 (let binary-tree:right! (lambda tree node (set! tree 2 node)))
-(let binary-tree:value (lambda node (car node)))
+(let binary-tree:value (lambda node (get node 0)))
 
 (let set:index
   (lambda table key
@@ -1100,8 +1100,8 @@
       (let rec:find-hash-index (lambda i bounds (do
         (let letter (get key i))
         (let value (- letter 96))
-        (set! total 0 (math:euclidean-mod (+ (* (car total) prime-num) value) (length table)))
-        (if (< i bounds) (rec:find-hash-index (+ i 1) bounds) (car total)))))
+        (set! total 0 (math:euclidean-mod (+ (* (array:first total) prime-num) value) (length table)))
+        (if (< i bounds) (rec:find-hash-index (+ i 1) bounds) (array:first total)))))
       (rec:find-hash-index 0 (if (< (- (length key) 1) 100) (- (length key) 1) 100)))))
 (let set:add!
       (lambda table key
@@ -1218,7 +1218,7 @@
 (let doubly-linked-list:value (lambda node (get node 1)))
 
 (let var:def (lambda val (array val)))
-(let var:get (lambda variable (car variable)))
+(let var:get (lambda variable (get variable 0)))
 (let var:set! (lambda variable value (set! variable 0 value)))
 (let var:del! (lambda variable (set! variable -1)))
 (let var:set-and-get! (lambda variable value (do (var:set! variable value) value)))
@@ -1226,9 +1226,9 @@
 (let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
 
 (let bool:def (lambda val (array (not (not val)))))
-(let bool:get (lambda variable (car variable)))
+(let bool:get (lambda variable (get variable 0)))
 (let bool:set! (lambda variable value (set! variable 0 (not (not value)))))
-(let bool:toggle! (lambda variable (set! variable 0 (not (car variable)))))
+(let bool:toggle! (lambda variable (set! variable 0 (not (get variable 0)))))
 (let bool:true (lambda (array 1)))
 (let bool:false (lambda (array 0)))
 (let bool:true! (lambda variable (set! variable 0 1)))
@@ -1363,12 +1363,14 @@ q)))
   slice)))
 
 (let queue:empty? brray:empty?)
+(let queue:not-empty? (lambda q (not (brray:empty? q))))
 (let queue:empty! brray:empty!)
 (let queue:enqueue! (lambda queue item (brray:append! queue item)))
 (let queue:dequeue! (lambda queue (brray:tail! queue)))
 (let queue:peek (lambda queue (brray:first queue)))
 
 (let stack:empty? brray:empty?)
+(let stack:not-empty? (lambda q (not (brray:empty? q))))
 (let stack:empty! stack:empty!)
 (let stack:push! (lambda stack item (brray:append! stack item)))
 (let stack:pop! (lambda stack (brray:head! stack)))
@@ -1404,7 +1406,7 @@ q)))
 (let date:year (lambda date (array:first date)))
 (let date:month (lambda date (array:second date)))
 (let date:day (lambda date (array:third date)))
-(let date:month-day (lambda date (cdr date)))
+(let date:month-day (lambda date (array:tail date)))
 (let date:year-month (lambda date (array (array:first date) (array:second date))))
 
 (let loop:for-range (lambda start end callback (do
@@ -1494,10 +1496,16 @@ heap)))
 (let array:set! set!)
 (let array:get get)
 (let array:length length)
-(let array:head car)
-(let array:tail cdr)
-(let array:car car)
-(let array:cdr cdr)
+(let array:head (lambda arr (get arr 0)))
+(let array:tail (lambda arr (do
+        (let bounds (length arr))
+        (let rec:iterate (lambda i out
+          (if (< i bounds)
+              (rec:iterate (+ i 1) (set! out (length out) (get arr i)))
+              out)))
+        (rec:iterate 1 ()))))
+(let array:car array:head)
+(let array:cdr array:tail)
 (let array:for-range loop:for-range)
 (let console:log! (lambda arg (do (log! arg) ())))
 (let console:log-string! (lambda arg (do (log-string! arg) ())))
@@ -1533,19 +1541,20 @@ heap)))
   (let rec:while (lambda (if (predicate) (do (callback) (rec:while))))) 
   (rec:while))))
 
-(let match:negative? (lambda string (= (car string) char:dash)))
+(let match:negative? (lambda string (= (array:first string) char:dash)))
 (let match:number? (lambda string (do 
   (let is-negative (match:negative? string))
-  (let digits (if is-negative (cdr string) string))
+  (let digits (if is-negative (array:tail string) string))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
-(let match:unsigned-integer? (lambda string (array:every? string (lambda digit (and (>= digit char:0) (<= digit char:9))))))
+(let match:digit? (lambda char (and (>= char char:0) (<= char char:9))))
+(let match:digits? (lambda string (array:every? string match:digit?)))
 (let ast:type 0)
 (let ast:value 1)
 (let ast:apply 0)
 (let ast:word 1)
 (let ast:atom 2)
 (let ast:leaf (lambda type value (array type value)))
-(let ast:leaf? (lambda arg (do (let c (car arg)) (and (atom? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
+(let ast:leaf? (lambda arg (do (let c (array:head arg)) (and (atom? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
 (let from:chars->ast (lambda source (do
     (let tree ())
     (let stack (array tree))
@@ -1577,8 +1586,8 @@ heap)))
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
   (if (array:not-empty? expression) (apply (lambda (do 
-    (let first (car expression))
-    (let rest (cdr expression))
+    (let first (array:head expression))
+    (let rest (array:tail expression))
     (let pattern (get first ast:type))
     (cond 
       (= pattern ast:word) (map:get env (get first ast:value))
