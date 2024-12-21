@@ -436,28 +436,28 @@
                             (rec:iterate (+ i 1) (callback out (get arr i)))
                             out)))
                       (rec:iterate 0 initial))))
-(let array:every? (lambda arr callback (do
+(let array:every? (lambda arr predicate? (do
                     (let rec:iterate (lambda i
-                          (if (and (> (length arr) i) (callback (get arr i)))
+                          (if (and (> (length arr) i) (predicate? (get arr i)))
                               (rec:iterate (+ i 1))
                               (not (> (length arr) i)))))
                         (rec:iterate 0))))
-(let array:some? (lambda arr callback (do
+(let array:some? (lambda arr predicate? (do
                     (let rec:iterate (lambda i
-                          (if (and (> (length arr) i)  (not (callback (get arr i))))
+                          (if (and (> (length arr) i)  (not (predicate? (get arr i))))
                               (rec:iterate (+ i 1))
                               (not (not (> (length arr) i))))))
                         (rec:iterate 0))))
-(let array:find (lambda arr callback (do
+(let array:find (lambda arr predicate? (do
                     (let rec:iterate (lambda i
                           (if (> (length arr) i)
-                              (if (callback (get arr i)) (get arr i) (rec:iterate (+ i 1)))
+                              (if (predicate? (get arr i)) (get arr i) (rec:iterate (+ i 1)))
                               ())))
                         (rec:iterate 0))))
-(let array:has? (lambda arr callback (do
+(let array:has? (lambda arr predicate? (do
                     (let rec:iterate (lambda i
                           (if (> (length arr) i)
-                              (if (callback (get arr i)) 1 (rec:iterate (+ i 1))))))
+                              (if (predicate? (get arr i)) 1 (rec:iterate (+ i 1))))))
                         (rec:iterate 0))))
 (let array:reverse (lambda arr (do
                     (let rec:iterate (lambda i out
@@ -499,6 +499,7 @@
               (rec:iterate (+ i 1) (set! out (length out) (get arr (+ start i))))
               out)))
         (rec:iterate 0 ()))))
+
 (let car (lambda arr (get arr 0)))
 (let cdr (lambda arr (do
         (let bounds (length arr))
@@ -507,6 +508,8 @@
               (rec:iterate (+ i 1) (set! out (length out) (get arr i)))
               out)))
         (rec:iterate 1 ()))))
+(let cons (lambda a b (do (let out ()) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
+
 (let array:take (lambda arr n (array:slice arr 0 n)))
 (let array:drop (lambda arr n (array:slice arr n (length arr))))
 (let array:binary-search
@@ -801,20 +804,20 @@
                                 (set! out (length out) (callback (get arr i) i)))
                               out)))
                       (rec:iterate 0 ()))))
-(let array:enumerated-select (lambda arr callback (do
+(let array:enumerated-select (lambda arr predicate? (do
                   (let rec:iterate (lambda i out
                         (if (> (length arr) i)
                             (rec:iterate (+ i 1)
-                                      (if (callback (get arr i) i)
+                                      (if (predicate? (get arr i) i)
                                             (set! out (length out) (get arr i))
                                             out))
                             out)))
                       (rec:iterate 0 ()))))
-(let array:enumerated-exclude (lambda arr callback (do
+(let array:enumerated-exclude (lambda arr predicate? (do
                   (let rec:iterate (lambda i out
                         (if (> (length arr) i)
                             (rec:iterate (+ i 1)
-                                      (if (not (callback (get arr i) i))
+                                      (if (not (predicate? (get arr i) i))
                                             (set! out (length out) (get arr i))
                                             out))
                             out)))
@@ -825,26 +828,26 @@
                             (rec:iterate (+ i 1) (callback out (get arr i) i))
                             out)))
                       (rec:iterate 0 initial))))
-(let array:enumerated-find (lambda arr callback (do
+(let array:enumerated-find (lambda arr predicate? (do
                     (let rec:iterate (lambda i
                           (if (> (length arr) i)
-                              (if (callback (get arr i) i) (get arr i) (rec:iterate (+ i 1)))
+                              (if (predicate? (get arr i) i) (get arr i) (rec:iterate (+ i 1)))
                               ())))
                         (rec:iterate 0))))
-(let array:enumerated-find-index (lambda arr callback (do
+(let array:enumerated-find-index (lambda arr predicate? (do
                     (let rec:iterate (lambda i
                           (if (> (length arr) i)
-                              (if (callback (get arr i) i) i (rec:iterate (+ i 1))) -1)))
+                              (if (predicate? (get arr i) i) i (rec:iterate (+ i 1))) -1)))
                         (rec:iterate arr 0))))
-(let array:enumerated-every? (lambda arr callback (do
+(let array:enumerated-every? (lambda arr predicate? (do
                     (let rec:iterate (lambda i
-                          (if (and (> (length arr) i) (callback (get arr i) i))
+                          (if (and (> (length arr) i) (predicate? (get arr i) i))
                               (rec:iterate (+ i 1))
                               (not (> (length arr) i)))))
                         (rec:iterate 0))))
-(let array:enumerated-some? (lambda arr callback (do
+(let array:enumerated-some? (lambda arr predicate? (do
                     (let rec:iterate (lambda i
-                          (if (and (> (length arr) i) (not (callback (get arr i) i)))
+                          (if (and (> (length arr) i) (not (predicate? (get arr i) i)))
                               (rec:iterate (+ i 1))
                               (not (not (> (length arr) i))))))
                         (rec:iterate 0))))
@@ -1424,6 +1427,18 @@ q)))
                                   (callback i)
                                   (rec:iterate (+ i 1))))))))
                           (rec:iterate 0))))
+
+(let loop:some-n? (lambda n predicate? (do
+                          (let rec:iterate (lambda i
+                          (if (< i n)
+                                (if (predicate? i) 1 (rec:iterate (+ i 1))))))
+                          (rec:iterate n))))
+
+(let loop:some-range? (lambda start end predicate? (do
+                          (let rec:iterate (lambda i
+                          (if (< i end)
+                                (if (predicate? i) 1 (rec:iterate (+ i 1))))))
+                          (rec:iterate start))))
 
 (let node:parent (lambda i (- (>>> (+ i 1) 1) 1)))
 (let node:left (lambda i (+ (<< i 1) 1)))
