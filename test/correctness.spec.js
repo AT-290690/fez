@@ -377,6 +377,18 @@ ZZZ=ZZZ,ZZZ")
     )
     deepStrictEqual(
       fez(
+        `
+      (let A (new:set (array "123" "100" "12" "14" "12" "42" "69" "666")))
+      (let B (new:set (array "12" "1000" "3000")))
+      (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
+      (|> (set:union A B) (from:set->numbers))      
+    `,
+        { compile: 1, eval: 1, mutation: 1 }
+      ),
+      [100, 12, 3000, 123, 42, 666, 14, 69, 1000]
+    )
+    deepStrictEqual(
+      fez(
         `(let set (array () () ()))
     (set:add! set (array char:1))
     (set:add! set (array char:1))
@@ -2453,7 +2465,7 @@ matrix
    (|> U (array:flat-one) (array:map from:chars->number)))`,
       { mutation: 1, compile: 1, eval: 1 }
     ),
-    [100, 69, 29, 42, [100, 40, 200, 50]]
+    [100, 69, 29, 42, [40, 100, 200, 50]]
   )
 
   strictEqual(

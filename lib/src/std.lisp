@@ -396,14 +396,15 @@
                       (if (> (length arr) i) (apply (lambda (do (callback (get arr i)) (rec:iter (+ i 1))))))))
                     (rec:iter 0)
                 arr)))
+(let array:buckets (lambda n (do (let out ()) (loop:for-n n (lambda . (set! out (length out) ()))) out)))
 (let array:enumerated-for (lambda arr callback (do 
   (loop:for-n (length arr) (lambda i (callback (get arr i) i)))
   arr)))
 (let array:fill (lambda n callback (do 
-  (let rec:iter (lambda arr i (if (= i 0) arr (rec:iter (array:merge arr (array (callback))) (- i 1)))))
+  (let rec:iter (lambda arr i (if (= i 0) arr (rec:iter (array:merge! arr (array (callback))) (- i 1)))))
   (rec:iter () n))))
 (let array:of (lambda n callback (do 
-  (let rec:iter (lambda arr i (if (= i n) arr (rec:iter (array:merge arr (array (callback i))) (+ i 1)))))
+  (let rec:iter (lambda arr i (if (= i n) arr (rec:iter (array:merge! arr (array (callback i))) (+ i 1)))))
   (rec:iter () 0))))
 (let array:map (lambda arr callback (do
                   (let rec:iterate (lambda i out
@@ -1050,8 +1051,7 @@
           (- current-char 32)
           current-char))
       (rec:iter (+ i 1)))))
-      arr))
-      ) (rec:iter 0))))
+      arr))) (rec:iter 0))))
 (let string:lower (lambda str (do
     (let arr ()) 
     (let n (length str))
@@ -1062,9 +1062,7 @@
           (+ current-char 32)
           current-char))
       (rec:iter (+ i 1)))))
-      arr))
-      ) (rec:iter 0))))
-
+      arr))) (rec:iter 0))))
 
 (let new:map (lambda args 
   (array:enumerated-fold args (lambda a . i 
@@ -1079,6 +1077,12 @@
 (let new:set16 (lambda (array:merge (new:set8) (new:set8))))
 (let new:set32 (lambda (array:merge (new:set16) (new:set16))))
 (let new:set64 (lambda (array:merge (new:set32) (new:set32))))
+(let new:map4 new:set4)
+(let new:map8 new:set8)
+(let new:map16 new:set16)
+(let new:map32 new:set32)
+(let new:map64 new:set64)
+
 (let new:array (lambda items (array:shallow-copy items)))
 (let new:list (lambda value (array () value ())))
 (let new:set-n (lambda n (array:map (math:zeroes n) (lambda . ()))))
@@ -1142,25 +1146,27 @@
 (let set:remove-and-get! (lambda memo key (do (let value (set:get memo key)) (set:remove! memo key) value)))
 (let set:with! (lambda initial args
   (array:fold args (lambda a b (set:add! a b)) initial)))
+(let set:max-capacity (lambda a b (array:buckets (math:max (length a) (length b)))))
+(let set:min-capacity (lambda a b (array:buckets (math:min (length a) (length b)))))
 (let set:intersection (lambda a b
         (|> b
           (from:set->array)
           (array:fold (lambda out element
           (do (if (set:has? a element)
-                    (set:add! out element)) out)) (array () () () () ())))))
+                    (set:add! out element)) out)) (set:max-capacity a b)))))
 (let set:difference (lambda a b
       (|> a
         (from:set->array)
         (array:fold (lambda out element
                         (do (if (not (set:has? b element))
-                                        (set:add! out element)) out)) (array () () () () ())))))
+                                        (set:add! out element)) out)) (set:max-capacity a b)))))
 (let set:xor (lambda a b (do
-        (let out (array () () () () ()))
+        (let out (set:max-capacity a b))
         (|> a (from:set->array) (array:for (lambda element (if (not (set:has? b element)) (set:add! out element)))))
         (|> b (from:set->array) (array:for (lambda element (if (not (set:has? a element)) (set:add! out element)))))
         out)))
 (let set:union (lambda a b (do
-        (let out (array () () () () ()))
+        (let out (set:max-capacity a b))
         (|> a (from:set->array) (array:for (lambda element (set:add! out element))))
         (|> b (from:set->array) (array:for (lambda element (set:add! out element))))
         out)))
