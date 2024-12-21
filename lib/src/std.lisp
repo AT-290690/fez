@@ -1135,6 +1135,8 @@
       (and (array:in-bounds? table idx)
                    (and (> (length current) 0)
                         (>= (array:find-index current (lambda x (string:equal? x key))) 0))))))
+(let set:exists? (lambda table key (if (> (length key) 0) (set:has? table key))))
+(let set:not-exists? (lambda table key (not (set:exists? table key))))
 
 (let set:add-and-get! (lambda memo key value (do (set:add! memo key value) value)))
 (let set:remove-and-get! (lambda memo key (do (let value (set:get memo key)) (set:remove! memo key) value)))
@@ -1213,6 +1215,8 @@
             (>= (array:find-index current
               (lambda x
                 (string:equal? x key))) 0))))))
+(let map:exists? (lambda table key (if (> (length key) 0) (map:has? table key))))
+(let map:not-exists? (lambda table key (not (map:exists? table key))))
 
 (let doubly-linked-list:prev! (lambda list node (set! list 0 (set! node 2 list))))
 (let doubly-linked-list:next! (lambda list node (set! list 2 (set! node 0 list))))
