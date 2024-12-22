@@ -1,7 +1,7 @@
 import { TYPE, VALUE, WORD, KEYWORDS, FALSE, TRUE, TYPES } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
-const keywords = {
+export const keywords = {
   [KEYWORDS.REMAINDER_OF_DIVISION]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(
@@ -820,5 +820,3 @@ const keywords = {
     throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
   }
 }
-
-export { keywords }

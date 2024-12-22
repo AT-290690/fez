@@ -111,6 +111,10 @@
                           (let rec:iterate (lambda out
                           (if (< (length out) n) (rec:iterate (set! out (length out) 1)) out)))
                           (rec:iterate ()))))
+(let math:numbers (lambda n num (do
+                          (let rec:iterate (lambda out
+                          (if (< (length out) n) (rec:iterate (set! out (length out) num)) out)))
+                          (rec:iterate ()))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
 (let math:permutations (lambda xs

@@ -315,7 +315,7 @@ export const minify = (source) =>
     deSuggar(LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source)))))
   )
 export const prep = (source) =>
-  deSuggar(LISP.parse(replaceQuotes(replaceStrings(removeNoCode(source)))))
+  deSuggar(LISP.parse(removeNoCode(replaceQuotes(replaceStrings(source)))))
 export const src = (source, deps) => {
   source = prep(source)
   return LISP.source([
@@ -335,6 +335,10 @@ export const ast = (source, deps) => {
     ),
     ...source
   ]
+}
+export const astWithStd = (source) => {
+  const parsed = prep(source)
+  return [...treeShake(parsed, std), ...parsed]
 }
 export const dependencies = (source, deps) => {
   source = prep(source)
