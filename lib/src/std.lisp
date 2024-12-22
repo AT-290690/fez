@@ -468,6 +468,7 @@
                           out)))
                         (rec:iterate 0 ()))))
 (let array:append! (lambda q item (set! q (length q) item)))
+(let array:set-and-get! (lambda q index item (do (set! q index item) item)))
 (let array:tail! (lambda q (set! q -1)))
 (let array:push! (lambda q item (do (set! q (length q) item) item)))
 (let array:pop! (lambda q (do (let l (get q -1)) (set! q -1) l)))
@@ -657,6 +658,7 @@
           )) 0)))
 (let matrix:set! (lambda matrix y x value (set! (get matrix y) x value)))
 (let matrix:get (lambda matrix y x (get (get matrix y) x)))
+(let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
 (let from:list->array (lambda list (do
   (let rec:iter (lambda lst out (if (list:nil? lst) out (rec:iter (list:tail lst) (array:merge out (array (list:head lst)))))))
@@ -755,12 +757,6 @@
 (let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:map->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
-; (let from:map->string (lambda table (|>
-;   table
-;   (array:select length)
-;   (array:flat-one)
-;   (array:map (lambda y (array:join y (array char:space))))
-;   (array:join (array char:new-line)))))
 (let from:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
@@ -1435,6 +1431,14 @@ q)))
                           (if (< i n)
                                 (apply (lambda (do
                                   (callback i)
+                                  (rec:iterate (+ i 1))))))))
+                          (rec:iterate 0))))
+
+(let loop:repeat (lambda n callback (do
+                          (let rec:iterate (lambda i
+                          (if (< i n)
+                                (apply (lambda (do
+                                  (callback)
                                   (rec:iterate (+ i 1))))))))
                           (rec:iterate 0))))
 

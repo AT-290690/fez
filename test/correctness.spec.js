@@ -2769,4 +2769,68 @@ bbrgwb")
     ),
     [6, 16]
   )
+
+  deepStrictEqual(
+    fez(
+      `(let INPUT
+"1
+10
+100
+2024")
+
+(let parse (lambda input (|> input (string:lines) (array:map from:string->number))))
+(let part1 (lambda input (do 
+
+
+(|> 
+  input (array:map 
+    (lambda secret (do 
+(let SECRET (var:def secret))
+; Each step of the above process involves mixing and pruning:
+
+; To mix a value into the secret number, 
+; calculate the bitwise XOR of the given value and the secret number.
+;  Then, the secret number becomes the result of that operation. 
+; (If the secret number is 42 and you were to mix 15 into the secret number, 
+; the secret number would become 37.)
+
+; To prune the secret number, 
+; calculate the value of the secret number modulo 16777216. 
+; Then, the secret number becomes the result of that operation. 
+; (If the secret number is 100000000 and you were to prune the secret number, 
+; the secret number would become 16113920.)
+
+(let mix-and-prune (lambda value (do (var:set-and-get! SECRET (math:euclidean-mod (var:set-and-get! SECRET (^ value (var:get SECRET))) 16777216)))))
+
+(let random (lambda (|> 
+      (var:get SECRET)
+
+      (* 64)        ; Calculate the result of multiplying the secret number by 64.  
+      
+      (mix-and-prune)         ; Then, mix this result into the secret number. 
+                               ; Finally, prune the secret number.
+
+      (/ 32)        ; Calculate the result of dividing the secret number by 32.
+      (math:floor)  ; Round the result down to the nearest integer. 
+      
+      (mix-and-prune)  ; Then, mix this result into the secret number. 
+                       ; Finally, prune the secret number.
+            
+      (* 2048)      ; Calculate the result of multiplying the secret number by 2048. 
+      (mix-and-prune)         ; Then, mix this result into the secret number. 
+                              ; Finally, prune the secret number.
+      )))
+      
+    (loop:repeat 2000 random)
+      (var:get SECRET)
+      ))) (math:summation))
+
+
+)))
+(let PARSED (parse INPUT))
+'((part1 PARSED))`,
+      { mutation: 1, compile: 1, eval: 1 }
+    ),
+    [37327623]
+  )
 })
