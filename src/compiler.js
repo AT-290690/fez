@@ -202,9 +202,8 @@ const compile = (tree, Drill) => {
         } else if (prefix === KEYWORDS.CACHE) {
           // memoization here
           const name = lispToJavaScriptVariableName(n)
-          const newName = name.substring(2)
+          const newName = name.substring(KEYWORDS.CACHE.length + 1)
           Drill.Variables.add(name)
-          Drill.Variables.add(newName)
           const functionArgs = Arguments.at(-1).slice(1)
           const body = functionArgs.pop()
           deepRenameCache(n, newName, body)
@@ -213,17 +212,12 @@ const compile = (tree, Drill) => {
           const vars = FunctionDrill.Variables.size
             ? `var ${[...FunctionDrill.Variables].join(',')};`
             : ''
-          return `(${name}=function(){const __${newName}_map = new Map(); 
-          var ${newName} = (function(${parseArgs(functionArgs, Drill)}){${vars};
-          var __key = [...arguments].join(',')
-          if (__${newName}_map.has(__key)) return __${newName}_map.get(__key)
-          else {
-          const __res = ${evaluatedBody.toString().trim()}
-          __${newName}_map.set(__key, __res)
-          return __res
-           }})
-          return ${newName}(...arguments)
-           });`
+          return `(${name}=function(){var __${newName}_map = new Map();var ${newName}=(function(${parseArgs(
+            functionArgs,
+            Drill
+          )}){${vars};var __key=[...arguments].join(',');if(__${newName}_map.has(__key)){return __${newName}_map.get(__key)}else{var __res = ${evaluatedBody
+            .toString()
+            .trim()};__${newName}_map.set(__key, __res);return __res}});return ${newName}(...arguments)});`
         } else {
           const name = lispToJavaScriptVariableName(n)
           Drill.Variables.add(name)
