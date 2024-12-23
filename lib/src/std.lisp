@@ -473,9 +473,9 @@
                         (recursive:iterate 0 ()))))
 (let array:append! (lambda q item (set! q (length q) item)))
 (let array:set-and-get! (lambda q index item (do (set! q index item) item)))
-(let array:tail! (lambda q (set! q -1)))
+(let array:tail! (lambda q (set! q)))
 (let array:push! (lambda q item (do (set! q (length q) item) item)))
-(let array:pop! (lambda q (do (let l (get q -1)) (set! q -1) l)))
+(let array:pop! (lambda q (do (let l (get q -1)) (set! q) l)))
 (let array:even-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:even? i) (array:append! a b) a)) ())))
 (let array:odd-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:odd? i) (array:append! a b) a)) ())))
 (let array:unique (lambda arr (|>
@@ -496,7 +496,7 @@
 (let array:not-empty? (lambda arr (not (not (length arr)))))
 (let array:count-of (lambda arr callback (length (array:select arr callback))))
 (let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
-(let array:empty! (lambda arr (do (let recursive:iterate (lambda (if (> (length arr) 0) (apply (lambda (do (set! arr -1) (recursive:iterate)))) arr))) (recursive:iterate))))
+(let array:empty! (lambda arr (do (let recursive:iterate (lambda (if (> (length arr) 0) (apply (lambda (do (set! arr) (recursive:iterate)))) arr))) (recursive:iterate))))
 (let array:in-bounds? (lambda arr index (and (< index (length arr)) (>= index 0))))
 (let array:slice (lambda arr start end (do
         (let bounds (- end start))
@@ -790,7 +790,7 @@
 (let array:concat (lambda arr (array:fold arr array:merge ())))
 (let array:concat-with (lambda arr ch (array:enumerated-fold arr (lambda a b i (if (and (> i 0) (< i (length arr))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) ())))
 (let string:concat-with-lines (lambda arr (array:enumerated-fold arr (lambda a b i (if (and (> i 0) (< i (length arr))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) ())))
-(let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr -1))))
+(let array:swap-remove! (lambda arr i (do (set! arr i (get arr (- (length arr) 1))) (set! arr))))
 (let array:swap! (lambda arr i j (do (let temp (get arr i)) (set! arr i (get arr j)) (set! arr j temp))))
 (let array:index-of (lambda arr item (do
                     (let recursive:iterate (lambda i
@@ -1131,7 +1131,7 @@
       (let len (length current))
       (let index (if (> len 0) (array:find-index current (lambda x (string:equal? x key))) -1))
       (let entry key)
-      (if (not (= index -1)) (apply (lambda (do (set! current index (get current -1)) (set! current -1)))))
+      (if (not (= index -1)) (apply (lambda (do (set! current index (get current -1)) (set! current)))))
       table)))
 (let set:has? (lambda table key (do 
       (let idx (set:index table key))
@@ -1200,7 +1200,7 @@
         (let current (get table idx))
         (let len (length current))
         (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
-        (if (not (= index -1)) (and (set! current index (get current -1)) (set! current -1)))
+        (if (not (= index -1)) (and (set! current index (get current -1)) (set! current)))
         table)))
 (let map:set-and-get! (lambda memo key value (do (map:set! memo key value) value)))
 (let map:remove-and-get! (lambda memo key (do (let value (map:get memo key)) (map:remove! memo key) value)))
@@ -1233,7 +1233,7 @@
 (let var:def (lambda val (array val)))
 (let var:get (lambda variable (get variable 0)))
 (let var:set! (lambda variable value (set! variable 0 value)))
-(let var:del! (lambda variable (set! variable -1)))
+(let var:del! (lambda variable (set! variable)))
 (let var:set-and-get! (lambda variable value (do (var:set! variable value) value)))
 (let var:increment! (lambda variable (set! variable 0 (+ (var:get variable) 1))))
 (let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
@@ -1282,13 +1282,13 @@
   (if (> len 0)
      (cond
         (= len 1) (brray:empty! q)
-        (> (length (get q 0)) 0) (set! (get q 0) -1))))))
+        (> (length (get q 0)) 0) (set! (get q 0)))))))
 (let brray:remove-from-right! (lambda q (do
     (let len (brray:length q))
     (if (> len 0)
      (cond
         (= len 1) (brray:empty! q)
-        (> (length (get q 1)) 0) (set! (get q 1) -1))))))
+        (> (length (get q 1)) 0) (set! (get q 1)))))))
 (let brray:iter (lambda q callback (do
   (let recursive:iter (lambda index bounds (do
       (callback (brray:get q index))

@@ -675,11 +675,11 @@ export const keywords = {
   //   return evaluate(inp, env)
   // },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
-    if (args.length !== 2 && args.length !== 3)
+    if (args.length !== 1 && args.length !== 3)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.SET_ARRAY
-        }) (or 2 3) required (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+        }) (or 1 3) required (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
@@ -688,46 +688,21 @@ export const keywords = {
           KEYWORDS.ARRAY_TYPE
         }) but got (${array}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
-    const index = evaluate(args[1], env)
-    if (!Number.isInteger(index))
-      throw new TypeError(
-        `Second argument of (${KEYWORDS.SET_ARRAY}) must be an (${
-          KEYWORDS.NUMBER_TYPE
-        } integer) (${index}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
-      )
-    if (index > array.length)
-      throw new RangeError(
-        `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
-          KEYWORDS.ARRAY_TYPE
-        }) bounds (index ${index} bounds ${array.length}) (${
-          KEYWORDS.SET_ARRAY
-        } ${stringifyArgs(args)})`
-      )
-    if (index < 0) {
-      if (args.length !== 2)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            KEYWORDS.SET_ARRAY
-          }) (if (< index 0) then 2 required) (${
-            KEYWORDS.SET_ARRAY
-          } ${stringifyArgs(args)})`
+    if (args.length === 1) {
+      array.pop()
+    } else {
+      const index = evaluate(args[1], env)
+      if (!Number.isInteger(index) || index < 0)
+        throw new TypeError(
+          `Second argument of (${KEYWORDS.SET_ARRAY}) must be a positive (${
+            KEYWORDS.NUMBER_TYPE
+          } integer) (${index}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
         )
-      if (index * -1 > array.length)
+      if (index > array.length)
         throw new RangeError(
           `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
             KEYWORDS.ARRAY_TYPE
           }) bounds (index ${index} bounds ${array.length}) (${
-            KEYWORDS.SET_ARRAY
-          } ${stringifyArgs(args)})`
-        )
-      const target = array.length + index
-      while (array.length !== target) array.pop()
-    } else {
-      if (args.length !== 3)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            KEYWORDS.SET_ARRAY
-          }) (if (>= index 0) then 3 required) (${
             KEYWORDS.SET_ARRAY
           } ${stringifyArgs(args)})`
         )

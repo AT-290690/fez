@@ -1121,7 +1121,7 @@ matrix
         `(let empty! (lambda arr (do 
       (let recursive:iterate (lambda 
         (unless (= (length arr) 0) 
-          (do (set! arr -1) (recursive:iterate))
+          (do (set! arr) (recursive:iterate))
         arr))) (recursive:iterate))))
 '( 
   (do 1 2)
