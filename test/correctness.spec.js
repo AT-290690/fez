@@ -89,12 +89,12 @@ ZZZ=ZZZ,ZZZ")
       (let part1 (lambda input (do 
         (let dirs (car input))
         (let adj (car (cdr input)))
-        (let rec:move (lambda source target step (do 
+        (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
-              (rec:move node target (+ step 1))))))
-        (+ (rec:move "AAA" "ZZZ" 0) 1))))
+              (recursive:move node target (+ step 1))))))
+        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
       
       
       (let part2 (lambda input (do 
@@ -103,11 +103,11 @@ ZZZ=ZZZ,ZZZ")
         (let adj (car (cdr input)))
         (let keys (car (cdr (cdr input))))
         
-        (let rec:move (lambda source target step (do 
+        (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? '((get node -1)) target)
               step 
-              (rec:move node target (+ step 1))))))
+              (recursive:move node target (+ step 1))))))
       
         (|> 
           keys
@@ -117,7 +117,7 @@ ZZZ=ZZZ,ZZZ")
                 (get -1)
                 '()
                 (string:equal? "A"))))
-          (array:map (lambda source (+ (rec:move source "Z" 0) 1)))
+          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
          (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`,
@@ -153,11 +153,11 @@ ZZZ=ZZZ,ZZZ")
     ; returns a copy of the array but reversed
     ; '(1 2 3) -> '(3 2 1)
     (let reverse (lambda arr (do
-      (let rec:iter (lambda arr out
+      (let recursive:iter (lambda arr out
         (if (> (length arr) 0)
-            (rec:iter (cdr arr) (array:merge (array (car arr)) out)) 
+            (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
             out)))
-      (rec:iter arr ()))))
+      (recursive:iter arr ()))))
     
     (let lazy '(reverse '(1 2 3 4 5 6)))
     (apply (car lazy) (car (cdr lazy)))`,
@@ -474,6 +474,15 @@ ZZZ=ZZZ,ZZZ")
     )
     strictEqual(
       fez(
+        `(let memoized:fibonacci (lambda n
+    (if (< n 2) n (+ (memoized:fibonacci (- n 1)) (memoized:fibonacci (- n 2))))))
+    (memoized:fibonacci 10)`,
+        { std: 1, compile: 1, eval: 1, mutation: 1 }
+      ),
+      55
+    )
+    strictEqual(
+      fez(
         `(let max-count-of (lambda nums
       (math:max
         (array:count-of nums math:positive?)
@@ -675,12 +684,12 @@ ZZZ=ZZZ,ZZZ")
 ))
 (let part1 (lambda input (- (array:count input char:left-brace) (array:count input char:right-brace))))
 (let part2 (lambda input (do
-    (let rec:part2 (lambda a out idx
+    (let recursive:part2 (lambda a out idx
                       (cond
                         (= out -1) idx
                         (array:empty? a) -1
-                        (*) (rec:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
-    (rec:part2 input 0 0))))
+                        (*) (recursive:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
+    (recursive:part2 input 0 0))))
 '((|> samples (array:map part1)) (|> samples (array:map part2)))
 `,
         { eval: 1, compile: 1 }
@@ -883,14 +892,14 @@ ZZZ=ZZZ,ZZZ")
     (> 2))))
 
 (let consecative-pair? (lambda str (do 
-    (let rec:iterate (lambda out rest 
+    (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 1)) 
             out 
-            (rec:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
-    (rec:iterate 0 str)
+            (recursive:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
+    (recursive:iterate 0 str)
 )))
 (let non-consecative-non-overlapping-pair? (lambda str (do 
-    (let rec:iterate (lambda out rest 
+    (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
             out 
             (apply (lambda (do
@@ -898,17 +907,17 @@ ZZZ=ZZZ,ZZZ")
                          (not (= (string:match (cdr rest) '((car rest) (car (cdr rest)))) -1))
                          (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest '((car rest) (car rest) (car rest))) -1))
                          ))
-            (rec:iterate match
+            (recursive:iterate match
             (cdr rest))))))))
-    (rec:iterate 0 str)
+    (recursive:iterate 0 str)
 )))
 
 (let consecative-between-pair? (lambda str (do 
-    (let rec:iterate (lambda out rest 
+    (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
             out 
-            (rec:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
-    (rec:iterate 0 str)
+            (recursive:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
+    (recursive:iterate 0 str)
 )))
 ; It contains at least three vowels (aeiou only), like aei, xazegov, or aeiouaeiouaeiou.
 ; It contains at least one letter that appears twice in a row, like xx, abcdde (dd), or aabbccdd (aa, bb, cc, or dd).
@@ -1110,10 +1119,10 @@ matrix
     deepStrictEqual(
       fez(
         `(let empty! (lambda arr (do 
-      (let rec:iterate (lambda 
+      (let recursive:iterate (lambda 
         (unless (= (length arr) 0) 
-          (do (set! arr -1) (rec:iterate))
-        arr))) (rec:iterate))))
+          (do (set! arr -1) (recursive:iterate))
+        arr))) (recursive:iterate))))
 '( 
   (do 1 2)
   (empty! '(1 2 3 4 5))
@@ -1141,10 +1150,10 @@ matrix
     deepStrictEqual(
       fez(
         `(let map (lambda xs f (do
-  (let rec:iter (lambda xs out
+  (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
-  (rec:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (rec:iter xs ())))))
+  (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (recursive:iter xs ())))))
   (map (list 2 3 4) math:square)`,
         { compile: 1, eval: 1 }
       ),
@@ -1268,7 +1277,7 @@ matrix
         (set:add! steps key)
         (queue:enqueue! queue (array y x target))
         (matrix:set! matrix y x char:dot)
-        (let rec:while (lambda (unless (queue:empty? queue) (do 
+        (let recursive:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
           (let y (array:first element))
@@ -1280,8 +1289,8 @@ matrix
               (if (and (= cell char:dot) (not (set:has? visited key))) (do 
                 (queue:enqueue! queue (array dy dx (- step 1)))
                 (set:add! visited key))))))
-          (rec:while)))))
-        (rec:while)
+          (recursive:while)))))
+        (recursive:while)
         (var:set! output (length (array:flat-one steps)))))))
   (var:get output))))
 (part1 (parse sample))`,
@@ -1763,7 +1772,7 @@ matrix
   (let starting (matrix:find-index input (lambda x (= x 94))))
   (matrix:set! matrix (get starting 0) (get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
-  (let rec:step (lambda start angle (do 
+  (let recursive:step (lambda start angle (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
       (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
@@ -1774,9 +1783,9 @@ matrix
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
       (cond 
-          (= current char:hash) (rec:step start (+ angle 1))
-          (or (= current char:dot) (= current char:X)) (rec:step start-copy angle)))))))
-  (rec:step starting 0)
+          (= current char:hash) (recursive:step start (+ angle 1))
+          (or (= current char:dot) (= current char:X)) (recursive:step start-copy angle)))))))
+  (recursive:step starting 0)
   (|> matrix (array:flat-one) (array:count char:X)))))
 
 (let part2 (lambda input (do
@@ -1786,7 +1795,7 @@ matrix
   (matrix:set! matrix (get starting 0) (get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let from:numbers->key (lambda a b (array:concat '((from:digits->chars (from:number->digits a)) '(char:pipe) (from:digits->chars (from:number->digits b))))))
-  (let rec:step (lambda matrix start angle corners (do 
+  (let recursive:step (lambda matrix start angle corners (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
       (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
@@ -1802,9 +1811,9 @@ matrix
           (let c (map:get corners key))
           (if (= c 4) 
           (var:set! loops (+ (var:get loops) 1))
-          (rec:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
-          (or (= current char:dot) (= current char:X)) (rec:step matrix start-copy angle corners)))))))
-  (rec:step matrix starting 0 (new:set64))
+          (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
+          (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)))))))
+  (recursive:step matrix starting 0 (new:set64))
   (let path '())
   (let Y (get starting 0))
   (let X (get starting 1))
@@ -1816,7 +1825,7 @@ matrix
       (let x (get pos 1))
       (matrix:set! copy Y X char:X)
       (matrix:set! copy y x char:hash)
-      (if (not (and (= y Y) (= x X))) (rec:step copy starting 0 (new:set64))))))
+      (if (not (and (= y Y) (= x X))) (recursive:step copy starting 0 (new:set64))))))
   (var:get loops))))
   
 (let PARSED (parse INPUT))
@@ -1948,7 +1957,7 @@ matrix
 
         (let distanceY (math:abs (- y1 y2)))
         (let distanceX (math:abs (- x1 x2)))
-        (let rec:iter (lambda i (do 
+        (let recursive:iter (lambda i (do 
         
             (let Y1 (if (= y1 y2) y1 (if (> y1 y2) (+ y1 (* distanceY i)) (- y1 (* distanceY i)))))
             (let X1 (if (= x1 x2) x1 (if (> x1 x2) (+ x1 (* distanceX i)) (- x1 (* distanceX i)))))
@@ -1959,9 +1968,9 @@ matrix
             (if bounds1? (matrix:set! copy Y1 X1 char:hash))
             (if bounds2? (matrix:set! copy Y2 X2 char:hash))
             
-            (if (or bounds1? bounds2?) (rec:iter (+ i 1))))))
+            (if (or bounds1? bounds2?) (recursive:iter (+ i 1))))))
 
-        (rec:iter 1))))
+        (recursive:iter 1))))
     
      (let map (array:fold coords (lambda a b 
         (if (map:has? a (array (array:first b))) 
@@ -2012,7 +2021,7 @@ matrix
         (set:add! visited (from:yx->key y x))
         (queue:enqueue! queue (array y x))
         (let score (var:def 0))
-        (let rec:while (lambda (unless (queue:empty? queue) (do 
+        (let recursive:while (lambda (unless (queue:empty? queue) (do 
             (let element (queue:peek queue))
             (queue:dequeue! queue)
             (let y (array:first element))
@@ -2022,8 +2031,8 @@ matrix
                  (if (and (= (- cell (matrix:get matrix y x)) 1) (not (set:has? visited key))) (do
                     (if (= cell 9) (var:set! score (math:increment (var:get score))) (queue:enqueue! queue (array dy dx)))
                     (set:add! visited key))))))
-        (rec:while)))))
-        (rec:while)
+        (recursive:while)))))
+        (recursive:while)
         (+ a (var:get score)))) 0))))
 
 (let part2 (lambda matrix (do 
@@ -2038,7 +2047,7 @@ matrix
         (map:set! visited root-key 1)
         (queue:enqueue! queue (array y x))
         (let score (var:def 0))
-        (let rec:while (lambda (unless (queue:empty? queue) (do 
+        (let recursive:while (lambda (unless (queue:empty? queue) (do 
             (let element (queue:peek queue))
             (let y (array:first element))
             (let x (array:second element))
@@ -2049,8 +2058,8 @@ matrix
                  (if (= (- cell (matrix:get matrix y x)) 1) (do
                     (queue:enqueue! queue (array dy dx))
                     (if (map:has? visited key) (map:set! visited key (+ (map:get visited root-key) (map:get visited key))) (map:set! visited key (map:get visited root-key))))))))
-        (rec:while)))))
-        (rec:while)
+        (recursive:while)))))
+        (recursive:while)
         (+ a (var:get score)))) 0))))
 
 (let PARSED (parse INPUT))
@@ -2072,27 +2081,27 @@ matrix
 ; If none of the other rules apply, the stone is replaced by a new stone; the old stone's number multiplied by 2024 is engraved on the new stone.
 (let part1 (lambda input (do 
   (let TIMES 5)
-  (let rec:while (lambda stones n (unless (= n 0) 
-      (rec:while (array:fold stones (lambda a b (do
+  (let recursive:while (lambda stones n (unless (= n 0) 
+      (recursive:while (array:fold stones (lambda a b (do
           (let n-digits (math:number-of-digits b))
           (array:merge! a 
                 (cond 
                   (= b 0) '(1)
                   (math:even? n-digits) '((math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
                   (*) '((* b 2024)))))) ()) (- n 1)) (length stones))))
-  (rec:while input TIMES))))
+  (recursive:while input TIMES))))
 
 (let part2 (lambda input (do 
   (let TIMES 5)
-  (let rec:while (lambda stones n (unless (= n 0) 
-      (rec:while (array:fold stones (lambda a b (do
+  (let recursive:while (lambda stones n (unless (= n 0) 
+      (recursive:while (array:fold stones (lambda a b (do
           (let n-digits (math:number-of-digits b))
           (array:merge! a 
                 (cond 
                   (= b 0) '(1)
                   (math:even? n-digits) '((math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
                   (*) '((* b 2024)))))) ()) (- n 1)) (length stones))))
-  (rec:while input TIMES))))
+  (recursive:while input TIMES))))
 
 (let PARSED (parse INPUT))
 '((part1 PARSED) (part2 PARSED))
@@ -2201,13 +2210,13 @@ matrix
                     (array:of ch (lambda . -1))))) ())))
     (let blanks ())
     (array:enumerated-for disk (lambda x i (if (= x -1) (array:push! blanks i))))
-    (let rec:fragment (lambda ind (do
+    (let recursive:fragment (lambda ind (do
         (let i (get blanks ind))
-        (if (= (array:last disk) -1) (do (array:pop! disk) (rec:fragment ind))
+        (if (= (array:last disk) -1) (do (array:pop! disk) (recursive:fragment ind))
             (unless (<= (length disk) i) (do 
             (set! disk i (array:pop! disk))
-            (rec:fragment (+ ind 1))))))))
-        (rec:fragment 0)
+            (recursive:fragment (+ ind 1))))))))
+        (recursive:fragment 0)
         (|> disk (array:enumerated-fold (lambda a b i (+ a (* b i))) 0)))))
        
 (let PARSED (parse INPUT))
@@ -2235,12 +2244,12 @@ matrix
 
 (let part1 (lambda input (- (array:count input char:left-brace) (array:count input char:right-brace))))
 (let part2 (lambda input (do
-    (let rec:iter (lambda a out idx
+    (let recursive:iter (lambda a out idx
                       (cond
                         (= out -1) idx
                         (array:empty? a) -1
-                        (*) (rec:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
-    (rec:iter input 0 0))))
+                        (*) (recursive:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
+    (recursive:iter input 0 0))))
 '((|> samples (array:map part1)) (|> samples (array:map part2)))
 `,
       { compile: 1, eval: 1 }
@@ -2291,11 +2300,11 @@ matrix
 (let comp (lambda a b (< a b)))
 (let heap (from:array->heap '(30 10 50 20 40) comp))
 (heap:peek heap)
-(let rec:while (lambda (unless (array:empty? heap) (do 
+(let recursive:while (lambda (unless (array:empty? heap) (do 
 (array:push! out (heap:peek heap))
 (heap:pop! heap comp)
-(rec:while)))))
-(rec:while)
+(recursive:while)))))
+(recursive:while)
 (identity out)`,
       { mutation: 1, compile: 1, eval: 1 }
     ),
@@ -2338,7 +2347,7 @@ matrix
     (let lower? (lambda a b (< (array:first a) (array:first b))))
     (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
   
-    (let rec:while (lambda (unless (heap:empty? pq) (do
+    (let recursive:while (lambda (unless (heap:empty? pq) (do
         (let first (heap:peek pq))
         (heap:pop! pq lower?)
         (let cost (get first 0))
@@ -2363,8 +2372,8 @@ matrix
                                     (not (= (matrix:get matrix nr nc) char:hash)) 
                                     (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
                                 (heap:push! pq stats lower?)))))
-            (rec:while)))))))
-    (rec:while))))
+            (recursive:while)))))))
+    (recursive:while))))
 
 (let PARSED (parse INPUT))
 (part1 PARSED)`,
@@ -2563,14 +2572,14 @@ Program: 0,1,5,4,3,0"
         )))
     (let get-opcode (lambda (get program (get-instruction-pointer))))
     (let get-operand (lambda (get program (+ (get-instruction-pointer) 1))))
-    (let rec:process (lambda (unless (halt?) (do 
+    (let recursive:process (lambda (unless (halt?) (do 
         (let opcode (get-opcode))
         (let operand (get-operand))
         (opcodes opcode operand)
-        (rec:process)
+        (recursive:process)
     ))))
     
-    (rec:process)
+    (recursive:process)
     ; (log-outputs!)
     outputs
 )))
@@ -2679,7 +2688,7 @@ Program: 0,1,5,4,3,0"
 
     (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
     (let solution (var:def 0))
-    (let rec:while (lambda (unless (or (heap:empty? q) (> (var:get solution) 0)) (do
+    (let recursive:while (lambda (unless (or (heap:empty? q) (> (var:get solution) 0)) (do
             (let first (queue:peek q))
             (queue:dequeue! q)
             (let steps (get first 0))
@@ -2695,8 +2704,8 @@ Program: 0,1,5,4,3,0"
                                     (do 
                                     (queue:enqueue! q '((+ steps 1) nr nc))
                                     (set:add! seen (from:stats->key '(nr nc)))))))))
-            (rec:while)))))
-    (rec:while)
+            (recursive:while)))))
+    (recursive:while)
     (var:get solution))))
     
     (part1 (parse I) 12)`,

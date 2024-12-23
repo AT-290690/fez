@@ -102,6 +102,8 @@ export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
     case KEYWORDS.DEFINE_VARIABLE:
+    case KEYWORDS.RECURSION:
+    case KEYWORDS.CACHE:
       return true
     default:
       return !isNaN(name[0])
@@ -262,9 +264,8 @@ export const fez = (source, options = {}) => {
     }
   } catch (error) {
     // console.log(error)
-    const err = error.message
-      .replace("'[object Array]'", '(array)')
-      .replace('object', '(array)')
+    const err = error.message.replace("'[object Array]'", '(array)')
+    // .replace('object', '(array)')
     logError(err)
     if (options.throw) throw err
     return err

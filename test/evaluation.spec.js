@@ -4,10 +4,10 @@ describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
       `(let map (lambda xs f (do
-  (let rec:iter (lambda xs out
+  (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
-  (rec:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (rec:iter xs ())))))
+  (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (recursive:iter xs ())))))
   (map (list 2 3 4) math:square)`,
       `(let memo '(() ()))
 (let fibonacci (lambda n (do 
@@ -76,12 +76,12 @@ describe('Compilation & Interpretation', () => {
       (let part1 (lambda input (do 
         (let dirs (car input))
         (let adj (car (cdr input)))
-        (let rec:move (lambda source target step (do 
+        (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
-              (rec:move node target (+ step 1))))))
-        (+ (rec:move "AAA" "ZZZ" 0) 1))))
+              (recursive:move node target (+ step 1))))))
+        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
       
       
       (let part2 (lambda input (do 
@@ -90,11 +90,11 @@ describe('Compilation & Interpretation', () => {
         (let adj (car (cdr input)))
         (let keys (car (cdr (cdr input))))
         
-        (let rec:move (lambda source target step (do 
+        (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? '((get node -1)) target)
               step 
-              (rec:move node target (+ step 1))))))
+              (recursive:move node target (+ step 1))))))
       
         (|> 
           keys
@@ -104,7 +104,7 @@ describe('Compilation & Interpretation', () => {
                 (get -1)
                 '()
                 (string:equal? "A"))))
-          (array:map (lambda source (+ (rec:move source "Z" 0) 1)))
+          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
          (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`,
@@ -112,11 +112,11 @@ describe('Compilation & Interpretation', () => {
       ; returns a copy of the array but reversed
       ; '(1 2 3) -> '(3 2 1)
       (let reverse (lambda arr (do
-        (let rec:iter (lambda arr out
+        (let recursive:iter (lambda arr out
           (if (> (length arr) 0)
-              (rec:iter (cdr arr) (array:merge (array (car arr)) out)) 
+              (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
-        (rec:iter arr ()))))
+        (recursive:iter arr ()))))
       
       (let lazy '(reverse '(1 2 3 4 5 6)))
       (apply (car lazy) (car (cdr lazy)))`,

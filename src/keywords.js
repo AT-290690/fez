@@ -57,7 +57,9 @@ export const KEYWORDS = {
   NOT_EQUAL_2: '<>',
   UNLESS: 'unless',
   LIST_TYPE: 'list',
-  RECURSION: 'rec'
+
+  RECURSION: 'recursive',
+  CACHE: 'memoized'
 }
 
 export const TYPES = {

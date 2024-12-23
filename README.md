@@ -5,6 +5,41 @@
 </p>
 
 ```lisp
+; 3 types only
+; Numbers
+; Arrays
+; Functions
+(do 42 (array 1 2 3) (lambda x (* x x)))
+; Variables are immutable
+(let x 42)
+; But array items are not
+(let arr (array 1 2 3))
+(set! arr 0 10)
+(set! arr (length arr) 100)
+; arr is now will make it '(10 2 3 100)
+; No strings - instead they are array of charcodes
+"Hello World!" ; This is syntactic suggar turning it into the one below
+(array 72 101 108 108 111 32  87 111 114 108 100  33) ; "Hello World!"
+; multiline strings support (it just captures whole string and adds new lines within the arrays)
+"Hello
+World
+!"
+; No Objects Sets Lists Classes etc. Yet all implemented using the 3 types above
+(let object (new:map
+  (array "id" 16
+  "power" (lambda x (* x x))
+  "backpack" (array 100 100 200 300)
+  "unique-set-of-things"
+  (new:set (array "10" "232" "42" "32")))))
+(apply (map:get object "power") (map:get object "id")) ; 256
+; There are many useful functions in the STD library
+; They get "tree shacked" - final program has only the functions it needs
+(math:permutations (array 1 2 3))
+; Pipe operator is syntactic sugar for readable function composition
+(|> (math:range 1 10) (array:map math:square) (math:summation))
+```
+
+```lisp
 (let fizz-buzz (lambda n
     (cond
       (= (mod n 15) 0) "Fizz Buzz"
@@ -33,31 +68,6 @@
   (|>
     (math:range 1 100)
     (array:map fizz-buzz)
-    (log!))
-```
-
-```lisp
-; https://adventofcode.com/2020/day/1
-(let *input*
-(string
-    char:1 char:7 char:2 char:1 char:new-line
-    char:3 char:6 char:6 char:new-line
-    char:2 char:9 char:9 char:new-line
-    char:6 char:7 char:5 char:new-line
-    char:1 char:4 char:5 char:6))
-; solve part 1
-(let solve (lambda arr cb
-     (array:fold arr (lambda a b (do
-        (let res (array:binary-search arr (cb b)))
-        (if res (array:merge a (array res)) a)))
-     ())))
-; 514579
-(|> *input*
-    (string:lines)
-    (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
-    (array:sort (lambda a b (> a b)))
-    (solve (lambda x (- 2020 x)))
-    (math:product)
     (log!))
 ```
 
@@ -190,15 +200,15 @@ This optimization technique works only by declaring the variable with let\*
 and only when compiled to JavaScript.
 
 ```lisp
-(let rec:sum-to (lambda n acc (if (= n 0) acc (rec:sum-to (- n 1) (+ n acc)))))
-(rec:sum-to 10000 0)
+(let recursive:sum-to (lambda n acc (if (= n 0) acc (recursive:sum-to (- n 1) (+ n acc)))))
+(recursive:sum-to 10000 0)
 ```
 
 ```js
 console.log(
   fez(
-    `(let rec:sum-to (lambda n acc (if (= n 0) acc (rec:sum-to (- n 1) (+ n acc)))))
-(rec:sum-to 10000 0)`,
+    `(let recursive:sum-to (lambda n acc (if (= n 0) acc (recursive:sum-to (- n 1) (+ n acc)))))
+(recursive:sum-to 10000 0)`,
     { compile: 1, eval: 1 }
   )
 )

@@ -8,13 +8,22 @@ import {
   WORD
 } from './keywords.js'
 import { leaf, isLeaf } from './parser.js'
-const deepRename = (name, newName, tree) => {
+const deepRenameTco = (name, newName, tree) => {
   if (!isLeaf(tree))
     for (const leaf of tree) {
       // Figure out a non mutable solution so
       // I can get rid of deep copy
       if (leaf[VALUE] === name) leaf[VALUE] = `()=>${newName}`
-      deepRename(name, newName, leaf)
+      deepRenameTco(name, newName, leaf)
+    }
+}
+const deepRenameCache = (name, newName, tree) => {
+  if (!isLeaf(tree))
+    for (const leaf of tree) {
+      // Figure out a non mutable solution so
+      // I can get rid of deep copy
+      if (leaf[VALUE] === name) leaf[VALUE] = newName
+      deepRenameCache(name, newName, leaf)
     }
 }
 const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
@@ -166,16 +175,20 @@ const compile = (tree, Drill) => {
       }
       case KEYWORDS.DEFINE_VARIABLE: {
         const n = Arguments[0][VALUE]
-        if (n.split(':')[0] === KEYWORDS.RECURSION) {
+        const prefix = n.split(':')[0]
+        if (prefix === KEYWORDS.RECURSION) {
           const name = lispToJavaScriptVariableName(n)
-          const newName = `rec_${performance.now().toString().replace('.', 7)}`
+          const newName = `recursive_${performance
+            .now()
+            .toString()
+            .replace('.', 7)}`
           Drill.Variables.add(name)
           Drill.Variables.add(newName)
           Drill.Helpers.add('__tco')
           const functionArgs = Arguments.at(-1).slice(1)
           const body = functionArgs.pop()
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-          deepRename(n, newName, body)
+          deepRenameTco(n, newName, body)
           const evaluatedBody = compile(body, FunctionDrill)
           const vars = FunctionDrill.Variables.size
             ? `var ${[...FunctionDrill.Variables].join(',')};`
@@ -186,6 +199,31 @@ const compile = (tree, Drill) => {
           )})=>{${vars}return ${evaluatedBody
             .toString()
             .trim()}}, ${newName})));`
+        } else if (prefix === KEYWORDS.CACHE) {
+          // memoization here
+          const name = lispToJavaScriptVariableName(n)
+          const newName = name.substring(2)
+          Drill.Variables.add(name)
+          Drill.Variables.add(newName)
+          const functionArgs = Arguments.at(-1).slice(1)
+          const body = functionArgs.pop()
+          deepRenameCache(n, newName, body)
+          const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
+          const evaluatedBody = compile(body, FunctionDrill)
+          const vars = FunctionDrill.Variables.size
+            ? `var ${[...FunctionDrill.Variables].join(',')};`
+            : ''
+          return `(${name}=function(){const __${newName}_map = new Map(); 
+          var ${newName} = (function(${parseArgs(functionArgs, Drill)}){${vars};
+          var __key = [...arguments].join(',')
+          if (__${newName}_map.has(__key)) return __${newName}_map.get(__key)
+          else {
+          const __res = ${evaluatedBody.toString().trim()}
+          __${newName}_map.set(__key, __res)
+          return __res
+           }})
+          return ${newName}(...arguments)
+           });`
         } else {
           const name = lispToJavaScriptVariableName(n)
           Drill.Variables.add(name)
