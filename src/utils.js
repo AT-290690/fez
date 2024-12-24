@@ -247,7 +247,7 @@ export const fez = (source, options = {}) => {
       // if (options.check) typeCheck(ast)
       if (options.compile) {
         const js = Object.values(comp(deepClone(ast))).join('')
-        return options.eval ? eval(js) : js
+        return js
       }
       return run(ast, env)
     } else if (Array.isArray(source)) {
@@ -256,7 +256,7 @@ export const fez = (source, options = {}) => {
         : source
       if (options.compile) {
         const js = Object.values(comp(deepClone(ast))).join('')
-        return options.eval ? eval(js) : js
+        return js
       }
       return run(ast, env)
     } else {

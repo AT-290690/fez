@@ -206,10 +206,12 @@ and only when compiled to JavaScript.
 
 ```js
 console.log(
-  fez(
-    `(let recursive:sum-to (lambda n acc (if (= n 0) acc (recursive:sum-to (- n 1) (+ n acc)))))
+  eval(
+    fez(
+      `(let recursive:sum-to (lambda n acc (if (= n 0) acc (recursive:sum-to (- n 1) (+ n acc)))))
 (recursive:sum-to 10000 0)`,
-    { compile: 1, eval: 1 }
+      { compile: 1 }
+    )
   )
 )
 // 50005000

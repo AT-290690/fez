@@ -1,9 +1,11 @@
 import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
+
+const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let m (new:set4))
 (let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
 (|> arr 
@@ -12,13 +14,12 @@ describe('Corretness', () => {
     (if (map:has? a key) 
         (map:set! a key (+ (map:get a key) 1))
         (map:set! a key 0)
-    ))) m))`,
-        { compile: 1, eval: 1, mutation: 1 }
+    ))) m))`
       ),
       [[[[52], 5]], [[[49], 2]], [[[50], 1]], [[[51], 0]]]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `
     (|>
      (array:concat '( 
@@ -29,8 +30,7 @@ describe('Corretness', () => {
         '(1 1 1 1)
         '(0 0 0 0)
         '(1 0 1 0)))
-     (array:map math:flag-flip))`,
-        { compile: 1, eval: 1 }
+     (array:map math:flag-flip))`
       ),
       [
         0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1,
@@ -38,7 +38,7 @@ describe('Corretness', () => {
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `
 (let sample1 
 "RL
@@ -120,35 +120,32 @@ ZZZ=ZZZ,ZZZ")
           (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
-         (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`,
-        { compile: 1, eval: 1, mutation: 1 }
+         (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`
       ),
       [2, 6, 6]
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let list (|> (new:list 10) (doubly-linked-list:prev! (new:list 8)) (doubly-linked-list:next! (new:list 12))))
     (doubly-linked-list:next! (doubly-linked-list:next list) (new:list 12121))
-    (doubly-linked-list:value (doubly-linked-list:next (doubly-linked-list:next list)))`,
-        { compile: 1, eval: 1, mutation: 1 }
+    (doubly-linked-list:value (doubly-linked-list:next (doubly-linked-list:next list)))`
       ),
       12121
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let x (var:def 10))
     (let y (var:def 8))
     (let temp (var:get x))
     (var:set! x (var:get y))
     (var:set! y temp)
     '((var:get x) (var:get y))
-    (+ (car x) (car y))`,
-        { compile: 1, eval: 1, mutation: 1 }
+    (+ (car x) (car y))`
       ),
       18
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `; reverse array
     ; returns a copy of the array but reversed
     ; '(1 2 3) -> '(3 2 1)
@@ -160,13 +157,12 @@ ZZZ=ZZZ,ZZZ")
       (recursive:iter arr ()))))
     
     (let lazy '(reverse '(1 2 3 4 5 6)))
-    (apply (car lazy) (car (cdr lazy)))`,
-        { compile: 1, eval: 1 }
+    (apply (car lazy) (car (cdr lazy)))`
       ),
       [6, 5, 4, 3, 2, 1]
     )
     strictEqual(
-      fez(
+      evalJS(
         `(= 
 
       (|>
@@ -174,22 +170,17 @@ ZZZ=ZZZ,ZZZ")
        (cdr)
        (car))
       
-      (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`,
-        { compile: 1, eval: 1 }
+      (car (cdr (array 72 101 108 108 111 32 87 111 114 108 100))))`
       ),
       1
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let arr (array 0.1 3.14 1 2 3 4 10))
 (let *FACTOR* 17)
 (let sin (lambda x (math:sine x *FACTOR*)))
 (let cos (lambda x (math:cosine x *FACTOR*)))
-(array (array:map arr sin) (array:map arr cos))`,
-        {
-          compile: 1,
-          eval: 1
-        }
+(array (array:map arr sin) (array:map arr cos))`
       ),
       [
         [
@@ -205,29 +196,22 @@ ZZZ=ZZZ,ZZZ")
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         ` (|> (array 1 2 3 4 5)
   (array:enumerated-map (lambda x i (* x i)))
   (array:enumerated-select (lambda . i (> i 2)))
-)`,
-        { compile: 1, eval: 1, shake: 1 }
+)`
       ),
       [12, 20]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(|> 
   '(1 2 3 4)
    (array:swap-remove! 1)
    (array:swap! 0 1)
    (math:permutations)
-)`,
-        {
-          compile: 1,
-          eval: 1,
-          shake: 1,
-          mutation: 1
-        }
+)`
       ),
       [
         [4, 1, 3],
@@ -238,50 +222,38 @@ ZZZ=ZZZ,ZZZ")
         [3, 1, 4]
       ]
     )
+    deepStrictEqual(evalJS(`(math:permutations (array 1 2 3 4))`), [
+      [1, 2, 3, 4],
+      [1, 2, 4, 3],
+      [1, 3, 2, 4],
+      [1, 3, 4, 2],
+      [1, 4, 2, 3],
+      [1, 4, 3, 2],
+      [2, 1, 3, 4],
+      [2, 1, 4, 3],
+      [2, 3, 1, 4],
+      [2, 3, 4, 1],
+      [2, 4, 1, 3],
+      [2, 4, 3, 1],
+      [3, 1, 2, 4],
+      [3, 1, 4, 2],
+      [3, 2, 1, 4],
+      [3, 2, 4, 1],
+      [3, 4, 1, 2],
+      [3, 4, 2, 1],
+      [4, 1, 2, 3],
+      [4, 1, 3, 2],
+      [4, 2, 1, 3],
+      [4, 2, 3, 1],
+      [4, 3, 1, 2],
+      [4, 3, 2, 1]
+    ])
     deepStrictEqual(
-      fez(`(math:permutations (array 1 2 3 4))`, {
-        compile: 1,
-        eval: 1,
-        shake: 1
-      }),
-      [
-        [1, 2, 3, 4],
-        [1, 2, 4, 3],
-        [1, 3, 2, 4],
-        [1, 3, 4, 2],
-        [1, 4, 2, 3],
-        [1, 4, 3, 2],
-        [2, 1, 3, 4],
-        [2, 1, 4, 3],
-        [2, 3, 1, 4],
-        [2, 3, 4, 1],
-        [2, 4, 1, 3],
-        [2, 4, 3, 1],
-        [3, 1, 2, 4],
-        [3, 1, 4, 2],
-        [3, 2, 1, 4],
-        [3, 2, 4, 1],
-        [3, 4, 1, 2],
-        [3, 4, 2, 1],
-        [4, 1, 2, 3],
-        [4, 1, 3, 2],
-        [4, 2, 1, 3],
-        [4, 2, 3, 1],
-        [4, 3, 1, 2],
-        [4, 3, 2, 1]
-      ]
-    )
-    deepStrictEqual(
-      fez(
+      evalJS(
         `(let arr (array (array 1 2 3) (array 1 (array 1 2) 3))) 
 (let cloned (array:deep-copy arr)) 
 (array:set! (array:get (array:get cloned 1) 1) 1 20000) 
-(array arr cloned)`,
-        {
-          compile: 1,
-          eval: 1,
-          mutation: 1
-        }
+(array arr cloned)`
       ),
       [
         [
@@ -294,36 +266,18 @@ ZZZ=ZZZ,ZZZ")
         ]
       ]
     )
+    strictEqual(evalJS(`(array:equal? (array 1) (array 10))`), 0)
+    strictEqual(evalJS(`(array:equal? (array 1 10) (array 1 10))`), 1)
     strictEqual(
-      fez(`(array:equal? (array 1) (array 10))`, {
-        compile: 1,
-        eval: 1
-      }),
-      0
-    )
-    strictEqual(
-      fez(`(array:equal? (array 1 10) (array 1 10))`, {
-        compile: 1,
-        eval: 1
-      }),
+      evalJS(`(array:equal? (array 1 (array 1 10)) (array 1 (array 1 10)))`),
       1
     )
     strictEqual(
-      fez(`(array:equal? (array 1 (array 1 10)) (array 1 (array 1 10)))`, {
-        compile: 1,
-        eval: 1
-      }),
-      1
-    )
-    strictEqual(
-      fez(`(array:equal? (array 1 (array 1 10)) (array 1 (array 2 10)))`, {
-        compile: 1,
-        eval: 1
-      }),
+      evalJS(`(array:equal? (array 1 (array 1 10)) (array 1 (array 2 10)))`),
       0
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `
     (let workers ())
 (let make-worker (lambda name age prof (array:set! workers (length workers) 
@@ -342,8 +296,7 @@ ZZZ=ZZZ,ZZZ")
            (map:entries) 
            (array:flat-one))))
           (find-worker-by-name (array char:A char:n char:t char:h char:o char:n char:y))
-    `,
-        { compile: 1, eval: 1, mutation: 1 }
+    `
       ),
       [
         [
@@ -358,7 +311,7 @@ ZZZ=ZZZ,ZZZ")
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `
         (let A (array () () ()))
         (let B (array () () ()))
@@ -370,25 +323,23 @@ ZZZ=ZZZ,ZZZ")
         (set:add! B (array char:4))
         (set:add! B (array char:5))
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))        
-    `,
-        { compile: 1, eval: 1, mutation: 1 }
+    `
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `
       (let A (new:set (array "123" "100" "12" "14" "12" "42" "69" "666")))
       (let B (new:set (array "12" "1000" "3000")))
       (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
       (|> (set:union A B) (from:set->numbers))      
-    `,
-        { compile: 1, eval: 1, mutation: 1 }
+    `
       ),
       [100, 12, 3000, 123, 42, 666, 14, 69, 1000]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let set (array () () ()))
     (set:add! set (array char:1))
     (set:add! set (array char:1))
@@ -396,24 +347,22 @@ ZZZ=ZZZ,ZZZ")
     (set:add! set (array char:2))
     (set:add! set (array char:3))
     (|> set (array:flat) (from:chars->digits))
-    `,
-        { compile: 1, eval: 1, mutation: 1 }
+    `
       ),
       [3, 1, 2]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(array (|>
 (array 1 2 3 4 5) 
 (array:map (lambda x (* x 2))) 
 (array:select (lambda x (> x 4))) 
-(array:fold (lambda a b (+ a b)) 0)))`,
-        { compile: 1, eval: 1 }
+(array:fold (lambda a b (+ a b)) 0)))`
       ),
       [24]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let Fizz (array char:F char:i char:z char:z))
         (let Buzz (array char:B char:u char:z char:z))
         (let FizzBuzz (array:merge Fizz Buzz))
@@ -427,8 +376,7 @@ ZZZ=ZZZ,ZZZ")
         
           (|>
             (math:range 1 15)
-            (array:map fizz-buzz))`,
-        { compile: 1, eval: 1 }
+            (array:map fizz-buzz))`
       ),
       [
         1,
@@ -449,16 +397,15 @@ ZZZ=ZZZ,ZZZ")
       ]
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let fibonacci (lambda n
     (if (< n 2) n (+ (fibonacci (- n 1)) (fibonacci (- n 2))))))
-    (fibonacci 10)`,
-        { std: 0, compile: 1, eval: 1 }
+    (fibonacci 10)`
       ),
       55
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let memo '(() ()))
 (let fibonacci (lambda n (do 
 (let key (|> n (from:number->digits) (from:digits->chars)))
@@ -467,22 +414,20 @@ ZZZ=ZZZ,ZZZ")
         (map:get memo key)
         (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key)
         )))))
-(fibonacci 10)`,
-        { std: 1, compile: 1, eval: 1, mutation: 1 }
+(fibonacci 10)`
       ),
       55
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let memoized:fibonacci (lambda n
     (if (< n 2) n (+ (memoized:fibonacci (- n 1)) (memoized:fibonacci (- n 2))))))
-    (memoized:fibonacci 10)`,
-        { std: 1, compile: 1, eval: 1, mutation: 1 }
+    (memoized:fibonacci 10)`
       ),
       55
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let max-count-of (lambda nums
       (math:max
         (array:count-of nums math:positive?)
@@ -490,20 +435,16 @@ ZZZ=ZZZ,ZZZ")
     
     (|>
       (array -2 -1 -1 0 0 1 2)
-      (max-count-of))`,
-        { compile: 1, eval: 1 }
+      (max-count-of))`
       ),
       3
     )
     deepStrictEqual(
-      fez(`(array:exclude (array 1 2 3 4 5) math:even?)`, {
-        compile: 1,
-        eval: 1
-      }),
+      evalJS(`(array:exclude (array 1 2 3 4 5) math:even?)`),
       [1, 3, 5]
     )
     strictEqual(
-      fez(
+      evalJS(
         `(let *input*
     (array
         char:1 char:7 char:2 char:1 char:new-line
@@ -523,37 +464,29 @@ ZZZ=ZZZ,ZZZ")
         (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
         (array:sort (lambda a b (> a b)))
         (solve (lambda x (- 2020 x)))
-        (math:product))`,
-        { eval: 1, compile: 1 }
+        (math:product))`
       ),
       514579
     )
     strictEqual(
-      fez(`(string:has? "It was a dark and stormy night" "dark")`, {
-        compile: 1,
-        eval: 1
-      }),
+      evalJS(`(string:has? "It was a dark and stormy night" "dark")`),
       1
     )
     strictEqual(
-      fez(`(string:has? "It was a dark and stormy night" "day")`, {
-        compile: 1,
-        eval: 1
-      }),
+      evalJS(`(string:has? "It was a dark and stormy night" "day")`),
       0
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(array
   (string:trim-right "  12 3  4  ")
   (string:trim-left "  12 3  4  ")
-  (string:trim " 12 3  4    "))`,
-        { compile: 0, mutation: 0 }
+  (string:trim " 12 3  4    "))`
       ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )
     strictEqual(
-      fez(
+      evalJS(
         `(and
           (= (string:greater? "a" "a") 0)
           (= (string:greater? "a" "b") 1)
@@ -578,20 +511,18 @@ ZZZ=ZZZ,ZZZ")
           (= (string:lesser-or-equal? "aa" "bb") 0)
           (= (string:lesser-or-equal? "bb" "aa") 1)
           (= (string:lesser-or-equal? "aa" "aa") 1)
-          (= (string:lesser-or-equal? "b" "a") 1))`,
-        { compile: 0, mutation: 0 }
+          (= (string:lesser-or-equal? "b" "a") 1))`
       ),
       1
     )
     deepStrictEqual(
-      fez(
-        `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
-        { compile: 0 }
+      evalJS(
+        `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`
       ),
       [45, 49, 50, 51, 45, 52, 45, 53, 54, 55]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let parse (lambda input
 (|> input
     (string:trim)
@@ -662,13 +593,12 @@ ZZZ=ZZZ,ZZZ")
     )) '('() '()))
 ))))
   (array:fold (lambda a b (+ a (dpm (car b) (car (cdr b)) '(() () () () () () ())))) 0))))
-'((part1 sample) (part2 sample))`,
-        { eval: 1, compile: 1, mutation: 1 }
+'((part1 sample) (part2 sample))`
       ),
       [21, 525152]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let samples '(
     "(())"    ;  result in floor 0.
     "()()"    ;  result in floor 0.
@@ -691,8 +621,7 @@ ZZZ=ZZZ,ZZZ")
                         (*) (recursive:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
     (recursive:part2 input 0 0))))
 '((|> samples (array:map part1)) (|> samples (array:map part2)))
-`,
-        { eval: 1, compile: 1 }
+`
       ),
       [
         [0, 0, 3, 3, 3, -1, -1, -3, -3, -1, -1],
@@ -700,7 +629,7 @@ ZZZ=ZZZ,ZZZ")
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let parse (lambda input (|> input
                              (string:lines)
                              (array:map (lambda x (|> x
@@ -739,13 +668,12 @@ ZZZ=ZZZ,ZZZ")
   ))) 
   (math:summation))))
 
-'((part1 (parse sample)) (part2 (parse sample)))`,
-        { std: 1, eval: 1, compile: 1 }
+'((part1 (parse sample)) (part2 (parse sample)))`
       ),
       [101, 48]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let char:right (car ">"))
 (let char:left (car "<"))
 (let char:down (car "v"))
@@ -773,8 +701,7 @@ ZZZ=ZZZ,ZZZ")
   (walk map (array:even-indexed x))
   (walk map (array:odd-indexed x))
   (length (array:flat-one (array:select map array:not-empty?))))))
-'((|> '(">" "^>v<" "^v^v^v^v^v" "^v") (array:map part1)) (|> '("^v" "^>v<" "^v^v^v^v^v" "^^vv") (array:map part2)))`,
-        { eval: 1, compile: 1, mutation: 1 }
+'((|> '(">" "^>v<" "^v^v^v^v^v" "^v") (array:map part1)) (|> '("^v" "^>v<" "^v^v^v^v^v" "^^vv") (array:map part2)))`
       ),
       [
         [2, 4, 2, 2],
@@ -782,7 +709,7 @@ ZZZ=ZZZ,ZZZ")
       ]
     )
     strictEqual(
-      fez(
+      evalJS(
         `; helpers
 (let keywords (array () () () () () ()))
 (map:set! keywords "let" (lambda args env (do
@@ -808,13 +735,12 @@ ZZZ=ZZZ,ZZZ")
                                                  (evaluate (array:get args 2) env)
                                                  0))))
 (let run (lambda source (apply (map:get keywords "do") (from:chars->ast source) keywords)))
-(run (array:concat '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`,
-        { mutation: 1, eval: 1, compile: 1 }
+(run (array:concat '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`
       ),
       29
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let n-queen (lambda n (do
   (let solutions ())
   (let cols '(() () () () () () ()))
@@ -843,8 +769,7 @@ ZZZ=ZZZ,ZZZ")
                 (set! (array:get board row) col ".")))))))))))))
   (backtrack 0)
   solutions)))
-'((n-queen 1) (n-queen 4))`,
-        { mutation: 1, compile: 1, eval: 1 }
+'((n-queen 1) (n-queen 4))`
       ),
       [
         [[[81]]],
@@ -865,7 +790,7 @@ ZZZ=ZZZ,ZZZ")
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let sample (array:concat '(
     "ugknbfddgicrmopn" '(char:new-line)
     "aaa" '(char:new-line)
@@ -945,17 +870,15 @@ ZZZ=ZZZ,ZZZ")
 (let part2 (lambda input (|> input (parse) (array:map nicer?) (math:summation))))
 
 '((part1 sample) (part2 sample2) (part2 sample3) (part2 sample4))
-`,
-        { compile: 1, eval: 1 }
+`
       ),
       [2, 2, 0, 1]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `
 '((|> "abcdef" (array:partition 2) (array:map string:upper) (array:map from:hex->dec))
-(|> "609043" (from:chars->digits) (array:map from:dec->hex)))`,
-        { compile: 1, eval: 1 }
+(|> "609043" (from:chars->digits) (array:map from:dec->hex)))`
       ),
       [
         [171, 205, 239],
@@ -969,15 +892,14 @@ ZZZ=ZZZ,ZZZ")
         ]
       ]
     )
+    deepStrictEqual(evalJS(`(|> (math:range 1 10) (array:partition 3))`), [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+      [10]
+    ])
     deepStrictEqual(
-      fez(`(|> (math:range 1 10) (array:partition 3))`, {
-        compile: 1,
-        eval: 1
-      }),
-      [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
-    )
-    deepStrictEqual(
-      fez(
+      evalJS(
         `(let N 8)
 (let matrix (|> (math:zeroes N) (array:map (lambda x (array:map (math:zeroes N) (lambda . 0))))))
 (let add-glider! (lambda matrix y x (do 
@@ -1034,8 +956,7 @@ matrix
 ; (render)
 ; (log-string!)
 )
-`,
-        { compile: 1, eval: 1, mutation: 1 }
+`
       ),
       [
         [0, 0, 0, 0, 0, 0, 0, 0],
@@ -1049,13 +970,12 @@ matrix
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `'((from:list->array (from:array->list (array 1 2 3 4)))
 (|> (math:list-range 1 10) (list:filter math:even?) (from:list->array))
 (from:list->array (list:pair 1 (list:pair 2 (list:pair 3 ()))))
 (from:list->array (math:list-range 1 10))
-(|> (math:list-range 1 2) (list:map (lambda x (* x x))) (list:fold + 0)))`,
-        { compile: 1, eval: 1 }
+(|> (math:list-range 1 2) (list:map (lambda x (* x x))) (list:fold + 0)))`
       ),
       [
         [1, 2, 3, 4],
@@ -1066,7 +986,7 @@ matrix
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let fizz-buzz (lambda x 
               (cond 
                 (= (mod x 15) 0) "fizz buzz" 
@@ -1078,8 +998,7 @@ matrix
   (list:map fizz-buzz)
   (from:list->array)
 )
-`,
-        { compile: 1, eval: 1 }
+`
       ),
       [
         1,
@@ -1110,14 +1029,13 @@ matrix
       ]
     )
     deepStrictEqual(
-      fez(
-        `(array (from:positive-or-negative-digits->chars (array -1)) (from:positive-or-negative-digits->chars (array 1)))`,
-        { compile: 1, eval: 1 }
+      evalJS(
+        `(array (from:positive-or-negative-digits->chars (array -1)) (from:positive-or-negative-digits->chars (array 1)))`
       ),
       [[45, 49], [49]]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let empty! (lambda arr (do 
       (let recursive:iterate (lambda 
         (unless (= (length arr) 0) 
@@ -1126,13 +1044,12 @@ matrix
 '( 
   (do 1 2)
   (empty! '(1 2 3 4 5))
-)`,
-        { mutation: 1, compile: 1, eval: 1 }
+)`
       ),
       [2, []]
     )
     strictEqual(
-      fez(
+      evalJS(
         `(do 
   (let v1 (var:def 0))
   (unless (> 2 3)
@@ -1141,26 +1058,24 @@ matrix
               (|> v1 (var:set! (+ v 10))))
         "Noooo!")
 (var:get v1))
-`,
-        { mutation: 1, compile: 1, eval: 1 }
+`
       ),
       25
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let map (lambda xs f (do
   (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
   (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
   (list:reverse (recursive:iter xs ())))))
-  (map (list 2 3 4) math:square)`,
-        { compile: 1, eval: 1 }
+  (map (list 2 3 4) math:square)`
       ),
       [4, [9, [16, []]]]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(|> 
   '(1 2 3 4 5)
   (from:array->list)
@@ -1172,16 +1087,14 @@ matrix
   (list:map math:sqrt)
   (list:map math:floor)
   (from:list->array)
-)`,
-        { compile: 1, eval: 1 }
+)`
       ),
       [1, 2, 3, 4, 5]
     )
 
     deepStrictEqual(
-      fez(
-        `(array (string:pad-left "aaa" 13 "x") (string:pad-right "aaa" 13 "x"))`,
-        { compile: 1, eval: 1 }
+      evalJS(
+        `(array (string:pad-left "aaa" 13 "x") (string:pad-right "aaa" 13 "x"))`
       ),
       [
         [120, 120, 120, 120, 120, 120, 120, 120, 120, 120, 97, 97, 97],
@@ -1190,7 +1103,7 @@ matrix
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `
       (let out \`(\`(1 2 3) \`(4 5 6)))
 '((|>
@@ -1198,8 +1111,7 @@ matrix
  (list:flatten)
  (from:list->array)
 ) (array:map (from:list->array out) from:list->array))
-      `,
-        { ocmpile: 1, eval: 1 }
+      `
       ),
       [
         [1, 2, 3, 4, 5, 6],
@@ -1210,37 +1122,34 @@ matrix
       ]
     )
 
-    deepStrictEqual(
-      fez(`(list:slice \`(1 2 3 4 5 6) 1 4)`, { compile: 1, eval: 1 }),
-      [2, [3, [4, []]]]
-    )
+    deepStrictEqual(evalJS(`(list:slice \`(1 2 3 4 5 6) 1 4)`), [
+      2,
+      [3, [4, []]]
+    ])
 
     deepStrictEqual(
-      fez(
-        `(|> (list (list 1 2) (list 3 4) (list 5 6) (list 7 8)) (list:concat!) (from:list->array))`,
-        { compile: 1, eval: 1, mutation: 1 }
+      evalJS(
+        `(|> (list (list 1 2) (list 3 4) (list 5 6) (list 7 8)) (list:concat!) (from:list->array))`
       ),
       [1, 2, 3, 4, 5, 6, 7, 8]
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `'(
   (|> '('(2 3) '(3 5) '(5 7) '(11 13) '(17 19) '(21 22) '(29 31) '(41 43)) (array:every? (lambda x (math:coprime? (array:first x) (array:second x)))))
   (|> '('(2 4) '(4 8) '(4 16)) (array:some? (lambda x (math:coprime? (array:first x) (array:second x)))))
-)`,
-        { compile: 1, eval: 1 }
+)`
       ),
       [1, 0]
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `'(
   (from:list->array (list:insert-at \`(1 2 3 4) 1 10))
   (from:list->array (list:remove-at \`(1 2 3 4) 1))
-)`,
-        { compile: 1, eval: 1 }
+)`
       ),
       [
         [1, 10, 2, 3, 4],
@@ -1248,7 +1157,7 @@ matrix
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let sample (array:concat-with '(
     "..........."
     ".....###.#."
@@ -1293,14 +1202,13 @@ matrix
         (recursive:while)
         (var:set! output (length (array:flat-one steps)))))))
   (var:get output))))
-(part1 (parse sample))`,
-        { mutation: 1, compile: 1, eval: 1 }
+(part1 (parse sample))`
       ),
       42
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let arr1 (from:array->brray '(1 2 3 4 5)))
 (let arr2 (from:array->brray '(1 2 3 4 5)))
 (brray:tail! arr1)
@@ -1313,14 +1221,13 @@ matrix
 (brray:head! arr2)
 (brray:head! arr2)
 (brray:head! arr2)
-'((brray:length arr1) (brray:length arr2))`,
-        { mutation: 1, compile: 1, eval: 1 }
+'((brray:length arr1) (brray:length arr2))`
       ),
       [0, 0]
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `
 (let INPUT (array:concat-with '(
     "3   4"
@@ -1372,13 +1279,12 @@ matrix
 
 (let PARSED (parse INPUT))
 (array (part1 PARSED) (part2 PARSED) (part2-better PARSED))
-      `,
-        { mutation: 1, compile: 1, eval: 1 }
+      `
       ),
       [11, 31, 31]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let INPUT (array:concat-with '(
 "7 6 4 2 1"
 "1 2 7 8 9"
@@ -1403,13 +1309,12 @@ matrix
                             (array:map (lambda x (not (not (part1 x)))))
                             (array:count 1))))
 (let PARSED (parse INPUT))
-'((part1 PARSED) (part2 PARSED))`,
-        { compile: 1, eval: 1 }
+'((part1 PARSED) (part2 PARSED))`
       ),
       [2, 4]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let iINPUT (array:concat-with '(
 "7 6 4 2 1"
 "1 2 7 8 9"
@@ -1433,13 +1338,12 @@ matrix
                             (array:count-of (lambda x (math:positive? (part1 x)))))))
 
 (let PARSED (parse iINPUT))
-'((part1 PARSED) (part2 PARSED))`,
-        { compile: 1, eval: 1 }
+'((part1 PARSED) (part2 PARSED))`
       ),
       [2, 4]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let sample "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)")
 (let sample2 "mul(4*, mul(6,9!, ?(12,34), or mul ( 2 , 4 )")
 (let sample3 "mul(1, 2)")
@@ -1504,22 +1408,20 @@ matrix
 (part1 (parse sample))
 (part1 (parse sample2))
 (part1 (parse sample3))
-(part1 (parse sample4)))`,
-        { mutation: 1, compile: 1, eval: 1 }
+(part1 (parse sample4)))`
       ),
       [161, 0, 0, 48]
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let zipped (list:zip \`(1 2 3 4 5) \`(4 5 2 4 6)))
 (|> 
   zipped
   (list:unzip)
   (tuple:list-zip)
   (list:map from:list->array)
-  (from:list->array))`,
-        { compile: 1, eval: 1 }
+  (from:list->array))`
       ),
       [
         [1, 4],
@@ -1530,7 +1432,7 @@ matrix
       ]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let sample "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5)")
 (let sample2 "mul(4*, mul(6,9!, ?(12,34), or mul ( 2 , 4 )")
 (let sample3 "mul(1, 2)")
@@ -1595,14 +1497,13 @@ matrix
 '((part1 (parse sample))
 ; (part1 (parse sample2))
 ; (part1 (parse sample3))
-(part1 (parse sample4)))`,
-        { mutation: 1, compile: 1, eval: 1 }
+(part1 (parse sample4)))`
       ),
       [161, 48]
     )
 
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let sample 
   (array:concat-with '(
       "MMMSXXMASM"
@@ -1659,13 +1560,12 @@ matrix
             (and (= A char:M) (= B char:M) (= C char:S) (= D char:S))
             (and (= A char:S) (= B char:S) (= C char:M) (= D char:M)))))) 0)))))
 (let PARSED (parse sample))
-'((part1 PARSED) (part2 PARSED))`,
-        { mutation: 1, compile: 1, eval: 1 }
+'((part1 PARSED) (part2 PARSED))`
       ),
       [18, 9]
     )
     deepStrictEqual(
-      fez(
+      evalJS(
         `(let INPUT (array:concat-with '( 
   "47|53"
   "97|13"
@@ -1743,15 +1643,14 @@ matrix
     (array:map (lambda x (array:sort x (lambda a b (not (set:has? memo (from:chars->key a b)))))))
     (sum-mid)))))
 
-    '((part1 PARSED) (part2 PARSED))`,
-        { mutation: 1, compile: 1, eval: 1 }
+    '((part1 PARSED) (part2 PARSED))`
       ),
       [143, 123]
     )
   })
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT (array:concat-with '(
   "....#....."
   ".........#"
@@ -1829,14 +1728,13 @@ matrix
   (var:get loops))))
   
 (let PARSED (parse INPUT))
-'((part1 PARSED) (part2 PARSED))`,
-      { mutation: 1, compile: 1, eval: 1 }
+'((part1 PARSED) (part2 PARSED))`
     ),
     [41, 6]
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `
    (let INPUT (array:concat-with '(
   "190: 10 19"
@@ -1891,13 +1789,12 @@ matrix
 
 '((sum PARSED part1) (sum PARSED part2))
 
-    `,
-      { compile: 1, eval: 1 }
+    `
     ),
     [3749, 11387]
   )
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT (array:concat-with '(
   "............"
   "........0..."
@@ -1990,13 +1887,12 @@ matrix
  
  (let PARSED (parse INPUT))
 
-'((part1 PARSED) (part2 PARSED))`,
-      { mutation: 1, compile: 1, eval: 1 }
+'((part1 PARSED) (part2 PARSED))`
     ),
     [14, 34]
   )
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT (array:concat-with '(
   "89010123"
   "78121874"
@@ -2064,14 +1960,13 @@ matrix
 
 (let PARSED (parse INPUT))
 
-'((part1 PARSED) (part2 PARSED))`,
-      { mutation: 1, compile: 1, eval: 1 }
+'((part1 PARSED) (part2 PARSED))`
     ),
     [36, 81]
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `
     (let INPUT "125 17")
 (let parse (lambda input (|> input (string:words) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
@@ -2105,14 +2000,13 @@ matrix
 
 (let PARSED (parse INPUT))
 '((part1 PARSED) (part2 PARSED))
-    `,
-      { mutation: 1, compile: 1, eval: 1 }
+    `
     ),
     [13, 13]
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT (string:concat-with-lines '(
     "p=0,4 v=3,-3"
     "p=6,3 v=-1,-3"
@@ -2189,14 +2083,13 @@ matrix
 
 (let PARSED (parse INPUT))
 '((part1 PARSED))
-`,
-      { mutation: 1, eval: 1, compile: 1 }
+`
     ),
     [12]
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT "2333133121414131402")
 (let parse (lambda input (from:chars->digits input)))
 (let part1 (lambda input (do
@@ -2220,14 +2113,13 @@ matrix
         (|> disk (array:enumerated-fold (lambda a b i (+ a (* b i))) 0)))))
        
 (let PARSED (parse INPUT))
-'((part1 PARSED))`,
-      { mutation: 1, compile: 1, eval: 1 }
+'((part1 PARSED))`
     ),
     [1928]
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let samples '(
     "(())"    ; result in floor 0.
     "()()"    ; result in floor 0.
@@ -2251,8 +2143,7 @@ matrix
                         (*) (recursive:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
     (recursive:iter input 0 0))))
 '((|> samples (array:map part1)) (|> samples (array:map part2)))
-`,
-      { compile: 1, eval: 1 }
+`
     ),
     [
       [0, 0, 3, 3, 3, -1, -1, -3, -3, -1, -1],
@@ -2260,7 +2151,7 @@ matrix
     ]
   )
   strictEqual(
-    fez(
+    evalJS(
       `(let parse (lambda input (|> input 
                               (string:lines)
                               (array:map (lambda line 
@@ -2288,14 +2179,13 @@ matrix
         (parse)
         (solve))
 
-`,
-      { compile: 1, eval: 1 }
+`
     ),
     288
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let out ())
 (let comp (lambda a b (< a b)))
 (let heap (from:array->heap '(30 10 50 20 40) comp))
@@ -2305,14 +2195,13 @@ matrix
 (heap:pop! heap comp)
 (recursive:while)))))
 (recursive:while)
-(identity out)`,
-      { mutation: 1, compile: 1, eval: 1 }
+(identity out)`
     ),
     [10, 20, 30, 40, 50]
   )
 
   strictEqual(
-    fez(
+    evalJS(
       `(let INPUT
     (string:concat-with-lines '(
         "###############"
@@ -2376,14 +2265,13 @@ matrix
     (recursive:while))))
 
 (let PARSED (parse INPUT))
-(part1 PARSED)`,
-      { mutation: 1, compile: 1, eval: 1 }
+(part1 PARSED)`
     ),
     7036
   )
 
   strictEqual(
-    fez(
+    evalJS(
       `
 (let part1 (lambda matrix (do 
 
@@ -2447,14 +2335,13 @@ matrix
         "#.....#...#.#.#"
         "#.###.#.#.#.#.#"
         "#S..#.....#...#"
-        "###############"))))`,
-      { mutation: 1, compile: 1, eval: 1 }
+        "###############"))))`
     ),
     7036
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let object (new:map '(
     "x" 69 
     "y" 29 
@@ -2471,23 +2358,21 @@ matrix
   (map:get object "x")
   (map:get object "y")
   (map:get object "price")
-   (|> U (array:flat-one) (array:map from:chars->number)))`,
-      { mutation: 1, compile: 1, eval: 1 }
+   (|> U (array:flat-one) (array:map from:chars->number)))`
     ),
     [100, 69, 29, 42, [40, 100, 200, 50]]
   )
 
   strictEqual(
-    fez(
+    evalJS(
       `
-(|> '("-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`,
-      { compile: 1, eval: 1 }
+(|> '("-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`
     ),
     2240
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let I 
 "Register A: 729
 Register B: 0
@@ -2636,14 +2521,13 @@ Program: 0,1,5,4,3,0"
 ; "Program: 4,0"
 ; ))))
 
-`,
-      { mutation: 1, compile: 1, eval: 1 }
+`
     ),
     [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
   )
 
   strictEqual(
-    fez(
+    evalJS(
       `(let I 
 "5,4
 4,2
@@ -2708,14 +2592,13 @@ Program: 0,1,5,4,3,0"
     (recursive:while)
     (var:get solution))))
     
-    (part1 (parse I) 12)`,
-      { mutation: 1, eval: 1, compile: 1 }
+    (part1 (parse I) 12)`
     ),
     22
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT 
 "r, wr, b, g, bwu, rb, gb, br
 
@@ -2773,14 +2656,13 @@ bbrgwb")
 (let PARSED (parse INPUT))
 
 '((part1 PARSED) (part2 PARSED))
-`,
-      { mutation: 1, compile: 1, eval: 1 }
+`
     ),
     [6, 16]
   )
 
   deepStrictEqual(
-    fez(
+    evalJS(
       `(let INPUT
 "1
 10
@@ -2837,8 +2719,7 @@ bbrgwb")
 
 )))
 (let PARSED (parse INPUT))
-'((part1 PARSED))`,
-      { mutation: 1, compile: 1, eval: 1 }
+'((part1 PARSED))`
     ),
     [37327623]
   )

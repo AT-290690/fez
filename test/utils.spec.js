@@ -136,16 +136,18 @@ bbrgwb")
       .map((ast) => deSuggar(ast))
       .forEach((ast) =>
         deepStrictEqual(
-          fez(LISP.source(ast), {
-            mutation: 1,
-            compile: 1,
-            eval: 1
-          }),
-          fez(AST.parse(AST.stringify(ast)), {
-            mutation: 1,
-            compile: 1,
-            eval: 1
-          })
+          eval(
+            fez(LISP.source(ast), {
+              mutation: 1,
+              compile: 1
+            })
+          ),
+          eval(
+            fez(AST.parse(AST.stringify(ast)), {
+              mutation: 1,
+              compile: 1
+            })
+          )
         )
       ))
 })
