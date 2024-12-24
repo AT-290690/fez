@@ -8,13 +8,13 @@ export const logError = (error) =>
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
 export const replaceStrings = (source) => {
   // const quotes = source.match(/"(.*?)"/g)
-  const quotes = source.match(/"(?:.*?\n)*?.*?"/g)
+  const quotes = source.match(/"(?:.*?(\n|\r))*?.*?"/g)
   // TODO handle escaping
   if (quotes)
     for (const q of quotes)
       source = source.replaceAll(
         q,
-        `(array ${[...q]
+        `(array ${[...q.replaceAll('\r', '')]
           .slice(1, -1)
           .map((x) => x.charCodeAt(0))
           .join(' ')})`
