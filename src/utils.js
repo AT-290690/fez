@@ -1,6 +1,6 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import { APPLY, ATOM, KEYWORDS, SUGGAR, TYPE, VALUE, WORD } from './keywords.js'
 import { evaluate, run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) =>
@@ -102,8 +102,8 @@ export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
     case KEYWORDS.DEFINE_VARIABLE:
-    case KEYWORDS.RECURSION:
-    case KEYWORDS.CACHE:
+    case SUGGAR.RECURSION:
+    case SUGGAR.CACHE:
       return true
     default:
       return !isNaN(name[0])
@@ -410,13 +410,13 @@ export const deSuggar = (ast) => {
               //     }
               //   }
               // break
-              case KEYWORDS.PIPE:
+              case SUGGAR.PIPE:
                 {
                   if (rest.length < 1)
                     throw new RangeError(
                       `Invalid number of arguments to (${
-                        KEYWORDS.PIPE
-                      }) (>= 1 required). (${KEYWORDS.PIPE} ${stringifyArgs(
+                        SUGGAR.PIPE
+                      }) (>= 1 required). (${SUGGAR.PIPE} ${stringifyArgs(
                         rest
                       )})`
                     )
@@ -426,10 +426,10 @@ export const deSuggar = (ast) => {
                     if (!rest[i].length || rest[i][0][TYPE] !== APPLY)
                       throw new TypeError(
                         `Argument at position (${i}) of (${
-                          KEYWORDS.PIPE
+                          SUGGAR.PIPE
                         }) is not an invoked (${
                           KEYWORDS.ANONYMOUS_FUNCTION
-                        }). (${KEYWORDS.PIPE} ${stringifyArgs(rest)})`
+                        }). (${SUGGAR.PIPE} ${stringifyArgs(rest)})`
                       )
                     inp = [rest[i].shift(), inp, ...rest[i]]
                   }
@@ -437,7 +437,7 @@ export const deSuggar = (ast) => {
                   deSuggar(exp)
                 }
                 break
-              case KEYWORDS.LIST_TYPE:
+              case SUGGAR.LIST_TYPE:
                 {
                   exp.length = 0
                   let temp = exp
@@ -447,6 +447,58 @@ export const deSuggar = (ast) => {
                   }
                   temp.push([0, 'array'])
                   deSuggar(exp)
+                }
+                break
+              case SUGGAR.INTEGER_DEVISION:
+                {
+                  if (rest.some((x) => x[TYPE] === APPLY))
+                    throw new TypeError(
+                      `Arguments of (${
+                        SUGGAR.INTEGER_DEVISION
+                      }), must be (or atom word) (hint use (math:floor (${
+                        KEYWORDS.DIVISION
+                      } a b)) instead) (${
+                        SUGGAR.INTEGER_DEVISION
+                      } ${stringifyArgs(rest)})`
+                    )
+                  else {
+                    exp.length = 1
+                    exp[0] = [APPLY, KEYWORDS.BITWISE_OR]
+                    exp.push([[APPLY, KEYWORDS.DIVISION], ...rest])
+                    exp.push([ATOM, 0])
+                  }
+                }
+                break
+              case SUGGAR.POWER:
+                {
+                  if (rest.length !== 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        SUGGAR.POWER
+                      }), expected (= 2) but got ${rest.length} (${
+                        SUGGAR.POWER
+                      } ${stringifyArgs(rest)})`
+                    )
+                  if (
+                    (exp[2][TYPE] === ATOM || exp[2][TYPE] === WORD) &&
+                    (exp[1][TYPE] === WORD || exp[1][TYPE] === ATOM)
+                  ) {
+                    exp[0][VALUE] = KEYWORDS.MULTIPLICATION
+                    const exponent = exp[1]
+                    const power = exp[2][VALUE]
+                    exp.length = 1
+                    const right = Array.from({ length: power })
+                      .fill(0)
+                      .map(() => [exponent[TYPE], exponent[VALUE]])
+                    exp.push(...right)
+                  } else
+                    throw new TypeError(
+                      `ArgumentS of (${
+                        SUGGAR.POWER
+                      }), must be (or atom word) (hint use math:power instead) (${
+                        SUGGAR.POWER
+                      } ${stringifyArgs(rest)})`
+                    )
                 }
                 break
               case KEYWORDS.MULTIPLICATION:
@@ -462,14 +514,14 @@ export const deSuggar = (ast) => {
                   exp[0][1] = 0
                 }
                 break
-              case KEYWORDS.UNLESS:
+              case SUGGAR.UNLESS:
                 {
                   if (rest.length > 3 || rest.length < 2)
                     throw new RangeError(
                       `Invalid number of arguments for (${
-                        KEYWORDS.UNLESS
+                        SUGGAR.UNLESS
                       }), expected (or (= 3) (= 2)) but got ${rest.length} (${
-                        KEYWORDS.UNLESS
+                        SUGGAR.UNLESS
                       } ${stringifyArgs(rest)})`
                     )
                   exp[0][1] = KEYWORDS.IF
@@ -480,8 +532,8 @@ export const deSuggar = (ast) => {
                 deSuggar(exp)
                 break
 
-              case KEYWORDS.NOT_EQUAL_1:
-              case KEYWORDS.NOT_EQUAL_2:
+              case SUGGAR.NOT_EQUAL_1:
+              case SUGGAR.NOT_EQUAL_2:
                 {
                   if (rest.length > 3 || rest.length < 2)
                     throw new RangeError(

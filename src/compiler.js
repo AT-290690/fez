@@ -5,7 +5,8 @@ import {
   KEYWORDS,
   TYPE,
   VALUE,
-  WORD
+  WORD,
+  SUGGAR
 } from './keywords.js'
 import { leaf, isLeaf } from './parser.js'
 const deepRenameTco = (name, newName, tree) => {
@@ -176,9 +177,9 @@ const compile = (tree, Drill) => {
       case KEYWORDS.DEFINE_VARIABLE: {
         const n = Arguments[0][VALUE]
         const prefix = n.split(':')[0]
-        if (prefix === KEYWORDS.RECURSION) {
+        if (prefix === SUGGAR.RECURSION) {
           const name = lispToJavaScriptVariableName(n)
-          const newName = `recursive_${performance
+          const newName = `${SUGGAR.RECURSION}_${performance
             .now()
             .toString()
             .replace('.', 7)}`
@@ -199,10 +200,10 @@ const compile = (tree, Drill) => {
           )})=>{${vars}return ${evaluatedBody
             .toString()
             .trim()}}, ${newName})));`
-        } else if (prefix === KEYWORDS.CACHE) {
+        } else if (prefix === SUGGAR.CACHE) {
           // memoization here
           const name = lispToJavaScriptVariableName(n)
-          const newName = name.substring(KEYWORDS.CACHE.length + 1)
+          const newName = name.substring(SUGGAR.CACHE.length + 1)
           Drill.Variables.add(name)
           const functionArgs = Arguments.at(-1).slice(1)
           const body = functionArgs.pop()

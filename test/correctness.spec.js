@@ -4,6 +4,12 @@ import { fez } from '../src/utils.js'
 const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(evalJS(`(let x 13) (let y 2) (// x y y)`), 3)
+    strictEqual(evalJS(`(let x 13) (let y 2) (// x y 2)`), 3)
+    strictEqual(evalJS(`(let x 2) (// 13 x x)`), 3)
+    strictEqual(evalJS(`(// 13 2 2)`), 3)
+    strictEqual(evalJS(`(let x 2) (** x 4)`), 16)
+    strictEqual(evalJS(`(** 2 4)`), 16)
     deepStrictEqual(
       evalJS(
         `(string:trim "

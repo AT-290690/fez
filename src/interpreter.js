@@ -651,29 +651,6 @@ export const keywords = {
       )
     return operands.reduce((acc, x) => acc >>> x)
   },
-  // [KEYWORDS.PIPE]: (args, env) => {
-  //   if (args.length < 1)
-  //     throw new RangeError(
-  //       `Invalid number of arguments to (${KEYWORDS.PIPE}) (>= 1 required). (${
-  //         KEYWORDS.PIPE
-  //       } ${stringifyArgs(args)})`
-  //     )
-  //   let inp = args[0]
-  //   for (let i = 1; i < args.length; ++i) {
-  //     if (!args[i].length || args[i][0][TYPE] !== APPLY)
-  //       throw new TypeError(
-  //         `Argument at position (${i}) of (${
-  //           KEYWORDS.PIPE
-  //         }) is not an invoked (${KEYWORDS.ANONYMOUS_FUNCTION}). (${
-  //           KEYWORDS.PIPE
-  //         } ${stringifyArgs(args)})`
-  //       )
-  //     const [first, ...rest] = args[i]
-  //     const arr = [first, inp, ...rest]
-  //     inp = arr
-  //   }
-  //   return evaluate(inp, env)
-  // },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
     if (args.length !== 1 && args.length !== 3)
       throw new RangeError(

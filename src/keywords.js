@@ -6,6 +6,19 @@ export const ATOM = 2
 export const TRUE = 1
 export const FALSE = 0
 export const PLACEHOLDER = '.'
+export const SUGGAR = {
+  // Syntactic suggars
+  PIPE: '|>',
+  NOT_EQUAL_1: '!=',
+  NOT_EQUAL_2: '<>',
+  UNLESS: 'unless',
+  LIST_TYPE: 'list',
+  POWER: '**',
+  INTEGER_DEVISION: '//',
+
+  RECURSION: 'recursive',
+  CACHE: 'memoized'
+}
 export const KEYWORDS = {
   NUMBER_TYPE: 'number',
   ARRAY_TYPE: 'array',
@@ -49,17 +62,7 @@ export const KEYWORDS = {
   LOG_CHAR: 'log-char!',
   CLEAR_CONSOLE: 'clear!',
 
-  THROW: 'throw',
-
-  // Syntactic suggars
-  PIPE: '|>',
-  NOT_EQUAL_1: '!=',
-  NOT_EQUAL_2: '<>',
-  UNLESS: 'unless',
-  LIST_TYPE: 'list',
-
-  RECURSION: 'recursive',
-  CACHE: 'memoized'
+  THROW: 'throw'
 }
 
 export const TYPES = {
