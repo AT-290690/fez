@@ -1006,18 +1006,18 @@
              (array:join (array char:space)))))
  (array:join (array char:new-line))))))
 (let string:trim-left (lambda str (do
-  (let tr (array 1))
+  (let tr (bool:true))
   (|> str (array:fold (lambda a b (if
-  (and (array:first tr) (= b char:space)) a
+  (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
-      (if (array:first tr) (set! tr 0 0))
+      (if (bool:true? tr) (bool:false! tr))
       (array:merge a (array b))))))) ())))))
 (let string:trim-right (lambda str (do
-  (let tr (array 1))
+  (let tr (bool:true))
   (|> str (array:reverse) (array:fold (lambda a b (if
-  (and (array:first tr) (= b char:space)) a
+  (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
-      (if (array:first tr) (set! tr 0 0))
+      (if (bool:true? tr) (bool:false! tr))
       (array:merge (array b) a)))))) ())))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
 (let string:lines (lambda str (string:split str char:new-line)))

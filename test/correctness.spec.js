@@ -6,6 +6,16 @@ describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       evalJS(
+        `(string:trim "
+      
+      x
+      
+      ")`
+      ),
+      [120]
+    )
+    deepStrictEqual(
+      evalJS(
         `(let m (new:set4))
 (let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
 (|> arr 
