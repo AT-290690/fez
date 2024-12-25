@@ -481,29 +481,26 @@ export const deSuggar = (ast) => {
                     )
                   const isExponentAtom = exp[1][TYPE] === ATOM
                   const isPowerAtom = exp[2][TYPE] === ATOM
-                  if (
-                    (isPowerAtom || exp[2][TYPE] === WORD) &&
-                    (isPowerAtom || exp[1][TYPE] === WORD)
-                  ) {
+                  const isExponentWord = exp[1][TYPE] === WORD
+                  if ((isExponentWord || isExponentAtom) && isPowerAtom) {
                     exp[0][VALUE] = KEYWORDS.MULTIPLICATION
                     const exponent = exp[1]
                     const power = exp[2][VALUE]
                     exp.length = 1
-                    isExponentAtom && isPowerAtom
-                      ? exp.push(exponent, [
-                          ATOM,
-                          exponent[VALUE] ** (power - 1)
-                        ])
-                      : exp.push(
-                          ...Array.from({ length: power })
-                            .fill(0)
-                            .map(() => [exponent[TYPE], exponent[VALUE]])
-                        )
+                    if (isExponentAtom) {
+                      exp.push(exponent, [ATOM, exponent[VALUE] ** (power - 1)])
+                    } else if (isExponentWord) {
+                      exp.push(
+                        ...Array.from({ length: power })
+                          .fill(0)
+                          .map(() => [exponent[TYPE], exponent[VALUE]])
+                      )
+                    }
                   } else
                     throw new TypeError(
-                      `ArgumentS of (${
+                      `Second Arguments of (${
                         SUGGAR.POWER
-                      }), must be (or atom word) (hint use math:power instead) (${
+                      }), must be (atom) (hint use math:power instead) (${
                         SUGGAR.POWER
                       } ${stringifyArgs(rest)})`
                     )
