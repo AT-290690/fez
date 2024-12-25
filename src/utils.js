@@ -1,6 +1,16 @@
 import std from '../lib/baked/std.js'
 import { comp } from './compiler.js'
-import { APPLY, ATOM, KEYWORDS, SUGGAR, TYPE, VALUE, WORD } from './keywords.js'
+import {
+  APPLY,
+  ATOM,
+  FALSE,
+  KEYWORDS,
+  SUGGAR,
+  TRUE,
+  TYPE,
+  VALUE,
+  WORD
+} from './keywords.js'
 import { evaluate, run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 export const logError = (error) =>
@@ -385,8 +395,8 @@ export const deSuggar = (ast) => {
                       prev[TYPE] === APPLY &&
                       prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
                   ) {
-                    exp[0][1] = KEYWORDS.CALL_FUNCTION
-                    exp[0][0] = APPLY
+                    exp[0][VALUE] = KEYWORDS.CALL_FUNCTION
+                    exp[0][TYPE] = APPLY
                     exp.length = 1
                     exp[1] = [
                       [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
@@ -437,15 +447,46 @@ export const deSuggar = (ast) => {
                   deSuggar(exp)
                 }
                 break
+              case SUGGAR.CONDITION:
+                {
+                  if (rest.length < 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        SUGGAR.CONDITION
+                      }), expected (> 2 required) but got ${rest.length} (${
+                        SUGGAR.CONDITION
+                      } ${stringifyArgs(rest)})`
+                    )
+                  if (rest.length % 2 !== 0)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        SUGGAR.CONDITION
+                      }), expected even number of arguments but got ${
+                        rest.length
+                      } (${SUGGAR.CONDITION} ${stringifyArgs(rest)})`
+                    )
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 2) {
+                    if (i === rest.length - 2) {
+                      temp.push([APPLY, KEYWORDS.IF], rest[i], rest.at(-1))
+                    } else {
+                      temp.push([APPLY, KEYWORDS.IF], rest[i], rest[i + 1], [])
+                      temp = temp.at(-1)
+                    }
+                  }
+                  deSuggar(exp)
+                }
+                break
               case SUGGAR.LIST_TYPE:
                 {
                   exp.length = 0
                   let temp = exp
                   for (const item of rest) {
-                    temp.push([0, KEYWORDS.ARRAY_TYPE], item, [])
+                    temp.push([APPLY, KEYWORDS.ARRAY_TYPE], item, [])
                     temp = temp.at(-1)
                   }
-                  temp.push([0, 'array'])
+                  temp.push([APPLY, KEYWORDS.ARRAY_TYPE])
                   deSuggar(exp)
                 }
                 break
@@ -465,7 +506,7 @@ export const deSuggar = (ast) => {
                     exp.length = 1
                     exp[0] = [APPLY, KEYWORDS.BITWISE_OR]
                     exp.push([[APPLY, KEYWORDS.DIVISION], ...rest])
-                    exp.push([ATOM, 0])
+                    exp.push([ATOM, FALSE])
                   }
                 }
                 break
@@ -508,15 +549,15 @@ export const deSuggar = (ast) => {
                 break
               case KEYWORDS.MULTIPLICATION:
                 if (!rest.length) {
-                  exp[0][0] = 2
-                  exp[0][1] = 1
+                  exp[0][TYPE] = ATOM
+                  exp[0][VALUE] = TRUE
                 }
                 break
               case KEYWORDS.ADDITION:
               case KEYWORDS.DIVISION:
                 if (!rest.length) {
-                  exp[0][0] = 2
-                  exp[0][1] = 0
+                  exp[0][TYPE] = ATOM
+                  exp[0][VALUE] = FALSE
                 }
                 break
               case SUGGAR.UNLESS:
@@ -529,9 +570,9 @@ export const deSuggar = (ast) => {
                         SUGGAR.UNLESS
                       } ${stringifyArgs(rest)})`
                     )
-                  exp[0][1] = KEYWORDS.IF
+                  exp[0][VALUE] = KEYWORDS.IF
                   const temp = exp[2]
-                  exp[2] = exp[3] ?? [ATOM, 0]
+                  exp[2] = exp[3] ?? [ATOM, FALSE]
                   exp[3] = temp
                 }
                 deSuggar(exp)
@@ -548,7 +589,7 @@ export const deSuggar = (ast) => {
                         exp[0][1]
                       } ${stringifyArgs(rest)})`
                     )
-                  exp[0][1] = KEYWORDS.NOT
+                  exp[0][VALUE] = KEYWORDS.NOT
                   exp[1] = [[APPLY, KEYWORDS.EQUAL], exp[1], exp[2]]
                   exp.length = 2
                   deSuggar(exp)

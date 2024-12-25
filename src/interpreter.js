@@ -171,37 +171,6 @@ export const keywords = {
       ? evaluate(args[2], env)
       : 0
   },
-  [KEYWORDS.CONDITION]: (args, env) => {
-    if (args.length < 2)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.CONDITION
-        }), expected (> 2 required) but got ${args.length} (${
-          KEYWORDS.CONDITION
-        } ${stringifyArgs(args)})`
-      )
-    if (args.length % 2 !== 0)
-      throw new RangeError(
-        `Invalid number of arguments for (${
-          KEYWORDS.CONDITION
-        }), expected even number of arguments but got ${args.length} (${
-          KEYWORDS.CONDITION
-        } ${stringifyArgs(args)})`
-      )
-    for (let i = 0; i < args.length; i += 2) {
-      const condition = evaluate(args[i], env)
-      if (condition !== FALSE && condition !== TRUE)
-        throw new TypeError(
-          `Condition of (${
-            KEYWORDS.CONDITION
-          }) must be ${TRUE} or ${FALSE} but got (${
-            KEYWORDS.CONDITION
-          } ${stringifyArgs(args)})`
-        )
-      if (condition) return evaluate(args[i + 1], env)
-    }
-    return 0
-  },
   [KEYWORDS.ARRAY_TYPE]: (args, env) => {
     return args.length ? args.map((x) => evaluate(x, env)) : []
   },

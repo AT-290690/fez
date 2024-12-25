@@ -313,16 +313,6 @@ const compile = (tree, Drill) => {
           Drill
         )}:${Arguments.length === 3 ? compile(Arguments[2], Drill) : 0});`
       }
-      case KEYWORDS.CONDITION: {
-        let out = '('
-        for (let i = 0; i < Arguments.length; i += 2)
-          out += `${compile(Arguments[i], Drill)}?${compile(
-            Arguments[i + 1],
-            Drill
-          )}:`
-        out += '0);'
-        return out
-      }
       case KEYWORDS.THROW: {
         Drill.Helpers.add('__error')
         return `__error(${compile(Arguments[0], Drill)})`

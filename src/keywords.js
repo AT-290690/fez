@@ -15,7 +15,7 @@ export const SUGGAR = {
   LIST_TYPE: 'list',
   POWER: '**',
   INTEGER_DEVISION: '//',
-
+  CONDITION: 'cond',
   RECURSION: 'recursive',
   CACHE: 'memoized'
 }
@@ -42,7 +42,6 @@ export const KEYWORDS = {
   BLOCK: 'do',
   ANONYMOUS_FUNCTION: 'lambda',
   IF: 'if',
-  CONDITION: 'cond',
   NOT: 'not',
   EQUAL: '=',
   LESS_THAN: '<',

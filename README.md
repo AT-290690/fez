@@ -256,7 +256,7 @@ console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ```lisp
 ; Build-in all keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...) (>>> ...)
-(mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (cond ...) (atom? ...) (lambda? ...)
+(mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
 (length ...) (do ...) (array ...) (set! ...) (get ...) (lambda ...) (apply ...)
 (throw ...)
 ```
