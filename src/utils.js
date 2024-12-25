@@ -406,20 +406,6 @@ export const deSuggar = (ast) => {
                   }
                 }
                 break
-              // case KEYWORDS.DEFINE_VARIABLE:
-              //   {
-              //     if (
-              //       rest[1] &&
-              //       rest[1][0] &&
-              //       rest[1][0][TYPE] === APPLY &&
-              //       rest[1][0][VALUE] === KEYWORDS.BLOCK
-              //     ) {
-              //       throw new SyntaxError(
-              //         `Can't use (${KEYWORDS.BLOCK}) in (${KEYWORDS.DEFINE_VARIABLE})`
-              //       )
-              //     }
-              //   }
-              // break
               case SUGGAR.PIPE:
                 {
                   if (rest.length < 1)

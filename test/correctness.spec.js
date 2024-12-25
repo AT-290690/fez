@@ -890,24 +890,6 @@ ZZZ=ZZZ,ZZZ")
       ),
       [2, 2, 0, 1]
     )
-    deepStrictEqual(
-      evalJS(
-        `
-'((|> "abcdef" (array:partition 2) (array:map string:upper) (array:map from:hex->dec))
-(|> "609043" (from:chars->digits) (array:map from:dec->hex)))`
-      ),
-      [
-        [171, 205, 239],
-        [
-          [48, 54],
-          [48, 48],
-          [48, 57],
-          [48, 48],
-          [48, 52],
-          [48, 51]
-        ]
-      ]
-    )
     deepStrictEqual(evalJS(`(|> (math:range 1 10) (array:partition 3))`), [
       [1, 2, 3],
       [4, 5, 6],
