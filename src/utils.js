@@ -479,18 +479,26 @@ export const deSuggar = (ast) => {
                         SUGGAR.POWER
                       } ${stringifyArgs(rest)})`
                     )
+                  const isExponentAtom = exp[1][TYPE] === ATOM
+                  const isPowerAtom = exp[2][TYPE] === ATOM
                   if (
-                    (exp[2][TYPE] === ATOM || exp[2][TYPE] === WORD) &&
-                    (exp[1][TYPE] === WORD || exp[1][TYPE] === ATOM)
+                    (isPowerAtom || exp[2][TYPE] === WORD) &&
+                    (isPowerAtom || exp[1][TYPE] === WORD)
                   ) {
                     exp[0][VALUE] = KEYWORDS.MULTIPLICATION
                     const exponent = exp[1]
                     const power = exp[2][VALUE]
                     exp.length = 1
-                    const right = Array.from({ length: power })
-                      .fill(0)
-                      .map(() => [exponent[TYPE], exponent[VALUE]])
-                    exp.push(...right)
+                    isExponentAtom && isPowerAtom
+                      ? exp.push(exponent, [
+                          ATOM,
+                          exponent[VALUE] ** (power - 1)
+                        ])
+                      : exp.push(
+                          ...Array.from({ length: power })
+                            .fill(0)
+                            .map(() => [exponent[TYPE], exponent[VALUE]])
+                        )
                   } else
                     throw new TypeError(
                       `ArgumentS of (${
