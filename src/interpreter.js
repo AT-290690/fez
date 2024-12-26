@@ -233,7 +233,7 @@ export const keywords = {
         throw new RangeError(
           `Incorrect number of arguments for (${
             KEYWORDS.ANONYMOUS_FUNCTION
-          } ${params.map((x) => x[VALUE]).join(' ')}) are provided. (expects ${
+          } ${stringifyArgs(params)}) are provided. (expects ${
             params.length
           } but got ${props.length}) (${
             KEYWORDS.ANONYMOUS_FUNCTION
