@@ -13,10 +13,10 @@ describe('Corretness', () => {
       evalJS(`(array:map (array 5 4 3 2 1) /)`),
       [0.2, 0.25, 0.3333333333333333, 0.5, 1]
     )
-    strictEqual(evalJS(`(let x 13) (let y 2) (// x y y)`), 3)
-    strictEqual(evalJS(`(let x 13) (let y 2) (// x y 2)`), 3)
-    strictEqual(evalJS(`(let x 2) (// 13 x x)`), 3)
-    strictEqual(evalJS(`(// 13 2 2)`), 3)
+    strictEqual(evalJS(`(let x 13) (let y 2) (// x y)`), 6)
+    strictEqual(evalJS(`(let x 13) (// x 2)`), 6)
+    strictEqual(evalJS(`(let x 2) (// 13 x )`), 6)
+    strictEqual(evalJS(`(// 13 2)`), 6)
     strictEqual(evalJS(`(let x 2) (** x 4)`), 16)
     strictEqual(evalJS(`(** 2 4)`), 16)
     deepStrictEqual(

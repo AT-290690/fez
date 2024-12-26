@@ -381,6 +381,38 @@ export const deSuggar = (ast) => {
     if (first != undefined) {
       switch (first[TYPE]) {
         case WORD:
+          {
+            switch (first[VALUE]) {
+              case SUGGAR.POWER:
+                throw new TypeError(
+                  `(${
+                    SUGGAR.POWER
+                  }), can't be used as a word (hint use math:power instead) (${
+                    SUGGAR.POWER
+                  } ${stringifyArgs(rest)})`
+                )
+                break
+              case SUGGAR.INTEGER_DEVISION:
+                exp.length = 0
+                exp.push(
+                  ...[
+                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                    [WORD, 'a'],
+                    [WORD, 'b'],
+                    [
+                      [APPLY, KEYWORDS.BITWISE_OR],
+                      [
+                        [APPLY, KEYWORDS.DIVISION],
+                        [WORD, 'a'],
+                        [WORD, 'b']
+                      ],
+                      [ATOM, 0]
+                    ]
+                  ]
+                )
+                break
+            }
+          }
           break
         case ATOM:
           break
@@ -478,7 +510,15 @@ export const deSuggar = (ast) => {
                 break
               case SUGGAR.INTEGER_DEVISION:
                 {
-                  if (rest.some((x) => x[TYPE] === APPLY))
+                  if (rest.length !== 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        SUGGAR.INTEGER_DEVISION
+                      }), expected (= 2) but got ${rest.length} (${
+                        SUGGAR.INTEGER_DEVISION
+                      } ${stringifyArgs(rest)})`
+                    )
+                  else if (rest.some((x) => x[TYPE] === APPLY))
                     throw new TypeError(
                       `Arguments of (${
                         SUGGAR.INTEGER_DEVISION
@@ -492,7 +532,7 @@ export const deSuggar = (ast) => {
                     exp.length = 1
                     exp[0] = [APPLY, KEYWORDS.BITWISE_OR]
                     exp.push([[APPLY, KEYWORDS.DIVISION], ...rest])
-                    exp.push([ATOM, FALSE])
+                    exp.push([ATOM, 0])
                   }
                 }
                 break
