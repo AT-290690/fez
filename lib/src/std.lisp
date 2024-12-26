@@ -942,20 +942,20 @@
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
    (let pairs (array:reverse (array:zip a b)))
    (let is? (bool:false))
-   (let rec:while (lambda (unless (array:empty? pairs) (do 
+   (let recursive:while (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (rec:while) (bool:set! is? (< (array:first current) (array:second current))))))))
-   (rec:while)
+    (if (= (array:first current) (array:second current)) (recursive:while) (bool:set! is? (< (array:first current) (array:second current))))))))
+   (recursive:while)
    (bool:true? is?)))))))
 (let string:greater? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
    (let pairs (array:reverse (array:zip a b)))
    (let is? (bool:false))
-   (let rec:while (lambda (unless (array:empty? pairs) (do 
+   (let recursive:while (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (rec:while) (bool:set! is? (> (array:first current) (array:second current))))))))
-   (rec:while)
+    (if (= (array:first current) (array:second current)) (recursive:while) (bool:set! is? (> (array:first current) (array:second current))))))))
+   (recursive:while)
    (bool:true? is?)))))))
 (let string:greater-or-equal? (lambda A B (or (string:equal? A B) (string:greater? A B))))
 (let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (string:lesser? A B))))
@@ -964,6 +964,7 @@
    a
    (array:zip b)
    (array:every? (lambda x (= (array:first x) (array:second x)))))))))))
+(let string:not-equal? (lambda a b (not (string:equal? a b))))
 (let string:one-equal? (lambda a b (= (array:first a) (array:first b))))
 (let string:two-equal? (lambda a b (and (string:one-equal? a b) (= (array:second a) (array:second b)))))
 (let string:three-equal? (lambda a b (and (string:two-equal? a b) (= (array:third a) (array:third b)))))
