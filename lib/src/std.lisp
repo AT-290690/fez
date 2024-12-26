@@ -995,6 +995,8 @@
              (array:join colum))))
             
  (array:join (array char:new-line))))))
+(let string:starts-with? (lambda str pattern (and (<= (length pattern) (length str)) (string:equal? (array:slice str 0 (length pattern)) pattern))))
+(let string:ends-with? (lambda str pattern (and (<= (length pattern) (length str)) (string:equal? (array:slice (array:reverse str) 0 (length pattern)) (array:reverse pattern)))))
 (let string:join-as-table (lambda table (do 
 (let M (math:maximum (array:map table math:max-length)))
 (|> 
@@ -1144,7 +1146,7 @@
   (array:fold args (lambda a b (set:add! a b)) initial)))
 (let set:max-capacity (lambda a b (array:buckets (math:max (length a) (length b)))))
 (let set:min-capacity (lambda a b (array:buckets (math:min (length a) (length b)))))
-(let set:values (lambda table (array:flat-one table)))
+(let set:values (lambda table (array:select (array:flat-one table) array:not-empty?)))
 (let set:intersection (lambda a b
         (|> b
           (from:set->array)
