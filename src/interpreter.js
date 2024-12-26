@@ -11,7 +11,8 @@ export const keywords = {
           KEYWORDS.REMAINDER_OF_DIVISION
         } ${stringifyArgs(args)})`
       )
-    const [a, b] = args.map((x) => evaluate(x, env))
+    const a = evaluate(args[0], env)
+    const b = evaluate(args[1], env)
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.REMAINDER_OF_DIVISION}) are (${
@@ -501,7 +502,6 @@ export const keywords = {
     })
     return env[name]
   },
-  [KEYWORDS.NUMBER_TYPE]: () => 0,
   [KEYWORDS.BITWISE_AND]: (args, env) => {
     if (args.length < 2)
       throw new RangeError(

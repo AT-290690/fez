@@ -3,6 +3,16 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(array 
+        (array (/ 5) (- 5)) 
+        (array:map (array 5 4 3 2 1) -)
+      (array:map (array 5 4 3 2 1) /)
+        )`,
+      `(let arr (array 0.1 3.14 1 2 3 4 10))
+(let *FACTOR* 17)
+(let sin (lambda x (math:sine x *FACTOR*)))
+(let cos (lambda x (math:cosine x *FACTOR*)))
+(array (array:map arr sin) (array:map arr cos))`,
       `(let map (lambda xs f (do
   (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
@@ -15,8 +25,7 @@ describe('Compilation & Interpretation', () => {
   (if (< n 2) n
     (if (map:has? memo key) 
         (map:get memo key)
-        (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key)
-        )))))
+        (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key))))))
 (fibonacci 10)`,
       `(let m (new:set4))
 (let arr '(1 1 1 2 2 3 4 4 4 4 4 4))

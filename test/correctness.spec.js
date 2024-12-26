@@ -4,6 +4,15 @@ import { fez } from '../src/utils.js'
 const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(evalJS(`(array (/ 5) (- 5))`), [0.2, -5])
+    deepStrictEqual(
+      evalJS(`(array:map (array 5 4 3 2 1) -)`),
+      [-5, -4, -3, -2, -1]
+    )
+    deepStrictEqual(
+      evalJS(`(array:map (array 5 4 3 2 1) /)`),
+      [0.2, 0.25, 0.3333333333333333, 0.5, 1]
+    )
     strictEqual(evalJS(`(let x 13) (let y 2) (// x y y)`), 3)
     strictEqual(evalJS(`(let x 13) (let y 2) (// x y 2)`), 3)
     strictEqual(evalJS(`(let x 2) (// 13 x x)`), 3)

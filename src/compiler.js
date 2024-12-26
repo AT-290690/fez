@@ -53,6 +53,8 @@ const keywordToHelper = (name) => {
       return '__add'
     case KEYWORDS.MULTIPLICATION:
       return '__mult'
+    case KEYWORDS.DIVISION:
+      return '__div'
     case KEYWORDS.SUBTRACTION:
       return '__sub'
     case KEYWORDS.GREATHER_THAN:
@@ -83,8 +85,9 @@ const lispToJavaScriptVariableName = (name) =>
   )
 const Helpers = {
   __add: `__add=(...numbers)=>{return numbers.reduce((a,b)=>a+b,0)}`,
-  __sub: `__sub=(...numbers)=>{return numbers.reduce((a,b)=>a-b,0)}`,
+  __sub: `__sub=(...numbers)=>{return numbers.length===1?-numbers[0]:numbers.reduce((a,b)=>a-b,0)}`,
   __mult: `__mult=(...numbers)=>{return numbers.reduce((a,b)=>a*b,1)}`,
+  __div: `__div=(...numbers)=>{return numbers.length===1?1/numbers[0]:numbers.reduce((a, b)=>a/b)}`,
   __gteq: '__gteq=(a,b)=>+(a>=b)',
   __gt: '__gt=(a,b)=>+(a>b)',
   __eq: '__eq=(a,b)=>+(a===b)',
