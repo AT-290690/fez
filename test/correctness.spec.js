@@ -501,35 +501,45 @@ ZZZ=ZZZ,ZZZ")
       ).map((x) => x.map((ch) => String.fromCharCode(ch)).join('')),
       ['  12 3  4', '12 3  4  ', '12 3  4']
     )
-    strictEqual(
+    deepStrictEqual(
       evalJS(
-        `(and
-          (= (string:greater? "a" "a") 0)
-          (= (string:greater? "a" "b") 1)
-          (= (string:greater? "aa" "bb") 1)
-          (= (string:greater? "bb" "aa") 0)
-          (= (string:greater? "aa" "aa") 0)
-          (= (string:greater? "b" "a") 0)
-          (= (string:lesser? "a" "a") 0)
-          (= (string:lesser? "a" "b") 0)
-          (= (string:lesser? "aa" "bb") 0)
-          (= (string:lesser? "bb" "aa") 1)
-          (= (string:lesser? "aa" "aa") 0)
-          (= (string:lesser? "b" "a") 1)
-          (= (string:greater-or-equal? "a" "a") 1)
-          (= (string:greater-or-equal? "a" "b") 1)
-          (= (string:greater-or-equal? "aa" "bb") 1)
-          (= (string:greater-or-equal? "bb" "aa") 0)
-          (= (string:greater-or-equal? "aa" "aa") 1)
-          (= (string:greater-or-equal? "b" "a") 0)
-          (= (string:lesser-or-equal? "a" "a") 1)
-          (= (string:lesser-or-equal? "a" "b") 0)
-          (= (string:lesser-or-equal? "aa" "bb") 0)
-          (= (string:lesser-or-equal? "bb" "aa") 1)
-          (= (string:lesser-or-equal? "aa" "aa") 1)
-          (= (string:lesser-or-equal? "b" "a") 1))`
+        `(array
+          (string:greater? "a" "a")
+          (string:greater? "a" "b")
+          (string:greater? "b" "a")
+          (string:greater? "aa" "bb")
+          (string:greater? "bb" "aa")
+          (string:greater? "aa" "aa")
+          (string:greater? "b" "a")
+          (string:lesser? "a" "a")
+          (string:lesser? "a" "b")
+          (string:lesser? "aa" "bb")
+          (string:lesser? "bb" "aa")
+          (string:lesser? "aa" "aa")
+          (string:lesser? "b" "a")
+          (string:greater-or-equal? "a" "a")
+          (string:greater-or-equal? "a" "b")
+          (string:greater-or-equal? "aa" "bb")
+          (string:greater-or-equal? "bb" "aa")
+          (string:greater-or-equal? "aa" "aa")
+          (string:greater-or-equal? "b" "a")
+          (string:lesser-or-equal? "a" "a")
+          (string:lesser-or-equal? "a" "b")
+          (string:lesser-or-equal? "aa" "bb")
+          (string:lesser-or-equal? "bb" "aa")
+          (string:lesser-or-equal? "aa" "aa")
+          (string:lesser-or-equal? "b" "a"))`
       ),
-      1
+      [
+        0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1,
+        0
+      ]
+    )
+    deepStrictEqual(
+      evalJS(`
+(let str "hello world")
+(array (string:ends-with? str "rld") (string:starts-with? str "hell") (string:starts-with? str "bye") (string:ends-with? str "net"))`),
+      [1, 1, 0, 0]
     )
     deepStrictEqual(
       evalJS(

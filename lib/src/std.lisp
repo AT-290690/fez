@@ -937,34 +937,28 @@
                                                         1 
                                                         (recursive:iterate (array:tail arr) (+ i 1))))))
                                               (recursive:iterate str 0)))))))
-(let string:greater? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
-  (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
-  (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
-  (|>
-   a
-   (array:zip b)
-   (array:fold (lambda acc pair (if (> (array:first pair) (array:second pair)) 0 acc)) 1))))))))
-(let string:greater-or-equal? (lambda A B (or (string:equal? A B) (apply (lambda (do
-  (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
-  (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
-  (|>
-   a
-   (array:zip b)
-   (array:fold (lambda acc pair (if (> (array:first pair) (array:second pair)) 0 acc)) 1))))))))
 (let string:lesser? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
-  (|>
-   a
-   (array:zip b)
-   (array:fold (lambda acc pair (if (< (array:first pair) (array:second pair)) 0 acc)) 1))))))))
-(let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (apply (lambda (do
+   (let pairs (array:reverse (array:zip a b)))
+   (let is? (bool:false))
+   (let rec:while (lambda (unless (array:empty? pairs) (do 
+    (let current (array:pop! pairs))
+    (if (= (array:first current) (array:second current)) (rec:while) (bool:set! is? (< (array:first current) (array:second current))))))))
+   (rec:while)
+   (bool:true? is?)))))))
+(let string:greater? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
-  (|>
-   a
-   (array:zip b)
-   (array:fold (lambda acc pair (if (< (array:first pair) (array:second pair)) 0 acc)) 1))))))))
+   (let pairs (array:reverse (array:zip a b)))
+   (let is? (bool:false))
+   (let rec:while (lambda (unless (array:empty? pairs) (do 
+    (let current (array:pop! pairs))
+    (if (= (array:first current) (array:second current)) (rec:while) (bool:set! is? (> (array:first current) (array:second current))))))))
+   (rec:while)
+   (bool:true? is?)))))))
+(let string:greater-or-equal? (lambda A B (or (string:equal? A B) (string:greater? A B))))
+(let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (string:lesser? A B))))
 (let string:equal? (lambda a b (if (= (length a) (length b)) (apply (lambda (do
   (|>
    a
