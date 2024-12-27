@@ -362,7 +362,139 @@ export const js = (source, deps) => {
   ])
   return `${top}${program}`
 }
-
+const EXPONENTIATION = [
+  [0, 'lambda'],
+  [1, 'base'],
+  [1, 'exp'],
+  [
+    [0, 'do'],
+    [
+      [0, 'let'],
+      [1, 'power'],
+      [
+        [0, 'lambda'],
+        [1, 'base'],
+        [1, 'exp'],
+        [
+          [0, 'if'],
+          [
+            [0, '<'],
+            [1, 'exp'],
+            [2, 0]
+          ],
+          [
+            [0, 'if'],
+            [
+              [0, '='],
+              [1, 'base'],
+              [2, 0]
+            ],
+            [
+              [0, 'throw'],
+              [
+                [0, 'array'],
+                [2, 66],
+                [2, 97],
+                [2, 115],
+                [2, 101],
+                [2, 32],
+                [2, 99],
+                [2, 97],
+                [2, 110],
+                [2, 39],
+                [2, 116],
+                [2, 32],
+                [2, 98],
+                [2, 101],
+                [2, 32],
+                [2, 48],
+                [2, 32],
+                [2, 105],
+                [2, 102],
+                [2, 32],
+                [2, 101],
+                [2, 120],
+                [2, 112],
+                [2, 111],
+                [2, 110],
+                [2, 101],
+                [2, 110],
+                [2, 116],
+                [2, 32],
+                [2, 105],
+                [2, 115],
+                [2, 32],
+                [2, 60],
+                [2, 32],
+                [2, 48]
+              ]
+            ],
+            [
+              [0, '/'],
+              [
+                [0, '*'],
+                [1, 'base'],
+                [
+                  [0, 'power'],
+                  [1, 'base'],
+                  [
+                    [0, '-'],
+                    [
+                      [0, '*'],
+                      [1, 'exp'],
+                      [2, -1]
+                    ],
+                    [2, 1]
+                  ]
+                ]
+              ]
+            ]
+          ],
+          [
+            [0, 'if'],
+            [
+              [0, '='],
+              [1, 'exp'],
+              [2, 0]
+            ],
+            [2, 1],
+            [
+              [0, 'if'],
+              [
+                [0, '='],
+                [1, 'exp'],
+                [2, 1]
+              ],
+              [1, 'base'],
+              [
+                [0, 'if'],
+                [[2, 1]],
+                [
+                  [0, '*'],
+                  [1, 'base'],
+                  [
+                    [0, 'power'],
+                    [1, 'base'],
+                    [
+                      [0, '-'],
+                      [1, 'exp'],
+                      [2, 1]
+                    ]
+                  ]
+                ]
+              ]
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      [0, 'power'],
+      [1, 'base'],
+      [1, 'exp']
+    ]
+  ]
+]
 export const deSuggar = (ast) => {
   if (ast.length === 0) throw new SyntaxError(`No expressions to evaluate`)
   // for (const node of ast)
@@ -377,13 +509,8 @@ export const deSuggar = (ast) => {
           {
             switch (first[VALUE]) {
               case SUGGAR.POWER:
-                throw new TypeError(
-                  `(${
-                    SUGGAR.POWER
-                  }), can't be used as a word (hint use math:power instead) (${
-                    SUGGAR.POWER
-                  } ${stringifyArgs(rest)})`
-                )
+                exp.length = 0
+                exp.push(...EXPONENTIATION)
                 break
               case SUGGAR.INTEGER_DEVISION:
                 exp.length = 0
@@ -498,8 +625,8 @@ export const deSuggar = (ast) => {
                     temp = temp.at(-1)
                   }
                   temp.push([APPLY, KEYWORDS.ARRAY_TYPE])
-                  deSuggar(exp)
                 }
+                deSuggar(exp)
                 break
               case SUGGAR.INTEGER_DEVISION:
                 {
@@ -543,40 +670,115 @@ export const deSuggar = (ast) => {
                   const isPowerAtom = exp[2][TYPE] === ATOM
                   const isExponentWord = exp[1][TYPE] === WORD
                   if ((isExponentWord || isExponentAtom) && isPowerAtom) {
-                    exp[0][VALUE] = KEYWORDS.MULTIPLICATION
-                    const exponent = exp[1]
-                    const power = exp[2][VALUE]
-                    exp.length = 1
                     if (isExponentAtom) {
+                      exp[0][VALUE] = KEYWORDS.MULTIPLICATION
+                      const exponent = exp[1]
+                      const power = exp[2][VALUE]
+                      exp.length = 1
                       exp.push(exponent, [ATOM, exponent[VALUE] ** (power - 1)])
                     } else if (isExponentWord) {
-                      exp.push(
-                        ...Array.from({ length: power })
-                          .fill(0)
-                          .map(() => [exponent[TYPE], exponent[VALUE]])
-                      )
+                      const exponent = exp[1]
+                      const power = exp[2]
+                      exp.length = 0
+                      exp.push([0, 'apply'], EXPONENTIATION, exponent, power)
                     }
-                  } else
-                    throw new TypeError(
-                      `Second Arguments of (${
-                        SUGGAR.POWER
-                      }), must be (atom) (hint use math:power instead) (${
-                        SUGGAR.POWER
-                      } ${stringifyArgs(rest)})`
-                    )
+                  } else {
+                    const exponent = exp[1]
+                    const power = exp[2]
+                    exp.length = 0
+                    exp.push([0, 'apply'], EXPONENTIATION, exponent, power)
+                  }
+                  deSuggar(exp)
                 }
                 break
               case KEYWORDS.MULTIPLICATION:
                 if (!rest.length) {
                   exp[0][TYPE] = ATOM
                   exp[0][VALUE] = TRUE
+                } else if (rest.length > 2) {
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, KEYWORDS.MULTIPLICATION], rest[i], [])
+                      temp = temp.at(-1)
+                    } else {
+                      temp.push(...rest[i])
+                    }
+                  }
+                  deSuggar(exp)
                 }
                 break
               case KEYWORDS.ADDITION:
+                if (!rest.length) {
+                  exp[0][TYPE] = ATOM
+                  exp[0][VALUE] = FALSE
+                } else if (rest.length > 2) {
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, KEYWORDS.ADDITION], rest[i], [])
+                      temp = temp.at(-1)
+                    } else {
+                      temp.push(...rest[i])
+                    }
+                  }
+                  deSuggar(exp)
+                }
+                break
               case KEYWORDS.DIVISION:
                 if (!rest.length) {
                   exp[0][TYPE] = ATOM
                   exp[0][VALUE] = FALSE
+                } else if (rest.length > 2) {
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, KEYWORDS.DIVISION], rest[i], [])
+                      temp = temp.at(-1)
+                    } else {
+                      temp.push(...rest[i])
+                    }
+                  }
+                  deSuggar(exp)
+                }
+                break
+              case KEYWORDS.AND:
+                if (!rest.length) {
+                  exp[0][TYPE] = ATOM
+                  exp[0][VALUE] = FALSE
+                } else if (rest.length > 2) {
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, KEYWORDS.AND], rest[i], [])
+                      temp = temp.at(-1)
+                    } else {
+                      temp.push(...rest[i])
+                    }
+                  }
+                  deSuggar(exp)
+                }
+                break
+              case KEYWORDS.OR:
+                if (!rest.length) {
+                  exp[0][TYPE] = ATOM
+                  exp[0][VALUE] = FALSE
+                } else if (rest.length > 2) {
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, KEYWORDS.OR], rest[i], [])
+                      temp = temp.at(-1)
+                    } else {
+                      temp.push(...rest[i])
+                    }
+                  }
+                  deSuggar(exp)
                 }
                 break
               case SUGGAR.UNLESS:

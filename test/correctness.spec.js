@@ -2,8 +2,11 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { fez } from '../src/utils.js'
 
 const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
+// const evalJS = (source) => fez(source, {  mutation: 1 })
+
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(evalJS(`(let pow (lambda a cb (cb a 2))) (pow 10 **)`), 100)
     deepStrictEqual(evalJS(`(array (/ 5) (- 5))`), [0.2, -5])
     deepStrictEqual(
       evalJS(`(array:map (array 5 4 3 2 1) -)`),
@@ -1403,7 +1406,7 @@ matrix
                 (bool:false! inside-parens?)) 
                 (bool:true! valid-separator?)))
             (*) (do 
-                (if (match:digit? '(cursor)) (do 
+                (if (match:digit? cursor) (do 
                     (array:append! acc cursor)
                     (if (> (length acc) 3) (array:empty! acc))
                     (bool:false! valid-separator?)) (do 
@@ -2203,162 +2206,6 @@ matrix
 
   deepStrictEqual(
     evalJS(
-      `(let out ())
-(let comp (lambda a b (< a b)))
-(let heap (from:array->heap '(30 10 50 20 40) comp))
-(heap:peek heap)
-(let recursive:while (lambda (unless (array:empty? heap) (do 
-(array:push! out (heap:peek heap))
-(heap:pop! heap comp)
-(recursive:while)))))
-(recursive:while)
-(identity out)`
-    ),
-    [10, 20, 30, 40, 50]
-  )
-
-  strictEqual(
-    evalJS(
-      `(let INPUT
-    (string:concat-with-lines '(
-        "###############"
-        "#.......#....E#"
-        "#.#.###.#.###.#"
-        "#.....#.#...#.#"
-        "#.###.#####.#.#"
-        "#.#.#.......#.#"
-        "#.#.#####.###.#"
-        "#...........#.#"
-        "###.#.#####.#.#"
-        "#...#.....#.#.#"
-        "#.#.#.###.#.#.#"
-        "#.....#...#.#.#"
-        "#.###.#.#.#.#.#"
-        "#S..#.....#...#"
-        "###############")))
-
-(let parse (lambda input (|> input (string:lines))))
-
-(let part1 (lambda matrix (do 
-
-    (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
-
-    (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
-    (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
-  
-    (let pq '('(0 (array:first start) (array:second start) 0 1)))
-    (let seen (new:set8))
-    (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
-
-    (let lower? (lambda a b (< (array:first a) (array:first b))))
-    (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
-  
-    (let recursive:while (lambda (unless (heap:empty? pq) (do
-        (let first (heap:peek pq))
-        (heap:pop! pq lower?)
-        (let cost (get first 0))
-        (let r (get first 1))
-        (let c (get first 2))
-        (let dr (get first 3))
-        (let dc (get first 4))
-        (set:add! seen (from:stats->key '(r c dr dc)))
-        (if (goal? r c) cost
-         (do 
-            (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
-                        '((+ cost 1000) r c dc (- dr))
-                        '((+ cost 1000) r c (- dc) dr)))
-            (array:for dirs (lambda stats (do 
-                            (let new-cost (get stats 0))
-                            (let nr (get stats 1))
-                            (let nc (get stats 2))
-                            (let ndr (get stats 3))
-                            (let ndc (get stats 4))
-                            (if 
-                                (and
-                                    (not (= (matrix:get matrix nr nc) char:hash)) 
-                                    (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
-                                (heap:push! pq stats lower?)))))
-            (recursive:while)))))))
-    (recursive:while))))
-
-(let PARSED (parse INPUT))
-(part1 PARSED)`
-    ),
-    7036
-  )
-
-  strictEqual(
-    evalJS(
-      `
-(let part1 (lambda matrix (do 
-
-    (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
-
-    (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
-    (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
-  
-    (let pq '('(0 (array:first start) (array:second start) 0 1)))
-    (let seen (new:set8))
-    (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
-
-    (let lower? (lambda a b (< (array:first a) (array:first b))))
-    (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
-    (let goal-reached? (bool:false))
-    (let output (var:def 0))
-    (loop 
-        (lambda (and (heap:not-empty? pq) (bool:false? goal-reached?))) 
-        (lambda (do
-            (let first (heap:peek pq))
-            (heap:pop! pq lower?)
-            (let cost (get first 0))
-            (let r (get first 1))
-            (let c (get first 2))
-            (let dr (get first 3))
-            (let dc (get first 4))
-            (set:add! seen (from:stats->key '(r c dr dc)))
-            (if (goal? r c) 
-                (do 
-                    (bool:true! goal-reached?)
-                    (var:set! output cost))
-                (do 
-                    (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
-                                '((+ cost 1000) r c dc (- dr))
-                                '((+ cost 1000) r c (- dc) dr)))
-                    (array:for dirs (lambda stats (do 
-                                    (let new-cost (get stats 0))
-                                    (let nr (get stats 1))
-                                    (let nc (get stats 2))
-                                    (let ndr (get stats 3))
-                                    (let ndc (get stats 4))
-                                    (if 
-                                        (and
-                                            (not (= (matrix:get matrix nr nc) char:hash)) 
-                                            (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
-                                        (heap:push! pq stats lower?))))))))))
-        (var:get output))))
-
-(part1 (string:lines (string:concat-with-lines '(
-        "###############"
-        "#.......#....E#"
-        "#.#.###.#.###.#"
-        "#.....#.#...#.#"
-        "#.###.#####.#.#"
-        "#.#.#.......#.#"
-        "#.#.#####.###.#"
-        "#...........#.#"
-        "###.#.#####.#.#"
-        "#...#.....#.#.#"
-        "#.#.#.###.#.#.#"
-        "#.....#...#.#.#"
-        "#.###.#.#.#.#.#"
-        "#S..#.....#...#"
-        "###############"))))`
-    ),
-    7036
-  )
-
-  deepStrictEqual(
-    evalJS(
       `(let object (new:map '(
     "x" 69 
     "y" 29 
@@ -2386,161 +2233,6 @@ matrix
 (|> '("-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`
     ),
     2240
-  )
-
-  deepStrictEqual(
-    evalJS(
-      `(let I 
-"Register A: 729
-Register B: 0
-Register C: 0
-
-Program: 0,1,5,4,3,0"
-)
-
-(let parse (lambda input (do
-    (let lines (|> input (string:lines)))
-    (let program (|> lines (array:pop!) (string:words) (array:pop!) (string:commas) (array:flat-one) (from:chars->digits)))
-    (array:pop! lines)
-    (let registers (|> lines (array:map (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->number))))))
-    '(registers program))))
-
-(let part1 (lambda input (do 
-    (let registers (array:first input))
-    (let program (array:second input))
-    (let instruction-pointer (var:def 0))
-    (let get-instruction-pointer (lambda (var:get instruction-pointer)))
-    (let move-pointer! (lambda (|> instruction-pointer (var:increment!) (var:increment!))))
-    (let set-pointer! (lambda operand (var:set! instruction-pointer operand)))
-    (let log-outputs! (lambda (log-string! (array:commas (from:numbers->strings outputs)))))
-    ; (let halt? (lambda (not (array:in-bounds? program (var:get instruction-pointer)))))
-    (let halt? (lambda (>= (var:get instruction-pointer) (length program))))
-    (let outputs ())
-    (let A 0)
-    (let B 1)
-    (let C 2)
-    (let combo (lambda operand (cond 
-        (math:overlap? operand 0 3) operand
-        (= operand 4) (get registers A)
-        (= operand 5) (get registers B)
-        (= operand 6) (get registers C)
-        (= operand 7) (throw "7 is reserved and SHOULD NOT appear in valid programs!")
-        (*) (throw (array:push! "Invalid combo operand " operand))
-    )))
-    ; (let set-register-A! (lambda value (set! registers 0 value)))
-    ; (let get-register-A (lambda (get registers 0)))
-    ; (let set-register-B! (lambda value (set! registers 1 value)))
-    ; (let get-register-B (lambda (get registers 1)))
-    ; (let set-register-C! (lambda value (set! registers 2 value)))
-    ; (let get-register-C (lambda (get registers 2)))
-    (let opcodes (lambda opcode operand 
-        (cond
-            ; The adv instruction (opcode 0) performs division.
-            ; The numerator is the value in the A register.
-            ; The denominator is found by raising 2 to the power of the instruction's combo operand.
-            ; (So, an operand of 2 would divide A by 4 (2^2); 
-            ; an operand of 5 would divide A by 2^B.) 
-            ; The result of the division operation is truncated to an integer
-            ; and then written to the A register. 
-            (= opcode 0) (do (set! registers A (>> (get registers A) (combo operand))) (move-pointer!))
-            ; The bxl instruction (opcode 1) calculates the bitwise XOR of register B
-            ; and the instruction's literal operand,
-            ; then stores the result in register B.
-            (= opcode 1) (do (set! registers B (^ (get registers B) operand)) (move-pointer!))
-            ; The bst instruction (opcode 2) calculates the value of its combo operand modulo 8 
-            ; (thereby keeping only its lowest 3 bits), 
-            ; then writes that value to the B register.
-            (= opcode 2) (do (set! registers B (& (combo operand) 7)) (move-pointer!))
-            ; The jnz instruction (opcode 3) does nothing if the A register is 0.
-            ; However, if the A register is not zero, 
-            ; it jumps by setting the instruction pointer to the value of its literal operand;
-            ; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
-            (= opcode 3) (if (not (= (get registers A) 0)) (set-pointer! operand) (move-pointer!))
-            ; The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C, 
-            ; then stores the result in register B. 
-            ; (For legacy reasons, this instruction reads an operand but ignores it.)
-            (= opcode 4) (do (set! registers B (^ (get registers B) (get registers C))) (move-pointer!))
-            ; The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
-            ; then outputs that value. 
-            ; (If a program outputs multiple values, they are separated by commas.)
-            (= opcode 5) (do (array:push! outputs (& (combo operand) 7)) (move-pointer!))
-            ; The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register. 
-            ; (The numerator is still read from the A register.)
-            (= opcode 6) (do (set! registers B (>> (get registers A) (combo operand))) (move-pointer!))
-            ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register. 
-            ; (The numerator is still read from the A register.)
-            (= opcode 7) (do (set! registers C (>> (get registers A) (combo operand))) (move-pointer!))
-            (*) (throw "Invalid instruction")
-        )))
-    (let get-opcode (lambda (get program (get-instruction-pointer))))
-    (let get-operand (lambda (get program (+ (get-instruction-pointer) 1))))
-    (let recursive:process (lambda (unless (halt?) (do 
-        (let opcode (get-opcode))
-        (let operand (get-operand))
-        (opcodes opcode operand)
-        (recursive:process)
-    ))))
-    
-    (recursive:process)
-    ; (log-outputs!)
-    outputs
-)))
-
-(let PARSED (parse I))
-(part1 PARSED)
-; (part1 (parse INPUT))
-; (part1 '('(22571680 0 0) '(2 4 1 3 7 5 0 3 4 3 1 5 5 5 3 0)))
-; (part1 (parse (string:concat-with-lines '(
-; "Register A: 10"
-; "Register B: 0"
-; "Register C: 0"
-; ""
-; "Program: 5,0,5,1,5,4"
-; ))))
-
-; (part1 (parse (string:concat-with-lines '(
-; "Register A: 2024"
-; "Register B: 0"
-; "Register C: 0"
-; ""
-; "Program: 0,1,5,4,3,0"
-; ))))
-
-; (part1 (parse (string:concat-with-lines '(
-; "Register A: 0"
-; "Register B: 0"
-; "Register C: 9"
-; ""
-; "Program: 2,6"
-; ))))
-
-; (part1 (parse (string:concat-with-lines '(
-; "Register A: 0"
-; "Register B: 0"
-; "Register C: 9"
-; ""
-; "Program: 2,6"
-; ))))
-
-; (part1 (parse (string:concat-with-lines '(
-; "Register A: 0"
-; "Register B: 29"
-; "Register C: 0"
-; ""
-; "Program: 1,7"
-; ))))
-
-; (part1 (parse (string:concat-with-lines '(
-; "Register A: 0"
-; "Register B: 2024"
-; "Register C: 43690"
-; ""
-; "Program: 4,0"
-; ))))
-
-`
-    ),
-    [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
   )
 
   strictEqual(
@@ -2614,6 +2306,8 @@ Program: 0,1,5,4,3,0"
     22
   )
 
+  // slow tests
+
   deepStrictEqual(
     evalJS(
       `(let INPUT 
@@ -2629,46 +2323,46 @@ brgr
 bbrgwb")
 
 (let parse (lambda input (do
-    (let lines (|> input (string:lines)))
-      (array 
-        (|> lines (array:first) (string:commas) (array:map string:trim))
-        (|> lines (array:slice 2 (length lines)))))))
+  (let lines (|> input (string:lines)))
+    (array 
+      (|> lines (array:first) (string:commas) (array:map string:trim))
+      (|> lines (array:slice 2 (length lines)))))))
 
 (let part1 (lambda input (do
 
-  (let patterns (array:fold (array:first input) (lambda a b (set:add! a b)) (new:set8)))
-  (let towels (array:second input))
-  (let memo (new:set32))
+(let patterns (array:fold (array:first input) (lambda a b (set:add! a b)) (new:set8)))
+(let towels (array:second input))
+(let memo (new:set32))
 
-  (let dp (lambda str (do
-      (if (map:has? memo str) (map:get memo str)
-          (or
-            (loop:some-range? 1 (length str) (lambda i (do
-              (let a (array:slice str 0 i))
-              (let b (array:slice str i (length str)))
-              (if (and (set:has? patterns a) (set:has? patterns b))
-                  (map:set-and-get! memo str 1)
-                  (if (and (dp a) (dp b))
-                      (map:set-and-get! memo str 1))))))
-            (map:set-and-get! memo str 0))))))
-  (array:count-of towels dp))))
+(let dp (lambda str (do
+    (if (map:has? memo str) (map:get memo str)
+        (or
+          (loop:some-range? 1 (length str) (lambda i (do
+            (let a (array:slice str 0 i))
+            (let b (array:slice str i (length str)))
+            (if (and (set:has? patterns a) (set:has? patterns b))
+                (map:set-and-get! memo str 1)
+                (if (and (dp a) (dp b))
+                    (map:set-and-get! memo str 1))))))
+          (map:set-and-get! memo str 0))))))
+(array:count-of towels dp))))
 
 (let part2 (lambda input (do
-  (let desings (array:first input))
-  (let patterns (array:fold desings (lambda a b (set:add! a b)) (new:set8)))
-  (let towels (array:second input))
-  (let memo (new:set32))
-  (let max-len (math:maximum (array:map desings length)))
-  (let num-possibilities (lambda stripes
-    (if (map:exists? memo stripes) (map:get memo stripes)
-        (if (array:empty? stripes) 1
-            (map:set-and-get! memo stripes (|> (math:range 0 (math:min (length stripes) max-len))
-                (array:map (lambda index (do
-                    (let pattern (array:slice stripes 0 (math:min index (length stripes))))
-                    (if (set:exists? patterns pattern)
-                        (num-possibilities (array:slice stripes index (length stripes)))))))
-                (math:summation)))))))
-  (|> towels (array:map num-possibilities) (math:summation)))))
+(let desings (array:first input))
+(let patterns (array:fold desings (lambda a b (set:add! a b)) (new:set8)))
+(let towels (array:second input))
+(let memo (new:set32))
+(let max-len (math:maximum (array:map desings length)))
+(let num-possibilities (lambda stripes
+  (if (map:exists? memo stripes) (map:get memo stripes)
+      (if (array:empty? stripes) 1
+          (map:set-and-get! memo stripes (|> (math:range 0 (math:min (length stripes) max-len))
+              (array:map (lambda index (do
+                  (let pattern (array:slice stripes 0 (math:min index (length stripes))))
+                  (if (set:exists? patterns pattern)
+                      (num-possibilities (array:slice stripes index (length stripes)))))))
+              (math:summation)))))))
+(|> towels (array:map num-possibilities) (math:summation)))))
 
 (let PARSED (parse INPUT))
 
@@ -2676,69 +2370,6 @@ bbrgwb")
 `
     ),
     [6, 16]
-  )
-
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT
-"1
-10
-100
-2024")
-
-(let parse (lambda input (|> input (string:lines) (array:map from:string->number))))
-(let part1 (lambda input (do 
-
-
-(|> 
-  input (array:map 
-    (lambda secret (do 
-(let SECRET (var:def secret))
-; Each step of the above process involves mixing and pruning:
-
-; To mix a value into the secret number, 
-; calculate the bitwise XOR of the given value and the secret number.
-;  Then, the secret number becomes the result of that operation. 
-; (If the secret number is 42 and you were to mix 15 into the secret number, 
-; the secret number would become 37.)
-
-; To prune the secret number, 
-; calculate the value of the secret number modulo 16777216. 
-; Then, the secret number becomes the result of that operation. 
-; (If the secret number is 100000000 and you were to prune the secret number, 
-; the secret number would become 16113920.)
-
-(let mix-and-prune (lambda value (do (var:set-and-get! SECRET (math:euclidean-mod (var:set-and-get! SECRET (^ value (var:get SECRET))) 16777216)))))
-
-(let random (lambda (|> 
-      (var:get SECRET)
-
-      (* 64)        ; Calculate the result of multiplying the secret number by 64.  
-      
-      (mix-and-prune)         ; Then, mix this result into the secret number. 
-                               ; Finally, prune the secret number.
-
-      (/ 32)        ; Calculate the result of dividing the secret number by 32.
-      (math:floor)  ; Round the result down to the nearest integer. 
-      
-      (mix-and-prune)  ; Then, mix this result into the secret number. 
-                       ; Finally, prune the secret number.
-            
-      (* 2048)      ; Calculate the result of multiplying the secret number by 2048. 
-      (mix-and-prune)         ; Then, mix this result into the secret number. 
-                              ; Finally, prune the secret number.
-      )))
-      
-    (loop:repeat 2000 random)
-      (var:get SECRET)
-      ))) (math:summation))
-
-
-)))
-(let PARSED (parse INPUT))
-'((part1 PARSED))`
-    ),
-    [37327623]
   )
 
   deepStrictEqual(
@@ -2778,29 +2409,401 @@ td-yn")
 
 (let parse (lambda input (|> input (string:trim) (string:lines) (array:map string:dashes))))
 (let part1 (lambda input (do
-    (let connections (array:fold input (lambda a b (do
-            (let left (array:first b))
-            (let right (array:second b))
-            (if (map:has? a left)
-                (set:add! (map:get a left) right)
-                (map:set! a left (new:set (array right))))
-            (if (map:has? a right)
-                (set:add! (map:get a right) left)
-                (map:set! a right (new:set (array left))))
-            a)) (new:map16)))
+  (let connections (array:fold input (lambda a b (do
+          (let left (array:first b))
+          (let right (array:second b))
+          (if (map:has? a left)
+              (set:add! (map:get a left) right)
+              (map:set! a left (new:set (array right))))
+          (if (map:has? a right)
+              (set:add! (map:get a right) left)
+              (map:set! a right (new:set (array left))))
+          a)) (new:map16)))
 
-    (let total (var:def 0))
-    (array:for (map:keys connections) (lambda x
-      (array:for (set:values (map:get connections x)) (lambda y
-          (array:for (set:values (map:get connections y)) (lambda z
-              (if (and (not (string:equal? z x)) 
-                  (set:has? (map:get connections z) x) 
-                  (array:some? (array x y z) (lambda ch (= (array:first ch) char:t)))) 
-              (var:increment! total))))))))
-    (// (var:get total) 6))))
+  (let total (var:def 0))
+  (array:for (map:keys connections) (lambda x
+    (array:for (set:values (map:get connections x)) (lambda y
+        (array:for (set:values (map:get connections y)) (lambda z
+            (if (and (not (string:equal? z x)) 
+                (set:has? (map:get connections z) x) 
+                (array:some? (array x y z) (lambda ch (= (array:first ch) char:t)))) 
+            (var:increment! total))))))))
+  (// (var:get total) 6))))
 
 '((part1 (parse INPUT)))
 `),
     [7]
+  )
+
+  deepStrictEqual(
+    evalJS(
+      `(let INPUT
+"1
+10
+100
+2024")
+
+(let parse (lambda input (|> input (string:lines) (array:map from:string->number))))
+(let part1 (lambda input (do 
+
+
+(|> 
+input (array:map 
+  (lambda secret (do 
+(let SECRET (var:def secret))
+; Each step of the above process involves mixing and pruning:
+
+; To mix a value into the secret number, 
+; calculate the bitwise XOR of the given value and the secret number.
+;  Then, the secret number becomes the result of that operation. 
+; (If the secret number is 42 and you were to mix 15 into the secret number, 
+; the secret number would become 37.)
+
+; To prune the secret number, 
+; calculate the value of the secret number modulo 16777216. 
+; Then, the secret number becomes the result of that operation. 
+; (If the secret number is 100000000 and you were to prune the secret number, 
+; the secret number would become 16113920.)
+
+(let mix-and-prune (lambda value (do (var:set-and-get! SECRET (math:euclidean-mod (var:set-and-get! SECRET (^ value (var:get SECRET))) 16777216)))))
+
+(let random (lambda (|> 
+    (var:get SECRET)
+
+    (* 64)        ; Calculate the result of multiplying the secret number by 64.  
+    
+    (mix-and-prune)         ; Then, mix this result into the secret number. 
+                             ; Finally, prune the secret number.
+
+    (/ 32)        ; Calculate the result of dividing the secret number by 32.
+    (math:floor)  ; Round the result down to the nearest integer. 
+    
+    (mix-and-prune)  ; Then, mix this result into the secret number. 
+                     ; Finally, prune the secret number.
+          
+    (* 2048)      ; Calculate the result of multiplying the secret number by 2048. 
+    (mix-and-prune)         ; Then, mix this result into the secret number. 
+                            ; Finally, prune the secret number.
+    )))
+    
+  (loop:repeat 2000 random)
+    (var:get SECRET)
+    ))) (math:summation))
+
+
+)))
+(let PARSED (parse INPUT))
+'((part1 PARSED))`
+    ),
+    [37327623]
+  )
+  strictEqual(
+    evalJS(
+      `(let INPUT
+  (string:concat-with-lines '(
+      "###############"
+      "#.......#....E#"
+      "#.#.###.#.###.#"
+      "#.....#.#...#.#"
+      "#.###.#####.#.#"
+      "#.#.#.......#.#"
+      "#.#.#####.###.#"
+      "#...........#.#"
+      "###.#.#####.#.#"
+      "#...#.....#.#.#"
+      "#.#.#.###.#.#.#"
+      "#.....#...#.#.#"
+      "#.###.#.#.#.#.#"
+      "#S..#.....#...#"
+      "###############")))
+
+(let parse (lambda input (|> input (string:lines))))
+
+(let part1 (lambda matrix (do 
+
+  (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
+
+  (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
+  (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
+
+  (let pq '('(0 (array:first start) (array:second start) 0 1)))
+  (let seen (new:set8))
+  (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
+
+  (let lower? (lambda a b (< (array:first a) (array:first b))))
+  (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
+
+  (let recursive:while (lambda (unless (heap:empty? pq) (do
+      (let first (heap:peek pq))
+      (heap:pop! pq lower?)
+      (let cost (get first 0))
+      (let r (get first 1))
+      (let c (get first 2))
+      (let dr (get first 3))
+      (let dc (get first 4))
+      (set:add! seen (from:stats->key '(r c dr dc)))
+      (if (goal? r c) cost
+       (do 
+          (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
+                      '((+ cost 1000) r c dc (- dr))
+                      '((+ cost 1000) r c (- dc) dr)))
+          (array:for dirs (lambda stats (do 
+                          (let new-cost (get stats 0))
+                          (let nr (get stats 1))
+                          (let nc (get stats 2))
+                          (let ndr (get stats 3))
+                          (let ndc (get stats 4))
+                          (if 
+                              (and
+                                  (not (= (matrix:get matrix nr nc) char:hash)) 
+                                  (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
+                              (heap:push! pq stats lower?)))))
+          (recursive:while)))))))
+  (recursive:while))))
+
+(let PARSED (parse INPUT))
+(part1 PARSED)`
+    ),
+    7036
+  )
+  deepStrictEqual(
+    evalJS(
+      `(let out ())
+(let comp (lambda a b (< a b)))
+(let heap (from:array->heap '(30 10 50 20 40) comp))
+(heap:peek heap)
+(let recursive:while (lambda (unless (array:empty? heap) (do 
+(array:push! out (heap:peek heap))
+(heap:pop! heap comp)
+(recursive:while)))))
+(recursive:while)
+(identity out)`
+    ),
+    [10, 20, 30, 40, 50]
+  )
+
+  strictEqual(
+    evalJS(
+      `
+(let part1 (lambda matrix (do 
+
+  (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
+
+  (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
+  (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
+
+  (let pq '('(0 (array:first start) (array:second start) 0 1)))
+  (let seen (new:set8))
+  (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
+
+  (let lower? (lambda a b (< (array:first a) (array:first b))))
+  (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
+  (let goal-reached? (bool:false))
+  (let output (var:def 0))
+  (loop 
+      (lambda (and (heap:not-empty? pq) (bool:false? goal-reached?))) 
+      (lambda (do
+          (let first (heap:peek pq))
+          (heap:pop! pq lower?)
+          (let cost (get first 0))
+          (let r (get first 1))
+          (let c (get first 2))
+          (let dr (get first 3))
+          (let dc (get first 4))
+          (set:add! seen (from:stats->key '(r c dr dc)))
+          (if (goal? r c) 
+              (do 
+                  (bool:true! goal-reached?)
+                  (var:set! output cost))
+              (do 
+                  (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
+                              '((+ cost 1000) r c dc (- dr))
+                              '((+ cost 1000) r c (- dc) dr)))
+                  (array:for dirs (lambda stats (do 
+                                  (let new-cost (get stats 0))
+                                  (let nr (get stats 1))
+                                  (let nc (get stats 2))
+                                  (let ndr (get stats 3))
+                                  (let ndc (get stats 4))
+                                  (if 
+                                      (and
+                                          (not (= (matrix:get matrix nr nc) char:hash)) 
+                                          (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
+                                      (heap:push! pq stats lower?))))))))))
+      (var:get output))))
+
+(part1 (string:lines (string:concat-with-lines '(
+      "###############"
+      "#.......#....E#"
+      "#.#.###.#.###.#"
+      "#.....#.#...#.#"
+      "#.###.#####.#.#"
+      "#.#.#.......#.#"
+      "#.#.#####.###.#"
+      "#...........#.#"
+      "###.#.#####.#.#"
+      "#...#.....#.#.#"
+      "#.#.#.###.#.#.#"
+      "#.....#...#.#.#"
+      "#.###.#.#.#.#.#"
+      "#S..#.....#...#"
+      "###############"))))`
+    ),
+    7036
+  )
+
+  deepStrictEqual(
+    evalJS(
+      `(let I 
+"Register A: 729
+Register B: 0
+Register C: 0
+
+Program: 0,1,5,4,3,0"
+)
+
+(let parse (lambda input (do
+  (let lines (|> input (string:lines)))
+  (let program (|> lines (array:pop!) (string:words) (array:pop!) (string:commas) (array:flat-one) (from:chars->digits)))
+  (array:pop! lines)
+  (let registers (|> lines (array:map (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->number))))))
+  '(registers program))))
+
+(let part1 (lambda input (do 
+  (let registers (array:first input))
+  (let program (array:second input))
+  (let instruction-pointer (var:def 0))
+  (let get-instruction-pointer (lambda (var:get instruction-pointer)))
+  (let move-pointer! (lambda (|> instruction-pointer (var:increment!) (var:increment!))))
+  (let set-pointer! (lambda operand (var:set! instruction-pointer operand)))
+  (let log-outputs! (lambda (log-string! (array:commas (from:numbers->strings outputs)))))
+  ; (let halt? (lambda (not (array:in-bounds? program (var:get instruction-pointer)))))
+  (let halt? (lambda (>= (var:get instruction-pointer) (length program))))
+  (let outputs ())
+  (let A 0)
+  (let B 1)
+  (let C 2)
+  (let combo (lambda operand (cond 
+      (math:overlap? operand 0 3) operand
+      (= operand 4) (get registers A)
+      (= operand 5) (get registers B)
+      (= operand 6) (get registers C)
+      (= operand 7) (throw "7 is reserved and SHOULD NOT appear in valid programs!")
+      (*) (throw (array:push! "Invalid combo operand " operand))
+  )))
+  ; (let set-register-A! (lambda value (set! registers 0 value)))
+  ; (let get-register-A (lambda (get registers 0)))
+  ; (let set-register-B! (lambda value (set! registers 1 value)))
+  ; (let get-register-B (lambda (get registers 1)))
+  ; (let set-register-C! (lambda value (set! registers 2 value)))
+  ; (let get-register-C (lambda (get registers 2)))
+  (let opcodes (lambda opcode operand 
+      (cond
+          ; The adv instruction (opcode 0) performs division.
+          ; The numerator is the value in the A register.
+          ; The denominator is found by raising 2 to the power of the instruction's combo operand.
+          ; (So, an operand of 2 would divide A by 4 (2^2); 
+          ; an operand of 5 would divide A by 2^B.) 
+          ; The result of the division operation is truncated to an integer
+          ; and then written to the A register. 
+          (= opcode 0) (do (set! registers A (>> (get registers A) (combo operand))) (move-pointer!))
+          ; The bxl instruction (opcode 1) calculates the bitwise XOR of register B
+          ; and the instruction's literal operand,
+          ; then stores the result in register B.
+          (= opcode 1) (do (set! registers B (^ (get registers B) operand)) (move-pointer!))
+          ; The bst instruction (opcode 2) calculates the value of its combo operand modulo 8 
+          ; (thereby keeping only its lowest 3 bits), 
+          ; then writes that value to the B register.
+          (= opcode 2) (do (set! registers B (& (combo operand) 7)) (move-pointer!))
+          ; The jnz instruction (opcode 3) does nothing if the A register is 0.
+          ; However, if the A register is not zero, 
+          ; it jumps by setting the instruction pointer to the value of its literal operand;
+          ; if this instruction jumps, the instruction pointer is not increased by 2 after this instruction.
+          (= opcode 3) (if (not (= (get registers A) 0)) (set-pointer! operand) (move-pointer!))
+          ; The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C, 
+          ; then stores the result in register B. 
+          ; (For legacy reasons, this instruction reads an operand but ignores it.)
+          (= opcode 4) (do (set! registers B (^ (get registers B) (get registers C))) (move-pointer!))
+          ; The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
+          ; then outputs that value. 
+          ; (If a program outputs multiple values, they are separated by commas.)
+          (= opcode 5) (do (array:push! outputs (& (combo operand) 7)) (move-pointer!))
+          ; The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register. 
+          ; (The numerator is still read from the A register.)
+          (= opcode 6) (do (set! registers B (>> (get registers A) (combo operand))) (move-pointer!))
+          ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register. 
+          ; (The numerator is still read from the A register.)
+          (= opcode 7) (do (set! registers C (>> (get registers A) (combo operand))) (move-pointer!))
+          (*) (throw "Invalid instruction")
+      )))
+  (let get-opcode (lambda (get program (get-instruction-pointer))))
+  (let get-operand (lambda (get program (+ (get-instruction-pointer) 1))))
+  (let recursive:process (lambda (unless (halt?) (do 
+      (let opcode (get-opcode))
+      (let operand (get-operand))
+      (opcodes opcode operand)
+      (recursive:process)
+  ))))
+  
+  (recursive:process)
+  ; (log-outputs!)
+  outputs
+)))
+
+(let PARSED (parse I))
+(part1 PARSED)
+; (part1 (parse INPUT))
+; (part1 '('(22571680 0 0) '(2 4 1 3 7 5 0 3 4 3 1 5 5 5 3 0)))
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 10"
+; "Register B: 0"
+; "Register C: 0"
+; ""
+; "Program: 5,0,5,1,5,4"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 2024"
+; "Register B: 0"
+; "Register C: 0"
+; ""
+; "Program: 0,1,5,4,3,0"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 0"
+; "Register C: 9"
+; ""
+; "Program: 2,6"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 0"
+; "Register C: 9"
+; ""
+; "Program: 2,6"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 29"
+; "Register C: 0"
+; ""
+; "Program: 1,7"
+; ))))
+
+; (part1 (parse (string:concat-with-lines '(
+; "Register A: 0"
+; "Register B: 2024"
+; "Register C: 43690"
+; ""
+; "Program: 4,0"
+; ))))
+
+`
+    ),
+    [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
   )
 })

@@ -75,10 +75,10 @@ const lispToJavaScriptVariableName = (name) =>
     )
   )
 const Helpers = {
-  __add: `__add=(...numbers)=>{return numbers.reduce((a,b)=>a+b,0)}`,
-  __sub: `__sub=(...numbers)=>{return numbers.length===1?-numbers[0]:numbers.reduce((a,b)=>a-b,0)}`,
-  __mult: `__mult=(...numbers)=>{return numbers.reduce((a,b)=>a*b,1)}`,
-  __div: `__div=(...numbers)=>{return numbers.length===1?1/numbers[0]:numbers.reduce((a, b)=>a/b)}`,
+  __add: `__add=(a,b)=>{return a+b}`,
+  __sub: `__sub=function(a,b){return arguments.length===1?-a:a-b}`,
+  __mult: `__mult=(a,b)=>{return a*b}`,
+  __div: `__div=function(a,b){return arguments.length===1?1/a:a/b}`,
   __gteq: '__gteq=(a,b)=>+(a>=b)',
   __gt: '__gt=(a,b)=>+(a>b)',
   __eq: '__eq=(a,b)=>+(a===b)',
