@@ -13,6 +13,7 @@ import {
 } from './keywords.js'
 import { evaluate, run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
+import { EXPONENTIATION, FLOOR } from '../lib/baked/macros.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
@@ -362,139 +363,7 @@ export const js = (source, deps) => {
   ])
   return `${top}${program}`
 }
-const EXPONENTIATION = [
-  [0, 'lambda'],
-  [1, 'base'],
-  [1, 'exp'],
-  [
-    [0, 'do'],
-    [
-      [0, 'let'],
-      [1, 'power'],
-      [
-        [0, 'lambda'],
-        [1, 'base'],
-        [1, 'exp'],
-        [
-          [0, 'if'],
-          [
-            [0, '<'],
-            [1, 'exp'],
-            [2, 0]
-          ],
-          [
-            [0, 'if'],
-            [
-              [0, '='],
-              [1, 'base'],
-              [2, 0]
-            ],
-            [
-              [0, 'throw'],
-              [
-                [0, 'array'],
-                [2, 66],
-                [2, 97],
-                [2, 115],
-                [2, 101],
-                [2, 32],
-                [2, 99],
-                [2, 97],
-                [2, 110],
-                [2, 39],
-                [2, 116],
-                [2, 32],
-                [2, 98],
-                [2, 101],
-                [2, 32],
-                [2, 48],
-                [2, 32],
-                [2, 105],
-                [2, 102],
-                [2, 32],
-                [2, 101],
-                [2, 120],
-                [2, 112],
-                [2, 111],
-                [2, 110],
-                [2, 101],
-                [2, 110],
-                [2, 116],
-                [2, 32],
-                [2, 105],
-                [2, 115],
-                [2, 32],
-                [2, 60],
-                [2, 32],
-                [2, 48]
-              ]
-            ],
-            [
-              [0, '/'],
-              [
-                [0, '*'],
-                [1, 'base'],
-                [
-                  [0, 'power'],
-                  [1, 'base'],
-                  [
-                    [0, '-'],
-                    [
-                      [0, '*'],
-                      [1, 'exp'],
-                      [2, -1]
-                    ],
-                    [2, 1]
-                  ]
-                ]
-              ]
-            ]
-          ],
-          [
-            [0, 'if'],
-            [
-              [0, '='],
-              [1, 'exp'],
-              [2, 0]
-            ],
-            [2, 1],
-            [
-              [0, 'if'],
-              [
-                [0, '='],
-                [1, 'exp'],
-                [2, 1]
-              ],
-              [1, 'base'],
-              [
-                [0, 'if'],
-                [[2, 1]],
-                [
-                  [0, '*'],
-                  [1, 'base'],
-                  [
-                    [0, 'power'],
-                    [1, 'base'],
-                    [
-                      [0, '-'],
-                      [1, 'exp'],
-                      [2, 1]
-                    ]
-                  ]
-                ]
-              ]
-            ]
-          ]
-        ]
-      ]
-    ],
-    [
-      [0, 'power'],
-      [1, 'base'],
-      [1, 'exp']
-    ]
-  ]
-]
+
 export const deSuggar = (ast) => {
   if (ast.length === 0) throw new SyntaxError(`No expressions to evaluate`)
   // for (const node of ast)
@@ -514,22 +383,7 @@ export const deSuggar = (ast) => {
                 break
               case SUGGAR.INTEGER_DEVISION:
                 exp.length = 0
-                exp.push(
-                  ...[
-                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                    [WORD, 'a'],
-                    [WORD, 'b'],
-                    [
-                      [APPLY, KEYWORDS.BITWISE_OR],
-                      [
-                        [APPLY, KEYWORDS.DIVISION],
-                        [WORD, 'a'],
-                        [WORD, 'b']
-                      ],
-                      [ATOM, 0]
-                    ]
-                  ]
-                )
+                exp.push(...FLOOR)
                 break
             }
           }
@@ -638,17 +492,10 @@ export const deSuggar = (ast) => {
                         SUGGAR.INTEGER_DEVISION
                       } ${stringifyArgs(rest)})`
                     )
-                  else if (rest.some((x) => x[TYPE] === APPLY))
-                    throw new TypeError(
-                      `Arguments of (${
-                        SUGGAR.INTEGER_DEVISION
-                      }), must be (or atom word) (hint use (math:floor (${
-                        KEYWORDS.DIVISION
-                      } a b)) instead) (${
-                        SUGGAR.INTEGER_DEVISION
-                      } ${stringifyArgs(rest)})`
-                    )
-                  else {
+                  else if (rest.some((x) => x[TYPE] === APPLY)) {
+                    exp.length = 0
+                    exp.push([0, KEYWORDS.CALL_FUNCTION], FLOOR, ...rest)
+                  } else {
                     exp.length = 1
                     exp[0] = [APPLY, KEYWORDS.BITWISE_OR]
                     exp.push([[APPLY, KEYWORDS.DIVISION], ...rest])
@@ -680,13 +527,23 @@ export const deSuggar = (ast) => {
                       const exponent = exp[1]
                       const power = exp[2]
                       exp.length = 0
-                      exp.push([0, 'apply'], EXPONENTIATION, exponent, power)
+                      exp.push(
+                        [0, KEYWORDS.CALL_FUNCTION],
+                        EXPONENTIATION,
+                        exponent,
+                        power
+                      )
                     }
                   } else {
                     const exponent = exp[1]
                     const power = exp[2]
                     exp.length = 0
-                    exp.push([0, 'apply'], EXPONENTIATION, exponent, power)
+                    exp.push(
+                      [0, KEYWORDS.CALL_FUNCTION],
+                      EXPONENTIATION,
+                      exponent,
+                      power
+                    )
                   }
                   deSuggar(exp)
                 }
@@ -798,7 +655,6 @@ export const deSuggar = (ast) => {
                 }
                 deSuggar(exp)
                 break
-
               case SUGGAR.NOT_EQUAL_1:
               case SUGGAR.NOT_EQUAL_2:
                 {

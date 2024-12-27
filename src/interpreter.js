@@ -432,28 +432,22 @@ export const keywords = {
           KEYWORDS.AND
         } ${stringifyArgs(args)})`
       )
-    let circuit
-    for (let i = 0; i < args.length - 1; ++i) {
-      circuit = evaluate(args[i], env)
-      if (circuit !== FALSE && circuit !== TRUE)
-        throw new TypeError(
-          `Condition of (${
-            KEYWORDS.AND
-          }) must be ${TRUE} or ${FALSE} but got (${
-            KEYWORDS.AND
-          } ${stringifyArgs(args)})`
-        )
-      if (circuit) continue
-      else return 0
-    }
-    const end = evaluate(args.at(-1), env)
-    if (end !== FALSE && end !== TRUE)
+    const a = evaluate(args[0], env)
+    if (a !== FALSE && a !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got (${
-          KEYWORDS.AND
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
-    return end
+    if (!a) return 0
+    const b = evaluate(args[1], env)
+    if (b !== FALSE && b !== TRUE)
+      throw new TypeError(
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.OR
+        } ${stringifyArgs(args)})`
+      )
+    return b
   },
   [KEYWORDS.OR]: (args, env) => {
     if (args.length !== 2)
@@ -462,26 +456,22 @@ export const keywords = {
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
-    let circuit
-    for (let i = 0; i < args.length - 1; ++i) {
-      circuit = evaluate(args[i], env)
-      if (circuit !== FALSE && circuit !== TRUE)
-        throw new TypeError(
-          `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
-            KEYWORDS.OR
-          } ${stringifyArgs(args)})`
-        )
-      if (circuit) return 1
-      else continue
-    }
-    const end = evaluate(args.at(-1), env)
-    if (end !== FALSE && end !== TRUE)
+    const a = evaluate(args[0], env)
+    if (a !== FALSE && a !== TRUE)
       throw new TypeError(
         `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
-    return end
+    if (a) return 1
+    const b = evaluate(args[1], env)
+    if (b !== FALSE && b !== TRUE)
+      throw new TypeError(
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.OR
+        } ${stringifyArgs(args)})`
+      )
+    return b
   },
   [KEYWORDS.CALL_FUNCTION]: (args, env) => {
     if (!args.length)

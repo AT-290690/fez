@@ -86,24 +86,8 @@ const Helpers = {
   __lt: '__lt=(a,b)=>+(a<b)',
   array: 'array=(...args)=>args',
   not: 'not=(a)=>+!a',
-  and: `and=(...args)=>{
-    let circuit;
-    for(let i=0; i<args.length-1;++i){
-      circuit=args[i]
-      if(circuit) continue
-      else return 0
-    }
-    return args.at(-1) ? 1 : 0
-  }`,
-  or: `or=(...args)=>{
-    let circuit;
-    for(let i=0;i<args.length-1;++i) {
-      circuit = args[i]
-      if(circuit) return 1
-      else continue
-    }
-    return args.at(-1) ? 1 : 0
-  }`,
+  and: `and=(a, b)=>+(a&&b)`,
+  or: `or=(a, b)=>+(a||b)`,
   log_effect: `log_effect=(msg)=>{console.log(msg);return msg}`,
   log_char_effect: `log_char_effect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
   log_string_effect: `log_string_effect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
