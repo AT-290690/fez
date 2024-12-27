@@ -117,11 +117,12 @@ document.addEventListener('keydown', (e) => {
     if (value.trim()) {
       terminal.setValue(
         serialise(
-          fez(editor.getValue(), {
-            compile: 1,
-            eval: 1,
-            mutation: 1
-          })
+          eval(
+            fez(editor.getValue(), {
+              compile: 1,
+              mutation: 1
+            })
+          )
         )
       )
       terminal.clearSelection()
