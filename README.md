@@ -54,9 +54,9 @@ World
 ```
 
 ```lisp
-(let Fizz (string char:F char:i char:z char:z))
-(let Buzz (string char:B char:u char:z char:z))
-(let FizzBuzz (string Fizz Buzz))
+(let Fizz (array char:F char:i char:z char:z))
+(let Buzz (array char:B char:u char:z char:z))
+(let FizzBuzz (array Fizz Buzz))
 
 (let fizz-buzz (lambda n
     (cond
@@ -152,9 +152,9 @@ eval(
 import { fez } from 'fez-lisp'
 fez(
   `
-(let Fizz (string char:F char:i char:z char:z))
-(let Buzz (string char:B char:u char:z char:z))
-(let FizzBuzz (string Fizz Buzz))
+(let Fizz (array char:F char:i char:z char:z))
+(let Buzz (array char:B char:u char:z char:z))
+(let FizzBuzz (array Fizz Buzz))
 
 (let fizz-buzz (lambda n
     (cond

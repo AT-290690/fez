@@ -8,23 +8,14 @@ import {
   WORD,
   SUGGAR
 } from './keywords.js'
-import { leaf, isLeaf } from './parser.js'
-const deepRenameTco = (name, newName, tree) => {
+import { leaf, isLeaf, AST } from './parser.js'
+const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
     for (const leaf of tree) {
       // Figure out a non mutable solution so
-      // I can get rid of deep copy
-      if (leaf[VALUE] === name) leaf[VALUE] = `()=>${newName}`
-      deepRenameTco(name, newName, leaf)
-    }
-}
-const deepRenameCache = (name, newName, tree) => {
-  if (!isLeaf(tree))
-    for (const leaf of tree) {
-      // Figure out a non mutable solution so
-      // I can get rid of deep copy
+      // I can get rid of deep clone AST.parse(AST.stringify(ast))
       if (leaf[VALUE] === name) leaf[VALUE] = newName
-      deepRenameCache(name, newName, leaf)
+      deepRename(name, newName, leaf)
     }
 }
 const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
@@ -192,7 +183,7 @@ const compile = (tree, Drill) => {
           const functionArgs = Arguments.at(-1).slice(1)
           const body = functionArgs.pop()
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-          deepRenameTco(n, newName, body)
+          deepRename(n, `()=>${newName}`, body)
           const evaluatedBody = compile(body, FunctionDrill)
           const vars = FunctionDrill.Variables.size
             ? `var ${[...FunctionDrill.Variables].join(',')};`
@@ -210,7 +201,7 @@ const compile = (tree, Drill) => {
           Drill.Variables.add(name)
           const functionArgs = Arguments.at(-1).slice(1)
           const body = functionArgs.pop()
-          deepRenameCache(n, newName, body)
+          deepRename(n, newName, body)
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
           const evaluatedBody = compile(body, FunctionDrill)
           const vars = FunctionDrill.Variables.size
@@ -336,7 +327,7 @@ const compile = (tree, Drill) => {
 const HelpersEntries = new Map(Object.entries(Helpers))
 export const comp = (ast) => {
   const Drill = { Variables: new Set(), Helpers: new Set() }
-  const raw = ast
+  const raw = AST.parse(AST.stringify(ast)) // cloning for fn renames mutations
     .map((tree) => compile(tree, Drill))
     .filter((x) => x !== undefined)
     .join('\n')
@@ -355,5 +346,5 @@ export const comp = (ast) => {
     ? `var ${[...Drill.Variables].join(',')};`
     : ''
   const top = `${help}${vars}`
-  return { top, program }
+  return `${top}${program}`
 }

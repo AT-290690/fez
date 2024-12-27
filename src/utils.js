@@ -239,7 +239,6 @@ export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
 }
-export const deepClone = (ast) => AST.parse(AST.stringify(ast))
 export const interpret = (ast, keywords) =>
   ast.reduce((_, x) => evaluate(x, keywords), 0)
 export const fez = (source, options = {}) => {
@@ -255,19 +254,13 @@ export const fez = (source, options = {}) => {
       const parsed = deSuggar(LISP.parse(code))
       const ast = [...treeShake(parsed, std), ...parsed]
       // if (options.check) typeCheck(ast)
-      if (options.compile) {
-        const js = Object.values(comp(deepClone(ast))).join('')
-        return js
-      }
+      if (options.compile) return comp(ast)
       return run(ast, env)
     } else if (Array.isArray(source)) {
       const ast = !options.mutation
         ? AST.parse(AST.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
         : source
-      if (options.compile) {
-        const js = Object.values(comp(deepClone(ast))).join('')
-        return js
-      }
+      if (options.compile) return comp(ast)
       return run(ast, env)
     } else {
       throw new Error('Source has to be either a lisp source code or an AST')
