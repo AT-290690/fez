@@ -1,13 +1,12 @@
 import std from '../lib/baked/std.js'
-import { comp } from './compiler.js'
+import { comp, OPTIMIZATIONS } from './compiler.js'
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { evaluate, run } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import {
   deSuggarAst,
   deSuggarSource,
-  handleUnbalancedQuotes,
-  SUGGAR
+  handleUnbalancedQuotes
 } from './macros.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
@@ -88,8 +87,8 @@ export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
     case KEYWORDS.DEFINE_VARIABLE:
-    case SUGGAR.RECURSION:
-    case SUGGAR.CACHE:
+    case OPTIMIZATIONS.RECURSION:
+    case OPTIMIZATIONS.CACHE:
       return true
     default:
       return !isNaN(name[0])

@@ -25,9 +25,7 @@ export const SUGGAR = {
   LIST_TYPE: 'list',
   POWER: '**',
   INTEGER_DEVISION: '//',
-  CONDITION: 'cond',
-  RECURSION: 'recursive',
-  CACHE: 'memoized'
+  CONDITION: 'cond'
 }
 export const deSuggarAst = (ast) => {
   if (ast.length === 0) throw new SyntaxError(`No expressions to evaluate`)
