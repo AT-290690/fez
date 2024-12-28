@@ -5,9 +5,9 @@ import {
   KEYWORDS,
   TYPE,
   VALUE,
-  WORD,
-  SUGGAR
+  WORD
 } from './keywords.js'
+import { SUGGAR } from './macros.js'
 import { leaf, isLeaf, AST } from './parser.js'
 const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
@@ -58,6 +58,20 @@ const keywordToHelper = (name) => {
       return '__lt'
     case KEYWORDS.LESS_THAN_OR_EQUAL:
       return '__lteq'
+    case KEYWORDS.BITWISE_AND:
+      return '__bit_and'
+    case KEYWORDS.BITWISE_OR:
+      return '__bit_or'
+    case KEYWORDS.BITWISE_XOR:
+      return '__bit_xor'
+    case KEYWORDS.BITWISE_NOT:
+      return '__bit_not'
+    case KEYWORDS.BITWISE_LEFT_SHIFT:
+      return '__bit_lshift'
+    case KEYWORDS.BITWISE_RIGHT_SHIFT:
+      return '__bit_rshift'
+    case KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT:
+      return '__bit_urshift'
     default:
       return name
   }
@@ -78,12 +92,19 @@ const Helpers = {
   __add: `__add=(a,b)=>{return a+b}`,
   __sub: `__sub=function(a,b){return arguments.length===1?-a:a-b}`,
   __mult: `__mult=(a,b)=>{return a*b}`,
-  __div: `__div=function(a,b){return arguments.length===1?1/a:a/b}`,
+  __div: `__div=(a,b)=>{return a/b}`,
   __gteq: '__gteq=(a,b)=>+(a>=b)',
   __gt: '__gt=(a,b)=>+(a>b)',
   __eq: '__eq=(a,b)=>+(a===b)',
   __lteq: '__lteq=(a,b)=>+(a<=b)',
   __lt: '__lt=(a,b)=>+(a<b)',
+  __bit_and: '__bit_and=(a,b)=>a&b',
+  __bit_or: '__bit_or=(a,b)=>a|b',
+  __bit_xor: '__bit_xor=(a,b)=>a^b',
+  __bit_not: '__bit_not=(a)=>~a',
+  __bit_lshift: '__bit_lshift=(a,b)=>a<<b',
+  __bit_rshift: '__bit_rshift=(a,b)=>a>>b',
+  __bit_urshift: '__bit_urshift=(a,b)=>a>>>b',
   array: 'array=(...args)=>args',
   not: 'not=(a)=>+!a',
   and: `and=(a, b)=>+(a&&b)`,
@@ -262,9 +283,7 @@ const compile = (tree, Drill) => {
       case KEYWORDS.MULTIPLICATION:
         return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.DIVISION:
-        return Arguments.length === 1
-          ? `(1/${compile(Arguments[0], Drill)});`
-          : `(${parseArgs(Arguments, Drill, token)});`
+        return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.ADDITION:
         return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.BITWISE_AND:

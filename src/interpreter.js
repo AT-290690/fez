@@ -3,11 +3,11 @@ import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 export const keywords = {
   [KEYWORDS.REMAINDER_OF_DIVISION]: (args, env) => {
-    if (args.length < 2)
+    if (args.length !== 2)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.REMAINDER_OF_DIVISION
-        }), expected > 1 but got ${args.length}. (${
+        }), expected (= 2) but got ${args.length}. (${
           KEYWORDS.REMAINDER_OF_DIVISION
         } ${stringifyArgs(args)})`
       )
@@ -37,24 +37,10 @@ export const keywords = {
     return a % b
   },
   [KEYWORDS.DIVISION]: (args, env) => {
-    if (args.length === 1) {
-      const number = evaluate(args[0], env)
-      if (typeof number !== 'number')
-        throw new TypeError(
-          `Arguments of (${KEYWORDS.DIVISION}) is not a (${
-            KEYWORDS.NUMBER_TYPE
-          }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
-        )
-      if (number === 0)
-        throw new TypeError(
-          `Argument of (${
-            KEYWORDS.DIVISION
-          }) can't be a (0) (division by 0 is not allowed) (${
-            KEYWORDS.DIVISION
-          } ${stringifyArgs(args)})`
-        )
-      return 1 / number
-    }
+    if (args.length !== 2)
+      throw new RangeError(
+        `Invalid number of arguments for (${KEYWORDS.DIVISION}), expected (= 2) but got ${args.length}.`
+      )
     const a = evaluate(args[0], env)
     if (typeof a !== 'number')
       throw new TypeError(
@@ -139,9 +125,9 @@ export const keywords = {
     return a + b
   },
   [KEYWORDS.MULTIPLICATION]: (args, env) => {
-    if (args.length !== 0 && args.length !== 2)
+    if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.MULTIPLICATION}), expected (or (= 2) (= 0)) but got ${args.length}.`
+        `Invalid number of arguments for (${KEYWORDS.MULTIPLICATION}), expected (= 2) but got ${args.length}.`
       )
     const a = evaluate(args[0], env)
     if (typeof a !== 'number')

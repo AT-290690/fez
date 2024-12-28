@@ -1,8 +1,5 @@
 import { deepStrictEqual } from 'assert'
-import { fez, ast, replaceStrings, tree, astWithStd } from '../src/utils.js'
-import { AST, LISP } from '../src/parser.js'
-import std from '../lib/baked/std.js'
-import { deSuggar } from '../src/utils.js'
+import { fez, astWithStd } from '../src/utils.js'
 describe('AST', () => {
   it('Should be work', () => {
     deepStrictEqual(

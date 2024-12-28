@@ -13,7 +13,7 @@ describe('Corretness', () => {
       [-5, -4, -3, -2, -1]
     )
     deepStrictEqual(
-      evalJS(`(array:map (array 5 4 3 2 1) /)`),
+      evalJS(`(array:map (array 5 4 3 2 1) (lambda x (/ x)))`),
       [0.2, 0.25, 0.3333333333333333, 0.5, 1]
     )
     strictEqual(evalJS(`(let x 13) (let y 2) (// x y)`), 6)
@@ -22,6 +22,18 @@ describe('Corretness', () => {
     strictEqual(evalJS(`(// 13 2)`), 6)
     strictEqual(evalJS(`(let x 2) (** x 4)`), 16)
     strictEqual(evalJS(`(** 2 4)`), 16)
+    deepStrictEqual(
+      evalJS(`(array:enumerated-map (array 0 1 3 4 4) **)`),
+      [1, 1, 9, 64, 256]
+    )
+    deepStrictEqual(
+      evalJS(`(array:enumerated-map (array 6 5 13 27) //)`),
+      [0, 5, 6, 9]
+    )
+    deepStrictEqual(
+      evalJS(`(array:enumerated-map (array 0 1 3 4 4) <>)`),
+      [0, 0, 1, 1, 0]
+    )
     deepStrictEqual(
       evalJS(
         `(string:trim "

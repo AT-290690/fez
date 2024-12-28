@@ -1,8 +1,8 @@
 import { deepStrictEqual } from 'assert'
-import { fez, replaceStrings, tree } from '../src/utils.js'
+import { fez, tree } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
-import { deSuggar } from '../src/utils.js'
+import { deSuggarAst } from '../src/macros.js'
 describe('Utils', () => {
   it('Should be work', () =>
     [
@@ -133,7 +133,7 @@ bbrgwb")
 '((part1 PARSED) (part2 PARSED))`
     ]
       .map((source) => tree(source, std))
-      .map((ast) => deSuggar(ast))
+      .map((ast) => deSuggarAst(ast))
       .forEach((ast) =>
         deepStrictEqual(
           eval(

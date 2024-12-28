@@ -3,11 +3,18 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(array:map (array 1 2 3 4) ~)`,
+      `(array:enumerated-map (array 1 2 3 4) &)`,
+      `(array:enumerated-map (array 1 2 3 4) |)`,
+      `(array:enumerated-map (array 1 2 3 4) ^)`,
+      `(array:enumerated-map (array 1 2 3 4) <<)`,
+      `(array:enumerated-map (array 1 2 3 4) >>)`,
+      `(array:enumerated-map (array 1 2 3 4) >>>)`,
       `(or (and (= 1 1) (> 2 1)) (or (and (= 0 0) (<= 2 2))))`,
       `(array 
         (array (/ 5) (- 5)) 
         (array:map (array 5 4 3 2 1) -)
-      (array:map (array 5 4 3 2 1) /)
+      (array:map (array 5 4 3 2 1) (lambda x (/ x)))
         )`,
       `(let arr (array 0.1 3.14 1 2 3 4 10))
 (let *FACTOR* 17)
