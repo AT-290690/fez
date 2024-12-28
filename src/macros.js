@@ -146,10 +146,10 @@ export const deSuggarAst = (ast) => {
                   exp.length = 0
                   let temp = exp
                   for (const item of rest) {
-                    temp.push([APPLY, KEYWORDS.ARRAY_TYPE], item, [])
+                    temp.push([APPLY, KEYWORDS.CREATE_ARRAY], item, [])
                     temp = temp.at(-1)
                   }
-                  temp.push([APPLY, KEYWORDS.ARRAY_TYPE])
+                  temp.push([APPLY, KEYWORDS.CREATE_ARRAY])
                 }
                 deSuggarAst(exp)
                 break
@@ -386,7 +386,7 @@ export const replaceStrings = (source) => {
     for (const q of quotes)
       source = source.replaceAll(
         q,
-        `(${KEYWORDS.ARRAY_TYPE} ${[...q.replaceAll('\r', '')]
+        `(${KEYWORDS.CREATE_ARRAY} ${[...q.replaceAll('\r', '')]
           .slice(1, -1)
           .map((x) => x.charCodeAt(0))
           .join(' ')})`
@@ -395,9 +395,9 @@ export const replaceStrings = (source) => {
 }
 export const replaceQuotes = (source) =>
   source
-    .replaceAll(/\'\(/g, `(${KEYWORDS.ARRAY_TYPE} `)
+    .replaceAll(/\'\(/g, `(${KEYWORDS.CREATE_ARRAY} `)
     .replaceAll(/\`\(/g, `(${SUGGAR.LIST_TYPE} `)
-    .replaceAll(/\(\)/g, `(${KEYWORDS.ARRAY_TYPE})`)
+    .replaceAll(/\(\)/g, `(${KEYWORDS.CREATE_ARRAY})`)
 export const deSuggarSource = (source) => replaceQuotes(replaceStrings(source))
 export const handleUnbalancedQuotes = (source) => {
   const diff = (source.match(/\"/g) ?? []).length % 2

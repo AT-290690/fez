@@ -1,4 +1,13 @@
-import { TYPE, VALUE, WORD, KEYWORDS, FALSE, TRUE, TYPES } from './keywords.js'
+import {
+  TYPE,
+  VALUE,
+  WORD,
+  KEYWORDS,
+  FALSE,
+  TRUE,
+  TYPES,
+  RUNTIME_TYPES
+} from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 export const keywords = {
@@ -15,14 +24,14 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `First arguments of (${KEYWORDS.ADDITION}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second arguments of (${KEYWORDS.ADDITION}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
       )
     return a + b
@@ -36,14 +45,14 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `First arguments of (${KEYWORDS.MULTIPLICATION}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second arguments of (${KEYWORDS.MULTIPLICATION}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
       )
     return a * b
@@ -61,7 +70,7 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `First argument of (${KEYWORDS.SUBTRACTION}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
       )
     if (args.length === 1) return -a
@@ -69,7 +78,7 @@ export const keywords = {
     if (typeof b !== 'number')
       throw new TypeError(
         `Second argument of (${KEYWORDS.SUBTRACTION}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
       )
     return a - b
@@ -83,14 +92,14 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `First argument of (${KEYWORDS.DIVISION}) is not (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second argument of (${KEYWORDS.DIVISION}) is not (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
     if (b === 0)
@@ -116,14 +125,14 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `First argument of (${KEYWORDS.REMAINDER_OF_DIVISION}) is not (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second argument of (${KEYWORDS.REMAINDER_OF_DIVISION}) is not (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
       )
     if (b === 0)
@@ -148,7 +157,7 @@ export const keywords = {
     if (operands.some((x) => typeof x !== 'number'))
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_AND}) are ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         } (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
     return operands.reduce((acc, x) => acc & x)
@@ -164,7 +173,7 @@ export const keywords = {
     if (typeof operand !== 'number')
       throw new TypeError(
         `Argument of (${KEYWORDS.BITWISE_NOT}) is not a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
       )
     return ~operand
@@ -181,7 +190,7 @@ export const keywords = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_OR}) are (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)})`
       )
     return a | b
@@ -198,7 +207,7 @@ export const keywords = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_XOR}) are (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
       )
     return a ^ b
@@ -217,7 +226,7 @@ export const keywords = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_LEFT_SHIFT}) are (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(args)})`
       )
     return a << b
@@ -236,7 +245,7 @@ export const keywords = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_RIGHT_SHIFT}) are (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(args)})`
       )
     return a >> b
@@ -255,12 +264,12 @@ export const keywords = {
     if (typeof a !== 'number' || typeof b !== 'number')
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT}) are (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(args)})`
       )
     return a >>> b
   },
-  [KEYWORDS.ARRAY_TYPE]: (args, env) => {
+  [KEYWORDS.CREATE_ARRAY]: (args, env) => {
     return args.length ? args.map((x) => evaluate(x, env)) : []
   },
   [KEYWORDS.GET_ARRAY]: (args, env) => {
@@ -274,32 +283,32 @@ export const keywords = {
     if (!Array.isArray(array))
       throw new TypeError(
         `First argument of (${KEYWORDS.GET_ARRAY}) must be an (${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     if (array.length === 0)
       throw new RangeError(
         `First argument of (${KEYWORDS.GET_ARRAY}) is an empty (${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}))`
       )
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index))
       throw new TypeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) must be an (32 bit ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     if (index > array.length - 1 || index * -1 > array.length)
       throw new RangeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) is outside of (${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         }) bounds (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     const value = array.at(index)
     if (value == undefined)
       throw new RangeError(
-        `Trying to get a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
+        `Trying to get a null value in (${RUNTIME_TYPES.ARRAY}) at (${
           KEYWORDS.GET_ARRAY
         }) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
@@ -316,7 +325,7 @@ export const keywords = {
     if (!Array.isArray(array))
       throw new TypeError(
         `First argument of (${KEYWORDS.SET_ARRAY}) must be an (${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         }) but got (${array}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     if (args.length === 1) {
@@ -326,13 +335,13 @@ export const keywords = {
       if (!Number.isInteger(index) || index < 0)
         throw new TypeError(
           `Second argument of (${KEYWORDS.SET_ARRAY}) must be a positive (${
-            KEYWORDS.NUMBER_TYPE
+            RUNTIME_TYPES.NUMBER
           } integer) (${index}) (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
         )
       if (index > array.length)
         throw new RangeError(
           `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
-            KEYWORDS.ARRAY_TYPE
+            RUNTIME_TYPES.ARRAY
           }) bounds (index ${index} bounds ${array.length}) (${
             KEYWORDS.SET_ARRAY
           } ${stringifyArgs(args)})`
@@ -340,7 +349,7 @@ export const keywords = {
       const value = evaluate(args[2], env)
       if (value == undefined)
         throw new RangeError(
-          `Trying to set a null value in (${KEYWORDS.ARRAY_TYPE}) at (${
+          `Trying to set a null value in (${RUNTIME_TYPES.ARRAY}) at (${
             KEYWORDS.SET_ARRAY
           }). (${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
         )
@@ -359,7 +368,7 @@ export const keywords = {
     if (!Array.isArray(array))
       throw new TypeError(
         `First argument of (${KEYWORDS.ARRAY_LENGTH}) must be an ${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         } (${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
       )
     return array.length
@@ -407,13 +416,13 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.EQUAL}), first argument is not an ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.EQUAL}), second argument are not an ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         } (${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
     return +(a === b)
@@ -430,13 +439,13 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.LESS_THAN}), first argument is not an ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         } (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.LESS_THAN}), second argument are not an ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         } (${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     return +(a < b)
@@ -453,14 +462,14 @@ export const keywords = {
     if (typeof a !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.GREATHER_THAN}), first argument is not an ${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         } (${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN
-        }), second argument are not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), second argument are not an ${RUNTIME_TYPES.NUMBER} (${
           KEYWORDS.GREATHER_THAN
         } ${stringifyArgs(args)})`
       )
@@ -481,7 +490,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }), first argument is not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), first argument is not an ${RUNTIME_TYPES.NUMBER} (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -489,7 +498,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }), second argument are not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), second argument are not an ${RUNTIME_TYPES.NUMBER} (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -510,7 +519,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }), first argument is not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), first argument is not an ${RUNTIME_TYPES.NUMBER} (${
           KEYWORDS.LESS_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -518,7 +527,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }), second argument are not an ${KEYWORDS.NUMBER_TYPE} (${
+        }), second argument are not an ${RUNTIME_TYPES.NUMBER} (${
           KEYWORDS.LESS_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -691,7 +700,7 @@ export const keywords = {
     if (!Array.isArray(expression))
       throw new TypeError(
         `Argument of (${KEYWORDS.THROW}) must be an (${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         }) but got (${expression}) (${KEYWORDS.THROW} ${stringifyArgs(args)})`
       )
     throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
@@ -718,7 +727,7 @@ export const keywords = {
     if (!Array.isArray(expression))
       throw new TypeError(
         `Argument of (${KEYWORDS.LOG_STRING}) must be an (${
-          KEYWORDS.ARRAY_TYPE
+          RUNTIME_TYPES.ARRAY
         }) but got (${expression}) (${KEYWORDS.LOG_STRING} ${stringifyArgs(
           args
         )})`
@@ -737,7 +746,7 @@ export const keywords = {
     if (typeof expression !== 'number')
       throw new TypeError(
         `Argument of (${KEYWORDS.LOG_CHAR}) must be a (${
-          KEYWORDS.NUMBER_TYPE
+          RUNTIME_TYPES.NUMBER
         }) but got (${expression}) (${KEYWORDS.LOG_CHAR} ${stringifyArgs(
           args
         )})`

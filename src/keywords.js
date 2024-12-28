@@ -7,8 +7,7 @@ export const TRUE = 1
 export const FALSE = 0
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
-  NUMBER_TYPE: 'number',
-  ARRAY_TYPE: 'array',
+  CREATE_ARRAY: 'array',
   IDENTITY: 'identity',
   ARRAY_LENGTH: 'length',
   IS_ATOM: 'atom?',
@@ -55,4 +54,8 @@ export const TYPES = {
   [APPLY]: 'APPLY',
   [WORD]: 'WORD',
   [ATOM]: 'ATOM'
+}
+export const RUNTIME_TYPES = {
+  NUMBER: 'number',
+  ARRAY: 'array'
 }

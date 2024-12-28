@@ -233,7 +233,7 @@ const compile = (tree, Drill) => {
       case KEYWORDS.IS_LAMBDA:
         Drill.Helpers.add('lambda_predicate')
         return `lambda_predicate(${compile(Arguments[0], Drill)});`
-      case KEYWORDS.ARRAY_TYPE:
+      case KEYWORDS.CREATE_ARRAY:
         return `[${parseArgs(Arguments, Drill)}];`
       case KEYWORDS.ARRAY_LENGTH:
         Drill.Helpers.add('length')

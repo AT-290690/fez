@@ -58,7 +58,7 @@ export const stringifyType = (type) => {
   if (!isLeaf(type)) {
     const [car] = type
     if (car == undefined) return '(array)'
-    else if (car[TYPE] === APPLY && car[VALUE] === KEYWORDS.ARRAY_TYPE)
+    else if (car[TYPE] === APPLY && car[VALUE] === KEYWORDS.CREATE_ARRAY)
       return `(array ${type
         .map((t) => stringifyType(t))
         .join(' ')
@@ -83,15 +83,18 @@ export const stringifyArgs = (args) =>
             .replace(new RegExp(/"/g), '')
     )
     .join(' ')
+const KEYWORDS_SET = Object.values(KEYWORDS).reduce((a, b) => {
+  a.add(b)
+  return a
+}, new Set())
 export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
-    case KEYWORDS.DEFINE_VARIABLE:
     case OPTIMIZATIONS.RECURSION:
     case OPTIMIZATIONS.CACHE:
       return true
     default:
-      return !isNaN(name[0])
+      return KEYWORDS_SET.has(name) || !isNaN(name[0])
   }
 }
 export const isEqual = (a, b) =>
