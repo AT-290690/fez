@@ -393,7 +393,7 @@ export const keywords = {
       ? evaluate(args[1], env)
       : args.length === 3
       ? evaluate(args[2], env)
-      : 0
+      : FALSE
   },
   [KEYWORDS.NOT]: (args, env) => {
     if (args.length !== 1)
@@ -547,7 +547,7 @@ export const keywords = {
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
-    if (!a) return 0
+    if (!a) return FALSE
     const b = evaluate(args[1], env)
     if (b !== FALSE && b !== TRUE)
       throw new TypeError(
@@ -571,7 +571,7 @@ export const keywords = {
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
-    if (a) return 1
+    if (a) return TRUE
     const b = evaluate(args[1], env)
     if (b !== FALSE && b !== TRUE)
       throw new TypeError(
@@ -668,7 +668,7 @@ export const keywords = {
           KEYWORDS.BLOCK
         } ${stringifyArgs(args)})`
       )
-    return args.reduce((_, x) => evaluate(x, env), 0)
+    return args.reduce((_, x) => evaluate(x, env), FALSE)
   },
   [KEYWORDS.IS_ATOM]: (args, env) => {
     if (args.length !== 1)

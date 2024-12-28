@@ -436,6 +436,41 @@ ZZZ=ZZZ,ZZZ")
         [70, 105, 122, 122, 66, 117, 122, 122]
       ]
     )
+    deepStrictEqual(
+      evalJS(
+        `(let Fizz (array char:F char:i char:z char:z))
+        (let Buzz (array char:B char:u char:z char:z))
+        (let FizzBuzz (array:merge Fizz Buzz))
+        
+        (let fizz-buzz (lambda n
+            (cond
+              (= (% n 15) 0) FizzBuzz
+              (= (% n 3) 0) Fizz
+              (= (% n 5) 0) Buzz
+              (*) n)))
+        
+          (|>
+            (math:range 1 15)
+            (array:map fizz-buzz))`
+      ),
+      [
+        1,
+        2,
+        [70, 105, 122, 122],
+        4,
+        [66, 117, 122, 122],
+        [70, 105, 122, 122],
+        7,
+        8,
+        [70, 105, 122, 122],
+        [66, 117, 122, 122],
+        11,
+        [70, 105, 122, 122],
+        13,
+        14,
+        [70, 105, 122, 122, 66, 117, 122, 122]
+      ]
+    )
     strictEqual(
       evalJS(
         `(let fibonacci (lambda n
