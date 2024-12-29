@@ -147,20 +147,26 @@ export const keywords = {
     return a % b
   },
   [KEYWORDS.BITWISE_AND]: (args, env) => {
-    if (args.length < 2)
+    if (args.length !== 2)
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_AND
         }) (= 2 required). (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
-    const operands = args.map((a) => evaluate(a, env))
-    if (operands.some((x) => typeof x !== 'number'))
+    if (typeof a !== 'number')
       throw new TypeError(
-        `Not all arguments of (${KEYWORDS.BITWISE_AND}) are ${
+        `First arguments of (${KEYWORDS.BITWISE_AND}) is not a (${
           RUNTIME_TYPES.NUMBER
-        } (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
+        }) (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
-    return operands.reduce((acc, x) => acc & x)
+    const b = evaluate(args[1], env)
+    if (typeof b !== 'number')
+      throw new TypeError(
+        `Second arguments of (${KEYWORDS.BITWISE_AND}) is not a (${
+          RUNTIME_TYPES.NUMBER
+        }) (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
+      )
+    return a & b
   },
   [KEYWORDS.BITWISE_NOT]: (args, env) => {
     if (args.length !== 1)
