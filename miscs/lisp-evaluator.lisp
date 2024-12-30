@@ -9,6 +9,10 @@
   "-" (lambda args env (if (= (length args) 1) (- (evaluate (get args 0) env)) (- (evaluate (get args 0) env) (evaluate (get args 1) env))))
   "*" (lambda args env (* (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "/" (lambda args env (/ (evaluate (get args 0) env) (evaluate (get args 1) env)))
+  ">" (lambda args env (> (evaluate (get args 0) env) (evaluate (get args 1) env)))
+  "<" (lambda args env (< (evaluate (get args 0) env) (evaluate (get args 1) env)))
+  ">=" (lambda args env (>= (evaluate (get args 0) env) (evaluate (get args 1) env)))
+  "<=" (lambda args env (<= (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "mod" (lambda args env (mod (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "&" (lambda args env (& (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "|" (lambda args env (| (evaluate (get args 0) env) (evaluate (get args 1) env)))
@@ -23,6 +27,18 @@
   "or" (lambda args env (or (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "atom?" (lambda args env (atom? (evaluate (get args 0) env)))
   "lambda?" (lambda args env (lambda? (evaluate (get args 0) env))))))
+
+(let evaluate (lambda exp env (do 
+  (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
+  (if (array:not-empty? expression) (apply (lambda (do 
+    (let first (array:head expression))
+    (let rest (array:tail expression))
+    (let pattern (get first ast:type))
+    (cond 
+      (= pattern ast:word) (map:get env (get first ast:value))
+      (= pattern ast:apply) (apply (map:get env (get first ast:value)) rest env)
+      (= pattern ast:atom) (get first ast:value)
+      (*) ())))) ()))))
 
 ; (let run (lambda source (apply (map:get keywords "do") (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) keywords)))
 
