@@ -121,8 +121,7 @@ const Helpers = {
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,
   lambda_predicate: `lambda_predicate=(fm)=>+(typeof fn==='function')`,
-  set_effect: `set_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array}`,
-  __error: `__error=(error)=>{throw new Error(error.map((x)=>String.fromCharCode(x)).join(''))}`
+  set_effect: `set_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',
@@ -312,10 +311,6 @@ const compile = (tree, Drill) => {
           Arguments[1],
           Drill
         )}:${Arguments.length === 3 ? compile(Arguments[2], Drill) : 0});`
-      }
-      case KEYWORDS.THROW: {
-        Drill.Helpers.add('__error')
-        return `__error(${compile(Arguments[0], Drill)})`
       }
       default: {
         const camelCased = lispToJavaScriptVariableName(token)

@@ -702,23 +702,6 @@ export const keywords = {
       )
     return +(typeof evaluate(args[0], env) === 'function')
   },
-  // Not sure about these
-  [KEYWORDS.THROW]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.THROW}) (= 1 required) (${
-          KEYWORDS.THROW
-        } ${stringifyArgs(args)})`
-      )
-    const expression = evaluate(args[0], env)
-    if (!Array.isArray(expression))
-      throw new TypeError(
-        `Argument of (${KEYWORDS.THROW}) must be an (${
-          RUNTIME_TYPES.ARRAY
-        }) but got (${expression}) (${KEYWORDS.THROW} ${stringifyArgs(args)})`
-      )
-    throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
-  },
   [KEYWORDS.LOG]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(

@@ -44,9 +44,7 @@ export const KEYWORDS = {
   LOG: 'log!',
   LOG_STRING: 'log-string!',
   LOG_CHAR: 'log-char!',
-  CLEAR_CONSOLE: 'clear!',
-
-  THROW: 'throw'
+  CLEAR_CONSOLE: 'clear!'
 }
 
 export const TYPES = {
