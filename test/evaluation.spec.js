@@ -3,6 +3,7 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(identity 42)`,
       `(array:map (array 1 2 3 4) ~)`,
       `(array:enumerated-map (array 1 2 3 4) &)`,
       `(array:enumerated-map (array 1 2 3 4) |)`,

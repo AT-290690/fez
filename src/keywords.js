@@ -8,7 +8,6 @@ export const FALSE = 0
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
   CREATE_ARRAY: 'array',
-  IDENTITY: 'identity',
   ARRAY_LENGTH: 'length',
   IS_ATOM: 'atom?',
   IS_LAMBDA: 'lambda?',

@@ -104,5 +104,35 @@ export const AST = {
       ? `[${ast.map(AST.stringify).join(',')}]`
       : typeof ast === 'string'
       ? `"${ast}"`
-      : ast
+      : ast,
+  struct: (ast) => {
+    const dfs = (exp) => {
+      let out = ''
+      const [first, ...rest] = isLeaf(exp) ? [exp] : exp
+      if (first == undefined)
+        return (out +=
+          '(Expression::Apply(vec![Expression::Word("array".to_string())]))')
+      switch (first[TYPE]) {
+        case WORD:
+          out += `Expression::Word("${first[VALUE]}".to_string())`
+          break
+        case ATOM:
+          out += `Expression::Atom(${
+            Number.isInteger(first[VALUE])
+              ? `${first[VALUE]}.0`
+              : first[VALUE].toString()
+          })`
+          break
+        case APPLY:
+          out += `Expression::Apply(vec![Expression::Word("${
+            first[VALUE]
+          }".to_string()),${rest.map(dfs).join(',')}])`
+          break
+      }
+      return out
+    }
+    return `Expression::Apply(vec![Expression::Word("do".to_string()),${ast
+      .map(dfs)
+      .join(',')}])`
+  }
 }

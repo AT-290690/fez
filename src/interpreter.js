@@ -153,6 +153,7 @@ export const keywords = {
           KEYWORDS.BITWISE_AND
         }) (= 2 required). (${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
+    const a = evaluate(args[0], env)
     if (typeof a !== 'number')
       throw new TypeError(
         `First arguments of (${KEYWORDS.BITWISE_AND}) is not a (${
