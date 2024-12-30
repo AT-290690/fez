@@ -3,6 +3,14 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(array
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 256 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 234 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 8 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 32 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 16 n)))
+(array:map (math:range 0 50) (lambda n (math:n-one-bit? 4234 n)))
+)`,
       `(identity 42)`,
       `(array:map (array 1 2 3 4) ~)`,
       `(array:enumerated-map (array 1 2 3 4) &)`,

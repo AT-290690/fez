@@ -6,6 +6,107 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      fez(`(let unique (lambda arr (|>
+      (let sorted (array:sort arr (lambda a b (> a b))))
+      (array:zip (math:sequence sorted))
+      (array:select (lambda x (do
+                  (let index (car (cdr x)))
+                  (or (not (> index 0))
+                  (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
+      (array:map car))))
+; tests
+(and
+   (array:equal? (unique (array 1)) (array 1))
+   (array:equal? (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))`),
+      1
+    )
+    deepStrictEqual(
+      fez(`(array (array:enumerated-some? (array 0 1 1 3 4 4 5) (lambda x i (= i x)))
+(array:enumerated-some? (array 1 2 3 4) (lambda x i (= i x))))`),
+      [1, 0]
+    )
+    deepStrictEqual(
+      fez(`(array 
+
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 256 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 234 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 8 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 32 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 16 n)))
+(array:map (math:range 0 50) (lambda n (math:n-one-bit? 4234 n)))
+
+
+)`),
+      [
+        [
+          0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+        ],
+        [
+          0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0
+        ],
+        [
+          0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
+        ],
+        [
+          0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+        ],
+        [
+          0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
+        ],
+        [
+          0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+          0, 0, 0, 0, 0
+        ]
+      ]
+    )
+    deepStrictEqual(
+      fez(`(array 
+
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 256 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 234 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 8 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 32 n)))
+(array:map (math:range 0 40) (lambda n (math:n-one-bit? 16 n)))
+(array:map (math:range 0 50) (lambda n (math:n-one-bit? 4234 n)))
+
+
+)`),
+      [
+        [
+          0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
+        ],
+        [
+          0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0
+        ],
+        [
+          0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
+        ],
+        [
+          0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0
+        ],
+        [
+          0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0
+        ],
+        [
+          0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0,
+          0, 0, 0, 0, 0
+        ]
+      ]
+    )
+    deepStrictEqual(evalJS(`(array (not (not 10)))`), [1])
     strictEqual(evalJS(`(let pow (lambda a cb (cb a 2))) (pow 10 **)`), 100)
     deepStrictEqual(evalJS(`(array (/ 5) (- 5))`), [0.2, -5])
     deepStrictEqual(

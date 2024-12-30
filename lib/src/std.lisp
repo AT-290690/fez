@@ -158,7 +158,7 @@
 (let math:max-bit (lambda a b (- a (& (- a b) (>> (- a b) 31)))))
 (let math:min-bit (lambda a b (- a (& (- a b) (>> (- b a) 31)))))
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
-(let math:n-one-bit? (lambda N nth (not (not (& N (<< 1 nth))))))
+(let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
 (let math:count-leading-zero-bits32 (lambda x (if (>= x 0) (- 32 (length (from:number->bit x))))))
 (let math:bit-count32 (lambda n0 (do 
   (let n1 (- n0 (& (>> n0 1) 1431655765)))
@@ -315,7 +315,7 @@
 (let list:cdr (lambda pair (get pair 1)))
 (let list:head (lambda pair (get pair 0)))
 (let list:tail (lambda pair (get pair 1)))
-(let list:nil? (lambda pair (not (length pair))))
+(let list:nil? (lambda pair (= (length pair) 0)))
 (let list:map (lambda xs f (if (list:nil? xs) () (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
 (let list:filter (lambda xs f (if (list:nil? xs) () (if (f (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f)) (list:filter (list:tail xs) f)))))
 (let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
@@ -338,7 +338,7 @@
                               (*) (list:some? (list:tail xs) f))))
 (let list:every? (lambda xs f (cond 
                               (list:nil? xs) 1
-                              (not (f (list:head xs))) 0
+                              (not (> (f (list:head xs)) 0)) 0
                               (*) (list:every? (list:tail xs) f))))
 (let list:remove-at (lambda xs pos (do 
   (let remove (lambda xs ini (if (= pos (- ini 1)) (list:tail xs) (list:pair (list:head xs) (remove (list:tail xs) (+ ini 1))))))
@@ -448,7 +448,7 @@
                     (let recursive:iterate (lambda i
                           (if (and (> (length arr) i)  (not (predicate? (get arr i))))
                               (recursive:iterate (+ i 1))
-                              (not (not (> (length arr) i))))))
+                              (not (= (> (length arr) i) 0)))))
                         (recursive:iterate 0))))
 (let array:find (lambda arr predicate? (do
                     (let recursive:iterate (lambda i
@@ -479,7 +479,7 @@
       (let sorted (array:sort arr (lambda a b (> a b))))
       (array:zip (math:sequence sorted))
       (array:select (lambda x (do 
-                  (let index (array:second x)) (or (not x)
+                  (let index (array:second x)) (or (not (> x 0))
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
       (array:map array:first))))
 (let array:traverse (lambda x callback
@@ -489,8 +489,8 @@
 (let array:iterate (lambda arr callback (do 
   (loop:for-n (length arr) callback)
   arr)))
-(let array:empty? (lambda arr (not (length arr))))
-(let array:not-empty? (lambda arr (not (not (length arr)))))
+(let array:empty? (lambda arr (= (length arr) 0)))
+(let array:not-empty? (lambda arr (not (= (length arr) 0))))
 (let array:count-of (lambda arr callback (length (array:select arr callback))))
 (let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
 (let array:empty! (lambda arr (do (let recursive:iterate (lambda (if (> (length arr) 0) (apply (lambda (do (del! arr) (recursive:iterate)))) arr))) (recursive:iterate))))
@@ -666,7 +666,7 @@
   (let recursive:iter (lambda lst out (if (list:nil? lst) out (recursive:iter (list:tail lst) (array:merge out (array (list:head lst)))))))
   (recursive:iter list ()))))
 (let from:array->list (lambda arr (do
-  (let recursive:iter (lambda arr out (if (not (length arr)) out (recursive:iter (array:tail arr) (list:pair (array:head arr) out)))))
+  (let recursive:iter (lambda arr out (if (not (> (length arr) 0)) out (recursive:iter (array:tail arr) (list:pair (array:head arr) out)))))
   (recursive:iter (array:reverse arr) ()))))
 (let from:digit->char (lambda d 
   (cond 
@@ -753,7 +753,6 @@
         (|> d (from:chars->digits) (from:digits->number)))))))
 (let from:number->string (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars))))
 (let from:numbers->strings (lambda x (array:map x from:number->string)))
-(let from:any->boolean (lambda val (not (not val))))
 (let from:array->set (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (set:add! s x))) s)))
 (let from:array->table (lambda arr (do (let s (array () () () ())) (array:for arr (lambda x (map:set! s x 0))) s)))
 (let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
@@ -846,7 +845,7 @@
                     (let recursive:iterate (lambda i
                           (if (and (> (length arr) i) (not (predicate? (get arr i) i)))
                               (recursive:iterate (+ i 1))
-                              (not (not (> (length arr) i))))))
+                              (not (= (> (length arr) i) 0)))))
                         (recursive:iterate 0))))
 (let array:find-index (lambda arr callback (do
                     (let recursive:iterate (lambda i
@@ -1233,9 +1232,9 @@
 (let var:increment! (lambda variable (set! variable 0 (+ (var:get variable) 1))))
 (let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
 
-(let bool:def (lambda val (array (not (not val)))))
+(let bool:def (lambda val (array (truthy? val))))
 (let bool:get (lambda variable (get variable 0)))
-(let bool:set! (lambda variable value (set! variable 0 (not (not value)))))
+(let bool:set! (lambda variable value (set! variable 0 (truthy? value))))
 (let bool:toggle! (lambda variable (set! variable 0 (not (get variable 0)))))
 (let bool:true (lambda (array 1)))
 (let bool:false (lambda (array 0)))

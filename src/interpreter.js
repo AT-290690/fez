@@ -409,6 +409,13 @@ export const keywords = {
           KEYWORDS.NOT
         } ${stringifyArgs(args)})`
       )
+    const operand = evaluate(args[0], env)
+    if (operand !== FALSE && operand !== TRUE)
+      throw new TypeError(
+        `Condition of (${KEYWORDS.NOT}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.NOT
+        } ${stringifyArgs(args)})`
+      )
     return +!evaluate(args[0], env)
   },
   [KEYWORDS.EQUAL]: (args, env) => {

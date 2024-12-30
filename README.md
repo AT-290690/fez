@@ -107,7 +107,7 @@ World
       (array:zip (math:sequence sorted))
       (array:select (lambda x (do
                   (let index (car (cdr x)))
-                  (or (not index)
+                  (or (not (> index 0))
                   (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
       (array:map car))))
 ; tests
