@@ -183,7 +183,7 @@
 (let math:coprime? (lambda a b (= (math:greatest-common-divisor a b) 1)))
 (let math:sqrt (lambda x (do
   (let is-good-enough (lambda g x (< (math:abs (- (math:square g) x)) 0.01)))
-  (let improve-guess (lambda g x (math:average g (* x (/ g)))))
+  (let improve-guess (lambda g x (math:average g (/ x g))))
   (let recursive:sqrt-recursive:iter (lambda g x
       (if (is-good-enough g x) g
           (recursive:sqrt-recursive:iter (improve-guess g x) x))))
@@ -1618,7 +1618,7 @@ heap)))
 
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
-  (if (array:not-empty? expression) (apply (lambda (do 
+  (if (array:not-empty? expression) (do 
     (let first (array:head expression))
     (let rest (array:tail expression))
     (let pattern (get first ast:type))
@@ -1626,4 +1626,4 @@ heap)))
       (= pattern ast:word) (map:get env (get first ast:value))
       (= pattern ast:apply) (apply (map:get env (get first ast:value)) rest env)
       (= pattern ast:atom) (get first ast:value)
-      (*) ())))) ()))))
+      (*) ())) ()))))

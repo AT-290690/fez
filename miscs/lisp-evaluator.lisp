@@ -1,7 +1,7 @@
 (let keywords (new:map (array 
-  "let" (lambda args env (do (let name (array:get (array:first args) ast:value)) (let val (evaluate (array:second args) env)) (map:set! env name val) val))
-  "lambda" (lambda args env (do (let params (array:slice args 0 (- (length args) 1))) (let body (array:get args -1)) (lambda props scope (do (let local (array:deep-copy env)) (loop:for-n (length props) (lambda i (map:set! local (get (get params i) ast:value) (evaluate (get props i) scope)))) (evaluate body local)))))
-  "apply" (lambda args env (do (let application (evaluate (array:first args) env)) (application (array:tail args) env)))
+  "let" (lambda args env (do (let name (get (get args 0) ast:value)) (let val (evaluate (get args 1) env)) (map:set! env name val) val))
+  "lambda" (lambda args env (do (let params (array:slice args 0 (- (length args) 1))) (let body (get args -1)) (lambda props scope (do (let local (array:deep-copy env)) (loop:for-n (length props) (lambda i (map:set! local (get (get params i) ast:value) (evaluate (get props i) scope)))) (evaluate body local)))))
+  "apply" (lambda args env (do (let application (evaluate (array:head args) env)) (application (array:tail args) env)))
   "array" (lambda args env (array:map args (lambda arg (evaluate arg env))))
   "length" (lambda args env (length (evaluate (get args 0) env)))
   "=" (lambda args env (= (evaluate (get args 0) env) (evaluate (get args 1) env)))
@@ -30,7 +30,7 @@
 
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
-  (if (array:not-empty? expression) (apply (lambda (do 
+  (if (array:not-empty? expression) (do 
     (let first (array:head expression))
     (let rest (array:tail expression))
     (let pattern (get first ast:type))
@@ -38,7 +38,7 @@
       (= pattern ast:word) (map:get env (get first ast:value))
       (= pattern ast:apply) (apply (map:get env (get first ast:value)) rest env)
       (= pattern ast:atom) (get first ast:value)
-      (*) ())))) ()))))
+      (*) ())) ()))))
 
 ; (let run (lambda source (apply (map:get keywords "do") (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) keywords)))
 
