@@ -1252,7 +1252,7 @@
 (let brray:offset-left (lambda q (* (- (length (get q 0)) 1) -1)))
 (let brray:offset-right (lambda q (length (get q 1))))
 (let brray:length (lambda q (+ (length (get q 0)) (length (get q 1)) -1)))
-(let brray:empty? (lambda q (not (brray:length q))))
+(let brray:empty? (lambda q (= (brray:length q) 0)))
 (let brray:empty! (lambda q (do
     (set! q 0 (array ()))
     (set! q 1 ())
