@@ -131,8 +131,6 @@ export const AST = {
       }
       return out
     }
-    return `Expression::Apply(vec![Expression::Word("do".to_string()),${ast
-      .map(dfs)
-      .join(',')}])`
+    return dfs(ast)
   }
 }
