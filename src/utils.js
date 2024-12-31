@@ -1,13 +1,14 @@
 import std from '../lib/baked/std.js'
 import { comp, OPTIMIZATIONS } from './compiler.js'
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
-import { evaluate, run } from './evaluator.js'
+import { evaluate } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import {
   deSuggarAst,
   deSuggarSource,
   handleUnbalancedQuotes
 } from './macros.js'
+import { keywords } from './interpreter.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log(output, '\x1b[0m')
@@ -212,10 +213,17 @@ export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
 }
+export const wrapInBlock = (ast) => [
+  [APPLY, KEYWORDS.CALL_FUNCTION],
+  [
+    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+    [[APPLY, KEYWORDS.BLOCK], ...ast]
+  ]
+]
 export const interpret = (ast, keywords) =>
   ast.reduce((_, x) => evaluate(x, keywords), 0)
 export const fez = (source, options = {}) => {
-  const env = Object.create(null)
+  const env = { ...keywords }
   try {
     if (typeof source === 'string') {
       source = deSuggarSource(source)
@@ -225,16 +233,16 @@ export const fez = (source, options = {}) => {
       const code = !options.mutation ? removeMutation(valid) : valid
       if (!code.length && options.throw) throw new Error('Nothing to parse!')
       const parsed = deSuggarAst(LISP.parse(code))
-      const ast = [...treeShake(parsed, std), ...parsed]
+      const ast = wrapInBlock(shake(parsed, std))
       // if (options.check) typeCheck(ast)
       if (options.compile) return comp(ast)
-      return run(ast, env)
+      return evaluate(ast, env)
     } else if (Array.isArray(source)) {
       const ast = !options.mutation
         ? AST.parse(AST.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
         : source
       if (options.compile) return comp(ast)
-      return run(ast, env)
+      return evaluate(ast, env)
     } else {
       throw new Error('Source has to be either a lisp source code or an AST')
     }
@@ -279,7 +287,7 @@ export const decompress = (raw) => {
   return result
 }
 // shake(LISP.parse(removeNoCode(source)), std)
-export const shake = (parsed, std) => [...treeShake(parsed, std), ...parsed]
+export const shake = (parsed, std) => treeShake(parsed, std).concat(parsed)
 export const tree = (source, std) =>
   std
     ? shake(LISP.parse(deSuggarSource(removeNoCode(source))), std)
@@ -288,45 +296,20 @@ export const minify = (source) =>
   LISP.source(deSuggarAst(LISP.parse(deSuggarSource(removeNoCode(source)))))
 export const prep = (source) =>
   deSuggarAst(LISP.parse(removeNoCode(deSuggarSource(source))))
-export const src = (source, deps) => {
-  source = prep(source)
-  return LISP.source([
-    ...treeShake(
-      source,
-      deps.reduce((a, b) => a.concat(b), [])
-    ),
-    ...source
-  ])
-}
-export const ast = (source, deps) => {
-  source = prep(source)
-  return [
-    ...treeShake(
-      source,
-      deps.reduce((a, b) => a.concat(b), [])
-    ),
-    ...source
-  ]
-}
-export const astWithStd = (source) => {
-  const parsed = prep(source)
-  return [...treeShake(parsed, std), ...parsed]
-}
-export const dependencies = (source, deps) => {
-  source = prep(source)
-  return shakedList(
-    source,
-    deps.reduce((a, b) => a.concat(b), [])
+export const src = (source, deps) =>
+  LISP.source(
+    wrapInBlock(
+      shake(
+        prep(source),
+        deps.reduce((a, b) => a.concat(b), [])
+      )
+    )
   )
-}
-export const js = (source, deps) => {
-  source = prep(source)
-  const { top, program } = comp([
-    ...treeShake(
-      source,
+export const ast = (source, deps) =>
+  wrapInBlock(
+    shake(
+      prep(source),
       deps.reduce((a, b) => a.concat(b), [])
-    ),
-    ...source
-  ])
-  return `${top}${program}`
-}
+    )
+  )
+export const astWithStd = (source) => wrapInBlock(shake(prep(source), std))

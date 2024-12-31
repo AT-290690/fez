@@ -76,7 +76,7 @@ World
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
         (let res (array:binary-search arr (cb b)))
-        (if res (array:merge a (array res)) a)))
+        (if (truthy? res) (array:merge a (array res)) a)))
      ())))
 (|> *input*
     (string:commas)
@@ -188,69 +188,6 @@ Many logical operators
    (= (logic-a 0 -1) (logic-b 0 -1))
    (= (logic-a 1 3) (logic-b 1 3))
    (= (logic-a 1 2) (logic-b 1 2)))
-```
-
-Tail Call Optimization:
-
-There are no loop constructs (like a "for" or "while" loop in other languages).
-That's because we don't quite need one: looping in fez is done by recursion — and the interpreter already supports that.
-But because each procedure call calls evaluate, recursing over a large number of items blows up the call stack of the interpreter.
-
-This optimization technique works only by declaring the variable with let\*
-and only when compiled to JavaScript.
-
-```lisp
-(let recursive:sum-to (lambda n acc (if (= n 0) acc (recursive:sum-to (- n 1) (+ n acc)))))
-(recursive:sum-to 10000 0)
-```
-
-```js
-console.log(
-  eval(
-    fez(
-      `(let recursive:sum-to (lambda n acc (if (= n 0) acc (recursive:sum-to (- n 1) (+ n acc)))))
-(recursive:sum-to 10000 0)`,
-      { compile: 1 }
-    )
-  )
-)
-// 50005000
-```
-
-Pass tree source as text:
-
-```js
-import { fez } from '../index.js'
-const source = `(|> 
-  (array 1 2 3 4)
-  (math:permutations)
-  (array:flat-one)
-  (math:summation)
-  (log!))`
-fez(source, {
-  mutation: 1
-})
-```
-
-Pass tree instead of a source:
-
-```js
-import { fez, tree, std } from '../index.js'
-const source = `(|> 
-  (array 1 2 3 4)
-  (math:permutations)
-  (array:flat-one)
-  (math:summation)
-  (log!))`
-const ast = tree(source, std)
-fez(ast, { mutation: 1 })
-```
-
-If passing AST and STD is not used then use tree with a single arugment
-
-```js
-import { fez, tree } from '../index.js'
-console.log(fez(tree(`(+ (|> 1 (+ 2) (* 3) (- 1)) (- (* (+ 1 2) 3) 1))`)))
 ```
 
 ```lisp

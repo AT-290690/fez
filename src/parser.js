@@ -97,7 +97,7 @@ export const AST = {
         if (cursor === ']') head = stack.pop()
       } else acc += cursor
     }
-    return tree[0]
+    return tree
   },
   stringify: (ast) =>
     typeof ast === 'object'

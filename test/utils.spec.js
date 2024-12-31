@@ -1,8 +1,7 @@
 import { deepStrictEqual } from 'assert'
-import { fez, tree } from '../src/utils.js'
+import { fez, prep, shake, wrapInBlock } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
-import { deSuggarAst } from '../src/macros.js'
 describe('Utils', () => {
   it('Should be work', () =>
     [
@@ -55,7 +54,7 @@ describe('Utils', () => {
             (let solve (lambda arr cb
                  (array:fold arr (lambda a b (do
                     (let res (array:binary-search arr (cb b)))
-                    (if res (array:merge a (array res)) a)))
+                    (if (truthy? res) (array:merge a (array res)) a)))
                  ())))
             ; 514579
             (|> *input*
@@ -131,23 +130,23 @@ bbrgwb")
 (let PARSED (parse INPUT))
 
 '((part1 PARSED) (part2 PARSED))`
-    ]
-      .map((source) => tree(source, std))
-      .map((ast) => deSuggarAst(ast))
-      .forEach((ast) =>
-        deepStrictEqual(
-          eval(
-            fez(LISP.source(ast), {
+    ].forEach((source) => {
+      deepStrictEqual(
+        eval(
+          fez(LISP.source(shake(prep(source), std)), {
+            mutation: 1,
+            compile: 1
+          })
+        ),
+        eval(
+          fez(
+            wrapInBlock(AST.parse(AST.stringify(shake(prep(source), std)))[0]),
+            {
               mutation: 1,
               compile: 1
-            })
-          ),
-          eval(
-            fez(AST.parse(AST.stringify(ast)), {
-              mutation: 1,
-              compile: 1
-            })
+            }
           )
         )
-      ))
+      )
+    }))
 })

@@ -33,5 +33,3 @@ export const evaluate = (exp, env) => {
       )
   }
 }
-export const run = (tree, env = {}) =>
-  keywords[KEYWORDS.BLOCK](tree, { ...keywords, ...env })
