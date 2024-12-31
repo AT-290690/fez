@@ -5,6 +5,12 @@ import std from '../lib/baked/std.js'
 describe('Utils', () => {
   it('Should be work', () =>
     [
+      ` (let arr (array 1 2 3 4 5 6 7 8 9 10))
+      (let '( x y . z . rest) (array 1 2 3 4 5 6 7))
+      (let '( X Y . . . Z best) arr)
+      (let '( . . . . M . ) arr)
+      (let '(. L .) arr)
+      (array x y z rest X Y Z best M L)`,
       `(let map (lambda xs f (do
   (let recursive:iter (lambda xs out
   (if (list:nil? xs) out

@@ -228,8 +228,7 @@ ZZZ=ZZZ,ZZZ")
       "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
-        (let dirs (car input))
-        (let adj (car (cdr input)))
+        (let '(dirs adj .) input)
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
@@ -239,11 +238,7 @@ ZZZ=ZZZ,ZZZ")
       
       
       (let part2 (lambda input (do 
-      
-        (let dirs (car input))
-        (let adj (car (cdr input)))
-        (let keys (car (cdr (cdr input))))
-        
+        (let '(dirs adj keys .) input)
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? '((get node -1)) target)
@@ -830,9 +825,7 @@ ZZZ=ZZZ,ZZZ")
 (let part1 (lambda input 
   (|> input 
   (array:map (lambda x (do 
-    (let l (car x))
-    (let w (car (cdr x)))
-    (let h (car (cdr (cdr x))))
+    (let '( l w h . ) x)
     ; 2*l*w + 2*w*h + 2*h*l
     (let sides '((* l w) (* w h) (* h l)))
     (let slack (math:minimum sides))
@@ -843,13 +836,10 @@ ZZZ=ZZZ,ZZZ")
 (let part2 (lambda input 
   (|> input 
   (array:map (lambda x (do
-    (let l (car x))
-    (let w (car (cdr x)))
-    (let h (car (cdr (cdr x))))
+    (let '( l w h . ) x)
     ; 2*l*w + 2*w*h + 2*h*l
     (let s (|> x (array:sort >)))
-    (let m1 (car s))
-    (let m2 (car (cdr s)))
+    (let '( m1 m2 . ) s)
     (+ (* m1 2) (* m2 2) (* l w h))
   ))) 
   (math:summation))))
@@ -1357,9 +1347,7 @@ matrix
         (let recursive:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
-          (let y (array:first element))
-          (let x (array:second element))
-          (let step (array:third element))
+          (let '( y x step . ) element)
           (if (math:even? step) (set:add! steps (from:yx->key y x)))
           (matrix:adjacent matrix matrix:von-neumann-neighborhood y x (lambda cell dir dy dx (do 
               (let key (from:yx->key dy dx))

@@ -1,14 +1,16 @@
-import { isLeaf } from './parser.js'
+import { AST, isLeaf } from './parser.js'
 import {
   EXPONENTIATION,
   INTEGER_DIVISION,
-  NOT_EQUAL
+  NOT_EQUAL,
+  SLICE
 } from '../lib/baked/macros.js'
 import {
   APPLY,
   ATOM,
   FALSE,
   KEYWORDS,
+  PLACEHOLDER,
   TRUE,
   TYPE,
   VALUE,
@@ -22,12 +24,13 @@ export const SUGGAR = {
   NOT_EQUAL_2: '<>',
   REMAINDER_OF_DIVISION_1: '%',
   UNLESS: 'unless',
-  LIST_TYPE: 'list',
+  CREATE_LIST: 'list',
   POWER: '**',
   INTEGER_DEVISION: '//',
   CONDITION: 'cond'
 }
-export const deSuggarAst = (ast) => {
+export const deSuggarAst = (ast, scope) => {
+  if (scope === undefined) scope = ast
   if (ast.length === 0) throw new SyntaxError(`No expressions to evaluate`)
   // for (const node of ast)
   //   if (node[0] && node[0][TYPE] === APPLY && node[0][VALUE] === KEYWORDS.BLOCK)
@@ -75,11 +78,11 @@ export const deSuggarAst = (ast) => {
                     exp[0][VALUE] = KEYWORDS.CALL_FUNCTION
                     exp[0][TYPE] = APPLY
                     exp.length = 1
-                    exp[1] = [
-                      [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                      [[APPLY, KEYWORDS.BLOCK], ...rest]
-                    ]
-                    deSuggarAst(exp)
+                    scope = [[APPLY, KEYWORDS.BLOCK], ...rest]
+                    exp[1] = [[APPLY, KEYWORDS.ANONYMOUS_FUNCTION], scope]
+                    deSuggarAst(exp, scope)
+                  } else {
+                    scope = exp
                   }
                 }
                 break
@@ -107,7 +110,7 @@ export const deSuggarAst = (ast) => {
                     inp = [rest[i].shift(), inp, ...rest[i]]
                   }
                   for (let i = 0; i < inp.length; ++i) exp[i] = inp[i]
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case SUGGAR.CONDITION:
@@ -138,10 +141,10 @@ export const deSuggarAst = (ast) => {
                       temp = temp.at(-1)
                     }
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
-              case SUGGAR.LIST_TYPE:
+              case SUGGAR.CREATE_LIST:
                 {
                   exp.length = 0
                   let temp = exp
@@ -151,7 +154,7 @@ export const deSuggarAst = (ast) => {
                   }
                   temp.push([APPLY, KEYWORDS.CREATE_ARRAY])
                 }
-                deSuggarAst(exp)
+                deSuggarAst(exp, scope)
                 break
               case SUGGAR.INTEGER_DEVISION:
                 {
@@ -220,7 +223,7 @@ export const deSuggarAst = (ast) => {
                       power
                     )
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case KEYWORDS.MULTIPLICATION:
@@ -238,7 +241,7 @@ export const deSuggarAst = (ast) => {
                       temp.push(...rest[i])
                     }
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case KEYWORDS.ADDITION:
@@ -256,7 +259,7 @@ export const deSuggarAst = (ast) => {
                       temp.push(...rest[i])
                     }
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case KEYWORDS.DIVISION:
@@ -277,7 +280,7 @@ export const deSuggarAst = (ast) => {
                       temp.push(...rest[i])
                     }
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case KEYWORDS.AND:
@@ -295,7 +298,7 @@ export const deSuggarAst = (ast) => {
                       temp.push(...rest[i])
                     }
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case KEYWORDS.OR:
@@ -313,7 +316,7 @@ export const deSuggarAst = (ast) => {
                       temp.push(...rest[i])
                     }
                   }
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case SUGGAR.UNLESS:
@@ -331,7 +334,7 @@ export const deSuggarAst = (ast) => {
                   exp[2] = exp[3] ?? [ATOM, FALSE]
                   exp[3] = temp
                 }
-                deSuggarAst(exp)
+                deSuggarAst(exp, scope)
                 break
               case SUGGAR.REMAINDER_OF_DIVISION_1:
                 {
@@ -344,7 +347,7 @@ export const deSuggarAst = (ast) => {
                       } ${stringifyArgs(rest)})`
                     )
                   exp[0][VALUE] = KEYWORDS.REMAINDER_OF_DIVISION
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
                 }
                 break
               case SUGGAR.NOT_EQUAL_1:
@@ -361,21 +364,92 @@ export const deSuggarAst = (ast) => {
                   exp[0][VALUE] = KEYWORDS.NOT
                   exp[1] = [[APPLY, KEYWORDS.EQUAL], exp[1], exp[2]]
                   exp.length = 2
-                  deSuggarAst(exp)
+                  deSuggarAst(exp, scope)
+                }
+                break
+              case KEYWORDS.DEFINE_VARIABLE:
+                {
+                  if (!isLeaf(exp[VALUE])) {
+                    const left = exp[VALUE]
+                    const right = exp.at(-1)
+                    // const key = AST.stringify(exp)
+                    // const index = scope.findIndex(
+                    //   (x) => AST.stringify(x) === key
+                    // )
+                    const lastLeft = left.pop()
+                    const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
+                    const vars = left.slice(1)
+                    const indexes = vars
+                      .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
+                      .filter((x) => x !== -1)
+                    let newScope
+                    exp.length = 0
+                    switch (left[0][VALUE]) {
+                    case  KEYWORDS.CREATE_ARRAY:
+                      {
+                        if (
+                          !isLeaf(right) &&
+                          right[0][TYPE] === APPLY &&
+                          right[0][VALUE] === KEYWORDS.CREATE_ARRAY
+                        ) {
+                          const values = right.slice(1)
+                          newScope = indexes.map((i) => [
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            vars[i],
+                            values[i]
+                          ])
+                          if (isSlicing)
+                            newScope.push([
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              lastLeft,
+                              [
+                                [APPLY, KEYWORDS.CREATE_ARRAY],
+                                ...values.slice(indexes.at(-1) + 1)
+                              ]
+                            ])
+                        } else {
+                          newScope = indexes.map((i) => [
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            vars[i],
+                            [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                          ])
+                          if (isSlicing)
+                            newScope.push([
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              lastLeft,
+                              [
+                                [APPLY, KEYWORDS.CALL_FUNCTION],
+                                SLICE,
+                                right,
+                                [ATOM, indexes.at(-1) + 1],
+                                [[APPLY, KEYWORDS.ARRAY_LENGTH], right]
+                              ]
+                            ]) 
+                        }
+                        exp.iron = true
+                        exp.push(newScope)
+                        deSuggarAst(exp)
+                      }
+                    break
+                    }
+                  }
                 }
                 break
             }
             prev = first
           }
           break
-        default:
+        default: {
+          iron(scope)
           for (const e of exp) evaluate(e)
+          }
           break
       }
       for (const r of rest) evaluate(r)
     }
   }
   evaluate(ast)
+  iron(scope)
   return ast
 }
 export const replaceStrings = (source) => {
@@ -393,10 +467,30 @@ export const replaceStrings = (source) => {
       )
   return source
 }
+const iron = (scope) => {
+  const indecies = scope
+  .map((x, i) => {
+    return x.iron ? i : -1
+  })
+  .filter((x) => x !== -1)
+if (indecies.length) {
+  const set = new Set(indecies)
+  const copy = []
+  for (let i = 0; i < scope.length; ++i) {
+    if (set.has(i)) {
+      delete scope[i].iron
+      copy.push(...scope[i][0])
+    } else {
+      copy.push(scope[i])
+    }
+  }
+  for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
+}
+}
 export const replaceQuotes = (source) =>
   source
     .replaceAll(/\'\(/g, `(${KEYWORDS.CREATE_ARRAY} `)
-    .replaceAll(/\`\(/g, `(${SUGGAR.LIST_TYPE} `)
+    .replaceAll(/\`\(/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\(\)/g, `(${KEYWORDS.CREATE_ARRAY})`)
 export const deSuggarSource = (source) => replaceQuotes(replaceStrings(source))
 export const handleUnbalancedQuotes = (source) => {

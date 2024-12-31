@@ -1,3 +1,4 @@
+(apply (lambda (do
 (let char:A 65)
 (let char:B 66)
 (let char:C 67)
@@ -1627,3 +1628,4 @@ heap)))
       (= pattern ast:apply) (apply (map:get env (get first ast:value)) rest env)
       (= pattern ast:atom) (get first ast:value)
       (*) ())) ()))))
+)))
