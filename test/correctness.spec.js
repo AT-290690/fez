@@ -7,7 +7,17 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
-      fez(`(let A (lambda (a b .) (+ a b)))
+      fez(`(let LS \`(1 2 3 4 5 6 7 8 9 10 11 12))
+(let (a (b (c (d (e (f (g R) .) .) .) .) .) .) LS)
+(array a b c d e f g R)
+`),
+      [1, 2, 3, 4, 5, 6, 7, [[8, [9, [10, [11, [12, []]]]]]]]
+    )
+    deepStrictEqual(
+      fez(`
+(let fn (lambda (a b c d e f g ~ R) (+ a b c d e f g (math:list-product R))))
+        
+(let A (lambda (a b .) (+ a b)))
 (let B (lambda (a b .) (do (+ a b))))
 (let C (lambda (a1 b1 .) (a2 b2 .) (+ (* (+ a1 b1) b2) a2)))
 (let D (lambda (a b rest) (+ a b (math:product rest))))
@@ -19,8 +29,9 @@ describe('Corretness', () => {
 (array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
 (F (array 1 2 3 4 5 6 7) (array 10 20 30 40))
 (G ls)
+(fn \`(1 2 3 4 5 6 7 8 9 10 11 12))
 )`),
-      [5, 5, 15, 63, 19, 70000, 214]
+      [5, 5, 15, 63, 19, 70000, 214, 95068]
     )
     strictEqual(
       fez(`(let unique (lambda arr (|>
@@ -1841,15 +1852,17 @@ matrix
 (let part1 (lambda input (do
   (let matrix (matrix:shallow-copy input)) 
   (let starting (matrix:find-index input (lambda x (= x 94))))
-  (matrix:set! matrix (get starting 0) (get starting 1) char:X)
+  (let (sy sx .) starting)
+  (matrix:set! matrix sy sx char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let recursive:step (lambda start angle (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
-      (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
-      (set! start-copy 1 (+ (get start-copy 1) (get current-dir 1)))
-      (let y (get start-copy 0))
-      (let x (get start-copy 1))
+      (let (syc sxc .) start-copy)
+      (let (cdy cdx .) current-dir)
+      (set! start-copy 0 (+ syc cdy))
+      (set! start-copy 1 (+ sxc cdx))
+      (let (y x .) start-copy)
       (if (matrix:in-bounds? matrix y x) (do 
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
@@ -1869,10 +1882,11 @@ matrix
   (let recursive:step (lambda matrix start angle corners (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
-      (set! start-copy 0 (+ (get start-copy 0) (get current-dir 0)))
-      (set! start-copy 1 (+ (get start-copy 1) (get current-dir 1)))
-      (let y (get start-copy 0))
-      (let x (get start-copy 1))
+      (let (syc sxc .) start-copy)
+      (let (cdy cdx .) current-dir)
+      (set! start-copy 0 (+ syc cdy))
+      (set! start-copy 1 (+ sxc cdx))
+      (let (y x .) start-copy)
       (if (matrix:in-bounds? matrix y x) (do 
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
@@ -1886,14 +1900,12 @@ matrix
           (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)))))))
   (recursive:step matrix starting 0 (new:set64))
   (let path '())
-  (let Y (get starting 0))
-  (let X (get starting 1))
+  (let (Y X .) starting)
   (matrix:enumerated-for matrix (lambda current y x (if 
       (= current char:X) (array:push! path '(y x)))))
   (array:for path (lambda pos (do 
       (let copy (matrix:shallow-copy input))
-      (let y (get pos 0))
-      (let x (get pos 1))
+      (let (y x .) pos)
       (matrix:set! copy Y X char:X)
       (matrix:set! copy y x char:hash)
       (if (not (and (= y Y) (= x X))) (recursive:step copy starting 0 (new:set64))))))

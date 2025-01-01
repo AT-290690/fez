@@ -476,7 +476,7 @@ export const deSuggarAst = (ast, scope) => {
                     }
                     exp.iron = true
                     exp.push(newScope)
-                    deSuggarAst(exp)
+                    deSuggarAst(scope)
                   }
                 }
                 break
@@ -585,16 +585,15 @@ export const deSuggarAst = (ast, scope) => {
           break
         default:
           {
-            iron(scope)
             for (const e of exp) evaluate(e)
           }
           break
       }
+      iron(scope)
       for (const r of rest) evaluate(r)
     }
   }
   evaluate(ast)
-  iron(scope)
   return ast
 }
 export const replaceStrings = (source) => {
