@@ -7,12 +7,12 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
-      fez(`(let A (lambda '( a b . ) (+ a b)))
-(let B (lambda '( a b . ) (do (+ a b))))
-(let C (lambda '( a1 b1 . ) '( a2 b2 . ) (+ (* (+ a1 b1) b2) a2)))
-(let D (lambda '( a b rest ) (+ a b (math:product rest))))
-(let E (lambda '( a1 b1 . ) '( a2 b2 . ) (do (+ (* (+ a1 b1) b2) a2))))
-(let F (lambda '( a1 b1 x ) '( a2 b2 y ) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
+      fez(`(let A (lambda (a b .) (+ a b)))
+(let B (lambda (a b .) (do (+ a b))))
+(let C (lambda (a1 b1 .) (a2 b2 .) (+ (* (+ a1 b1) b2) a2)))
+(let D (lambda (a b rest) (+ a b (math:product rest))))
+(let E (lambda (a1 b1 .) (a2 b2 .) (do (+ (* (+ a1 b1) b2) a2))))
+(let F (lambda (a1 b1 x ) (a2 b2 y) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
 
 (array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
 (F (array 1 2 3 4 5 6 7) (array 10 20 30 40)))`),
@@ -240,7 +240,7 @@ ZZZ=ZZZ,ZZZ")
       "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
-        (let '(dirs adj .) input)
+        (let (dirs adj .) input)
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
@@ -250,7 +250,7 @@ ZZZ=ZZZ,ZZZ")
       
       
       (let part2 (lambda input (do 
-        (let '(dirs adj keys .) input)
+        (let (dirs adj keys .) input)
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? '((get node -1)) target)
@@ -837,7 +837,7 @@ ZZZ=ZZZ,ZZZ")
 (let part1 (lambda input 
   (|> input 
   (array:map (lambda x (do 
-    (let '( l w h . ) x)
+    (let (l w h .) x)
     ; 2*l*w + 2*w*h + 2*h*l
     (let sides '((* l w) (* w h) (* h l)))
     (let slack (math:minimum sides))
@@ -848,10 +848,10 @@ ZZZ=ZZZ,ZZZ")
 (let part2 (lambda input 
   (|> input 
   (array:map (lambda x (do
-    (let '( l w h . ) x)
+    (let (l w h .) x)
     ; 2*l*w + 2*w*h + 2*h*l
     (let s (|> x (array:sort >)))
-    (let '( m1 m2 . ) s)
+    (let (m1 m2 .) s)
     (+ (* m1 2) (* m2 2) (* l w h))
   ))) 
   (math:summation))))
@@ -1359,7 +1359,7 @@ matrix
         (let recursive:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
-          (let '( y x step . ) element)
+          (let (y x step .) element)
           (if (math:even? step) (set:add! steps (from:yx->key y x)))
           (matrix:adjacent matrix matrix:von-neumann-neighborhood y x (lambda cell dir dy dx (do 
               (let key (from:yx->key dy dx))
@@ -2684,14 +2684,14 @@ input (array:map
   (let recursive:while (lambda (unless (heap:empty? pq) (do
       (let first (heap:peek pq))
       (heap:pop! pq lower?)
-      (let '( cost r c dr dc . ) first)
+      (let (cost r c dr dc .) first)
       (set:add! seen (from:stats->key '(r c dr dc)))
       (if (goal? r c) cost
        (do 
           (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
                       '((+ cost 1000) r c dc (- dr))
                       '((+ cost 1000) r c (- dc) dr)))
-          (array:for dirs (lambda '( new-cost nr nc ndr ndc . ) 
+          (array:for dirs (lambda (new-cost nr nc ndr ndc .) 
                           (if 
                               (and
                                   (not (= (matrix:get matrix nr nc) char:hash)) 

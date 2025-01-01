@@ -371,70 +371,59 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case KEYWORDS.DEFINE_VARIABLE:
                 {
-                  if (!isLeaf(exp[VALUE])) {
+                  if (!isLeaf(exp[VALUE]) && exp[VALUE][0][TYPE] === APPLY) {
                     const left = exp[VALUE]
                     const right = exp.at(-1)
-                    // const key = AST.stringify(exp)
-                    // const index = scope.findIndex(
-                    //   (x) => AST.stringify(x) === key
-                    // )
                     const lastLeft = left.pop()
                     const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
-                    const vars = left.slice(1)
+                    const vars = left
                     const indexes = vars
                       .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
                       .filter((x) => x !== -1)
                     let newScope
+                    vars[0][TYPE] = WORD
                     exp.length = 0
-                    switch (left[0][VALUE]) {
-                      case KEYWORDS.CREATE_ARRAY:
-                        {
-                          if (
-                            !isLeaf(right) &&
-                            right[0][TYPE] === APPLY &&
-                            right[0][VALUE] === KEYWORDS.CREATE_ARRAY
-                          ) {
-                            const values = right.slice(1)
-                            newScope = indexes.map((i) => [
-                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              vars[i],
-                              values[i]
-                            ])
-                            if (isSlicing)
-                              newScope.push([
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                lastLeft,
-                                [
-                                  [APPLY, KEYWORDS.CREATE_ARRAY],
-                                  ...values.slice(indexes.at(-1) + 1)
-                                ]
-                              ])
-                          } else {
-                            newScope = indexes.map((i) => [
-                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              vars[i],
-                              [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
-                            ])
-                            if (isSlicing)
-                              newScope.push([
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                lastLeft,
-                                [
-                                  [APPLY, KEYWORDS.CALL_FUNCTION],
-                                  SLICE,
-                                  right,
-                                  [ATOM, indexes.at(-1) + 1]
-                                ]
-                              ])
-                          }
-                          exp.iron = true
-                          exp.push(newScope)
-                          deSuggarAst(exp)
-                        }
-                        break
-                      default:
-                        break
+                    if (
+                      !isLeaf(right) &&
+                      right[0][TYPE] === APPLY &&
+                      right[0][VALUE] === KEYWORDS.CREATE_ARRAY
+                    ) {
+                      const values = right.slice(1)
+                      newScope = indexes.map((i) => [
+                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                        vars[i],
+                        values[i]
+                      ])
+                      if (isSlicing)
+                        newScope.push([
+                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                          lastLeft,
+                          [
+                            [APPLY, KEYWORDS.CREATE_ARRAY],
+                            ...values.slice(indexes.at(-1) + 1)
+                          ]
+                        ])
+                    } else {
+                      newScope = indexes.map((i) => [
+                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                        vars[i],
+                        [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                      ])
+                      if (isSlicing)
+                        newScope.push([
+                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                          lastLeft,
+                          [
+                            [APPLY, KEYWORDS.CALL_FUNCTION],
+                            SLICE,
+                            right,
+                            [ATOM, indexes.at(-1) + 1]
+                          ]
+                        ])
                     }
+                    exp.iron = true
+                    exp.push(newScope)
+                    deSuggarAst(exp)
                   }
                 }
                 break
@@ -447,54 +436,46 @@ export const deSuggarAst = (ast, scope) => {
                       : body
                   const newBlock = [[APPLY, KEYWORDS.BLOCK]]
                   for (let i = 1; i < exp.length - 1; ++i) {
-                    if (
-                      !isLeaf(exp[i]) &&
-                      exp[i][0][TYPE] === APPLY &&
-                      exp[i][0][VALUE] === KEYWORDS.CREATE_ARRAY
-                    ) {
+                    if (!isLeaf(exp[i]) && exp[i][0][TYPE] === APPLY) {
                       const left = exp[i]
                       const right = [WORD, `_arg${i}`]
+                      left[0][TYPE] = WORD
                       const lastLeft = left.pop()
                       const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
-                      const vars = left.slice(1)
+                      const vars = left
                       const indexes = vars
                         .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
                         .filter((x) => x !== -1)
-                      switch (left[0][VALUE]) {
-                        case KEYWORDS.CREATE_ARRAY:
-                          {
-                            // const tempBlcok = [...block[VALUE]]
-                            newBlock.push(
-                              ...indexes.map((i) => [
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                vars[i],
-                                [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
-                              ])
-                            )
-                            if (isSlicing)
-                              newBlock.push([
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                lastLeft,
-                                [
-                                  [APPLY, KEYWORDS.CALL_FUNCTION],
-                                  SLICE,
-                                  right,
-                                  [ATOM, indexes.at(-1) + 1]
-                                ]
-                              ])
-                            exp[i] = right
-                            exp[i].length = 2
-                          }
-                          exp[exp.length - 1] = newBlock.concat([block])
-                          deSuggarAst(block)
 
-                          break
-                        default:
-                          break
+                      {
+                        // const tempBlcok = [...block[VALUE]]
+                        newBlock.push(
+                          ...indexes.map((i) => [
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            vars[i],
+                            [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                          ])
+                        )
+                        if (isSlicing)
+                          newBlock.push([
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            lastLeft,
+                            [
+                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                              SLICE,
+                              right,
+                              [ATOM, indexes.at(-1) + 1]
+                            ]
+                          ])
+                        exp[i] = right
+                        exp[i].length = 2
                       }
+                      exp[exp.length - 1] = newBlock.concat([block])
+                      deSuggarAst(block)
                     }
                   }
                 }
+
                 break
             }
             prev = first

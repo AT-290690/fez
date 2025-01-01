@@ -3,20 +3,20 @@ import { fez } from '../src/utils.js'
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
-      `(let A (lambda '( a b . ) (+ a b)))
-(let B (lambda '( a b . ) (do (+ a b))))
-(let C (lambda '( a1 b1 . ) '( a2 b2 . ) (+ (* (+ a1 b1) b2) a2)))
-(let D (lambda '( a b rest ) (+ a b (math:product rest))))
-(let E (lambda '( a1 b1 . ) '( a2 b2 . ) (do (+ (* (+ a1 b1) b2) a2))))
-(let F (lambda '( a1 b1 x ) '( a2 b2 y ) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
+      `(let A (lambda (a b .) (+ a b)))
+(let B (lambda (a b .) (do (+ a b))))
+(let C (lambda (a1 b1 .) (a2 b2 .) (+ (* (+ a1 b1) b2) a2)))
+(let D (lambda (a b rest ) (+ a b (math:product rest))))
+(let E (lambda (a1 b1 .) (a2 b2 .) (do (+ (* (+ a1 b1) b2) a2))))
+(let F (lambda (a1 b1 x) (a2 b2 y) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
 
 (array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
 (F (array 1 2 3 4 5 6 7) (array 10 20 30 40)))`,
       ` (let arr (array 1 2 3 4 5 6 7 8 9 10))
-      (let '( x y . z . rest) (array 1 2 3 4 5 6 7))
-      (let '( X Y . . . Z best) arr)
-      (let '( . . . . M . ) arr)
-      (let '(. L .) arr)
+      (let (x y . z . rest) (array 1 2 3 4 5 6 7))
+      (let (X Y . . . Z best) arr)
+      (let (. . . . M .) arr)
+      (let (. L .) arr)
       (array x y z rest X Y Z best M L)`,
       `(let INPUT (array:concat-with '(
         "89010123"
