@@ -6,6 +6,18 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      fez(`(let A (lambda '( a b . ) (+ a b)))
+(let B (lambda '( a b . ) (do (+ a b))))
+(let C (lambda '( a1 b1 . ) '( a2 b2 . ) (+ (* (+ a1 b1) b2) a2)))
+(let D (lambda '( a b rest ) (+ a b (math:product rest))))
+(let E (lambda '( a1 b1 . ) '( a2 b2 . ) (do (+ (* (+ a1 b1) b2) a2))))
+(let F (lambda '( a1 b1 x ) '( a2 b2 y ) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
+
+(array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
+(F (array 1 2 3 4 5 6 7) (array 10 20 30 40)))`),
+      [5, 5, 15, 63, 19, 70000]
+    )
     strictEqual(
       fez(`(let unique (lambda arr (|>
       (let sorted (array:sort arr (lambda a b (> a b))))
@@ -2679,13 +2691,12 @@ input (array:map
           (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
                       '((+ cost 1000) r c dc (- dr))
                       '((+ cost 1000) r c (- dc) dr)))
-          (array:for dirs (lambda stats (do 
-                          (let '( new-cost nr nc ndr ndc . ) stats)
+          (array:for dirs (lambda '( new-cost nr nc ndr ndc . ) 
                           (if 
                               (and
                                   (not (= (matrix:get matrix nr nc) char:hash)) 
-                                  (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
-                              (heap:push! pq stats lower?)))))
+                                  (not (set:has? seen (from:stats->key '( nr nc ndr ndc )))))
+                              (heap:push! pq '( new-cost nr nc ndr ndc ) lower?))))
           (recursive:while)))))))
   (recursive:while))))
 
