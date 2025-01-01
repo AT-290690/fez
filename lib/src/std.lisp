@@ -634,6 +634,20 @@
     (loop:for-n width (lambda x
       (callback y x)))))
    matrix)))
+(let matrix:rotate-square (lambda matrix (do 
+    (let len (length matrix))
+    (let out (math:zeroes len))
+    (let recursive:outer (lambda row 
+        (if (< row len) (do 
+            (set! out row ())
+            (let recursive:inner (lambda col 
+        (if (< col len) (do 
+            (set! (get out row) col (get (get matrix col) (- (- len 1) row)))
+            (recursive:inner (+ col 1))))))
+            (recursive:inner 0)
+        (recursive:outer (+ row 1))))))
+    (recursive:outer 0) out)))
+(let matrix:dimensions (lambda matrix (array (length matrix) (length (get matrix 0)))))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
 (let matrix:diagonal-neighborhood (array (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
 (let matrix:moore-neighborhood (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))

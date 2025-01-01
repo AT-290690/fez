@@ -271,6 +271,21 @@ export const deSuggarAst = (ast, scope) => {
                   deSuggarAst(exp, scope)
                 }
                 break
+              case KEYWORDS.SUBTRACTION:
+                if (rest.length > 2) {
+                  exp.length = 0
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, KEYWORDS.SUBTRACTION], rest[i], [])
+                      temp = temp.at(-1)
+                    } else {
+                      temp.push(...rest[i])
+                    }
+                  }
+                  deSuggarAst(exp, scope)
+                }
+                break
               case KEYWORDS.DIVISION:
                 if (!rest.length) {
                   exp[0][TYPE] = ATOM

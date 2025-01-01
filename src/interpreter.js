@@ -557,16 +557,16 @@ export const keywords = {
     const a = evaluate(args[0], env)
     if (a !== FALSE && a !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
-          KEYWORDS.OR
+        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.AND
         } ${stringifyArgs(args)})`
       )
     if (!a) return FALSE
     const b = evaluate(args[1], env)
     if (b !== FALSE && b !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got (${
-          KEYWORDS.OR
+        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got (${
+          KEYWORDS.AND
         } ${stringifyArgs(args)})`
       )
     return b
