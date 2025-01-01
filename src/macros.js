@@ -613,7 +613,7 @@ export const replaceStrings = (source) => {
   return source
 }
 const hasBlock = (body) =>
-  body[0][TYPE] === APPLY && body[0][VALUE] === KEYWORDS.BLOCK
+  body[0] && body[0][TYPE] === APPLY && body[0][VALUE] === KEYWORDS.BLOCK
 const iron = (scope) => {
   const indecies = scope
     .map((x, i) => {
