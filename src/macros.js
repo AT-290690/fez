@@ -69,6 +69,12 @@ export const deSuggarAst = (ast, scope) => {
         case APPLY:
           {
             switch (first[VALUE]) {
+              // case KEYWORDS.CALL_FUNCTION: {
+              //     if (prev === undefined && scope[0][VALUE] === KEYWORDS.CALL_FUNCTION) {
+              //         exp[0][VALUE] = KEYWORDS.BLOCK
+              //       }
+              //     }
+              //       break
               case KEYWORDS.BLOCK:
                 {
                   if (
@@ -82,6 +88,7 @@ export const deSuggarAst = (ast, scope) => {
                     exp.length = 1
                     scope = [[APPLY, KEYWORDS.BLOCK], ...rest]
                     exp[1] = [[APPLY, KEYWORDS.ANONYMOUS_FUNCTION], scope]
+
                     deSuggarAst(exp, scope)
                   } else {
                     scope = exp
@@ -371,55 +378,101 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case KEYWORDS.DEFINE_VARIABLE:
                 {
-                  if (!isLeaf(exp[VALUE]) && exp[VALUE][0][TYPE] === APPLY) {
-                    const left = exp[VALUE]
+                  if (!isLeaf(exp[1]) && exp[1][0][TYPE] === APPLY) {
+                    const left = exp[1]
                     const right = exp.at(-1)
-                    const lastLeft = left.pop()
-                    const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
-                    const vars = left
-                    const indexes = vars
-                      .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
-                      .filter((x) => x !== -1)
+                    const isList =
+                      left[left.length - 2][VALUE] === KEYWORDS.BITWISE_NOT
                     let newScope
-                    vars[0][TYPE] = WORD
-                    exp.length = 0
-                    if (
-                      !isLeaf(right) &&
-                      right[0][TYPE] === APPLY &&
-                      right[0][VALUE] === KEYWORDS.CREATE_ARRAY
-                    ) {
-                      const values = right.slice(1)
-                      newScope = indexes.map((i) => [
-                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                        vars[i],
-                        values[i]
-                      ])
-                      if (isSlicing)
-                        newScope.push([
-                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                          lastLeft,
-                          [
-                            [APPLY, KEYWORDS.CREATE_ARRAY],
-                            ...values.slice(indexes.at(-1) + 1)
-                          ]
-                        ])
+                    if (isList) {
+                      const lastLeft = left.pop()
+                      left.pop() // tail separator
+                      const vars = left
+                      if (
+                        !isLeaf(right) &&
+                        right[0][TYPE] === APPLY &&
+                        right[0][VALUE] === SUGGAR.CREATE_LIST
+                      ) {
+                        throw new SyntaxError(
+                          `Destrcuturing requires right hadnd side to be a word but got an apply ${stringifyArgs(
+                            exp
+                          )}`
+                        )
+                      } else {
+                        newScope = vars
+                          .map((x, i) => [x, i])
+                          .filter((x) => x[0][VALUE] !== PLACEHOLDER)
+                          .map(([name, n]) => {
+                            let wrap = right
+                            for (let i = 0; i < n; ++i) {
+                              wrap = [
+                                [APPLY, KEYWORDS.GET_ARRAY],
+                                wrap,
+                                [ATOM, 1]
+                              ]
+                            }
+                            return [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              name,
+                              [[APPLY, KEYWORDS.GET_ARRAY], wrap, [ATOM, 0]]
+                            ]
+                          })
+                        if (lastLeft[VALUE] !== PLACEHOLDER) {
+                          let wrap = right
+                          for (let i = 0; i < vars.length; ++i) {
+                            wrap = [
+                              [APPLY, KEYWORDS.GET_ARRAY],
+                              wrap,
+                              [ATOM, 1]
+                            ]
+                          }
+                          newScope.push([
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            lastLeft,
+                            wrap
+                          ])
+                        }
+                      }
+                      vars[0][TYPE] = WORD
+                      exp.length = 0
                     } else {
-                      newScope = indexes.map((i) => [
-                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                        vars[i],
-                        [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
-                      ])
-                      if (isSlicing)
-                        newScope.push([
+                      const lastLeft = left.pop()
+                      // const isList = exp[i][exp[i].length - 2][VALUE] === KEYWORDS.BITWISE_NOT
+                      const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
+                      const vars = left
+                      const indexes = vars
+                        .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
+                        .filter((x) => x !== -1)
+                      vars[0][TYPE] = WORD
+                      exp.length = 0
+                      if (
+                        !isLeaf(right) &&
+                        right[0][TYPE] === APPLY &&
+                        right[0][VALUE] === KEYWORDS.CREATE_ARRAY
+                      ) {
+                        throw new SyntaxError(
+                          `Destrcuturing requires right hadnd side to be a word but got an apply ${stringifyArgs(
+                            exp
+                          )}`
+                        )
+                      } else {
+                        newScope = indexes.map((i) => [
                           [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                          lastLeft,
-                          [
-                            [APPLY, KEYWORDS.CALL_FUNCTION],
-                            SLICE,
-                            right,
-                            [ATOM, indexes.at(-1) + 1]
-                          ]
+                          vars[i],
+                          [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
                         ])
+                        if (isSlicing)
+                          newScope.push([
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            lastLeft,
+                            [
+                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                              SLICE,
+                              right,
+                              [ATOM, indexes.at(-1) + 1]
+                            ]
+                          ])
+                      }
                     }
                     exp.iron = true
                     exp.push(newScope)
@@ -430,45 +483,94 @@ export const deSuggarAst = (ast, scope) => {
               case KEYWORDS.ANONYMOUS_FUNCTION:
                 {
                   const body = exp.at(-1)
-                  const block =
-                    body[0][TYPE] === APPLY && body[0][VALUE] === KEYWORDS.BLOCK
-                      ? body[1]
-                      : body
+                  const block = hasBlock(body) ? body[1] : body
                   const newBlock = [[APPLY, KEYWORDS.BLOCK]]
                   for (let i = 1; i < exp.length - 1; ++i) {
                     if (!isLeaf(exp[i]) && exp[i][0][TYPE] === APPLY) {
-                      const left = exp[i]
-                      const right = [WORD, `_arg${i}`]
-                      left[0][TYPE] = WORD
-                      const lastLeft = left.pop()
-                      const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
-                      const vars = left
-                      const indexes = vars
-                        .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
-                        .filter((x) => x !== -1)
+                      const isList =
+                        exp[i][exp[i].length - 2][VALUE] ===
+                        KEYWORDS.BITWISE_NOT
+                      if (isList) {
+                        const left = exp[i]
+                        const right = [WORD, `_arg${i}`]
+                        const lastLeft = left.pop()
 
-                      {
-                        // const tempBlcok = [...block[VALUE]]
+                        left.pop() // tail separator
+
+                        const vars = left
+                        const indexes = vars
+                          .map((x, i) => [x, i])
+                          .filter((x) => x[0][VALUE] !== PLACEHOLDER)
+
                         newBlock.push(
-                          ...indexes.map((i) => [
-                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                            vars[i],
-                            [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
-                          ])
+                          ...indexes.map(([name, n]) => {
+                            let wrap = right
+                            for (let i = 0; i < n; ++i) {
+                              wrap = [
+                                [APPLY, KEYWORDS.GET_ARRAY],
+                                wrap,
+                                [ATOM, 1]
+                              ]
+                            }
+                            return [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              name,
+                              [[APPLY, KEYWORDS.GET_ARRAY], wrap, [ATOM, 0]]
+                            ]
+                          })
                         )
-                        if (isSlicing)
+                        if (lastLeft[VALUE] !== PLACEHOLDER) {
+                          let wrap = right
+                          for (let i = 0; i < vars.length; ++i) {
+                            wrap = [
+                              [APPLY, KEYWORDS.GET_ARRAY],
+                              wrap,
+                              [ATOM, 1]
+                            ]
+                          }
                           newBlock.push([
                             [APPLY, KEYWORDS.DEFINE_VARIABLE],
                             lastLeft,
-                            [
-                              [APPLY, KEYWORDS.CALL_FUNCTION],
-                              SLICE,
-                              right,
-                              [ATOM, indexes.at(-1) + 1]
-                            ]
+                            wrap
                           ])
+                        }
+
+                        left[0][TYPE] = WORD
                         exp[i] = right
                         exp[i].length = 2
+                      } else {
+                        const left = exp[i]
+                        const right = [WORD, `_arg${i}`]
+                        left[0][TYPE] = WORD
+                        const lastLeft = left.pop()
+                        const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
+                        const vars = left
+                        const indexes = vars
+                          .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
+                          .filter((x) => x !== -1)
+                        {
+                          // const tempBlcok = [...block[VALUE]]
+                          newBlock.push(
+                            ...indexes.map((i) => [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              vars[i],
+                              [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                            ])
+                          )
+                          if (isSlicing)
+                            newBlock.push([
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              lastLeft,
+                              [
+                                [APPLY, KEYWORDS.CALL_FUNCTION],
+                                SLICE,
+                                right,
+                                [ATOM, indexes.at(-1) + 1]
+                              ]
+                            ])
+                          exp[i] = right
+                          exp[i].length = 2
+                        }
                       }
                       exp[exp.length - 1] = newBlock.concat([block])
                       deSuggarAst(block)
@@ -510,6 +612,8 @@ export const replaceStrings = (source) => {
       )
   return source
 }
+const hasBlock = (body) =>
+  body[0][TYPE] === APPLY && body[0][VALUE] === KEYWORDS.BLOCK
 const iron = (scope) => {
   const indecies = scope
     .map((x, i) => {
@@ -522,6 +626,26 @@ const iron = (scope) => {
     for (let i = 0; i < scope.length; ++i) {
       if (set.has(i)) {
         delete scope[i].iron
+        copy.push(...scope[i][0])
+      } else {
+        copy.push(scope[i])
+      }
+    }
+    for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
+  }
+}
+const iron2 = (scope, exp) => {
+  const key = AST.stringify(exp)
+  const indexes = new Set(
+    scope
+      .map((x, i) => (AST.stringify(x) === key ? i : -1))
+      .filter((x) => x !== -1)
+  )
+  console.log(indexes)
+  if (indexes.size) {
+    const copy = []
+    for (let i = 0; i < scope.length; ++i) {
+      if (indexes.has(i)) {
         copy.push(...scope[i][0])
       } else {
         copy.push(scope[i])

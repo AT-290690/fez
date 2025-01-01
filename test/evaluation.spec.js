@@ -13,7 +13,8 @@ describe('Compilation & Interpretation', () => {
 (array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
 (F (array 1 2 3 4 5 6 7) (array 10 20 30 40)))`,
       ` (let arr (array 1 2 3 4 5 6 7 8 9 10))
-      (let (x y . z . rest) (array 1 2 3 4 5 6 7))
+      (let brr (array 1 2 3 4 5 6 7))
+      (let (x y . z . rest) brr)
       (let (X Y . . . Z best) arr)
       (let (. . . . M .) arr)
       (let (. L .) arr)

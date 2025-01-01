@@ -13,10 +13,14 @@ describe('Corretness', () => {
 (let D (lambda (a b rest) (+ a b (math:product rest))))
 (let E (lambda (a1 b1 .) (a2 b2 .) (do (+ (* (+ a1 b1) b2) a2))))
 (let F (lambda (a1 b1 x ) (a2 b2 y) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
+(let ls \`(1 2 3 4 5 6 7))
+(let G (lambda (a . c d ~ rest) (+ a c (math:list-product rest))))
 
 (array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
-(F (array 1 2 3 4 5 6 7) (array 10 20 30 40)))`),
-      [5, 5, 15, 63, 19, 70000]
+(F (array 1 2 3 4 5 6 7) (array 10 20 30 40))
+(G ls)
+)`),
+      [5, 5, 15, 63, 19, 70000, 214]
     )
     strictEqual(
       fez(`(let unique (lambda arr (|>
