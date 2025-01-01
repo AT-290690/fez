@@ -2672,11 +2672,7 @@ input (array:map
   (let recursive:while (lambda (unless (heap:empty? pq) (do
       (let first (heap:peek pq))
       (heap:pop! pq lower?)
-      (let cost (get first 0))
-      (let r (get first 1))
-      (let c (get first 2))
-      (let dr (get first 3))
-      (let dc (get first 4))
+      (let '( cost r c dr dc . ) first)
       (set:add! seen (from:stats->key '(r c dr dc)))
       (if (goal? r c) cost
        (do 
@@ -2684,11 +2680,7 @@ input (array:map
                       '((+ cost 1000) r c dc (- dr))
                       '((+ cost 1000) r c (- dc) dr)))
           (array:for dirs (lambda stats (do 
-                          (let new-cost (get stats 0))
-                          (let nr (get stats 1))
-                          (let nc (get stats 2))
-                          (let ndr (get stats 3))
-                          (let ndc (get stats 4))
+                          (let '( new-cost nr nc ndr ndc . ) stats)
                           (if 
                               (and
                                   (not (= (matrix:get matrix nr nc) char:hash)) 

@@ -385,52 +385,51 @@ export const deSuggarAst = (ast, scope) => {
                     let newScope
                     exp.length = 0
                     switch (left[0][VALUE]) {
-                    case  KEYWORDS.CREATE_ARRAY:
-                      {
-                        if (
-                          !isLeaf(right) &&
-                          right[0][TYPE] === APPLY &&
-                          right[0][VALUE] === KEYWORDS.CREATE_ARRAY
-                        ) {
-                          const values = right.slice(1)
-                          newScope = indexes.map((i) => [
-                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                            vars[i],
-                            values[i]
-                          ])
-                          if (isSlicing)
-                            newScope.push([
+                      case KEYWORDS.CREATE_ARRAY:
+                        {
+                          if (
+                            !isLeaf(right) &&
+                            right[0][TYPE] === APPLY &&
+                            right[0][VALUE] === KEYWORDS.CREATE_ARRAY
+                          ) {
+                            const values = right.slice(1)
+                            newScope = indexes.map((i) => [
                               [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              lastLeft,
-                              [
-                                [APPLY, KEYWORDS.CREATE_ARRAY],
-                                ...values.slice(indexes.at(-1) + 1)
-                              ]
+                              vars[i],
+                              values[i]
                             ])
-                        } else {
-                          newScope = indexes.map((i) => [
-                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                            vars[i],
-                            [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
-                          ])
-                          if (isSlicing)
-                            newScope.push([
+                            if (isSlicing)
+                              newScope.push([
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                lastLeft,
+                                [
+                                  [APPLY, KEYWORDS.CREATE_ARRAY],
+                                  ...values.slice(indexes.at(-1) + 1)
+                                ]
+                              ])
+                          } else {
+                            newScope = indexes.map((i) => [
                               [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              lastLeft,
-                              [
-                                [APPLY, KEYWORDS.CALL_FUNCTION],
-                                SLICE,
-                                right,
-                                [ATOM, indexes.at(-1) + 1],
-                                [[APPLY, KEYWORDS.ARRAY_LENGTH], right]
-                              ]
-                            ]) 
+                              vars[i],
+                              [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                            ])
+                            if (isSlicing)
+                              newScope.push([
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                lastLeft,
+                                [
+                                  [APPLY, KEYWORDS.CALL_FUNCTION],
+                                  SLICE,
+                                  right,
+                                  [ATOM, indexes.at(-1) + 1]
+                                ]
+                              ])
+                          }
+                          exp.iron = true
+                          exp.push(newScope)
+                          deSuggarAst(exp)
                         }
-                        exp.iron = true
-                        exp.push(newScope)
-                        deSuggarAst(exp)
-                      }
-                    break
+                        break
                     }
                   }
                 }
@@ -439,9 +438,10 @@ export const deSuggarAst = (ast, scope) => {
             prev = first
           }
           break
-        default: {
-          iron(scope)
-          for (const e of exp) evaluate(e)
+        default:
+          {
+            iron(scope)
+            for (const e of exp) evaluate(e)
           }
           break
       }
@@ -469,23 +469,23 @@ export const replaceStrings = (source) => {
 }
 const iron = (scope) => {
   const indecies = scope
-  .map((x, i) => {
-    return x.iron ? i : -1
-  })
-  .filter((x) => x !== -1)
-if (indecies.length) {
-  const set = new Set(indecies)
-  const copy = []
-  for (let i = 0; i < scope.length; ++i) {
-    if (set.has(i)) {
-      delete scope[i].iron
-      copy.push(...scope[i][0])
-    } else {
-      copy.push(scope[i])
+    .map((x, i) => {
+      return x.iron ? i : -1
+    })
+    .filter((x) => x !== -1)
+  if (indecies.length) {
+    const set = new Set(indecies)
+    const copy = []
+    for (let i = 0; i < scope.length; ++i) {
+      if (set.has(i)) {
+        delete scope[i].iron
+        copy.push(...scope[i][0])
+      } else {
+        copy.push(scope[i])
+      }
     }
+    for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
   }
-  for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
-}
 }
 export const replaceQuotes = (source) =>
   source
