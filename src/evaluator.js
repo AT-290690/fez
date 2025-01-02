@@ -29,7 +29,7 @@ export const evaluate = (exp, env) => {
       return first[VALUE]
     default:
       throw new ReferenceError(
-        `Attempting to acces Undefined near ${stringifyArgs(exp)}`
+        `Attempting to access Undefined near ${stringifyArgs(exp)}`
       )
   }
 }

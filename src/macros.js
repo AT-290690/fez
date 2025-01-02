@@ -589,7 +589,7 @@ export const deSuggarAst = (ast, scope) => {
                       exp[exp.length - 1] = newBlock.concat(
                         hasBlock(block) ? block.slice(1) : [block]
                       )
-                      deSuggarAst(block)
+                      deSuggarAst(exp)
                     }
                   }
                 }
