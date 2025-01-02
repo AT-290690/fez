@@ -1,6 +1,5 @@
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { keywords } from './interpreter.js'
 import { stringifyArgs } from './utils.js'
 
 export const evaluate = (exp, env) => {

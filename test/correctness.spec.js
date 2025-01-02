@@ -62,17 +62,23 @@ Prize: X=18641, Y=10279")
     )
     deepStrictEqual(
       fez(
-        `(let matrix (array (array 1 2 3) (array 1 2 3) (array 1 2 3)))
-(|> matrix
-(matrix:rotate-square)
-
-)`,
+        `(let matrix (array (array 1 2 3) (array 1 2 3) (array 1 2 3))) (|> matrix (matrix:rotate-square))`,
         { mutation: 1 }
       ),
       [
         [3, 3, 3],
         [2, 2, 2],
         [1, 1, 1]
+      ]
+    )
+    deepStrictEqual(
+      fez(
+        `(let matrix (array (array 1 2) (array 3 4))) (|> matrix (matrix:flip-square))`,
+        { mutation: 1 }
+      ),
+      [
+        [2, 1],
+        [4, 3]
       ]
     )
     strictEqual(

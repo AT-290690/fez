@@ -12,11 +12,11 @@ import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 export const keywords = {
   [KEYWORDS.ADDITION]: (args, env) => {
-    if (args.length !== 0 && args.length !== 2)
+    if (args.length !== 2)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.ADDITION
-        }), expected (or (= 2) (= 0)) but got ${args.length}. (${
+        }), expected (= 2) but got ${args.length}. (${
           KEYWORDS.ADDITION
         } ${stringifyArgs(args)})`
       )
