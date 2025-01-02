@@ -675,10 +675,10 @@ export const replaceQuotes = (source) =>
     .replaceAll(/\`\(/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\(\)/g, `(${KEYWORDS.CREATE_ARRAY})`)
     .replaceAll(/\[\]/g, `(${KEYWORDS.CREATE_ARRAY})`)
-    .replaceAll(/\{\}/g, `(${KEYWORDS.CREATE_LIST})`)
+    .replaceAll(/\{\}/g, `(${SUGGAR.CREATE_LIST})`)
     .replaceAll(/\[/g, `(${KEYWORDS.CREATE_ARRAY} `)
     .replaceAll(/\]/g, ')')
-    .replaceAll(/\{/g, `(${KEYWORDS.CREATE_LIST} `)
+    .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\}/g, ')')
 
 export const replaceParens = (source) =>
