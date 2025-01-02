@@ -6,7 +6,8 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 
 describe('Corretness', () => {
   it('Should be correct', () => {
-    strictEqual(evalJS(`(|> [
+    strictEqual(
+      evalJS(`(|> [
 "....."
 "....."
 "..*.."
@@ -17,7 +18,9 @@ describe('Corretness', () => {
     []
     (apply (lambda [x .] (array:merge! [x] [(matrix:rotate-square x)])))
     (array:map (lambda x (array:fold x (lambda a b (+ a (not (array:some? b not)))) 0)))
-    (math:summation))`), 8)
+    (math:summation))`),
+      8
+    )
     strictEqual(
       fez(`(let INPUT
 "Button A: X+94, Y+34

@@ -180,7 +180,7 @@ export const deSuggarAst = (ast, scope) => {
                     exp.push(
                       [0, KEYWORDS.CALL_FUNCTION],
                       ...rest,
-                      INTEGER_DIVISION,
+                      INTEGER_DIVISION
                     )
                   } else {
                     exp.length = 1
@@ -481,7 +481,7 @@ export const deSuggarAst = (ast, scope) => {
                               [APPLY, KEYWORDS.CALL_FUNCTION],
                               right,
                               [ATOM, indexes.at(-1)[0] + 1],
-                              SLICE,
+                              SLICE
                             ]
                           ])
                       }

@@ -191,7 +191,8 @@
     },
     ['apply']: (args, env) => {
       const first = args.pop()
-      if (first == undefined) throw new ReferenceError('Attemting to call undefined function')
+      if (first == undefined)
+        throw new ReferenceError('Attemting to call undefined function')
       const apply = evaluate(first, env)
       if (!isApply(apply)) throw new TypeError('Arg must b a function')
       return apply(args, env)

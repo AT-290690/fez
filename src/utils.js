@@ -149,7 +149,7 @@ export const handleUnbalancedParens = (source) => {
 export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
 const isDefinition = (x) =>
   x[TYPE] === APPLY && x[VALUE] === KEYWORDS.DEFINE_VARIABLE
-const toDeps = ([[,[,libs]]]) =>
+const toDeps = ([[, [, libs]]]) =>
   libs.reduce(
     (a, x, i) => a.set(x.at(1)[VALUE], { value: x, index: i }),
     new Map()
