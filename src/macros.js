@@ -497,8 +497,7 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case KEYWORDS.ANONYMOUS_FUNCTION:
                 {
-                  const body = exp.at(-1)
-                  const block = hasBlock(body) ? body[1] : body
+                  const block = exp.at(-1)
                   const newBlock = [[APPLY, KEYWORDS.BLOCK]]
                   for (let i = 1; i < exp.length - 1; ++i) {
                     if (!isLeaf(exp[i]) && exp[i][0][TYPE] === APPLY) {
@@ -587,7 +586,9 @@ export const deSuggarAst = (ast, scope) => {
                           exp[i].length = 2
                         }
                       }
-                      exp[exp.length - 1] = newBlock.concat([block])
+                      exp[exp.length - 1] = newBlock.concat(
+                        hasBlock(block) ? block.slice(1) : [block]
+                      )
                       deSuggarAst(block)
                     }
                   }
