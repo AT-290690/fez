@@ -36,7 +36,7 @@
     (let pattern (get first ast:type))
     (cond 
       (= pattern ast:word) (map:get env (get first ast:value))
-      (= pattern ast:apply) (apply (map:get env (get first ast:value)) rest env)
+      (= pattern ast:apply) (apply rest env (map:get env (get first ast:value)))
       (= pattern ast:atom) (get first ast:value)
       (*) ())) ()))))
 

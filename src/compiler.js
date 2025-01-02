@@ -167,7 +167,8 @@ const compile = (tree, Drill) => {
         }
       }
       case KEYWORDS.CALL_FUNCTION: {
-        const [first, ...rest] = Arguments
+        const first = Arguments.pop()
+        const rest = Arguments
         const apply = compile(first, Drill)
         return `${
           apply[apply.length - 1] === ';'

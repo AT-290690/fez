@@ -190,10 +190,11 @@
       return evaluate(args[1], env) === TRUE ? TRUE : FALSE
     },
     ['apply']: (args, env) => {
-      const [first, ...rest] = args
+      const first = args.pop()
+      if (first == undefined) throw new ReferenceError('Attemting to call undefined function')
       const apply = evaluate(first, env)
       if (!isApply(apply)) throw new TypeError('Arg must b a function')
-      return apply(rest, env)
+      return apply(args, env)
     },
     ['let']: (args, env) => {
       const word = args[0]

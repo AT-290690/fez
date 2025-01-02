@@ -179,8 +179,8 @@ export const deSuggarAst = (ast, scope) => {
                     exp.length = 0
                     exp.push(
                       [0, KEYWORDS.CALL_FUNCTION],
+                      ...rest,
                       INTEGER_DIVISION,
-                      ...rest
                     )
                   } else {
                     exp.length = 1
@@ -216,9 +216,9 @@ export const deSuggarAst = (ast, scope) => {
                       exp.length = 0
                       exp.push(
                         [0, KEYWORDS.CALL_FUNCTION],
-                        EXPONENTIATION,
                         exponent,
-                        power
+                        power,
+                        EXPONENTIATION
                       )
                     }
                   } else {
@@ -227,9 +227,9 @@ export const deSuggarAst = (ast, scope) => {
                     exp.length = 0
                     exp.push(
                       [0, KEYWORDS.CALL_FUNCTION],
-                      EXPONENTIATION,
                       exponent,
-                      power
+                      power,
+                      EXPONENTIATION
                     )
                   }
                   deSuggarAst(exp, scope)
@@ -479,9 +479,9 @@ export const deSuggarAst = (ast, scope) => {
                             lastLeft,
                             [
                               [APPLY, KEYWORDS.CALL_FUNCTION],
-                              SLICE,
                               right,
-                              [ATOM, indexes.at(-1)[0] + 1]
+                              [ATOM, indexes.at(-1)[0] + 1],
+                              SLICE,
                             ]
                           ])
                       }
@@ -573,9 +573,9 @@ export const deSuggarAst = (ast, scope) => {
                             lastLeft,
                             [
                               [APPLY, KEYWORDS.CALL_FUNCTION],
-                              SLICE,
                               right,
-                              [ATOM, indexes.at(-1)[0] + 1]
+                              [ATOM, indexes.at(-1)[0] + 1],
+                              SLICE
                             ]
                           ])
                         exp[i] = right

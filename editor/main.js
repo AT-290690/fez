@@ -6,7 +6,7 @@ editor.setOptions({
 })
 // pastel_on_dark
 // pastel_on_dark
-const THEME = 'tomorrow_night'
+const THEME = 'terminal'
 const EDITOR_THEME = THEME
 const TERMINAL_THEME = THEME
 // 'chrome' => 'Chrome',

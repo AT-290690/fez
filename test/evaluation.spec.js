@@ -229,7 +229,7 @@ describe('Compilation & Interpretation', () => {
         (recursive:iter arr ()))))
       
       (let lazy '(reverse '(1 2 3 4 5 6)))
-      (apply (car lazy) (car (cdr lazy)))`,
+      (apply (car (cdr lazy)) (car lazy))`,
       `(= 
         (|>
          "Hello World"

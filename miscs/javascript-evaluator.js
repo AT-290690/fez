@@ -117,9 +117,8 @@ const keywords = {
     return b
   },
   ['apply']: (args, env) => {
-    const [first, ...rest] = args
-    const apply = evaluate(first, env)
-    return apply(rest, env)
+    const apply = evaluate(args.pop(), env)
+    return apply(args, env)
   },
   ['let']: (args, env) => {
     const word = args[0]

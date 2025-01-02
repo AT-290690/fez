@@ -15,6 +15,7 @@ enum Evaluated {
     Number(f64),
     Vector(Rc<RefCell<Vec<Evaluated>>>),
 }
+
 impl fmt::Debug for Evaluated {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -42,11 +43,11 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
         Expression::Word(name) => {
             let env_ref = env.borrow();
             if let Some(var) = env_ref.vars.get(name) {
-                return var.clone()
+                return var.clone();
             }
             let defs_ref = defs.borrow();
             if let Some(var) = defs_ref.vars.get(name) {
-                return var.clone()
+                return var.clone();
             }
             panic!("Undefined variable: {}", name);
         }
@@ -56,7 +57,7 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
                 if let Some(var) = env_ref.vars.get(name) {
                     match var {
                         Evaluated::Function(func) => {
-                            return func(exprs[1..].to_vec(), Rc::clone(&env), Rc::clone(&defs))
+                            return func(exprs[1..].to_vec(), Rc::clone(&env), Rc::clone(&defs));
                         }
                         _ => panic!("Cannot apply a non-lambda value"),
                     }
@@ -65,7 +66,7 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
                 if let Some(var) = defs_ref.vars.get(name) {
                     match var {
                         Evaluated::Function(func) => {
-                            return func(exprs[1..].to_vec(), Rc::clone(&env), Rc::clone(&defs))
+                            return func(exprs[1..].to_vec(), Rc::clone(&env), Rc::clone(&defs));
                         }
                         _ => panic!("Cannot apply a non-lambda value"),
                     }
@@ -74,7 +75,6 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
             }
             panic!("Invalid lambda application");
         }
-       
     }
 }
 
@@ -120,7 +120,7 @@ fn main() {
                     | -> Evaluated {
                         match evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs)) {
                             Evaluated::Vector(arr) => {
-                                Evaluated::Number(arr.borrow_mut().len() as f64)
+                                Evaluated::Number(arr.borrow().len() as f64)
                             }
                             _ => panic!("First argument must be an array"),
                         }
@@ -145,12 +145,10 @@ fn main() {
                                         let len: usize = arr.borrow().len();
                                         if
                                             (index >= 0.0 && index < (len as f64)) ||
-                                            (index < 0.0 &&
-                                                index * -1.0 < (len as f64) + 1.0)
+                                            (index < 0.0 && index * -1.0 < (len as f64) + 1.0)
                                         {
                                             arr.borrow_mut()
-                                                .get((
-                                                if index >= 0.0 {
+                                                .get((if index >= 0.0 {
                                                     index
                                                 } else {
                                                     (len as f64) + index
@@ -777,7 +775,7 @@ fn main() {
                         if let Expression::Word(var_name) = &args[0] {
                             let value = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
                             defs.borrow_mut().vars.insert(var_name.clone(), value);
-                            return evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs))
+                            return evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
                         } else {
                             panic!("First argument to 'let' must be a variable name");
                         }
@@ -797,30 +795,38 @@ fn main() {
                         if args.len() < 1 {
                             panic!("apply expects exactly at least one argument");
                         }
-                        if let Expression::Word(_) = &args[0] {
-                            let func = evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
+                        if let Expression::Word(_) = &args[&args.len() - 1] {
+                            let func = evaluate(
+                                &args[((args.len() as i64) - 1) as usize],
+                                Rc::clone(&env),
+                                Rc::clone(&defs)
+                            );
                             if let Evaluated::Function(func) = func {
                                 func(
-                                    args[1..].to_vec(),
+                                    args[0..args.len() - 1].to_vec(),
                                     Rc::clone(&env),
                                     Rc::clone(&defs)
                                 )
                             } else {
-                                panic!("Second argument to 'apply' must be a lambda")
+                                panic!("Last argument to 'apply' must be a lambda")
                             }
-                        } else if let Expression::Apply(_) = &args[0] {
-                            let func = evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
+                        } else if let Expression::Apply(_) = &args[&args.len() - 1] {
+                            let func = evaluate(
+                                &args[((args.len() as i64) - 1) as usize],
+                                Rc::clone(&env),
+                                Rc::clone(&defs)
+                            );
                             if let Evaluated::Function(func) = func {
                                 func(
-                                    args[1..].to_vec(),
+                                    args[0..args.len() - 1].to_vec(),
                                     Rc::clone(&env),
                                     Rc::clone(&defs)
                                 )
                             } else {
-                                panic!("Second argument to 'apply' must be a lambda")
+                                panic!("Last argument to 'apply' must be a lambda")
                             }
                         } else {
-                            panic!("First argument to 'apply' must be a lambda name");
+                            panic!("First argument to 'apply' must be a word");
                         }
                     }
                 )

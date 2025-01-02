@@ -6,6 +6,18 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(evalJS(`(|> [
+"....."
+"....."
+"..*.."
+"....."
+"....."
+]
+    (array:map (lambda r (array:map r (lambda c (= c char:dot)))))
+    []
+    (apply (lambda [x .] (array:merge! [x] [(matrix:rotate-square x)])))
+    (array:map (lambda x (array:fold x (lambda a b (+ a (not (array:some? b not)))) 0)))
+    (math:summation))`), 8)
     strictEqual(
       fez(`(let INPUT
 "Button A: X+94, Y+34
@@ -392,7 +404,7 @@ ZZZ=ZZZ,ZZZ")
       (recursive:iter arr ()))))
     
     (let lazy '(reverse '(1 2 3 4 5 6)))
-    (apply (car lazy) (car (cdr lazy)))`
+    (apply (car (cdr lazy)) (car lazy))`
       ),
       [6, 5, 4, 3, 2, 1]
     )
@@ -1009,7 +1021,7 @@ ZZZ=ZZZ,ZZZ")
                                              (if (= (length args) 3)
                                                  (evaluate (array:get args 2) env)
                                                  0))))
-(let run (lambda source (apply (map:get keywords "do") (from:chars->ast source) keywords)))
+(let run (lambda source (apply (from:chars->ast source) keywords (map:get keywords "do"))))
 (run (array:concat '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`
       ),
       29

@@ -656,10 +656,11 @@ export const keywords = {
           KEYWORDS.CALL_FUNCTION
         }) (>= 1 required) (${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
-    const [first, ...rest] = args
+    const rest = [...args]
+    const first = rest.pop()
     if (first[TYPE] === WORD && first[VALUE] in keywords)
       throw new TypeError(
-        `Following argument of (${
+        `Preceeding arguments of (${
           KEYWORDS.CALL_FUNCTION
         }) must not be an reserved word (${
           KEYWORDS.CALL_FUNCTION
@@ -668,7 +669,7 @@ export const keywords = {
     const apply = evaluate(first, env)
     if (typeof apply !== 'function')
       throw new TypeError(
-        `First argument of (${KEYWORDS.CALL_FUNCTION}) must be a (${
+        `Last argument of (${KEYWORDS.CALL_FUNCTION}) must be a (${
           KEYWORDS.ANONYMOUS_FUNCTION
         }) (${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
