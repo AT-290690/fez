@@ -44,12 +44,12 @@ Prize: X=18641, Y=10279")
 (let part1 (lambda input
                 (|>
                   input
-                  (array:fold (lambda a (A B P .) (do
+                  (array:fold (lambda a [A B P .] (do
                     (let ax (array:first A))
                     (let ay (array:second A))
-                    (let (ax ay .) A)
-                    (let (bx by .) B)
-                    (let (px py .) P)
+                    (let [ax ay .] A)
+                    (let [bx by .] B)
+                    (let [px py .] P)
                     (let ca (/ (- (* px by) (* py bx)) (- (* ax by) (* ay bx))))
                     (let cb (/ (- px (* ax ca)) bx))
                     (if (and (= (mod ca 1) 0) (= (mod cb 1) 0) (<= ca 100) (<= cb 100))
@@ -86,31 +86,24 @@ Prize: X=18641, Y=10279")
       114
     )
     deepStrictEqual(
-      fez(`(let LS \`(1 2 3 4 5 6 7 8 9 10 11 12))
-(let (a (b (c (d (e (f (g R) .) .) .) .) .) .) LS)
-(array a b c d e f g R)
-`),
-      [1, 2, 3, 4, 5, 6, 7, [[8, [9, [10, [11, [12, []]]]]]]]
-    )
-    deepStrictEqual(
       fez(`
-(let fn (lambda (a b c d e f g ~ R) (+ a b c d e f g (math:list-product R))))
-        
-(let A (lambda (a b .) (+ a b)))
-(let B (lambda (a b .) (do (+ a b))))
-(let C (lambda (a1 b1 .) (a2 b2 .) (+ (* (+ a1 b1) b2) a2)))
-(let D (lambda (a b rest) (+ a b (math:product rest))))
-(let E (lambda (a1 b1 .) (a2 b2 .) (do (+ (* (+ a1 b1) b2) a2))))
-(let F (lambda (a1 b1 x ) (a2 b2 y) (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
-(let ls \`(1 2 3 4 5 6 7))
-(let G (lambda (a . c d ~ rest) (+ a c (math:list-product rest))))
+(let fn (lambda {a b c d e f g . R} (+ a b c d e f g (math:list-product R))))
+    
+(let A (lambda [a b .] (+ a b)))
+(let B (lambda [a b .] (do (+ a b))))
+(let C (lambda [a1 b1 .] [a2 b2 .] (+ (* (+ a1 b1) b2) a2)))
+(let D (lambda [a b rest] (+ a b (math:product rest))))
+(let E (lambda [a1 b1 .] [a2 b2 .] (do (+ (* (+ a1 b1) b2) a2))))
+(let F (lambda [a1 b1 x] [a2 b2 y] (* (math:summation x) (math:maximum y) (+ (* (+ a1 b1) b2) a2))))
+(let ls {1 2 3 4 5 6 7})
+(let G (lambda {a . c d rest} (+ a c (math:list-product rest))))
 
 (array (A (array 2 3)) (B (array 2 3)) (C (array 1 2) (array 3 4)) (D (array 1 2 3 4 5)) (E (array 1 2 3) (array 4 5 6)) 
 (F (array 1 2 3 4 5 6 7) (array 10 20 30 40))
 (G ls)
-(fn \`(1 2 3 4 5 6 7 8 9 10 11 12))
-)`),
-      [5, 5, 15, 63, 19, 70000, 214, 95068]
+(fn {1 2 3 4 5 6 7 8 9 10 11 12}))
+`),
+      [5, 5, 15, 63, 19, 70000, 214, 11908]
     )
     strictEqual(
       fez(`(let unique (lambda arr (|>
@@ -334,7 +327,7 @@ ZZZ=ZZZ,ZZZ")
       "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
-        (let (dirs adj .) input)
+        (let [dirs adj .] input)
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
@@ -344,7 +337,7 @@ ZZZ=ZZZ,ZZZ")
       
       
       (let part2 (lambda input (do 
-        (let (dirs adj keys .) input)
+        (let [dirs adj keys .] input)
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? '((get node -1)) target)
@@ -931,9 +924,9 @@ ZZZ=ZZZ,ZZZ")
 (let part1 (lambda input 
   (|> input 
   (array:map (lambda x (do 
-    (let (l w h .) x)
+    (let [l w h .] x)
     ; 2*l*w + 2*w*h + 2*h*l
-    (let sides '((* l w) (* w h) (* h l)))
+    (let sides [(* l w) (* w h) (* h l)])
     (let slack (math:minimum sides))
     (|> sides (array:map (lambda x (* x 2))) (array:fold (lambda a b (+ a b)) slack))
   )))
@@ -942,10 +935,10 @@ ZZZ=ZZZ,ZZZ")
 (let part2 (lambda input 
   (|> input 
   (array:map (lambda x (do
-    (let (l w h .) x)
+    (let [l w h .] x)
     ; 2*l*w + 2*w*h + 2*h*l
     (let s (|> x (array:sort >)))
-    (let (m1 m2 .) s)
+    (let [m1 m2 .] s)
     (+ (* m1 2) (* m2 2) (* l w h))
   ))) 
   (math:summation))))
@@ -1453,7 +1446,7 @@ matrix
         (let recursive:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
-          (let (y x step .) element)
+          (let [y x step .] element)
           (if (math:even? step) (set:add! steps (from:yx->key y x)))
           (matrix:adjacent matrix matrix:von-neumann-neighborhood y x (lambda cell dir dy dx (do 
               (let key (from:yx->key dy dx))
@@ -1913,7 +1906,7 @@ matrix
 
   deepStrictEqual(
     evalJS(
-      `(let INPUT (array:concat-with '(
+      `(let INPUT (array:concat-with [
   "....#....."
   ".........#"
   ".........."
@@ -1924,24 +1917,24 @@ matrix
   "........#."
   "#........."
   "......#..."
-) char:new-line))
+] char:new-line))
 (let parse (lambda input (|> input (string:lines))))
-(let dir '('(-1 0) '(0 1) '(1 0) '(0 -1)))
+(let dir [[-1 0] [0 1] [1 0] [0 -1]])
 
 (let part1 (lambda input (do
   (let matrix (matrix:shallow-copy input)) 
   (let starting (matrix:find-index input (lambda x (= x 94))))
-  (let (sy sx .) starting)
+  (let [sy sx .] starting)
   (matrix:set! matrix sy sx char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let recursive:step (lambda start angle (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
-      (let (syc sxc .) start-copy)
-      (let (cdy cdx .) current-dir)
+      (let [syc sxc .] start-copy)
+      (let [cdy cdx .] current-dir)
       (set! start-copy 0 (+ syc cdy))
       (set! start-copy 1 (+ sxc cdx))
-      (let (y x .) start-copy)
+      (let [y x .] start-copy)
       (if (matrix:in-bounds? matrix y x) (do 
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
@@ -1961,11 +1954,11 @@ matrix
   (let recursive:step (lambda matrix start angle corners (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
-      (let (syc sxc .) start-copy)
-      (let (cdy cdx .) current-dir)
+      (let [syc sxc .] start-copy)
+      (let [cdy cdx .] current-dir)
       (set! start-copy 0 (+ syc cdy))
       (set! start-copy 1 (+ sxc cdx))
-      (let (y x .) start-copy)
+      (let [y x .] start-copy)
       (if (matrix:in-bounds? matrix y x) (do 
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
@@ -1978,13 +1971,13 @@ matrix
           (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
           (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)))))))
   (recursive:step matrix starting 0 (new:set64))
-  (let path '())
-  (let (Y X .) starting)
+  (let path [])
+  (let [Y X .] starting)
   (matrix:enumerated-for matrix (lambda current y x (if 
-      (= current char:X) (array:push! path '(y x)))))
+      (= current char:X) (array:push! path [y x]))))
   (array:for path (lambda pos (do 
       (let copy (matrix:shallow-copy input))
-      (let (y x .) pos)
+      (let [y x .] pos)
       (matrix:set! copy Y X char:X)
       (matrix:set! copy y x char:hash)
       (if (not (and (= y Y) (= x X))) (recursive:step copy starting 0 (new:set64))))))
@@ -2769,7 +2762,7 @@ input (array:map
   (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
   (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
 
-  (let pq '('(0 (array:first start) (array:second start) 0 1)))
+  (let pq [[0 (array:first start) (array:second start) 0 1]])
   (let seen (new:set8))
   (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
 
@@ -2779,19 +2772,21 @@ input (array:map
   (let recursive:while (lambda (unless (heap:empty? pq) (do
       (let first (heap:peek pq))
       (heap:pop! pq lower?)
-      (let (cost r c dr dc .) first)
+      (let [cost r c dr dc .] first)
       (set:add! seen (from:stats->key '(r c dr dc)))
       (if (goal? r c) cost
        (do 
-          (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
-                      '((+ cost 1000) r c dc (- dr))
-                      '((+ cost 1000) r c (- dc) dr)))
-          (array:for dirs (lambda (new-cost nr nc ndr ndc .) 
+          (let dirs [
+                      [(+ cost 1) (+ r dr) (+ c dc) dr dc]
+                      [(+ cost 1000) r c dc (- dr)]
+                      [(+ cost 1000) r c (- dc) dr]
+                    ])
+          (array:for dirs (lambda [new-cost nr nc ndr ndc .] 
                           (if 
                               (and
                                   (not (= (matrix:get matrix nr nc) char:hash)) 
-                                  (not (set:has? seen (from:stats->key '( nr nc ndr ndc )))))
-                              (heap:push! pq '( new-cost nr nc ndr ndc ) lower?))))
+                                  (not (set:has? seen (from:stats->key [nr nc ndr ndc]))))
+                              (heap:push! pq [new-cost nr nc ndr ndc] lower?))))
           (recursive:while)))))))
   (recursive:while))))
 

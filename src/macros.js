@@ -394,14 +394,11 @@ export const deSuggarAst = (ast, scope) => {
               case KEYWORDS.DEFINE_VARIABLE:
                 {
                   if (!isLeaf(exp[1]) && exp[1][0][TYPE] === APPLY) {
-                    const left = exp[1]
+                    const left = exp[1].slice(1)
                     const right = exp.at(-1)
-                    const isList =
-                      left[left.length - 2][VALUE] === KEYWORDS.BITWISE_NOT
                     let newScope
-                    if (isList) {
+                    if (exp[1][0][VALUE] === SUGGAR.CREATE_LIST) {
                       const lastLeft = left.pop()
-                      left.pop() // tail separator
                       const vars = left
                       if (
                         !isLeaf(right) &&
@@ -409,7 +406,7 @@ export const deSuggarAst = (ast, scope) => {
                         right[0][VALUE] === SUGGAR.CREATE_LIST
                       ) {
                         throw new SyntaxError(
-                          `Destrcuturing requires right hadnd side to be a word but got an apply ${stringifyArgs(
+                          `Destructuring requires right hand side to be a word but got an apply ${stringifyArgs(
                             exp
                           )}`
                         )
@@ -450,14 +447,12 @@ export const deSuggarAst = (ast, scope) => {
                       }
                       vars[0][TYPE] = WORD
                       exp.length = 0
-                    } else {
+                    } else if (exp[1][0][VALUE] === KEYWORDS.CREATE_ARRAY) {
                       const lastLeft = left.pop()
                       // const isList = exp[i][exp[i].length - 2][VALUE] === KEYWORDS.BITWISE_NOT
                       const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
                       const vars = left
-                      const indexes = vars
-                        .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
-                        .filter((x) => x !== -1)
+                      const indexes = vars.map((x, i) => [i, x])
                       vars[0][TYPE] = WORD
                       exp.length = 0
                       if (
@@ -466,16 +461,18 @@ export const deSuggarAst = (ast, scope) => {
                         right[0][VALUE] === KEYWORDS.CREATE_ARRAY
                       ) {
                         throw new SyntaxError(
-                          `Destrcuturing requires right hadnd side to be a word but got an apply ${stringifyArgs(
+                          `Destructuring requires right hand side to be a word but got an apply ${stringifyArgs(
                             exp
                           )}`
                         )
                       } else {
-                        newScope = indexes.map((i) => [
-                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                          vars[i],
-                          [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
-                        ])
+                        newScope = indexes
+                          .filter((x) => x[1][VALUE] !== PLACEHOLDER)
+                          .map(([i]) => [
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            vars[i],
+                            [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                          ])
                         if (isSlicing)
                           newScope.push([
                             [APPLY, KEYWORDS.DEFINE_VARIABLE],
@@ -484,7 +481,7 @@ export const deSuggarAst = (ast, scope) => {
                               [APPLY, KEYWORDS.CALL_FUNCTION],
                               SLICE,
                               right,
-                              [ATOM, indexes.at(-1) + 1]
+                              [ATOM, indexes.at(-1)[0] + 1]
                             ]
                           ])
                       }
@@ -500,16 +497,16 @@ export const deSuggarAst = (ast, scope) => {
                   const block = exp.at(-1)
                   const newBlock = [[APPLY, KEYWORDS.BLOCK]]
                   for (let i = 1; i < exp.length - 1; ++i) {
-                    if (!isLeaf(exp[i]) && exp[i][0][TYPE] === APPLY) {
-                      const isList =
-                        exp[i][exp[i].length - 2][VALUE] ===
-                        KEYWORDS.BITWISE_NOT
-                      if (isList) {
-                        const left = exp[i]
+                    if (
+                      !isLeaf(exp[i]) &&
+                      exp[i][0][TYPE] === APPLY &&
+                      (exp[i][0][VALUE] === KEYWORDS.CREATE_ARRAY ||
+                        exp[i][0][VALUE] === SUGGAR.CREATE_LIST)
+                    ) {
+                      if (exp[i][0][VALUE] === SUGGAR.CREATE_LIST) {
+                        const left = exp[i].slice(1)
                         const right = [WORD, `_arg${i}`]
                         const lastLeft = left.pop()
-
-                        left.pop() // tail separator
 
                         const vars = left
                         const indexes = vars
@@ -552,39 +549,37 @@ export const deSuggarAst = (ast, scope) => {
                         left[0][TYPE] = WORD
                         exp[i] = right
                         exp[i].length = 2
-                      } else {
-                        const left = exp[i]
+                      } else if (exp[i][0][VALUE] === KEYWORDS.CREATE_ARRAY) {
+                        const left = exp[i].slice(1)
                         const right = [WORD, `_arg${i}`]
                         left[0][TYPE] = WORD
                         const lastLeft = left.pop()
                         const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
                         const vars = left
-                        const indexes = vars
-                          .map((x, i) => (x[VALUE] === PLACEHOLDER ? -1 : i))
-                          .filter((x) => x !== -1)
-                        {
-                          // const tempBlcok = [...block[VALUE]]
-                          newBlock.push(
-                            ...indexes.map((i) => [
+                        const indexes = vars.map((x, i) => [i, x])
+                        // const tempBlcok = [...block[VALUE]]
+                        newBlock.push(
+                          ...indexes
+                            .filter((x) => x[1][VALUE] !== PLACEHOLDER)
+                            .map(([i]) => [
                               [APPLY, KEYWORDS.DEFINE_VARIABLE],
                               vars[i],
                               [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
                             ])
-                          )
-                          if (isSlicing)
-                            newBlock.push([
-                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              lastLeft,
-                              [
-                                [APPLY, KEYWORDS.CALL_FUNCTION],
-                                SLICE,
-                                right,
-                                [ATOM, indexes.at(-1) + 1]
-                              ]
-                            ])
-                          exp[i] = right
-                          exp[i].length = 2
-                        }
+                        )
+                        if (isSlicing)
+                          newBlock.push([
+                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                            lastLeft,
+                            [
+                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                              SLICE,
+                              right,
+                              [ATOM, indexes.at(-1)[0] + 1]
+                            ]
+                          ])
+                        exp[i] = right
+                        exp[i].length = 2
                       }
                       exp[exp.length - 1] = newBlock.concat(
                         hasBlock(block) ? block.slice(1) : [block]
@@ -610,6 +605,7 @@ export const deSuggarAst = (ast, scope) => {
     }
   }
   evaluate(ast)
+  iron(ast)
   return ast
 }
 export const replaceStrings = (source) => {
