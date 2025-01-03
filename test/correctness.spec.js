@@ -6,6 +6,76 @@ const evalJS = (source) => eval(fez(source, { compile: 1, mutation: 1 }))
 
 describe('Corretness', () => {
   it('Should be correct', () => {
+
+    deepStrictEqual(evalJS(`(let input "
+#####
+.####
+.####
+.####
+.#.#.
+.#...
+.....
+
+#####
+##.##
+.#.##
+...##
+...#.
+...#.
+.....
+
+.....
+#....
+#....
+#...#
+#.#.#
+#.###
+#####
+
+.....
+.....
+#.#..
+###..
+###.#
+###.#
+#####
+
+.....
+.....
+.....
+#....
+#.#..
+#.#.#
+#####
+")
+(let array:chunks (lambda arr predicate? (do 
+        (|> arr 
+        (array:ranges predicate?)
+        (array:map (lambda [start end .] (array:exclude (array:slice arr start end) predicate?)))))))
+
+(let parse (lambda input (|> input 
+(string:trim) 
+(string:lines) 
+(array:append! []) 
+(array:chunks array:empty?))))
+(let PARSED (parse input))
+(let part1 (lambda input (do
+    (let lock? (lambda x (array:some? (get x 0) (lambda y (= y char:dot)))))
+    (let from:key->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) i -1)))))))))
+    (let from:lock->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) (- (length y) i 1) -1)))))))))
+    (let heights (|> input (array:map (lambda x
+        (if (lock? x)
+        (from:lock->heights x) ; is lock
+        (from:key->heights x) ; is key
+)))))
+
+
+(|> heights 
+    (array:map (lambda x (|> x (array:map from:numbers->strings) 
+                            (array:map (lambda x (array:append! (array:map x (lambda y 
+                                (if (= (car y) char:minus) [char:dot] y))) [char:new-line])))
+                                (array:flat-one))))))))
+(part1 PARSED)`), [[[48],[48],[48],[48],[48],[10],[46],[49],[49],[49],[49],[10],[46],[50],[50],[50],[50],[10],[46],[51],[51],[51],[51],[10],[46],[52],[46],[52],[46],[10],[46],[53],[46],[46],[46],[10],[46],[46],[46],[46],[46],[10]],[[48],[48],[48],[48],[48],[10],[49],[49],[46],[49],[49],[10],[46],[50],[46],[50],[50],[10],[46],[46],[46],[51],[51],[10],[46],[46],[46],[52],[46],[10],[46],[46],[46],[53],[46],[10],[46],[46],[46],[46],[46],[10]],[[46],[46],[46],[46],[46],[10],[53],[46],[46],[46],[46],[10],[52],[46],[46],[46],[46],[10],[51],[46],[46],[46],[51],[10],[50],[46],[50],[46],[50],[10],[49],[46],[49],[49],[49],[10],[48],[48],[48],[48],[48],[10]],[[46],[46],[46],[46],[46],[10],[46],[46],[46],[46],[46],[10],[52],[46],[52],[46],[46],[10],[51],[51],[51],[46],[46],[10],[50],[50],[50],[46],[50],[10],[49],[49],[49],[46],[49],[10],[48],[48],[48],[48],[48],[10]],[[46],[46],[46],[46],[46],[10],[46],[46],[46],[46],[46],[10],[46],[46],[46],[46],[46],[10],[51],[46],[46],[46],[46],[10],[50],[46],[50],[46],[46],[10],[49],[46],[49],[46],[49],[10],[48],[48],[48],[48],[48],[10]]])
     strictEqual(
       evalJS(`(|> [
 "....."
