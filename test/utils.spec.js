@@ -1,5 +1,5 @@
 import { deepStrictEqual } from 'assert'
-import { fez, prep, shake, wrapInBlock } from '../src/utils.js'
+import { astWithStd, fez, prep, shake, wrapInBlock } from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
 import std from '../lib/baked/std.js'
 describe('Utils', () => {
@@ -148,19 +148,17 @@ bbrgwb")
     ].forEach((source) => {
       deepStrictEqual(
         eval(
-          fez(LISP.source(shake(prep(source), std)), {
+          fez(LISP.source(astWithStd(source)), {
             mutation: 1,
             compile: 1
           })
         ),
         eval(
-          fez(
-            wrapInBlock(AST.parse(AST.stringify(shake(prep(source), std)))[0]),
-            {
-              mutation: 1,
-              compile: 1
-            }
-          )
+          // TODO: Figure out why do I need to make a [0] access?
+          fez(AST.parse(AST.stringify(astWithStd(source)))[0], {
+            mutation: 1,
+            compile: 1
+          })
         )
       )
     }))

@@ -61,7 +61,7 @@ export const LISP = {
       }
       return out
     }
-    return ast.map(dfs).join(' ')
+    return dfs(ast)
   }
 }
 export const AST = {
@@ -99,7 +99,7 @@ export const AST = {
     }
     return tree
   },
-  stringify: (ast) =>
+  stringify: (ast) => 
     typeof ast === 'object'
       ? `[${ast.map(AST.stringify).join(',')}]`
       : typeof ast === 'string'
