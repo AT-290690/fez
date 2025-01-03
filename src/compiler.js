@@ -116,7 +116,7 @@ const Helpers = {
   log_char_effect: `log_char_effect=(msg)=>{console.log(String.fromCharCode(msg));return msg}`,
   log_string_effect: `log_string_effect=(msg)=>{console.log(msg.map(x=>String.fromCharCode(x)).join(''));return msg}`,
   clear_effect: `clear_effect=()=>{console.clear();return 0}`,
-  get: 'get=(arr,i)=>arr.at(i)',
+  get: 'get=(arr,i)=>arr[i]',
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,

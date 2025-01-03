@@ -686,7 +686,7 @@
       (array:fold directions (lambda a dir (do
           (let dy (+ (array:first dir)  y))
           (let dx (+ (array:second dir)  x))
-          (callback a (get (get arr (mod dy N)) (mod dx N))) 
+          (callback a (get (get arr (math:euclidean-mod dy N)) (math:euclidean-mod dx N))) 
           )) 0)))
 (let matrix:set! (lambda matrix y x value (set! (get matrix y) x value)))
 (let matrix:get (lambda matrix y x (get (get matrix y) x)))
