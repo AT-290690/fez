@@ -202,7 +202,7 @@ describe('Compilation & Interpretation', () => {
         
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
-          (if (string:equal? '((get node -1)) target)
+          (if (string:equal? '((array:at node -1)) target)
               step 
               (recursive:move node target (+ step 1))))))
       
@@ -211,7 +211,7 @@ describe('Compilation & Interpretation', () => {
           (array:map car)
           (array:select (lambda source 
             (|> source 
-                (get -1)
+                (array:at -1)
                 '()
                 (string:equal? "A"))))
           (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))

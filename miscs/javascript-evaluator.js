@@ -55,7 +55,7 @@ const keywords = {
   ['get']: (args, env) => {
     const array = evaluate(args[0], env)
     const index = evaluate(args[1], env)
-    const value = array.at(index)
+    const value = array[index]
     return value
   },
   ['do']: (args, env) => {

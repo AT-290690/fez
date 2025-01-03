@@ -4,6 +4,8 @@
   "apply" (lambda args env (do (let application (evaluate (array:head args) env)) (application (array:tail args) env)))
   "array" (lambda args env (array:map args (lambda arg (evaluate arg env))))
   "length" (lambda args env (length (evaluate (get args 0) env)))
+  "get" (lambda args env (get (evaluate (get args 0) env) (evaluate (get args 1) env)))
+  "set!" (lambda args env (if (= (length args 3)) (set! (evaluate (get args 0) env) (evaluate (get args 1) env) (evaluate (get args 2) env)) (set! (evaluate (get args 0)))))
   "=" (lambda args env (= (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "+" (lambda args env (+ (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "-" (lambda args env (if (= (length args) 1) (- (evaluate (get args 0) env)) (- (evaluate (get args 0) env) (evaluate (get args 1) env))))

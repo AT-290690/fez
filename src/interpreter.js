@@ -300,13 +300,13 @@ export const keywords = {
         })) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}))`
       )
     const index = evaluate(args[1], env)
-    if (!Number.isInteger(index))
+    if (!Number.isInteger(index) || index < 0)
       throw new TypeError(
-        `Second argument of (${KEYWORDS.GET_ARRAY}) must be an (32 bit ${
+        `Second argument of (${KEYWORDS.GET_ARRAY}) must be a positive (32 bit ${
           RUNTIME_TYPES.NUMBER
         }) (${index}) (${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
-    if (index > array.length - 1 || index * -1 > array.length)
+    if (index > array.length - 1 )
       throw new RangeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) is outside of (${
           RUNTIME_TYPES.ARRAY

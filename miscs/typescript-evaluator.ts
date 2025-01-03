@@ -117,7 +117,7 @@
       if (!Array.isArray(array)) throw new TypeError('Arg must be an array')
       const index = evaluate(args[1], env)
       if (typeof index !== 'number') throw new TypeError('Arg must be a number')
-      const value = array.at(index)
+      const value = array[index]
       if (value === undefined)
         throw new RangeError('Index is outside of the bounds of the array')
       return value

@@ -473,7 +473,7 @@
 (let array:set-and-get! (lambda q index item (do (set! q index item) item)))
 (let array:tail! (lambda q (del! q)))
 (let array:push! (lambda q item (do (set! q (length q) item) item)))
-(let array:pop! (lambda q (do (let l (get q -1)) (del! q) l)))
+(let array:pop! (lambda q (do (let l (array:at q -1)) (del! q) l)))
 (let array:even-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:even? i) (array:append! a b) a)) ())))
 (let array:odd-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:odd? i) (array:append! a b) a)) ())))
 (let array:unique (lambda arr (|>
@@ -589,7 +589,7 @@
       (let x (array:first b))
       (let i (array:second b))
       (if (> (mod i n) 0)
-        (array:push! (get a -1) x)
+        (array:push! (array:at a -1) x)
         (array:push! a (array x))) a))
       ())))
 (let array:ranges (lambda arr predicate? (array:sliding-window (array:enumerated-fold arr (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
@@ -901,7 +901,7 @@
 (let array:first (lambda arr (get arr 0)))
 (let array:second (lambda arr (get arr 1)))
 (let array:third (lambda arr (get arr 2)))
-(let array:last (lambda arr (get arr -1)))
+(let array:last (lambda arr (array:at arr -1)))
 (let string:character-occurances (lambda str letter (do
   (let arr str)
   (let bitmask (var:def 0))
@@ -937,7 +937,7 @@
   (|> a (array:slice (+ index (length b)) (+ index (- (length a) index))) (array:reverse)))))
 (let string:split (lambda str char (|> str
               (array:fold (lambda a b (do
-              (let prev (get a -1))
+              (let prev (array:at a -1))
                 (if (string:equal? (array b) (array char))
                     (set! a (length a) ())
                     (set! prev (length prev) b)) a))
@@ -1153,7 +1153,7 @@
       (let len (length current))
       (let index (if (> len 0) (array:find-index current (lambda x (string:equal? x key))) -1))
       (let entry key)
-      (if (not (= index -1)) (apply (lambda (do (set! current index (get current -1)) (del! current)))))
+      (if (not (= index -1)) (apply (lambda (do (set! current index (array:at current -1)) (del! current)))))
       table)))
 (let set:has? (lambda table key (do 
       (let idx (set:index table key))
@@ -1224,7 +1224,7 @@
         (let current (get table idx))
         (let len (length current))
         (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
-        (if (not (= index -1)) (and (set! current index (get current -1)) (del! current)))
+        (if (not (= index -1)) (and (set! current index (array:at current -1)) (del! current)))
         table)))
 (let map:set-and-get! (lambda memo key value (do (map:set! memo key value) value)))
 (let map:remove-and-get! (lambda memo key (do (let value (map:get memo key)) (map:remove! memo key) value)))
@@ -1557,6 +1557,7 @@ heap)))
 (let not-equal? array:not-equal?)
 
 (let array:get get)
+(let array:at (lambda arr i (if (< i 0) (get arr (+ (length arr) i)) (get arr i))))
 (let array:length length)
 (let array:head (lambda arr (get arr 0)))
 (let array:tail (lambda arr (do
