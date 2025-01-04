@@ -99,7 +99,7 @@ export const AST = {
     }
     return tree
   },
-  stringify: (ast) => 
+  stringify: (ast) =>
     typeof ast === 'object'
       ? `[${ast.map(AST.stringify).join(',')}]`
       : typeof ast === 'string'

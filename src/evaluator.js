@@ -1,9 +1,19 @@
 import { keywords } from './interpreter.js'
-import { APPLY, ATOM, KEYWORDS, SPECIAL_FORMS_SET, TYPE, VALUE, WORD } from './keywords.js'
+import {
+  APPLY,
+  ATOM,
+  KEYWORDS,
+  SPECIAL_FORMS_SET,
+  TYPE,
+  VALUE,
+  WORD
+} from './keywords.js'
 import { isLeaf } from './parser.js'
 import { stringifyArgs } from './utils.js'
 export const DEFAULT_MAXIMUM_FUNCTION_CALLS = 262144
-export const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS : DEFAULT_MAXIMUM_FUNCTION_CALLS
+export const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS
+  ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS
+  : DEFAULT_MAXIMUM_FUNCTION_CALLS
 export const evaluate = (exp, env = keywords) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
@@ -25,14 +35,14 @@ export const evaluate = (exp, env = keywords) => {
         throw new TypeError(
           `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
         )
-        const isSpecial = SPECIAL_FORMS_SET.has(value)
-        if (!isSpecial) {
-          evaluate.count = (evaluate.count || 0) + 1
-          if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
-            evaluate.count = 0
-            throw new RangeError('Maximum function invocation limit exceeded')
-          }
+      const isSpecial = SPECIAL_FORMS_SET.has(value)
+      if (!isSpecial) {
+        evaluate.count = (evaluate.count || 0) + 1
+        if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
+          evaluate.count = 0
+          throw new RangeError('Maximum function invocation limit exceeded')
         }
+      }
       const result = apply(rest, env, value)
       if (!isSpecial) evaluate.stack.pop()
       return result

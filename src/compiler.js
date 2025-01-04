@@ -293,10 +293,7 @@ const comp = (tree, Drill) => {
       case KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT:
         return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.REMAINDER_OF_DIVISION:
-        return `(${comp(Arguments[0], Drill)}%${comp(
-          Arguments[1],
-          Drill
-        )});`
+        return `(${comp(Arguments[0], Drill)}%${comp(Arguments[1], Drill)});`
       case KEYWORDS.BIT_TYPE:
         return `(${comp(Arguments[0], Drill)}>>>0).toString(2)`
       case KEYWORDS.BITWISE_NOT:
@@ -304,10 +301,9 @@ const comp = (tree, Drill) => {
       case KEYWORDS.NOT:
         return `(+!${comp(Arguments[0], Drill)})`
       case KEYWORDS.IF: {
-        return `(${comp(Arguments[0], Drill)}?${comp(
-          Arguments[1],
-          Drill
-        )}:${Arguments.length === 3 ? comp(Arguments[2], Drill) : 0});`
+        return `(${comp(Arguments[0], Drill)}?${comp(Arguments[1], Drill)}:${
+          Arguments.length === 3 ? comp(Arguments[2], Drill) : 0
+        });`
       }
       default: {
         const camelCased = lispToJavaScriptVariableName(token)

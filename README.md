@@ -41,7 +41,8 @@ World
 
 ```js
 import { parse, debug } from 'fez-lisp'
-debug(parse(`(let *input* "1721,979,366,299,675,1456")
+debug(
+  parse(`(let *input* "1721,979,366,299,675,1456")
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
         (let res (array:binary-search arr (cb b)))
@@ -53,9 +54,8 @@ debug(parse(`(let *input* "1721,979,366,299,675,1456")
     (array:sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (math:product)
-    (log))`
-  ))
-
+    (log))`)
+)
 ```
 
 ```lisp
@@ -87,7 +87,7 @@ import { parse, debug } from 'fez-lisp'
 debug(parse(`(+ 1 (array 2))`)) // TypeError: Second arguments of (+) is not a (number) at: (+ 1 (array 2) scope: (apply)
 ```
 
-```js
+````js
 
 
 ```lisp
@@ -97,9 +97,10 @@ debug(parse(`(+ 1 (array 2))`)) // TypeError: Second arguments of (+) is not a (
           (= (mod n 3) 0) "Fizz"
           (= (mod n 5) 0) "Buzz"
           (*) (from:number->string n))))
-    
+
 (|> (math:range 1 100) (array:map fizz-buzz) (array:commas) (log "str"))
-```
+````
+
 ```js
 import { parse, compile } from 'fez-lisp'
 console.log(compile(parse("(+ 1 2)")))
@@ -110,6 +111,7 @@ console.log(compile(parse("(|> [1 2 3 4] (array:map math:square) (math:summation
 /* (()=>{var __tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result},length=(arr)=>arr.length,set_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array},get=(arr,i)=>arr[i];
 ;return(()=>{var math_summation,math_square,array_map,array_fold;return (math_summation=((xs)=>{return array_fold(xs,((a,b)=>{return (a+b);}),0);}),math_square=((x)=>{return (x*x);}),array_map=((xs,callback)=>{var recursive_array_map,recursive_9271675;return ((recursive_array_map=(__tco(recursive_9271675=(i,out)=>{return (+(length(xs)>i)?()=>recursive_9271675((i+1),set_effect(out,length(out),callback(get(xs, i)))):out);}, recursive_9271675))),recursive_array_map(0,[]));}),array_fold=((xs,callback,initial)=>{var recursive_array_fold,recursive_927729;return ((recursive_array_fold=(__tco(recursive_927729=(i,out)=>{return (+(length(xs)>i)?()=>recursive_927729((i+1),callback(out,get(xs, i))):out);}, recursive_927729))),recursive_array_fold(0,initial));}),math_summation(array_map([1,2,3,4],math_square)));})()})() * /
 ```
+
 ```lisp
 ; Build-in all keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...) (>>> ...)

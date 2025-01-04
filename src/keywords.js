@@ -39,7 +39,7 @@ export const KEYWORDS = {
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'let',
 
-  SET_ARRAY: 'set!',
+  SET_ARRAY: 'set!'
 }
 
 export const TYPES = {
@@ -52,9 +52,9 @@ export const RUNTIME_TYPES = {
   ARRAY: 'array'
 }
 export const DEBUG = {
-    LOG:'log',
-    ASSERT: 'assert',
-    ERROR: 'error'
+  LOG: 'log',
+  ASSERT: 'assert',
+  ERROR: 'error'
 }
 
 export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))
