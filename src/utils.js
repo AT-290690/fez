@@ -313,16 +313,102 @@ export const ast = (source, deps) =>
       deps.reduce((a, b) => a.concat(b), [])
     )
   )
-  
+
 export const astWithStd = (source) => wrapInBlock(shake(prep(source), std))
-export const parse = (source) => 
-  wrapInBlock(shake(deSuggarAst(LISP.parse(removeNoCode(handleUnbalancedQuotes(handleUnbalancedParens(deSuggarSource(source)))))), std))
+export const parse = (source) =>
+  wrapInBlock(
+    shake(
+      deSuggarAst(
+        LISP.parse(
+          removeNoCode(
+            handleUnbalancedQuotes(
+              handleUnbalancedParens(deSuggarSource(source))
+            )
+          )
+        )
+      ),
+      std
+    )
+  )
 export const debug = (ast) => {
   let output = undefined
   try {
-    output = evaluate(ast, keywords)
+    const DEBUG = {
+      LOG:'log!',
+      LOG_STRING: 'log-string!',
+      LOG_CHAR: 'log-char!',
+      CLEAR_CONSOLE: 'clear!'
+    }
+    const debugEnv = {
+      ...keywords,
+      [DEBUG.LOG]: (args, env) => {
+        if (args.length !== 1)
+          throw new RangeError(
+            `Invalid number of arguments to (${DEBUG.LOG}) (= 1 required) (${
+              DEBUG.LOG
+            } ${stringifyArgs(args)})`
+          )
+        const expression = evaluate(args[0], env)
+        console.log(expression)
+        return expression
+      },
+      [DEBUG.LOG_STRING]: (args, env) => {
+        if (args.length !== 1)
+          throw new RangeError(
+            `Invalid number of arguments to (${
+              DEBUG.LOG_STRING
+            }) (= 1 required) (${DEBUG.LOG_STRING} ${stringifyArgs(args)})`
+          )
+        const expression = evaluate(args[0], env)
+        if (!Array.isArray(expression))
+          throw new TypeError(
+            `Argument of (${DEBUG.LOG_STRING}) must be an (${
+              RUNTIME_TYPES.ARRAY
+            }) but got (${expression}) (${DEBUG.LOG_STRING} ${stringifyArgs(
+              args
+            )})`
+          )
+        console.log(expression.map((x) => String.fromCharCode(x)).join(''))
+        return expression
+      },
+      [DEBUG.LOG_CHAR]: (args, env) => {
+        if (args.length !== 1)
+          throw new RangeError(
+            `Invalid number of arguments to (${
+              DEBUG.LOG_CHAR
+            }) (= 1 required) (${DEBUG.LOG_CHAR} ${stringifyArgs(args)})`
+          )
+        const expression = evaluate(args[0], env)
+        if (typeof expression !== 'number')
+          throw new TypeError(
+            `Argument of (${DEBUG.LOG_CHAR}) must be a (${
+              RUNTIME_TYPES.NUMBER
+            }) but got (${expression}) (${DEBUG.LOG_CHAR} ${stringifyArgs(
+              args
+            )})`
+          )
+        console.log(String.fromCharCode(expression))
+        return expression
+      },
+      [DEBUG.CLEAR_CONSOLE]: (args) => {
+        if (args.length)
+          throw new RangeError(
+            `Invalid number of arguments to (${
+              DEBUG.CLEAR_CONSOLE
+            }) (= 0 required) (${DEBUG.CLEAR_CONSOLE} ${stringifyArgs(args)})`
+          )
+        console.clear()
+        return 0
+      }
+    }
+    output = evaluate(ast, debugEnv)
   } catch (error) {
-    if (!error.message.includes('Maximum call stack size exceeded') && !error.message.includes('too much recursion') && error.message !== 'Maximum evaluation limit exceeded') throw error
+    if (
+      !error.message.includes('Maximum call stack size exceeded') &&
+      !error.message.includes('too much recursion') &&
+      error.message !== 'Maximum evaluation limit exceeded'
+    )
+      throw error
   }
-  return output == undefined ? compile(ast) : output 
+  return output == undefined ? compile(ast) : output
 }
