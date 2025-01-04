@@ -56,3 +56,5 @@ export const RUNTIME_TYPES = {
   NUMBER: 'number',
   ARRAY: 'array'
 }
+
+export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))
