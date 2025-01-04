@@ -344,5 +344,5 @@ export const compile = (ast) => {
     ? `var ${[...Drill.Variables].join(',')};`
     : ''
   const top = `${help}${vars}`
-  return `${top}${program}`
+  return `(()=>{\n${top}\nreturn${program}\n})()`
 }

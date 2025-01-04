@@ -10,6 +10,7 @@ import {
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
+import { LISP } from './parser.js'
 export const keywords = {
   [KEYWORDS.ADDITION]: (args, env) => {
     if (args.length !== 2)
@@ -392,7 +393,7 @@ export const keywords = {
     const condition = evaluate(args[0], env)
     if (condition !== FALSE && condition !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got \n\n(${
+        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got ${LISP.source(args[0])} \n\n(${
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
@@ -412,7 +413,7 @@ export const keywords = {
     const operand = evaluate(args[0], env)
     if (operand !== FALSE && operand !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.NOT}) must be ${TRUE} or ${FALSE} but got \n\n(${
+        `Condition of (${KEYWORDS.NOT}) must be ${TRUE} or ${FALSE} but got ${LISP.source(args[0])} \n\n(${
           KEYWORDS.NOT
         } ${stringifyArgs(args)})`
       )
@@ -626,7 +627,7 @@ export const keywords = {
   [KEYWORDS.ANONYMOUS_FUNCTION]: (args, env) => {
     const params = args.slice(0, -1)
     const body = args.at(-1)
-    return (props = [], scope) => {
+    return (props = [], scope, name) => {
       if (props.length !== params.length)
         throw new RangeError(
           `Incorrect number of arguments for (${
@@ -646,6 +647,7 @@ export const keywords = {
           writable: true
         })
       }
+      if (name) evaluate.peek.push(name)
       return evaluate(body, localEnv)
     }
   },
@@ -656,8 +658,7 @@ export const keywords = {
           KEYWORDS.CALL_FUNCTION
         }) (>= 1 required) \n\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
-    const rest = [...args]
-    const first = rest.pop()
+    const first = args.at(-1)
     if (first[TYPE] === WORD && first[VALUE] in keywords)
       throw new TypeError(
         `Preceeding arguments of (${
@@ -674,7 +675,7 @@ export const keywords = {
         }) \n\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
 
-    return apply(rest, env)
+    return apply(args.slice(0, -1), env)
   },
   [KEYWORDS.BLOCK]: (args, env) => {
     if (!args.length)

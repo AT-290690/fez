@@ -1,6 +1,6 @@
 import { APPLY, ATOM, KEYWORDS, SPECIAL_FORMS_SET, TYPE, VALUE, WORD } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { stringifyArgs } from './utils.js'
+import { logError, stringifyArgs } from './utils.js'
 const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS : 262144
 export const evaluate = (exp, env) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
@@ -23,13 +23,18 @@ export const evaluate = (exp, env) => {
         throw new TypeError(
           `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
         )
-        if (!SPECIAL_FORMS_SET.has(value)) {
+        const isSpecial = SPECIAL_FORMS_SET.has(value)
+        if (!isSpecial) {
           evaluate.count = (evaluate.count || 0) + 1
           if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
-            throw new RangeError('Maximum evaluation limit exceeded')
+            evaluate.count = 0
+            logError(`(reached ${MAXIMUM_FUNCTION_CALLS} lambda invocations)`)
+            throw new RangeError('Maximum function invocation limit exceeded')
           }
         }
-      return apply(rest, env)
+      const result = apply(rest, env, value)
+      if (!isSpecial) evaluate.peek.pop()
+      return result
     }
     case ATOM:
       return value
@@ -39,3 +44,4 @@ export const evaluate = (exp, env) => {
       )
   }
 }
+evaluate.peek = [KEYWORDS.CALL_FUNCTION]

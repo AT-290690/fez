@@ -70,20 +70,19 @@ export const stringifyType = (type) => {
       .trim()
   } else if (type[TYPE] === ATOM) return 'number'
 }
-export const stringifyArgs = (args) =>
-  args
-    .map((x) =>
-      !isLeaf(x)
-        ? `(${stringifyArgs(x)})`
-        : x[TYPE] === APPLY || x[TYPE] === WORD
-        ? x[VALUE]
-        : JSON.stringify(x[VALUE])
-            .replace(new RegExp(/\[/g), '(')
-            .replace(new RegExp(/\]/g), ')')
-            .replace(new RegExp(/\,/g), ' ')
-            .replace(new RegExp(/"/g), '')
-    )
-    .join(' ')
+export const stringifyArgs = (args) =>args
+.map((x) =>
+  !isLeaf(x)
+    ? `(${stringifyArgs(x)})`
+    : x[TYPE] === APPLY || x[TYPE] === WORD
+    ? x[VALUE]
+    : JSON.stringify(x[VALUE])
+        .replace(new RegExp(/\[/g), '(')
+        .replace(new RegExp(/\]/g), ')')
+        .replace(new RegExp(/\,/g), ' ')
+        .replace(new RegExp(/"/g), '')
+)
+.join(' ')
 const KEYWORDS_SET = Object.values(KEYWORDS).reduce((a, b) => {
   a.add(b)
   return a
@@ -248,7 +247,6 @@ export const fez = (source, options = {}) => {
       throw new Error('Source has to be either a lisp source code or an AST')
     }
   } catch (error) {
-    // console.log(error)
     const err = error.message.replace("'[object Array]'", '(array)')
     // .replace('object', '(array)')
     logError(err)
@@ -331,7 +329,6 @@ export const parse = (source) =>
     )
   )
 export const debug = (ast) => {
-  let output = undefined
   try {
     const debugEnv = {
       ...keywords,
@@ -383,26 +380,18 @@ export const debug = (ast) => {
           )
         console.log(String.fromCharCode(expression))
         return expression
-      },
-      [DEBUG.CLEAR_CONSOLE]: (args) => {
-        if (args.length)
-          throw new RangeError(
-            `Invalid number of arguments to (${
-              DEBUG.CLEAR_CONSOLE
-            }) (= 0 required) (${DEBUG.CLEAR_CONSOLE} ${stringifyArgs(args)})`
-          )
-        console.clear()
-        return 0
       }
     }
-    output = evaluate(ast, debugEnv)
+    evaluate(ast, debugEnv)
   } catch (error) {
     if (
       !error.message.includes('Maximum call stack size exceeded') &&
       !error.message.includes('too much recursion') &&
-      error.message !== 'Maximum evaluation limit exceeded'
-    )
+      error.message !== 'Maximum function invocation limit exceeded'
+    ) {
+      error.message += `\n\nlast invoked lambda:\n(${evaluate.peek.at(-1)})` 
       throw error
+    }
   }
-  return output == undefined ? compile(ast) : output
+  return compile(ast).replaceAll('log_effect', '(').replaceAll('log_string_effect', '(').replaceAll('log_char_effect', '(').replaceAll(DEBUG.LOG_STRING, '(')
 }
