@@ -318,10 +318,11 @@ export const astWithStd = (source) => wrapInBlock(shake(prep(source), std))
 export const parse = (source) => 
   wrapInBlock(shake(deSuggarAst(LISP.parse(removeNoCode(handleUnbalancedQuotes(handleUnbalancedParens(deSuggarSource(source)))))), std))
 export const debug = (ast) => {
+  let output = undefined
   try {
-    evaluate(ast, keywords)
+    output = evaluate(ast, keywords)
   } catch (error) {
     if (!error.message.includes('Maximum call stack size exceeded') && !error.message.includes('too much recursion') && error.message !== 'Maximum evaluation limit exceeded') throw error
   }
-  return compile(ast)
+  return output == undefined ? compile(ast) : output 
 }
