@@ -467,9 +467,11 @@ export const debug = (ast) => {
     }
     evaluate(ast, debugEnv)
   } catch (error) {
+    const isMaxCallStack =
+      error.message.includes('Maximum call stack size exceeded') ||
+      error.message.includes('too much recursion')
     if (
-      !error.message.includes('Maximum call stack size exceeded') &&
-      !error.message.includes('too much recursion') &&
+      !isMaxCallStack &&
       error.message !== 'Maximum function invocation limit exceeded'
     ) {
       error.message += `\n\nscope:\n(${evaluate.stack.at(-1)})`

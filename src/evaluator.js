@@ -37,7 +37,7 @@ export const evaluate = (exp, env = keywords) => {
         )
       const isSpecial = SPECIAL_FORMS_SET.has(value)
       if (!isSpecial) {
-        evaluate.count = (evaluate.count || 0) + 1
+        evaluate.count += 1
         if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
           evaluate.count = 0
           throw new RangeError('Maximum function invocation limit exceeded')
@@ -56,3 +56,4 @@ export const evaluate = (exp, env = keywords) => {
   }
 }
 evaluate.stack = [KEYWORDS.CALL_FUNCTION]
+evaluate.count = 0

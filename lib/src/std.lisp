@@ -303,6 +303,9 @@
 (let math:list-summation (lambda xs (list:fold xs + 0)))
 (let math:list-product (lambda xs (list:fold xs * 1)))
 (let math:list-range (lambda low high (if (> low high) () (list:pair low (math:list-range (+ low 1) high)))))
+(let math:fibonacci (lambda n (do 
+    (let memoized:math:fibonacci (lambda n (if (< n 2) n (+ (memoized:fmath:ibonacci (- n 1)) (memoized:math:fibonacci (- n 2))))))
+    (memoized:math:fibonacci n))))
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (get pair 0)))
 (let list:cdr (lambda pair (get pair 1)))
