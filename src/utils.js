@@ -1,5 +1,5 @@
 import std from '../lib/baked/std.js'
-import { comp, OPTIMIZATIONS } from './compiler.js'
+import { compile, OPTIMIZATIONS } from './compiler.js'
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
@@ -236,13 +236,13 @@ export const fez = (source, options = {}) => {
       const scope = deSuggarAst(parsed)
       const ast = wrapInBlock(shake(scope, std))
       // if (options.check) typeCheck(ast)
-      if (options.compile) return comp(ast)
+      if (options.compile) return compile(ast)
       return evaluate(ast, env)
     } else if (Array.isArray(source)) {
       const ast = !options.mutation
         ? AST.parse(AST.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
         : source
-      if (options.compile) return comp(ast)
+      if (options.compile) return compile(ast)
       return evaluate(ast, env)
     } else {
       throw new Error('Source has to be either a lisp source code or an AST')
@@ -313,4 +313,15 @@ export const ast = (source, deps) =>
       deps.reduce((a, b) => a.concat(b), [])
     )
   )
+  
 export const astWithStd = (source) => wrapInBlock(shake(prep(source), std))
+export const parse = (source) => 
+  wrapInBlock(shake(deSuggarAst(LISP.parse(removeNoCode(handleUnbalancedQuotes(handleUnbalancedParens(deSuggarSource(source)))))), std))
+export const debug = (ast) => {
+  try {
+    evaluate(ast, keywords)
+  } catch (error) {
+    if (!error.message.includes('Maximum call stack size exceeded') && !error.message.includes('too much recursion') && error.message !== 'Maximum evaluation limit exceeded') throw error
+  }
+  return compile(ast)
+}

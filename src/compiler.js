@@ -144,10 +144,10 @@ const semiColumnEdgeCases = new Set([
   ';]',
   ';^'
 ])
-const parse = (Arguments, Drill) => Arguments.map((x) => compile(x, Drill))
+const parse = (Arguments, Drill) => Arguments.map((x) => comp(x, Drill))
 const parseArgs = (Arguments, Drill, separator = ',') =>
   parse(Arguments, Drill).join(separator)
-const compile = (tree, Drill) => {
+const comp = (tree, Drill) => {
   if (!tree) return ''
   const [first, ...Arguments] = !isLeaf(tree) ? tree : [tree]
   if (first == undefined) return '[];'
@@ -157,19 +157,19 @@ const compile = (tree, Drill) => {
       case KEYWORDS.BLOCK: {
         if (Arguments.length > 1) {
           return `(${Arguments.map((x) =>
-            (compile(x, Drill) ?? '').toString().trim()
+            (comp(x, Drill) ?? '').toString().trim()
           )
             .filter((x) => x !== undefined)
             .join(',')});`
         } else {
-          const res = compile(Arguments[0], Drill)
+          const res = comp(Arguments[0], Drill)
           return res !== undefined ? res.toString().trim() : ''
         }
       }
       case KEYWORDS.CALL_FUNCTION: {
         const first = Arguments.pop()
         const rest = Arguments
-        const apply = compile(first, Drill)
+        const apply = comp(first, Drill)
         return `${
           apply[apply.length - 1] === ';'
             ? apply.substring(0, apply.length - 1)
@@ -192,7 +192,7 @@ const compile = (tree, Drill) => {
           const body = functionArgs.pop()
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
           deepRename(n, `()=>${newName}`, body)
-          const evaluatedBody = compile(body, FunctionDrill)
+          const evaluatedBody = comp(body, FunctionDrill)
           const vars = FunctionDrill.Variables.size
             ? `var ${[...FunctionDrill.Variables].join(',')};`
             : ''
@@ -211,7 +211,7 @@ const compile = (tree, Drill) => {
           const body = functionArgs.pop()
           deepRename(n, newName, body)
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-          const evaluatedBody = compile(body, FunctionDrill)
+          const evaluatedBody = comp(body, FunctionDrill)
           const vars = FunctionDrill.Variables.size
             ? `var ${[...FunctionDrill.Variables].join(',')};`
             : ''
@@ -224,23 +224,23 @@ const compile = (tree, Drill) => {
         } else {
           const name = lispToJavaScriptVariableName(n)
           Drill.Variables.add(name)
-          return `${name}=${compile(Arguments[1], Drill)};`
+          return `${name}=${comp(Arguments[1], Drill)};`
         }
       }
       case KEYWORDS.IS_ATOM:
         Drill.Helpers.add('atom_predicate')
-        return `atom_predicate(${compile(Arguments[0], Drill)});`
+        return `atom_predicate(${comp(Arguments[0], Drill)});`
       case KEYWORDS.IS_LAMBDA:
         Drill.Helpers.add('lambda_predicate')
-        return `lambda_predicate(${compile(Arguments[0], Drill)});`
+        return `lambda_predicate(${comp(Arguments[0], Drill)});`
       case KEYWORDS.CREATE_ARRAY:
         return `[${parseArgs(Arguments, Drill)}];`
       case KEYWORDS.ARRAY_LENGTH:
         Drill.Helpers.add('length')
-        return `length(${compile(Arguments[0], Drill)})`
+        return `length(${comp(Arguments[0], Drill)})`
       case KEYWORDS.GET_ARRAY:
         Drill.Helpers.add('get')
-        return `get(${compile(Arguments[0], Drill)}, ${compile(
+        return `get(${comp(Arguments[0], Drill)}, ${comp(
           Arguments[1],
           Drill
         )});`
@@ -248,7 +248,7 @@ const compile = (tree, Drill) => {
         const functionArgs = Arguments
         const body = Arguments.pop()
         const InnerDrills = { Variables: new Set(), Helpers: Drill.Helpers }
-        const evaluatedBody = compile(body, InnerDrills)
+        const evaluatedBody = comp(body, InnerDrills)
         const vars = InnerDrills.Variables.size
           ? `var ${[...InnerDrills.Variables].join(',')};`
           : ''
@@ -278,7 +278,7 @@ const compile = (tree, Drill) => {
         return `+(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.SUBTRACTION:
         return Arguments.length === 1
-          ? `(-${compile(Arguments[0], Drill)});`
+          ? `(-${comp(Arguments[0], Drill)});`
           : `(${parse(Arguments, Drill)
               // Add space so it doesn't consider it 2--1 but 2- -1
               .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
@@ -297,21 +297,21 @@ const compile = (tree, Drill) => {
       case KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT:
         return `(${parseArgs(Arguments, Drill, token)});`
       case KEYWORDS.REMAINDER_OF_DIVISION:
-        return `(${compile(Arguments[0], Drill)}%${compile(
+        return `(${comp(Arguments[0], Drill)}%${comp(
           Arguments[1],
           Drill
         )});`
       case KEYWORDS.BIT_TYPE:
-        return `(${compile(Arguments[0], Drill)}>>>0).toString(2)`
+        return `(${comp(Arguments[0], Drill)}>>>0).toString(2)`
       case KEYWORDS.BITWISE_NOT:
-        return `~(${compile(Arguments[0], Drill)})`
+        return `~(${comp(Arguments[0], Drill)})`
       case KEYWORDS.NOT:
-        return `(+!${compile(Arguments[0], Drill)})`
+        return `(+!${comp(Arguments[0], Drill)})`
       case KEYWORDS.IF: {
-        return `(${compile(Arguments[0], Drill)}?${compile(
+        return `(${comp(Arguments[0], Drill)}?${comp(
           Arguments[1],
           Drill
-        )}:${Arguments.length === 3 ? compile(Arguments[2], Drill) : 0});`
+        )}:${Arguments.length === 3 ? comp(Arguments[2], Drill) : 0});`
       }
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
@@ -327,10 +327,10 @@ const compile = (tree, Drill) => {
   }
 }
 const HelpersEntries = new Map(Object.entries(Helpers))
-export const comp = (ast) => {
+export const compile = (ast) => {
   const Drill = { Variables: new Set(), Helpers: new Set() }
   const raw = AST.parse(AST.stringify(ast)) // cloning for fn renames mutations
-    .map((tree) => compile(tree, Drill))
+    .map((tree) => comp(tree, Drill))
     .filter((x) => x !== undefined)
     .join('\n')
   let program = ''

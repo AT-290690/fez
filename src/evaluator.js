@@ -1,7 +1,7 @@
 import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { isLeaf } from './parser.js'
 import { stringifyArgs } from './utils.js'
-
+const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS : 4194304
 export const evaluate = (exp, env) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
@@ -22,6 +22,10 @@ export const evaluate = (exp, env) => {
         throw new TypeError(
           `${first[VALUE]} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
         )
+        evaluate.count = (evaluate.count || 0) + 1
+        if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
+          throw new RangeError('Maximum evaluation limit exceeded')
+        }
       return apply(rest, env)
     }
     case ATOM:
