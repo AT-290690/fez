@@ -287,7 +287,7 @@
 (let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) ())))
 (let math:enumeration (lambda (do 
   (let I (var:def -1))
-  (let recursive:math:enumeration (lambda (do (let i (+ (var:get I) 1)) (var:set! I i) i))))))
+  (let enumeration (lambda (do (let i (+ (var:get I) 1)) (var:set! I i) i))))))
 (let math:palindrome? (lambda xs (|> xs
   (array:zip (array:reverse xs))
   (array:map tuple:subtract)
