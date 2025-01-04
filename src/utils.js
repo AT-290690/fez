@@ -393,5 +393,6 @@ export const debug = (ast) => {
       throw error
     }
   }
+  logSuccess('Compiled with no errors')
   return compile(ast).replaceAll('log_effect', '(').replaceAll('log_string_effect', '(').replaceAll('log_char_effect', '(').replaceAll(DEBUG.LOG_STRING, '(')
 }
