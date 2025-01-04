@@ -52,9 +52,9 @@ export const RUNTIME_TYPES = {
   ARRAY: 'array'
 }
 export const DEBUG = {
-    LOG:'log!',
-    LOG_STRING: 'log-string!',
-    LOG_CHAR: 'log-char!',
+    LOG:'log',
+    ASSERT: 'assert',
+    ERROR: 'error'
 }
 
 export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))

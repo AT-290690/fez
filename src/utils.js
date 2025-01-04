@@ -1,6 +1,17 @@
 import std from '../lib/baked/std.js'
 import { compile, OPTIMIZATIONS } from './compiler.js'
-import { APPLY, ATOM, DEBUG, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import {
+  APPLY,
+  ATOM,
+  DEBUG,
+  FALSE,
+  KEYWORDS,
+  RUNTIME_TYPES,
+  TRUE,
+  TYPE,
+  VALUE,
+  WORD
+} from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import {
@@ -70,19 +81,20 @@ export const stringifyType = (type) => {
       .trim()
   } else if (type[TYPE] === ATOM) return 'number'
 }
-export const stringifyArgs = (args) =>args
-.map((x) =>
-  !isLeaf(x)
-    ? `(${stringifyArgs(x)})`
-    : x[TYPE] === APPLY || x[TYPE] === WORD
-    ? x[VALUE]
-    : JSON.stringify(x[VALUE])
-        .replace(new RegExp(/\[/g), '(')
-        .replace(new RegExp(/\]/g), ')')
-        .replace(new RegExp(/\,/g), ' ')
-        .replace(new RegExp(/"/g), '')
-)
-.join(' ')
+export const stringifyArgs = (args) =>
+  args
+    .map((x) =>
+      !isLeaf(x)
+        ? `(${stringifyArgs(x)})`
+        : x[TYPE] === APPLY || x[TYPE] === WORD
+        ? x[VALUE]
+        : JSON.stringify(x[VALUE])
+            .replace(new RegExp(/\[/g), '(')
+            .replace(new RegExp(/\]/g), ')')
+            .replace(new RegExp(/\,/g), ' ')
+            .replace(new RegExp(/"/g), '')
+    )
+    .join(' ')
 const KEYWORDS_SET = Object.values(KEYWORDS).reduce((a, b) => {
   a.add(b)
   return a
@@ -333,53 +345,124 @@ export const debug = (ast) => {
     const debugEnv = {
       ...keywords,
       [DEBUG.LOG]: (args, env) => {
-        if (args.length !== 1)
+        if (args.length !== 1 && args.length !== 2)
           throw new RangeError(
-            `Invalid number of arguments to (${DEBUG.LOG}) (= 1 required) (${
+            `Invalid number of arguments to (${DEBUG.LOG}) (or (= 1) (= 2)) (${
               DEBUG.LOG
             } ${stringifyArgs(args)})`
           )
         const expression = evaluate(args[0], env)
-        console.log(expression)
+        if (args.length === 2) {
+          const option = evaluate(args[1], env)
+          if (!Array.isArray(option)) {
+            throw new TypeError(
+              `Second argument of (${DEBUG.LOG}) must be an (${
+                RUNTIME_TYPES.ARRAY
+              }) but got (${expression}) (${DEBUG.LOG} ${stringifyArgs(args)})`
+            )
+          }
+          const type = option.map((x) => String.fromCharCode(x)).join('')
+          switch (type) {
+            case 'string':
+            case 'str':
+              {
+                if (!Array.isArray(expression))
+                  throw new TypeError(
+                    `Argument of (${DEBUG.LOG}) must be an (${
+                      RUNTIME_TYPES.ARRAY
+                    }) in the case ${type} but got (${expression}) (${
+                      DEBUG.LOG
+                    } ${stringifyArgs(args)})`
+                  )
+                console.log(
+                  expression.map((x) => String.fromCharCode(x)).join('')
+                )
+              }
+              break
+            case 'char':
+            case 'ch':
+              {
+                if (typeof expression !== 'number')
+                  throw new TypeError(
+                    `Argument argument of (${DEBUG.LOG}) must be a (${
+                      RUNTIME_TYPES.NUMBER
+                    }) in the case ${type} but got (${expression}) (${
+                      DEBUG.LOG
+                    } ${stringifyArgs(args)})`
+                  )
+                console.log(String.fromCharCode(expression))
+              }
+
+              break
+            case '*':
+              console.log(expression)
+              break
+            default:
+              throw new TypeError(
+                `Invalid number of option to (${
+                  DEBUG.LOG
+                }) got ${option} ${stringifyArgs(args)})`
+              )
+          }
+        } else console.log(expression)
         return expression
       },
-      [DEBUG.LOG_STRING]: (args, env) => {
+      [DEBUG.ERROR]: (args, env) => {
         if (args.length !== 1)
           throw new RangeError(
-            `Invalid number of arguments to (${
-              DEBUG.LOG_STRING
-            }) (= 1 required) (${DEBUG.LOG_STRING} ${stringifyArgs(args)})`
+            `Invalid number of arguments to (${DEBUG.ERROR}) (= 1 required) (${
+              DEBUG.ERROR
+            } ${stringifyArgs(args)})`
           )
         const expression = evaluate(args[0], env)
         if (!Array.isArray(expression))
           throw new TypeError(
-            `Argument of (${DEBUG.LOG_STRING}) must be an (${
-              RUNTIME_TYPES.ARRAY
-            }) but got (${expression}) (${DEBUG.LOG_STRING} ${stringifyArgs(
-              args
-            )})`
+            `Argument of (${DEBUG.ERROR}) must be an (${
+              DEBUG.ARRAY_TYPE
+            }) but got (${expression}) (${DEBUG.ERROR} ${stringifyArgs(args)})`
           )
-        console.log(expression.map((x) => String.fromCharCode(x)).join(''))
-        return expression
+        throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
       },
-      [DEBUG.LOG_CHAR]: (args, env) => {
-        if (args.length !== 1)
+      [DEBUG.ASSERT]: (args, env) => {
+        if (args.length < 2)
           throw new RangeError(
-            `Invalid number of arguments to (${
-              DEBUG.LOG_CHAR
-            }) (= 1 required) (${DEBUG.LOG_CHAR} ${stringifyArgs(args)})`
+            `Invalid number of arguments for (${
+              DEBUG.ASSERT
+            }), expected (> 2 required) but got ${args.length} (${
+              DEBUG.ASSERT
+            } ${stringifyArgs(args)})`
           )
-        const expression = evaluate(args[0], env)
-        if (typeof expression !== 'number')
-          throw new TypeError(
-            `Argument of (${DEBUG.LOG_CHAR}) must be a (${
-              RUNTIME_TYPES.NUMBER
-            }) but got (${expression}) (${DEBUG.LOG_CHAR} ${stringifyArgs(
-              args
-            )})`
+        if (args.length % 2 !== 0)
+          throw new RangeError(
+            `Invalid number of arguments for (${
+              DEBUG.ASSERT
+            }), expected even number of arguments but got ${args.length} (${
+              DEBUG.ASSERT
+            } ${stringifyArgs(args)})`
           )
-        console.log(String.fromCharCode(expression))
-        return expression
+        for (let i = 0; i < args.length; i += 2) {
+          const condition = evaluate(args[i], env)
+          if (condition !== FALSE && condition !== TRUE)
+            throw new TypeError(
+              `Condition of (${
+                DEBUG.ASSERT
+              }) must be ${TRUE} or ${FALSE} but got (${
+                DEBUG.ASSERT
+              } ${stringifyArgs(args)})`
+            )
+          if (condition) {
+            const error = args[i + 1]
+            if (error[0][TYPE] === APPLY && error[0][VALUE] === DEBUG.ERROR)
+              return evaluate(error, env)
+            else
+              throw new TypeError(
+                `Concequence of (${DEBUG.ASSERT}) must be (${
+                  DEBUG.ERROR
+                }) but got (${DEBUG.ASSERT} ${stringifyArgs(args)})`
+              )
+          }
+        }
+        return 0
       }
     }
     evaluate(ast, debugEnv)
@@ -389,14 +472,27 @@ export const debug = (ast) => {
       !error.message.includes('too much recursion') &&
       error.message !== 'Maximum function invocation limit exceeded'
     ) {
-      error.message += `\n\nscope:\n(${evaluate.stack.at(-1)})` 
+      error.message += `\n\nscope:\n(${evaluate.stack.at(-1)})`
       throw error
-    }
+    } else logError(error.message)
   }
   logSuccess('Compiled with no errors')
-  const identity = (name) => [[0,"let"],[1, name],[[0,"lambda"],[1,"x"],[1,"x"]]]
+  const identity = (name) => [
+    [0, 'let'],
+    [1, name],
+    [
+      [0, 'lambda'],
+      [1, 'x'],
+      [1, 'x']
+    ]
+  ]
   const block = ast[1][1]
   const temp = block.shift()
-  block.unshift(temp,identity(DEBUG.LOG),identity(DEBUG.LOG_CHAR),identity(DEBUG.LOG_STRING))
+  block.unshift(
+    temp,
+    identity(DEBUG.LOG),
+    identity(DEBUG.ERROR),
+    identity(DEBUG.ASSERT)
+  )
   return compile(ast)
 }

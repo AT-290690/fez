@@ -29,7 +29,6 @@ export const evaluate = (exp, env) => {
           evaluate.count = (evaluate.count || 0) + 1
           if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
             evaluate.count = 0
-            logError(`(reached ${MAXIMUM_FUNCTION_CALLS} lambda invocations)`)
             throw new RangeError('Maximum function invocation limit exceeded')
           }
         }
