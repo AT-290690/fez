@@ -389,7 +389,7 @@ export const debug = (ast) => {
       !error.message.includes('too much recursion') &&
       error.message !== 'Maximum function invocation limit exceeded'
     ) {
-      error.message += `\n\nlast invoked lambda:\n(${evaluate.peek.at(-1)})` 
+      error.message += `\n\nscope:\n(${evaluate.peek.at(-1)})` 
       throw error
     }
   }

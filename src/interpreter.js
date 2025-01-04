@@ -17,7 +17,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.ADDITION
-        }), expected (= 2) but got ${args.length} \n\n(${
+        }), expected (= 2) but got ${args.length}\n\nat:\n(${
           KEYWORDS.ADDITION
         } ${stringifyArgs(args)})`
       )
@@ -26,35 +26,35 @@ export const keywords = {
       throw new TypeError(
         `First arguments of (${KEYWORDS.ADDITION}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second arguments of (${KEYWORDS.ADDITION}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.ADDITION} ${stringifyArgs(args)})`
       )
     return a + b
   },
   [KEYWORDS.MULTIPLICATION]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.MULTIPLICATION}), expected (= 2) but got ${args.length} \n\n(${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
+        `Invalid number of arguments for (${KEYWORDS.MULTIPLICATION}), expected (= 2) but got ${args.length}\n\nat:\n(${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     if (typeof a !== 'number')
       throw new TypeError(
         `First arguments of (${KEYWORDS.MULTIPLICATION}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second arguments of (${KEYWORDS.MULTIPLICATION}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.MULTIPLICATION} ${stringifyArgs(args)})`
       )
     return a * b
   },
@@ -63,7 +63,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.SUBTRACTION
-        }), expected (or (= 1)) (= 2) but got ${args.length} \n\n(${
+        }), expected (or (= 1) (= 2)) but got ${args.length}\n\nat:\n(${
           KEYWORDS.SUBTRACTION
         } ${stringifyArgs(args)})`
       )
@@ -72,7 +72,7 @@ export const keywords = {
       throw new TypeError(
         `First argument of (${KEYWORDS.SUBTRACTION}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
       )
     if (args.length === 1) return -a
     const b = evaluate(args[1], env)
@@ -80,34 +80,34 @@ export const keywords = {
       throw new TypeError(
         `Second argument of (${KEYWORDS.SUBTRACTION}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.SUBTRACTION} ${stringifyArgs(args)})`
       )
     return a - b
   },
   [KEYWORDS.DIVISION]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.DIVISION}), expected (= 2) but got ${args.length} \n\n(${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
+        `Invalid number of arguments for (${KEYWORDS.DIVISION}), expected (= 2) but got ${args.length}\n\nat:\n(${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     if (typeof a !== 'number')
       throw new TypeError(
         `First argument of (${KEYWORDS.DIVISION}) is not (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second argument of (${KEYWORDS.DIVISION}) is not (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.DIVISION} ${stringifyArgs(args)})`
       )
     if (b === 0)
       throw new TypeError(
         `Second Argument of (${
           KEYWORDS.DIVISION
-        }) can't be a (0) (division by 0 is not allowed) \n\n(${
+        }) can't be a (0) (division by 0 is not allowed)\n\nat:\n(${
           KEYWORDS.DIVISION
         } ${stringifyArgs(args)})`
       )
@@ -118,7 +118,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.REMAINDER_OF_DIVISION
-        }), expected (= 2) but got ${args.length} \n\n(${
+        }), expected (= 2) but got ${args.length}\n\nat:\n(${
           KEYWORDS.REMAINDER_OF_DIVISION
         } ${stringifyArgs(args)})`
       )
@@ -127,20 +127,20 @@ export const keywords = {
       throw new TypeError(
         `First argument of (${KEYWORDS.REMAINDER_OF_DIVISION}) is not (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second argument of (${KEYWORDS.REMAINDER_OF_DIVISION}) is not (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.REMAINDER_OF_DIVISION} ${stringifyArgs(args)})`
       )
     if (b === 0)
       throw new TypeError(
         `Second argument of (${
           KEYWORDS.REMAINDER_OF_DIVISION
-        }) can't be a (0) (division by 0 is not allowed) \n\n(${
+        }) can't be a (0) (division by 0 is not allowed)\n\nat:\n(${
           KEYWORDS.REMAINDER_OF_DIVISION
         } ${stringifyArgs(args)})`
       )
@@ -152,21 +152,21 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_AND
-        }) (= 2 required) \n\n(${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     if (typeof a !== 'number')
       throw new TypeError(
         `First arguments of (${KEYWORDS.BITWISE_AND}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(
         `Second arguments of (${KEYWORDS.BITWISE_AND}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_AND} ${stringifyArgs(args)})`
       )
     return a & b
   },
@@ -175,14 +175,14 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_NOT
-        }) (= 1 required) \n\n(${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
+        }) (= 1 required)\n\nat:\n(${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
       )
     const operand = evaluate(args[0], env)
     if (typeof operand !== 'number')
       throw new TypeError(
         `Argument of (${KEYWORDS.BITWISE_NOT}) is not a (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_NOT} ${stringifyArgs(args)})`
       )
     return ~operand
   },
@@ -191,7 +191,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_OR
-        }) (= 2 required) \n\n(${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -199,7 +199,7 @@ export const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_OR}) are (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_OR} ${stringifyArgs(args)})`
       )
     return a | b
   },
@@ -208,7 +208,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_XOR
-        }) (= 2 required) \n\n(${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -216,7 +216,7 @@ export const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_XOR}) are (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_XOR} ${stringifyArgs(args)})`
       )
     return a ^ b
   },
@@ -225,7 +225,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_LEFT_SHIFT
-        }) (= 2 required) \n\n(${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(
           args
         )})`
       )
@@ -235,7 +235,7 @@ export const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_LEFT_SHIFT}) are (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_LEFT_SHIFT} ${stringifyArgs(args)})`
       )
     return a << b
   },
@@ -244,7 +244,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_RIGHT_SHIFT
-        }) (= 2 required) \n\n(${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(
           args
         )})`
       )
@@ -254,7 +254,7 @@ export const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_RIGHT_SHIFT}) are (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_RIGHT_SHIFT} ${stringifyArgs(args)})`
       )
     return a >> b
   },
@@ -263,7 +263,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
-        }) (= 2 required) \n\n(${
+        }) (= 2 required)\n\nat:\n(${
           KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
         } ${stringifyArgs(args)})`
       )
@@ -273,7 +273,7 @@ export const keywords = {
       throw new TypeError(
         `Not all arguments of (${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT}) are (${
           RUNTIME_TYPES.NUMBER
-        }) \n\n(${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(args)})`
       )
     return a >>> b
   },
@@ -285,40 +285,40 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.GET_ARRAY
-        }) (= 2 required) \n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError(
         `First argument of (${KEYWORDS.GET_ARRAY}) must be an (${
           RUNTIME_TYPES.ARRAY
-        })) \n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     if (array.length === 0)
       throw new RangeError(
         `First argument of (${KEYWORDS.GET_ARRAY}) is an empty (${
           RUNTIME_TYPES.ARRAY
-        })) \n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)}))`
+        })\n\nat:\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     const index = evaluate(args[1], env)
     if (!Number.isInteger(index) || index < 0)
       throw new TypeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) must be a positive (32 bit ${
           RUNTIME_TYPES.NUMBER
-        }) (${index}) \n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
+        }) (= i ${index})\n\nat:\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     if (index > array.length - 1 )
       throw new RangeError(
         `Second argument of (${KEYWORDS.GET_ARRAY}) is outside of (${
           RUNTIME_TYPES.ARRAY
-        }) bounds (${index}) \n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
+        }) bounds (= i ${index}) expected (and (>= i 0) (< i ${array.length}))\n\nat:\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     const value = array.at(index)
     if (value == undefined)
       throw new RangeError(
         `Trying to get a null value in (${RUNTIME_TYPES.ARRAY}) at (${
           KEYWORDS.GET_ARRAY
-        }) \n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
     return value
   },
@@ -327,14 +327,14 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.SET_ARRAY
-        }) (or 1 3) required \n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+        }) (or 1 3) required\n\nat:\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError(
         `First argument of (${KEYWORDS.SET_ARRAY}) must be an (${
           RUNTIME_TYPES.ARRAY
-        }) but got (${array}) \n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+        }) but got (${array})\n\nat:\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     if (args.length === 1) {
       array.pop()
@@ -344,13 +344,13 @@ export const keywords = {
         throw new TypeError(
           `Second argument of (${KEYWORDS.SET_ARRAY}) must be a positive (${
             RUNTIME_TYPES.NUMBER
-          } integer) (${index}) \n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+          } integer) (= i ${index})\n\nat:\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
         )
       if (index > array.length)
         throw new RangeError(
           `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
             RUNTIME_TYPES.ARRAY
-          }) bounds (index ${index} bounds ${array.length}) \n\n(${
+          }) bounds (${index}) expected (and (>= i 0) (< i ${array.length}))\n\nat:\n(${
             KEYWORDS.SET_ARRAY
           } ${stringifyArgs(args)})`
         )
@@ -359,7 +359,7 @@ export const keywords = {
         throw new RangeError(
           `Trying to set a null value in (${RUNTIME_TYPES.ARRAY}) at (${
             KEYWORDS.SET_ARRAY
-          }) \n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+          })\n\nat:\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
         )
       array[index] = value
     }
@@ -370,14 +370,14 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.ARRAY_LENGTH
-        }) (= 1 required) \n\n(${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
+        }) (= 1 required)\n\nat:\n(${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
       throw new TypeError(
         `First argument of (${KEYWORDS.ARRAY_LENGTH}) must be an ${
           RUNTIME_TYPES.ARRAY
-        } \n\n(${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.ARRAY_LENGTH} ${stringifyArgs(args)})`
       )
     return array.length
   },
@@ -386,14 +386,14 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IF
-        }), expected (or (= 3) (= 2)) but got ${args.length} \n\n(${
+        }), expected (or (= 3) (= 2)) but got ${args.length}\n\nat:\n(${
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
     const condition = evaluate(args[0], env)
     if (condition !== FALSE && condition !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got ${LISP.source(args[0])} \n\n(${
+        `Condition of (${KEYWORDS.IF}) must be ${TRUE} or ${FALSE} but got ${LISP.source(args[0])}\n\nat:\n(${
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
@@ -406,14 +406,14 @@ export const keywords = {
   [KEYWORDS.NOT]: (args, env) => {
     if (args.length !== 1)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.NOT}) (= 1 required) \n\n(${
+        `Invalid number of arguments for (${KEYWORDS.NOT}) (= 1 required)\n\nat:\n(${
           KEYWORDS.NOT
         } ${stringifyArgs(args)})`
       )
     const operand = evaluate(args[0], env)
     if (operand !== FALSE && operand !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.NOT}) must be ${TRUE} or ${FALSE} but got ${LISP.source(args[0])} \n\n(${
+        `Condition of (${KEYWORDS.NOT}) must be ${TRUE} or ${FALSE} but got ${LISP.source(args[0])}\n\nat:\n(${
           KEYWORDS.NOT
         } ${stringifyArgs(args)})`
       )
@@ -422,7 +422,7 @@ export const keywords = {
   [KEYWORDS.EQUAL]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.EQUAL}) (= 2 required) \n\n(${
+        `Invalid number of arguments for (${KEYWORDS.EQUAL}) (= 2 required)\n\nat:\n(${
           KEYWORDS.EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -432,13 +432,13 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${KEYWORDS.EQUAL}), first argument is not an ${
           RUNTIME_TYPES.NUMBER
-        } \n\n(${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.EQUAL}), second argument are not an ${
           RUNTIME_TYPES.NUMBER
-        } \n\n(${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.EQUAL} ${stringifyArgs(args)})`
       )
     return +(a === b)
   },
@@ -447,7 +447,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.LESS_THAN
-        }) (= 2 required) \n\n(${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -455,13 +455,13 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${KEYWORDS.LESS_THAN}), first argument is not an ${
           RUNTIME_TYPES.NUMBER
-        } \n\n(${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${KEYWORDS.LESS_THAN}), second argument are not an ${
           RUNTIME_TYPES.NUMBER
-        } \n\n(${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.LESS_THAN} ${stringifyArgs(args)})`
       )
     return +(a < b)
   },
@@ -470,7 +470,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.GREATHER_THAN
-        }) (= 2 required) \n\n(${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     const b = evaluate(args[1], env)
@@ -478,13 +478,13 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${KEYWORDS.GREATHER_THAN}), first argument is not an ${
           RUNTIME_TYPES.NUMBER
-        } \n\n(${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.GREATHER_THAN} ${stringifyArgs(args)})`
       )
     if (typeof b !== 'number')
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN
-        }), second argument are not an ${RUNTIME_TYPES.NUMBER} \n\n(${
+        }), second argument are not an ${RUNTIME_TYPES.NUMBER}\n\nat:\n(${
           KEYWORDS.GREATHER_THAN
         } ${stringifyArgs(args)})`
       )
@@ -495,7 +495,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }) (= 2 required) \n\n(${KEYWORDS.GREATHER_THAN_OR_EQUAL} ${stringifyArgs(
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.GREATHER_THAN_OR_EQUAL} ${stringifyArgs(
           args
         )})`
       )
@@ -505,7 +505,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }), first argument is not an ${RUNTIME_TYPES.NUMBER} \n\n(${
+        }), first argument is not an ${RUNTIME_TYPES.NUMBER}\n\nat:\n(${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -513,7 +513,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
-        }), second argument are not an ${RUNTIME_TYPES.NUMBER} \n\n(${
+        }), second argument are not an ${RUNTIME_TYPES.NUMBER}\n\nat:\n(${
           KEYWORDS.GREATHER_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -524,7 +524,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }) (= 2 required) \n\n(${KEYWORDS.LESS_THAN_OR_EQUAL} ${stringifyArgs(
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.LESS_THAN_OR_EQUAL} ${stringifyArgs(
           args
         )})`
       )
@@ -534,7 +534,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }), first argument is not an ${RUNTIME_TYPES.NUMBER} \n\n(${
+        }), first argument is not an ${RUNTIME_TYPES.NUMBER}\n\nat:\n(${
           KEYWORDS.LESS_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -542,7 +542,7 @@ export const keywords = {
       throw new TypeError(
         `Invalid use of (${
           KEYWORDS.LESS_THAN_OR_EQUAL
-        }), second argument are not an ${RUNTIME_TYPES.NUMBER} \n\n(${
+        }), second argument are not an ${RUNTIME_TYPES.NUMBER}\n\nat:\n(${
           KEYWORDS.LESS_THAN_OR_EQUAL
         } ${stringifyArgs(args)})`
       )
@@ -551,14 +551,14 @@ export const keywords = {
   [KEYWORDS.AND]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.AND}) (= 2 required) \n\n(${
+        `Invalid number of arguments for (${KEYWORDS.AND}) (= 2 required)\n\nat:\n(${
           KEYWORDS.AND
         } ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     if (a !== FALSE && a !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got \n\n(${
+        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got\n\nat:\n(${
           KEYWORDS.AND
         } ${stringifyArgs(args)})`
       )
@@ -566,7 +566,7 @@ export const keywords = {
     const b = evaluate(args[1], env)
     if (b !== FALSE && b !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got \n\n(${
+        `Condition of (${KEYWORDS.AND}) must be ${TRUE} or ${FALSE} but got\n\nat:\n(${
           KEYWORDS.AND
         } ${stringifyArgs(args)})`
       )
@@ -575,14 +575,14 @@ export const keywords = {
   [KEYWORDS.OR]: (args, env) => {
     if (args.length !== 2)
       throw new RangeError(
-        `Invalid number of arguments for (${KEYWORDS.OR}) (= 2 required) \n\n(${
+        `Invalid number of arguments for (${KEYWORDS.OR}) (= 2 required)\n\nat:\n(${
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
     const a = evaluate(args[0], env)
     if (a !== FALSE && a !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got \n\n(${
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got\n\nat:\n(${
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
@@ -590,7 +590,7 @@ export const keywords = {
     const b = evaluate(args[1], env)
     if (b !== FALSE && b !== TRUE)
       throw new TypeError(
-        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got \n\n(${
+        `Condition of (${KEYWORDS.OR}) must be ${TRUE} or ${FALSE} but got\n\nat:\n(${
           KEYWORDS.OR
         } ${stringifyArgs(args)})`
       )
@@ -601,7 +601,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.DEFINE_VARIABLE
-        }) (= 2 required) \n\n(${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
+        }) (= 2 required)\n\nat:\n(${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
       )
     const word = args[0]
     const type = word[TYPE]
@@ -610,11 +610,11 @@ export const keywords = {
       throw new SyntaxError(
         `First argument of (${KEYWORDS.DEFINE_VARIABLE}) must be word but got ${
           TYPES[type]
-        } \n\n(${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
+        }\n\nat:\n(${KEYWORDS.DEFINE_VARIABLE} ${stringifyArgs(args)})`
       )
     else if (isForbiddenVariableName(name))
       throw new ReferenceError(
-        `Variable name ${name} is forbidden at \n\n(${
+        `Variable name ${name} is forbidden at\n\nat:\n(${
           KEYWORDS.DEFINE_VARIABLE
         } ${stringifyArgs(args)})`
       )
@@ -632,11 +632,11 @@ export const keywords = {
         throw new RangeError(
           `Incorrect number of arguments for (${
             KEYWORDS.ANONYMOUS_FUNCTION
-          } ${stringifyArgs(params)}) are provided (expects ${
+          }${name ? ` ${name}` : ''}) are provided (expects ${
             params.length
-          } but got ${props.length}) \n\n(${
+          } but got ${props.length})\n\nat:\n(${
             KEYWORDS.ANONYMOUS_FUNCTION
-          } ${stringifyArgs(args)})`
+          } ${stringifyArgs(params)})`
         )
       const localEnv = Object.create(env)
       // localEnv[KEYWORDS.BLOCK] = block[KEYWORDS.BLOCK]
@@ -656,14 +656,14 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments to (${
           KEYWORDS.CALL_FUNCTION
-        }) (>= 1 required) \n\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
+        }) (>= 1 required)\n\nat:\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
     const first = args.at(-1)
     if (first[TYPE] === WORD && first[VALUE] in keywords)
       throw new TypeError(
         `Preceeding arguments of (${
           KEYWORDS.CALL_FUNCTION
-        }) must not be an reserved word \n\n(${
+        }) must not be an reserved word\n\nat:\n(${
           KEYWORDS.CALL_FUNCTION
         } ${stringifyArgs(args)})`
       )
@@ -672,7 +672,7 @@ export const keywords = {
       throw new TypeError(
         `Last argument of (${KEYWORDS.CALL_FUNCTION}) must be a (${
           KEYWORDS.ANONYMOUS_FUNCTION
-        }) \n\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
+        })\n\nat:\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
 
     return apply(args.slice(0, -1), env)
@@ -680,7 +680,7 @@ export const keywords = {
   [KEYWORDS.BLOCK]: (args, env) => {
     if (!args.length)
       throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.BLOCK}) (>= 1 required) \n\n(${
+        `Invalid number of arguments to (${KEYWORDS.BLOCK}) (>= 1 required)\n\nat:\n(${
           KEYWORDS.BLOCK
         } ${stringifyArgs(args)})`
       )
@@ -691,7 +691,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_ATOM
-        }) (= 1 required) \n\n(${KEYWORDS.IS_ATOM} ${stringifyArgs(args)})`
+        }) (= 1 required)\n\nat:\n(${KEYWORDS.IS_ATOM} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'number')
   },
@@ -700,7 +700,7 @@ export const keywords = {
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IS_LAMBDA
-        }) (= 1 required) \n\n(${KEYWORDS.IS_LAMBDA} ${stringifyArgs(args)})`
+        }) (= 1 required)\n\nat:\n(${KEYWORDS.IS_LAMBDA} ${stringifyArgs(args)})`
       )
     return +(typeof evaluate(args[0], env) === 'function')
   }

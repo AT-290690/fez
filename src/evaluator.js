@@ -17,7 +17,7 @@ export const evaluate = (exp, env) => {
       const apply = env[value]
       if (apply == undefined)
         throw new ReferenceError(
-          `Undefined (${KEYWORDS.ANONYMOUS_FUNCTION}) ${value}`
+          `Undefined (${KEYWORDS.ANONYMOUS_FUNCTION}) (${value})`
         )
       if (typeof apply !== 'function')
         throw new TypeError(
