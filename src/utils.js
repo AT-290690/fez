@@ -1,6 +1,6 @@
 import std from '../lib/baked/std.js'
 import { compile, OPTIMIZATIONS } from './compiler.js'
-import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import { APPLY, ATOM, DEBUG, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import {
@@ -333,12 +333,6 @@ export const parse = (source) =>
 export const debug = (ast) => {
   let output = undefined
   try {
-    const DEBUG = {
-      LOG:'log!',
-      LOG_STRING: 'log-string!',
-      LOG_CHAR: 'log-char!',
-      CLEAR_CONSOLE: 'clear!'
-    }
     const debugEnv = {
       ...keywords,
       [DEBUG.LOG]: (args, env) => {
