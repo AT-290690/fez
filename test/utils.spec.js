@@ -1,6 +1,7 @@
 import { deepStrictEqual } from 'assert'
-import { astWithStd, fez} from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
+import { compile, parse } from '../index.js'
+const evalJS = (x) => new Function(`return ${compile(x)}`)()
 describe('Utils', () => {
   it('Should be work', () =>
     [
@@ -146,18 +147,9 @@ bbrgwb")
 (array (part1 PARSED) (part2 PARSED))`
     ].forEach((source) => {
       deepStrictEqual(
-        eval(
-          fez(LISP.source(astWithStd(source)), {
-            mutation: 1,
-            compile: 1
-          })
-        ),
-        eval(
-          // TODO: Figure out why do I need to make a [0] access?
-          fez(AST.parse(AST.stringify(astWithStd(source)))[0], {
-            mutation: 1,
-            compile: 1
-          })
+        evalJS(LISP.source(parse(source))),
+        evalJS(
+          AST.parse(AST.stringify(parse(source)))
         )
       )
     }))

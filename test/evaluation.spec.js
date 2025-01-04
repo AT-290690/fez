@@ -1,5 +1,7 @@
 import { deepStrictEqual } from 'assert'
-import { fez } from '../src/utils.js'
+import { compile, parse, evaluate } from '../index.js'
+const evalJS = (source) => new Function(`return ${compile(parse(source))}`)()
+const interpred = (source) => evaluate(parse(source)) 
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
@@ -289,8 +291,8 @@ describe('Compilation & Interpretation', () => {
 )`
     ].forEach((source) =>
       deepStrictEqual(
-        fez(source, { compile: 0, mutation: 1 }),
-        eval(fez(source, { compile: 1, mutation: 1 }))
+        interpred(source),
+        evalJS(source)
       )
     ))
 })

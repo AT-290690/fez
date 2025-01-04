@@ -39,40 +39,9 @@ World
 (|> (math:range 1 10) (array:map math:square) (math:summation))
 ```
 
-```lisp
-(let fizz-buzz (lambda n
-    (cond
-      (= (mod n 15) 0) "Fizz Buzz"
-      (= (mod n 3) 0) "Fizz"
-      (= (mod n 5) 0) "Buzz"
-      (*) n)))
-
-(|>
-(math:range 1 100)
-(array:map fizz-buzz)
-(log!))
-```
-
-```lisp
-(let Fizz (array char:F char:i char:z char:z))
-(let Buzz (array char:B char:u char:z char:z))
-(let FizzBuzz (array Fizz Buzz))
-
-(let fizz-buzz (lambda n
-    (cond
-      (= (mod n 15) 0) FizzBuzz
-      (= (mod n 3) 0) Fizz
-      (= (mod n 5) 0) Buzz
-      (*) n)))
-
-  (|>
-    (math:range 1 100)
-    (array:map fizz-buzz)
-    (log!))
-```
-
-```lisp
-(let *input* "1721,979,366,299,675,1456")
+```js
+import { parse, debug } from 'fez-lisp'
+debug(parse(`(let *input* "1721,979,366,299,675,1456")
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
         (let res (array:binary-search arr (cb b)))
@@ -84,7 +53,9 @@ World
     (array:sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (math:product)
-    (log!))
+    (log))`
+  ))
+
 ```
 
 ```lisp
@@ -100,22 +71,6 @@ World
   (log!)) ; 3
 ```
 
-```lisp
-; remove duplicate elements in the arr
-(let unique (lambda arr (|>
-      (let sorted (array:sort arr (lambda a b (> a b))))
-      (array:zip (math:sequence sorted))
-      (array:select (lambda x (do
-                  (let index (car (cdr x)))
-                  (or (not (> index 0))
-                  (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
-      (array:map car))))
-; tests
-(and
-   (array:equal? (unique (array 1)) (array 1))
-   (array:equal? (unique (array 1 2 2 4 5 9 5 12 14 1)) (array 1 2 4 5 9 12 14)))
-```
-
 Installation:
 
 ```
@@ -123,73 +78,38 @@ npm i fez-lisp
 ```
 
 ```js
-import { fez } from 'fez-lisp'
-fez(`(log! "Hello World!")`) // Hello World!
+import { parse, debug } from 'fez-lisp'
+debug(parse(`(log "Hello World!" "str")`)) // Hello World!
 ```
 
 ```js
-import { fez } from 'fez-lisp'
-fez(`(+ 1 (array 2))`) // Not all arguments of (+) are (number) (+ 1 (array 2))
+import { parse, debug } from 'fez-lisp'
+debug(parse(`(+ 1 (array 2))`)) // TypeError: Second arguments of (+) is not a (number) at: (+ 1 (array 2) scope: (apply)
 ```
 
 ```js
-import { fez } from 'fez-lisp'
-eval(
-  fez(
-    `(|> 
-        (math:range 1 11) 
-        (array:map (lambda x (* x x))) 
-        (log!)))`,
-    // include standard library
-    // compile fez to JavaScript
-    // tree shake standard library
-    { compile: true }
-  )
-)
-```
 
-```js
-import { fez } from 'fez-lisp'
-fez(
-  `
-(let Fizz (array char:F char:i char:z char:z))
-(let Buzz (array char:B char:u char:z char:z))
-(let FizzBuzz (array Fizz Buzz))
-
-(let fizz-buzz (lambda n
-    (cond
-      (= (mod n 15) 0) FizzBuzz
-      (= (mod n 3) 0) Fizz
-      (= (mod n 5) 0) Buzz
-      (*) n)))
-
-  (|> (math:range 1 100) (array:map fizz-buzz) (log!))`,
-  { compile: false }
-)
-```
-
-Many logical operators
 
 ```lisp
-(let logic-a (lambda a b
-   (if (or (= b -1) (> a b)) char:a
-       (if (and (> b 2) (< a 4)) char:b char:c))))
-
-; De Morgan's First Law: ¬(P ∧ Q) is equivalent to (¬P ∨ ¬Q)
-; De Morgan's Second Law: ¬(P ∨ Q) is equivalent to (¬P ∧ ¬Q)
-(let logic-b (lambda a b
-    ; Swapping the consequent with the alternative in the condition by using (unless) instead of (if)
-    ; The condition (or (= b -1) (> a b)) has been changed to (and (not (= b -1)) (not (> a b))), applying De Morgan's First Law.
-    ; The condition (and (> b 2) (< a 4)) has been changed to (or (not (> b 2)) (not (< a 4))), applying De Morgan's Second Law.
-    (unless (and (not (= b -1)) (not (> a b))) char:a
-            (unless (or (not (> b 2)) (not (< a 4))) char:b char:c))))
-
-(and
-   (= (logic-a 0 -1) (logic-b 0 -1))
-   (= (logic-a 1 3) (logic-b 1 3))
-   (= (logic-a 1 2) (logic-b 1 2)))
+(let fizz-buzz (lambda n
+        (cond
+          (= (mod n 15) 0) "FizzBuzz"
+          (= (mod n 3) 0) "Fizz"
+          (= (mod n 5) 0) "Buzz"
+          (*) (from:number->string n))))
+    
+(|> (math:range 1 100) (array:map fizz-buzz) (array:commas) (log "str"))
 ```
-
+```js
+import { parse, compile } from 'fez-lisp'
+console.log(compile(parse("(+ 1 2)")))
+// '(()=>{;return(()=>{return (1+2);})()})()'
+console.log(compile(parse("(math:power 2 4)")))
+// (()=>{;return(()=>{var math_power;return (math_power=((base,exp)=>{return (+(exp<0)?(+(base===0)?[]:(1/(base*math_power(base,((exp*-1)-1))))):(+(exp===0)?1:(+(exp===1)?base:(1?(base*math_power(base,(exp-1))):0))));}),math_power(2,4));})()})()
+console.log(compile(parse("(|> [1 2 3 4] (array:map math:square) (math:summation))")))
+/* (()=>{var __tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result},length=(arr)=>arr.length,set_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array},get=(arr,i)=>arr[i];
+;return(()=>{var math_summation,math_square,array_map,array_fold;return (math_summation=((xs)=>{return array_fold(xs,((a,b)=>{return (a+b);}),0);}),math_square=((x)=>{return (x*x);}),array_map=((xs,callback)=>{var recursive_array_map,recursive_9271675;return ((recursive_array_map=(__tco(recursive_9271675=(i,out)=>{return (+(length(xs)>i)?()=>recursive_9271675((i+1),set_effect(out,length(out),callback(get(xs, i)))):out);}, recursive_9271675))),recursive_array_map(0,[]));}),array_fold=((xs,callback,initial)=>{var recursive_array_fold,recursive_927729;return ((recursive_array_fold=(__tco(recursive_927729=(i,out)=>{return (+(length(xs)>i)?()=>recursive_927729((i+1),callback(out,get(xs, i))):out);}, recursive_927729))),recursive_array_fold(0,initial));}),math_summation(array_map([1,2,3,4],math_square)));})()})() * /
+```
 ```lisp
 ; Build-in all keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...) (>>> ...)

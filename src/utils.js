@@ -476,7 +476,6 @@ export const debug = (ast) => {
       throw error
     } else logError(error.message)
   }
-  logSuccess('Compiled with no errors')
   const identity = (name) => [
     [0, 'let'],
     [1, name],

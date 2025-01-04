@@ -1,9 +1,10 @@
+import { keywords } from './interpreter.js'
 import { APPLY, ATOM, KEYWORDS, SPECIAL_FORMS_SET, TYPE, VALUE, WORD } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { logError, stringifyArgs } from './utils.js'
+import { stringifyArgs } from './utils.js'
 export const DEFAULT_MAXIMUM_FUNCTION_CALLS = 262144
 export const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS : DEFAULT_MAXIMUM_FUNCTION_CALLS
-export const evaluate = (exp, env) => {
+export const evaluate = (exp, env = keywords) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
   const value = first[VALUE]

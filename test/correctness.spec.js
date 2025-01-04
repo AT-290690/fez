@@ -1,8 +1,9 @@
 import { deepStrictEqual, strictEqual } from 'assert'
-import { fez } from '../src/utils.js'
+import { compile, parse, evaluate } from '../index.js'
 
-const evalJS = (source) => new Function(`return ${fez(source, { compile: 1, mutation: 1 })}`)()
-// const evalJS = (source) => fez(source, {  mutation: 1 })
+const evalJS = (source) => new Function(`return ${compile(parse(source))}`)()
+const interpred = (source) => evaluate(parse(source)) 
+// const evalJS = (source) => interpred(source, {  mutation: 1 })
 
 describe('Corretness', () => {
   it('Should be correct', () => {
@@ -316,7 +317,7 @@ describe('Corretness', () => {
       8
     )
     strictEqual(
-      fez(`(let INPUT
+      interpred(`(let INPUT
 "Button A: X+94, Y+34
 Button B: X+22, Y+67
 Prize: X=8400, Y=5400
@@ -370,7 +371,7 @@ Prize: X=18641, Y=10279")
       480
     )
     deepStrictEqual(
-      fez(
+      interpred(
         `(let matrix (array (array 1 2 3) (array 1 2 3) (array 1 2 3))) (|> matrix (matrix:rotate-square))`,
         { mutation: 1 }
       ),
@@ -381,7 +382,7 @@ Prize: X=18641, Y=10279")
       ]
     )
     deepStrictEqual(
-      fez(
+      interpred(
         `(let matrix (array (array 1 2) (array 3 4))) (|> matrix (matrix:flip-square))`,
         { mutation: 1 }
       ),
@@ -391,11 +392,11 @@ Prize: X=18641, Y=10279")
       ]
     )
     strictEqual(
-      fez(`(- (- (+ 1 2 3 4 5 (- 6 4 3 2) (* 1 2 3 4 (/ 10 5 2)))))`),
+      interpred(`(- (- (+ 1 2 3 4 5 (- 6 4 3 2) (* 1 2 3 4 (/ 10 5 2)))))`),
       114
     )
     deepStrictEqual(
-      fez(`
+      interpred(`
 (let fn (lambda {a b c d e f g . R} (+ a b c d e f g (math:list-product R))))
     
 (let A (lambda [a b .] (+ a b)))
@@ -415,7 +416,7 @@ Prize: X=18641, Y=10279")
       [5, 5, 15, 63, 19, 70000, 214, 11908]
     )
     strictEqual(
-      fez(`(let unique (lambda arr (|>
+      interpred(`(let unique (lambda arr (|>
       (let sorted (array:sort arr (lambda a b (> a b))))
       (array:zip (math:sequence sorted))
       (array:select (lambda x (do
@@ -430,12 +431,12 @@ Prize: X=18641, Y=10279")
       1
     )
     deepStrictEqual(
-      fez(`(array (array:enumerated-some? (array 0 1 1 3 4 4 5) (lambda x i (= i x)))
+      interpred(`(array (array:enumerated-some? (array 0 1 1 3 4 4 5) (lambda x i (= i x)))
 (array:enumerated-some? (array 1 2 3 4) (lambda x i (= i x))))`),
       [1, 0]
     )
     deepStrictEqual(
-      fez(`(array 
+      interpred(`(array 
 
 (array:map (math:range 0 40) (lambda n (math:n-one-bit? 256 n)))
 (array:map (math:range 0 40) (lambda n (math:n-one-bit? 234 n)))
@@ -475,7 +476,7 @@ Prize: X=18641, Y=10279")
       ]
     )
     deepStrictEqual(
-      fez(`(array 
+      interpred(`(array 
 
 (array:map (math:range 0 40) (lambda n (math:n-one-bit? 256 n)))
 (array:map (math:range 0 40) (lambda n (math:n-one-bit? 234 n)))

@@ -31,7 +31,7 @@ export const SUGGAR = {
 }
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
-  if (ast.length === 0) throw new SyntaxError(`No expressions to evaluate`)
+  if (ast.length === 0) throw new SyntaxError(`No expressions...`)
   // for (const node of ast)
   //   if (node[0] && node[0][TYPE] === APPLY && node[0][VALUE] === KEYWORDS.BLOCK)
   //     throw new SyntaxError(`Top level (${KEYWORDS.BLOCK}) is not allowed`)
