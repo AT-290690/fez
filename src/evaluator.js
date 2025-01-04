@@ -14,6 +14,8 @@ export const DEFAULT_MAXIMUM_FUNCTION_CALLS = 262144
 export const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS
   ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS
   : DEFAULT_MAXIMUM_FUNCTION_CALLS
+export const MAXUMUM_FUNCTION_CALLS_ERROR =
+  'Maximum function invocation limit exceeded'
 export const evaluate = (exp, env = keywords) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
@@ -40,7 +42,7 @@ export const evaluate = (exp, env = keywords) => {
         evaluate.count += 1
         if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
           evaluate.count = 0
-          throw new RangeError('Maximum function invocation limit exceeded')
+          throw new RangeError(MAXUMUM_FUNCTION_CALLS_ERROR)
         }
       }
       const result = apply(rest, env, value)

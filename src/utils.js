@@ -12,7 +12,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { evaluate } from './evaluator.js'
+import { evaluate, MAXUMUM_FUNCTION_CALLS_ERROR } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import {
   deSuggarAst,
@@ -23,8 +23,6 @@ import { keywords } from './interpreter.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
-// export const replaceEmptyArrays = (source) =>
-//   source
 export const removeNoCode = (source) =>
   source
     .replace(/;.+/g, '')
@@ -160,6 +158,7 @@ export const handleUnbalancedParens = (source) => {
 export const removeMutation = (source) => source.replace(new RegExp(/!/g), 'ǃ')
 const isDefinition = (x) =>
   x[TYPE] === APPLY && x[VALUE] === KEYWORDS.DEFINE_VARIABLE
+// [[, [, libs]]] is because std is wrapped in (apply (lambda (do ...)))
 const toDeps = ([[, [, libs]]]) =>
   libs.reduce(
     (a, x, i) => a.set(x.at(1)[VALUE], { value: x, index: i }),
@@ -266,38 +265,6 @@ export const fez = (source, options = {}) => {
     return err
   }
 }
-export const compress = (source) => {
-  let { result, occurance } = source.split('').reduce(
-    (acc, item) => {
-      if (item === ')') acc.occurance++
-      else {
-        if (acc.occurance < 3) {
-          acc.result += ')'.repeat(acc.occurance)
-          acc.occurance = 0
-        } else {
-          acc.result += '·' + acc.occurance
-          acc.occurance = 0
-        }
-        acc.result += item
-      }
-      return acc
-    },
-    { result: '', occurance: 0 }
-  )
-  if (occurance > 0) result += '·' + occurance
-  return result
-}
-export const decompress = (raw) => {
-  const suffix = [...new Set(raw.match(/·+?\d+/g))]
-  const runes = suffix.reduce(
-    (acc, m) => acc.split(m).join(')'.repeat(parseInt(m.substring(1)))),
-    raw
-  )
-  let result = ''
-  for (const tok of runes) result += tok
-  return result
-}
-// shake(LISP.parse(removeNoCode(source)), std)
 export const shake = (parsed, std) => treeShake(parsed, std).concat(parsed)
 export const tree = (source, std) =>
   std
@@ -470,10 +437,7 @@ export const debug = (ast) => {
     const isMaxCallStack =
       error.message.includes('Maximum call stack size exceeded') ||
       error.message.includes('too much recursion')
-    if (
-      !isMaxCallStack &&
-      error.message !== 'Maximum function invocation limit exceeded'
-    ) {
+    if (!isMaxCallStack && error.message !== MAXUMUM_FUNCTION_CALLS_ERROR) {
       error.message += `\n\nscope:\n(${evaluate.stack.at(-1)})`
       throw error
     } else logError(error.message)
