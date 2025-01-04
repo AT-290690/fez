@@ -28,7 +28,7 @@ describe('Utils', () => {
   (map (list 2 3 4) math:square)`,
       `; reverse array
       ; returns a copy of the array but reversed
-      ; '(1 2 3) -> '(3 2 1)
+      ; (array 1 2 3) -> (array 3 2 1)
       (let reverse (lambda arr (do
         (let recursive:iter (lambda arr out
           (if (> (length arr) 0)
@@ -36,7 +36,7 @@ describe('Utils', () => {
               out)))
         (recursive:iter arr ()))))
       
-      (let lazy '(reverse '(1 2 3 4 5 6)))
+      (let lazy (array reverse (array 1 2 3 4 5 6)))
       (apply (car (cdr lazy)) (car lazy))`,
       `(= 
       (|>
@@ -84,9 +84,9 @@ describe('Utils', () => {
         (unless (= (length arr) 0) 
           (do (set! arr) (recursive:iterate))
         arr))) (recursive:iterate))))
-'( 
+(array  
   (do 1 2)
-  (empty! '(1 2 3 4 5))
+  (empty! (array 1 2 3 4 5))
 )`,
       `(let INPUT 
 "r, wr, b, g, bwu, rb, gb, br
@@ -144,7 +144,7 @@ bbrgwb")
 
 (let PARSED (parse INPUT))
 
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
     ].forEach((source) => {
       deepStrictEqual(
         eval(

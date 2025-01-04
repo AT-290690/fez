@@ -667,11 +667,6 @@ const iron2 = (scope, exp) => {
 }
 export const replaceQuotes = (source) =>
   source
-    .replaceAll(/\'\(/g, `(${KEYWORDS.CREATE_ARRAY} `)
-    .replaceAll(/\`\(/g, `(${SUGGAR.CREATE_LIST} `)
-    .replaceAll(/\(\)/g, `(${KEYWORDS.CREATE_ARRAY})`)
-    .replaceAll(/\[\]/g, `(${KEYWORDS.CREATE_ARRAY})`)
-    .replaceAll(/\{\}/g, `(${SUGGAR.CREATE_LIST})`)
     .replaceAll(/\[/g, `(${KEYWORDS.CREATE_ARRAY} `)
     .replaceAll(/\]/g, ')')
     .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)

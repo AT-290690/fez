@@ -18,7 +18,7 @@ describe('Compilation & Interpretation', () => {
 (F (array 1 2 3 4 5 6 7) (array 10 20 30 40))
 (G ls)
 (fn {1 2 3 4 5 6 7 8 9 10 11 12}))`,
-      `(let INPUT (array:concat-with '(
+      `(let INPUT (array:concat-with (array 
         "89010123"
         "78121874"
         "87430965"
@@ -85,7 +85,7 @@ describe('Compilation & Interpretation', () => {
       
       (let PARSED (parse INPUT))
       
-      '((part1 PARSED) (part2 PARSED))`,
+      (array (part1 PARSED) (part2 PARSED))`,
 
       `(array
 (array:map (math:range 0 40) (lambda n (math:n-one-bit? 256 n)))
@@ -120,7 +120,7 @@ describe('Compilation & Interpretation', () => {
   (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
   (list:reverse (recursive:iter xs ())))))
   (map (list 2 3 4) math:square)`,
-      `(let memo '(() ()))
+      `(let memo (array () ()))
 (let fibonacci (lambda n (do 
 (let key (|> n (from:number->digits) (from:digits->chars)))
   (if (< n 2) n
@@ -129,30 +129,30 @@ describe('Compilation & Interpretation', () => {
         (map:get (map:set! memo key (+ (fibonacci (- n 1)) (fibonacci (- n 2)))) key))))))
 (fibonacci 10)`,
       `(let m (new:set4))
-(let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
+(let arr (array 1 1 1 2 2 3 4 4 4 4 4 4))
 (|> arr 
     (array:fold (lambda a b (do
-    (let key '((from:digit->char b)))
+    (let key (array (from:digit->char b)))
     (if (map:has? a key) 
         (map:set! a key (+ (map:get a key) 1))
         (map:set! a key 0)
     ))) m))`,
-      `(let sample1 (array:concat '( 
-      "RL" '(char:new-line)
-      '(char:new-line)
-      "AAA=BBB,CCC" '(char:new-line)
-      "BBB=DDD,EEE" '(char:new-line)
-      "CCC=ZZZ,GGG" '(char:new-line)
-      "DDD=DDD,DDD" '(char:new-line)
-      "EEE=EEE,EEE" '(char:new-line)
-      "GGG=GGG,GGG" '(char:new-line)
+      `(let sample1 (array:concat (array  
+      "RL" (array char:new-line)
+      (array char:new-line)
+      "AAA=BBB,CCC" (array char:new-line)
+      "BBB=DDD,EEE" (array char:new-line)
+      "CCC=ZZZ,GGG" (array char:new-line)
+      "DDD=DDD,DDD" (array char:new-line)
+      "EEE=EEE,EEE" (array char:new-line)
+      "GGG=GGG,GGG" (array char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       (let parse (lambda input (do 
         (let split (string:lines input))
         (let path (car split))
         (let list (cdr (cdr split)))
         
-        (let dirs (|> path (array:map (lambda x (string:equal? '(x) "R")))))
+        (let dirs (|> path (array:map (lambda x (string:equal? (array x) "R")))))
         (let adj (|> list (array:map (lambda x (string:split x (array:first "="))))))
         
         (array 
@@ -164,23 +164,23 @@ describe('Compilation & Interpretation', () => {
           (array () () () ()))
           adj))))
       
-      (let sample2 (array:concat '( 
-      "LLR" '(char:new-line)
-      '(char:new-line)
-      "AAA=BBB,BBB" '(char:new-line)
-      "BBB=AAA,ZZZ" '(char:new-line)
+      (let sample2 (array:concat (array  
+      "LLR" (array char:new-line)
+      (array char:new-line)
+      "AAA=BBB,BBB" (array char:new-line)
+      "BBB=AAA,ZZZ" (array char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       
-      (let sample3 (array:concat '(
-      "LR" '(char:new-line)
-      '(char:new-line)
-      "11A=11B,XXX" '(char:new-line)
-      "11B=XXX,11Z" '(char:new-line)
-      "11Z=11B,XXX" '(char:new-line)
-      "22A=22B,XXX" '(char:new-line)
-      "22B=22C,22C" '(char:new-line)
-      "22C=22Z,22Z" '(char:new-line)
-      "22Z=22B,22B" '(char:new-line)
+      (let sample3 (array:concat (array 
+      "LR" (array char:new-line)
+      (array char:new-line)
+      "11A=11B,XXX" (array char:new-line)
+      "11B=XXX,11Z" (array char:new-line)
+      "11Z=11B,XXX" (array char:new-line)
+      "22A=22B,XXX" (array char:new-line)
+      "22B=22C,22C" (array char:new-line)
+      "22C=22Z,22Z" (array char:new-line)
+      "22Z=22B,22B" (array char:new-line)
       "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
@@ -202,7 +202,7 @@ describe('Compilation & Interpretation', () => {
         
         (let recursive:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
-          (if (string:equal? '((array:at node -1)) target)
+          (if (string:equal? (array (array:at node -1)) target)
               step 
               (recursive:move node target (+ step 1))))))
       
@@ -212,7 +212,7 @@ describe('Compilation & Interpretation', () => {
           (array:select (lambda source 
             (|> source 
                 (array:at -1)
-                '()
+                (array )
                 (string:equal? "A"))))
           (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
@@ -220,7 +220,7 @@ describe('Compilation & Interpretation', () => {
          (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`,
       `; reverse array
       ; returns a copy of the array but reversed
-      ; '(1 2 3) -> '(3 2 1)
+      ; (array 1 2 3) -> (array 3 2 1)
       (let reverse (lambda arr (do
         (let recursive:iter (lambda arr out
           (if (> (length arr) 0)
@@ -228,7 +228,7 @@ describe('Compilation & Interpretation', () => {
               out)))
         (recursive:iter arr ()))))
       
-      (let lazy '(reverse '(1 2 3 4 5 6)))
+      (let lazy (array reverse (array 1 2 3 4 5 6)))
       (apply (car (cdr lazy)) (car lazy))`,
       `(= 
         (|>
@@ -282,7 +282,7 @@ describe('Compilation & Interpretation', () => {
         (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))`,
       `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
       `(|> 
-  '(1 2 3 4)
+  (array 1 2 3 4)
    (array:swap-remove! 1)
    (array:swap! 0 1)
    (math:permutations)

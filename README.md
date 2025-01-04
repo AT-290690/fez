@@ -16,7 +16,7 @@
 (let arr (array 1 2 3))
 (set! arr 0 10)
 (set! arr (length arr) 100)
-; arr is now will make it '(10 2 3 100)
+; arr is now will make it [10 2 3 100]
 ; No strings - instead they are array of charcodes
 "Hello World!" ; This is syntactic suggar turning it into the one below
 (array 72 101 108 108 111 32  87 111 114 108 100  33) ; "Hello World!"

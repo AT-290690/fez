@@ -555,10 +555,10 @@ Prize: X=18641, Y=10279")
     deepStrictEqual(
       evalJS(
         `(let m (new:set4))
-(let arr '(1 1 1 2 2 3 4 4 4 4 4 4))
+(let arr [1 1 1 2 2 3 4 4 4 4 4 4])
 (|> arr 
     (array:fold (lambda a b (do
-    (let key '((from:digit->char b)))
+    (let key (array (from:digit->char b)))
     (if (map:has? a key) 
         (map:set! a key (+ (map:get a key) 1))
         (map:set! a key 0)
@@ -570,14 +570,14 @@ Prize: X=18641, Y=10279")
       evalJS(
         `
     (|>
-     (array:concat '( 
-        '(1 0 1 0) 
-        '(1 1 1 1)
-        '(0 0 1 0)
-        '(1 0 1 0)
-        '(1 1 1 1)
-        '(0 0 0 0)
-        '(1 0 1 0)))
+     (array:concat (array  
+        (array 1 0 1 0) 
+        (array 1 1 1 1)
+        (array 0 0 1 0)
+        (array 1 0 1 0)
+        (array 1 1 1 1)
+        (array 0 0 0 0)
+        (array 1 0 1 0)))
      (array:map math:flag-flip))`
       ),
       [
@@ -603,7 +603,7 @@ ZZZ=ZZZ,ZZZ")
         (let path (car split))
         (let list (cdr (cdr split)))
         
-        (let dirs (|> path (array:map (lambda x (string:equal? '(x) "R")))))
+        (let dirs (|> path (array:map (lambda x (string:equal? (array x) "R")))))
         (let adj (|> list (array:map (lambda x (string:split x (array:first "="))))))
         
         (array 
@@ -615,23 +615,23 @@ ZZZ=ZZZ,ZZZ")
           (array () () () ()))
           adj))))
       
-      (let sample2 (array:concat '( 
-      "LLR" '(char:new-line)
-      '(char:new-line)
-      "AAA=BBB,BBB" '(char:new-line)
-      "BBB=AAA,ZZZ" '(char:new-line)
+      (let sample2 (array:concat (array  
+      "LLR" (array char:new-line)
+      (array char:new-line)
+      "AAA=BBB,BBB" (array char:new-line)
+      "BBB=AAA,ZZZ" (array char:new-line)
       "ZZZ=ZZZ,ZZZ")))
       
-      (let sample3 (array:concat '(
-      "LR" '(char:new-line)
-      '(char:new-line)
-      "11A=11B,XXX" '(char:new-line)
-      "11B=XXX,11Z" '(char:new-line)
-      "11Z=11B,XXX" '(char:new-line)
-      "22A=22B,XXX" '(char:new-line)
-      "22B=22C,22C" '(char:new-line)
-      "22C=22Z,22Z" '(char:new-line)
-      "22Z=22B,22B" '(char:new-line)
+      (let sample3 (array:concat (array 
+      "LR" (array char:new-line)
+      (array char:new-line)
+      "11A=11B,XXX" (array char:new-line)
+      "11B=XXX,11Z" (array char:new-line)
+      "11Z=11B,XXX" (array char:new-line)
+      "22A=22B,XXX" (array char:new-line)
+      "22B=22C,22C" (array char:new-line)
+      "22C=22Z,22Z" (array char:new-line)
+      "22Z=22B,22B" (array char:new-line)
       "XXX=XXX,XXX")))
       
       (let part1 (lambda input (do 
@@ -682,7 +682,7 @@ ZZZ=ZZZ,ZZZ")
     (let temp (var:get x))
     (var:set! x (var:get y))
     (var:set! y temp)
-    '((var:get x) (var:get y))
+    (array (var:get x) (var:get y))
     (+ (car x) (car y))`
       ),
       18
@@ -691,7 +691,7 @@ ZZZ=ZZZ,ZZZ")
       evalJS(
         `; reverse array
     ; returns a copy of the array but reversed
-    ; '(1 2 3) -> '(3 2 1)
+    ; (array 1 2 3) -> (array 3 2 1)
     (let reverse (lambda arr (do
       (let recursive:iter (lambda arr out
         (if (> (length arr) 0)
@@ -699,7 +699,7 @@ ZZZ=ZZZ,ZZZ")
             out)))
       (recursive:iter arr ()))))
     
-    (let lazy '(reverse '(1 2 3 4 5 6)))
+    (let lazy (array reverse (array 1 2 3 4 5 6)))
     (apply (car (cdr lazy)) (car lazy))`
       ),
       [6, 5, 4, 3, 2, 1]
@@ -750,7 +750,7 @@ ZZZ=ZZZ,ZZZ")
     deepStrictEqual(
       evalJS(
         `(|> 
-  '(1 2 3 4)
+  (array 1 2 3 4)
    (array:swap-remove! 1)
    (array:swap! 0 1)
    (math:permutations)
@@ -984,7 +984,7 @@ ZZZ=ZZZ,ZZZ")
     )
     strictEqual(
       evalJS(
-        `(let memo '(() ()))
+        `(let memo (array () ()))
 (let fibonacci (lambda n (do 
 (let key (|> n (from:number->digits) (from:digits->chars)))
   (if (< n 2) n
@@ -1119,7 +1119,7 @@ ZZZ=ZZZ,ZZZ")
       (let w (string:words x))
       (let springs (car w))
       (let list (car (cdr w)))
-      '(
+      (array 
         (|> springs (string:chars) (array:flat-one)) 
         (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->number))))))
 ))))))
@@ -1172,22 +1172,22 @@ ZZZ=ZZZ,ZZZ")
   (let left (car arg))
   (let right (car (cdr arg)))
   (|> 
-    (array:of 5 (lambda . '(left right)))
+    (array:of 5 (lambda . (array left right)))
     (array:enumerated-fold (lambda out arg i (do 
       (array:merge! (get out 0) left)
-      (if (< i 4) (array:merge! (get out 0) '(char:question-mark)))
+      (if (< i 4) (array:merge! (get out 0) (array char:question-mark)))
       (array:merge! (get out 1) right)
       out
-    )) '('() '()))
+    )) (array (array ) (array )))
 ))))
-  (array:fold (lambda a b (+ a (dpm (car b) (car (cdr b)) '(() () () () () () ())))) 0))))
-'((part1 sample) (part2 sample))`
+  (array:fold (lambda a b (+ a (dpm (car b) (car (cdr b)) (array () () () () () () ())))) 0))))
+(array (part1 sample) (part2 sample))`
       ),
       [21, 525152]
     )
     deepStrictEqual(
       evalJS(
-        `(let samples '(
+        `(let samples (array 
     "(())"    ;  result in floor 0.
     "()()"    ;  result in floor 0.
     "((("     ; result in floor 3.
@@ -1208,7 +1208,7 @@ ZZZ=ZZZ,ZZZ")
                         (array:empty? a) -1
                         (*) (recursive:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
     (recursive:part2 input 0 0))))
-'((|> samples (array:map part1)) (|> samples (array:map part2)))
+(array (|> samples (array:map part1)) (|> samples (array:map part2)))
 `
       ),
       [
@@ -1225,8 +1225,8 @@ ZZZ=ZZZ,ZZZ")
                                                     (array:map (lambda d (|> d
                                                                             (from:chars->digits)
                                                                             (from:digits->number))))))))))
-(let sample (array:concat '( 
-            "2x3x4" '(char:new-line) 
+(let sample (array:concat (array  
+            "2x3x4" (array char:new-line) 
             "1x1x10")))
 
 (let part1 (lambda input 
@@ -1251,7 +1251,7 @@ ZZZ=ZZZ,ZZZ")
   ))) 
   (math:summation))))
 
-'((part1 (parse sample)) (part2 (parse sample)))`
+(array (part1 (parse sample)) (part2 (parse sample)))`
       ),
       [101, 48]
     )
@@ -1270,21 +1270,21 @@ ZZZ=ZZZ,ZZZ")
                       (*) a)
                       (let A (from:digits->chars (from:number->digits (math:abs (car a)))))
                       (let B (from:digits->chars (from:number->digits (math:abs (car (cdr a))))))
-                      (let key (array:concat '((if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B)))
+                      (let key (array:concat (array (if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B)))
                       (set:add! map key)
-                      a)) '(0 0))))
+                      a)) (array 0 0))))
 (let part1 (lambda x (do
-  (let map '(() () () () () () () () () () () () () () () ()))
+  (let map (array () () () () () () () () () () () () () () () ()))
   (set:add! map "+0,+0")
   (walk map x)
   (length (array:flat-one (array:select map array:not-empty?))))))
 (let part2 (lambda x (do
-  (let map '(() () () () () () () () () () () () () () () ()))
+  (let map (array () () () () () () () () () () () () () () () ()))
   (set:add! map "+0,+0")
   (walk map (array:even-indexed x))
   (walk map (array:odd-indexed x))
   (length (array:flat-one (array:select map array:not-empty?))))))
-'((|> '(">" "^>v<" "^v^v^v^v^v" "^v") (array:map part1)) (|> '("^v" "^>v<" "^v^v^v^v^v" "^^vv") (array:map part2)))`
+(array (|> (array ">" "^>v<" "^v^v^v^v^v" "^v") (array:map part1)) (|> (array "^v" "^>v<" "^v^v^v^v^v" "^^vv") (array:map part2)))`
       ),
       [
         [2, 4, 2, 2],
@@ -1318,7 +1318,7 @@ ZZZ=ZZZ,ZZZ")
                                                  (evaluate (array:get args 2) env)
                                                  0))))
 (let run (lambda source (apply (from:chars->ast source) keywords (map:get keywords "do"))))
-(run (array:concat '("(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`
+(run (array:concat (array "(let x (+ 1 2))" "(let add (lambda a b (+ a b x)))" "(if 0 1 (add x 23))")))`
       ),
       29
     )
@@ -1326,9 +1326,9 @@ ZZZ=ZZZ,ZZZ")
       evalJS(
         `(let n-queen (lambda n (do
   (let solutions ())
-  (let cols '(() () () () () () ()))
-  (let positive-diagonal '(() () () () () () ()))
-  (let negative-diagonal '(() () () () () () ()))
+  (let cols (array () () () () () () ()))
+  (let positive-diagonal (array () () () () () () ()))
+  (let negative-diagonal (array () () () () () () ()))
   (let board (array:map (math:zeroes n) (lambda . (array:map (math:zeroes n) (lambda . ".")))))
   (let backtrack (lambda row 
     (if (= row n) 
@@ -1337,22 +1337,22 @@ ZZZ=ZZZ,ZZZ")
           (loop:for-n n (lambda col 
             (unless 
               (or 
-                (set:has? cols '(col)) 
-                (set:has? positive-diagonal '((+ row col)))
-                (set:has? negative-diagonal '((- row col))))
+                (set:has? cols (array col)) 
+                (set:has? positive-diagonal (array (+ row col)))
+                (set:has? negative-diagonal (array (- row col))))
               (apply (lambda (do 
-                (set:add! cols '(col))
-                (set:add! positive-diagonal '((+ row col)))
-                (set:add! negative-diagonal '((- row col)))
+                (set:add! cols (array col))
+                (set:add! positive-diagonal (array (+ row col)))
+                (set:add! negative-diagonal (array (- row col)))
                 (set! (array:get board row) col "Q")
                 (backtrack (+ row 1)) 
-                (set:remove! cols '(col))
-                (set:remove! positive-diagonal '((+ row col)))
-                (set:remove! negative-diagonal '((- row col)))
+                (set:remove! cols (array col))
+                (set:remove! positive-diagonal (array (+ row col)))
+                (set:remove! negative-diagonal (array (- row col)))
                 (set! (array:get board row) col ".")))))))))))))
   (backtrack 0)
   solutions)))
-'((n-queen 1) (n-queen 4))`
+(array (n-queen 1) (n-queen 4))`
       ),
       [
         [[[81]]],
@@ -1374,17 +1374,17 @@ ZZZ=ZZZ,ZZZ")
     )
     deepStrictEqual(
       evalJS(
-        `(let sample (array:concat '(
-    "ugknbfddgicrmopn" '(char:new-line)
-    "aaa" '(char:new-line)
-    "jchzalrnumimnmhp" '(char:new-line)
-    "haegwjzuvuyypxyu" '(char:new-line)
+        `(let sample (array:concat (array 
+    "ugknbfddgicrmopn" (array char:new-line)
+    "aaa" (array char:new-line)
+    "jchzalrnumimnmhp" (array char:new-line)
+    "haegwjzuvuyypxyu" (array char:new-line)
     "dvszwmarrgswjxmb"
 )))
-(let sample2 (array:concat '(
-    "qjhvhtzxzqqjkmpb" '(char:new-line)
-    "xxyxx" '(char:new-line)
-    "uurcxstgmygtbstg" '(char:new-line)
+(let sample2 (array:concat (array 
+    "qjhvhtzxzqqjkmpb" (array char:new-line)
+    "xxyxx" (array char:new-line)
+    "uurcxstgmygtbstg" (array char:new-line)
     "ieodomkazucvgmuy"
 )))
 
@@ -1412,8 +1412,8 @@ ZZZ=ZZZ,ZZZ")
             out 
             (apply (lambda (do
             (let match (and 
-                         (not (= (string:match (cdr rest) '((car rest) (car (cdr rest)))) -1))
-                         (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest '((car rest) (car rest) (car rest))) -1))
+                         (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
+                         (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest (array (car rest) (car rest) (car rest))) -1))
                          ))
             (recursive:iterate match
             (cdr rest))))))))
@@ -1452,7 +1452,7 @@ ZZZ=ZZZ,ZZZ")
 (let part1 (lambda input (|> input (parse) (array:map nice?) (math:summation))))
 (let part2 (lambda input (|> input (parse) (array:map nicer?) (math:summation))))
 
-'((part1 sample) (part2 sample2) (part2 sample3) (part2 sample4))
+(array (part1 sample) (part2 sample2) (part2 sample3) (part2 sample4))
 `
       ),
       [2, 2, 0, 1]
@@ -1536,7 +1536,7 @@ matrix
     )
     deepStrictEqual(
       evalJS(
-        `'((from:list->array (from:array->list (array 1 2 3 4)))
+        `(array (from:list->array (from:array->list (array 1 2 3 4)))
 (|> (math:list-range 1 10) (list:filter math:even?) (from:list->array))
 (from:list->array (list:pair 1 (list:pair 2 (list:pair 3 ()))))
 (from:list->array (math:list-range 1 10))
@@ -1606,9 +1606,9 @@ matrix
         (unless (= (length arr) 0) 
           (do (set! arr) (recursive:iterate))
         arr))) (recursive:iterate))))
-'( 
+(array  
   (do 1 2)
-  (empty! '(1 2 3 4 5))
+  (empty! (array 1 2 3 4 5))
 )`
       ),
       [2, []]
@@ -1642,7 +1642,7 @@ matrix
     deepStrictEqual(
       evalJS(
         `(|> 
-  '(1 2 3 4 5)
+  (array 1 2 3 4 5)
   (from:array->list)
   (list:map math:square)
   (from:list->array)
@@ -1670,8 +1670,8 @@ matrix
     deepStrictEqual(
       evalJS(
         `
-      (let out \`(\`(1 2 3) \`(4 5 6)))
-'((|>
+      (let out (list (list 1 2 3) (list 4 5 6)))
+(array (|>
  out
  (list:flatten)
  (from:list->array)
@@ -1687,7 +1687,7 @@ matrix
       ]
     )
 
-    deepStrictEqual(evalJS(`(list:slice \`(1 2 3 4 5 6) 1 4)`), [
+    deepStrictEqual(evalJS(`(list:slice (list 1 2 3 4 5 6) 1 4)`), [
       2,
       [3, [4, []]]
     ])
@@ -1701,9 +1701,9 @@ matrix
 
     deepStrictEqual(
       evalJS(
-        `'(
-  (|> '('(2 3) '(3 5) '(5 7) '(11 13) '(17 19) '(21 22) '(29 31) '(41 43)) (array:every? (lambda x (math:coprime? (array:first x) (array:second x)))))
-  (|> '('(2 4) '(4 8) '(4 16)) (array:some? (lambda x (math:coprime? (array:first x) (array:second x)))))
+        `(array 
+  (|> (array (array 2 3) (array 3 5) (array 5 7) (array 11 13) (array 17 19) (array 21 22) (array 29 31) (array 41 43)) (array:every? (lambda x (math:coprime? (array:first x) (array:second x)))))
+  (|> (array (array 2 4) (array 4 8) (array 4 16)) (array:some? (lambda x (math:coprime? (array:first x) (array:second x)))))
 )`
       ),
       [1, 0]
@@ -1711,9 +1711,9 @@ matrix
 
     deepStrictEqual(
       evalJS(
-        `'(
-  (from:list->array (list:insert-at \`(1 2 3 4) 1 10))
-  (from:list->array (list:remove-at \`(1 2 3 4) 1))
+        `(array 
+  (from:list->array (list:insert-at (list 1 2 3 4) 1 10))
+  (from:list->array (list:remove-at (list 1 2 3 4) 1))
 )`
       ),
       [
@@ -1723,7 +1723,7 @@ matrix
     )
     deepStrictEqual(
       evalJS(
-        `(let sample (array:concat-with '(
+        `(let sample (array:concat-with (array 
     "..........."
     ".....###.#."
     ".###.##..#."
@@ -1772,8 +1772,8 @@ matrix
 
     deepStrictEqual(
       evalJS(
-        `(let arr1 (from:array->brray '(1 2 3 4 5)))
-(let arr2 (from:array->brray '(1 2 3 4 5)))
+        `(let arr1 (from:array->brray (array 1 2 3 4 5)))
+(let arr2 (from:array->brray (array 1 2 3 4 5)))
 (brray:tail! arr1)
 (brray:tail! arr1)
 (brray:tail! arr1)
@@ -1784,7 +1784,7 @@ matrix
 (brray:head! arr2)
 (brray:head! arr2)
 (brray:head! arr2)
-'((brray:length arr1) (brray:length arr2))`
+(array (brray:length arr1) (brray:length arr2))`
       ),
       [0, 0]
     )
@@ -1792,7 +1792,7 @@ matrix
     deepStrictEqual(
       evalJS(
         `
-(let INPUT (array:concat-with '(
+(let INPUT (array:concat-with (array 
     "3   4"
     "4   3"
     "2   5"
@@ -1848,7 +1848,7 @@ matrix
     )
     deepStrictEqual(
       evalJS(
-        `(let INPUT (array:concat-with '(
+        `(let INPUT (array:concat-with (array 
 "7 6 4 2 1"
 "1 2 7 8 9"
 "9 7 6 2 1"
@@ -1872,13 +1872,13 @@ matrix
                             (array:map (lambda x (not (not (part1 x)))))
                             (array:count 1))))
 (let PARSED (parse INPUT))
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
       ),
       [2, 4]
     )
     deepStrictEqual(
       evalJS(
-        `(let iINPUT (array:concat-with '(
+        `(let iINPUT (array:concat-with (array 
 "7 6 4 2 1"
 "1 2 7 8 9"
 "9 7 6 2 1"
@@ -1901,7 +1901,7 @@ matrix
                             (array:count-of (lambda x (math:positive? (part1 x)))))))
 
 (let PARSED (parse iINPUT))
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
       ),
       [2, 4]
     )
@@ -1967,7 +1967,7 @@ matrix
                         (math:product))))
         (math:summation))))
 
-'(
+(array 
 (part1 (parse sample))
 (part1 (parse sample2))
 (part1 (parse sample3))
@@ -1978,7 +1978,7 @@ matrix
 
     deepStrictEqual(
       evalJS(
-        `(let zipped (list:zip \`(1 2 3 4 5) \`(4 5 2 4 6)))
+        `(let zipped (list:zip (list 1 2 3 4 5) (list 4 5 2 4 6)))
 (|> 
   zipped
   (list:unzip)
@@ -2057,7 +2057,7 @@ matrix
                         (math:product))))
         (math:summation))))
 
-'((part1 (parse sample))
+(array (part1 (parse sample))
 ; (part1 (parse sample2))
 ; (part1 (parse sample3))
 (part1 (parse sample4)))`
@@ -2068,7 +2068,7 @@ matrix
     deepStrictEqual(
       evalJS(
         `(let sample 
-  (array:concat-with '(
+  (array:concat-with (array 
       "MMMSXXMASM"
       "MSAMXMSMSA"
       "AMXSXMAAMM"
@@ -2123,13 +2123,13 @@ matrix
             (and (= A char:M) (= B char:M) (= C char:S) (= D char:S))
             (and (= A char:S) (= B char:S) (= C char:M) (= D char:M)))))) 0)))))
 (let PARSED (parse sample))
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
       ),
       [18, 9]
     )
     deepStrictEqual(
       evalJS(
-        `(let INPUT (array:concat-with '( 
+        `(let INPUT (array:concat-with (array  
   "47|53"
   "97|13"
   "97|61"
@@ -2151,7 +2151,7 @@ matrix
   "47|29"
   "75|13"
   "53|13"
-  '(char:new-line)
+  (array char:new-line)
   "75,47,61,53,29"
   "97,61,53,29,13"
   "75,29,13"
@@ -2162,13 +2162,13 @@ matrix
 (let parse (lambda input (do 
     (let lines (|> input (string:lines)))
     (let mid (array:find-index lines array:empty?))
-    '(
+    (array 
         (|> lines (array:slice 0 mid) (array:map (lambda x (|> x (string:split char:pipe))))) 
         (|> lines (array:slice (+ mid 1) (length lines)) (array:map (lambda x (|> x (string:commas)))))))))
 
 (let PARSED (parse INPUT))
 
-(let from:chars->key (lambda a b (array:concat '(a '(char:pipe) b))))
+(let from:chars->key (lambda a b (array:concat (array a (array char:pipe) b))))
 
 (let new:memo (lambda input (array:fold input (lambda memo entry (do 
         (let key (from:chars->key (array:first entry) (array:second entry)))
@@ -2206,7 +2206,7 @@ matrix
     (array:map (lambda x (array:sort x (lambda a b (not (set:has? memo (from:chars->key a b)))))))
     (sum-mid)))))
 
-    '((part1 PARSED) (part2 PARSED))`
+    (array (part1 PARSED) (part2 PARSED))`
       ),
       [143, 123]
     )
@@ -2258,7 +2258,7 @@ matrix
   (let starting (matrix:find-index matrix (lambda x (= x 94))))
   (matrix:set! matrix (get starting 0) (get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
-  (let from:numbers->key (lambda a b (array:concat '((from:digits->chars (from:number->digits a)) '(char:pipe) (from:digits->chars (from:number->digits b))))))
+  (let from:numbers->key (lambda a b (array:concat (array (from:digits->chars (from:number->digits a)) (array char:pipe) (from:digits->chars (from:number->digits b))))))
   (let recursive:step (lambda matrix start angle corners (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
@@ -2292,7 +2292,7 @@ matrix
   (var:get loops))))
   
 (let PARSED (parse INPUT))
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
     ),
     [41, 6]
   )
@@ -2300,7 +2300,7 @@ matrix
   deepStrictEqual(
     evalJS(
       `
-   (let INPUT (array:concat-with '(
+   (let INPUT (array:concat-with (array 
   "190: 10 19"
   "3267: 81 40 27"
   "83: 17 5"
@@ -2317,14 +2317,14 @@ matrix
     (let sides (|> x (string:split (array:first ":"))))
     (let L (|> sides (array:first) (from:chars->digits) (from:digits->number)))
     (let R (|> sides (array:second) (string:words) (array:exclude array:empty?) (from:array->list) (list:map (lambda x (|> x (from:chars->digits) (from:digits->number))))))
-    '(L R)))))))))
+    (array L R)))))))))
 
     
 (let sum (lambda input solution (|> input
             (array:map (lambda x (do
             (let left (array:first x))
             (let right (list:reverse (array:second x)))
-            '(left (solution right left)))))
+            (array left (solution right left)))))
             (array:select (lambda x (= (array:second x) 1)))
             (array:map array:first)
             (math:summation))))
@@ -2351,7 +2351,7 @@ matrix
 
 (let PARSED (parse INPUT))
 
-'((sum PARSED part1) (sum PARSED part2))
+(array (sum PARSED part1) (sum PARSED part2))
 
     `
     ),
@@ -2359,7 +2359,7 @@ matrix
   )
   deepStrictEqual(
     evalJS(
-      `(let INPUT (array:concat-with '(
+      `(let INPUT (array:concat-with (array 
   "............"
   "........0..."
   ".....0......"
@@ -2451,13 +2451,13 @@ matrix
  
  (let PARSED (parse INPUT))
 
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
     ),
     [14, 34]
   )
   deepStrictEqual(
     evalJS(
-      `(let INPUT (array:concat-with '(
+      `(let INPUT (array:concat-with (array 
   "89010123"
   "78121874"
   "87430965"
@@ -2524,7 +2524,7 @@ matrix
 
 (let PARSED (parse INPUT))
 
-'((part1 PARSED) (part2 PARSED))`
+(array (part1 PARSED) (part2 PARSED))`
     ),
     [36, 81]
   )
@@ -2545,9 +2545,9 @@ matrix
           (let n-digits (math:number-of-digits b))
           (array:merge! a 
                 (cond 
-                  (= b 0) '(1)
-                  (math:even? n-digits) '((math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
-                  (*) '((* b 2024)))))) ()) (- n 1)) (length stones))))
+                  (= b 0) (array 1)
+                  (math:even? n-digits) (array (math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
+                  (*) (array (* b 2024)))))) ()) (- n 1)) (length stones))))
   (recursive:while input TIMES))))
 
 (let part2 (lambda input (do 
@@ -2557,13 +2557,13 @@ matrix
           (let n-digits (math:number-of-digits b))
           (array:merge! a 
                 (cond 
-                  (= b 0) '(1)
-                  (math:even? n-digits) '((math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
-                  (*) '((* b 2024)))))) ()) (- n 1)) (length stones))))
+                  (= b 0) (array 1)
+                  (math:even? n-digits) (array (math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
+                  (*) (array (* b 2024)))))) ()) (- n 1)) (length stones))))
   (recursive:while input TIMES))))
 
 (let PARSED (parse INPUT))
-'((part1 PARSED) (part2 PARSED))
+(array (part1 PARSED) (part2 PARSED))
     `
     ),
     [13, 13]
@@ -2571,7 +2571,7 @@ matrix
 
   deepStrictEqual(
     evalJS(
-      `(let INPUT (string:concat-with-lines '(
+      `(let INPUT (string:concat-with-lines (array 
     "p=0,4 v=3,-3"
     "p=6,3 v=-1,-3"
     "p=10,3 v=-1,2"
@@ -2605,10 +2605,10 @@ matrix
     ; .....+..... 4 
     ; .....+..... 5
     ; .....+..... 6
-    (let Q1 '('(0 0) '((- QWIDTH 1) (- QHEIGHT 1))))
-    (let Q2 '('((+ QWIDTH 1) 0) '((- WIDTH 1) (- QHEIGHT 1))))
-    (let Q3 '('(0 (+ QHEIGHT 1)) '((- QWIDTH 1) (- HEIGHT 1))))
-    (let Q4 '('((+ QWIDTH 1) (+ QHEIGHT 1)) '((- WIDTH 1) (- HEIGHT 1))))
+    (let Q1 (array (array 0 0) (array (- QWIDTH 1) (- QHEIGHT 1))))
+    (let Q2 (array (array (+ QWIDTH 1) 0) (array (- WIDTH 1) (- QHEIGHT 1))))
+    (let Q3 (array (array 0 (+ QHEIGHT 1)) (array (- QWIDTH 1) (- HEIGHT 1))))
+    (let Q4 (array (array (+ QWIDTH 1) (+ QHEIGHT 1)) (array (- WIDTH 1) (- HEIGHT 1))))
 
 
     (|> input 
@@ -2642,11 +2642,11 @@ matrix
                 (math:overlap? x (array:first (array:first Q4)) (array:first (array:second Q4)))
                 (math:overlap? y (array:second (array:first Q4)) (array:second (array:second Q4)))
                 )  (set! a 3 (+ (get a 3) 1))
-            (*) 0) a)) '(0 0 0 0))
+            (*) 0) a)) (array 0 0 0 0))
         (math:product)))))
 
 (let PARSED (parse INPUT))
-'((part1 PARSED))
+(array (part1 PARSED))
 `
     ),
     [12]
@@ -2677,14 +2677,14 @@ matrix
         (|> disk (array:enumerated-fold (lambda a b i (+ a (* b i))) 0)))))
        
 (let PARSED (parse INPUT))
-'((part1 PARSED))`
+(array (part1 PARSED))`
     ),
     [1928]
   )
 
   deepStrictEqual(
     evalJS(
-      `(let samples '(
+      `(let samples (array 
     "(())"    ; result in floor 0.
     "()()"    ; result in floor 0.
     "((("     ; result in floor 3.
@@ -2706,7 +2706,7 @@ matrix
                         (array:empty? a) -1
                         (*) (recursive:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
     (recursive:iter input 0 0))))
-'((|> samples (array:map part1)) (|> samples (array:map part2)))
+(array (|> samples (array:map part1)) (|> samples (array:map part2)))
 `
     ),
     [
@@ -2737,7 +2737,7 @@ matrix
                                           (array:count-of (lambda rec (> rec dist))))))) ; count number of records that beat the distance
                              (math:product))))
 
-(|> (string:concat-with-lines '( 
+(|> (string:concat-with-lines (array  
         "7 15 30"
         "9 40 200")) 
         (parse)
@@ -2750,16 +2750,16 @@ matrix
 
   deepStrictEqual(
     evalJS(
-      `(let object (new:map '(
+      `(let object (new:map (array 
     "x" 69 
     "y" 29 
     "price" 42
-    "settings" (new:map '("volume" 100 "colored" 0)))))
-(let A (new:set '("10" "20" "30")))
-(let B (new:set '("20" "40" "50")))
+    "settings" (new:map (array "volume" 100 "colored" 0)))))
+(let A (new:set (array "10" "20" "30")))
+(let B (new:set (array "20" "40" "50")))
 (let U (set:difference B A))
-(set:with! U '("100" "200"))
-'((|> 
+(set:with! U (array "100" "200"))
+(array (|> 
   object
   (map:get "settings")
   (map:get "volume"))
@@ -2774,7 +2774,7 @@ matrix
   strictEqual(
     evalJS(
       `
-(|> '("-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`
+(|> (array "-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`
     ),
     2240
   )
@@ -2815,13 +2815,13 @@ matrix
     (let W (math:maximum (array:map input array:second)))
     (let matrix (|> (math:zeroes (+ H 1)) (array:map (lambda . (array:map (math:zeroes (+ W 1)) (lambda . char:dot)) ))))
     (array:for (array:slice input 0 size) (lambda x (matrix:set! matrix (array:second x) (array:first x) char:hash)))
-    (let start '(0 0))
-    (let end '(H W))
+    (let start (array 0 0))
+    (let end (array H W))
   
     (let q (new:queue))
-    (queue:enqueue! q '(0 (array:first start) (array:second start)))
+    (queue:enqueue! q (array 0 (array:first start) (array:second start)))
     (let seen (new:set32))
-    (set:add! seen (from:stats->key '((array:first start) (array:second start))))
+    (set:add! seen (from:stats->key (array (array:first start) (array:second start))))
 
     (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
     (let solution (var:def 0))
@@ -2835,12 +2835,12 @@ matrix
                  (lambda current . nr nc (do
                             (if (and 
                                     (not (= current char:hash)) 
-                                    (not (set:has? seen (from:stats->key '(nr nc)))))
+                                    (not (set:has? seen (from:stats->key (array nr nc)))))
                                 (if (goal? nr nc) 
                                     (var:set! solution (+ steps 1))
                                     (do 
-                                    (queue:enqueue! q '((+ steps 1) nr nc))
-                                    (set:add! seen (from:stats->key '(nr nc)))))))))
+                                    (queue:enqueue! q (array (+ steps 1) nr nc))
+                                    (set:add! seen (from:stats->key (array nr nc)))))))))
             (recursive:while)))))
     (recursive:while)
     (var:get solution))))
@@ -2910,7 +2910,7 @@ bbrgwb")
 
 (let PARSED (parse INPUT))
 
-'((part1 PARSED) (part2 PARSED))
+(array (part1 PARSED) (part2 PARSED))
 `
     ),
     [6, 16]
@@ -2974,7 +2974,7 @@ td-yn")
             (var:increment! total))))))))
   (// (var:get total) 6))))
 
-'((part1 (parse INPUT)))
+(array (part1 (parse INPUT)))
 `),
     [7]
   )
@@ -3037,14 +3037,14 @@ input (array:map
 
 )))
 (let PARSED (parse INPUT))
-'((part1 PARSED))`
+(array (part1 PARSED))`
     ),
     [37327623]
   )
   strictEqual(
     evalJS(
       `(let INPUT
-  (string:concat-with-lines '(
+  (string:concat-with-lines (array 
       "###############"
       "#.......#....E#"
       "#.#.###.#.###.#"
@@ -3072,7 +3072,7 @@ input (array:map
 
   (let pq [[0 (array:first start) (array:second start) 0 1]])
   (let seen (new:set8))
-  (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
+  (set:add! seen (from:stats->key (array (array:first start) (array:second start) 0 1)))
 
   (let lower? (lambda a b (< (array:first a) (array:first b))))
   (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
@@ -3081,7 +3081,7 @@ input (array:map
       (let first (heap:peek pq))
       (heap:pop! pq lower?)
       (let [cost r c dr dc .] first)
-      (set:add! seen (from:stats->key '(r c dr dc)))
+      (set:add! seen (from:stats->key (array r c dr dc)))
       (if (goal? r c) cost
        (do 
           (let dirs [
@@ -3107,7 +3107,7 @@ input (array:map
     evalJS(
       `(let out ())
 (let comp (lambda a b (< a b)))
-(let heap (from:array->heap '(30 10 50 20 40) comp))
+(let heap (from:array->heap (array 30 10 50 20 40) comp))
 (heap:peek heap)
 (let recursive:while (lambda (unless (array:empty? heap) (do 
 (array:push! out (heap:peek heap))
@@ -3129,9 +3129,9 @@ input (array:map
   (let start (array:first (matrix:points matrix (lambda cell (= cell char:S)))))
   (let end (array:first (matrix:points matrix (lambda cell (= cell char:E)))))
 
-  (let pq '('(0 (array:first start) (array:second start) 0 1)))
+  (let pq (array (array 0 (array:first start) (array:second start) 0 1)))
   (let seen (new:set8))
-  (set:add! seen (from:stats->key '((array:first start) (array:second start) 0 1)))
+  (set:add! seen (from:stats->key (array (array:first start) (array:second start) 0 1)))
 
   (let lower? (lambda a b (< (array:first a) (array:first b))))
   (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
@@ -3147,15 +3147,15 @@ input (array:map
           (let c (get first 2))
           (let dr (get first 3))
           (let dc (get first 4))
-          (set:add! seen (from:stats->key '(r c dr dc)))
+          (set:add! seen (from:stats->key (array r c dr dc)))
           (if (goal? r c) 
               (do 
                   (bool:true! goal-reached?)
                   (var:set! output cost))
               (do 
-                  (let dirs '('((+ cost 1) (+ r dr) (+ c dc) dr dc)
-                              '((+ cost 1000) r c dc (- dr))
-                              '((+ cost 1000) r c (- dc) dr)))
+                  (let dirs (array (array (+ cost 1) (+ r dr) (+ c dc) dr dc)
+                              (array (+ cost 1000) r c dc (- dr))
+                              (array (+ cost 1000) r c (- dc) dr)))
                   (array:for dirs (lambda stats (do 
                                   (let new-cost (get stats 0))
                                   (let nr (get stats 1))
@@ -3165,11 +3165,11 @@ input (array:map
                                   (if 
                                       (and
                                           (not (= (matrix:get matrix nr nc) char:hash)) 
-                                          (not (set:has? seen (from:stats->key '(nr nc ndr ndc)))))
+                                          (not (set:has? seen (from:stats->key (array nr nc ndr ndc)))))
                                       (heap:push! pq stats lower?))))))))))
       (var:get output))))
 
-(part1 (string:lines (string:concat-with-lines '(
+(part1 (string:lines (string:concat-with-lines (array 
       "###############"
       "#.......#....E#"
       "#.#.###.#.###.#"
@@ -3204,7 +3204,7 @@ Program: 0,1,5,4,3,0"
   (let program (|> lines (array:pop!) (string:words) (array:pop!) (string:commas) (array:flat-one) (from:chars->digits)))
   (array:pop! lines)
   (let registers (|> lines (array:map (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->number))))))
-  '(registers program))))
+  (array registers program))))
 
 (let part1 (lambda input (do 
   (let registers (array:first input))
@@ -3290,8 +3290,8 @@ Program: 0,1,5,4,3,0"
 (let PARSED (parse I))
 (part1 PARSED)
 ; (part1 (parse INPUT))
-; (part1 '('(22571680 0 0) '(2 4 1 3 7 5 0 3 4 3 1 5 5 5 3 0)))
-; (part1 (parse (string:concat-with-lines '(
+; (part1 (array (array 22571680 0 0) (array 2 4 1 3 7 5 0 3 4 3 1 5 5 5 3 0)))
+; (part1 (parse (string:concat-with-lines (array 
 ; "Register A: 10"
 ; "Register B: 0"
 ; "Register C: 0"
@@ -3299,7 +3299,7 @@ Program: 0,1,5,4,3,0"
 ; "Program: 5,0,5,1,5,4"
 ; ))))
 
-; (part1 (parse (string:concat-with-lines '(
+; (part1 (parse (string:concat-with-lines (array 
 ; "Register A: 2024"
 ; "Register B: 0"
 ; "Register C: 0"
@@ -3307,7 +3307,7 @@ Program: 0,1,5,4,3,0"
 ; "Program: 0,1,5,4,3,0"
 ; ))))
 
-; (part1 (parse (string:concat-with-lines '(
+; (part1 (parse (string:concat-with-lines (array 
 ; "Register A: 0"
 ; "Register B: 0"
 ; "Register C: 9"
@@ -3315,7 +3315,7 @@ Program: 0,1,5,4,3,0"
 ; "Program: 2,6"
 ; ))))
 
-; (part1 (parse (string:concat-with-lines '(
+; (part1 (parse (string:concat-with-lines (array 
 ; "Register A: 0"
 ; "Register B: 0"
 ; "Register C: 9"
@@ -3323,7 +3323,7 @@ Program: 0,1,5,4,3,0"
 ; "Program: 2,6"
 ; ))))
 
-; (part1 (parse (string:concat-with-lines '(
+; (part1 (parse (string:concat-with-lines (array 
 ; "Register A: 0"
 ; "Register B: 29"
 ; "Register C: 0"
@@ -3331,7 +3331,7 @@ Program: 0,1,5,4,3,0"
 ; "Program: 1,7"
 ; ))))
 
-; (part1 (parse (string:concat-with-lines '(
+; (part1 (parse (string:concat-with-lines (array 
 ; "Register A: 0"
 ; "Register B: 2024"
 ; "Register C: 43690"
