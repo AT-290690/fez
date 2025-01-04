@@ -389,10 +389,14 @@ export const debug = (ast) => {
       !error.message.includes('too much recursion') &&
       error.message !== 'Maximum function invocation limit exceeded'
     ) {
-      error.message += `\n\nscope:\n(${evaluate.peek.at(-1)})` 
+      error.message += `\n\nscope:\n(${evaluate.stack.at(-1)})` 
       throw error
     }
   }
   logSuccess('Compiled with no errors')
-  return compile(ast).replaceAll('log_effect', '(').replaceAll('log_string_effect', '(').replaceAll('log_char_effect', '(').replaceAll(DEBUG.LOG_STRING, '(')
+  const identity = (name) => [[0,"let"],[1, name],[[0,"lambda"],[1,"x"],[1,"x"]]]
+  const block = ast[1][1]
+  const temp = block.shift()
+  block.unshift(temp,identity(DEBUG.LOG),identity(DEBUG.LOG_CHAR),identity(DEBUG.LOG_STRING))
+  return compile(ast)
 }

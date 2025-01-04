@@ -1,7 +1,6 @@
 import { deepStrictEqual } from 'assert'
-import { astWithStd, fez, prep, shake, wrapInBlock } from '../src/utils.js'
+import { astWithStd, fez} from '../src/utils.js'
 import { AST, LISP } from '../src/parser.js'
-import std from '../lib/baked/std.js'
 describe('Utils', () => {
   it('Should be work', () =>
     [

@@ -292,20 +292,12 @@
   (array:zip (array:reverse xs))
   (array:map tuple:subtract)
   (array:every? math:zero?))))
-(let math:max-sub-array-sum (lambda xs (do
-    (let get-sum (lambda xs (get xs 0)))
-    (let set-sum! (lambda xs value (set! xs 0 value)))
-    (let get-max (lambda xs (get xs 1)))
-    (let set-max! (lambda xs value (set! xs 1 value)))
-    (|> xs
+(let math:max-sub-array-sum (lambda xs (|> xs
         (array:fold (lambda a b (do
-            (set-sum! a (+ (get-sum a) b))
-            (if (< (get-max a) (get-sum a))
-                (set-max! a (get-sum a)))
-            (if (< (get-sum a) 0)
-                (set-sum! a 0))
-            a)) (array 0 math:min-safe-integer))
-        (get 0)))))
+            (set! a 1 (math:max (+ (get a 1) b) b))
+            (set! a 0 (math:max (get a 0) (get a 1)))
+            a)) (array 0 (get xs 0)))
+        (get 0))))
 (let math:list-maximum (lambda xs (list:fold xs math:max math:min-safe-integer)))
 (let math:list-minimum (lambda xs (list:fold xs math:min math:max-safe-integer)))
 (let math:list-summation (lambda xs (list:fold xs + 0)))

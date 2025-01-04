@@ -647,7 +647,7 @@ export const keywords = {
           writable: true
         })
       }
-      if (name) evaluate.peek.push(name)
+      if (name) evaluate.stack.push(name)
       return evaluate(body, localEnv)
     }
   },

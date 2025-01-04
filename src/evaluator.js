@@ -1,7 +1,8 @@
 import { APPLY, ATOM, KEYWORDS, SPECIAL_FORMS_SET, TYPE, VALUE, WORD } from './keywords.js'
 import { isLeaf } from './parser.js'
 import { logError, stringifyArgs } from './utils.js'
-const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS : 262144
+export const DEFAULT_MAXIMUM_FUNCTION_CALLS = 262144
+export const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS : DEFAULT_MAXIMUM_FUNCTION_CALLS
 export const evaluate = (exp, env) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
@@ -33,7 +34,7 @@ export const evaluate = (exp, env) => {
           }
         }
       const result = apply(rest, env, value)
-      if (!isSpecial) evaluate.peek.pop()
+      if (!isSpecial) evaluate.stack.pop()
       return result
     }
     case ATOM:
@@ -44,4 +45,4 @@ export const evaluate = (exp, env) => {
       )
   }
 }
-evaluate.peek = [KEYWORDS.CALL_FUNCTION]
+evaluate.stack = [KEYWORDS.CALL_FUNCTION]
