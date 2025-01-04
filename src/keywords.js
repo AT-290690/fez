@@ -40,11 +40,6 @@ export const KEYWORDS = {
   DEFINE_VARIABLE: 'let',
 
   SET_ARRAY: 'set!',
-
-  LOG: 'log!',
-  LOG_STRING: 'log-string!',
-  LOG_CHAR: 'log-char!',
-  CLEAR_CONSOLE: 'clear!'
 }
 
 export const TYPES = {
