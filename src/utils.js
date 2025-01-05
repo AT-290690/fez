@@ -435,16 +435,15 @@ export const debug = (ast) => {
       error.message.includes('Maximum call stack size exceeded') ||
       error.message.includes('too much recursion')
     if (!isMaxCallStack) {
-      error.message += `\n${callStack.reverse().map((x, i) => `${Array(i + 2).join('.')}(${x})`).join('\n')}`
+      error.message += `\n${callStack
+        .reverse()
+        .map((x, i) => `${Array(i + 2).join('.')}(${x})`)
+        .join('\n')}`
       throw error
     } else logError(error.message)
   }
   const block = ast[1][1]
   const temp = block.shift()
-  block.unshift(
-    temp,
-    identity(DEBUG.LOG),
-    identity(DEBUG.ASSERT)
-  )
+  block.unshift(temp, identity(DEBUG.LOG), identity(DEBUG.ASSERT))
   return compile(ast)
 }
