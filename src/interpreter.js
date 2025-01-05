@@ -758,7 +758,7 @@ export const keywords = {
             name ? ` ${name}` : ''
           }) are provided (expects ${params.length} but got ${
             props.length
-          })\n\n(${KEYWORDS.ANONYMOUS_FUNCTION} ${stringifyArgs(params)})`
+          })\n\n${name ? `(${name} ${stringifyArgs(params)})` : `(${KEYWORDS.ANONYMOUS_FUNCTION} ${stringifyArgs(params)})`}`
         )
       const localEnv = Object.create(env)
       // localEnv[KEYWORDS.BLOCK] = block[KEYWORDS.BLOCK]

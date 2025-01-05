@@ -437,7 +437,7 @@ export const debug = (ast) => {
     if (!isMaxCallStack) {
       error.message += `\n${callStack
         .reverse()
-        .map((x, i) => `${Array(i + 2).join('.')}(${x})`)
+        .map((x, i) => `\x1b[33m${Array(i + 2).join('.')}\x1b[31m(${x} \x1b[39m...\x1b[31m)`)
         .join('\n')}`
       throw error
     } else logError(error.message)
