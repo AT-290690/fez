@@ -8,6 +8,12 @@ const interpred = (source) => evaluate(parse(source))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      interpred(
+        `(array (math:ceil 0) (math:ceil 0.4) (math:ceil 12) (math:ceil 12.5))`
+      ),
+      [0, 1, 12, 13]
+    )
+    deepStrictEqual(
       evalJS(
         `[(math:max-sub-array-sum [-2 1 -3 4 -1 2 1 -5 4]) (math:max-sub-array-sum [2 3 -8 7 -1 2 3])]`
       ),
