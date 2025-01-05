@@ -93,7 +93,9 @@ fn main() {
                  -> Evaluated {
                     match evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs)) {
                         Evaluated::Vector(arr) => {
-                            let chars: Vec<char> = arr.borrow().iter()
+                            let chars: Vec<char> = arr
+                                .borrow()
+                                .iter()
                                 .filter_map(|code| {
                                     if let Evaluated::Number(num) = code {
                                         std::char::from_u32(*num as u32)
@@ -104,7 +106,7 @@ fn main() {
                                 .collect();
                             let error_message: String = chars.iter().collect();
                             panic!("{}", error_message);
-                        },
+                        }
                         _ => panic!("First argument must be an array of char codes"),
                     }
                 },

@@ -774,7 +774,8 @@ export const keywords = {
           writable: true
         })
       }
-      if (name && Array.isArray(env[DEBUG.CALLSTACK])) env[DEBUG.CALLSTACK].push(name)
+      if (name && Array.isArray(env[DEBUG.CALLSTACK]))
+        env[DEBUG.CALLSTACK].push(name)
       return evaluate(body, localEnv)
     }
   },
