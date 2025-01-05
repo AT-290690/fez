@@ -387,22 +387,6 @@ export const debug = (ast) => {
         } else console.log(expression)
         return expression
       },
-      [DEBUG.ERROR]: (args, env) => {
-        if (args.length !== 1)
-          throw new RangeError(
-            `Invalid number of arguments to (${DEBUG.ERROR}) (= 1 required) (${
-              DEBUG.ERROR
-            } ${stringifyArgs(args)})`
-          )
-        const expression = evaluate(args[0], env)
-        if (!Array.isArray(expression))
-          throw new TypeError(
-            `Argument of (${DEBUG.ERROR}) must be an (${
-              DEBUG.ARRAY_TYPE
-            }) but got (${expression}) (${DEBUG.ERROR} ${stringifyArgs(args)})`
-          )
-        throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
-      },
       [DEBUG.ASSERT]: (args, env) => {
         if (args.length < 2)
           throw new RangeError(
@@ -432,12 +416,12 @@ export const debug = (ast) => {
             )
           if (condition) {
             const error = args[i + 1]
-            if (error[0][TYPE] === APPLY && error[0][VALUE] === DEBUG.ERROR)
+            if (error[0][TYPE] === APPLY && error[0][VALUE] === KEYWORDS.ERROR)
               return evaluate(error, env)
             else
               throw new TypeError(
                 `Concequence of (${DEBUG.ASSERT}) must be (${
-                  DEBUG.ERROR
+                  KEYWORDS.ERROR
                 }) but got (${DEBUG.ASSERT} ${stringifyArgs(args)})`
               )
           }
@@ -460,7 +444,6 @@ export const debug = (ast) => {
   block.unshift(
     temp,
     identity(DEBUG.LOG),
-    identity(DEBUG.ERROR),
     identity(DEBUG.ASSERT)
   )
   return compile(ast)

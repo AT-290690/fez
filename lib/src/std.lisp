@@ -172,7 +172,7 @@
 (let math:square (lambda x (* x x)))
 (let math:power (lambda base exp
   (if (< exp 0)
-      (if (= base 0) ()
+      (if (= base 0) (throw "(= base 0) is invalid")
       (/ (* base (math:power base (- (* exp -1) 1)))))
         (cond
             (= exp 0) 1
@@ -706,7 +706,7 @@
     (= d 7) char:7
     (= d 8) char:8
     (= d 9) char:9 
-    (*) ())))
+    (*) (throw (array:append! "Expected a digit but got " d)))))
 (let from:char->digit (lambda c 
   (cond 
     (= c char:0) 0
@@ -719,7 +719,7 @@
     (= c char:7) 7 
     (= c char:8) 8 
     (= c char:9) 9
-    (*) ())))
+    (*) (throw (array:append! "Expected a character digit but got " c)))))
 (let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
 (let from:chars->positive-or-negative-digits (lambda chars (do
     (let current-sign (var:def 1))

@@ -46,6 +46,13 @@ const keywords = {
       : args.length === 3
       ? evaluate(args[2], env)
       : FALSE,
+  ['throw']: (args, env) => {
+    throw new Error(
+      evaluate(args[0], env)
+        .map((x) => String.fromCharCode(x))
+        .join('')
+    )
+  },
   ['set!']: (args, env) => {
     const array = evaluate(args[0], env)
     if (args.length === 1) array.pop()

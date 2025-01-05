@@ -116,5 +116,5 @@ console.log(compile(parse("(|> [1 2 3 4] (array:map math:square) (math:summation
 ; Build-in all keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...) (>>> ...)
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
-(length ...) (do ...) (array ...) (set! ...) (get ...) (lambda ...) (apply ...)
+(length ...) (do ...) (array ...) (set! ...) (get ...) (lambda ...) (apply ...) (throw ...)
 ```
