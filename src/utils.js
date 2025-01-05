@@ -309,14 +309,14 @@ export const parse = (source) =>
   )
 
 const identity = (name) => [
-    [0, 'let'],
-    [1, name],
-    [
-      [0, 'lambda'],
-      [1, 'x'],
-      [1, 'x']
-    ]
+  [0, 'let'],
+  [1, name],
+  [
+    [0, 'lambda'],
+    [1, 'x'],
+    [1, 'x']
   ]
+]
 export const callStack = [KEYWORDS.CALL_FUNCTION]
 export const debug = (ast) => {
   callStack.length = 0

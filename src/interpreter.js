@@ -724,7 +724,9 @@ export const keywords = {
       throw new TypeError(
         `Last argument of (${KEYWORDS.CALL_FUNCTION}) must be a (${
           KEYWORDS.ANONYMOUS_FUNCTION
-        }) but got ${LISP.stringify(apply)}\n\nat:\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
+        }) but got ${LISP.stringify(apply)}\n\nat:\n(${
+          KEYWORDS.CALL_FUNCTION
+        } ${stringifyArgs(args)})`
       )
 
     return apply(args.slice(0, -1), env)

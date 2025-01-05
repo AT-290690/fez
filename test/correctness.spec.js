@@ -2,12 +2,17 @@ import { deepStrictEqual, strictEqual } from 'assert'
 import { compile, parse, evaluate } from '../index.js'
 
 const evalJS = (source) => new Function(`return ${compile(parse(source))}`)()
-const interpred = (source) => evaluate(parse(source)) 
+const interpred = (source) => evaluate(parse(source))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 
 describe('Corretness', () => {
   it('Should be correct', () => {
-    deepStrictEqual(evalJS(`[(math:max-sub-array-sum [-2 1 -3 4 -1 2 1 -5 4]) (math:max-sub-array-sum [2 3 -8 7 -1 2 3])]`), [6, 11])
+    deepStrictEqual(
+      evalJS(
+        `[(math:max-sub-array-sum [-2 1 -3 4 -1 2 1 -5 4]) (math:max-sub-array-sum [2 3 -8 7 -1 2 3])]`
+      ),
+      [6, 11]
+    )
     deepStrictEqual(
       evalJS(`(let input "
 #####

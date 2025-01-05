@@ -1,7 +1,7 @@
 import { deepStrictEqual } from 'assert'
 import { compile, parse, evaluate } from '../index.js'
 const evalJS = (source) => new Function(`return ${compile(parse(source))}`)()
-const interpred = (source) => evaluate(parse(source)) 
+const interpred = (source) => evaluate(parse(source))
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
@@ -305,10 +305,5 @@ describe('Compilation & Interpretation', () => {
    (array:swap! 0 1)
    (math:permutations)
 )`
-    ].forEach((source) =>
-      deepStrictEqual(
-        interpred(source),
-        evalJS(source)
-      )
-    ))
+    ].forEach((source) => deepStrictEqual(interpred(source), evalJS(source))))
 })

@@ -148,9 +148,7 @@ bbrgwb")
     ].forEach((source) => {
       deepStrictEqual(
         evalJS(LISP.source(parse(source))),
-        evalJS(
-          AST.parse(AST.stringify(parse(source)))
-        )
+        evalJS(AST.parse(AST.stringify(parse(source))))
       )
     }))
 })
