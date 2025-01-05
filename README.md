@@ -84,7 +84,7 @@ debug(parse(`(log "Hello World!" "str")`)) // Hello World!
 
 ```js
 import { parse, debug } from 'fez-lisp'
-debug(parse(`(+ 1 (array 2))`)) // TypeError: Second arguments of (+) is not a (number) at: (+ 1 (array 2) scope: (apply)
+debug(parse(`(+ 1 (array 2))`)).error.message // TypeError: Second arguments of (+) is not a (number) at: (+ 1 (array 2) scope: (apply)
 ```
 
 ````js

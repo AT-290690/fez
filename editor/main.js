@@ -1,4 +1,5 @@
-import { fez } from '../src/utils.js'
+import { fez, result } from '../src/utils.js'
+import { parse, debug, compile } from '../index.js'
 const editor = ace.edit('editor')
 editor.setOptions({
   fontFamily: 'Fantastic',
@@ -90,13 +91,11 @@ document.addEventListener('keydown', (e) => {
     const value = editor.getValue()
     if (value.trim()) {
       const compressed = LZString.compressToBase64(editor.getValue())
-      terminal.setValue(
-        serialise(
-          fez(editor.getValue(), {
-            mutation: 1
-          })
-        )
-      )
+      const {
+        evaluated,
+        error: { message }
+      } = debug(parse(editor.getValue()))
+      terminal.setValue(evaluated ?? message)
       terminal.clearSelection()
       const newurl =
         window.location.protocol +
@@ -115,16 +114,7 @@ document.addEventListener('keydown', (e) => {
     e.stopPropagation()
     const value = editor.getValue()
     if (value.trim()) {
-      terminal.setValue(
-        serialise(
-          eval(
-            fez(editor.getValue(), {
-              compile: 1,
-              mutation: 1
-            })
-          )
-        )
-      )
+      terminal.setValue(serialise(compile(parse(editor.getValue()))))
       terminal.clearSelection()
     }
   }

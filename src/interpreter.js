@@ -6,10 +6,11 @@ import {
   FALSE,
   TRUE,
   TYPES,
-  RUNTIME_TYPES
+  RUNTIME_TYPES,
+  DEBUG
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
-import { callStack, isForbiddenVariableName, stringifyArgs } from './utils.js'
+import { isForbiddenVariableName, stringifyArgs } from './utils.js'
 import { LISP } from './parser.js'
 export const keywords = {
   [KEYWORDS.ADDITION]: (args, env) => {
@@ -773,7 +774,7 @@ export const keywords = {
           writable: true
         })
       }
-      if (name) callStack.push(name)
+      if (name && Array.isArray(env[DEBUG.CALLSTACK])) env[DEBUG.CALLSTACK].push(name)
       return evaluate(body, localEnv)
     }
   },

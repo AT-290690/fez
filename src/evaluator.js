@@ -2,6 +2,7 @@ import { keywords } from './interpreter.js'
 import {
   APPLY,
   ATOM,
+  DEBUG,
   KEYWORDS,
   SPECIAL_FORMS_SET,
   TYPE,
@@ -9,7 +10,7 @@ import {
   WORD
 } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { callStack, stringifyArgs } from './utils.js'
+import { stringifyArgs } from './utils.js'
 export const evaluate = (exp, env = keywords) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
@@ -33,7 +34,8 @@ export const evaluate = (exp, env = keywords) => {
         )
       const isSpecial = SPECIAL_FORMS_SET.has(value)
       const result = apply(rest, env, value)
-      if (!isSpecial) callStack.pop()
+      if (!isSpecial && Array.isArray(env[DEBUG.CALLSTACK]))
+        env[DEBUG.CALLSTACK].pop()
       return result
     }
     case ATOM:

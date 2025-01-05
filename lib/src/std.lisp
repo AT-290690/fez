@@ -589,7 +589,7 @@
         (array:push! a (array x))) a))
       ())))
 (let array:ranges (lambda xs predicate? (array:sliding-window (array:enumerated-fold xs (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
-(let array:chunks (lambda xs predicate?(|> xs (array:ranges predicate?) (array:map (lambda [start end .] (array:exclude (array:slice xs start end) predicate?))))))
+(let array:chunks (lambda xs predicate? (|> xs (array:ranges predicate?) (array:map (lambda [start end .] (array:exclude (array:slice xs start end) predicate?))))))
 (let array:adjacent-find (lambda xs callback (do
   (let len (length xs))
   (if (not (= len 1)) (apply (lambda (do
