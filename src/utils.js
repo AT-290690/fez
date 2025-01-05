@@ -317,10 +317,10 @@ const identity = (name) => [
     [1, 'x']
   ]
 ]
-export const callStack = [KEYWORDS.CALL_FUNCTION]
+export const callStack = [KEYWORDS.BLOCK]
 export const debug = (ast) => {
   callStack.length = 0
-  callStack.push(KEYWORDS.CALL_FUNCTION)
+  callStack.push(KEYWORDS.BLOCK)
   try {
     const debugEnv = {
       ...keywords,
@@ -451,7 +451,7 @@ export const debug = (ast) => {
       error.message.includes('Maximum call stack size exceeded') ||
       error.message.includes('too much recursion')
     if (!isMaxCallStack) {
-      error.message += `\n\nscope:\n(${callStack.at(-1)})`
+      error.message += `\n${callStack.reverse().map((x, i) => `${Array(i + 2).join('.')}(${x})`).join('\n')}`
       throw error
     } else logError(error.message)
   }

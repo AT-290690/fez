@@ -666,7 +666,7 @@ export const keywords = {
       )
     else if (isForbiddenVariableName(name))
       throw new ReferenceError(
-        `Variable name ${name} is forbidden at\n\nat:\n(${
+        `Variable name ${name} is forbidden \n\nat:\n(${
           KEYWORDS.DEFINE_VARIABLE
         } ${stringifyArgs(args)})`
       )
