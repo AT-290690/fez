@@ -9,7 +9,7 @@ import {
   RUNTIME_TYPES
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
-import { isForbiddenVariableName, stringifyArgs } from './utils.js'
+import { callStack, isForbiddenVariableName, stringifyArgs } from './utils.js'
 import { LISP } from './parser.js'
 export const keywords = {
   [KEYWORDS.ADDITION]: (args, env) => {
@@ -697,7 +697,7 @@ export const keywords = {
           writable: true
         })
       }
-      if (name) evaluate.stack.push(name)
+      if (name) callStack.push(name)
       return evaluate(body, localEnv)
     }
   },
@@ -724,7 +724,7 @@ export const keywords = {
       throw new TypeError(
         `Last argument of (${KEYWORDS.CALL_FUNCTION}) must be a (${
           KEYWORDS.ANONYMOUS_FUNCTION
-        })\n\nat:\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
+        }) but got ${LISP.stringify(apply)}\n\nat:\n(${KEYWORDS.CALL_FUNCTION} ${stringifyArgs(args)})`
       )
 
     return apply(args.slice(0, -1), env)

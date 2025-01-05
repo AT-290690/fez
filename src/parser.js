@@ -30,6 +30,8 @@ export const LISP = {
   },
   stringify: (array) => {
     if (array == undefined) return '()'
+    else if (typeof array === 'function') return '(lambda)'
+    else if (typeof array === 'boolean') return +array
     else if (typeof array === 'object')
       if (Array.isArray(array))
         return array.length
@@ -39,8 +41,6 @@ export const LISP = {
         return `(array ${array
           .map(([key, value]) => `("${key}" ${LISP.stringify(value)})`)
           .join(' ')})`
-    else if (typeof array === 'function') return '()'
-    else if (typeof array === 'boolean') return +array
     else return array
   },
   source: (ast) => {

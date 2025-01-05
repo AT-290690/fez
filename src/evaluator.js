@@ -9,13 +9,7 @@ import {
   WORD
 } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { stringifyArgs } from './utils.js'
-export const DEFAULT_MAXIMUM_FUNCTION_CALLS = 262144
-export const MAXIMUM_FUNCTION_CALLS = process.env.FEZ_MAXIMUM_FUNCTION_CALLS
-  ? +process.env.FEZ_MAXIMUM_FUNCTION_CALLS
-  : DEFAULT_MAXIMUM_FUNCTION_CALLS
-export const MAXUMUM_FUNCTION_CALLS_ERROR =
-  'Maximum function invocation limit exceeded'
+import { callStack, stringifyArgs } from './utils.js'
 export const evaluate = (exp, env = keywords) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
@@ -38,15 +32,8 @@ export const evaluate = (exp, env = keywords) => {
           `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
         )
       const isSpecial = SPECIAL_FORMS_SET.has(value)
-      if (!isSpecial) {
-        evaluate.count += 1
-        if (evaluate.count > MAXIMUM_FUNCTION_CALLS) {
-          evaluate.count = 0
-          throw new RangeError(MAXUMUM_FUNCTION_CALLS_ERROR)
-        }
-      }
       const result = apply(rest, env, value)
-      if (!isSpecial) evaluate.stack.pop()
+      if (!isSpecial) callStack.pop()
       return result
     }
     case ATOM:
@@ -57,5 +44,4 @@ export const evaluate = (exp, env = keywords) => {
       )
   }
 }
-evaluate.stack = [KEYWORDS.CALL_FUNCTION]
-evaluate.count = 0
+

@@ -41,6 +41,3 @@
       (= pattern ast:apply) (apply rest env (map:get env (get first ast:value)))
       (= pattern ast:atom) (get first ast:value)
       (*) ())) ()))))
-
-; (let run (lambda source (apply (map:get keywords "do") (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) keywords)))
-

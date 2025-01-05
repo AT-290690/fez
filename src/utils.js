@@ -12,7 +12,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { evaluate, MAXUMUM_FUNCTION_CALLS_ERROR } from './evaluator.js'
+import { evaluate } from './evaluator.js'
 import { AST, isLeaf, LISP } from './parser.js'
 import {
   deSuggarAst,
@@ -307,7 +307,20 @@ export const parse = (source) =>
       std
     )
   )
+
+const identity = (name) => [
+    [0, 'let'],
+    [1, name],
+    [
+      [0, 'lambda'],
+      [1, 'x'],
+      [1, 'x']
+    ]
+  ]
+export const callStack = [KEYWORDS.CALL_FUNCTION]
 export const debug = (ast) => {
+  callStack.length = 0
+  callStack.push(KEYWORDS.CALL_FUNCTION)
   try {
     const debugEnv = {
       ...keywords,
@@ -437,20 +450,11 @@ export const debug = (ast) => {
     const isMaxCallStack =
       error.message.includes('Maximum call stack size exceeded') ||
       error.message.includes('too much recursion')
-    if (!isMaxCallStack && error.message !== MAXUMUM_FUNCTION_CALLS_ERROR) {
-      error.message += `\n\nscope:\n(${evaluate.stack.at(-1)})`
+    if (!isMaxCallStack) {
+      error.message += `\n\nscope:\n(${callStack.at(-1)})`
       throw error
     } else logError(error.message)
   }
-  const identity = (name) => [
-    [0, 'let'],
-    [1, name],
-    [
-      [0, 'lambda'],
-      [1, 'x'],
-      [1, 'x']
-    ]
-  ]
   const block = ast[1][1]
   const temp = block.shift()
   block.unshift(

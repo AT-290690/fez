@@ -5,6 +5,22 @@ const interpred = (source) => evaluate(parse(source))
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(lisp:eval "
+(let char:0 48)
+(let char:1 49)
+(let char:2 50)
+(let char:3 51)
+(let char:4 52)
+(let char:5 53)
+(let char:6 54)
+(let char:7 55)
+(let char:8 56)
+(let char:9 57)
+(let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
+
+(array (char:digit? 1) (char:digit? 48))
+
+")`,
       `(let fn (lambda {a b c d e f g . R} (+ a b c d e f g (math:list-product R))))
     
 (let A (lambda [a b .] (+ a b)))

@@ -116,7 +116,7 @@ const Helpers = {
   length: 'length=(arr)=>arr.length',
   __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
   atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,
-  lambda_predicate: `lambda_predicate=(fm)=>+(typeof fn==='function')`,
+  lambda_predicate: `lambda_predicate=(fn)=>+(typeof fn==='function')`,
   set_effect: `set_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array}`
 }
 const semiColumnEdgeCases = new Set([
