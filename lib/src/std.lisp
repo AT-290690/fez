@@ -190,6 +190,7 @@
       (if (is-good-enough g x) g
           (recursive:math:sqrt (improve-guess g x) x))))
   (recursive:math:sqrt 1.0 x))))
+(let math:perfect-square? (lambda n (- (math:floor (math:sqrt n)) (math:floor (math:sqrt (- n 1))))))
 (let math:circumference (lambda radius (* math:pi (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (lambda n (- (^ n (>> n 31)) (>> n 31))))

@@ -750,6 +750,10 @@ export const keywords = {
     return env[name]
   },
   [KEYWORDS.ANONYMOUS_FUNCTION]: (args, env) => {
+    if (!args.length)
+      throw new RangeError(
+        `At lest one argument (the body) is required for (${KEYWORDS.ANONYMOUS_FUNCTION})`
+      )
     const params = args.slice(0, -1)
     const body = args.at(-1)
     return (props = [], scope, name) => {

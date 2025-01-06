@@ -9,6 +9,15 @@ describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
       interpred(
+        `[
+        (array:every? [1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361 400] math:perfect-square?)
+        (array:some? [2 3 5 6 7 8 10 11 12 13 14 15 17] math:perfect-square?)
+        ]`
+      ),
+      [1, 0]
+    )
+    deepStrictEqual(
+      interpred(
         `(array (math:ceil 0) (math:ceil 0.4) (math:ceil 12) (math:ceil 12.5))`
       ),
       [0, 1, 12, 13]
