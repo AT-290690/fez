@@ -1,4 +1,3 @@
-import { fez, result } from '../src/utils.js'
 import { parse, debug, compile } from '../index.js'
 const editor = ace.edit('editor')
 editor.setOptions({
@@ -91,11 +90,8 @@ document.addEventListener('keydown', (e) => {
     const value = editor.getValue()
     if (value.trim()) {
       const compressed = LZString.compressToBase64(editor.getValue())
-      const {
-        evaluated,
-        error: { message }
-      } = debug(parse(editor.getValue()))
-      terminal.setValue(evaluated ?? message)
+      const { evaluated, error } = debug(parse(editor.getValue()))
+      terminal.setValue(error == null ? serialise(evaluated) : error.message)
       terminal.clearSelection()
       const newurl =
         window.location.protocol +
@@ -114,7 +110,9 @@ document.addEventListener('keydown', (e) => {
     e.stopPropagation()
     const value = editor.getValue()
     if (value.trim()) {
-      terminal.setValue(serialise(compile(parse(editor.getValue()))))
+      terminal.setValue(
+        serialise(new Function(`return ${compile(parse(editor.getValue()))}`))
+      )
       terminal.clearSelection()
     }
   }

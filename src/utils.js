@@ -232,39 +232,6 @@ export const wrapInBlock = (ast) => [
 ]
 export const interpret = (ast, keywords) =>
   ast.reduce((_, x) => evaluate(x, keywords), 0)
-export const fez = (source, options = {}) => {
-  const env = { ...keywords }
-  try {
-    if (typeof source === 'string') {
-      source = deSuggarSource(source)
-      const valid = handleUnbalancedQuotes(
-        handleUnbalancedParens(removeNoCode(source))
-      )
-      const code = !options.mutation ? removeMutation(valid) : valid
-      if (!code.length && options.throw) throw new Error('Nothing to parse!')
-      const parsed = LISP.parse(code)
-      const scope = deSuggarAst(parsed)
-      const ast = wrapInBlock(shake(scope, std))
-      // if (options.check) typeCheck(ast)
-      if (options.compile) return compile(ast)
-      return evaluate(ast, env)
-    } else if (Array.isArray(source)) {
-      const ast = !options.mutation
-        ? AST.parse(AST.stringify(source).replace(new RegExp(/!/g), 'ǃ'))
-        : source
-      if (options.compile) return compile(ast)
-      return evaluate(ast, env)
-    } else {
-      throw new Error('Source has to be either a lisp source code or an AST')
-    }
-  } catch (error) {
-    const err = error.message.replace("'[object Array]'", '(array)')
-    // .replace('object', '(array)')
-    logError(err)
-    if (options.throw) throw err
-    return err
-  }
-}
 export const shake = (parsed, std) => treeShake(parsed, std).concat(parsed)
 export const tree = (source, std) =>
   std
