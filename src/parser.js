@@ -1,6 +1,7 @@
 import { APPLY, ATOM, TYPE, WORD, VALUE } from './keywords.js'
 export const leaf = (type, value) => [type, value]
 export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
+export const toPair = (exp) => []
 export const LISP = {
   parse: (source) => {
     const tree = []
@@ -46,17 +47,23 @@ export const LISP = {
   source: (ast) => {
     const dfs = (exp) => {
       let out = ''
-      const [first, ...rest] = isLeaf(exp) ? [exp] : exp
-      if (first == undefined) return (out += '()')
-      switch (first[TYPE]) {
+      let head, tail
+      if (isLeaf(exp)) head = exp
+      else {
+        head = exp[0]
+        if (head == undefined) return []
+        tail = exp.slice(1)
+      }
+      if (head == undefined) return (out += '()')
+      switch (head[TYPE]) {
         case WORD:
-          out += first[VALUE]
+          out += head[VALUE]
           break
         case ATOM:
-          out += first[VALUE]
+          out += head[VALUE]
           break
         case APPLY:
-          out += `(${first[VALUE]} ${rest.map(dfs).join(' ')})`
+          out += `(${head[VALUE]} ${tail.map(dfs).join(' ')})`
           break
       }
       return out
@@ -108,25 +115,31 @@ export const AST = {
   struct: (ast) => {
     const dfs = (exp) => {
       let out = ''
-      const [first, ...rest] = isLeaf(exp) ? [exp] : exp
-      if (first == undefined)
+      let head, tail
+      if (isLeaf(exp)) head = exp
+      else {
+        head = exp[0]
+        if (head == undefined) return []
+        tail = exp.slice(1)
+      }
+      if (head == undefined)
         return (out +=
           '(Expression::Apply(vec![Expression::Word("array".to_string())]))')
-      switch (first[TYPE]) {
+      switch (head[TYPE]) {
         case WORD:
-          out += `Expression::Word("${first[VALUE]}".to_string())`
+          out += `Expression::Word("${head[VALUE]}".to_string())`
           break
         case ATOM:
           out += `Expression::Atom(${
-            Number.isInteger(first[VALUE])
-              ? `${first[VALUE]}.0`
-              : first[VALUE].toString()
+            Number.isInteger(head[VALUE])
+              ? `${head[VALUE]}.0`
+              : head[VALUE].toString()
           })`
           break
         case APPLY:
           out += `Expression::Apply(vec![Expression::Word("${
-            first[VALUE]
-          }".to_string()),${rest.map(dfs).join(',')}])`
+            head[VALUE]
+          }".to_string()),${tail.map(dfs).join(',')}])`
           break
       }
       return out

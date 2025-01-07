@@ -5,7 +5,7 @@
   "array" (lambda args env (array:map args (lambda arg (evaluate arg env))))
   "length" (lambda args env (length (evaluate (get args 0) env)))
   "get" (lambda args env (get (evaluate (get args 0) env) (evaluate (get args 1) env)))
-  "set!" (lambda args env (if (= (length args 3)) (set! (evaluate (get args 0) env) (evaluate (get args 1) env) (evaluate (get args 2) env)) (set! (evaluate (get args 0)))))
+  "set!" (lambda args env (if (= (length args) 3) (set! (evaluate (get args 0) env) (evaluate (get args 1) env) (evaluate (get args 2) env)) (set! (evaluate (get args 0)))))
   "=" (lambda args env (= (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "+" (lambda args env (+ (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "-" (lambda args env (if (= (length args) 1) (- (evaluate (get args 0) env)) (- (evaluate (get args 0) env) (evaluate (get args 1) env))))
@@ -34,13 +34,13 @@
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
   (if (array:not-empty? expression) (do 
-    (let first (array:head expression))
-    (let rest (array:tail expression))
-    (let pattern (get first ast:type))
+    (let head (array:head expression))
+    (let tail (array:tail expression))
+    (let pattern (get head ast:type))
     (cond 
-      (= pattern ast:word) (map:get env (get first ast:value))
-      (= pattern ast:apply) (apply rest env (map:get env (get first ast:value)))
-      (= pattern ast:atom) (get first ast:value)
+      (= pattern ast:word) (map:get env (get head ast:value))
+      (= pattern ast:apply) (apply tail env (map:get env (get head ast:value)))
+      (= pattern ast:atom) (get head ast:value)
       (*) ())) ()))))
      
 ; (apply (from:chars->ast "(let add (lambda a b (+ a b))) (add 1 2)") keywords (map:get keywords "do"))

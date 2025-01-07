@@ -141,32 +141,37 @@ const semiColumnEdgeCases = new Set([
   ';]',
   ';^'
 ])
-const parse = (Arguments, Drill) => Arguments.map((x) => comp(x, Drill))
-const parseArgs = (Arguments, Drill, separator = ',') =>
-  parse(Arguments, Drill).join(separator)
+const parse = (tail, Drill) => tail.map((x) => comp(x, Drill))
+const parseArgs = (tail, Drill, separator = ',') =>
+  parse(tail, Drill).join(separator)
 const comp = (tree, Drill) => {
   if (!tree) return ''
-  const [first, ...Arguments] = !isLeaf(tree) ? tree : [tree]
-  if (first == undefined) return '[];'
-  const token = first[VALUE]
-  if (first[TYPE] === APPLY) {
+  let head, tail
+  if (isLeaf(tree)) head = tree
+  else {
+    head = tree[0]
+    if (head == undefined) return '[];'
+
+    tail = tree.slice(1)
+  }
+  const token = head[VALUE]
+  if (head[TYPE] === APPLY) {
     switch (token) {
       case KEYWORDS.BLOCK: {
-        if (Arguments.length > 1) {
-          return `(${Arguments.map((x) =>
-            (comp(x, Drill) ?? '').toString().trim()
-          )
+        if (tail.length > 1) {
+          return `(${tail
+            .map((x) => (comp(x, Drill) ?? '').toString().trim())
             .filter((x) => x !== undefined)
             .join(',')});`
         } else {
-          const res = comp(Arguments[0], Drill)
+          const res = comp(tail[0], Drill)
           return res !== undefined ? res.toString().trim() : ''
         }
       }
       case KEYWORDS.CALL_FUNCTION: {
-        const first = Arguments.pop()
-        const rest = Arguments
-        const apply = comp(first, Drill)
+        const head = tail.pop()
+        const rest = tail
+        const apply = comp(head, Drill)
         return `${
           apply[apply.length - 1] === ';'
             ? apply.substring(0, apply.length - 1)
@@ -174,7 +179,7 @@ const comp = (tree, Drill) => {
         }(${parseArgs(rest, Drill)})`
       }
       case KEYWORDS.DEFINE_VARIABLE: {
-        const n = Arguments[0][VALUE]
+        const n = tail[0][VALUE]
         const prefix = n.split(':')[0]
         if (prefix === OPTIMIZATIONS.RECURSION) {
           const name = lispToJavaScriptVariableName(n)
@@ -185,7 +190,7 @@ const comp = (tree, Drill) => {
           Drill.Variables.add(name)
           Drill.Variables.add(newName)
           Drill.Helpers.add('__tco')
-          const functionArgs = Arguments.at(-1).slice(1)
+          const functionArgs = tail.at(-1).slice(1)
           const body = functionArgs.pop()
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
           deepRename(n, `()=>${newName}`, body)
@@ -204,7 +209,7 @@ const comp = (tree, Drill) => {
           const name = lispToJavaScriptVariableName(n)
           const newName = name.substring(OPTIMIZATIONS.CACHE.length + 1)
           Drill.Variables.add(name)
-          const functionArgs = Arguments.at(-1).slice(1)
+          const functionArgs = tail.at(-1).slice(1)
           const body = functionArgs.pop()
           deepRename(n, newName, body)
           const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
@@ -221,29 +226,26 @@ const comp = (tree, Drill) => {
         } else {
           const name = lispToJavaScriptVariableName(n)
           Drill.Variables.add(name)
-          return `${name}=${comp(Arguments[1], Drill)};`
+          return `${name}=${comp(tail[1], Drill)};`
         }
       }
       case KEYWORDS.IS_ATOM:
         Drill.Helpers.add('atom_predicate')
-        return `atom_predicate(${comp(Arguments[0], Drill)});`
+        return `atom_predicate(${comp(tail[0], Drill)});`
       case KEYWORDS.IS_LAMBDA:
         Drill.Helpers.add('lambda_predicate')
-        return `lambda_predicate(${comp(Arguments[0], Drill)});`
+        return `lambda_predicate(${comp(tail[0], Drill)});`
       case KEYWORDS.CREATE_ARRAY:
-        return `[${parseArgs(Arguments, Drill)}];`
+        return `[${parseArgs(tail, Drill)}];`
       case KEYWORDS.ARRAY_LENGTH:
         Drill.Helpers.add('length')
-        return `length(${comp(Arguments[0], Drill)})`
+        return `length(${comp(tail[0], Drill)})`
       case KEYWORDS.GET_ARRAY:
         Drill.Helpers.add('get')
-        return `get(${comp(Arguments[0], Drill)}, ${comp(
-          Arguments[1],
-          Drill
-        )});`
+        return `get(${comp(tail[0], Drill)}, ${comp(tail[1], Drill)});`
       case KEYWORDS.ANONYMOUS_FUNCTION: {
-        const functionArgs = Arguments
-        const body = Arguments.pop()
+        const functionArgs = tail
+        const body = tail.pop()
         const InnerDrills = { Variables: new Set(), Helpers: Drill.Helpers }
         const evaluatedBody = comp(body, InnerDrills)
         const vars = InnerDrills.Variables.size
@@ -263,61 +265,61 @@ const comp = (tree, Drill) => {
           .trim()}});`
       }
       case KEYWORDS.AND:
-        return `((${parseArgs(Arguments, Drill, '&&')}) ? 1 : 0);`
+        return `((${parseArgs(tail, Drill, '&&')}) ? 1 : 0);`
       case KEYWORDS.OR:
-        return `((${parseArgs(Arguments, Drill, '||')}) ? 1 : 0);`
+        return `((${parseArgs(tail, Drill, '||')}) ? 1 : 0);`
       case KEYWORDS.EQUAL:
-        return `+(${parseArgs(Arguments, Drill, '===')});`
+        return `+(${parseArgs(tail, Drill, '===')});`
       case KEYWORDS.GREATHER_THAN_OR_EQUAL:
       case KEYWORDS.LESS_THAN_OR_EQUAL:
       case KEYWORDS.GREATHER_THAN:
       case KEYWORDS.LESS_THAN:
-        return `+(${parseArgs(Arguments, Drill, token)});`
+        return `+(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.SUBTRACTION:
-        return Arguments.length === 1
-          ? `(-${comp(Arguments[0], Drill)});`
-          : `(${parse(Arguments, Drill)
+        return tail.length === 1
+          ? `(-${comp(tail[0], Drill)});`
+          : `(${parse(tail, Drill)
               // Add space so it doesn't consider it 2--1 but 2- -1
               .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
               .join(token)});`
       case KEYWORDS.MULTIPLICATION:
-        return `(${parseArgs(Arguments, Drill, token)});`
+        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.DIVISION:
-        return `(${parseArgs(Arguments, Drill, token)});`
+        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.ADDITION:
-        return `(${parseArgs(Arguments, Drill, token)});`
+        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.BITWISE_AND:
       case KEYWORDS.BITWISE_OR:
       case KEYWORDS.BITWISE_XOR:
       case KEYWORDS.BITWISE_LEFT_SHIFT:
       case KEYWORDS.BITWISE_RIGHT_SHIFT:
       case KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT:
-        return `(${parseArgs(Arguments, Drill, token)});`
+        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.REMAINDER_OF_DIVISION:
-        return `(${comp(Arguments[0], Drill)}%${comp(Arguments[1], Drill)});`
+        return `(${comp(tail[0], Drill)}%${comp(tail[1], Drill)});`
       case KEYWORDS.BIT_TYPE:
-        return `(${comp(Arguments[0], Drill)}>>>0).toString(2)`
+        return `(${comp(tail[0], Drill)}>>>0).toString(2)`
       case KEYWORDS.BITWISE_NOT:
-        return `~(${comp(Arguments[0], Drill)})`
+        return `~(${comp(tail[0], Drill)})`
       case KEYWORDS.NOT:
-        return `(+!${comp(Arguments[0], Drill)})`
+        return `(+!${comp(tail[0], Drill)})`
       case KEYWORDS.IF: {
-        return `(${comp(Arguments[0], Drill)}?${comp(Arguments[1], Drill)}:${
-          Arguments.length === 3 ? comp(Arguments[2], Drill) : 0
+        return `(${comp(tail[0], Drill)}?${comp(tail[1], Drill)}:${
+          tail.length === 3 ? comp(tail[2], Drill) : 0
         });`
       }
       case KEYWORDS.ERROR: {
         Drill.Helpers.add('__error')
-        return `__error(${compile(Arguments[0], Drill)})`
+        return `__error(${compile(tail[0], Drill)})`
       }
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
         if (camelCased in Helpers) Drill.Helpers.add(camelCased)
-        return `${camelCased}(${parseArgs(Arguments, Drill)});`
+        return `${camelCased}(${parseArgs(tail, Drill)});`
       }
     }
-  } else if (first[TYPE] === ATOM) return first[VALUE]
-  else if (first[TYPE] === WORD) {
+  } else if (head[TYPE] === ATOM) return head[VALUE]
+  else if (head[TYPE] === WORD) {
     const camelCased = lispToJavaScriptVariableName(token)
     if (camelCased in Helpers) Drill.Helpers.add(camelCased)
     return camelCased

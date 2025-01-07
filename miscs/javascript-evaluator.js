@@ -71,15 +71,15 @@ const keywords = {
 }
 const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
 const evaluate = (exp, env = keywords) => {
-  const [first, ...rest] = isLeaf(exp) ? [exp] : exp
-  if (first == undefined) return []
-  const type = first[TYPE]
-  const value = first[VALUE]
+  const [head, ...tail] = isLeaf(exp) ? [exp] : exp
+  if (head == undefined) return []
+  const type = head[TYPE]
+  const value = head[VALUE]
   switch (type) {
     case WORD:
       return env[value]
     case APPLY:
-      return env[value](rest, env)
+      return env[value](tail, env)
     case ATOM:
       return value
   }

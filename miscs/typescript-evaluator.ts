@@ -191,10 +191,10 @@
       return evaluate(args[1], env) === TRUE ? TRUE : FALSE
     },
     ['apply']: (args, env) => {
-      const first = args.pop()
-      if (first == undefined)
+      const head = args.pop()
+      if (head == undefined)
         throw new ReferenceError('Attemting to call undefined function')
-      const apply = evaluate(first, env)
+      const apply = evaluate(head, env)
       if (!isApply(apply)) throw new TypeError('Arg must b a function')
       return apply(args, env)
     },
@@ -277,9 +277,9 @@
     !Array.isArray(x) && (x === APPLY || x === ATOM || x === WORD)
   const isApply = (x: Results): x is Fn => typeof x === 'function'
   const evaluate = (exp: Expression[], env: Env): Results => {
-    const [first, ...rest] = isLeaf(exp) ? [exp] : exp
-    if (first == undefined) return []
-    const leaf = first
+    const [head, ...tail] = isLeaf(exp) ? [exp] : exp
+    if (head == undefined) return []
+    const leaf = head
     const type = leaf[TYPE]
     const value = leaf[VALUE]
     switch (type) {
@@ -292,7 +292,7 @@
         if (typeof value !== 'string') throw new TypeError('Incorrect type')
         const apply = env[value]
         if (isApply(apply)) {
-          return apply(rest as Expression[][], env)
+          return apply(tail as Expression[][], env)
         } else throw new TypeError('Apply is not a function')
       case AstEnum.Atom:
         if (typeof value !== 'number') throw new TypeError('Incorrect type')

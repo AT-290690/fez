@@ -7,6 +7,19 @@ const interpred = (source) => evaluate(parse(source))
 
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      interpred(`
+(let std:map "(let map (lambda xs callback (do (let recursive:map (lambda i out (if (> (length xs) i) (recursive:map (+ i 1) (set! out (length out) (callback (get xs i)))) out))) (recursive:map 0 (array)))))")
+(let std:fold "(let fold (lambda xs callback initial (do (let recursive:array:fold (lambda i out (if (> (length xs) i) (recursive:array:fold (+ i 1) (callback out (get xs i))) out))) (recursive:array:fold 0 initial))))")
+(let code "(fold (map (array 1 2 3 4 5) (lambda x (* x x))) (lambda a b (+ a b)) 0)")
+(let source (|>
+    [] 
+    (array:merge! std:map)
+    (array:merge! std:fold)
+    (array:merge code)))
+(apply (from:chars->ast source) keywords (map:get keywords "do"))`),
+      55
+    )
     deepStrictEqual(
       interpred(
         `[

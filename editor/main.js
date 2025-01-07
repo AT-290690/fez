@@ -89,17 +89,22 @@ document.addEventListener('keydown', (e) => {
     e.stopPropagation()
     const value = editor.getValue()
     if (value.trim()) {
-      const compressed = LZString.compressToBase64(editor.getValue())
-      const { evaluated, error } = debug(parse(editor.getValue()))
-      terminal.setValue(error == null ? serialise(evaluated) : error.message)
-      terminal.clearSelection()
-      const newurl =
-        window.location.protocol +
-        '//' +
-        window.location.host +
-        window.location.pathname +
-        `?l=${encodeURIComponent(compressed)}`
-      window.history.pushState({ path: newurl }, '', newurl)
+      try {
+        const compressed = LZString.compressToBase64(editor.getValue())
+        const { evaluated, error } = debug(parse(editor.getValue()))
+        terminal.setValue(error == null ? serialise(evaluated) : error.message)
+        terminal.clearSelection()
+        const newurl =
+          window.location.protocol +
+          '//' +
+          window.location.host +
+          window.location.pathname +
+          `?l=${encodeURIComponent(compressed)}`
+        window.history.pushState({ path: newurl }, '', newurl)
+      } catch (error) {
+        terminal.setValue(error.message)
+        terminal.clearSelection()
+      }
     }
   } else if (
     e.key.toLowerCase() === 's' &&

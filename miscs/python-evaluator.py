@@ -12,19 +12,19 @@ def evaluate(exp, env):
     if len(exp) == 0:
         return []
     if is_leaf(exp):
-        first = exp
-        rest = []
+        head = exp
+        tail = []
     else:
-        first = exp[0]
-        rest = exp[1:]
+        head = exp[0]
+        tail = exp[1:]
 
-    type_ = first[TYPE]
-    value = first[VALUE]
+    type_ = head[TYPE]
+    value = head[VALUE]
 
     if type_ == WORD:
         return env[value]
     elif type_ == APPLY:
-        return env[value](rest, env)
+        return env[value](tail, env)
     elif type_ == ATOM:
         return value
 

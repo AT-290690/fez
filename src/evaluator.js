@@ -12,10 +12,15 @@ import {
 import { isLeaf } from './parser.js'
 import { stringifyArgs } from './utils.js'
 export const evaluate = (exp, env = keywords) => {
-  const [first, ...rest] = isLeaf(exp) ? [exp] : exp
-  if (first == undefined) return []
-  const value = first[VALUE]
-  switch (first[TYPE]) {
+  let head, tail
+  if (isLeaf(exp)) head = exp
+  else {
+    head = exp[0]
+    if (head == undefined) return []
+    tail = exp.slice(1)
+  }
+  const value = head[VALUE]
+  switch (head[TYPE]) {
     case WORD: {
       const word = env[value]
       if (word == undefined)
@@ -33,7 +38,7 @@ export const evaluate = (exp, env = keywords) => {
           `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
         )
       const isSpecial = SPECIAL_FORMS_SET.has(value)
-      const result = apply(rest, env, value)
+      const result = apply(tail, env, value)
       if (!isSpecial && Array.isArray(env[DEBUG.CALLSTACK]))
         env[DEBUG.CALLSTACK].pop()
       return result
