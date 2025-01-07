@@ -1258,6 +1258,8 @@
 (let var:set-and-get! (lambda variable value (do (var:set! variable value) value)))
 (let var:increment! (lambda variable (set! variable 0 (+ (var:get variable) 1))))
 (let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
+(let var:increment-and-get! (lambda variable (do (set! variable 0 (+ (var:get variable) 1)) (var:get variable))))
+(let var:decrement-and-get! (lambda variable (do (set! variable 0 (- (var:get variable) 1)) (var:get variable))))
 
 (let bool:def (lambda val (array (truthy? val))))
 (let bool:get (lambda variable (get variable 0)))

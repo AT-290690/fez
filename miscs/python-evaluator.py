@@ -1,5 +1,3 @@
-from functools import reduce
-
 TYPE = 0
 VALUE = 1
 APPLY = 0
@@ -12,19 +10,19 @@ def evaluate(exp, env):
     if len(exp) == 0:
         return []
     if is_leaf(exp):
-        head = exp
-        tail = []
+        first = exp
+        rest = []
     else:
-        head = exp[0]
-        tail = exp[1:]
+        first = exp[0]
+        rest = exp[1:]
 
-    type_ = head[TYPE]
-    value = head[VALUE]
+    type_ = first[TYPE]
+    value = first[VALUE]
 
     if type_ == WORD:
         return env[value]
     elif type_ == APPLY:
-        return env[value](tail, env)
+        return env[value](rest, env)
     elif type_ == ATOM:
         return value
 
@@ -39,7 +37,7 @@ keywords = {
     '/': lambda args, env: evaluate(args[0], env) * evaluate(args[1], env),
     'array': lambda args, env: [evaluate(x, env) for x in args] if args else [],
     'get': lambda args, env: evaluate(args[0], env)[evaluate(args[1], env)],
-    'do': lambda args, env: reduce(lambda _, x: evaluate(x, env), args, FALSE),
+    'do': lambda args, env: do_block(args, env),
     'not': lambda args, env: int(not evaluate(args[0], env)),
     '=': lambda args, env: int(evaluate(args[0], env) == evaluate(args[1], env)),
     '<': lambda args, env: int(evaluate(args[0], env) < evaluate(args[1], env)),
@@ -51,7 +49,6 @@ keywords = {
     '&': lambda args, env: int(evaluate(args[0], env) & evaluate(args[1], env)),
     '^': lambda args, env: int(evaluate(args[0], env) ^ evaluate(args[1], env)),
     '>>': lambda args, env: int(evaluate(args[0], env) >> evaluate(args[1], env)),
-    '>>>': lambda args, env: int(evaluate(args[0], env) >> evaluate(args[1], env)),
     '<<': lambda args, env: int(evaluate(args[0], env) << evaluate(args[1], env)),
     'and': lambda args, env: FALSE if not evaluate(args[0], env) else evaluate(args[1], env),
     'or': lambda args, env: TRUE if evaluate(args[0], env) else evaluate(args[1], env),
@@ -85,6 +82,11 @@ def lambda_function(args, props, env, scope):
         local_env[params[i][VALUE]] = evaluate(props[i], scope)
     return evaluate(args[-1], local_env)
 
+def do_block(args, env):
+    out = FALSE 
+    for exp in args:
+        out = evaluate(exp, env)
+    return out
 
 # import json
 # print(evaluate(json.loads(

@@ -824,7 +824,9 @@ export const keywords = {
           KEYWORDS.BLOCK
         }) (>= 1 required)\n\n(${KEYWORDS.BLOCK} ${stringifyArgs(args)})`
       )
-    return args.reduce((_, x) => evaluate(x, env), FALSE)
+    let out = FALSE
+    for (const exp of args) out = evaluate(exp, env)
+    return out
   },
   [KEYWORDS.IS_ATOM]: (args, env) => {
     if (args.length !== 1)

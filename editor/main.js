@@ -115,9 +115,15 @@ document.addEventListener('keydown', (e) => {
     e.stopPropagation()
     const value = editor.getValue()
     if (value.trim()) {
-      terminal.setValue(
-        serialise(new Function(`return ${compile(parse(editor.getValue()))}`))
-      )
+      try {
+        terminal.setValue(
+          serialise(
+            new Function(`return ${compile(parse(editor.getValue()))}`)()
+          )
+        )
+      } catch (error) {
+        terminal.setValue(error.message)
+      }
       terminal.clearSelection()
     }
   }
