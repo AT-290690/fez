@@ -645,26 +645,6 @@ const iron = (scope) => {
     for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
   }
 }
-const iron2 = (scope, exp) => {
-  const key = AST.stringify(exp)
-  const indexes = new Set(
-    scope
-      .map((x, i) => (AST.stringify(x) === key ? i : -1))
-      .filter((x) => x !== -1)
-  )
-  console.log(indexes)
-  if (indexes.size) {
-    const copy = []
-    for (let i = 0; i < scope.length; ++i) {
-      if (indexes.has(i)) {
-        copy.push(...scope[i][0])
-      } else {
-        copy.push(scope[i])
-      }
-    }
-    for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
-  }
-}
 export const replaceQuotes = (source) =>
   source
     .replaceAll(/\[/g, `(${KEYWORDS.CREATE_ARRAY} `)

@@ -13,7 +13,7 @@ import {
   WORD
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
-import { AST, isLeaf, LISP } from './parser.js'
+import { isLeaf, LISP } from './parser.js'
 import {
   deSuggarAst,
   deSuggarSource,
@@ -259,6 +259,7 @@ export const ast = (source, deps) =>
   )
 
 export const astWithStd = (source) => wrapInBlock(shake(prep(source), std))
+export const unwrapped = (source) => shake(prep(source), std)
 export const parse = (source) =>
   wrapInBlock(
     shake(
@@ -284,28 +285,7 @@ const identity = (name) => [
     [1, 'x']
   ]
 ]
-// export const result = (ast) => {
-//   try {
-//     return { output: evaluate(ast, keywords), error: null }
-//   } catch (error) {
-//     const isMaxCallStack =
-//       error.message.includes('Maximum call stack size exceeded') ||
-//       error.message.includes('too much recursion')
-//     return {
-//       output: null,
-//       error: {
-//         stack: [...callStack],
-//         message: isMaxCallStack
-//           ? error
-//           : `${error}\n${callStack
-//               .reverse()
-//               .map((x, i) => `${Array(i + 2).join(' ')}(${x} ...)`)
-//               .join('\n')}`
-//       }
-//     }
-//   }
-// }
-export const debug = (ast) => {
+export const debug = (ast, onSuccess = compile) => {
   const debugEnv = {
     ...keywords,
     [DEBUG.CALLSTACK]: [KEYWORDS.BLOCK],
@@ -421,7 +401,7 @@ export const debug = (ast) => {
     block.unshift(temp, identity(DEBUG.LOG), identity(DEBUG.ASSERT))
     return {
       evaluated,
-      compiled: compile(ast),
+      compiled: onSuccess(ast),
       error: null
     }
   } catch (error) {

@@ -783,4 +783,7 @@ fn main() {
             )),
         );
     }
+
+    // let expr = Expression::Apply(vec![Expression::Word("apply".to_string()),Expression::Apply(vec![Expression::Word("lambda".to_string()),Expression::Apply(vec![Expression::Word("do".to_string()),Expression::Apply(vec![Expression::Word("let".to_string()),Expression::Word("add".to_string()),Expression::Apply(vec![Expression::Word("lambda".to_string()),Expression::Word("a".to_string()),Expression::Word("b".to_string()),Expression::Apply(vec![Expression::Word("+".to_string()),Expression::Word("a".to_string()),Expression::Word("b".to_string())])])]),Expression::Apply(vec![Expression::Word("add".to_string()),Expression::Atom(1.0),Expression::Atom(2.0)])])])]);
+    // println!("{:?}",evaluate(&expr, Rc::clone(&env), Rc::clone(&defs)));
 }

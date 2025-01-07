@@ -70,7 +70,7 @@ const keywords = {
   }
 }
 const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
-const evaluate = (exp, env) => {
+const evaluate = (exp, env = keywords) => {
   const [first, ...rest] = isLeaf(exp) ? [exp] : exp
   if (first == undefined) return []
   const type = first[TYPE]
@@ -84,3 +84,5 @@ const evaluate = (exp, env) => {
       return value
   }
 }
+
+// evaluate([[0,"apply"],[[0,"lambda"],[[0,"do"],[[0,"let"],[1,"add"],[[0,"lambda"],[1,"a"],[1,"b"],[[0,"+"],[1,"a"],[1,"b"]]]],[[0,"add"],[2,1],[2,2]]]]])
