@@ -201,9 +201,7 @@ const comp = (tree, Drill) => {
           return `(${name}=(__tco(${newName}=(${parseArgs(
             functionArgs,
             Drill
-          )})=>{${vars}return ${evaluatedBody
-            .toString()
-            .trim()}}, ${newName})));`
+          )})=>{${vars}return ${evaluatedBody.toString().trim()}})));`
         } else if (prefix === OPTIMIZATIONS.CACHE) {
           // memoization here
           const name = lispToJavaScriptVariableName(n)
