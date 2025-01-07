@@ -51,6 +51,7 @@ keywords = {
     '&': lambda args, env: int(evaluate(args[0], env) & evaluate(args[1], env)),
     '^': lambda args, env: int(evaluate(args[0], env) ^ evaluate(args[1], env)),
     '>>': lambda args, env: int(evaluate(args[0], env) >> evaluate(args[1], env)),
+    '>>>': lambda args, env: int(evaluate(args[0], env) >> evaluate(args[1], env)),
     '<<': lambda args, env: int(evaluate(args[0], env) << evaluate(args[1], env)),
     'and': lambda args, env: FALSE if not evaluate(args[0], env) else evaluate(args[1], env),
     'or': lambda args, env: TRUE if evaluate(args[0], env) else evaluate(args[1], env),
