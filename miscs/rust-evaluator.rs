@@ -85,6 +85,26 @@ fn main() {
     {
         let mut env_ref = env.borrow_mut();
         env_ref.vars.insert(
+            "loop".to_string(),
+            Evaluated::Function(Rc::new(
+                |args: Vec<Expression>,
+                 env: Rc<RefCell<Env>>,
+                 defs: Rc<RefCell<Env>>|
+                 -> Evaluated {
+                    let condition = evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
+                    match condition {
+                        Evaluated::Number(condition) => {
+                            while condition == 1.0 {
+                                evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
+                            }
+                        }
+                        _ => panic!("First argument must be a 1 or 0"),
+                    }
+                    return Evaluated::Number(0.0);
+                },
+            )),
+        );
+        env_ref.vars.insert(
             "throw".to_string(),
             Evaluated::Function(Rc::new(
                 |args: Vec<Expression>,

@@ -30,6 +30,7 @@ def is_leaf(exp):
     return exp[0] in (APPLY, ATOM, WORD)
 
 keywords = {
+    'loop': lambda args, env: loop(args, env),
     'mod': lambda args, env: evaluate(args[0], env) % evaluate(args[1], env),
     '+': lambda args, env: evaluate(args[0], env) + evaluate(args[1], env),
     '-': lambda args, env: -evaluate(args[0], env) if len(args) == 1 else evaluate(args[0], env) - evaluate(args[1], env),
@@ -53,7 +54,7 @@ keywords = {
     'and': lambda args, env: FALSE if not evaluate(args[0], env) else evaluate(args[1], env),
     'or': lambda args, env: TRUE if evaluate(args[0], env) else evaluate(args[1], env),
     'apply': lambda args, env: evaluate(args.pop(), env)(args, env),
-    'let': lambda args, env: (env.update({args[0][VALUE]: evaluate(args[1], env)})),
+    'let': lambda args, env: let(args,env),
     'if': lambda args, env: evaluate(args[1], env) if evaluate(args[0], env) else (evaluate(args[2], env) if len(args) == 3 else FALSE),
     'throw': lambda args, env: (_ for _ in ()).throw(Exception(''.join(chr(x) for x in evaluate(args[0], env)))),
     'atom?': lambda args, env: int(isinstance(evaluate(args[0], env), (int, float))),
@@ -87,6 +88,17 @@ def do_block(args, env):
     for exp in args:
         out = evaluate(exp, env)
     return out
+    
+def loop(args, env):
+    while evaluate(args[0], env):
+        evaluate(args[1], env)
+    return 0
+
+def let(args, env):
+    name = args[0][VALUE]
+    value = evaluate(args[1], env)
+    env.update({name: value})
+    return env[name]
 
 # import json
 # print(evaluate(json.loads(

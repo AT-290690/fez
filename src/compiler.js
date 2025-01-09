@@ -7,18 +7,15 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
+import { OPTIMIZATIONS } from './macros.js'
 import { leaf, isLeaf, AST } from './parser.js'
-export const OPTIMIZATIONS = {
-  RECURSION: 'recursive',
-  CACHE: 'memoized'
-}
 const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
     for (const leaf of tree) {
       // Figure out a non mutable solution so
       // I can get rid of deep clone AST.parse(AST.stringify(ast))
       if (leaf[VALUE] === name) leaf[VALUE] = newName
-      deepRename(name, newName, leaf)
+      else deepRename(name, newName, leaf)
     }
 }
 const earMuffsToLodashes = (name) => name.replace(new RegExp(/\*/g), '_')
@@ -181,28 +178,30 @@ const comp = (tree, Drill) => {
       case KEYWORDS.DEFINE_VARIABLE: {
         const n = tail[0][VALUE]
         const prefix = n.split(':')[0]
-        if (prefix === OPTIMIZATIONS.RECURSION) {
-          const name = lispToJavaScriptVariableName(n)
-          const newName = `${OPTIMIZATIONS.RECURSION}_${performance
-            .now()
-            .toString()
-            .replace('.', 7)}`
-          Drill.Variables.add(name)
-          Drill.Variables.add(newName)
-          Drill.Helpers.add('__tco')
-          const functionArgs = tail.at(-1).slice(1)
-          const body = functionArgs.pop()
-          const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-          deepRename(n, `()=>${newName}`, body)
-          const evaluatedBody = comp(body, FunctionDrill)
-          const vars = FunctionDrill.Variables.size
-            ? `var ${[...FunctionDrill.Variables].join(',')};`
-            : ''
-          return `(${name}=(__tco(${newName}=(${parseArgs(
-            functionArgs,
-            Drill
-          )})=>{${vars}return ${evaluatedBody.toString().trim()}})));`
-        } else if (prefix === OPTIMIZATIONS.CACHE) {
+        // if (prefix === OPTIMIZATIONS.RECURSION) {
+        //   const name = lispToJavaScriptVariableName(n)
+        //   const newName = `${OPTIMIZATIONS.RECURSION}_${performance
+        //     .now()
+        //     .toString()
+        //     .replace('.', 7)}`
+        //   Drill.Variables.add(name)
+        //   Drill.Variables.add(newName)
+        //   Drill.Helpers.add('__tco')
+        //   const functionArgs = tail.at(-1).slice(1)
+        //   const body = functionArgs.pop()
+        //   const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
+        //   deepRename(n, `()=>${newName}`, body)
+        //   const evaluatedBody = comp(body, FunctionDrill)
+        //   const vars = FunctionDrill.Variables.size
+        //     ? `var ${[...FunctionDrill.Variables].join(',')};`
+        //     : ''
+        //   return `(${name}=(__tco(${newName}=(${parseArgs(
+        //     functionArgs,
+        //     Drill
+        //   )})=>{${vars}return ${evaluatedBody.toString().trim()}})));`
+        // } else
+
+        if (prefix === OPTIMIZATIONS.CACHE) {
           // memoization here
           const name = lispToJavaScriptVariableName(n)
           const newName = name.substring(OPTIMIZATIONS.CACHE.length + 1)
@@ -305,6 +304,12 @@ const comp = (tree, Drill) => {
         return `(${comp(tail[0], Drill)}?${comp(tail[1], Drill)}:${
           tail.length === 3 ? comp(tail[2], Drill) : 0
         });`
+      }
+      case KEYWORDS.LOOP: {
+        return `(()=>{while(${comp(tail[0], Drill)}){${comp(
+          tail[1],
+          Drill
+        )}}return 0})();`
       }
       case KEYWORDS.ERROR: {
         Drill.Helpers.add('__error')

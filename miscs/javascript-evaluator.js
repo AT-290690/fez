@@ -53,6 +53,10 @@ const keywords = {
         .join('')
     )
   },
+  ['loop']: (args, env) => {
+    while (evaluate(args[0], env) !== FALSE) evaluate(args[1], env)
+    return 0
+  },
   ['set!']: (args, env) => {
     const array = evaluate(args[0], env)
     if (args.length === 1) array.pop()

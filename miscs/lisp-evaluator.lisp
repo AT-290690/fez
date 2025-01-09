@@ -28,6 +28,7 @@
   "and" (lambda args env (and (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "or" (lambda args env (or (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "throw" (lambda args env (throw (evaluate (get args 0) env)))
+  "loop" (lambda args env (loop (evaluate (get args 0)) (evaluate (get args 1))))
   "atom?" (lambda args env (atom? (evaluate (get args 0) env)))
   "lambda?" (lambda args env (lambda? (evaluate (get args 0) env))))))
 

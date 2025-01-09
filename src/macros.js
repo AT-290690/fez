@@ -29,6 +29,19 @@ export const SUGGAR = {
   INTEGER_DEVISION: '//',
   CONDITION: 'cond'
 }
+export const OPTIMIZATIONS = {
+  RECURSION: 'recursive',
+  CACHE: 'memoized'
+}
+const deepTransform = (predicate, transform, tree) => {
+  if (!isLeaf(tree))
+    for (const leaf of tree) {
+      // Figure out a non mutable solution so
+      // I can get rid of deep clone AST.parse(AST.stringify(ast))
+      if (predicate(leaf)) transform(leaf)
+      else deepTransform(predicate, transform, leaf)
+    }
+}
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
   if (ast.length === 0) throw new SyntaxError(`No expressions...`)
@@ -489,6 +502,109 @@ export const deSuggarAst = (ast, scope) => {
                     exp.iron = true
                     exp.push(newScope)
                     deSuggarAst(scope)
+                  } else {
+                    const last = exp.at(-1)
+                    if (
+                      !isLeaf(last) &&
+                      Array.isArray(last) &&
+                      last[0] &&
+                      last[0][TYPE] === APPLY &&
+                      last[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                    ) {
+                      const name = exp[1][VALUE]
+                      const prefix = name.split(':')[0]
+                      if (prefix === OPTIMIZATIONS.RECURSION) {
+                        const args = last.slice(1, -1)
+                        const newName = `*${performance
+                          .now()
+                          .toString()
+                          .replace('.', 0)}*`
+                        deepTransform(
+                          (leaf) =>
+                            Array.isArray(leaf) &&
+                            leaf[0] &&
+                            leaf[0][TYPE] === APPLY &&
+                            leaf[0][VALUE] === name,
+                          (leaf) => {
+                            const copy = [...leaf]
+                            leaf.length = 0
+                            copy[0][VALUE] = newName
+                            leaf.push(
+                              [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                              copy
+                            )
+                          },
+                          last
+                        )
+                        exp[exp.length - 1] = [
+                          [APPLY, KEYWORDS.CALL_FUNCTION],
+                          [
+                            [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                            [
+                              [APPLY, KEYWORDS.BLOCK],
+                              [
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                [WORD, newName],
+                                last
+                              ],
+                              [
+                                [APPLY, KEYWORDS.CALL_FUNCTION],
+                                [WORD, newName],
+                                [
+                                  [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                  [WORD, '*fn*'],
+                                  [
+                                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                    ...args,
+                                    [
+                                      [APPLY, KEYWORDS.BLOCK],
+                                      [
+                                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                        [WORD, '*res*'],
+                                        [
+                                          [APPLY, KEYWORDS.CREATE_ARRAY],
+                                          [[APPLY, '*fn*'], ...args]
+                                        ]
+                                      ],
+                                      [
+                                        [APPLY, KEYWORDS.LOOP],
+                                        [
+                                          [APPLY, KEYWORDS.IS_LAMBDA],
+                                          [
+                                            [APPLY, KEYWORDS.GET_ARRAY],
+                                            [WORD, '*res*'],
+                                            [ATOM, 0]
+                                          ]
+                                        ],
+                                        [
+                                          [APPLY, KEYWORDS.SET_ARRAY],
+                                          [WORD, '*res*'],
+                                          [ATOM, 0],
+                                          [
+                                            [APPLY, KEYWORDS.CALL_FUNCTION],
+                                            [
+                                              [APPLY, KEYWORDS.GET_ARRAY],
+                                              [WORD, '*res*'],
+                                              [ATOM, 0]
+                                            ]
+                                          ]
+                                        ]
+                                      ],
+                                      [
+                                        [APPLY, KEYWORDS.GET_ARRAY],
+                                        [WORD, '*res*'],
+                                        [ATOM, 0]
+                                      ]
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ]
+                          ]
+                        ]
+                        deSuggarAst(exp[exp.length - 1])
+                      }
+                    }
                   }
                 }
                 break

@@ -9,6 +9,7 @@
   type Keyword =
     | 'array'
     | 'length'
+    | 'loop'
     | 'atom?'
     | 'lambda?'
     | 'throw'
@@ -55,6 +56,10 @@
   type Env = Record<string, Results>
 
   const keywords: Record<Keyword, Fn> = {
+    ['loop']: (args, env) => {
+      while (evaluate(args[0], env) !== FALSE) evaluate(args[1], env)
+      return 0
+    },
     ['mod']: (args, env) => {
       const a = evaluate(args[0], env)
       const b = evaluate(args[1], env)

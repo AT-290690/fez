@@ -7,6 +7,7 @@ export const TRUE = 1
 export const FALSE = 0
 export const PLACEHOLDER = '.'
 export const KEYWORDS = {
+  LOOP: 'loop',
   CREATE_ARRAY: 'array',
   ARRAY_LENGTH: 'length',
   IS_ATOM: 'atom?',
@@ -40,7 +41,7 @@ export const KEYWORDS = {
   DEFINE_VARIABLE: 'let',
 
   SET_ARRAY: 'set!',
-  ERROR: 'throw',
+  ERROR: 'throw'
 }
 
 export const TYPES = {
@@ -56,7 +57,6 @@ export const DEBUG = {
   LOG: 'log',
   ASSERT: 'assert',
   CALLSTACK: '(CALLSTACK)' // so that you can't use it in the code
-
 }
 
 export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))

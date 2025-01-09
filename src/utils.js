@@ -1,5 +1,5 @@
 import std from '../lib/baked/std.js'
-import { compile, OPTIMIZATIONS } from './compiler.js'
+import { compile } from './compiler.js'
 import {
   APPLY,
   ATOM,
@@ -17,7 +17,8 @@ import { isLeaf, LISP } from './parser.js'
 import {
   deSuggarAst,
   deSuggarSource,
-  handleUnbalancedQuotes
+  handleUnbalancedQuotes,
+  OPTIMIZATIONS
 } from './macros.js'
 import { keywords } from './interpreter.js'
 export const logError = (error) =>

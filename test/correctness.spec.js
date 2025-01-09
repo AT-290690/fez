@@ -3173,8 +3173,8 @@ input (array:map
   (let goal-reached? (bool:false))
   (let output (var:def 0))
   (loop 
-      (lambda (and (heap:not-empty? pq) (bool:false? goal-reached?))) 
-      (lambda (do
+      (and (heap:not-empty? pq) (bool:false? goal-reached?))
+      (do
           (let first (heap:peek pq))
           (heap:pop! pq lower?)
           (let cost (get first 0))
@@ -3201,7 +3201,7 @@ input (array:map
                                       (and
                                           (not (= (matrix:get matrix nr nc) char:hash)) 
                                           (not (set:has? seen (from:stats->key (array nr nc ndr ndc)))))
-                                      (heap:push! pq stats lower?))))))))))
+                                      (heap:push! pq stats lower?)))))))))
       (var:get output))))
 
 (part1 (string:lines (string:concat-with-lines (array 
