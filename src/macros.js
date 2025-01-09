@@ -1,9 +1,8 @@
-import { AST, isLeaf } from './parser.js'
+import { isLeaf } from './parser.js'
 import {
-  EXPONENTIATION,
+  EXPONENTIATION_RAW,
   INTEGER_DIVISION,
-  NOT_EQUAL,
-  SLICE
+  NOT_EQUAL
 } from '../lib/baked/macros.js'
 import {
   APPLY,
@@ -66,7 +65,7 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case SUGGAR.POWER:
                 exp.length = 0
-                exp.push(...EXPONENTIATION)
+                exp.push(...EXPONENTIATION_RAW)
                 break
               case SUGGAR.INTEGER_DEVISION:
                 exp.length = 0
@@ -227,23 +226,13 @@ export const deSuggarAst = (ast, scope) => {
                       const exponent = exp[1]
                       const power = exp[2]
                       exp.length = 0
-                      exp.push(
-                        [0, KEYWORDS.CALL_FUNCTION],
-                        exponent,
-                        power,
-                        EXPONENTIATION
-                      )
+                      exp.push([APPLY, 'math:power'], exponent, power)
                     }
                   } else {
                     const exponent = exp[1]
                     const power = exp[2]
                     exp.length = 0
-                    exp.push(
-                      [0, KEYWORDS.CALL_FUNCTION],
-                      exponent,
-                      power,
-                      EXPONENTIATION
-                    )
+                    exp.push([APPLY, 'math:power'], exponent, power)
                   }
                   deSuggarAst(exp, scope)
                 }
@@ -406,9 +395,10 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case KEYWORDS.DEFINE_VARIABLE:
                 {
+                  const last = exp.at(-1)
                   if (!isLeaf(exp[1]) && exp[1][0][TYPE] === APPLY) {
                     const left = exp[1].slice(1)
-                    const right = exp.at(-1)
+                    const right = last
                     let newScope
                     if (exp[1][0][VALUE] === SUGGAR.CREATE_LIST) {
                       const lastLeft = left.pop()
@@ -491,10 +481,9 @@ export const deSuggarAst = (ast, scope) => {
                             [APPLY, KEYWORDS.DEFINE_VARIABLE],
                             lastLeft,
                             [
-                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                              [APPLY, 'array:drop'],
                               right,
-                              [ATOM, indexes.at(-1)[0] + 1],
-                              SLICE
+                              [ATOM, indexes.at(-1)[0] + 1]
                             ]
                           ])
                       }
@@ -502,99 +491,93 @@ export const deSuggarAst = (ast, scope) => {
                     exp.iron = true
                     exp.push(newScope)
                     deSuggarAst(scope)
-                  } else {
-                    const last = exp.at(-1)
-                    if (
-                      !isLeaf(last) &&
-                      Array.isArray(last) &&
-                      last[0] &&
-                      last[0][TYPE] === APPLY &&
-                      last[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-                    ) {
-                      const name = exp[1][VALUE]
-                      const prefix = name.split(':')[0]
-                      if (prefix === OPTIMIZATIONS.RECURSION) {
-                        const args = last.slice(1, -1)
-                        const newName = `*${performance
-                          .now()
-                          .toString()
-                          .replace('.', 0)}*`
-                        deepTransform(
-                          (leaf) =>
-                            Array.isArray(leaf) &&
-                            leaf[0] &&
-                            leaf[0][TYPE] === APPLY &&
-                            leaf[0][VALUE] === name,
-                          (leaf) => {
-                            const copy = [...leaf]
-                            leaf.length = 0
-                            copy[0][VALUE] = newName
-                            leaf.push(
-                              [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                              copy
-                            )
-                          },
-                          last
-                        )
-                        exp[exp.length - 1] = [
-                          [APPLY, KEYWORDS.CALL_FUNCTION],
+                  } else if (
+                    !isLeaf(last) &&
+                    Array.isArray(last) &&
+                    last[0] &&
+                    last[0][TYPE] === APPLY &&
+                    last[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                  ) {
+                    const name = exp[1][VALUE]
+                    const prefix = name.split(':')[0]
+                    if (prefix === OPTIMIZATIONS.RECURSION) {
+                      const args = last.slice(1, -1)
+                      const newName = `*${performance
+                        .now()
+                        .toString()
+                        .replace('.', 0)}*`
+                      deepTransform(
+                        (leaf) =>
+                          Array.isArray(leaf) &&
+                          leaf[0] &&
+                          leaf[0][TYPE] === APPLY &&
+                          leaf[0][VALUE] === name,
+                        (leaf) => {
+                          const copy = [...leaf]
+                          leaf.length = 0
+                          copy[0][VALUE] = newName
+                          leaf.push([APPLY, KEYWORDS.ANONYMOUS_FUNCTION], copy)
+                        },
+                        last
+                      )
+                      exp[exp.length - 1] = [
+                        [APPLY, KEYWORDS.CALL_FUNCTION],
+                        [
+                          [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
                           [
-                            [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                            [APPLY, KEYWORDS.BLOCK],
                             [
-                              [APPLY, KEYWORDS.BLOCK],
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, newName],
+                              last
+                            ],
+                            [
+                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                              [WORD, newName],
                               [
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                [WORD, newName],
-                                last
-                              ],
-                              [
-                                [APPLY, KEYWORDS.CALL_FUNCTION],
-                                [WORD, newName],
+                                [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                [WORD, '*fn*'],
                                 [
                                   [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                  [WORD, '*fn*'],
+                                  ...args,
                                   [
-                                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                    ...args,
+                                    [APPLY, KEYWORDS.BLOCK],
                                     [
-                                      [APPLY, KEYWORDS.BLOCK],
+                                      [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                      [WORD, '*res*'],
                                       [
-                                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                        [WORD, '*res*'],
+                                        [APPLY, KEYWORDS.CREATE_ARRAY],
+                                        [[APPLY, '*fn*'], ...args]
+                                      ]
+                                    ],
+                                    [
+                                      [APPLY, KEYWORDS.LOOP],
+                                      [
+                                        [APPLY, KEYWORDS.IS_LAMBDA],
                                         [
-                                          [APPLY, KEYWORDS.CREATE_ARRAY],
-                                          [[APPLY, '*fn*'], ...args]
+                                          [APPLY, KEYWORDS.GET_ARRAY],
+                                          [WORD, '*res*'],
+                                          [ATOM, 0]
                                         ]
                                       ],
                                       [
-                                        [APPLY, KEYWORDS.LOOP],
+                                        [APPLY, KEYWORDS.SET_ARRAY],
+                                        [WORD, '*res*'],
+                                        [ATOM, 0],
                                         [
-                                          [APPLY, KEYWORDS.IS_LAMBDA],
+                                          [APPLY, KEYWORDS.CALL_FUNCTION],
                                           [
                                             [APPLY, KEYWORDS.GET_ARRAY],
                                             [WORD, '*res*'],
                                             [ATOM, 0]
                                           ]
-                                        ],
-                                        [
-                                          [APPLY, KEYWORDS.SET_ARRAY],
-                                          [WORD, '*res*'],
-                                          [ATOM, 0],
-                                          [
-                                            [APPLY, KEYWORDS.CALL_FUNCTION],
-                                            [
-                                              [APPLY, KEYWORDS.GET_ARRAY],
-                                              [WORD, '*res*'],
-                                              [ATOM, 0]
-                                            ]
-                                          ]
                                         ]
-                                      ],
-                                      [
-                                        [APPLY, KEYWORDS.GET_ARRAY],
-                                        [WORD, '*res*'],
-                                        [ATOM, 0]
                                       ]
+                                    ],
+                                    [
+                                      [APPLY, KEYWORDS.GET_ARRAY],
+                                      [WORD, '*res*'],
+                                      [ATOM, 0]
                                     ]
                                   ]
                                 ]
@@ -602,8 +585,10 @@ export const deSuggarAst = (ast, scope) => {
                             ]
                           ]
                         ]
-                        deSuggarAst(exp[exp.length - 1])
-                      }
+                      ]
+                      deSuggarAst(exp[exp.length - 1])
+                    } else if (prefix === OPTIMIZATIONS.CACHE) {
+                      // TODO: Make this
                     }
                   }
                 }
@@ -688,10 +673,9 @@ export const deSuggarAst = (ast, scope) => {
                             [APPLY, KEYWORDS.DEFINE_VARIABLE],
                             lastLeft,
                             [
-                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                              [APPLY, 'array:drop'],
                               right,
-                              [ATOM, indexes.at(-1)[0] + 1],
-                              SLICE
+                              [ATOM, indexes.at(-1)[0] + 1]
                             ]
                           ])
                         exp[i] = right
