@@ -689,6 +689,11 @@
 (let matrix:get (lambda matrix y x (get (get matrix y) x)))
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
+(let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x 
+      (cond 
+          (atom? x) (array x)
+          (= (length x) 0) (array char:comma) 
+          (*) x))))))
 (let from:list->array (lambda list (do
   (let recursive:from:list->array (lambda lst out (if (list:nil? lst) out (recursive:from:list->array (list:tail lst) (array:merge out (array (list:head lst)))))))
   (recursive:from:list->array list ()))))

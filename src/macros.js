@@ -628,12 +628,15 @@ export const deSuggarAst = (ast, scope) => {
                                   [
                                     [APPLY, KEYWORDS.DEFINE_VARIABLE],
                                     [WORD, keyName],
-                                    [[APPLY, KEYWORDS.CREATE_ARRAY], ...args]
+                                    [
+                                      [APPLY, 'from:string-or-number->key'],
+                                      [[APPLY, KEYWORDS.CREATE_ARRAY], ...args]
+                                    ]
                                   ],
                                   [
                                     [APPLY, KEYWORDS.IF],
                                     [
-                                      [APPLY, 'map:has?'],
+                                      [APPLY, 'map:exists?'],
                                       [WORD, memoName],
                                       [WORD, keyName]
                                     ],
