@@ -776,7 +776,6 @@ export const keywords = {
           }`
         )
       const localEnv = Object.create(env)
-      // localEnv[KEYWORDS.BLOCK] = block[KEYWORDS.BLOCK]
       for (let i = 0; i < props.length; ++i) {
         const value = evaluate(props[i], scope)
         Object.defineProperty(localEnv, params[i][VALUE], {

@@ -37,7 +37,7 @@ keywords = {
     '*': lambda args, env: evaluate(args[0], env) * evaluate(args[1], env),
     '/': lambda args, env: evaluate(args[0], env) * evaluate(args[1], env),
     'array': lambda args, env: [evaluate(x, env) for x in args] if args else [],
-    'get': lambda args, env: evaluate(args[0], env)[evaluate(args[1], env)],
+    'get': lambda args, env: evaluate(args[0], env)[int(evaluate(args[1], env))],
     'do': lambda args, env: do_block(args, env),
     'not': lambda args, env: int(not evaluate(args[0], env)),
     '=': lambda args, env: int(evaluate(args[0], env) == evaluate(args[1], env)),
@@ -69,7 +69,7 @@ def set_array(args, env):
     if len(args) == 1:
         array.pop()
     else:
-        index = evaluate(args[1],env)
+        index = int(evaluate(args[1],env))
         if (index == len(array)):
             array.append(evaluate(args[2],env))
         else:

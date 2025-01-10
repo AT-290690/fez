@@ -520,6 +520,7 @@ export const deSuggarAst = (ast, scope) => {
                         },
                         last
                       )
+
                       exp[exp.length - 1] = [
                         [APPLY, KEYWORDS.CALL_FUNCTION],
                         [
@@ -531,58 +532,66 @@ export const deSuggarAst = (ast, scope) => {
                               [WORD, newName],
                               last
                             ],
-                            [
-                              [APPLY, KEYWORDS.CALL_FUNCTION],
-                              [WORD, newName],
-                              [
-                                [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                [WORD, '*fn*'],
-                                [
-                                  [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                  ...args,
+                            args.length < 5
+                              ? [
                                   [
-                                    [APPLY, KEYWORDS.BLOCK],
+                                    APPLY,
+                                    `optimization:tail-calls-${args.length}`
+                                  ],
+                                  [WORD, newName]
+                                ]
+                              : [
+                                  [APPLY, KEYWORDS.CALL_FUNCTION],
+                                  [WORD, newName],
+                                  [
+                                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                    [WORD, '*fn*'],
                                     [
-                                      [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                      [WORD, '*res*'],
+                                      [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                      ...args,
                                       [
-                                        [APPLY, KEYWORDS.CREATE_ARRAY],
-                                        [[APPLY, '*fn*'], ...args]
-                                      ]
-                                    ],
-                                    [
-                                      [APPLY, KEYWORDS.LOOP],
-                                      [
-                                        [APPLY, KEYWORDS.IS_LAMBDA],
+                                        [APPLY, KEYWORDS.BLOCK],
+                                        [
+                                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                          [WORD, '*res*'],
+                                          [
+                                            [APPLY, KEYWORDS.CREATE_ARRAY],
+                                            [[APPLY, '*fn*'], ...args]
+                                          ]
+                                        ],
+                                        [
+                                          [APPLY, KEYWORDS.LOOP],
+                                          [
+                                            [APPLY, KEYWORDS.IS_LAMBDA],
+                                            [
+                                              [APPLY, KEYWORDS.GET_ARRAY],
+                                              [WORD, '*res*'],
+                                              [ATOM, 0]
+                                            ]
+                                          ],
+                                          [
+                                            [APPLY, KEYWORDS.SET_ARRAY],
+                                            [WORD, '*res*'],
+                                            [ATOM, 0],
+                                            [
+                                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                                              [
+                                                [APPLY, KEYWORDS.GET_ARRAY],
+                                                [WORD, '*res*'],
+                                                [ATOM, 0]
+                                              ]
+                                            ]
+                                          ]
+                                        ],
                                         [
                                           [APPLY, KEYWORDS.GET_ARRAY],
                                           [WORD, '*res*'],
                                           [ATOM, 0]
                                         ]
-                                      ],
-                                      [
-                                        [APPLY, KEYWORDS.SET_ARRAY],
-                                        [WORD, '*res*'],
-                                        [ATOM, 0],
-                                        [
-                                          [APPLY, KEYWORDS.CALL_FUNCTION],
-                                          [
-                                            [APPLY, KEYWORDS.GET_ARRAY],
-                                            [WORD, '*res*'],
-                                            [ATOM, 0]
-                                          ]
-                                        ]
                                       ]
-                                    ],
-                                    [
-                                      [APPLY, KEYWORDS.GET_ARRAY],
-                                      [WORD, '*res*'],
-                                      [ATOM, 0]
                                     ]
                                   ]
                                 ]
-                              ]
-                            ]
                           ]
                         ]
                       ]
@@ -659,6 +668,7 @@ export const deSuggarAst = (ast, scope) => {
                           ]
                         ]
                       ]
+                      deSuggarAst(exp[exp.length - 1])
                     }
                   }
                 }

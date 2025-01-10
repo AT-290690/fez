@@ -1552,6 +1552,17 @@ heap)))
   (array:for xs (lambda x (heap:push! heap x callback)))
   heap)))
 
+
+(let optimization:tail-call-loop (lambda result (do 
+    (loop (lambda? (var:get result)) (var:set! result (apply (var:get result))))
+    (var:get result))))
+
+(let optimization:tail-calls-0 (lambda fn (lambda (optimization:tail-call-loop (var:def (fn))))))
+(let optimization:tail-calls-1 (lambda fn (lambda a (optimization:tail-call-loop (var:def (fn a))))))
+(let optimization:tail-calls-2 (lambda fn (lambda a b (optimization:tail-call-loop (var:def (fn a b))))))
+(let optimization:tail-calls-3 (lambda fn (lambda a b c (optimization:tail-call-loop (var:def (fn a b c))))))
+(let optimization:tail-calls-4 (lambda fn (lambda a b c d (optimization:tail-call-loop (var:def (fn a b c d))))))
+
 ; Fake keywords section
 
 (let array:set! set!)
@@ -1599,6 +1610,7 @@ heap)))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
 (let match:digit? (lambda char (and (>= char char:0) (<= char char:9))))
 (let match:digits? (lambda string (array:every? string match:digit?)))
+
 (let ast:type 0)
 (let ast:value 1)
 (let ast:apply 0)
@@ -1682,4 +1694,5 @@ heap)))
 
   (let lisp:eval (lambda source (apply (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) keywords (map:get keywords "do"))))
   
+
 )))

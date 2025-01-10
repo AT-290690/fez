@@ -91,7 +91,8 @@ document.addEventListener('keydown', (e) => {
     if (value.trim()) {
       try {
         const compressed = LZString.compressToBase64(editor.getValue())
-        const { evaluated, error } = debug(parse(editor.getValue()))
+        const parsed = parse(editor.getValue())
+        const { evaluated, error } = debug(parsed)
         terminal.setValue(error == null ? serialise(evaluated) : error.message)
         terminal.clearSelection()
         const newurl =
