@@ -403,15 +403,11 @@ export const deSuggarAst = (ast, scope) => {
                     if (exp[1][0][VALUE] === SUGGAR.CREATE_LIST) {
                       const lastLeft = left.pop()
                       const vars = left
-                      if (
-                        !isLeaf(right) &&
-                        right[0][TYPE] === APPLY &&
-                        right[0][VALUE] === SUGGAR.CREATE_LIST
-                      ) {
+                      if (!isLeaf(right) && right[0][TYPE] !== WORD) {
                         throw new SyntaxError(
-                          `Destructuring requires right hand side to be a word but got an apply ${stringifyArgs(
+                          `Destructuring requires right hand side to be a word but got an apply\n(${stringifyArgs(
                             exp
-                          )}`
+                          )})`
                         )
                       } else {
                         newScope = vars
@@ -451,24 +447,21 @@ export const deSuggarAst = (ast, scope) => {
                       vars[0][TYPE] = WORD
                       exp.length = 0
                     } else if (exp[1][0][VALUE] === KEYWORDS.CREATE_ARRAY) {
-                      const lastLeft = left.pop()
-                      // const isList = exp[i][exp[i].length - 2][VALUE] === KEYWORDS.BITWISE_NOT
-                      const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
-                      const vars = left
-                      const indexes = vars.map((x, i) => [i, x])
-                      vars[0][TYPE] = WORD
-                      exp.length = 0
-                      if (
-                        !isLeaf(right) &&
-                        right[0][TYPE] === APPLY &&
-                        right[0][VALUE] === KEYWORDS.CREATE_ARRAY
-                      ) {
+                      if (!isLeaf(right) && right[0][TYPE] !== WORD) {
                         throw new SyntaxError(
-                          `Destructuring requires right hand side to be a word but got an apply ${stringifyArgs(
+                          `Destructuring requires right hand side to be a word but got an apply\n(${stringifyArgs(
                             exp
-                          )}`
+                          )})`
                         )
                       } else {
+                        const lastLeft = left.pop()
+                        // const isList = exp[i][exp[i].length - 2][VALUE] === KEYWORDS.BITWISE_NOT
+                        const isSlicing = lastLeft[VALUE] !== PLACEHOLDER
+                        const vars = left
+                        const indexes = vars.map((x, i) => [i, x])
+
+                        vars[0][TYPE] = WORD
+                        exp.length = 0
                         newScope = indexes
                           .filter((x) => x[1][VALUE] !== PLACEHOLDER)
                           .map(([i]) => [
