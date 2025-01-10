@@ -47,13 +47,7 @@ export const LISP = {
   source: (ast) => {
     const dfs = (exp) => {
       let out = ''
-      let head, tail
-      if (isLeaf(exp)) head = exp
-      else {
-        head = exp[0]
-        if (head == undefined) return []
-        tail = exp.slice(1)
-      }
+      const [head, ...tail] = isLeaf(exp) ? [exp] : exp
       if (head == undefined) return (out += '()')
       switch (head[TYPE]) {
         case WORD:
@@ -115,13 +109,7 @@ export const AST = {
   struct: (ast) => {
     const dfs = (exp) => {
       let out = ''
-      let head, tail
-      if (isLeaf(exp)) head = exp
-      else {
-        head = exp[0]
-        if (head == undefined) return []
-        tail = exp.slice(1)
-      }
+      const [head, ...tail] = isLeaf(exp) ? [exp] : exp
       if (head == undefined)
         return (out +=
           '(Expression::Apply(vec![Expression::Word("array".to_string())]))')
