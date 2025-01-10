@@ -589,6 +589,73 @@ export const deSuggarAst = (ast, scope) => {
                       deSuggarAst(exp[exp.length - 1])
                     } else if (prefix === OPTIMIZATIONS.CACHE) {
                       // TODO: Make this
+                      const args = last.slice(1, -1)
+                      const newName = `*${performance
+                        .now()
+                        .toString()
+                        .replace('.', 0)}*`
+                      deepTransform(
+                        (leaf) =>
+                          Array.isArray(leaf) &&
+                          leaf[0] &&
+                          leaf[0][TYPE] === APPLY &&
+                          leaf[0][VALUE] === name,
+                        (leaf) => (leaf[0][VALUE] = newName),
+                        last
+                      )
+                      const memoName = newName + ':memo'
+                      const keyName = newName + ':key'
+
+                      exp[exp.length - 1] = [
+                        [APPLY, KEYWORDS.CALL_FUNCTION],
+                        [
+                          [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                          [
+                            [APPLY, KEYWORDS.BLOCK],
+                            [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, memoName],
+                              [[APPLY, 'new:map64']]
+                            ],
+                            [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, newName],
+                              [
+                                [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                ...args,
+                                [
+                                  [APPLY, KEYWORDS.BLOCK],
+                                  [
+                                    [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                    [WORD, keyName],
+                                    [[APPLY, KEYWORDS.CREATE_ARRAY], ...args]
+                                  ],
+                                  [
+                                    [APPLY, KEYWORDS.IF],
+                                    [
+                                      [APPLY, 'map:has?'],
+                                      [WORD, memoName],
+                                      [WORD, keyName]
+                                    ],
+                                    [
+                                      [APPLY, 'map:get'],
+                                      [WORD, memoName],
+                                      [WORD, keyName]
+                                    ],
+                                    [
+                                      [APPLY, 'map:set-and-get!'],
+                                      [WORD, memoName],
+                                      [WORD, keyName],
+                                      last.at(-1)
+                                    ]
+                                  ]
+                                ]
+                              ]
+                            ],
+                            [WORD, newName]
+                          ]
+                        ]
+                      ]
                     }
                   }
                 }
@@ -608,12 +675,10 @@ export const deSuggarAst = (ast, scope) => {
                         const left = exp[i].slice(1)
                         const right = [WORD, `_arg${i}`]
                         const lastLeft = left.pop()
-
                         const vars = left
                         const indexes = vars
                           .map((x, i) => [x, i])
                           .filter((x) => x[0][VALUE] !== PLACEHOLDER)
-
                         newBlock.push(
                           ...indexes.map(([name, n]) => {
                             let wrap = right
@@ -646,7 +711,6 @@ export const deSuggarAst = (ast, scope) => {
                             wrap
                           ])
                         }
-
                         left[0][TYPE] = WORD
                         exp[i] = right
                         exp[i].length = 2

@@ -288,7 +288,7 @@
   (>> (+ N4 1) 1))))
 (let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) ())))
 (let math:fibonacci (lambda n (do 
-    (let memoized:math:fibonacci (lambda n (if (< n 2) n (+ (memoized:fmath:ibonacci (- n 1)) (memoized:math:fibonacci (- n 2))))))
+    (let memoized:math:fibonacci (lambda n (if (< n 2) n (+ (memoized:math:fibonacci (- n 1)) (memoized:math:fibonacci (- n 2))))))
     (memoized:math:fibonacci n))))
 (let math:enumeration (lambda (do 
   (let I (var:def -1))
