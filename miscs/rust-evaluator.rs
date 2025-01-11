@@ -91,14 +91,14 @@ fn main() {
                  env: Rc<RefCell<Env>>,
                  defs: Rc<RefCell<Env>>|
                  -> Evaluated {
-                    let condition = evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
-                    match condition {
-                        Evaluated::Number(condition) => {
-                            while condition == 1.0 {
-                                evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
-                            }
+                    while let Evaluated::Number(value) =
+                        evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs))
+                    {
+                        if value == 1.0 {
+                            evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
+                        } else {
+                            break; // Exit the loop if the value is not 1.0
                         }
-                        _ => panic!("First argument must be a 1 or 0"),
                     }
                     return Evaluated::Number(0.0);
                 },

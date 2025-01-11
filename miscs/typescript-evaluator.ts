@@ -57,7 +57,7 @@
 
   const keywords: Record<Keyword, Fn> = {
     ['loop']: (args, env) => {
-      while (evaluate(args[0], env) !== FALSE) evaluate(args[1], env)
+      while (evaluate(args[0], env) === TRUE) evaluate(args[1], env)
       return 0
     },
     ['mod']: (args, env) => {
@@ -306,6 +306,36 @@
         throw new ReferenceError('Nothing to evalaute')
     }
   }
-}
 
-// evaluate([[0,"apply"],[[0,"lambda"],[[0,"do"],[[0,"let"],[1,"add"],[[0,"lambda"],[1,"a"],[1,"b"],[[0,"+"],[1,"a"],[1,"b"]]]],[[0,"add"],[2,1],[2,2]]]]], keywords)
+  evaluate(
+    [
+      [0, 'apply'],
+      [
+        [0, 'lambda'],
+        [
+          [0, 'do'],
+          [
+            [0, 'let'],
+            [1, 'add'],
+            [
+              [0, 'lambda'],
+              [1, 'a'],
+              [1, 'b'],
+              [
+                [0, '+'],
+                [1, 'a'],
+                [1, 'b']
+              ]
+            ]
+          ],
+          [
+            [0, 'add'],
+            [2, 1],
+            [2, 2]
+          ]
+        ]
+      ]
+    ] as any,
+    keywords
+  )
+}
