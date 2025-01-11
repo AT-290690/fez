@@ -8,14 +8,24 @@
   <title>Fez</title>
   <link rel="icon" type="image/svg+xml" href="./logo.svg" />
   <style>
-    @font-face {
+    /* @font-face {
       font-family: 'Fantastic';
       src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
+      font-display: swap;
+    } */
+    * {
+      font-family: 'Fantastic' !important;
+      font-size: 30px !important;
+    }
+    @font-face {
+      font-family: 'Fantastic';
+      src: url(./assets/fonts/monaco-9.ttf) format('truetype');
       font-display: swap;
     }
     #editor {
       height: 80%;
       width: 100%;
+      font-size: 30px !important;
     }
     body {
       margin: 0;
@@ -23,6 +33,7 @@
     }
 
     #terminal {
+      font-size: 30px !important;
       border-top: 1px solid #8f938f;
       height: 20%;
       width: 100%;

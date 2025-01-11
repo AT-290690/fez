@@ -5,8 +5,8 @@ editor.setOptions({
   fontSize: '10pt'
 })
 // pastel_on_dark
-// pastel_on_dark
-const THEME = 'terminal'
+// pastel_on_light
+const THEME = 'dracula'
 const EDITOR_THEME = THEME
 const TERMINAL_THEME = THEME
 // 'chrome' => 'Chrome',
@@ -80,7 +80,7 @@ if (initial) {
 const serialise = (arg) => {
   if (typeof arg === 'number' || typeof arg === 'string') return arg.toString()
   else if (Array.isArray(arg))
-    return arg.length ? `(${arg.map((a) => serialise(a)).join(' ')})` : '()'
+    return arg.length ? `[${arg.map((a) => serialise(a)).join(' ')}]` : '[]'
   else return ''
 }
 document.addEventListener('keydown', (e) => {
