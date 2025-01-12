@@ -4,9 +4,9 @@ examples
 main.js
 playground
 lib/src/
+lib/debug/
 lib/builder.js
 editor/
 index.html
 assets/
 miscs/
-debug/

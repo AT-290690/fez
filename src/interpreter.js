@@ -519,7 +519,16 @@ export const keywords = {
           KEYWORDS.NOT
         } ${stringifyArgs(args)})`
       )
-    return +!evaluate(args[0], env)
+    const operand = evaluate(args[0], env)
+    if (operand !== FALSE && operand !== TRUE)
+      throw new TypeError(
+        `Condition of (${
+          KEYWORDS.NOT
+        }) must be ${TRUE} or ${FALSE} but ${LISP.source(args[0])} is not\n\n(${
+          KEYWORDS.NOT
+        } ${stringifyArgs(args)})`
+      )
+    return +!operand
   },
   [KEYWORDS.EQUAL]: (args, env) => {
     if (args.length !== 2)

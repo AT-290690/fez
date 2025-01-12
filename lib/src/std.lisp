@@ -159,7 +159,7 @@
 (let math:same-sign-bit? (lambda a b (>= (^ a b) 0)))
 (let math:max-bit (lambda a b (- a (& (- a b) (>> (- a b) 31)))))
 (let math:min-bit (lambda a b (- a (& (- a b) (>> (- b a) 31)))))
-(let math:bit-equal (lambda a b (not (^ a b))))
+(let math:bit-equal (lambda a b (< (^ a b) 1)))
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
 (let math:count-leading-zero-bits32 (lambda x (if (>= x 0) (- 32 (length (from:number->bit x))))))
