@@ -40,8 +40,8 @@ World
 ```
 
 ```js
-import { parse, debug } from 'fez-lisp'
-debug(
+import { parse, evaluate } from 'fez-lisp'
+evaluate(
   parse(`(let *input* "1721,979,366,299,675,1456")
 (let solve (lambda arr cb
      (array:fold arr (lambda a b (do
