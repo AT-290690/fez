@@ -120,7 +120,6 @@ describe('Compilation & Interpretation', () => {
       `(array:enumerated-map (array 1 2 3 4) ^)`,
       `(array:enumerated-map (array 1 2 3 4) <<)`,
       `(array:enumerated-map (array 1 2 3 4) >>)`,
-      `(array:enumerated-map (array 1 2 3 4) >>>)`,
       `(or (and (= 1 1) (> 2 1)) (or (and (= 0 0) (<= 2 2))))`,
       `(array 
         (array (/ 5) (- 5)) 

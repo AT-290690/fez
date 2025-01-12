@@ -428,24 +428,6 @@ fn main() {
             )),
         );
         env_ref.vars.insert(
-            ">>>".to_string(),
-            Evaluated::Function(Rc::new(
-                |args: Vec<Expression>,
-                 env: Rc<RefCell<Env>>,
-                 defs: Rc<RefCell<Env>>|
-                 -> Evaluated {
-                    let a = evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
-                    let b = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
-                    match (a, b) {
-                        (Evaluated::Number(a), Evaluated::Number(b)) => {
-                            Evaluated::Number(((a as i64) >> (b as i64)) as f64)
-                        }
-                        _ => panic!("Both arguments must be numbers"),
-                    }
-                },
-            )),
-        );
-        env_ref.vars.insert(
             "if".to_string(),
             Evaluated::Function(Rc::new(
                 |args: Vec<Expression>,

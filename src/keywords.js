@@ -23,7 +23,6 @@ export const KEYWORDS = {
   BITWISE_XOR: '^',
   BITWISE_LEFT_SHIFT: '<<',
   BITWISE_RIGHT_SHIFT: '>>',
-  BITWISE_UNSIGNED_RIGHT_SHIFT: '>>>',
   GET_ARRAY: 'get',
   BLOCK: 'do',
   ANONYMOUS_FUNCTION: 'lambda',

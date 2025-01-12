@@ -24,7 +24,6 @@
     | '^'
     | '<<'
     | '>>'
-    | '>>>'
     | 'get'
     | 'do'
     | 'lambda'
@@ -251,13 +250,6 @@
       if (typeof a !== 'number' || typeof b !== 'number')
         throw new TypeError('Args must be numbers')
       return a >> b
-    },
-    ['>>>']: (args, env) => {
-      const a = evaluate(args[0], env)
-      const b = evaluate(args[1], env)
-      if (typeof a !== 'number' || typeof b !== 'number')
-        throw new TypeError('Args must be numbers')
-      return a >>> b
     },
     ['alter!']: (args, env) => {
       const array = evaluate(args[0], env)

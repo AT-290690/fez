@@ -21,7 +21,6 @@
   "^" (lambda args env (^ (evaluate (get args 0) env) (evaluate (get args 1) env)))
   ">>" (lambda args env (>> (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "<<" (lambda args env (<< (evaluate (get args 0) env) (evaluate (get args 1) env)))
-  ">>>" (lambda args env (>>> (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "~" (lambda args env (~ (evaluate (get args 0) env)))
   "do" (lambda args env (array:first (array:fold args (lambda a arg (array:alter! a 0 (evaluate arg env))) ())))
   "if" (lambda args env (if (evaluate (get args 0) env) (evaluate (get args 1) env) (if (= (length args) 3) (evaluate (get args 2) env))))

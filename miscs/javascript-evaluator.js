@@ -39,7 +39,6 @@ const keywords = {
   ['^']: (args, env) => evaluate(args[0], env) ^ evaluate(args[1], env),
   ['<<']: (args, env) => evaluate(args[0], env) << evaluate(args[1], env),
   ['>>']: (args, env) => evaluate(args[0], env) >> evaluate(args[1], env),
-  ['>>>']: (args, env) => evaluate(args[0], env) >>> evaluate(args[1], env),
   ['if']: (args, env) =>
     evaluate(args[0], env)
       ? evaluate(args[1], env)

@@ -104,7 +104,6 @@ const Helpers = {
   __bit_not: '__bit_not=(a)=>~a',
   __bit_lshift: '__bit_lshift=(a,b)=>a<<b',
   __bit_rshift: '__bit_rshift=(a,b)=>a>>b',
-  __bit_urshift: '__bit_urshift=(a,b)=>a>>>b',
   array: 'array=(...args)=>args',
   not: 'not=(a)=>+!a',
   and: `and=(a, b)=>+(a&&b)`,
@@ -177,50 +176,6 @@ const comp = (tree, Drill) => {
       }
       case KEYWORDS.DEFINE_VARIABLE: {
         const n = tail[0][VALUE]
-        // const prefix = n.split(':')[0]
-        // if (prefix === OPTIMIZATIONS.RECURSION) {
-        //   const name = lispToJavaScriptVariableName(n)
-        //   const newName = `${OPTIMIZATIONS.RECURSION}_${performance
-        //     .now()
-        //     .toString()
-        //     .replace('.', 7)}`
-        //   Drill.Variables.add(name)
-        //   Drill.Variables.add(newName)
-        //   Drill.Helpers.add('__tco')
-        //   const functionArgs = tail.at(-1).slice(1)
-        //   const body = functionArgs.pop()
-        //   const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-        //   deepRename(n, `()=>${newName}`, body)
-        //   const evaluatedBody = comp(body, FunctionDrill)
-        //   const vars = FunctionDrill.Variables.size
-        //     ? `var ${[...FunctionDrill.Variables].join(',')};`
-        //     : ''
-        //   return `(${name}=(__tco(${newName}=(${parseArgs(
-        //     functionArgs,
-        //     Drill
-        //   )})=>{${vars}return ${evaluatedBody.toString().trim()}})));`
-        // } else
-
-        // if (prefix === OPTIMIZATIONS.CACHE) {
-        //   // memoization here
-        //   const name = lispToJavaScriptVariableName(n)
-        //   const newName = name.substring(OPTIMIZATIONS.CACHE.length + 1)
-        //   Drill.Variables.add(name)
-        //   const functionArgs = tail.at(-1).slice(1)
-        //   const body = functionArgs.pop()
-        //   deepRename(n, newName, body)
-        //   const FunctionDrill = { Variables: new Set(), Helpers: Drill.Helpers }
-        //   const evaluatedBody = comp(body, FunctionDrill)
-        //   const vars = FunctionDrill.Variables.size
-        //     ? `var ${[...FunctionDrill.Variables].join(',')};`
-        //     : ''
-        //   return `(${name}=function(){var __${newName}_map = new Map();var ${newName}=(function(${parseArgs(
-        //     functionArgs,
-        //     Drill
-        //   )}){${vars};var __key=[...arguments].join(',');if(__${newName}_map.has(__key)){return __${newName}_map.get(__key)}else{var __res = ${evaluatedBody
-        //     .toString()
-        //     .trim()};__${newName}_map.set(__key, __res);return __res}});return ${newName}(...arguments)});`
-        // }
         const name = lispToJavaScriptVariableName(n)
         Drill.Variables.add(name)
         return `${name}=${comp(tail[1], Drill)};`
@@ -293,8 +248,6 @@ const comp = (tree, Drill) => {
         return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.REMAINDER_OF_DIVISION:
         return `(${comp(tail[0], Drill)}%${comp(tail[1], Drill)});`
-      case KEYWORDS.BIT_TYPE:
-        return `(${comp(tail[0], Drill)}>>>0).toString(2)`
       case KEYWORDS.BITWISE_NOT:
         return `~(${comp(tail[0], Drill)})`
       case KEYWORDS.NOT:

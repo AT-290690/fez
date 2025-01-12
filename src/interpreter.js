@@ -339,39 +339,6 @@ export const keywords = {
       )
     return a >> b
   },
-  [KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT]: (args, env) => {
-    if (args.length !== 2)
-      throw new RangeError(
-        `Invalid number of arguments to (${
-          KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
-        }) (= 2 required)\n\n(${
-          KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
-        } ${stringifyArgs(args)})`
-      )
-    const a = evaluate(args[0], env)
-    if (typeof a !== 'number')
-      throw new TypeError(
-        `First arguments of (${
-          KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
-        }) must be a (${RUNTIME_TYPES.NUMBER}) but ${LISP.source(
-          args[0]
-        )} is not\n\n(${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(
-          args
-        )})`
-      )
-    const b = evaluate(args[1], env)
-    if (typeof b !== 'number')
-      throw new TypeError(
-        `Second arguments of (${
-          KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT
-        }) must be a (${RUNTIME_TYPES.NUMBER}) but ${LISP.source(
-          args[1]
-        )} is not\n\n(${KEYWORDS.BITWISE_UNSIGNED_RIGHT_SHIFT} ${stringifyArgs(
-          args
-        )})`
-      )
-    return a >>> b
-  },
   [KEYWORDS.CREATE_ARRAY]: (args, env) => {
     return args.length ? args.map((x) => evaluate(x, env)) : []
   },
@@ -400,7 +367,7 @@ export const keywords = {
       throw new TypeError(
         `Second argument of (${
           KEYWORDS.GET_ARRAY
-        }) must be a positive (32 bit ${
+        }) must be a positive (interger ${
           RUNTIME_TYPES.NUMBER
         }) (= i ${index})\n\n(${KEYWORDS.GET_ARRAY} ${stringifyArgs(args)})`
       )
