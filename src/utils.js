@@ -290,6 +290,23 @@ export const debug = (ast, onSuccess = compile) => {
   const debugEnv = {
     ...keywords,
     [DEBUG.CALLSTACK]: [KEYWORDS.BLOCK],
+    [DEBUG.SIGNATURE]: (args, env) => {
+      if (args.length !== 1)
+        throw new RangeError(
+          `Invalid number of arguments to (${DEBUG.SIGNATURE}) (= 1) (${
+            DEBUG.SIGNATURE
+          } ${stringifyArgs(args)})`
+        )
+      const name = args[0][VALUE]
+      const signatures = std[0][1][1].filter(
+        (x) =>
+          x[0][TYPE] === APPLY &&
+          x[0][VALUE] === KEYWORDS.DEFINE_VARIABLE &&
+          x[1][TYPE] === WORD &&
+          x[1][VALUE].toString().includes(name)
+      )
+      return signatures.map(LISP.source).join('\n\n')
+    },
     [DEBUG.LOG]: (args, env) => {
       if (args.length !== 1 && args.length !== 2)
         throw new RangeError(

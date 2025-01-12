@@ -56,6 +56,7 @@ export const RUNTIME_TYPES = {
 export const DEBUG = {
   LOG: 'log',
   ASSERT: 'assert',
+  SIGNATURE: '?',
   CALLSTACK: '(CALLSTACK)' // so that you can't use it in the code
 }
 
