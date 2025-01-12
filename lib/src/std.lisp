@@ -1650,38 +1650,70 @@ heap)))
     (array:push! acc cursor))))))
     tree)))
 
+(let special-form:let (lambda args env (do (let name (array:get (array:get args 0) ast:value)) (let val (evaluate (array:get args 1) env)) (map:set! env name val) val)))
+(let special-form:lambda (lambda args env (do (let params (array:slice args 0 (- (length args) 1))) (let body (array:get args (- (length args) 1))) (lambda props scope (do (let local (array:deep-copy env)) (loop:for-n (length props) (lambda i (map:set! local (array:get (array:get params i) ast:value) (evaluate (array:get props i) scope)))) (evaluate body local))))))
+(let special-form:apply (lambda args env (do (let application (evaluate (array:head args) env)) (application (array:tail args) env))))
+(let special-form:array (lambda args env (array:map args (lambda arg (evaluate arg env)))))
+(let special-form:length (lambda args env (length (evaluate (array:get args 0) env))))
+(let special-form:get (lambda args env (array:get (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:alter! (lambda args env (if (= (length args) 3) (array:alter! (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (evaluate (array:get args 2) env)) (array:alter! (evaluate (array:get args 0))))))
+(let special-form:equal? (lambda args env (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:add (lambda args env (+ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:subtract (lambda args env (if (= (length args) 1) (- (evaluate (array:get args 0) env)) (- (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))))
+(let special-form:multiply (lambda args env (* (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:divide (lambda args env (/ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:greater-than? (lambda args env (> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:less-than? (lambda args env (< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:greater-than-or-equal? (lambda args env (>= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:less-than-or-equal? (lambda args env (<= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:mod (lambda args env (mod (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:bit-wise-and (lambda args env (& (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:bit-wise-or (lambda args env (| (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:bit-wise-xor (lambda args env (^ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:bit-wise-right-shift (lambda args env (>> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:bit-wise-left-shift (lambda args env (<< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:bit-wise-not (lambda args env (~ (evaluate (array:get args 0) env))))
+(let special-form:do (lambda args env (array:first (array:fold args (lambda a arg (array:alter! a 0 (evaluate arg env))) ()))))
+(let special-form:if (lambda args env (if (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (if (= (length args) 3) (evaluate (array:get args 2) env)))))
+(let special-form:and (lambda args env (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:or (lambda args env (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
+(let special-form:throw (lambda args env (throw (evaluate (array:get args 0) env))))
+(let special-form:loop (lambda args env (loop (evaluate (array:get args 0)) (evaluate (array:get args 1)))))
+(let special-form:atom? (lambda args env (atom? (evaluate (array:get args 0) env))))
+(let special-form:lambda? (lambda args env (lambda? (evaluate (array:get args 0) env))))
+
 (let keywords (new:map (array
-  "let" (lambda args env (do (let name (array:get (array:get args 0) ast:value)) (let val (evaluate (array:get args 1) env)) (map:set! env name val) val))
-  "lambda" (lambda args env (do (let params (array:slice args 0 (- (length args) 1))) (let body (array:get args (- (length args) 1))) (lambda props scope (do (let local (array:deep-copy env)) (loop:for-n (length props) (lambda i (map:set! local (array:get (array:get params i) ast:value) (evaluate (array:get props i) scope)))) (evaluate body local)))))
-  "apply" (lambda args env (do (let application (evaluate (array:head args) env)) (application (array:tail args) env)))
-  "array" (lambda args env (array:map args (lambda arg (evaluate arg env))))
-  "length" (lambda args env (length (evaluate (array:get args 0) env)))
-  "get" (lambda args env (array:get (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "alter!" (lambda args env (if (= (length args) 3) (array:alter! (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (evaluate (array:get args 2) env)) (array:alter! (evaluate (array:get args 0)))))
-  "=" (lambda args env (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "+" (lambda args env (+ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "-" (lambda args env (if (= (length args) 1) (- (evaluate (array:get args 0) env)) (- (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
-  "*" (lambda args env (* (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "/" (lambda args env (/ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  ">" (lambda args env (> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "<" (lambda args env (< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  ">=" (lambda args env (>= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "<=" (lambda args env (<= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "mod" (lambda args env (mod (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "&" (lambda args env (& (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "|" (lambda args env (| (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "^" (lambda args env (^ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  ">>" (lambda args env (>> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "<<" (lambda args env (<< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "~" (lambda args env (~ (evaluate (array:get args 0) env)))
-  "do" (lambda args env (array:first (array:fold args (lambda a arg (array:alter! a 0 (evaluate arg env))) ())))
-  "if" (lambda args env (if (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (if (= (length args) 3) (evaluate (array:get args 2) env))))
-  "and" (lambda args env (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "or" (lambda args env (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))
-  "throw" (lambda args env (throw (evaluate (array:get args 0) env)))
-  "loop" (lambda args env (loop (evaluate (array:get args 0)) (evaluate (array:get args 1))))
-  "atom?" (lambda args env (atom? (evaluate (array:get args 0) env)))
-  "lambda?" (lambda args env (lambda? (evaluate (array:get args 0) env))))))
+    "let" special-form:let
+    "lambda" special-form:lambda
+    "apply" special-form:apply
+    "array" special-form:array
+    "length" special-form:length
+    "get" special-form:get
+    "alter!" special-form:alter!
+    "=" special-form:equal?
+    "+" special-form:add
+    "-" special-form:subtract
+    "*" special-form:multiply
+    "/" special-form:divide
+    ">" special-form:greater-than?
+    "<" special-form:less-than?
+    ">=" special-form:greater-than-or-equal?
+    "<=" special-form:less-than-or-equal?
+    "mod" special-form:mod
+    "&" special-form:bit-wise-and
+    "|" special-form:bit-wise-or
+    "^" special-form:bit-wise-xor
+    ">>" special-form:bit-wise-right-shift
+    "<<" special-form:bit-wise-left-shift
+    "~" special-form:bit-wise-not
+    "do" special-form:do
+    "if" special-form:if
+    "and" special-form:and
+    "or" special-form:or
+    "throw" special-form:throw
+    "loop" special-form:loop
+    "atom?" special-form:atom?
+    "lambda?" special-form:lambda?)))
 
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))

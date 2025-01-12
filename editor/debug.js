@@ -1,6 +1,17 @@
+import debugStd from '../lib/debug/std.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
-import { DEBUG, FALSE, KEYWORDS, TRUE } from '../src/keywords.js'
+import {
+  APPLY,
+  DEBUG,
+  FALSE,
+  KEYWORDS,
+  TRUE,
+  TYPE,
+  VALUE,
+  WORD
+} from '../src/keywords.js'
+import { LISP } from '../src/parser.js'
 import { stringifyArgs } from '../src/utils.js'
 
 const identity = (name) => [

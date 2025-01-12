@@ -7,6 +7,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
+import { OPTIMIZATIONS } from './macros.js'
 import { leaf, isLeaf, AST } from './parser.js'
 const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
@@ -241,6 +242,7 @@ const comp = (tree, Drill) => {
       case KEYWORDS.BITWISE_XOR:
       case KEYWORDS.BITWISE_LEFT_SHIFT:
       case KEYWORDS.BITWISE_RIGHT_SHIFT:
+        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.REMAINDER_OF_DIVISION:
         return `(${comp(tail[0], Drill)}%${comp(tail[1], Drill)});`
       case KEYWORDS.BITWISE_NOT:
