@@ -56,6 +56,8 @@ export const DEBUG = {
   LOG: 'log',
   ASSERT: 'assert',
   SIGNATURE: '?',
+  LIST_THEMES: 'theme?',
+  SET_THEME: 'theme!',
   CALLSTACK: '(CALLSTACK)' // so that you can't use it in the code
 }
 

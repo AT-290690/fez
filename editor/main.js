@@ -10,7 +10,7 @@ editor.setOptions({
 // tomorrow_night_bright
 // dracula
 // terminal
-const THEME = 'dracula'
+const THEME = new URLSearchParams(location.search).get('t') ?? 'dracula'
 const EDITOR_THEME = THEME
 const TERMINAL_THEME = THEME
 // 'chrome' => 'Chrome',
@@ -104,7 +104,7 @@ document.addEventListener('keydown', (e) => {
           '//' +
           window.location.host +
           window.location.pathname +
-          `?l=${encodeURIComponent(compressed)}`
+          `?t=${THEME}&l=${encodeURIComponent(compressed)}`
         window.history.pushState({ path: newurl }, '', newurl)
       } catch (error) {
         terminal.setValue(error.message)

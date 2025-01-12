@@ -42,6 +42,68 @@ export const debug = (ast) => {
         ? 'Not defined in library'
         : signatures.map(LISP.source).join('\n\n')
     },
+    [DEBUG.LIST_THEMES]: (args, env) => {
+      if (args.length)
+        throw new RangeError(
+          `Invalid number of arguments to (${DEBUG.LIST_THEMES}) (= 0) (${
+            DEBUG.LIST_THEMES
+          } ${stringifyArgs(args)})`
+        )
+      return `;; "chrome"
+;; "clouds"
+;; "crimson_editor"
+;; "dawn"
+;; "dreamweaver"
+;; "eclipse"
+;; "github"
+;; "iplastic"
+;; "katzenmilch"
+;; "kuroir"
+;; "solarized_light"
+;; "sqlserver"
+;; "textmate"
+;; "tomorrow"
+;; "xcode"
+
+;; "ambiance"
+;; "chaos"
+;; "clouds_midnight"
+;; "cobalt"
+;; "dracula"
+;; "gob"
+;; "gruvbox"
+;; "idle_fingers"
+;; "kr_theme"
+;; "merbivore"
+;; "merbivore_soft"
+;; "mono_industrial"
+;; "monokai"
+;; "pastel_on_dark"
+;; "solarized_dark"
+;; "terminal"
+;; "tomorrow_night"
+;; "tomorrow_night_blue"
+;; "tomorrow_night_bright"
+;; "tomorrow_night_eighties"
+;; "twilight"
+;; "vibrant_ink"`
+    },
+    [DEBUG.SET_THEME]: (args, env) => {
+      if (args.length !== 1)
+        throw new RangeError(
+          `Invalid number of arguments to (${DEBUG.LIST_THEMES}) (= 1) (${
+            DEBUG.SET_THEME
+          } ${stringifyArgs(args)})`
+        )
+      const urlParams = new URLSearchParams(window.location.search)
+      urlParams.set(
+        't',
+        evaluate(args[0], env)
+          .map((x) => String.fromCharCode(x))
+          .join('')
+      )
+      window.location.search = urlParams
+    },
     [DEBUG.LOG]: (args, env) => {
       if (args.length !== 1 && args.length !== 2)
         throw new RangeError(
