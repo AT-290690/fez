@@ -1,4 +1,5 @@
 import std from '../lib/baked/std.js'
+import debugStd from '../lib/debug/std.js'
 import { compile } from './compiler.js'
 import {
   APPLY,
@@ -298,7 +299,7 @@ export const debug = (ast, onSuccess = compile) => {
           } ${stringifyArgs(args)})`
         )
       const name = args[0][VALUE]
-      const signatures = std[0][1][1].filter(
+      const signatures = debugStd[0][1][1].filter(
         (x) =>
           x[0][TYPE] === APPLY &&
           x[0][VALUE] === KEYWORDS.DEFINE_VARIABLE &&
