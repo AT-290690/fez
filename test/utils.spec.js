@@ -82,7 +82,7 @@ describe('Utils', () => {
       `(let empty! (lambda arr (do 
       (let recursive:iterate (lambda 
         (unless (= (length arr) 0) 
-          (do (set! arr) (recursive:iterate))
+          (do (alter! arr) (recursive:iterate))
         arr))) (recursive:iterate))))
 (array  
   (do 1 2)

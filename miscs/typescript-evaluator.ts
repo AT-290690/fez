@@ -39,7 +39,7 @@
     | 'or'
     | 'apply'
     | 'let'
-    | 'set!'
+    | 'alter!'
   enum AstEnum {
     Apply = 0,
     Word = 1,
@@ -259,7 +259,7 @@
         throw new TypeError('Args must be numbers')
       return a >>> b
     },
-    ['set!']: (args, env) => {
+    ['alter!']: (args, env) => {
       const array = evaluate(args[0], env)
       if (!Array.isArray(array)) throw new TypeError('Arg must be an array')
       if (args.length === 1) {

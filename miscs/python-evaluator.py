@@ -59,7 +59,7 @@ keywords = {
     'throw': lambda args, env: (_ for _ in ()).throw(Exception(''.join(chr(x) for x in evaluate(args[0], env)))),
     'atom?': lambda args, env: int(isinstance(evaluate(args[0], env), (int, float))),
     'lambda?': lambda args, env: int(callable(evaluate(args[0], env))),
-    'set!': lambda args, env: set_array(args, env),
+    'alter!': lambda args, env: set_array(args, env),
     'length': lambda args, env: len(evaluate(args[0], env)),
     'lambda': lambda args, env: lambda props=[], scope=None: lambda_function(args, props, env, scope)
 }

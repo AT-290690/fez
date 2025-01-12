@@ -189,7 +189,7 @@ fn main() {
             )),
         );
         env_ref.vars.insert(
-            "set!".to_string(),
+            "alter!".to_string(),
             Evaluated::Function(Rc::new(
                 |args: Vec<Expression>,
                  env: Rc<RefCell<Env>>,

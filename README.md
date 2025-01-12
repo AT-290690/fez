@@ -14,8 +14,8 @@
 (let x 42)
 ; But array items are not
 (let arr (array 1 2 3))
-(set! arr 0 10)
-(set! arr (length arr) 100)
+(alter! arr 0 10)
+(alter! arr (length arr) 100)
 ; arr is now will make it [10 2 3 100]
 ; No strings - instead they are array of charcodes
 "Hello World!" ; This is syntactic suggar turning it into the one below
@@ -108,13 +108,13 @@ console.log(compile(parse("(+ 1 2)")))
 console.log(compile(parse("(math:power 2 4)")))
 // (()=>{;return(()=>{var math_power;return (math_power=((base,exp)=>{return (+(exp<0)?(+(base===0)?[]:(1/(base*math_power(base,((exp*-1)-1))))):(+(exp===0)?1:(+(exp===1)?base:(1?(base*math_power(base,(exp-1))):0))));}),math_power(2,4));})()})()
 console.log(compile(parse("(|> [1 2 3 4] (array:map math:square) (math:summation))")))
-/* (()=>{var __tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result},length=(arr)=>arr.length,set_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array},get=(arr,i)=>arr[i];
-;return(()=>{var math_summation,math_square,array_map,array_fold;return (math_summation=((xs)=>{return array_fold(xs,((a,b)=>{return (a+b);}),0);}),math_square=((x)=>{return (x*x);}),array_map=((xs,callback)=>{var recursive_array_map,recursive_9271675;return ((recursive_array_map=(__tco(recursive_9271675=(i,out)=>{return (+(length(xs)>i)?()=>recursive_9271675((i+1),set_effect(out,length(out),callback(get(xs, i)))):out);}, recursive_9271675))),recursive_array_map(0,[]));}),array_fold=((xs,callback,initial)=>{var recursive_array_fold,recursive_927729;return ((recursive_array_fold=(__tco(recursive_927729=(i,out)=>{return (+(length(xs)>i)?()=>recursive_927729((i+1),callback(out,get(xs, i))):out);}, recursive_927729))),recursive_array_fold(0,initial));}),math_summation(array_map([1,2,3,4],math_square)));})()})() * /
+/* (()=>{var __tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result},length=(arr)=>arr.length,alter_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array},get=(arr,i)=>arr[i];
+;return(()=>{var math_summation,math_square,array_map,array_fold;return (math_summation=((xs)=>{return array_fold(xs,((a,b)=>{return (a+b);}),0);}),math_square=((x)=>{return (x*x);}),array_map=((xs,callback)=>{var recursive_array_map,recursive_9271675;return ((recursive_array_map=(__tco(recursive_9271675=(i,out)=>{return (+(length(xs)>i)?()=>recursive_9271675((i+1),alter_effect(out,length(out),callback(get(xs, i)))):out);}, recursive_9271675))),recursive_array_map(0,[]));}),array_fold=((xs,callback,initial)=>{var recursive_array_fold,recursive_927729;return ((recursive_array_fold=(__tco(recursive_927729=(i,out)=>{return (+(length(xs)>i)?()=>recursive_927729((i+1),callback(out,get(xs, i))):out);}, recursive_927729))),recursive_array_fold(0,initial));}),math_summation(array_map([1,2,3,4],math_square)));})()})() * /
 ```
 
 ```lisp
 ; Build-in all keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...) (>>> ...)
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
-(length ...) (do ...) (array ...) (set! ...) (get ...) (lambda ...) (apply ...) (throw ...)
+(length ...) (do ...) (array ...) (alter! ...) (get ...) (lambda ...) (apply ...) (throw ...)
 ```
