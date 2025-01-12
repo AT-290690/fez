@@ -1,17 +1,5 @@
 import std from '../lib/baked/std.js'
-import { compile } from './compiler.js'
-import {
-  APPLY,
-  ATOM,
-  DEBUG,
-  FALSE,
-  KEYWORDS,
-  RUNTIME_TYPES,
-  TRUE,
-  TYPE,
-  VALUE,
-  WORD
-} from './keywords.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isLeaf, LISP } from './parser.js'
 import {
@@ -20,7 +8,6 @@ import {
   handleUnbalancedQuotes,
   OPTIMIZATIONS
 } from './macros.js'
-import { keywords } from './interpreter.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
