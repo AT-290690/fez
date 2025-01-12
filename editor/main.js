@@ -1,4 +1,5 @@
-import { parse, debug, compile } from '../index.js'
+import { parse, compile } from '../index.js'
+import { debug } from './debug.js'
 const editor = ace.edit('editor')
 editor.setOptions({
   fontFamily: 'Fantastic',

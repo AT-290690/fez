@@ -77,19 +77,6 @@ Installation:
 npm i fez-lisp
 ```
 
-```js
-import { parse, debug } from 'fez-lisp'
-debug(parse(`(log "Hello World!" "str")`)) // Hello World!
-```
-
-```js
-import { parse, debug } from 'fez-lisp'
-debug(parse(`(+ 1 (array 2))`)).error.message // TypeError: Second arguments of (+) is not a (number) at: (+ 1 (array 2) scope: (apply)
-```
-
-````js
-
-
 ```lisp
 (let fizz-buzz (lambda n
         (cond
@@ -99,7 +86,7 @@ debug(parse(`(+ 1 (array 2))`)).error.message // TypeError: Second arguments of 
           (*) (from:number->string n))))
 
 (|> (math:range 1 100) (array:map fizz-buzz) (array:commas) (log "str"))
-````
+```
 
 ```js
 import { parse, compile } from 'fez-lisp'
