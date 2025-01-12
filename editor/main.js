@@ -6,6 +6,9 @@ editor.setOptions({
 })
 // pastel_on_dark
 // pastel_on_light
+// tomorrow_night_bright
+// dracula
+// terminal
 const THEME = 'dracula'
 const EDITOR_THEME = THEME
 const TERMINAL_THEME = THEME
