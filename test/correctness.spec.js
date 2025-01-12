@@ -6,6 +6,23 @@ const interpred = (source) => evaluate(parse(source))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      evalJS(
+        `(let numbers (math:range 1 1000))
+
+(|> 
+ numbers
+ (array:ranges math:prime?)
+ (array:map (lambda [start end .] (array:slice numbers (+ start 1) end)))
+ (array:exclude array:empty?)
+ (array:map math:summation)
+ (array:sort <)
+ (array:take 3)
+ (math:product)
+)`
+      ),
+      2405598998400
+    )
     deepStrictEqual(
       evalJS(`
     

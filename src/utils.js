@@ -11,6 +11,12 @@ import {
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
+export const formatErrorWithCallstack = (error, callstack) => {
+  return `${error.message}\n${callstack
+    .reverse()
+    .map((x, i) => `${Array(i + 2).join(' ')}(${x} ...)`)
+    .join('\n')}`
+}
 export const removeNoCode = (source) =>
   source
     .replace(/;.+/g, '')
@@ -263,3 +269,15 @@ export const parse = (source) =>
       std
     )
   )
+
+export const UTILS = {
+  handleUnbalancedQuotes,
+  handleUnbalancedParens,
+  logError,
+  logSuccess,
+  formatErrorWithCallstack,
+  wrapInBlock,
+  isEqual,
+  stringifyArgs,
+  shake
+}

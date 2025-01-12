@@ -53,6 +53,7 @@ export const RUNTIME_TYPES = {
   ARRAY: 'array'
 }
 export const DEBUG = {
+  STRING: 'string',
   LOG: 'log',
   ASSERT: 'assert',
   SIGNATURE: '?',

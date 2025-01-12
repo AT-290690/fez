@@ -1,4 +1,5 @@
 import { parse, compile } from '../index.js'
+import { DEBUG } from '../src/keywords.js'
 import { debug } from './debug.js'
 const editor = ace.edit('editor')
 editor.setOptions({
@@ -129,6 +130,20 @@ document.addEventListener('keydown', (e) => {
       } catch (error) {
         terminal.setValue(error.message)
       }
+      terminal.clearSelection()
+    }
+  } else if (e.key === '§' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault()
+    e.stopPropagation()
+    const selection = terminal.getSelectedText()?.trim()
+    if (selection) {
+      const parsed = parse(selection)
+      const { evaluated, error } = debug(parsed)
+      terminal.setValue(`${selection
+        .split('\n')
+        .map((x) => `; ${x}`)
+        .join('\n')}
+${error == null ? serialise(evaluated) : error.message}`)
       terminal.clearSelection()
     }
   }

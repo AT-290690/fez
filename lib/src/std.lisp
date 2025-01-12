@@ -86,6 +86,7 @@
 (let char:asterix 42)
 (let char:ampersand 38)
 (let char:at 64)
+(let char:backtick 96)
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
@@ -1132,7 +1133,7 @@
       (let total (array 0))
       (let recursive:set:index (lambda i bounds (do
         (let letter (array:get key i))
-        (let value (- letter 96))
+        (let value (- letter char:backtick))
         (array:alter! total 0 (math:euclidean-mod (+ (* (array:first total) prime-num) value) (length table)))
         (if (< i bounds) (recursive:set:index (+ i 1) bounds) (array:first total)))))
       (recursive:set:index 0 (if (< (- (length key) 1) 100) (- (length key) 1) 100)))))

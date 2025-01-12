@@ -12,7 +12,7 @@ import {
   WORD
 } from '../src/keywords.js'
 import { LISP } from '../src/parser.js'
-import { stringifyArgs } from '../src/utils.js'
+import { formatErrorWithCallstack, stringifyArgs } from '../src/utils.js'
 
 const identity = (name) => [
   [0, 'let'],
@@ -49,44 +49,45 @@ export const debug = (ast) => {
             DEBUG.LIST_THEMES
           } ${stringifyArgs(args)})`
         )
-      return `;; "chrome"
-;; "clouds"
-;; "crimson_editor"
-;; "dawn"
-;; "dreamweaver"
-;; "eclipse"
-;; "github"
-;; "iplastic"
-;; "katzenmilch"
-;; "kuroir"
-;; "solarized_light"
-;; "sqlserver"
-;; "textmate"
-;; "tomorrow"
-;; "xcode"
-
-;; "ambiance"
-;; "chaos"
-;; "clouds_midnight"
-;; "cobalt"
-;; "dracula"
-;; "gob"
-;; "gruvbox"
-;; "idle_fingers"
-;; "kr_theme"
-;; "merbivore"
-;; "merbivore_soft"
-;; "mono_industrial"
-;; "monokai"
-;; "pastel_on_dark"
-;; "solarized_dark"
-;; "terminal"
-;; "tomorrow_night"
-;; "tomorrow_night_blue"
-;; "tomorrow_night_bright"
-;; "tomorrow_night_eighties"
-;; "twilight"
-;; "vibrant_ink"`
+      return `;; light themes
+(${DEBUG.SET_THEME} "chrome")
+(${DEBUG.SET_THEME} "clouds")
+(${DEBUG.SET_THEME} "crimson_editor")
+(${DEBUG.SET_THEME} "dawn")
+(${DEBUG.SET_THEME} "dreamweaver")
+(${DEBUG.SET_THEME} "eclipse")
+(${DEBUG.SET_THEME} "github")
+(${DEBUG.SET_THEME} "iplastic")
+(${DEBUG.SET_THEME} "katzenmilch")
+(${DEBUG.SET_THEME} "kuroir")
+(${DEBUG.SET_THEME} "solarized_light")
+(${DEBUG.SET_THEME} "sqlserver")
+(${DEBUG.SET_THEME} "textmate")
+(${DEBUG.SET_THEME} "tomorrow")
+(${DEBUG.SET_THEME} "xcode")
+;; dark themes
+(${DEBUG.SET_THEME} "ambiance")
+(${DEBUG.SET_THEME} "chaos")
+(${DEBUG.SET_THEME} "clouds_midnight")
+(${DEBUG.SET_THEME} "cobalt")
+(${DEBUG.SET_THEME} "dracula")
+(${DEBUG.SET_THEME} "gob")
+(${DEBUG.SET_THEME} "gruvbox")
+(${DEBUG.SET_THEME} "idle_fingers")
+(${DEBUG.SET_THEME} "kr_theme")
+(${DEBUG.SET_THEME} "merbivore")
+(${DEBUG.SET_THEME} "merbivore_soft")
+(${DEBUG.SET_THEME} "mono_industrial")
+(${DEBUG.SET_THEME} "monokai")
+(${DEBUG.SET_THEME} "pastel_on_dark")
+(${DEBUG.SET_THEME} "solarized_dark")
+(${DEBUG.SET_THEME} "terminal")
+(${DEBUG.SET_THEME} "tomorrow_night")
+(${DEBUG.SET_THEME} "tomorrow_night_blue")
+(${DEBUG.SET_THEME} "tomorrow_night_bright")
+(${DEBUG.SET_THEME} "tomorrow_night_eighties")
+(${DEBUG.SET_THEME} "twilight")
+(${DEBUG.SET_THEME} "vibrant_ink")`
     },
     [DEBUG.SET_THEME]: (args, env) => {
       if (args.length !== 1)
@@ -103,6 +104,22 @@ export const debug = (ast) => {
           .join('')
       )
       window.location.search = urlParams
+    },
+    [DEBUG.STRING]: (args, env) => {
+      if (args.length !== 1)
+        throw new RangeError(
+          `Invalid number of arguments to (${DEBUG.STRING}) (= 1) (${
+            DEBUG.STRING
+          } but got (${args.length}) ${stringifyArgs(args)})`
+        )
+      const expression = evaluate(args[0], env)
+      if (!Array.isArray(expression))
+        throw new TypeError(
+          `Argument of (${DEBUG.STRING}) must be an (${
+            RUNTIME_TYPES.ARRAY
+          }) but got (${expression}) (${DEBUG.STRING} ${stringifyArgs(args)})`
+        )
+      return expression.map((x) => String.fromCharCode(x)).join('')
     },
     [DEBUG.LOG]: (args, env) => {
       if (args.length !== 1 && args.length !== 2)
@@ -227,10 +244,7 @@ export const debug = (ast) => {
       error: {
         message: isMaxCallStack
           ? error.message
-          : `${error.message}\n${debugEnv[DEBUG.CALLSTACK]
-              .reverse()
-              .map((x, i) => `${Array(i + 2).join(' ')}(${x} ...)`)
-              .join('\n')}`,
+          : formatErrorWithCallstack(error, debugEnv[DEBUG.CALLSTACK]),
         stack: debugEnv[DEBUG.CALLSTACK]
       }
     }
