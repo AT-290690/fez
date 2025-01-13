@@ -1012,23 +1012,22 @@
 (let string:min (lambda a b (if (string:lesser? a b) a b)))
 (let string:max (lambda a b (if (string:lesser? a b) b a)))
 (let string:join-as-table-with (lambda table colum row (do 
-(let M (math:maximum (array:map table math:max-length)))
-(let row-delimiter2 (array:map (math:zeroes (array:length (array:first table))) (lambda . (array:map (math:zeroes M) (lambda . row)))))
-(let row-delimiter 
-    (|> 
-     (math:zeroes (array:length (array:first table))) 
-     (array:map (lambda . 
-     (array:map (math:zeroes M) (lambda . row))
-     ))))
-(|> 
- table
- (array:fold (lambda a b
-    (array:merge (array:merge a (array b)) (array row-delimiter))
- ) ())  
- (array:map (lambda x (|> x 
-             (array:map (lambda y 
-             (string:pad-right y M (array char:space))))
-             (array:join colum))))
+  (let M (math:maximum (array:map table math:max-length)))
+  (let row-delimiter2 (array:map (math:zeroes (array:length (array:first table))) (lambda . (array:map (math:zeroes M) (lambda . row)))))
+  (let row-delimiter 
+      (|> 
+      (math:zeroes (array:length (array:first table))) 
+      (array:map (lambda . 
+      (array:map (math:zeroes M) (lambda . row))
+      ))))
+  (|> table
+  (array:fold (lambda a b
+      (array:merge (array:merge a (array b)) (array row-delimiter))
+  ) ())  
+  (array:map (lambda x (|> x 
+              (array:map (lambda y 
+              (string:pad-right y M (array char:space))))
+              (array:join colum))))
             
  (array:join (array char:new-line))))))
 (let string:starts-with? (lambda str pattern (and (<= (array:length pattern) (array:length str)) (string:equal? (array:slice str 0 (array:length pattern)) pattern))))
@@ -1065,6 +1064,7 @@
 (let string:colons (lambda str (string:split str char:colon)))
 (let string:semi-colons (lambda str (string:split str char:semi-colon)))
 (let string:dashes (lambda str (string:split str char:dash)))
+(let string:multilines (lambda input (|> input (string:lines) (array:append! []) (array:chunks array:empty?))))
 (let string:append (lambda a b (array:merge a b)))
 (let string:prepend (lambda a b (array:merge b a)))
 (let string:pad-left (lambda str N ch (do 
@@ -1140,8 +1140,7 @@
       (let total (array 0))
       (let recursive:set:index (lambda i bounds (do
         (let letter (array:get key i))
-        (let value (- letter char:backtick))
-        (array:alter! total 0 (math:euclidean-mod (+ (* (array:first total) prime-num) value) (array:length table)))
+        (array:alter! total 0 (math:euclidean-mod (+ (* (array:first total) prime-num) letter) (array:length table)))
         (if (< i bounds) (recursive:set:index (+ i 1) bounds) (array:first total)))))
       (recursive:set:index 0 (if (< (- (array:length key) 1) 100) (- (array:length key) 1) 100)))))
 (let set:add!

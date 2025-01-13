@@ -19,7 +19,7 @@ export const formatErrorWithCallstack = (error, callstack) => {
 }
 export const removeNoCode = (source) =>
   source
-    .replace(/;.+/g, '')
+    .replace(/(;.+|;)/g, '')
     .replace(/[\s\s]/g, ' ')
     .trim()
 export const isBalancedParenthesis = (sourceCode) => {
