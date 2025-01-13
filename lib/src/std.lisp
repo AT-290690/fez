@@ -164,6 +164,13 @@
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
 (let math:count-leading-zero-bits32 (lambda x (if (>= x 0) (- 32 (length (from:number->bit x))))))
+(let math:median (lambda xs (do
+    (let len (array:length xs))
+    (let half (math:floor (/ len 2)))
+    (if (math:odd? len)
+        (array:get xs half)
+        (/ (+ (array:get xs (- half 1)) (array:get xs half)) 2)))))
+(let math:mean (lambda xs (/ (math:summation xs) (array:length xs))))
 (let math:bit-count32 (lambda n0 (do 
   (let n1 (- n0 (& (>> n0 1) 1431655765)))
   (let n2 (+ (& n1 858993459) (& (>> n1 2) 858993459)))

@@ -6,6 +6,14 @@ const interpred = (source) => evaluate(parse(source))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`[(math:median [1 3 3 6 7 8 9])
+(math:median [1 2 3 4 5 6 8 9])
+(math:median [342 654 987 1093 2234 6243 7087 20123])
+(math:mean [1 2 3])
+(math:mean [24 39 28 30 29 18])]`),
+      [6, 4.5, 1663.5, 2, 28]
+    )
     strictEqual(
       evalJS(
         `(let numbers (math:range 1 1000))
