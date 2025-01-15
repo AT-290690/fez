@@ -1258,6 +1258,11 @@
                 (string:equal? x key))) 0))))))
 (let map:exists? (lambda table key (if (> (array:length key) 0) (map:has? table key))))
 (let map:not-exists? (lambda table key (not (map:exists? table key))))
+(let map:count (lambda arr 
+    (|> arr (array:fold (lambda memo key (do 
+        (if (map:has? memo key) 
+            (map:set! memo key (+ (map:get memo key) 1))
+            (map:set! memo key 1)))) (new:map64)))))
 
 (let doubly-linked-list:prev! (lambda list node (array:alter! list 0 (array:alter! node 2 list))))
 (let doubly-linked-list:next! (lambda list node (array:alter! list 2 (array:alter! node 0 list))))
