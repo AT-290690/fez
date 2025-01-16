@@ -126,6 +126,17 @@
                                  (math:permutations)
                                  (array:map (lambda vs (array:merge (array x) vs)))))) (array:flat-one))
               (array ()))))
+(let math:combinations (lambda xs (do
+    (let out [])
+    (let combinations (lambda arr size start temp (do
+        (if (= (length temp) size)
+            (array:push! out (array:shallow-copy temp))
+            (loop:for-range start (length arr) (lambda i (do
+                    (array:push! temp (array:get arr i))
+                    (combinations arr size (+ i 1) temp)
+                    (array:pop! temp))))))))
+   (loop:for-range 1 (+ 1 (length xs)) (lambda i (combinations xs i 0 [])))
+    out)))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
 (let math:lesser-or-equal? (lambda a b (<= a b)))
