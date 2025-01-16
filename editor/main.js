@@ -1,11 +1,13 @@
 import { parse, compile } from '../index.js'
-import { DEBUG } from '../src/keywords.js'
 import { debug } from './debug.js'
 const editor = ace.edit('editor')
 editor.setOptions({
-  fontFamily: 'Fantastic',
-  fontSize: '10pt'
+  fontFamily: 'Monaco9',
+  fontSize: '10pt',
+  copyWithEmptySelection: true
+  // keybindings: 'vscode'
 })
+editor.setKeyboardHandler('ace/keyboard/vscode')
 // pastel_on_dark
 // pastel_on_light
 // tomorrow_night_bright
@@ -62,9 +64,11 @@ editor.session.setUseWrapMode(true)
 
 const terminal = ace.edit('terminal')
 terminal.setOptions({
-  fontFamily: 'Fantastic',
-  fontSize: '10pt'
+  fontFamily: 'Monaco9',
+  fontSize: '10pt',
+  copyWithEmptySelection: true
 })
+terminal.setKeyboardHandler('ace/keyboard/vscode')
 terminal.renderer.setShowGutter(false)
 terminal.setTheme(`ace/theme/${TERMINAL_THEME}`)
 terminal.setShowPrintMargin(false)
