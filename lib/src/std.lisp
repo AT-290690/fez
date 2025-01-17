@@ -472,7 +472,7 @@
                     (let recursive:array:find (lambda i
                           (if (> (array:length xs) i)
                               (if (predicate? (array:get xs i)) (array:get xs i) (recursive:array:find (+ i 1)))
-                              ())))
+                              (throw "Item does not exist in (array:find)"))))
                         (recursive:array:find 0))))
 (let array:has? (lambda xs predicate? (do
                     (let recursive:array:has? (lambda i
@@ -1257,8 +1257,9 @@
       (if (array:in-bounds? table idx)
         (apply (lambda (do
           (let current (array:get table idx))
-          (let found (array:find current (lambda x (string:equal? key (array:get x 0)))))
-          (if (> (array:length found) 0) (array:get found 1)))))))))
+          (let found-index (array:find-index current (lambda x (string:equal? key (array:get x 0)))))
+          (unless (= found-index -1) (array:get (array:get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))))))
+  
 (let map:has? (lambda table key (do 
           (let idx (set:index table key))
           (let current (array:map (array:get table idx) (lambda x (array:first x))))

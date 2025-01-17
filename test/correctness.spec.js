@@ -2387,7 +2387,7 @@ matrix
       (cond 
           (= current char:hash) (do
           (let key (from:numbers->key y x))
-          (let c (map:get corners key))
+          (let c (if (map:has? corners key) (map:get corners key) -1))
           (if (= c 4) 
           (var:set! loops (+ (var:get loops) 1))
           (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
