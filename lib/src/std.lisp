@@ -1197,7 +1197,7 @@
 (let set:not-exists? (lambda table key (not (set:exists? table key))))
 
 (let set:add-and-get! (lambda memo key (do (set:add! memo key) key)))
-(let set:remove-and-get! (lambda memo key (do (let value (set:get memo key)) (set:remove! memo key) value)))
+(let set:remove-and-get! (lambda memo key (do (set:remove! memo key) key)))
 (let set:with! (lambda initial args
   (array:fold args (lambda a b (set:add! a b)) initial)))
 (let set:max-capacity (lambda a b (array:buckets (math:max (array:length a) (array:length b)))))
