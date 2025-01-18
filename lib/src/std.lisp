@@ -468,12 +468,13 @@
                               (recursive:array:some? (+ i 1))
                               (not (= (> (array:length xs) i) 0)))))
                         (recursive:array:some? 0))))
-(let array:find (lambda xs predicate? (do
-                    (let recursive:array:find (lambda i
-                          (if (> (array:length xs) i)
-                              (if (predicate? (array:get xs i)) (array:get xs i) (recursive:array:find (+ i 1)))
-                              (throw "Item does not exist in (array:find)"))))
-                        (recursive:array:find 0))))
+
+(let array:find (lambda xs predicate? (array:get xs (array:find-index xs predicate?))))
+
+(let array:find-option (lambda xs predicate? (do
+  (let index (array:find-index xs predicate?))
+  (if (= index -1) [[] "No such item found in (array:find-option)"] [[(array:get xs index)] []]))))
+
 (let array:has? (lambda xs predicate? (do
                     (let recursive:array:has? (lambda i
                           (if (> (array:length xs) i)
@@ -1259,7 +1260,15 @@
           (let current (array:get table idx))
           (let found-index (array:find-index current (lambda x (string:equal? key (array:get x 0)))))
           (unless (= found-index -1) (array:get (array:get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))))))
-  
+(let map:get-option
+  (lambda table key
+    (do
+      (let idx (set:index table key))
+      (if (array:in-bounds? table idx)
+        (apply (lambda (do
+          (let current (array:get table idx))
+            (let index (array:find-index current (lambda x (string:equal? key (array:get x 0)))))
+            (if (= index -1) [[] "No such item found in (map:get-option)"] [[(array:get current index)] []]))))))))
 (let map:has? (lambda table key (do 
           (let idx (set:index table key))
           (let current (array:map (array:get table idx) (lambda x (array:first x))))
@@ -1588,6 +1597,11 @@ heap)))
 (let optimization:tail-calls-2 (lambda fn (lambda a b (optimization:tail-call-loop (var:def (fn a b))))))
 (let optimization:tail-calls-3 (lambda fn (lambda a b c (optimization:tail-call-loop (var:def (fn a b c))))))
 (let optimization:tail-calls-4 (lambda fn (lambda a b c d (optimization:tail-call-loop (var:def (fn a b c d))))))
+
+(let option:error? (lambda x (> (array:length (array:second x)) 0)))
+(let option:value? (lambda x (> (array:length (array:first x)) 0)))
+(let option:value (lambda x (array:first (array:first x))))
+(let option:error (lambda x (throw (array:second x))))
 
 ; Fake keywords section
 
