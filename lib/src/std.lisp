@@ -514,6 +514,7 @@
 (let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
 (let array:empty! (lambda xs (do (let recursive:array:empty! (lambda (if (> (array:length xs) 0) (apply (lambda (do (del! xs) (recursive:array:empty!)))) xs))) (recursive:array:empty!))))
 (let array:in-bounds? (lambda xs index (and (< index (array:length xs)) (>= index 0))))
+(let array:get-option (lambda xs i (if (array:in-bounds? xs i) [[(array:get xs i)] []] [[] "Index is outside of array bounds (array:get-option)"])))
 (let array:slice (lambda xs start end (do
         (let bounds (- end start))
         (let recursive:array:slice (lambda i out
@@ -710,6 +711,7 @@
 (let matrix:alter! matrix:set!)
 (let matrix:get (lambda matrix y x (array:get (array:get matrix y) x)))
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
+(let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] "Coordinates are outside of matrix bounds (matrix:get-option)"])))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
 (let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x 
       (cond 
@@ -1601,7 +1603,8 @@ heap)))
 (let option:error? (lambda x (> (array:length (array:second x)) 0)))
 (let option:value? (lambda x (> (array:length (array:first x)) 0)))
 (let option:value (lambda x (array:first (array:first x))))
-(let option:error (lambda x (throw (array:second x))))
+(let option:throw-error (lambda x (throw (array:second x))))
+(let option:error (lambda x (array:second x)))
 
 ; Fake keywords section
 
