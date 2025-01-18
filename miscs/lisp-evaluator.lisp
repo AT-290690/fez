@@ -5,7 +5,7 @@
   "array" (lambda args env (array:map args (lambda arg (evaluate arg env))))
   "length" (lambda args env (length (evaluate (get args 0) env)))
   "get" (lambda args env (get (evaluate (get args 0) env) (evaluate (get args 1) env)))
-  "alter!" (lambda args env (if (= (length args) 3) (alter! (evaluate (get args 0) env) (evaluate (get args 1) env) (evaluate (get args 2) env)) (alter! (evaluate (get args 0)))))
+  "alter!" (lambda args env (if (= (length args) 3) (alter! (evaluate (get args 0) env) (evaluate (get args 1) env) (evaluate (get args 2) env)) (alter! (evaluate (get args 0) env))))
   "=" (lambda args env (= (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "+" (lambda args env (+ (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "-" (lambda args env (if (= (length args) 1) (- (evaluate (get args 0) env)) (- (evaluate (get args 0) env) (evaluate (get args 1) env))))
@@ -27,7 +27,7 @@
   "and" (lambda args env (and (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "or" (lambda args env (or (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "throw" (lambda args env (throw (evaluate (get args 0) env)))
-  "loop" (lambda args env (loop (evaluate (get args 0)) (evaluate (get args 1))))
+  "loop" (lambda args env (loop (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "atom?" (lambda args env (atom? (evaluate (get args 0) env)))
   "lambda?" (lambda args env (lambda? (evaluate (get args 0) env))))))
 

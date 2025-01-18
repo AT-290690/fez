@@ -88,6 +88,18 @@
 (let char:at 64)
 (let char:backtick 96)
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
+
+(let identity (lambda x x))
+(let truthy? (lambda x
+    (cond
+     (atom? x) (not (= x 0))
+     (array? x) (> (array:length x) 0)
+     (*) 1)))
+(let falsy? (lambda x
+    (cond
+     (atom? x) (= x 0)
+     (array? x) (= (array:length x) 0))))
+
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
@@ -167,14 +179,13 @@
 (let math:odd-bit? (lambda n (= (& n 1) 1)))
 (let math:average-bit (lambda a b (>> (+ a b) 1)))
 (let math:flag-flip (lambda x (- 1 (* x x))))
-(let math:toggle-bit (lambda n a b (^ a b n)))
+(let math:toggle-bit (lambda n a b (^ (^ a b) n)))
 (let math:same-sign-bit? (lambda a b (>= (^ a b) 0)))
 (let math:max-bit (lambda a b (- a (& (- a b) (>> (- a b) 31)))))
 (let math:min-bit (lambda a b (- a (& (- a b) (>> (- b a) 31)))))
 (let math:bit-equal (lambda a b (< (^ a b) 1)))
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
-(let math:count-leading-zero-bits32 (lambda x (if (>= x 0) (- 32 (array:length (from:number->bit x))))))
 (let math:median (lambda xs (do
     (let len (array:length xs))
     (let half (math:floor (/ len 2)))
@@ -501,10 +512,6 @@
                   (let index (array:second x)) (or (not (> x 0))
                   (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
       (array:map array:first))))
-(let array:traverse (lambda x cb
-    (if (atom? x)
-        (cb x)
-        (recursive:array:traverse x (lambda y (array:traverse y cb))))))
 (let array:iterate (lambda xs cb (do 
   (loop:for-n (array:length xs) cb)
   xs)))
@@ -1173,7 +1180,7 @@
   (lambda table key
     (do
       (let idx (set:index table key))
-      (if (not (array:in-bounds? table idx)) (array:alter! table idx (Array)))
+      (if (not (array:in-bounds? table idx)) (array:alter! table idx (array)))
       (let current (array:get table idx))
       (let len (array:length current))
       (let index (if (> len 0) (array:find-index current (lambda x (string:equal? x key))) -1))
@@ -1189,7 +1196,7 @@
 (let set:exists? (lambda table key (if (> (array:length key) 0) (set:has? table key))))
 (let set:not-exists? (lambda table key (not (set:exists? table key))))
 
-(let set:add-and-get! (lambda memo key value (do (set:add! memo key value) value)))
+(let set:add-and-get! (lambda memo key (do (set:add! memo key) key)))
 (let set:remove-and-get! (lambda memo key (do (let value (set:get memo key)) (set:remove! memo key) value)))
 (let set:with! (lambda initial args
   (array:fold args (lambda a b (set:add! a b)) initial)))
@@ -1218,7 +1225,7 @@
         (|> a (from:set->array) (array:for (lambda element (set:add! out element))))
         (|> b (from:set->array) (array:for (lambda element (set:add! out element))))
         out)))
-(let set:empty! (lambda table (array:map table empty!)))
+(let set:empty! (lambda table (array:map table array:empty!)))
 
 (let map:with! (lambda initial args  
   (array:enumerated-fold args (lambda a . i 
@@ -1226,7 +1233,7 @@
         (map:set! a (array:get args i) (array:get args (+ i 1))) 
         a)) 
         initial)))
-(let map:empty! (lambda table (array:map table empty!)))
+(let map:empty! (lambda table (array:map table array:empty!)))
 (let map:keys (lambda table (|> table (array:flat-one) (array:map array:first))))
 (let map:values (lambda table (|> table (array:flat-one) (array:map array:second))))
 (let map:set! (lambda table key value
@@ -1365,7 +1372,7 @@
   (let half (math:floor (* len 0.5)))
   (let recursive:left:brray:map (lambda index (do
     (brray:add-to-left! result (cb (brray:get q index)))
-   (if (> index 0) (recursive:left (- index 1))))))
+   (if (> index 0) (recursive:left:brray:map (- index 1))))))
  (recursive:left:brray:map (- half 1))
 (let recursive:right:brray:map (lambda index bounds (do
    (brray:add-to-right! result (cb (brray:get q index)))
@@ -1631,16 +1638,6 @@ heap)))
 (let array:cdr array:tail)
 (let array:for-range loop:for-range)
 (let progn do)
-(let identity (lambda x x))
-(let truthy? (lambda x
-    (cond
-     (atom? x) (not (= x 0))
-     (array? x) (> (array:length x) 0)
-     (*) 1)))
-(let falsy? (lambda x
-    (cond
-     (atom? x) (= x 0)
-     (array? x) (= (array:length x) 0))))
 
 (let π math:pi)
 (let λ lambda)
@@ -1697,7 +1694,7 @@ heap)))
 (let special-form:array (lambda args env (array:map args (lambda arg (evaluate arg env)))))
 (let special-form:length (lambda args env (array:length (evaluate (array:get args 0) env))))
 (let special-form:get (lambda args env (array:get (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
-(let special-form:alter! (lambda args env (if (= (array:length args) 3) (array:alter! (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (evaluate (array:get args 2) env)) (array:alter! (evaluate (array:get args 0))))))
+(let special-form:alter! (lambda args env (if (= (array:length args) 3) (array:alter! (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (evaluate (array:get args 2) env)) (array:alter! (evaluate (array:get args 0) env)))))
 (let special-form:equal? (lambda args env (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:add (lambda args env (+ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:subtract (lambda args env (if (= (array:length args) 1) (- (evaluate (array:get args 0) env)) (- (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)))))
@@ -1719,7 +1716,7 @@ heap)))
 (let special-form:and (lambda args env (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:or (lambda args env (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:throw (lambda args env (throw (evaluate (array:get args 0) env))))
-(let special-form:loop (lambda args env (loop (evaluate (array:get args 0)) (evaluate (array:get args 1)))))
+(let special-form:loop (lambda args env (loop (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:atom? (lambda args env (atom? (evaluate (array:get args 0) env))))
 (let special-form:lambda? (lambda args env (lambda? (evaluate (array:get args 0) env))))
 

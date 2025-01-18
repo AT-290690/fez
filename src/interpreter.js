@@ -716,10 +716,7 @@ export const keywords = {
           KEYWORDS.DEFINE_VARIABLE
         } ${stringifyArgs(args)})`
       )
-    Object.defineProperty(env, name, {
-      value: evaluate(args[1], env),
-      writable: false
-    })
+    env[name] = evaluate(args[1], env)
     return env[name]
   },
   [KEYWORDS.ANONYMOUS_FUNCTION]: (args, env) => {
@@ -745,10 +742,7 @@ export const keywords = {
       const localEnv = Object.create(env)
       for (let i = 0; i < props.length; ++i) {
         const value = evaluate(props[i], scope)
-        Object.defineProperty(localEnv, params[i][VALUE], {
-          value,
-          writable: true
-        })
+        localEnv[params[i][VALUE]] = value
       }
       if (
         name &&
