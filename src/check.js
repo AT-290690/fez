@@ -284,21 +284,28 @@ export const typeCheck = (ast) => {
                     [STATS]: { type: APPLY, [ARGS_COUNT]: new Set([n - 2]) }
                   }
                   scope = exp
-                } else env[rest[0][VALUE]] = { [STATS]: { type: ATOM } }
-                const key = withScope(rest[0][VALUE], scope)
-                if (errorStack.has(key)) errorStack.delete(key)
-                check(rest.at(-1), env, scope)
+                  const key = withScope(rest[0][VALUE], scope)
+                  if (errorStack.has(key)) errorStack.delete(key)
+                  check(rest.at(-1), env, scope)
+                } else {
+                  const name = isLeaf(rest[0])
+                    ? rest[0][VALUE]
+                    : rest[0][1][VALUE]
+                  env[name] = { [STATS]: { type: ATOM } }
+                  const key = withScope(name, scope)
+                  if (errorStack.has(key)) errorStack.delete(key)
+                  check(rest.at(-1), env, scope)
+                }
               }
               break
             case KEYWORDS.ANONYMOUS_FUNCTION:
               {
                 const params = exp.slice(1, -1)
                 const copy = Object.create(env)
-                // console.log(scope)
                 copy[SCOPE_NAME] = scope[1][VALUE]
-                // copy[SCOPE_NAME] = performance.now().toString().replace('.', 0)
-                for (const param of params)
+                for (const param of params) {
                   copy[param[VALUE]] = { [STATS]: { type: ATOM } }
+                }
                 check(rest.at(-1), copy, scope)
               }
               break
