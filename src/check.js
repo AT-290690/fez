@@ -269,8 +269,6 @@ export const typeCheck = (ast) => {
           break
         case APPLY: {
           switch (first[VALUE]) {
-            // case KEYWORDS.BLOCK:
-            //   for (const r of rest) check(r, env, scope)
             case KEYWORDS.DEFINE_VARIABLE:
               {
                 if (
@@ -293,9 +291,7 @@ export const typeCheck = (ast) => {
                   if (errorStack.has(key)) errorStack.delete(key)
                   check(rest.at(-1), env, scope)
                 } else {
-                  const name = isLeaf(rest[0])
-                    ? rest[0][VALUE]
-                    : rest[0][1][VALUE]
+                  const name = rest[0][VALUE]
                   if (!(name in env)) {
                     env[name] = { [STATS]: { type: ATOM } }
                   }
