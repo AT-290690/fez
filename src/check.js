@@ -14,7 +14,7 @@ const ARGS_COUNT = 'n'
 const VARIADIC = '...'
 const STATS = '__stats__'
 const ARGS = 'args'
-const UNKNOWN = 'unknown'
+const UNKNOWN = -1
 const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
 
@@ -42,7 +42,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, UNKNOWN],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [UNKNOWN, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -50,7 +53,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -58,7 +64,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -66,7 +75,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1, 2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -74,7 +86,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -82,7 +97,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -90,7 +108,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -98,7 +119,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [ATOM],
+        [ARGS]: [[ATOM, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
     },
@@ -106,7 +127,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -114,7 +138,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -122,7 +149,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -130,7 +160,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -146,7 +179,11 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1, 3]),
-        [ARGS]: [UNKNOWN, ATOM, UNKNOWN],
+        [ARGS]: [
+          [UNKNOWN, PLACEHOLDER],
+          [ATOM, PLACEHOLDER],
+          [UNKNOWN, PLACEHOLDER]
+        ],
         [RETURNS]: UNKNOWN
       }
     },
@@ -154,7 +191,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [UNKNOWN],
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
     },
@@ -162,7 +199,11 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2, 3]),
-        [ARGS]: [ATOM, UNKNOWN, UNKNOWN],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [UNKNOWN, PLACEHOLDER],
+          [UNKNOWN, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -170,7 +211,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [ATOM],
+        [ARGS]: [[ATOM, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
     },
@@ -178,7 +219,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -186,7 +230,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -194,7 +241,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -202,7 +252,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -210,7 +263,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -218,7 +274,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -226,7 +285,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [ATOM, ATOM],
+        [ARGS]: [
+          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: ATOM
       }
     },
@@ -234,7 +296,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [UNKNOWN],
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
     },
@@ -242,7 +304,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [UNKNOWN],
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
     },
@@ -250,7 +312,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [UNKNOWN],
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
       }
     }
