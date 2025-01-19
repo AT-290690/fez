@@ -3,6 +3,7 @@ import {
   ATOM,
   KEYWORDS,
   PLACEHOLDER,
+  PREDICATE_SUFFIX,
   SPECIAL_FORMS_SET,
   TYPE,
   VALUE,
@@ -17,7 +18,8 @@ const ARGS = 'args'
 const UNKNOWN = -1
 const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
-
+const SUBTYPE = 'subtype'
+const PREDICATE = 1
 const xor = (A, B) => {
   const out = new Set()
   B.forEach((element) => !A.has(element) && out.add(element))
@@ -43,10 +45,11 @@ export const typeCheck = (ast) => {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
         [ARGS]: [
-          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER, PREDICATE],
           [UNKNOWN, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.ADDITION]: {
@@ -200,7 +203,7 @@ export const typeCheck = (ast) => {
         type: APPLY,
         [ARGS_COUNT]: new Set([2, 3]),
         [ARGS]: [
-          [ATOM, PLACEHOLDER],
+          [ATOM, PLACEHOLDER, PREDICATE],
           [UNKNOWN, PLACEHOLDER],
           [UNKNOWN, PLACEHOLDER]
         ],
@@ -211,8 +214,9 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
-        [ARGS]: [[ATOM, PLACEHOLDER]],
-        [RETURNS]: ATOM
+        [ARGS]: [[ATOM, PLACEHOLDER, PREDICATE]],
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.EQUAL]: {
@@ -223,7 +227,8 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.LESS_THAN]: {
@@ -234,7 +239,8 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.GREATHER_THAN]: {
@@ -245,7 +251,8 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
@@ -256,7 +263,8 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.LESS_THAN_OR_EQUAL]: {
@@ -267,7 +275,8 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.AND]: {
@@ -275,10 +284,11 @@ export const typeCheck = (ast) => {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
         [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
+          [ATOM, PLACEHOLDER, PREDICATE],
+          [ATOM, PLACEHOLDER, PREDICATE]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.OR]: {
@@ -286,10 +296,11 @@ export const typeCheck = (ast) => {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
         [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
+          [ATOM, PLACEHOLDER, PREDICATE],
+          [ATOM, PLACEHOLDER, PREDICATE]
         ],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.IS_ATOM]: {
@@ -297,7 +308,8 @@ export const typeCheck = (ast) => {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.IS_LAMBDA]: {
@@ -305,7 +317,8 @@ export const typeCheck = (ast) => {
         type: APPLY,
         [ARGS_COUNT]: new Set([1]),
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
-        [RETURNS]: ATOM
+        [RETURNS]: ATOM,
+        [SUBTYPE]: PREDICATE
       }
     },
     [KEYWORDS.ERROR]: {
@@ -325,13 +338,13 @@ export const typeCheck = (ast) => {
       switch (first[TYPE]) {
         case WORD:
           {
-            const key = withScope(first[VALUE], env)
-            if (env[first[VALUE]] === undefined)
+            const key = withScope(first[VALUE], scope)
+            if (env[first[VALUE]] === undefined) {
               errorStack.set(
                 key,
                 `Trying to access undefined variable ${first[VALUE]}`
               )
-            else if (errorStack.has(key)) errorStack.delete(key)
+            } else if (errorStack.has(key)) errorStack.delete(key)
           }
           break
         case ATOM:
@@ -346,17 +359,22 @@ export const typeCheck = (ast) => {
                   rest.at(-1)[0][TYPE] === APPLY &&
                   rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
                 ) {
+                  const name = rest[0][VALUE]
                   const n = rest.at(-1).length
-                  env[rest[0][VALUE]] = {
+                  env[name] = {
                     [STATS]: {
                       type: APPLY,
                       [ARGS_COUNT]: new Set([n - 2]),
                       [ARGS]: []
                     }
                   }
+                  if (name[name.length - 1] === PREDICATE_SUFFIX)
+                    env[name][STATS][SUBTYPE] = PREDICATE
                   scope = exp
-                  const key = withScope(rest[0][VALUE], scope)
-                  if (errorStack.has(key)) errorStack.delete(key)
+                  if (env[SCOPE_NAME]) {
+                    const key = withScope(name, scope)
+                    if (errorStack.has(key)) errorStack.delete(key)
+                  }
                   check(rest.at(-1), env, scope)
                 } else {
                   const name = rest[0][VALUE]
@@ -374,7 +392,12 @@ export const typeCheck = (ast) => {
               {
                 const params = exp.slice(1, -1)
                 const copy = Object.create(env)
-                copy[SCOPE_NAME] = scope[1][VALUE]
+                if (isLeaf(scope[1])) copy[SCOPE_NAME] = scope[1][VALUE]
+                else
+                  copy[SCOPE_NAME] = performance
+                    .now()
+                    .toString()
+                    .replace('.', 0)
                 for (const param of params) {
                   copy[param[VALUE]] = { [STATS]: { type: ATOM } }
                   if (env[copy[SCOPE_NAME]])
@@ -471,8 +494,91 @@ export const typeCheck = (ast) => {
                               } but got ${rest.length} (${stringifyArgs(exp)})`
                             )
                         }
+
+                        // type checking
+
+                        // if (
+                        //   rest[i] &&
+                        //   args[i][STATS] &&
+                        //   rest[i][TYPE] !== args[i][STATS].type
+                        // ) {
+                        //   if (isLeaf(rest[i])) {
+                        //     if (
+                        //       env[rest[i][VALUE]] &&
+                        //       env[rest[i][VALUE]][STATS].type !==
+                        //         args[i][STATS].type
+                        //     )
+                        //       errorStack.set(
+                        //         key,
+                        //         `Incorrect type of arguments ${i} for (${
+                        //           first[VALUE]
+                        //         }). Expected (${
+                        //           args[i][STATS].type === ATOM
+                        //             ? 'number'
+                        //             : 'lambda'
+                        //         }) but got (${
+                        //           rest[i][TYPE] === ATOM ? 'number' : 'lambda'
+                        //         }) (${stringifyArgs(exp)})`
+                        //       )
+                        //   } else if (
+                        //     rest[i].length &&
+                        //     SPECIAL_FORMS_SET.has(rest[i][0][VALUE]) &&
+                        //     env[rest[i][0][VALUE]] &&
+                        //     env[rest[i][0][VALUE]][STATS][RETURNS] !==
+                        //       args[i][STATS].type
+                        //   ) {
+                        //     console.log(env)
+                        //     errorStack.set(
+                        //       key,
+                        //       `Incorrect type of arguments ${i} for (${
+                        //         first[VALUE]
+                        //       }). Expected (${
+                        //         args[i][STATS].type === ATOM
+                        //           ? 'number'
+                        //           : 'lambda'
+                        //       }) but got (${
+                        //         env[rest[i][0][VALUE]][STATS][RETURNS] === ATOM
+                        //           ? 'number'
+                        //           : 'lambda'
+                        //       }) (${stringifyArgs(exp)})`
+                        //     )
+                        //   }
+                        // }
                       }
                     }
+                  } else if (
+                    first[TYPE] === APPLY &&
+                    isSpecial &&
+                    env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC
+                  ) {
+                    // const expectedArgs = env[first[VALUE]][STATS][ARGS]
+                    // for (let i = 0; i < rest.length; ++i) {
+                    //   if (expectedArgs[i][TYPE] === UNKNOWN) continue
+                    //   if (expectedArgs[i][TYPE] !== rest[i][TYPE]) {
+                    //     switch (rest[i][TYPE]) {
+                    //       case UNKNOWN:
+                    //       case WORD:
+                    //         env[first[VALUE]][STATS].type =
+                    //           expectedArgs[i][TYPE]
+                    //         break
+                    //       case APPLY:
+                    //       case ATOM:
+                    //         errorStack.set(
+                    //           key,
+                    //           `Incorrect type of arguments for (${
+                    //             first[VALUE]
+                    //           }). Expected (${
+                    //             expectedArgs[i][TYPE] === ATOM
+                    //               ? 'number'
+                    //               : 'lambda'
+                    //           }) but got (${
+                    //             rest[i][TYPE] === ATOM ? 'number' : 'lambda'
+                    //           }) (${stringifyArgs(exp)})`
+                    //         )
+                    //         break
+                    //     }
+                    //   }
+                    // }
                   }
                 }
                 for (const r of rest) check(r, env, scope)
@@ -481,13 +587,9 @@ export const typeCheck = (ast) => {
           }
         }
       }
-      // for (const r of rest) check(r, env)
     }
   }
   check(ast, root, ast)
-  // check(ast, root)
-  // checkArgs(ast, root)
   if (errorStack.size) throw new TypeError([...errorStack.values()].join('\n'))
-
   return ast
 }

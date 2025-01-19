@@ -6,6 +6,8 @@ export const ATOM = 2
 export const TRUE = 1
 export const FALSE = 0
 export const PLACEHOLDER = '.'
+export const MUTATION_SUFFIX = '!'
+export const PREDICATE_SUFFIX = '?'
 export const KEYWORDS = {
   LOOP: 'loop',
   CREATE_ARRAY: 'array',
