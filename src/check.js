@@ -332,6 +332,7 @@ export const typeCheck = (ast) => {
   }
   const errorStack = new Map()
   const withScope = (name, env) => `${env[SCOPE_NAME]}_${name}`
+  const stack = []
   const check = (exp, env, scope) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first != undefined) {
@@ -344,7 +345,8 @@ export const typeCheck = (ast) => {
                 key,
                 `Trying to access undefined variable ${first[VALUE]}`
               )
-            } else if (errorStack.has(key)) errorStack.delete(key)
+            }
+            // else if (errorStack.has(key)) errorStack.delete(key)
           }
           break
         case ATOM:
@@ -370,6 +372,7 @@ export const typeCheck = (ast) => {
                   }
                   if (name[name.length - 1] === PREDICATE_SUFFIX)
                     env[name][STATS][SUBTYPE] = PREDICATE
+
                   scope = exp
                   if (env[SCOPE_NAME]) {
                     const key = withScope(name, scope)
@@ -392,8 +395,9 @@ export const typeCheck = (ast) => {
               {
                 const params = exp.slice(1, -1)
                 const copy = Object.create(env)
-                if (isLeaf(scope[1])) copy[SCOPE_NAME] = scope[1][VALUE]
-                else
+                if (isLeaf(scope[1])) {
+                  copy[SCOPE_NAME] = scope[1][VALUE]
+                } else
                   copy[SCOPE_NAME] = performance
                     .now()
                     .toString()
@@ -407,7 +411,7 @@ export const typeCheck = (ast) => {
               }
               break
             default:
-              {
+              stack.push(() => {
                 const key = withScope(first[VALUE], scope)
                 if (env[first[VALUE]] === undefined)
                   errorStack.set(
@@ -581,8 +585,8 @@ export const typeCheck = (ast) => {
                     // }
                   }
                 }
-                for (const r of rest) check(r, env, scope)
-              }
+              })
+              for (const r of rest) check(r, env, scope)
               break
           }
         }
@@ -590,6 +594,7 @@ export const typeCheck = (ast) => {
     }
   }
   check(ast, root, ast)
+  while (stack.length) stack.pop()()
   if (errorStack.size) throw new TypeError([...errorStack.values()].join('\n'))
   return ast
 }
