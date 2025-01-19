@@ -358,7 +358,6 @@ export const typeCheck = (ast) => {
                     const args = env[first[VALUE]][STATS][ARGS]
                     if (args) {
                       for (let i = 0; i < args.length; ++i) {
-                        // console.log(rest[i], args[i])
                         if (
                           args[i][STATS] &&
                           args[i][STATS].type === APPLY &&
@@ -386,6 +385,29 @@ export const typeCheck = (ast) => {
                               } but got ${rest.length} (${stringifyArgs(exp)})`
                             )
                           }
+                        } else if (
+                          args[i][STATS] &&
+                          args[i][STATS].type === APPLY &&
+                          !isLeaf(rest[i]) &&
+                          rest[i][0][TYPE] === APPLY &&
+                          rest[i][0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                        ) {
+                          const argCount = [...args[i][STATS][ARGS_COUNT]]
+                          if (
+                            !args[i][STATS][ARGS_COUNT].has(rest[i].length - 2)
+                          )
+                            errorStack.set(
+                              key,
+                              `Incorrect number of arguments for (${
+                                first[VALUE]
+                              }). Expected ${
+                                argCount.length > 1
+                                  ? `(or ${argCount
+                                      .map((x) => `(= ${x})`)
+                                      .join(' ')})`
+                                  : `(= ${argCount[0]})`
+                              } but got ${rest.length} (${stringifyArgs(exp)})`
+                            )
                         }
                       }
                     }
