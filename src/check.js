@@ -17,8 +17,10 @@ const ARGS = 'args'
 const ASSOC = 'assoc'
 const UNKNOWN = 'unknown'
 const RETURNS = 'returns'
+const SCOPE_NAME = '__scope__'
 export const typeCheck = (ast) => {
   const root = {
+    [SCOPE_NAME]: performance.now().toString().replace('.', 0),
     [KEYWORDS.BLOCK]: { [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC } },
     [KEYWORDS.ANONYMOUS_FUNCTION]: {
       [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC }
@@ -247,87 +249,86 @@ export const typeCheck = (ast) => {
     }
   }
   const errorStack = new Map()
-  const check = (exp, env) => {
+  const withScope = (name, env) => `${env[SCOPE_NAME]}_${name}`
+  const check = (exp, env, scope) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first != undefined) {
       switch (first[TYPE]) {
         case WORD:
-          if (env[first[VALUE]] === undefined)
-            errorStack.set(
-              first[VALUE],
-              `Trying to access undefined variable ${first[VALUE]}`
-            )
-          else if (errorStack.has(first[VALUE])) errorStack.delete(first[VALUE])
+          {
+            const key = withScope(first[VALUE], env)
+            if (env[first[VALUE]] === undefined)
+              errorStack.set(
+                key,
+                `Trying to access undefined variable ${first[VALUE]}`
+              )
+            else if (errorStack.has(key)) errorStack.delete(key)
+          }
           break
         case ATOM:
           break
         case APPLY: {
           switch (first[VALUE]) {
             case KEYWORDS.BLOCK:
-              for (const r of rest) check(r, env)
+              for (const r of rest) check(r, env, scope)
             case KEYWORDS.DEFINE_VARIABLE:
-              if (
-                rest.length &&
-                rest.at(-1).length &&
-                rest.at(-1)[0][TYPE] === APPLY &&
-                rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-              ) {
-                const n = rest.at(-1).length
-                Object.defineProperty(env, rest[0][VALUE], {
-                  value: {
+              {
+                if (
+                  rest.length &&
+                  rest.at(-1).length &&
+                  rest.at(-1)[0][TYPE] === APPLY &&
+                  rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                ) {
+                  const n = rest.at(-1).length
+                  env[rest[0][VALUE]] = {
                     [STATS]: { type: APPLY, [ARGS_COUNT]: new Set([n - 2]) }
-                  },
-                  writable: true
-                })
-              } else {
-                Object.defineProperty(env, rest[0][VALUE], {
-                  value: { [STATS]: { type: ATOM } },
-                  writable: true
-                })
+                  }
+                  scope = exp
+                } else env[rest[0][VALUE]] = { [STATS]: { type: ATOM } }
+                const key = withScope(rest[0][VALUE], scope)
+                if (errorStack.has(key)) errorStack.delete(key)
+                check(rest.at(-1), env, scope)
               }
-
-              if (errorStack.has(rest[0][VALUE]))
-                errorStack.delete(rest[0][VALUE])
-
-              check(rest.at(-1), env)
               break
             case KEYWORDS.ANONYMOUS_FUNCTION:
               {
                 const params = exp.slice(1, -1)
                 const copy = Object.create(env)
-                for (const param of params) {
-                  Object.defineProperty(copy, param[VALUE], {
-                    value: { [STATS]: { type: ATOM } },
-                    writable: true
-                  })
-                }
-                check(rest.at(-1), copy)
+                // console.log(scope)
+                copy[SCOPE_NAME] = scope[1][VALUE]
+                // copy[SCOPE_NAME] = performance.now().toString().replace('.', 0)
+                for (const param of params)
+                  copy[param[VALUE]] = { [STATS]: { type: ATOM } }
+                check(rest.at(-1), copy, scope)
               }
               break
             default:
-              if (env[first[VALUE]] === undefined)
-                errorStack.set(
-                  first[VALUE],
-                  `Trying to call undefined (lambda) ${first[VALUE]}`
-                )
-              else if (
-                env[first[VALUE]][STATS].type === APPLY &&
-                env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
-                !env[first[VALUE]][STATS][ARGS_COUNT].has(rest.length)
-              ) {
-                const argCount = [...env[first[VALUE]][STATS][ARGS_COUNT]]
-                errorStack.set(
-                  first[VALUE],
-                  `Incorrect number of arguments for (${
-                    first[VALUE]
-                  }). Expected ${
-                    argCount.length > 1
-                      ? `(or ${argCount.map((x) => `(= ${x})`).join(' ')})`
-                      : `(= ${argCount[0]})`
-                  } but got ${rest.length} (${stringifyArgs(exp)})`
-                )
+              {
+                const key = withScope(first[VALUE], scope)
+                if (env[first[VALUE]] === undefined)
+                  errorStack.set(
+                    key,
+                    `Trying to call undefined (lambda) ${first[VALUE]}`
+                  )
+                else if (
+                  env[first[VALUE]][STATS].type === APPLY &&
+                  env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
+                  !env[first[VALUE]][STATS][ARGS_COUNT].has(rest.length)
+                ) {
+                  const argCount = [...env[first[VALUE]][STATS][ARGS_COUNT]]
+                  errorStack.set(
+                    key,
+                    `Incorrect number of arguments for (${
+                      first[VALUE]
+                    }). Expected ${
+                      argCount.length > 1
+                        ? `(or ${argCount.map((x) => `(= ${x})`).join(' ')})`
+                        : `(= ${argCount[0]})`
+                    } but got ${rest.length} (${stringifyArgs(exp)})`
+                  )
+                }
+                for (const r of rest) check(r, env, scope)
               }
-              for (const r of rest) check(r, env)
               break
           }
         }
@@ -335,10 +336,9 @@ export const typeCheck = (ast) => {
       // for (const r of rest) check(r, env)
     }
   }
-  check(ast, root)
+  check(ast, root, ast)
   // check(ast, root)
   // checkArgs(ast, root)
-  console.log(errorStack)
   if (errorStack.size) throw new TypeError([...errorStack.values()].join('\n'))
 
   return ast
