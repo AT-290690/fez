@@ -269,8 +269,8 @@ export const typeCheck = (ast) => {
           break
         case APPLY: {
           switch (first[VALUE]) {
-            case KEYWORDS.BLOCK:
-              for (const r of rest) check(r, env, scope)
+            // case KEYWORDS.BLOCK:
+            //   for (const r of rest) check(r, env, scope)
             case KEYWORDS.DEFINE_VARIABLE:
               {
                 if (
@@ -281,7 +281,12 @@ export const typeCheck = (ast) => {
                 ) {
                   const n = rest.at(-1).length
                   env[rest[0][VALUE]] = {
-                    [STATS]: { type: APPLY, [ARGS_COUNT]: new Set([n - 2]) }
+                    [STATS]: {
+                      type: APPLY,
+                      [ARGS_COUNT]: new Set([n - 2]),
+                      args: [],
+                      assoc: []
+                    }
                   }
                   scope = exp
                   const key = withScope(rest[0][VALUE], scope)
@@ -291,7 +296,9 @@ export const typeCheck = (ast) => {
                   const name = isLeaf(rest[0])
                     ? rest[0][VALUE]
                     : rest[0][1][VALUE]
-                  env[name] = { [STATS]: { type: ATOM } }
+                  if (!(name in env)) {
+                    env[name] = { [STATS]: { type: ATOM } }
+                  }
                   const key = withScope(name, scope)
                   if (errorStack.has(key)) errorStack.delete(key)
                   check(rest.at(-1), env, scope)
@@ -304,6 +311,7 @@ export const typeCheck = (ast) => {
                 const copy = Object.create(env)
                 copy[SCOPE_NAME] = scope[1][VALUE]
                 for (const param of params) {
+                  env[copy[SCOPE_NAME]][STATS].args.push(param)
                   copy[param[VALUE]] = { [STATS]: { type: ATOM } }
                 }
                 check(rest.at(-1), copy, scope)
