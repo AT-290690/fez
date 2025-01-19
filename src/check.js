@@ -315,7 +315,8 @@ export const typeCheck = (ast) => {
                 copy[SCOPE_NAME] = scope[1][VALUE]
                 for (const param of params) {
                   copy[param[VALUE]] = { [STATS]: { type: ATOM } }
-                  env[copy[SCOPE_NAME]][STATS][ARGS].push(copy[param[VALUE]])
+                  if (env[copy[SCOPE_NAME]])
+                    env[copy[SCOPE_NAME]][STATS][ARGS].push(copy[param[VALUE]])
                 }
                 check(rest.at(-1), copy, scope)
               }
