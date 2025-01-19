@@ -6,6 +6,25 @@ describe('Should throw errors', () => {
   it('Should throw', () => {
     doesNotThrow(() =>
       type(
+        parse(`(let p (lambda (do 
+(let idx 2)
+(get [1 2 3] idx)
+(let base 10)
+(let exp 3)
+(* base (math:power base (- (* exp -1) 1)))
+(let is? (> 1 1))
+(if is? 1)
+
+(let from:positive-or-negative-digits->number (lambda digits-with-sign (do
+    (let negative? (< (array:first digits-with-sign) 0))
+    (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
+    (let recursive:from:positive-or-negative-digits->number (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->number (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
+    (* (recursive:from:positive-or-negative-digits->number 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
+)))`)
+      )
+    )
+    doesNotThrow(() =>
+      type(
         parse(`(let INPUT
 "3   4
 4   3

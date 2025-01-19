@@ -19,7 +19,7 @@ const UNKNOWN = -1
 const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
 const SUBTYPE = 'subtype'
-const PREDICATE = 1
+const PREDICATE = 3
 const xor = (A, B) => {
   const out = new Set()
   B.forEach((element) => !A.has(element) && out.add(element))
@@ -30,15 +30,17 @@ const xor = (A, B) => {
 export const typeCheck = (ast) => {
   const root = {
     [SCOPE_NAME]: performance.now().toString().replace('.', 0),
-    [KEYWORDS.BLOCK]: { [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC } },
+    [KEYWORDS.BLOCK]: {
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+    },
     [KEYWORDS.ANONYMOUS_FUNCTION]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC }
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: APPLY }
     },
     [KEYWORDS.CALL_FUNCTION]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC }
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
     },
     [KEYWORDS.CREATE_ARRAY]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC }
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: APPLY }
     },
     [KEYWORDS.LOOP]: {
       [STATS]: {
@@ -174,7 +176,10 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         [ARGS_COUNT]: new Set([2]),
-        [ARGS]: [UNKNOWN, ATOM],
+        [ARGS]: [
+          [UNKNOWN, PLACEHOLDER],
+          [ATOM, PLACEHOLDER]
+        ],
         [RETURNS]: UNKNOWN
       }
     },
@@ -383,7 +388,7 @@ export const typeCheck = (ast) => {
                   const name = rest[0][VALUE]
                   if (!(name in env)) {
                     if (rest[1][TYPE] === WORD) env[name] = env[rest[1][VALUE]]
-                    else env[name] = { [STATS]: { type: ATOM } }
+                    else env[name] = { [STATS]: { type: rest.at(-1)[TYPE] } }
                   }
                   const key = withScope(name, scope)
                   if (errorStack.has(key)) errorStack.delete(key)
@@ -393,6 +398,15 @@ export const typeCheck = (ast) => {
               break
             case KEYWORDS.ANONYMOUS_FUNCTION:
               {
+                if (exp.length === 1) {
+                  throw new TypeError(
+                    `Incorrect number of arguments for (${
+                      first[VALUE]
+                    }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
+                      exp
+                    )})`
+                  )
+                }
                 const params = exp.slice(1, -1)
                 const copy = Object.create(env)
                 if (isLeaf(scope[1])) {
@@ -550,39 +564,101 @@ export const typeCheck = (ast) => {
                         // }
                       }
                     }
-                  } else if (
+                  }
+                  // type check
+                  else if (
                     first[TYPE] === APPLY &&
                     isSpecial &&
                     env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC
                   ) {
-                    // const expectedArgs = env[first[VALUE]][STATS][ARGS]
-                    // for (let i = 0; i < rest.length; ++i) {
-                    //   if (expectedArgs[i][TYPE] === UNKNOWN) continue
-                    //   if (expectedArgs[i][TYPE] !== rest[i][TYPE]) {
-                    //     switch (rest[i][TYPE]) {
-                    //       case UNKNOWN:
-                    //       case WORD:
-                    //         env[first[VALUE]][STATS].type =
-                    //           expectedArgs[i][TYPE]
-                    //         break
-                    //       case APPLY:
-                    //       case ATOM:
-                    //         errorStack.set(
-                    //           key,
-                    //           `Incorrect type of arguments for (${
-                    //             first[VALUE]
-                    //           }). Expected (${
-                    //             expectedArgs[i][TYPE] === ATOM
-                    //               ? 'number'
-                    //               : 'lambda'
-                    //           }) but got (${
-                    //             rest[i][TYPE] === ATOM ? 'number' : 'lambda'
-                    //           }) (${stringifyArgs(exp)})`
-                    //         )
-                    //         break
-                    //     }
-                    //   }
-                    // }
+                    const expectedArgs = env[first[VALUE]][STATS][ARGS]
+                    for (let i = 0; i < rest.length; ++i) {
+                      if (expectedArgs[i][TYPE] === UNKNOWN) continue
+                      if (!isLeaf(rest[i])) {
+                        const CAR = rest[i][0][VALUE]
+                        if (
+                          env[CAR] &&
+                          env[CAR][STATS][RETURNS] != undefined &&
+                          env[CAR][STATS][RETURNS] != UNKNOWN &&
+                          env[CAR][STATS][RETURNS] !== expectedArgs[i][TYPE]
+                        ) {
+                          // console.log(env[CAR][STATS], expectedArgs[i][TYPE])
+                          errorStack.set(
+                            key,
+                            `Incorrect type of arguments for (${
+                              first[VALUE]
+                            }). Expected (${
+                              expectedArgs[i][TYPE] === ATOM
+                                ? 'number'
+                                : 'lambda'
+                            }) but got (${'lambda'}) (${stringifyArgs(exp)})`
+                          )
+                        }
+                      }
+                      if (
+                        env[rest[i][VALUE]] &&
+                        expectedArgs[i][TYPE] !== rest[i][TYPE]
+                      ) {
+                        switch (rest[i][TYPE]) {
+                          case UNKNOWN:
+                            env[first[VALUE]][STATS].type =
+                              expectedArgs[i][TYPE]
+                            break
+                          case WORD:
+                            const T = env[rest[i][VALUE]][STATS].type
+                            if (Array.isArray(T)) {
+                              const TT = T[VALUE]
+                              if (
+                                env[TT][STATS][RETURNS] &&
+                                env[TT][STATS][RETURNS] !== UNKNOWN &&
+                                expectedArgs[i][TYPE] !==
+                                  env[TT][STATS][RETURNS]
+                              )
+                                errorStack.set(
+                                  key,
+                                  `Incorrect type of arguments for (${
+                                    first[VALUE]
+                                  }). Expected (${
+                                    expectedArgs[i][TYPE] === ATOM
+                                      ? 'number'
+                                      : 'lambda'
+                                  }) but got (${
+                                    rest[i][TYPE] === ATOM ? 'number' : 'lambda'
+                                  }) (${stringifyArgs(exp)})`
+                                )
+                            } else if (expectedArgs[i][TYPE] !== T) {
+                              errorStack.set(
+                                key,
+                                `Incorrect type of arguments for (${
+                                  first[VALUE]
+                                }). Expected (${
+                                  expectedArgs[i][TYPE] === ATOM
+                                    ? 'number'
+                                    : 'lambda'
+                                }) but got (${
+                                  rest[i][TYPE] === ATOM ? 'number' : 'lambda'
+                                }) (${stringifyArgs(exp)})`
+                              )
+                            }
+                            break
+                          case APPLY:
+                          case ATOM:
+                            errorStack.set(
+                              key,
+                              `Incorrect type of arguments for (${
+                                first[VALUE]
+                              }). Expected (${
+                                expectedArgs[i][TYPE] === ATOM
+                                  ? 'number'
+                                  : 'lambda'
+                              }) but got (${
+                                rest[i][TYPE] === ATOM ? 'number' : 'lambda'
+                              }) (${stringifyArgs(exp)})`
+                            )
+                            break
+                        }
+                      }
+                    }
                   }
                 }
               })
