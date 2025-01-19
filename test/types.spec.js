@@ -106,7 +106,10 @@ describe('Should throw errors', () => {
         message: `Trying to access undefined variable array:nah-empty?
 Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4)
 Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1)
-Trying to call undefined (lambda) array:mapz`
+Trying to call undefined (lambda) array:mapz
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4)
+Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1)
+Trying to access undefined variable array:nah-empty?`
       }
     )
 
@@ -1896,7 +1899,8 @@ Trying to call undefined (lambda) from:charss->ast
 Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1)
 Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12)
 Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)`
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)
+Trying to access undefined variable entityz`
       }
     )
 
@@ -1921,5 +1925,35 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)`
           'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1)'
       }
     )
+
+    throws(
+      () =>
+        type(
+          parse(`(let p (lambda (do 
+(let idx [])
+(let add (lambda a b (+ a b)))
+(add idx 1))))
+`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Application) (add idx 1)`
+      }
+    )
+
+    //     throws(()=>type(parse(`(let array:get (lambda xs i (get xs i)))
+    // (let p1 (lambda (do
+    // (let idx [])
+    // (array:get [1 2 3] idx)
+    // )))
+    // (let p2 (lambda (do
+    // (array:get [1 2 3] (lambda 1))
+    // )))
+    // (let p3 (lambda (do
+    // (array:get [1 2 3] [])
+    // )))
+    // (let p4 (lambda (do
+    // (array:get [1 2 3] 1)
+    // )))`)))
   })
 })
