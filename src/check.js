@@ -14,10 +14,17 @@ const ARGS_COUNT = 'n'
 const VARIADIC = '...'
 const STATS = '__stats__'
 const ARGS = 'args'
-const ASSOC = 'assoc'
 const UNKNOWN = 'unknown'
 const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
+
+const xor = (A, B) => {
+  const out = new Set()
+  B.forEach((element) => !A.has(element) && out.add(element))
+  A.forEach((element) => !B.has(element) && out.add(element))
+  return out
+}
+
 export const typeCheck = (ast) => {
   const root = {
     [SCOPE_NAME]: performance.now().toString().replace('.', 0),
@@ -282,8 +289,7 @@ export const typeCheck = (ast) => {
                     [STATS]: {
                       type: APPLY,
                       [ARGS_COUNT]: new Set([n - 2]),
-                      args: [],
-                      assoc: []
+                      [ARGS]: []
                     }
                   }
                   scope = exp
@@ -293,7 +299,8 @@ export const typeCheck = (ast) => {
                 } else {
                   const name = rest[0][VALUE]
                   if (!(name in env)) {
-                    env[name] = { [STATS]: { type: ATOM } }
+                    if (rest[1][TYPE] === WORD) env[name] = env[rest[1][VALUE]]
+                    else env[name] = { [STATS]: { type: ATOM } }
                   }
                   const key = withScope(name, scope)
                   if (errorStack.has(key)) errorStack.delete(key)
@@ -307,8 +314,8 @@ export const typeCheck = (ast) => {
                 const copy = Object.create(env)
                 copy[SCOPE_NAME] = scope[1][VALUE]
                 for (const param of params) {
-                  env[copy[SCOPE_NAME]][STATS].args.push(param)
                   copy[param[VALUE]] = { [STATS]: { type: ATOM } }
+                  env[copy[SCOPE_NAME]][STATS][ARGS].push(copy[param[VALUE]])
                 }
                 check(rest.at(-1), copy, scope)
               }
@@ -337,6 +344,51 @@ export const typeCheck = (ast) => {
                         : `(= ${argCount[0]})`
                     } but got ${rest.length} (${stringifyArgs(exp)})`
                   )
+                } else {
+                  const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
+                  if (first[TYPE] === APPLY && !isSpecial) {
+                    if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
+                      env[first[VALUE]][STATS].type = APPLY
+                      env[first[VALUE]][STATS][ARGS_COUNT] = new Set([
+                        rest.length
+                      ])
+                    }
+                    // also type of arg
+                    const args = env[first[VALUE]][STATS][ARGS]
+                    if (args) {
+                      for (let i = 0; i < args.length; ++i) {
+                        // console.log(rest[i], args[i])
+                        if (
+                          args[i][STATS] &&
+                          args[i][STATS].type === APPLY &&
+                          env[rest[i][VALUE]] &&
+                          env[rest[i][VALUE]][STATS] &&
+                          env[rest[i][VALUE]][STATS][ARGS_COUNT]
+                        ) {
+                          const argCount = [...args[i][STATS][ARGS_COUNT]]
+                          if (
+                            xor(
+                              args[i][STATS][ARGS_COUNT],
+                              env[rest[i][VALUE]][STATS][ARGS_COUNT]
+                            ).size !== 0
+                          ) {
+                            errorStack.set(
+                              key,
+                              `Incorrect number of arguments for (${
+                                first[VALUE]
+                              }). Expected ${
+                                argCount.length > 1
+                                  ? `(or ${argCount
+                                      .map((x) => `(= ${x})`)
+                                      .join(' ')})`
+                                  : `(= ${argCount[0]})`
+                              } but got ${rest.length} (${stringifyArgs(exp)})`
+                            )
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
                 for (const r of rest) check(r, env, scope)
               }
