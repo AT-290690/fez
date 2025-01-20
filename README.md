@@ -14,8 +14,8 @@
 (let x 42)
 ; But array items are not
 (let arr (array 1 2 3))
-(alter! arr 0 10)
-(alter! arr (length arr) 100)
+(set! arr 0 10)
+(set! arr (length arr) 100)
 ; arr is now will make it [10 2 3 100]
 ; No strings - instead they are array of charcodes
 "Hello World!" ; This is syntactic suggar turning it into the one below
@@ -103,5 +103,5 @@ console.log(compile(parse("(|> [1 2 3 4] (array:map math:square) (math:summation
 ; Build-in all keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...)
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
-(length ...) (do ...) (array ...) (alter! ...) (get ...) (lambda ...) (apply ...) (throw ...)
+(length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...) (throw ...)
 ```

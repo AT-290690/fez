@@ -112,7 +112,8 @@ const Helpers = {
   atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,
   lambda_predicate: `lambda_predicate=(fn)=>+(typeof fn==='function')`,
   __error: `__error=(error)=>{throw new Error(error.map((x)=>String.fromCharCode(x)).join(''))}`,
-  alter_effect: `alter_effect=function(array,index,value){if(arguments.length===1){array.pop()}else{array[index] = value};return array}`
+  set_effect: `set_effect=(array,index,value)=>{array[index] = value;return array}`,
+  pop_effect: `pop_effect=(array)=>{array.pop();return array}`
 }
 const semiColumnEdgeCases = new Set([
   ';)',

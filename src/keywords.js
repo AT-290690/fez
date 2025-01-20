@@ -41,7 +41,8 @@ export const KEYWORDS = {
   CALL_FUNCTION: 'apply',
   DEFINE_VARIABLE: 'let',
 
-  SET_ARRAY: 'alter!',
+  SET_ARRAY: 'set!',
+  POP_ARRAY: 'pop!',
   ERROR: 'throw'
 }
 

@@ -389,11 +389,11 @@ export const keywords = {
     return value
   },
   [KEYWORDS.SET_ARRAY]: (args, env) => {
-    if (args.length !== 1 && args.length !== 3)
+    if (args.length !== 3)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.SET_ARRAY
-        }) (or 1 3) required\n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+        }) (= 3) required\n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
       )
     const array = evaluate(args[0], env)
     if (!Array.isArray(array))
@@ -404,37 +404,52 @@ export const keywords = {
           KEYWORDS.SET_ARRAY
         } ${stringifyArgs(args)})`
       )
-    if (args.length === 1) {
-      array.pop()
-    } else {
-      const index = evaluate(args[1], env)
-      if (!Number.isInteger(index) || index < 0)
-        throw new TypeError(
-          `Second argument of (${KEYWORDS.SET_ARRAY}) must be a positive (${
-            RUNTIME_TYPES.NUMBER
-          } integer) (= i ${index}) but ${LISP.source(args[1])} is not\n\n(${
-            KEYWORDS.SET_ARRAY
-          } ${stringifyArgs(args)})`
-        )
-      if (index > array.length)
-        throw new RangeError(
-          `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
-            RUNTIME_TYPES.ARRAY
-          }) bounds (${index}) expected (and (>= i 0) (< i ${
-            array.length
-          })) but ${LISP.source(args[1])} is not\n\n(${
-            KEYWORDS.SET_ARRAY
-          } ${stringifyArgs(args)})`
-        )
-      const value = evaluate(args[2], env)
-      if (value == undefined)
-        throw new RangeError(
-          `Trying to set a null value in (${RUNTIME_TYPES.ARRAY}) at (${
-            KEYWORDS.SET_ARRAY
-          })\n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
-        )
-      array[index] = value
-    }
+    const index = evaluate(args[1], env)
+    if (!Number.isInteger(index) || index < 0)
+      throw new TypeError(
+        `Second argument of (${KEYWORDS.SET_ARRAY}) must be a positive (${
+          RUNTIME_TYPES.NUMBER
+        } integer) (= i ${index}) but ${LISP.source(args[1])} is not\n\n(${
+          KEYWORDS.SET_ARRAY
+        } ${stringifyArgs(args)})`
+      )
+    if (index > array.length)
+      throw new RangeError(
+        `Second argument of (${KEYWORDS.SET_ARRAY}) is outside of the (${
+          RUNTIME_TYPES.ARRAY
+        }) bounds (${index}) expected (and (>= i 0) (< i ${
+          array.length
+        })) but ${LISP.source(args[1])} is not\n\n(${
+          KEYWORDS.SET_ARRAY
+        } ${stringifyArgs(args)})`
+      )
+    const value = evaluate(args[2], env)
+    if (value == undefined)
+      throw new RangeError(
+        `Trying to set a null value in (${RUNTIME_TYPES.ARRAY}) at (${
+          KEYWORDS.SET_ARRAY
+        })\n\n(${KEYWORDS.SET_ARRAY} ${stringifyArgs(args)})`
+      )
+    array[index] = value
+    return array
+  },
+  [KEYWORDS.POP_ARRAY]: (args, env) => {
+    if (args.length !== 1)
+      throw new RangeError(
+        `Invalid number of arguments for (${
+          KEYWORDS.POP_ARRAY
+        }) (= 1) required\n\n(${KEYWORDS.POP_ARRAY} ${stringifyArgs(args)})`
+      )
+    const array = evaluate(args[0], env)
+    if (!Array.isArray(array))
+      throw new TypeError(
+        `First argument of (${KEYWORDS.POP_ARRAY}) must be an (${
+          RUNTIME_TYPES.ARRAY
+        }) but ${LISP.source(args[0])} is not\n\n(${
+          KEYWORDS.POP_ARRAY
+        } ${stringifyArgs(args)})`
+      )
+    array.pop()
     return array
   },
   [KEYWORDS.ARRAY_LENGTH]: (args, env) => {

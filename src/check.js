@@ -224,12 +224,20 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SET_ARRAY]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1, 3]),
+        [ARGS_COUNT]: new Set([3]),
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
           [ATOM, PLACEHOLDER],
           [UNKNOWN, PLACEHOLDER]
         ],
+        [RETURNS]: UNKNOWN
+      }
+    },
+    [KEYWORDS.POP_ARRAY]: {
+      [STATS]: {
+        type: APPLY,
+        [ARGS_COUNT]: new Set([1]),
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
       }
     },

@@ -88,7 +88,7 @@ bbrgwb")
     )
     strictEqual(
       interpred(`
-(let std:map "(let map (lambda xs callback (do (let recursive:map (lambda i out (if (> (length xs) i) (recursive:map (+ i 1) (alter! out (length out) (callback (get xs i)))) out))) (recursive:map 0 (array)))))")
+(let std:map "(let map (lambda xs callback (do (let recursive:map (lambda i out (if (> (length xs) i) (recursive:map (+ i 1) (set! out (length out) (callback (get xs i)))) out))) (recursive:map 0 (array)))))")
 (let std:fold "(let fold (lambda xs callback initial (do (let recursive:array:fold (lambda i out (if (> (length xs) i) (recursive:array:fold (+ i 1) (callback out (get xs i))) out))) (recursive:array:fold 0 initial))))")
 (let code "(fold (map (array 1 2 3 4 5) (lambda x (* x x))) (lambda a b (+ a b)) 0)")
 (let source (|>
@@ -909,7 +909,7 @@ ZZZ=ZZZ,ZZZ")
       evalJS(
         `(let arr (array (array 1 2 3) (array 1 (array 1 2) 3))) 
 (let cloned (array:deep-copy arr)) 
-(array:alter! (array:get (array:get cloned 1) 1) 1 20000) 
+(array:set! (array:get (array:get cloned 1) 1) 1 20000) 
 (array arr cloned)`
       ),
       [
@@ -937,7 +937,7 @@ ZZZ=ZZZ,ZZZ")
       evalJS(
         `
     (let workers ())
-(let make-worker (lambda name age prof (array:alter! workers (length workers) 
+(let make-worker (lambda name age prof (array:set! workers (length workers) 
   (|> (array () () () ()) 
   (map:set! 
     (array char:n char:a char:m char:e) name) 
@@ -1425,7 +1425,7 @@ ZZZ=ZZZ,ZZZ")
 (map:set! keywords "=" (lambda args env (do (let a (evaluate (car args) env)) (array:every? (cdr args) (lambda b (= a (evaluate b env)))))))
 (map:set! keywords "+" (lambda args env (array:fold args (lambda a b (+ a (evaluate b env))) 0)))
 (map:set! keywords "*" (lambda args env (array:fold args (lambda a b (* a (evaluate b env))) 1)))
-(map:set! keywords "do" (lambda args env (car (array:fold args (lambda a arg (array:alter! a 0 (evaluate arg env))) ()))))
+(map:set! keywords "do" (lambda args env (car (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) ()))))
 (map:set! keywords "if" (lambda args env (if (evaluate (array:get args 0) env)
                                              (evaluate (array:get args 1) env)
                                              (if (= (length args) 3)
@@ -1446,7 +1446,7 @@ ZZZ=ZZZ,ZZZ")
   (let board (array:map (math:zeroes n) (lambda . (array:map (math:zeroes n) (lambda . ".")))))
   (let backtrack (lambda row 
     (if (= row n) 
-        (alter! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
+        (set! solutions (length solutions) (array:map board (lambda a (array:join a "")))) 
         (apply (lambda (do
           (loop:for-n n (lambda col 
             (unless 
@@ -1458,12 +1458,12 @@ ZZZ=ZZZ,ZZZ")
                 (set:add! cols (array col))
                 (set:add! positive-diagonal (array (+ row col)))
                 (set:add! negative-diagonal (array (- row col)))
-                (alter! (array:get board row) col "Q")
+                (set! (array:get board row) col "Q")
                 (backtrack (+ row 1)) 
                 (set:remove! cols (array col))
                 (set:remove! positive-diagonal (array (+ row col)))
                 (set:remove! negative-diagonal (array (- row col)))
-                (alter! (array:get board row) col ".")))))))))))))
+                (set! (array:get board row) col ".")))))))))))))
   (backtrack 0)
   solutions)))
 (array (n-queen 1) (n-queen 4))`
@@ -1582,18 +1582,18 @@ ZZZ=ZZZ,ZZZ")
         `(let N 8)
 (let matrix (|> (math:zeroes N) (array:map (lambda x (array:map (math:zeroes N) (lambda . 0))))))
 (let add-glider! (lambda matrix y x (do 
-  (alter! (get matrix (+ y 2)) (+ x 1) 1)
-  (alter! (get matrix (+ y 2)) (+ x 2) 1)
-  (alter! (get matrix (+ y 2)) (+ x 3) 1)
-  (alter! (get matrix (+ y 1)) (+ x 3) 1)
-  (alter! (get matrix (+ y 0)) (+ x 2) 1)
+  (set! (get matrix (+ y 2)) (+ x 1) 1)
+  (set! (get matrix (+ y 2)) (+ x 2) 1)
+  (set! (get matrix (+ y 2)) (+ x 3) 1)
+  (set! (get matrix (+ y 1)) (+ x 3) 1)
+  (set! (get matrix (+ y 0)) (+ x 2) 1)
   )))
 (add-glider! matrix 0 0)
 
-; (alter! (get matrix 6) 2 1)
-; (alter! (get matrix 5) 4 1)
-; (alter! (get matrix 5) 3 1)
-; (alter! (get matrix 3) 3 1)
+; (set! (get matrix 6) 2 1)
+; (set! (get matrix 5) 4 1)
+; (set! (get matrix 5) 3 1)
+; (set! (get matrix 3) 3 1)
 
 (let gof (lambda matrix (do
   (array:enumerated-map matrix (lambda arr y (do
@@ -1718,7 +1718,7 @@ matrix
         `(let empty! (lambda arr (do 
       (let recursive:iterate (lambda 
         (unless (= (length arr) 0) 
-          (do (alter! arr) (recursive:iterate))
+          (do (pop! arr) (recursive:iterate))
         arr))) (recursive:iterate))))
 (array  
   (do 1 2)
@@ -2354,8 +2354,8 @@ matrix
       (let start-copy (array:shallow-copy start))
       (let [syc sxc .] start-copy)
       (let [cdy cdx .] current-dir)
-      (alter! start-copy 0 (+ syc cdy))
-      (alter! start-copy 1 (+ sxc cdx))
+      (set! start-copy 0 (+ syc cdy))
+      (set! start-copy 1 (+ sxc cdx))
       (let [y x .] start-copy)
       (if (matrix:in-bounds? matrix y x) (do 
       (let current (matrix:get matrix y x))
@@ -2378,8 +2378,8 @@ matrix
       (let start-copy (array:shallow-copy start))
       (let [syc sxc .] start-copy)
       (let [cdy cdx .] current-dir)
-      (alter! start-copy 0 (+ syc cdy))
-      (alter! start-copy 1 (+ sxc cdx))
+      (set! start-copy 0 (+ syc cdy))
+      (set! start-copy 1 (+ sxc cdx))
       (let [y x .] start-copy)
       (if (matrix:in-bounds? matrix y x) (do 
       (let current (matrix:get matrix y x))
@@ -2743,19 +2743,19 @@ matrix
             (and 
                 (math:overlap? x (array:first (array:first Q1)) (array:first (array:second Q1)))
                 (math:overlap? y (array:second (array:first Q1)) (array:second (array:second Q1)))
-                )  (alter! a 0 (+ (get a 0) 1))
+                )  (set! a 0 (+ (get a 0) 1))
            (and 
                 (math:overlap? x (array:first (array:first Q2)) (array:first (array:second Q2)))
                 (math:overlap? y (array:second (array:first Q2)) (array:second (array:second Q2)))
-                )  (alter! a 1 (+ (get a 1) 1))
+                )  (set! a 1 (+ (get a 1) 1))
             (and 
                 (math:overlap? x (array:first (array:first Q3)) (array:first (array:second Q3)))
                 (math:overlap? y (array:second (array:first Q3)) (array:second (array:second Q3)))
-                )  (alter! a 2 (+ (get a 2) 1))
+                )  (set! a 2 (+ (get a 2) 1))
             (and 
                 (math:overlap? x (array:first (array:first Q4)) (array:first (array:second Q4)))
                 (math:overlap? y (array:second (array:first Q4)) (array:second (array:second Q4)))
-                )  (alter! a 3 (+ (get a 3) 1))
+                )  (set! a 3 (+ (get a 3) 1))
             (*) 0) a)) (array 0 0 0 0))
         (math:product)))))
 
@@ -2785,7 +2785,7 @@ matrix
         (let i (get blanks ind))
         (if (= (array:last disk) -1) (do (array:pop! disk) (recursive:fragment ind))
             (unless (<= (length disk) i) (do 
-            (alter! disk i (array:pop! disk))
+            (array:set! disk i (array:pop! disk))
             (recursive:fragment (+ ind 1))))))))
         (recursive:fragment 0)
         (|> disk (array:enumerated-fold (lambda a b i (+ a (* b i))) 0)))))
@@ -3342,11 +3342,11 @@ Program: 0,1,5,4,3,0"
       (= operand 7) ()
       (*) ()
   )))
-  ; (let set-register-A! (lambda value (alter! registers 0 value)))
+  ; (let set-register-A! (lambda value (set! registers 0 value)))
   ; (let get-register-A (lambda (get registers 0)))
-  ; (let set-register-B! (lambda value (alter! registers 1 value)))
+  ; (let set-register-B! (lambda value (set! registers 1 value)))
   ; (let get-register-B (lambda (get registers 1)))
-  ; (let set-register-C! (lambda value (alter! registers 2 value)))
+  ; (let set-register-C! (lambda value (set! registers 2 value)))
   ; (let get-register-C (lambda (get registers 2)))
   (let opcodes (lambda opcode operand 
       (cond
@@ -3357,15 +3357,15 @@ Program: 0,1,5,4,3,0"
           ; an operand of 5 would divide A by 2^B.) 
           ; The result of the division operation is truncated to an integer
           ; and then written to the A register. 
-          (= opcode 0) (do (alter! registers A (>> (get registers A) (combo operand))) (move-pointer!))
+          (= opcode 0) (do (set! registers A (>> (get registers A) (combo operand))) (move-pointer!))
           ; The bxl instruction (opcode 1) calculates the bitwise XOR of register B
           ; and the instruction's literal operand,
           ; then stores the result in register B.
-          (= opcode 1) (do (alter! registers B (^ (get registers B) operand)) (move-pointer!))
+          (= opcode 1) (do (set! registers B (^ (get registers B) operand)) (move-pointer!))
           ; The bst instruction (opcode 2) calculates the value of its combo operand modulo 8 
           ; (thereby keeping only its lowest 3 bits), 
           ; then writes that value to the B register.
-          (= opcode 2) (do (alter! registers B (& (combo operand) 7)) (move-pointer!))
+          (= opcode 2) (do (set! registers B (& (combo operand) 7)) (move-pointer!))
           ; The jnz instruction (opcode 3) does nothing if the A register is 0.
           ; However, if the A register is not zero, 
           ; it jumps by setting the instruction pointer to the value of its literal operand;
@@ -3374,17 +3374,17 @@ Program: 0,1,5,4,3,0"
           ; The bxc instruction (opcode 4) calculates the bitwise XOR of register B and register C, 
           ; then stores the result in register B. 
           ; (For legacy reasons, this instruction reads an operand but ignores it.)
-          (= opcode 4) (do (alter! registers B (^ (get registers B) (get registers C))) (move-pointer!))
+          (= opcode 4) (do (set! registers B (^ (get registers B) (get registers C))) (move-pointer!))
           ; The out instruction (opcode 5) calculates the value of its combo operand modulo 8,
           ; then outputs that value. 
           ; (If a program outputs multiple values, they are separated by commas.)
           (= opcode 5) (do (array:push! outputs (& (combo operand) 7)) (move-pointer!))
           ; The bdv instruction (opcode 6) works exactly like the adv instruction except that the result is stored in the B register. 
           ; (The numerator is still read from the A register.)
-          (= opcode 6) (do (alter! registers B (>> (get registers A) (combo operand))) (move-pointer!))
+          (= opcode 6) (do (set! registers B (>> (get registers A) (combo operand))) (move-pointer!))
           ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register. 
           ; (The numerator is still read from the A register.)
-          (= opcode 7) (do (alter! registers C (>> (get registers A) (combo operand))) (move-pointer!))
+          (= opcode 7) (do (set! registers C (>> (get registers A) (combo operand))) (move-pointer!))
           (*) ()
       )))
   (let get-opcode (lambda (get program (get-instruction-pointer))))
