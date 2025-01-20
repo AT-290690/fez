@@ -21,12 +21,6 @@ const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
 const SUBTYPE = 'subtype'
 const PREDICATE = 3
-const xor = (A, B) => {
-  const out = new Set()
-  B.forEach((element) => !A.has(element) && out.add(element))
-  A.forEach((element) => !B.has(element) && out.add(element))
-  return out
-}
 const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -48,7 +42,7 @@ export const typeCheck = (ast) => {
           [UNKNOWN, PLACEHOLDER],
           [APPLY, PLACEHOLDER]
         ],
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [RETURNS]: UNKNOWN
       }
     },
@@ -83,7 +77,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LOOP]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
           [UNKNOWN, PLACEHOLDER]
@@ -95,7 +89,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ADDITION]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -106,7 +100,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.MULTIPLICATION]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -117,7 +111,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SUBTRACTION]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -128,7 +122,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.DIVISION]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -139,7 +133,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.REMAINDER_OF_DIVISION]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -150,7 +144,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_AND]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -161,7 +155,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_NOT]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
@@ -169,7 +163,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_OR]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -180,7 +174,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_XOR]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -191,7 +185,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_LEFT_SHIFT]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -202,7 +196,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_RIGHT_SHIFT]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -213,7 +207,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GET_ARRAY]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -224,7 +218,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SET_ARRAY]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([3]),
+        [ARGS_COUNT]: 3,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
           [ATOM, PLACEHOLDER],
@@ -236,7 +230,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.POP_ARRAY]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
       }
@@ -244,7 +238,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ARRAY_LENGTH]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
@@ -252,7 +246,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IF]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([3]),
+        [ARGS_COUNT]: 3,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
           [UNKNOWN, PLACEHOLDER],
@@ -264,7 +258,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.NOT]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER, PREDICATE]],
         [RETURNS]: ATOM,
         [SUBTYPE]: PREDICATE
@@ -273,7 +267,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.EQUAL]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -285,7 +279,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -297,7 +291,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GREATHER_THAN]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -309,7 +303,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -321,7 +315,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN_OR_EQUAL]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
@@ -333,7 +327,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.AND]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
           [ATOM, PLACEHOLDER, PREDICATE]
@@ -345,7 +339,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.OR]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2]),
+        [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
           [ATOM, PLACEHOLDER, PREDICATE]
@@ -357,7 +351,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IS_ATOM]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM,
         [SUBTYPE]: PREDICATE
@@ -366,7 +360,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IS_LAMBDA]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM,
         [SUBTYPE]: PREDICATE
@@ -375,7 +369,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ERROR]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1]),
+        [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
       }
@@ -419,7 +413,7 @@ export const typeCheck = (ast) => {
                   env[name] = {
                     [STATS]: {
                       type: APPLY,
-                      [ARGS_COUNT]: new Set([n - 2]),
+                      [ARGS_COUNT]: n - 2,
                       [ARGS]: []
                     }
                   }
@@ -494,18 +488,15 @@ export const typeCheck = (ast) => {
                 else if (
                   env[first[VALUE]][STATS].type === APPLY &&
                   env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
-                  !env[first[VALUE]][STATS][ARGS_COUNT].has(rest.length)
+                  env[first[VALUE]][STATS][ARGS_COUNT] !== rest.length
                 ) {
-                  const argCount = [...env[first[VALUE]][STATS][ARGS_COUNT]]
                   errorStack.set(
                     key,
                     `Incorrect number of arguments for (${
                       first[VALUE]
-                    }). Expected ${
-                      argCount.length > 1
-                        ? `(or ${argCount.map((x) => `(= ${x})`).join(' ')})`
-                        : `(= ${argCount[0]})`
-                    } but got ${rest.length} (${stringifyArgs(exp)})`
+                    }). Expected (= ${
+                      env[first[VALUE]][STATS][ARGS_COUNT]
+                    }) but got ${rest.length} (${stringifyArgs(exp)})`
                   )
                 } else {
                   const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
@@ -514,9 +505,7 @@ export const typeCheck = (ast) => {
                     if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
                       env[first[VALUE]][STATS][RETURNS] = UNKNOWN
                       env[first[VALUE]][STATS].type = APPLY
-                      env[first[VALUE]][STATS][ARGS_COUNT] = new Set([
-                        rest.length
-                      ])
+                      env[first[VALUE]][STATS][ARGS_COUNT] = rest.length
                     }
                   }
                   // also type of arg
@@ -532,24 +521,17 @@ export const typeCheck = (ast) => {
                         args[i][STATS][ARGS_COUNT] !== VARIADIC &&
                         env[rest[i][VALUE]][STATS][ARGS_COUNT] !== VARIADIC
                       ) {
-                        const argCount = [...args[i][STATS][ARGS_COUNT]]
                         if (
-                          xor(
-                            args[i][STATS][ARGS_COUNT],
-                            env[rest[i][VALUE]][STATS][ARGS_COUNT]
-                          ).size !== 0
+                          args[i][STATS][ARGS_COUNT] !==
+                          env[rest[i][VALUE]][STATS][ARGS_COUNT]
                         ) {
                           errorStack.set(
                             key,
                             `Incorrect number of arguments for (${
                               first[VALUE]
-                            }). Expected ${
-                              argCount.length > 1
-                                ? `(or ${argCount
-                                    .map((x) => `(= ${x})`)
-                                    .join(' ')})`
-                                : `(= ${argCount[0]})`
-                            } but got ${rest.length} (${stringifyArgs(exp)})`
+                            }). Expected (= ${
+                              args[i][STATS][ARGS_COUNT]
+                            }) but got ${rest.length} (${stringifyArgs(exp)})`
                           )
                         }
                       } else if (
@@ -559,19 +541,14 @@ export const typeCheck = (ast) => {
                         rest[i][0][TYPE] === APPLY &&
                         rest[i][0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
                       ) {
-                        const argCount = [...args[i][STATS][ARGS_COUNT]]
-                        if (!args[i][STATS][ARGS_COUNT].has(rest[i].length - 2))
+                        if (args[i][STATS][ARGS_COUNT] !== rest[i].length - 2)
                           errorStack.set(
                             key,
                             `Incorrect number of arguments for (${
                               first[VALUE]
-                            }). Expected ${
-                              argCount.length > 1
-                                ? `(or ${argCount
-                                    .map((x) => `(= ${x})`)
-                                    .join(' ')})`
-                                : `(= ${argCount[0]})`
-                            } but got ${rest.length} (${stringifyArgs(exp)})`
+                            }). Expected (= ${
+                              args[i][STATS][ARGS_COUNT]
+                            }) but got ${rest.length} (${stringifyArgs(exp)})`
                           )
                       }
 
