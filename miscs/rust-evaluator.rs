@@ -189,7 +189,7 @@ fn main() {
             )),
         );
         env_ref.vars.insert(
-            "alter!".to_string(),
+            "set!".to_string(),
             Evaluated::Function(Rc::new(
                 |args: Vec<Expression>,
                  env: Rc<RefCell<Env>>,
@@ -197,11 +197,7 @@ fn main() {
                  -> Evaluated {
                     match evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs)) {
                         Evaluated::Vector(arr) => {
-                            if args.len() == 1 {
-                                arr.borrow_mut().pop();
-                                Evaluated::Vector(arr)
-                            } else {
-                                let index = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
+                            let index = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
                                 match index {
                                     Evaluated::Number(index) => {
                                         {
@@ -226,7 +222,23 @@ fn main() {
                                     }
                                     _ => panic!("Second argument of get must be a number"),
                                 }
-                            }
+                        }
+                        _ => panic!("First argument must be an array"),
+                    }
+                },
+            )),
+        );
+        env_ref.vars.insert(
+            "pop!".to_string(),
+            Evaluated::Function(Rc::new(
+                |args: Vec<Expression>,
+                 env: Rc<RefCell<Env>>,
+                 defs: Rc<RefCell<Env>>|
+                 -> Evaluated {
+                    match evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs)) {
+                        Evaluated::Vector(arr) => {
+                            arr.borrow_mut().pop();
+                            Evaluated::Vector(arr)
                         }
                         _ => panic!("First argument must be an array"),
                     }

@@ -38,7 +38,8 @@
     | 'or'
     | 'apply'
     | 'let'
-    | 'alter!'
+    | 'set!'
+    | 'pop!'
   enum AstEnum {
     Apply = 0,
     Word = 1,
@@ -251,16 +252,18 @@
         throw new TypeError('Args must be numbers')
       return a >> b
     },
-    ['alter!']: (args, env) => {
+    ['set!']: (args, env) => {
       const array = evaluate(args[0], env)
       if (!Array.isArray(array)) throw new TypeError('Arg must be an array')
-      if (args.length === 1) {
-        array.pop()
-      } else {
-        const index = evaluate(args[1], env) as number
-        const value = evaluate(args[2], env)
-        array[index] = value
-      }
+      const index = evaluate(args[1], env) as number
+      const value = evaluate(args[2], env)
+      array[index] = value
+      return array
+    },
+    ['pop!']: (args, env) => {
+      const array = evaluate(args[0], env)
+      if (!Array.isArray(array)) throw new TypeError('Arg must be an array')
+      array.pop()
       return array
     },
     ['throw']: (args, env) => {

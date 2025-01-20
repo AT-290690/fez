@@ -56,10 +56,14 @@ const keywords = {
     while (evaluate(args[0], env) === TRUE) evaluate(args[1], env)
     return 0
   },
-  ['alter!']: (args, env) => {
+  ['set!']: (args, env) => {
     const array = evaluate(args[0], env)
-    if (args.length === 1) array.pop()
-    else array[evaluate(args[1], env)] = evaluate(args[2], env)
+    array[evaluate(args[1], env)] = evaluate(args[2], env)
+    return array
+  },
+  ['pop!']: (args, env) => {
+    const array = evaluate(args[0], env)
+    array.pop()
     return array
   },
   ['lambda']: (args, env) => {

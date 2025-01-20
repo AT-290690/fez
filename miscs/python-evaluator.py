@@ -46,11 +46,11 @@ keywords = {
     '<=': lambda args, env: int(evaluate(args[0], env) <= evaluate(args[1], env)),
     '>=': lambda args, env: int(evaluate(args[0], env) >= evaluate(args[1], env)),
     '~': lambda args, env: ~int(evaluate(args[0], env)),
-    '|': lambda args, env: int(evaluate(args[0], env) | evaluate(args[1], env)),
-    '&': lambda args, env: int(evaluate(args[0], env) & evaluate(args[1], env)),
-    '^': lambda args, env: int(evaluate(args[0], env) ^ evaluate(args[1], env)),
-    '>>': lambda args, env: int(evaluate(args[0], env) >> evaluate(args[1], env)),
-    '<<': lambda args, env: int(evaluate(args[0], env) << evaluate(args[1], env)),
+    '|': lambda args, env: int(evaluate(args[0], env)) | int(evaluate(args[1], env)),
+    '&': lambda args, env: int(evaluate(args[0], env)) & int(evaluate(args[1], env)),
+    '^': lambda args, env: int(evaluate(args[0], env)) ^ int(evaluate(args[1], env)),
+    '>>': lambda args, env: int(evaluate(args[0], env)) >> int(evaluate(args[1], env)),
+    '<<': lambda args, env: int(evaluate(args[0], env)) << int(evaluate(args[1], env)),
     'and': lambda args, env: FALSE if not evaluate(args[0], env) else evaluate(args[1], env),
     'or': lambda args, env: TRUE if evaluate(args[0], env) else evaluate(args[1], env),
     'apply': lambda args, env: evaluate(args.pop(), env)(args, env),
@@ -59,21 +59,24 @@ keywords = {
     'throw': lambda args, env: (_ for _ in ()).throw(Exception(''.join(chr(x) for x in evaluate(args[0], env)))),
     'atom?': lambda args, env: int(isinstance(evaluate(args[0], env), (int, float))),
     'lambda?': lambda args, env: int(callable(evaluate(args[0], env))),
-    'alter!': lambda args, env: set_array(args, env),
+    'set!': lambda args, env: set_array(args, env),
+    'pop!': lambda args, env: pop_array(args, env),
     'length': lambda args, env: len(evaluate(args[0], env)),
     'lambda': lambda args, env: lambda props=[], scope=None: lambda_function(args, props, env, scope)
 }
 
 def set_array(args, env):
     array = evaluate(args[0], env)
-    if len(args) == 1:
-        array.pop()
+    index = int(evaluate(args[1],env))
+    if (index == len(array)):
+        array.append(evaluate(args[2],env))
     else:
-        index = int(evaluate(args[1],env))
-        if (index == len(array)):
-            array.append(evaluate(args[2],env))
-        else:
-            array[index] = evaluate(args[2], env)
+        array[index] = evaluate(args[2], env)
+    return array
+
+def pop_array(args, env):
+    array = evaluate(args[0], env)
+    array.pop()
     return array
 
 def lambda_function(args, props, env, scope):
