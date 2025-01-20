@@ -13,10 +13,7 @@ const keywords = {
   ['lambda?']: (args, env) => +(typeof evaluate(args[0], env) === 'function'),
   ['+']: (args, env) => evaluate(args[0], env) + evaluate(args[1], env),
   ['*']: (args, env) => evaluate(args[0], env) * evaluate(args[1], env),
-  ['-']: (args, env) =>
-    args.length === 1
-      ? -evaluate(args[0], env)
-      : evaluate(args[0], env) - evaluate(args[1], env),
+  ['-']: (args, env) => evaluate(args[0], env) - evaluate(args[1], env),
   ['array']: (args, env) =>
     args.length ? args.map((x) => evaluate(x, env)) : [],
   ['get']: (args, env) => evaluate(args[0], env)[evaluate(args[1], env)],

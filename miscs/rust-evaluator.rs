@@ -269,19 +269,12 @@ fn main() {
                  defs: Rc<RefCell<Env>>|
                  -> Evaluated {
                     let a = evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
-                    if args.len() == 1 {
-                        match a {
-                            Evaluated::Number(a) => Evaluated::Number(-a),
-                            _ => panic!("Argument must be number"),
+                    let b = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
+                    match (a, b) {
+                        (Evaluated::Number(a), Evaluated::Number(b)) => {
+                            Evaluated::Number(a - b)
                         }
-                    } else {
-                        let b = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
-                        match (a, b) {
-                            (Evaluated::Number(a), Evaluated::Number(b)) => {
-                                Evaluated::Number(a - b)
-                            }
-                            _ => panic!("Both arguments must be numbers"),
-                        }
+                        _ => panic!("Both arguments must be numbers"),
                     }
                 },
             )),

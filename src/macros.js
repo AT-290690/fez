@@ -286,6 +286,21 @@ export const deSuggarAst = (ast, scope) => {
                     }
                   }
                   deSuggarAst(exp, scope)
+                } else {
+                  if (rest.length !== 1 && rest.length !== 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        KEYWORDS.SUBTRACTION
+                      }), expected (or (= 1) (= 2)) but got ${
+                        rest.length
+                      }\n\n(${KEYWORDS.SUBTRACTION} ${stringifyArgs(rest)})`
+                    )
+
+                  if (rest.length === 1) {
+                    exp[0][VALUE] = KEYWORDS.MULTIPLICATION
+                    exp.push([ATOM, -1])
+                    deSuggarAst(exp, scope)
+                  }
                 }
                 break
               case KEYWORDS.DIVISION:

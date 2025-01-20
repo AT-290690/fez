@@ -88,7 +88,7 @@ const lispToJavaScriptVariableName = (name) =>
   )
 const Helpers = {
   __add: `__add=(a,b)=>{return a+b}`,
-  __sub: `__sub=function(a,b){return arguments.length===1?-a:a-b}`,
+  __sub: `__sub=(a,b)=>{return a-b}`,
   __mult: `__mult=(a,b)=>{return a*b}`,
   __div: `__div=(a,b)=>{return a/b}`,
   __gteq: '__gteq=(a,b)=>+(a>=b)',
@@ -226,12 +226,10 @@ const comp = (tree, Drill) => {
       case KEYWORDS.LESS_THAN:
         return `+(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.SUBTRACTION:
-        return tail.length === 1
-          ? `(-${comp(tail[0], Drill)});`
-          : `(${parse(tail, Drill)
-              // Add space so it doesn't consider it 2--1 but 2- -1
-              .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
-              .join(token)});`
+        return `(${parse(tail, Drill)
+          // Add space so it doesn't consider it 2--1 but 2- -1
+          .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
+          .join(token)});`
       case KEYWORDS.MULTIPLICATION:
         return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.DIVISION:

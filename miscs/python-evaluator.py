@@ -33,7 +33,7 @@ keywords = {
     'loop': lambda args, env: loop(args, env),
     'mod': lambda args, env: evaluate(args[0], env) % evaluate(args[1], env),
     '+': lambda args, env: evaluate(args[0], env) + evaluate(args[1], env),
-    '-': lambda args, env: -evaluate(args[0], env) if len(args) == 1 else evaluate(args[0], env) - evaluate(args[1], env),
+    '-': lambda args, env: evaluate(args[0], env) - evaluate(args[1], env),
     '*': lambda args, env: evaluate(args[0], env) * evaluate(args[1], env),
     '/': lambda args, env: evaluate(args[0], env) * evaluate(args[1], env),
     'array': lambda args, env: [evaluate(x, env) for x in args] if args else [],

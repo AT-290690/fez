@@ -631,7 +631,7 @@ Prize: X=18641, Y=10279")
     strictEqual(evalJS(`(let pow (lambda a cb (cb a 2))) (pow 10 **)`), 100)
     deepStrictEqual(evalJS(`(array (/ 5) (- 5))`), [0.2, -5])
     deepStrictEqual(
-      evalJS(`(array:map (array 5 4 3 2 1) -)`),
+      evalJS(`(array:map (array 5 4 3 2 1) (lambda a (- a)))`),
       [-5, -4, -3, -2, -1]
     )
     deepStrictEqual(

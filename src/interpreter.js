@@ -78,11 +78,11 @@ export const keywords = {
     return a * b
   },
   [KEYWORDS.SUBTRACTION]: (args, env) => {
-    if (args.length !== 1 && args.length !== 2)
+    if (args.length !== 2)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.SUBTRACTION
-        }), expected (or (= 1) (= 2)) but got ${args.length}\n\n(${
+        }), expected (= 2) but got ${args.length}\n\n(${
           KEYWORDS.SUBTRACTION
         } ${stringifyArgs(args)})`
       )
@@ -95,7 +95,6 @@ export const keywords = {
           KEYWORDS.SUBTRACTION
         } ${stringifyArgs(args)})`
       )
-    if (args.length === 1) return -a
     const b = evaluate(args[1], env)
     if (typeof b !== 'number')
       throw new TypeError(

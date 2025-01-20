@@ -104,7 +104,7 @@
       const b = evaluate(args[1], env)
       if (typeof a !== 'number' || typeof b !== 'number')
         throw new TypeError('Args must be numbers')
-      return args.length === 1 ? -a : a - b
+      return a - b
     },
     ['if']: (args, env) => {
       const result =

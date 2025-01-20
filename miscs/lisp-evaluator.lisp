@@ -9,7 +9,7 @@
   "pop!" (lambda args env (pop! (evaluate (get args 0) env)))
   "=" (lambda args env (= (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "+" (lambda args env (+ (evaluate (get args 0) env) (evaluate (get args 1) env)))
-  "-" (lambda args env (if (= (length args) 1) (- (evaluate (get args 0) env)) (- (evaluate (get args 0) env) (evaluate (get args 1) env))))
+  "-" (lambda args env (- (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "*" (lambda args env (* (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "/" (lambda args env (/ (evaluate (get args 0) env) (evaluate (get args 1) env)))
   ">" (lambda args env (> (evaluate (get args 0) env) (evaluate (get args 1) env)))

@@ -117,7 +117,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SUBTRACTION]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([1, 2]),
+        [ARGS_COUNT]: new Set([2]),
         [ARGS]: [
           [ATOM, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
