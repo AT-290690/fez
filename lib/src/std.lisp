@@ -1,4 +1,5 @@
 (apply (lambda (do
+
 (let char:A 65)
 (let char:B 66)
 (let char:C 67)
@@ -811,6 +812,20 @@
 (let from:positive-or-negative-chars->number (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->number))))
 (let from:string->number from:positive-or-negative-chars->number)
 (let from:strings->numbers (lambda strings (array:map strings from:positive-or-negative-chars->number)))
+(let from:string->float (lambda str (do 
+    (let dec (array:find-index str (lambda x (= x char:dot))))
+    (if (= dec -1) 
+        (from:string->number str) 
+        (do 
+            (let neg? (match:negative? str))
+            (let left (array:slice str neg? dec))
+            (let right (array:slice str (+ dec 1) (length str)))
+            (let n (math:power 10 (array:length right)))
+            (let sign (if neg? -1 1))
+            (let exponent (|> left (from:chars->digits) (from:digits->number)))
+            (let mantissa (|> right (from:chars->digits) (from:digits->number)))
+            (* sign (/ (+ (* exponent n) mantissa) n)))))))
+(let from:strings->floats (lambda strings (array:map strings from:string->float)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))
@@ -1644,13 +1659,13 @@ heap)))
 (let array? (lambda x (and (not (atom? x)) (not (lambda? x)))))
 (let char? (lambda cc (and (atom? cc) (>= cc 0) (< cc 65535))))
 
-(let match:negative? (lambda string (= (array:first string) char:dash)))
-(let match:number? (lambda string (do 
-  (let is-negative (match:negative? string))
-  (let digits (if is-negative (array:tail string) string))
+(let match:negative? (lambda str (= (array:first str) char:minus)))
+(let match:number? (lambda str (do 
+  (let is-negative (match:negative? str))
+  (let digits (if is-negative (array:tail str) str))
   (array:every? digits (lambda digit (or (and (>= digit char:0) (<= digit char:9)) (= digit char:dot)))))))
 (let match:digit? (lambda char (and (>= char char:0) (<= char char:9))))
-(let match:digits? (lambda string (array:every? string match:digit?)))
+(let match:digits? (lambda str (array:every? str match:digit?)))
 
 (let ast:type 0)
 (let ast:value 1)
@@ -1679,9 +1694,7 @@ heap)))
             (let h (var:get head))
             (if (array:empty? h) (array:push! h (ast:leaf ast:apply token))
                 (if (match:number? token) 
-                    (array:push! h (ast:leaf ast:atom 
-                        (from:digits->number 
-                            (from:chars->digits token)))) 
+                    (array:push! h (ast:leaf ast:atom (from:string->float token))) 
                     (array:push! h (ast:leaf ast:word token))))))))
         (if (= cursor char:right-brace) (var:set! head (array:pop! stack))))))
     (array:push! acc cursor))))))
@@ -1778,5 +1791,4 @@ heap)))
 
   (let lisp:eval (lambda source (apply (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) { keywords } (map:get keywords "do"))))
   
-
 )))
