@@ -55,7 +55,7 @@ keywords = {
     'or': lambda args, env: TRUE if evaluate(args[0], env) else evaluate(args[1], env),
     'apply': lambda args, env: evaluate(args.pop(), env)(args, env),
     'let': lambda args, env: let(args,env),
-    'if': lambda args, env: evaluate(args[1], env) if evaluate(args[0], env) else (evaluate(args[2], env) if len(args) == 3 else FALSE),
+    'if': lambda args, env: evaluate(args[1], env) if evaluate(args[0], env) else evaluate(args[2], env),
     'throw': lambda args, env: (_ for _ in ()).throw(Exception(''.join(chr(x) for x in evaluate(args[0], env)))),
     'atom?': lambda args, env: int(isinstance(evaluate(args[0], env), (int, float))),
     'lambda?': lambda args, env: int(callable(evaluate(args[0], env))),

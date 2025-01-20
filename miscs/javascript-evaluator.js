@@ -40,11 +40,7 @@ const keywords = {
   ['<<']: (args, env) => evaluate(args[0], env) << evaluate(args[1], env),
   ['>>']: (args, env) => evaluate(args[0], env) >> evaluate(args[1], env),
   ['if']: (args, env) =>
-    evaluate(args[0], env)
-      ? evaluate(args[1], env)
-      : args.length === 3
-      ? evaluate(args[2], env)
-      : FALSE,
+    evaluate(args[0], env) ? evaluate(args[1], env) : evaluate(args[2], env),
   ['throw']: (args, env) => {
     throw new Error(
       evaluate(args[0], env)

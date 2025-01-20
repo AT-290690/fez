@@ -471,11 +471,11 @@ export const keywords = {
     return array.length
   },
   [KEYWORDS.IF]: (args, env) => {
-    if (args.length > 3 || args.length < 2)
+    if (args.length !== 3)
       throw new RangeError(
         `Invalid number of arguments for (${
           KEYWORDS.IF
-        }), expected (or (= 3) (= 2)) but got ${args.length}\n\n(${
+        }), expected (= 3) but got ${args.length}\n\n(${
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
@@ -488,11 +488,7 @@ export const keywords = {
           KEYWORDS.IF
         } ${stringifyArgs(args)})`
       )
-    return condition
-      ? evaluate(args[1], env)
-      : args.length === 3
-      ? evaluate(args[2], env)
-      : FALSE
+    return condition ? evaluate(args[1], env) : evaluate(args[2], env)
   },
   [KEYWORDS.NOT]: (args, env) => {
     if (args.length !== 1)

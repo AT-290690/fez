@@ -252,7 +252,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IF]: {
       [STATS]: {
         type: APPLY,
-        [ARGS_COUNT]: new Set([2, 3]),
+        [ARGS_COUNT]: new Set([3]),
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
           [UNKNOWN, PLACEHOLDER],

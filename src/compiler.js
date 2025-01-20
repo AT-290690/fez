@@ -251,9 +251,10 @@ const comp = (tree, Drill) => {
       case KEYWORDS.NOT:
         return `(+!${comp(tail[0], Drill)})`
       case KEYWORDS.IF: {
-        return `(${comp(tail[0], Drill)}?${comp(tail[1], Drill)}:${
-          tail.length === 3 ? comp(tail[2], Drill) : 0
-        });`
+        return `(${comp(tail[0], Drill)}?${comp(tail[1], Drill)}:${comp(
+          tail[2],
+          Drill
+        )});`
       }
       case KEYWORDS.LOOP: {
         return `(()=>{while(${comp(tail[0], Drill)}){${comp(

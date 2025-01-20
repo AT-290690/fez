@@ -110,9 +110,7 @@
       const result =
         evaluate(args[0], env) === TRUE
           ? evaluate(args[1], env) === TRUE
-          : args.length === 3
-          ? evaluate(args[2], env) === TRUE
-          : FALSE
+          : evaluate(args[2], env) === TRUE
       return result ? TRUE : FALSE
     },
     ['array']: (args, env) => {

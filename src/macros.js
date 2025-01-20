@@ -362,6 +362,20 @@ export const deSuggarAst = (ast, scope) => {
                 }
                 deSuggarAst(exp, scope)
                 break
+              case KEYWORDS.IF:
+                {
+                  if (rest.length > 3 || rest.length < 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        KEYWORDS.IF
+                      }), expected (or (= 3) (= 2)) but got ${rest.length} (${
+                        KEYWORDS.IF
+                      } ${stringifyArgs(rest)})`
+                    )
+                  if (rest.length === 2) exp.push([ATOM, FALSE])
+                }
+                deSuggarAst(exp[1], scope)
+                break
               case SUGGAR.REMAINDER_OF_DIVISION_1:
                 {
                   if (rest.length !== 2)

@@ -451,10 +451,8 @@ fn main() {
                         Evaluated::Number(condition) => {
                             if condition == 1.0 {
                                 evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs))
-                            } else if args.len() == 3 {
-                                evaluate(&args[2], Rc::clone(&env), Rc::clone(&defs))
                             } else {
-                                Evaluated::Number(0.0)
+                                evaluate(&args[2], Rc::clone(&env), Rc::clone(&defs))
                             }
                         }
                         _ => panic!("First argument must be a 1 or 0"),
