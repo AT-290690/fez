@@ -6,6 +6,7 @@ import {
   DEBUG,
   FALSE,
   KEYWORDS,
+  RUNTIME_TYPES,
   TRUE,
   TYPE,
   VALUE,
@@ -176,9 +177,9 @@ export const debug = (ast) => {
             break
           default:
             throw new TypeError(
-              `Invalid number of option to (${
-                DEBUG.LOG
-              }) got ${option} ${stringifyArgs(args)})`
+              `Invalid option to (${DEBUG.LOG}) got ${option} ${stringifyArgs(
+                args
+              )})`
             )
         }
       } else console.log(expression)

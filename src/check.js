@@ -1,6 +1,7 @@
 import {
   APPLY,
   ATOM,
+  DEBUG,
   KEYWORDS,
   PLACEHOLDER,
   PREDICATE_SUFFIX,
@@ -40,6 +41,32 @@ const toTypeNames = (type) => {
 }
 export const typeCheck = (ast) => {
   const root = {
+    [DEBUG.LOG]: {
+      [STATS]: {
+        type: APPLY,
+        [ARGS]: [
+          [UNKNOWN, PLACEHOLDER],
+          [APPLY, PLACEHOLDER]
+        ],
+        [ARGS_COUNT]: new Set([2]),
+        [RETURNS]: UNKNOWN
+      }
+    },
+    [DEBUG.STRING]: {
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: APPLY }
+    },
+    [DEBUG.ASSERT]: {
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+    },
+    [DEBUG.SIGNATURE]: {
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+    },
+    [DEBUG.LIST_THEMES]: {
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+    },
+    [DEBUG.SET_THEME]: {
+      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+    },
     [SCOPE_NAME]: performance.now().toString().replace('.', 0),
     [KEYWORDS.BLOCK]: {
       [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
