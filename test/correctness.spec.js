@@ -96,7 +96,7 @@ bbrgwb")
     (array:merge! std:map)
     (array:merge! std:fold)
     (array:merge code)))
-(apply (from:chars->ast source) keywords (map:get keywords "do"))`),
+(apply (from:chars->ast source) { keywords } (map:get keywords "do"))`),
       55
     )
     deepStrictEqual(
@@ -1408,6 +1408,7 @@ ZZZ=ZZZ,ZZZ")
     strictEqual(
       evalJS(
         `; helpers
+(let evaluate (lambda exp env (do (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp)) (if (array:not-empty? expression) (do (let head (array:head expression)) (let tail (array:tail expression)) (let pattern (array:get head ast:type)) (cond (= pattern ast:word) (map:get env (array:get head ast:value)) (= pattern ast:apply) (apply tail env (map:get env (array:get head ast:value))) (= pattern ast:atom) (array:get head ast:value) (* ) ())) ()))))
 (let keywords (array () () () () () ()))
 (map:set! keywords "let" (lambda args env (do
   (let name (array:get (array:first args) ast:value))

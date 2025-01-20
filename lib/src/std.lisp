@@ -1687,8 +1687,15 @@ heap)))
     (array:push! acc cursor))))))
     tree)))
 
-(let special-form:let (lambda args env (do (let name (array:get (array:get args 0) ast:value)) (let val (evaluate (array:get args 1) env)) (map:set! env name val) val)))
-(let special-form:lambda (lambda args env (do (let params (array:slice args 0 (- (array:length args) 1))) (let body (array:get args (- (array:length args) 1))) (lambda props scope (do (let local (array:deep-copy env)) (loop:for-n (array:length props) (lambda i (map:set! local (array:get (array:get params i) ast:value) (evaluate (array:get props i) scope)))) (evaluate body local))))))
+(let special-form:let (lambda args env (do (let name (get (get args 0) ast:value)) (let val (evaluate (get args 1) env)) (map:set! (list:head env) name val) val)))
+(let special-form:lambda (lambda args env (do 
+    (let params (array:slice args 0 (- (length args) 1))) 
+    (let body (array:at args -1)) 
+    (lambda props scope (do 
+        (let local (prototype:create! env)) 
+        (loop:for-n (length props) (lambda i 
+        (map:set! (list:head local) (get (get params i) ast:value) (evaluate (get props i) scope)))) 
+        (evaluate body local))))))
 (let special-form:apply (lambda args env (do (let application (evaluate (array:head args) env)) (application (array:tail args) env))))
 (let special-form:array (lambda args env (array:map args (lambda arg (evaluate arg env)))))
 (let special-form:length (lambda args env (array:length (evaluate (array:get args 0) env))))
@@ -1754,19 +1761,22 @@ heap)))
     "atom?" special-form:atom?
     "lambda?" special-form:lambda?)))
 
+(let prototype:get (lambda { head tail } key (if (map:has? head key) (map:get head key) (prototype:get tail key))))
+(let prototype:create! (lambda xs (list:merge! { (new:map4) } xs)))
+
 (let evaluate (lambda exp env (do 
   (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
   (if (array:not-empty? expression) (do 
     (let head (array:head expression))
     (let tail (array:tail expression))
-    (let pattern (array:get head ast:type))
+    (let pattern (get head ast:type))
     (cond 
-      (= pattern ast:word) (map:get env (array:get head ast:value))
-      (= pattern ast:apply) (apply tail env (map:get env (array:get head ast:value)))
-      (= pattern ast:atom) (array:get head ast:value)
+      (= pattern ast:word) (prototype:get env (get head ast:value))
+      (= pattern ast:apply) (apply tail env (prototype:get env (get head ast:value)))
+      (= pattern ast:atom) (get head ast:value)
       (*) ())) ()))))
 
-  (let lisp:eval (lambda source (apply (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) keywords (map:get keywords "do"))))
+  (let lisp:eval (lambda source (apply (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) { keywords } (map:get keywords "do"))))
   
 
 )))
