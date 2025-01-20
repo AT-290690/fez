@@ -412,8 +412,10 @@ export const typeCheck = (ast) => {
                         }
                       }
                   }
-                  const key = withScope(name, scope)
-                  if (errorStack.has(key)) errorStack.delete(key)
+                  // if (env[SCOPE_NAME]) {
+                  //   const key = withScope(name, scope)
+                  //   if (errorStack.has(key)) errorStack.delete(key)
+                  // }
                   check(rest.at(-1), env, scope)
                 }
               }
@@ -491,7 +493,9 @@ export const typeCheck = (ast) => {
                         args[i][STATS].type === APPLY &&
                         env[rest[i][VALUE]] &&
                         env[rest[i][VALUE]][STATS] &&
-                        env[rest[i][VALUE]][STATS][ARGS_COUNT]
+                        env[rest[i][VALUE]][STATS][ARGS_COUNT] &&
+                        args[i][STATS][ARGS_COUNT] !== VARIADIC &&
+                        env[rest[i][VALUE]][STATS][ARGS_COUNT] !== VARIADIC
                       ) {
                         const argCount = [...args[i][STATS][ARGS_COUNT]]
                         if (
@@ -667,11 +671,14 @@ export const typeCheck = (ast) => {
                               )})`
                             )
                           } else {
+                            // env[rest[i][VALUE]][STATS] THiss SHOULD BE
+                            const retry = env[rest[i][VALUE]]
                             if (
-                              !args[i][STATS].retried &&
+                              retry &&
+                              !retry.retried &&
                               args[i][STATS].type === UNKNOWN
                             ) {
-                              args[i][STATS].retried = true
+                              retry.retried = true
                               if (!scope[SCOPE_NAME])
                                 scope[SCOPE_NAME] = scope[1][VALUE]
                               stack.unshift(() => check(exp, env, scope))
@@ -704,10 +711,12 @@ export const typeCheck = (ast) => {
                           )
                         } else {
                           if (
+                            rest[i].length &&
+                            env[rest[i][0][VALUE]] &&
                             args[i][STATS].type === UNKNOWN &&
-                            !args[i][STATS].retried
+                            !env[rest[i][0][VALUE]].retried
                           ) {
-                            args[i][STATS].retried = true
+                            env[rest[i][0][VALUE]].retried = true
                             if (!scope[SCOPE_NAME])
                               scope[SCOPE_NAME] = scope[1][VALUE]
                             stack.unshift(() => check(exp, env, scope))
@@ -725,8 +734,10 @@ export const typeCheck = (ast) => {
       }
     }
   }
-  check(ast, root, ast)
+  const copy = JSON.parse(JSON.stringify(ast))
+  check(copy, root, copy)
   while (stack.length) stack.pop()()
-  if (errorStack.size) throw new TypeError([...errorStack.values()].join('\n'))
+  if (errorStack.size)
+    throw new TypeError([...new Set(errorStack.values())].join('\n'))
   return ast
 }
