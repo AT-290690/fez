@@ -726,7 +726,7 @@ ZZZ=ZZZ,ZZZ")
           (let key (car entry))
           (let value (car (cdr entry)))
           (map:set! object key (string:commas value))))
-          (array () () () ()))
+          (array [] [] [] []))
           adj))))
       
       (let sample2 (array:concat (array  
@@ -811,7 +811,7 @@ ZZZ=ZZZ,ZZZ")
         (if (> (length arr) 0)
             (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
             out)))
-      (recursive:iter arr ()))))
+      (recursive:iter arr []))))
     
     (let lazy (array reverse (array 1 2 3 4 5 6)))
     (apply (car (cdr lazy)) (car lazy))`
@@ -936,9 +936,9 @@ ZZZ=ZZZ,ZZZ")
     deepStrictEqual(
       evalJS(
         `
-    (let workers ())
+    (let workers [])
 (let make-worker (lambda name age prof (array:set! workers (length workers) 
-  (|> (array () () () ()) 
+  (|> (array [] [] [] []) 
   (map:set! 
     (array char:n char:a char:m char:e) name) 
     (map:set! (array char:a char:g char:e) age) 
@@ -970,8 +970,8 @@ ZZZ=ZZZ,ZZZ")
     deepStrictEqual(
       evalJS(
         `
-        (let A (array () () ()))
-        (let B (array () () ()))
+        (let A (array [] [] []))
+        (let B (array [] [] []))
         (set:add! A (array char:1))
         (set:add! A (array char:2))
         (set:add! A (array char:3))
@@ -997,7 +997,7 @@ ZZZ=ZZZ,ZZZ")
     )
     deepStrictEqual(
       evalJS(
-        `(let set (array () () ()))
+        `(let set (array [] [] []))
     (set:add! set (array char:1))
     (set:add! set (array char:1))
     (set:add! set (array char:2))
@@ -1098,7 +1098,7 @@ ZZZ=ZZZ,ZZZ")
     )
     strictEqual(
       evalJS(
-        `(let memo (array () ()))
+        `(let memo (array [] []))
 (let fibonacci (lambda n (do 
 (let key (|> n (from:number->digits) (from:digits->chars)))
   (if (< n 2) n
@@ -1149,7 +1149,7 @@ ZZZ=ZZZ,ZZZ")
          (array:fold arr (lambda a b (do
             (let res (array:binary-search arr (cb b)))
             (if (not (= res 0)) (array:merge a (array res)) a)))
-         ())))
+         [])))
     ; 514579
     (|> *input*
         (string:lines)
@@ -1294,7 +1294,7 @@ ZZZ=ZZZ,ZZZ")
       out
     )) (array (array ) (array )))
 ))))
-  (array:fold (lambda a b (+ a (dpm (car b) (car (cdr b)) (array () () () () () () ())))) 0))))
+  (array:fold (lambda a b (+ a (dpm (car b) (car (cdr b)) (array [] [] [] [] [] [] [])))) 0))))
 (array (part1 sample) (part2 sample))`
       ),
       [21, 525152]
@@ -1388,12 +1388,12 @@ ZZZ=ZZZ,ZZZ")
                       (set:add! map key)
                       a)) (array 0 0))))
 (let part1 (lambda x (do
-  (let map (array () () () () () () () () () () () () () () () ()))
+  (let map (array [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] []))
   (set:add! map "+0,+0")
   (walk map x)
   (length (array:flat-one (array:select map array:not-empty?))))))
 (let part2 (lambda x (do
-  (let map (array () () () () () () () () () () () () () () () ()))
+  (let map (array [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] []))
   (set:add! map "+0,+0")
   (walk map (array:even-indexed x))
   (walk map (array:odd-indexed x))
@@ -1408,8 +1408,8 @@ ZZZ=ZZZ,ZZZ")
     strictEqual(
       evalJS(
         `; helpers
-(let evaluate (lambda exp env (do (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp)) (if (array:not-empty? expression) (do (let head (array:head expression)) (let tail (array:tail expression)) (let pattern (array:get head ast:type)) (cond (= pattern ast:word) (map:get env (array:get head ast:value)) (= pattern ast:apply) (apply tail env (map:get env (array:get head ast:value))) (= pattern ast:atom) (array:get head ast:value) (* ) ())) ()))))
-(let keywords (array () () () () () ()))
+(let evaluate (lambda exp env (do (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp)) (if (array:not-empty? expression) (do (let head (array:head expression)) (let tail (array:tail expression)) (let pattern (array:get head ast:type)) (cond (= pattern ast:word) (map:get env (array:get head ast:value)) (= pattern ast:apply) (apply tail env (map:get env (array:get head ast:value))) (= pattern ast:atom) (array:get head ast:value) (* ) [])) []))))
+(let keywords (array [] [] [] [] [] []))
 (map:set! keywords "let" (lambda args env (do
   (let name (array:get (array:first args) ast:value))
   (let val (evaluate (array:second args) env))
@@ -1426,7 +1426,7 @@ ZZZ=ZZZ,ZZZ")
 (map:set! keywords "=" (lambda args env (do (let a (evaluate (car args) env)) (array:every? (cdr args) (lambda b (= a (evaluate b env)))))))
 (map:set! keywords "+" (lambda args env (array:fold args (lambda a b (+ a (evaluate b env))) 0)))
 (map:set! keywords "*" (lambda args env (array:fold args (lambda a b (* a (evaluate b env))) 1)))
-(map:set! keywords "do" (lambda args env (car (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) ()))))
+(map:set! keywords "do" (lambda args env (car (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) []))))
 (map:set! keywords "if" (lambda args env (if (evaluate (array:get args 0) env)
                                              (evaluate (array:get args 1) env)
                                              (if (= (length args) 3)
@@ -1440,10 +1440,10 @@ ZZZ=ZZZ,ZZZ")
     deepStrictEqual(
       evalJS(
         `(let n-queen (lambda n (do
-  (let solutions ())
-  (let cols (array () () () () () () ()))
-  (let positive-diagonal (array () () () () () () ()))
-  (let negative-diagonal (array () () () () () () ()))
+  (let solutions [])
+  (let cols (array [] [] [] [] [] [] []))
+  (let positive-diagonal (array [] [] [] [] [] [] []))
+  (let negative-diagonal (array [] [] [] [] [] [] []))
   (let board (array:map (math:zeroes n) (lambda . (array:map (math:zeroes n) (lambda . ".")))))
   (let backtrack (lambda row 
     (if (= row n) 
@@ -1653,7 +1653,7 @@ matrix
       evalJS(
         `(array (from:list->array (from:array->list (array 1 2 3 4)))
 (|> (math:list-range 1 10) (list:filter math:even?) (from:list->array))
-(from:list->array (list:pair 1 (list:pair 2 (list:pair 3 ()))))
+(from:list->array (list:pair 1 (list:pair 2 (list:pair 3 []))))
 (from:list->array (math:list-range 1 10))
 (|> (math:list-range 1 2) (list:map (lambda x (* x x))) (list:fold + 0)))`
       ),
@@ -1749,7 +1749,7 @@ matrix
   (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
   (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (recursive:iter xs ())))))
+  (list:reverse (recursive:iter xs [])))))
   (map (list 2 3 4) math:square)`
       ),
       [4, [9, [16, []]]]
@@ -2031,9 +2031,9 @@ matrix
     (let size (length pattern))
     (and (array:in-bounds? source (- index size)) (array:enumerated-every? pattern (lambda x i  (= (get source (+ (- index size) i)) x)))))))
 (let parse (lambda source (do 
-    (let tree ())
+    (let tree [])
     (let head (var:def tree))
-    (let acc ())
+    (let acc [])
     (let inside-parens? (bool:false))
     (let valid-separator? (bool:false))
     (let disabled? (bool:false))
@@ -2047,7 +2047,7 @@ matrix
                 (bool:true! inside-parens?)
                 (bool:false! valid-separator?)
                 (array:empty! acc)
-                (let temp ())
+                (let temp [])
                 (var:set! head temp)
                 (array:push! tree temp)) 
             (or (= cursor char:right-brace) (= cursor char:comma)) (do 
@@ -2121,9 +2121,9 @@ matrix
     (and (array:in-bounds? source (- index size)) (array:enumerated-every? pattern (lambda x i  (= (get source (+ (- index size) i)) x)))))))
 (let digit? (lambda digit (and (>= digit char:0) (<= digit char:9))))
 (let parse (lambda source (do 
-    (let tree ())
+    (let tree [])
     (let head (var:def tree))
-    (let acc ())
+    (let acc [])
     (let inside-parens? (bool:false))
     (let valid-separator? (bool:false))
     (let disabled? (bool:false))
@@ -2137,7 +2137,7 @@ matrix
                 (bool:true! inside-parens?)
                 (bool:false! valid-separator?)
                 (array:empty! acc)
-                (let temp ())
+                (let temp [])
                 (var:set! head temp)
                 (array:push! tree temp)) 
             (or (= cursor char:right-brace) (= cursor char:comma)) (do 
@@ -2198,7 +2198,7 @@ matrix
 
 (let parse (lambda input (|> input (string:lines))))
 (let part1 (lambda matrix (do 
-    (let coords ())
+    (let coords [])
     (matrix:enumerated-for matrix (lambda char y x (if (= char char:X) (array:push! coords (array y x)))))
     (let pattern "XMAS")
     (let size (length pattern))
@@ -2217,7 +2217,7 @@ matrix
     (var:get out))))
 
 (let part2 (lambda matrix (do 
-    (let coords ())
+    (let coords [])
     (matrix:enumerated-for matrix (lambda char y x (if (= char char:A) (array:push! coords (array y x)))))
     (|>
       coords
@@ -2492,7 +2492,7 @@ matrix
 (let parse (lambda input (|> input (string:lines))))
 
 (let part1 (lambda matrix (do 
-    (let coords ())
+    (let coords [])
     (matrix:enumerated-for matrix (lambda char y x (if (not (= char char:dot)) (array:push! coords (array char y x)))))
     (let copy (matrix:shallow-copy matrix))
     (let update! (lambda y1 y2 x1 x2 (do
@@ -2526,7 +2526,7 @@ matrix
     (|> copy (array:flat-one) (array:count char:hash)))))
 
 (let part2 (lambda matrix (do 
-    (let coords ())
+    (let coords [])
     (matrix:enumerated-for matrix (lambda char y x (if (not (= char char:dot)) (array:push! coords (array char y x)))))
     (let copy (matrix:shallow-copy matrix))
     (let update! (lambda y1 y2 x1 x2 (do
@@ -2662,7 +2662,7 @@ matrix
                 (cond 
                   (= b 0) (array 1)
                   (math:even? n-digits) (array (math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
-                  (*) (array (* b 2024)))))) ()) (- n 1)) (length stones))))
+                  (*) (array (* b 2024)))))) []) (- n 1)) (length stones))))
   (recursive:while input TIMES))))
 
 (let part2 (lambda input (do 
@@ -2674,7 +2674,7 @@ matrix
                 (cond 
                   (= b 0) (array 1)
                   (math:even? n-digits) (array (math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
-                  (*) (array (* b 2024)))))) ()) (- n 1)) (length stones))))
+                  (*) (array (* b 2024)))))) []) (- n 1)) (length stones))))
   (recursive:while input TIMES))))
 
 (let PARSED (parse INPUT))
@@ -2779,8 +2779,8 @@ matrix
             (if (math:even? i) (do
                     (let id (var:get (var:increment! file-id)))
                     (array:of ch (lambda . id)))
-                    (array:of ch (lambda . -1))))) ())))
-    (let blanks ())
+                    (array:of ch (lambda . -1))))) [])))
+    (let blanks [])
     (array:enumerated-for disk (lambda x i (if (= x -1) (array:push! blanks i))))
     (let recursive:fragment (lambda ind (do
         (let i (get blanks ind))
@@ -3220,7 +3220,7 @@ input (array:map
   )
   deepStrictEqual(
     evalJS(
-      `(let out ())
+      `(let out [])
 (let comp (lambda a b (< a b)))
 (let heap (from:array->heap (array 30 10 50 20 40) comp))
 (heap:peek heap)
@@ -3331,7 +3331,7 @@ Program: 0,1,5,4,3,0"
   (let log-outputs! (lambda (log-string! (array:commas (from:numbers->strings outputs)))))
   ; (let halt? (lambda (not (array:in-bounds? program (var:get instruction-pointer)))))
   (let halt? (lambda (>= (var:get instruction-pointer) (length program))))
-  (let outputs ())
+  (let outputs [])
   (let A 0)
   (let B 1)
   (let C 2)
@@ -3340,8 +3340,8 @@ Program: 0,1,5,4,3,0"
       (= operand 4) (get registers A)
       (= operand 5) (get registers B)
       (= operand 6) (get registers C)
-      (= operand 7) ()
-      (*) ()
+      (= operand 7) []
+      (*) []
   )))
   ; (let set-register-A! (lambda value (set! registers 0 value)))
   ; (let get-register-A (lambda (get registers 0)))
@@ -3386,7 +3386,7 @@ Program: 0,1,5,4,3,0"
           ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register. 
           ; (The numerator is still read from the A register.)
           (= opcode 7) (do (set! registers C (>> (get registers A) (combo operand))) (move-pointer!))
-          (*) ()
+          (*) []
       )))
   (let get-opcode (lambda (get program (get-instruction-pointer))))
   (let get-operand (lambda (get program (+ (get-instruction-pointer) 1))))

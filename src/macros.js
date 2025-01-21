@@ -851,12 +851,6 @@ export const replaceQuotes = (source) =>
     .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\}/g, ')')
 
-export const replaceParens = (source) =>
-  source
-    .replaceAll(/\[/g, '(')
-    .replaceAll(/\]/g, ')')
-    .replaceAll(/\{/g, '(')
-    .replaceAll(/\}/g, ')')
 export const deSuggarSource = (source) => replaceQuotes(replaceStrings(source))
 export const handleUnbalancedQuotes = (source) => {
   const diff = (source.match(/\"/g) ?? []).length % 2

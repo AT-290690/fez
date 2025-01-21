@@ -48,7 +48,7 @@ export const LISP = {
     const dfs = (exp) => {
       let out = ''
       const [head, ...tail] = isLeaf(exp) ? [exp] : exp
-      if (head == undefined) return (out += '()')
+      if (head == undefined) return (out += '(array)')
       switch (head[TYPE]) {
         case WORD:
           out += head[VALUE]

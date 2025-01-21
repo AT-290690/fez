@@ -135,9 +135,9 @@ describe('Compilation & Interpretation', () => {
   (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
   (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (recursive:iter xs ())))))
+  (list:reverse (recursive:iter xs [])))))
   (map (list 2 3 4) math:square)`,
-      `(let memo (array () ()))
+      `(let memo (array [] []))
 (let fibonacci (lambda n (do 
 (let key (|> n (from:number->digits) (from:digits->chars)))
   (if (< n 2) n
@@ -178,7 +178,7 @@ describe('Compilation & Interpretation', () => {
           (let key (car entry))
           (let value (car (cdr entry)))
           (map:set! object key (string:commas value))))
-          (array () () () ()))
+          (array [] [] [] []))
           adj))))
       
       (let sample2 (array:concat (array  
@@ -243,7 +243,7 @@ describe('Compilation & Interpretation', () => {
           (if (> (length arr) 0)
               (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
-        (recursive:iter arr ()))))
+        (recursive:iter arr []))))
       
       (let lazy (array reverse (array 1 2 3 4 5 6)))
       (apply (car (cdr lazy)) (car lazy))`,
@@ -279,7 +279,7 @@ describe('Compilation & Interpretation', () => {
                (array:fold arr (lambda a b (do
                   (let res (array:binary-search arr (cb b)))
                   (if (not (= res 0)) (array:merge a (array res)) a)))
-               ())))
+               [])))
           ; 514579
           (|> *input*
               (string:lines)
@@ -287,8 +287,8 @@ describe('Compilation & Interpretation', () => {
               (array:sort (lambda a b (> a b)))
               (solve (lambda x (- 2020 x)))
               (math:product))`,
-      `(let A (array () () ()))
-        (let B (array () () ()))
+      `(let A (array [] [] []))
+        (let B (array [] [] []))
         (set:add! A (array char:1))
         (set:add! A (array char:2))
         (set:add! A (array char:3))

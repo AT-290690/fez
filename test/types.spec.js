@@ -224,28 +224,28 @@ Trying to call undefined (lambda) array:mapz`
 (let math:range (lambda start end (do
                           (let recursive:math:range (lambda out count
                           (if (<= count end) (recursive:math:range (array:set! out (array:length out) count) (+ count 1)) out)))
-                          (recursive:math:range () start))))
+                          (recursive:math:range [] start))))
 (let math:sequence (lambda xs (do
                           (let end (array:length xs))
                           (let recursive:math:sequence (lambda out count
                           (if (< (array:length out) end) (recursive:math:sequence (array:set! out (array:length out) count) (+ count 1)) out)))
-                          (recursive:math:sequence () 0))))
+                          (recursive:math:sequence [] 0))))
 (let math:sequence-n (lambda n (do
                           (let recursive:sequence-n (lambda out count
                           (if (< (array:length out) n) (recursive:sequence-n (array:set! out (array:length out) count) (+ count 1)) out)))
-                          (recursive:sequence-n () 0))))
+                          (recursive:sequence-n [] 0))))
 (let math:zeroes (lambda n (do
                           (let recursive:math:zeroes (lambda out
                           (if (< (array:length out) n) (recursive:math:zeroes (array:set! out (array:length out) 0)) out)))
-                          (recursive:math:zeroes ()))))
+                          (recursive:math:zeroes []))))
 (let math:ones (lambda n (do
                           (let recursive:math:ones (lambda out
                           (if (< (array:length out) n) (recursive:math:ones (array:set! out (array:length out) 1)) out)))
-                          (recursive:math:ones ()))))
+                          (recursive:math:ones []))))
 (let math:numbers (lambda n num (do
                           (let recursive:math:numbers (lambda out
                           (if (< (array:length out) n) (recursive:math:numbers (array:set! out (array:length out) num)) out)))
-                          (recursive:math:numbers ()))))
+                          (recursive:math:numbers []))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
 (let math:permutations (lambda xs
@@ -254,7 +254,7 @@ Trying to call undefined (lambda) array:mapz`
                               xs (array:enumerated-exclude (lambda . j (= i j)))
                                  (math:permutations)
                                  (array:map (lambda vs (array:merge (array x) vs)))))) (array:flat-one))
-              (array ()))))
+              (array []))))
 (let math:combinations (lambda xs (do
     (let out [])
     (let combinations (lambda arr size start temp (do
@@ -399,7 +399,7 @@ Trying to call undefined (lambda) array:mapz`
         (if (< i terms) (recursive:math:cosine (+ i 1)) (var:get cosine)))))
       (recursive:math:cosine 0))))
 (let math:prime-factors (lambda N (do 
-  (let a ()) 
+  (let a []) 
   (let n (var:def N))
   (let f (var:def 2))
   (let recursive:math:prime-factors (lambda (if (> (var:get n) 1) (apply (lambda (do 
@@ -434,7 +434,7 @@ Trying to call undefined (lambda) array:mapz`
   ; where x is required answer,
   ; so adding 1 and dividing it by
   (>> (+ N4 1) 1))))
-(let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) ())))
+(let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) [])))
 (let math:fibonacci (lambda n (do 
     (let memoized:math:fibonacci (lambda n (if (< n 2) n (+ (memoized:math:fibonacci (- n 1)) (memoized:math:fibonacci (- n 2))))))
     (memoized:math:fibonacci n))))
@@ -455,27 +455,27 @@ Trying to call undefined (lambda) array:mapz`
 (let math:list-minimum (lambda xs (list:fold xs math:min math:max-safe-integer)))
 (let math:list-summation (lambda xs (list:fold xs + 0)))
 (let math:list-product (lambda xs (list:fold xs * 1)))
-(let math:list-range (lambda low high (if (> low high) () (list:pair low (math:list-range (+ low 1) high)))))
+(let math:list-range (lambda low high (if (> low high) [] (list:pair low (math:list-range (+ low 1) high)))))
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (array:get pair 0)))
 (let list:cdr (lambda pair (array:get pair 1)))
 (let list:head (lambda pair (array:get pair 0)))
 (let list:tail (lambda pair (array:get pair 1)))
 (let list:nil? (lambda pair (= (array:length pair) 0)))
-(let list:map (lambda xs f (if (list:nil? xs) () (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
-(let list:filter (lambda xs f (if (list:nil? xs) () (if (f (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f)) (list:filter (list:tail xs) f)))))
+(let list:map (lambda xs f (if (list:nil? xs) [] (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
+(let list:filter (lambda xs f (if (list:nil? xs) [] (if (f (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f)) (list:filter (list:tail xs) f)))))
 (let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
-(let list:zip (lambda a b (if (list:nil? a) () (list:pair (list:pair (list:head a) (list:pair (list:head b) ())) (list:zip (list:tail a) (list:tail b))))))
+(let list:zip (lambda a b (if (list:nil? a) [] (list:pair (list:pair (list:head a) (list:pair (list:head b) [])) (list:zip (list:tail a) (list:tail b))))))
 (let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
 (let list:length (lambda list (list:fold list (lambda a . (+ a 1)) 0)))
 (let list:enumerate (lambda list (list:zip list (math:list-range 0 (list:length list)))))
-(let list:reverse (lambda list (list:fold list (lambda a b (list:pair b a)) ())))
+(let list:reverse (lambda list (list:fold list (lambda a b (list:pair b a)) [])))
 (let list:find (lambda xs f (cond 
-                              (list:nil? xs) () 
+                              (list:nil? xs) [] 
                               (f (list:head xs)) (list:head xs)
                               (*) (list:find (list:tail xs) f))))
 (let list:find-tail (lambda xs f (cond 
-                              (list:nil? xs) () 
+                              (list:nil? xs) [] 
                               (f (list:head xs)) xs
                               (*) (list:find-tail (list:tail xs) f))))
 (let list:some? (lambda xs f (cond 
@@ -511,22 +511,22 @@ Trying to call undefined (lambda) array:mapz`
 (let list:concat! (lambda lists (list:fold (list:tail lists) (lambda a b (list:merge! a b)) (list:head lists))))
 (let list:merge! (lambda a b (do (array:set! (list:end a) 1 b) a)))
 (let list:flatten (lambda xs 
-  (if (list:nil? xs) ()
+  (if (list:nil? xs) []
   (if (atom? (list:head xs))
-    (list:merge! (list:pair (list:head xs) ()) (list:flatten (list:tail xs)))
+    (list:merge! (list:pair (list:head xs) []) (list:flatten (list:tail xs)))
     (list:merge! (list:flatten (list:head xs)) (list:flatten (list:tail xs)))))))
 (let list:equal? (lambda a b (array:equal? (from:list->array a) (from:list->array b))))
 (let list:count-of (lambda xs cb (list:fold xs (lambda a b (if (cb b) (+ a 1) a)) 0)))
 (let list:count (lambda input item (list:count-of input (lambda x (= x item)))))
 (let list:take (lambda lista pos
     (cond
-      (<= pos 0) ()
+      (<= pos 0) []
       (list:nil? lista) lista
       (*) (list:pair (list:head lista) (list:take (list:tail lista) (- pos 1))))))
 (let list:after (lambda lista pos
   (cond 
     (<= pos 0) lista
-    (list:nil? lista) ()
+    (list:nil? lista) []
     (*) (list:after (list:tail lista) (- pos 1)))))
 (let list:slice (lambda lista i k 
     (cond 
@@ -534,7 +534,7 @@ Trying to call undefined (lambda) array:mapz`
       (list:nil? lista) lista
       (*) (list:slice (list:tail lista) (- i 1) (- k 1)))))
 (let list:for (lambda xs f (if
-                              (list:nil? xs) ()
+                              (list:nil? xs) []
                               (apply (lambda (do 
                                 (f (list:head xs)) 
                                 (list:for (list:tail xs) f)))))))
@@ -543,23 +543,23 @@ Trying to call undefined (lambda) array:mapz`
                       (if (> (array:length xs) i) (apply (lambda (do (cb (array:get xs i)) (recursive:array:for (+ i 1))))))))
                     (recursive:array:for 0)
                 xs)))
-(let array:buckets (lambda n (do (let out ()) (loop:for-n n (lambda . (array:set! out (array:length out) ()))) out)))
+(let array:buckets (lambda n (do (let out []) (loop:for-n n (lambda . (array:set! out (array:length out) []))) out)))
 (let array:enumerated-for (lambda xs cb (do 
   (loop:for-n (array:length xs) (lambda i (cb (array:get xs i) i)))
   xs)))
 (let array:fill (lambda n cb (do 
   (let recursive:array:fill (lambda xs i (if (= i 0) xs (recursive:array:fill (array:merge! xs (array (cb))) (- i 1)))))
-  (recursive:array:fill () n))))
+  (recursive:array:fill [] n))))
 (let array:of (lambda n cb (do 
   (let recursive:array:of (lambda xs i (if (= i n) xs (recursive:array:of (array:merge! xs (array (cb i))) (+ i 1)))))
-  (recursive:array:of () 0))))
+  (recursive:array:of [] 0))))
 (let array:map (lambda xs cb (do
                   (let recursive:array:map (lambda i out
                         (if (> (array:length xs) i)
                               (recursive:array:map (+ i 1)
                                 (array:set! out (array:length out) (cb (array:get xs i))))
                               out)))
-                      (recursive:array:map 0 ()))))
+                      (recursive:array:map 0 []))))
 (let array:select (lambda xs cb (do
                   (let recursive:array:select (lambda i out
                         (if (> (array:length xs) i)
@@ -568,7 +568,7 @@ Trying to call undefined (lambda) array:mapz`
                                             (array:set! out (array:length out) (array:get xs i))
                                             out))
                             out)))
-                      (recursive:array:select 0 ()))))
+                      (recursive:array:select 0 []))))
 (let array:exclude (lambda xs cb (do
                   (let recursive:array:exclude (lambda i out
                         (if (> (array:length xs) i)
@@ -577,7 +577,7 @@ Trying to call undefined (lambda) array:mapz`
                                             (array:set! out (array:length out) (array:get xs i))
                                             out))
                             out)))
-                      (recursive:array:exclude 0 ()))))
+                      (recursive:array:exclude 0 []))))
 (let array:fold (lambda xs cb initial (do
                   (let recursive:array:fold (lambda i out
                         (if (> (array:length xs) i)
@@ -614,14 +614,14 @@ Trying to call undefined (lambda) array:mapz`
                               (recursive:array:reverse (+ i 1)
                               (array:merge! (array (array:get xs i)) out))
                           out)))
-                        (recursive:array:reverse 0 ()))))
+                        (recursive:array:reverse 0 []))))
 (let array:append! (lambda q item (array:set! q (array:length q) item)))
 (let array:set-and-get! (lambda q index item (do (array:set! q index item) item)))
 (let array:tail! (lambda q (del! q)))
 (let array:push! (lambda q item (do (array:set! q (array:length q) item) item)))
 (let array:pop! (lambda q (do (let l (array:at q -1)) (del! q) l)))
-(let array:even-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:even? i) (array:append! a b) a)) ())))
-(let array:odd-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:odd? i) (array:append! a b) a)) ())))
+(let array:even-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:even? i) (array:append! a b) a)) [])))
+(let array:odd-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:odd? i) (array:append! a b) a)) [])))
 (let array:unique (lambda xs (|>
       (let sorted (array:sort xs (lambda a b (> a b))))
       (array:zip (math:sequence sorted))
@@ -645,7 +645,7 @@ Trying to call undefined (lambda) array:mapz`
           (if (< i bounds)
               (recursive:array:slice (+ i 1) (array:set! out (array:length out) (array:get xs (+ start i))))
               out)))
-        (recursive:array:slice 0 ()))))
+        (recursive:array:slice 0 []))))
 
 (let car (lambda xs (array:get xs 0)))
 (let cdr (lambda xs (do
@@ -654,8 +654,8 @@ Trying to call undefined (lambda) array:mapz`
           (if (< i bounds)
               (recursive:cdr (+ i 1) (array:set! out (array:length out) (array:get xs i)))
               out)))
-        (recursive:cdr 1 ()))))
-(let cons (lambda a b (do (let out ()) (array:for a (lambda x (array:set! out (array:length out) x))) (array:for b (lambda x (array:set! out (array:length out) x))) out)))
+        (recursive:cdr 1 []))))
+(let cons (lambda a b (do (let out []) (array:for a (lambda x (array:set! out (array:length out) x))) (array:for b (lambda x (array:set! out (array:length out) x))) out)))
 
 (let array:take (lambda xs n (array:slice xs 0 n)))
 (let array:drop (lambda xs n (array:slice xs n (array:length xs))))
@@ -674,7 +674,7 @@ Trying to call undefined (lambda) array:mapz`
 (let array:zip (lambda a b (do
   (let recursive:array:zip (lambda i j output
     (if (and (> (array:length a) i) (> (array:length b) j)) (recursive:array:zip (+ i 1) (+ j 1) (array:set! output (array:length output) (array (array:get a i) (array:get b j)))) output)))
-  (recursive:array:zip 0 0 ()))))
+  (recursive:array:zip 0 0 []))))
 (let array:unzip (lambda xs (array (array:map xs array:first) (array:map xs array:second))))
 (let array:equal? (lambda a b
   (or
@@ -683,20 +683,20 @@ Trying to call undefined (lambda) array:mapz`
         (= (array:length a) (array:length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i))))))))))
 (let array:not-equal? (lambda a b (not (array:equal? a b))))
-(let array:join (lambda xs delim (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) ())))
-(let array:chars (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) ())))
-(let array:lines (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b)) (array:first b))) ())))
-(let array:commas (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:comma)) (array:first b)) (array:first b))) ())))
-(let array:spaces (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:space)) (array:first b)) (array:first b))) ())))
-(let array:dots (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dot)) (array:first b)) (array:first b))) ())))
-(let array:colons (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:colon)) (array:first b)) (array:first b))) ())))
-(let array:semi-colons (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:semi-colon)) (array:first b)) (array:first b))) ())))
-(let array:dashes (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dash)) (array:first b)) (array:first b))) ())))
-(let array:flat-one (lambda xs (array:fold xs (lambda a b (array:merge! a (if (array? b) b (array b)))) ())))
+(let array:join (lambda xs delim (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
+(let array:chars (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
+(let array:lines (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b)) (array:first b))) [])))
+(let array:commas (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:comma)) (array:first b)) (array:first b))) [])))
+(let array:spaces (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:space)) (array:first b)) (array:first b))) [])))
+(let array:dots (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dot)) (array:first b)) (array:first b))) [])))
+(let array:colons (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:colon)) (array:first b)) (array:first b))) [])))
+(let array:semi-colons (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:semi-colon)) (array:first b)) (array:first b))) [])))
+(let array:dashes (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dash)) (array:first b)) (array:first b))) [])))
+(let array:flat-one (lambda xs (array:fold xs (lambda a b (array:merge! a (if (array? b) b (array b)))) [])))
 (let array:flat (lambda xs (do
   (let flatten (lambda item
     (if (array? item)
-        (array:fold item (lambda a b (array:merge! a (flatten b))) ())
+        (array:fold item (lambda a b (array:merge! a (flatten b))) [])
         (array item))))
   (flatten xs))))
 (let array:sort (lambda xs cb (do
@@ -709,7 +709,7 @@ Trying to call undefined (lambda) array:mapz`
         (let right (if (= predicate 1) (array:merge b (array current)) b))
         (if (< i bounds) (recursive:array:sort (+ i 1) bounds left right)
         (array left right)))))
-    (let sorted (recursive:array:sort 1 (- (array:length xs) 1) () ()))
+    (let sorted (recursive:array:sort 1 (- (array:length xs) 1) [] []))
     (let left (array:first sorted))
     (let right (array:second sorted))
     (array:merge (array:merge (array:sort left cb) (array pivot)) (array:sort right cb)))))))))
@@ -719,7 +719,7 @@ Trying to call undefined (lambda) array:mapz`
 (let array:increment! (lambda xs idx value (array:set! xs idx (+ (array:get xs idx) value))))
 (let array:set (lambda xs index item (array:set! (array:shallow-copy xs) index item)))
 (let set (lambda xs index item (array:set! (array:shallow-copy xs) index item)))
-(let array:sliding-window (lambda xs size (array:enumerated-fold xs (lambda a b i (if (> (+ i size) (array:length xs)) a (array:merge a (array (array:slice xs i (+ i size)))))) ())))
+(let array:sliding-window (lambda xs size (array:enumerated-fold xs (lambda a b i (if (> (+ i size) (array:length xs)) a (array:merge a (array (array:slice xs i (+ i size)))))) [])))
 (let array:adjacent-difference (lambda xs cb (do
   (let len (array:length xs))
   (if (= len 1) xs
@@ -734,7 +734,7 @@ Trying to call undefined (lambda) array:mapz`
       (if (> (mod i n) 0)
         (array:push! (array:at a -1) x)
         (array:push! a (array x))) a))
-      ())))
+      [])))
 (let array:ranges (lambda xs predicate? (array:sliding-window (array:enumerated-fold xs (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
 (let array:chunks (lambda xs predicate? (|> xs (array:ranges predicate?) (array:map (lambda [start end .] (array:exclude (array:slice xs start end) predicate?))))))
 (let array:adjacent-find (lambda xs cb (do
@@ -744,10 +744,10 @@ Trying to call undefined (lambda) array:mapz`
       (if (< i len)
       (if (cb (let prev (array:get xs (- i 1))) (let current (array:get xs i)))
       prev
-      (recursive:array:adjacent-find (+ i 1))) ())))
+      (recursive:array:adjacent-find (+ i 1))) [])))
       (recursive:array:adjacent-find 1))))))))
 (let matrix:points (lambda matrix cb (do 
-   (let coords ())
+   (let coords [])
    (matrix:enumerated-for matrix (lambda cell y x (if (cb cell) (array:push! coords (array y x))))) 
     coords)))
 (let matrix:for (lambda matrix cb 
@@ -784,7 +784,7 @@ Trying to call undefined (lambda) array:mapz`
     (let out (math:zeroes len))
     (let recursive:outer:matrix:rotate-square (lambda row 
         (if (< row len) (do 
-            (array:set! out row ())
+            (array:set! out row [])
             (let recursive:inner:matrix:rotate-square (lambda col 
         (if (< col len) (do 
             (array:set! (array:get out row) col (array:get (array:get matrix col) (- (- len 1) row)))
@@ -797,7 +797,7 @@ Trying to call undefined (lambda) array:mapz`
     (let out (math:zeroes len))
     (let recursive:outer:matrix:flip-square (lambda row 
         (if (< row len) (do 
-            (array:set! out row ())
+            (array:set! out row [])
             (let recursive:inner:matrix:flip-square (lambda col 
         (if (< col len) (do 
             (array:set! (array:get out row) col (array:get (array:get matrix row) (- (- len 1) col)))
@@ -843,10 +843,10 @@ Trying to call undefined (lambda) array:mapz`
           (*) x))))))
 (let from:list->array (lambda list (do
   (let recursive:from:list->array (lambda lst out (if (list:nil? lst) out (recursive:from:list->array (list:tail lst) (array:merge out (array (list:head lst)))))))
-  (recursive:from:list->array list ()))))
+  (recursive:from:list->array list []))))
 (let from:array->list (lambda xs (do
   (let recursive:from:array->list (lambda xs out (if (not (> (array:length xs) 0)) out (recursive:from:array->list (array:tail xs) (list:pair (array:head xs) out)))))
-  (recursive:from:array->list (array:reverse xs) ()))))
+  (recursive:from:array->list (array:reverse xs) []))))
 (let from:digit->char (lambda d 
   (cond 
     (= d 0) char:0 
@@ -883,7 +883,7 @@ Trying to call undefined (lambda) array:mapz`
                 (do  
                     (array:push! a (* (var:get current-sign) (from:char->digit ch))) 
                     (var:set! current-sign 1)))
-                a)) ())))))
+                a)) [])))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 (let from:digits->number (lambda digits (do
     (let recursive:from:digits->number (lambda i num base (if (> (array:length digits) i) (recursive:from:digits->number (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
@@ -899,13 +899,13 @@ Trying to call undefined (lambda) array:mapz`
   (array:fold (lambda a x
   (if (array:first x)
       (array:set! a (array:length a) (from:digit->char (array:second x)))
-      (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x))))) ()))))
+      (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x))))) []))))
 (let from:number->digits (lambda num (do
   (let recursive:from:number->digits (lambda num res (cond
                               (>= num 1) (recursive:from:number->digits (/ num 10) (array:set! res (array:length res) (| (mod num 10) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (array:reverse (recursive:from:number->digits num ())))))
+  (array:reverse (recursive:from:number->digits num [])))))
 (let from:number->positive-or-negative-digits (lambda positive-or-negative-num (do
   (let negative? (math:negative? positive-or-negative-num))
   (let num (if negative? (* positive-or-negative-num -1) positive-or-negative-num))
@@ -913,7 +913,7 @@ Trying to call undefined (lambda) array:mapz`
                               (>= num 1) (recursive:from:number->positive-or-negative-digits (/ num 10) (array:set! res (array:length res) (| (mod num 10) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (let out (array:reverse (recursive:from:number->positive-or-negative-digits num ())))
+  (let out (array:reverse (recursive:from:number->positive-or-negative-digits num [])))
   (if negative? (array:set! out 0 (* (array:get out 0) -1)))
   out)))
 (let from:number->bits (lambda num (do
@@ -921,7 +921,7 @@ Trying to call undefined (lambda) array:mapz`
                               (>= num 1) (recursive:from:number->bits (/ num 2) (array:set! res (array:length res) (| (mod num 2) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (array:reverse (recursive:from:number->bits num ())))))
+  (array:reverse (recursive:from:number->bits num [])))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:number->digits x))))))
 (let from:chars->number (lambda n (|> n (from:chars->digits) (from:digits->number))))
 (let from:positive-or-negative-chars->number (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->number))))
@@ -932,8 +932,8 @@ Trying to call undefined (lambda) array:mapz`
         (|> d (from:chars->digits) (from:digits->number)))))))
 (let from:number->string (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars))))
 (let from:numbers->strings (lambda x (array:map x from:number->string)))
-(let from:array->set (lambda xs (do (let s (array () () () ())) (array:for xs (lambda x (set:add! s x))) s)))
-(let from:array->table (lambda xs (do (let s (array () () () ())) (array:for xs (lambda x (map:set! s x 0))) s)))
+(let from:array->set (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (set:add! s x))) s)))
+(let from:array->table (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (map:set! s x 0))) s)))
 (let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:map->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
@@ -950,20 +950,20 @@ Trying to call undefined (lambda) array:mapz`
  (recursive:right:from:array->brray half (- (array:length initial) 1))
     q)))
 (let from:brray->array (lambda q (do
-  (let out ())
+  (let out [])
   (let recursive:from:brray->array (lambda index bounds (do
       (array:set! out (array:length out) (brray:get q index))
       (if (< index bounds) (recursive:from:brray->array (+ index 1) bounds)))))
     (recursive:from:brray->array 0 (- (brray:length q) 1))
     out)))
 (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:spaces m))))))
-(let array:shallow-copy (lambda xs (array:fold xs (lambda a b (array:set! a (array:length a) b)) ())))
-(let array:deep-copy (lambda xs (array:fold xs (lambda a b (array:set! a (array:length a) (if (array? b) (array:deep-copy b) b))) ())))
+(let array:shallow-copy (lambda xs (array:fold xs (lambda a b (array:set! a (array:length a) b)) [])))
+(let array:deep-copy (lambda xs (array:fold xs (lambda a b (array:set! a (array:length a) (if (array? b) (array:deep-copy b) b))) [])))
 (let array:merge! (lambda a b (do (array:for b (lambda x (array:set! a (array:length a) x))) a)))
-(let array:merge (lambda a b (do (let out ()) (array:for a (lambda x (array:set! out (array:length out) x))) (array:for b (lambda x (array:set! out (array:length out) x))) out)))
-(let array:concat (lambda xs (array:fold xs array:merge ())))
-(let array:concat-with (lambda xs ch (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (array:length xs))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) ())))
-(let string:concat-with-lines (lambda xs (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (array:length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) ())))
+(let array:merge (lambda a b (do (let out []) (array:for a (lambda x (array:set! out (array:length out) x))) (array:for b (lambda x (array:set! out (array:length out) x))) out)))
+(let array:concat (lambda xs (array:fold xs array:merge [])))
+(let array:concat-with (lambda xs ch (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (array:length xs))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) [])))
+(let string:concat-with-lines (lambda xs (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (array:length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
 (let array:swap-remove! (lambda xs i (do (array:set! xs i (array:get xs (- (array:length xs) 1))) (del! xs))))
 (let array:swap! (lambda xs i j (do (let temp (array:get xs i)) (array:set! xs i (array:get xs j)) (array:set! xs j temp))))
 (let array:index-of (lambda xs item (do
@@ -978,7 +978,7 @@ Trying to call undefined (lambda) array:mapz`
                               (recursive:array:enumerated-map (+ i 1)
                                 (array:set! out (array:length out) (cb (array:get xs i) i)))
                               out)))
-                      (recursive:array:enumerated-map 0 ()))))
+                      (recursive:array:enumerated-map 0 []))))
 (let array:enumerated-select (lambda xs predicate? (do
                   (let recursive:array:enumerated-select (lambda i out
                         (if (> (array:length xs) i)
@@ -987,7 +987,7 @@ Trying to call undefined (lambda) array:mapz`
                                             (array:set! out (array:length out) (array:get xs i))
                                             out))
                             out)))
-                      (recursive:array:enumerated-select 0 ()))))
+                      (recursive:array:enumerated-select 0 []))))
 (let array:enumerated-exclude (lambda xs predicate? (do
                   (let recursive:array:enumerated-exclude (lambda i out
                         (if (> (array:length xs) i)
@@ -996,7 +996,7 @@ Trying to call undefined (lambda) array:mapz`
                                             (array:set! out (array:length out) (array:get xs i))
                                             out))
                             out)))
-                      (recursive:array:enumerated-exclude 0 ()))))
+                      (recursive:array:enumerated-exclude 0 []))))
 (let array:enumerated-fold (lambda xs cb initial (do
                   (let recursive:array:enumerated-fold (lambda i out
                         (if (> (array:length xs) i)
@@ -1007,7 +1007,7 @@ Trying to call undefined (lambda) array:mapz`
                     (let recursive:array:enumerated-find (lambda i
                           (if (> (array:length xs) i)
                               (if (predicate? (array:get xs i) i) (array:get xs i) (recursive:array:enumerated-find (+ i 1)))
-                              ())))
+                              [])))
                         (recursive:array:enumerated-find 0))))
 (let array:enumerated-find-index (lambda xs predicate? (do
                     (let recursive:array:enumerated-find-index (lambda i
@@ -1032,7 +1032,7 @@ Trying to call undefined (lambda) array:mapz`
                               (if (cb (array:get xs i)) i (recursive:array:find-index (+ i 1))) -1)))
                         (recursive:array:find-index 0))))
 (let array:remove (lambda xs i
-      (array:fold xs (lambda a x (do (if (= x i) a (array:set! a (array:length a) x)))) ())))
+      (array:fold xs (lambda a x (do (if (= x i) a (array:set! a (array:length a) x)))) [])))
 (let array:pad-right (lambda a b (if (> (array:length a) (array:length b))
      (array:merge b (math:zeroes (- (array:length a) (array:length b))))
      (array:merge a (math:zeroes (- (array:length b) (array:length a)))))))
@@ -1088,9 +1088,9 @@ Trying to call undefined (lambda) array:mapz`
               (array:fold (lambda a b (do
               (let prev (array:at a -1))
                 (if (string:equal? (array b) (array char))
-                    (array:set! a (array:length a) ())
+                    (array:set! a (array:length a) [])
                     (array:set! prev (array:length prev) b)) a))
-              (array ()))
+              (array []))
               (array:map (lambda x (array:join (array x) (array char:empty)))))))
 (let string:match (lambda str word (cond 
                                     (< (array:length str) (array:length word)) -1
@@ -1160,7 +1160,7 @@ Trying to call undefined (lambda) array:mapz`
   (|> table
   (array:fold (lambda a b
       (array:merge (array:merge a (array b)) (array row-delimiter))
-  ) ())  
+  ) [])  
   (array:map (lambda x (|> x 
               (array:map (lambda y 
               (string:pad-right y M (array char:space))))
@@ -1184,14 +1184,14 @@ Trying to call undefined (lambda) array:mapz`
   (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
       (if (bool:true? tr) (bool:false! tr))
-      (array:merge a (array b))))))) ())))))
+      (array:merge a (array b))))))) [])))))
 (let string:trim-right (lambda str (do
   (let tr (bool:true))
   (|> str (array:reverse) (array:fold (lambda a b (if
   (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
       (if (bool:true? tr) (bool:false! tr))
-      (array:merge (array b) a)))))) ())))))
+      (array:merge (array b) a)))))) [])))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
 (let string:lines (lambda str (string:split str char:new-line)))
 (let string:chars (lambda str (array:map str (lambda x (array x)))))
@@ -1213,7 +1213,7 @@ Trying to call undefined (lambda) array:mapz`
   (let recursive:string:pad-right (lambda i str (if (< i n) (recursive:string:pad-right (+ i 1) (array:merge str ch)) str)))
   (recursive:string:pad-right 0 str))))
 (let string:upper (lambda str (do
-    (let xs ()) 
+    (let xs []) 
     (let n (array:length str))
     (let recursive:string:upper (lambda i (if (< i n) (apply (lambda (do
       (let current-char (array:get str i))
@@ -1224,7 +1224,7 @@ Trying to call undefined (lambda) array:mapz`
       (recursive:string:upper (+ i 1)))))
       xs))) (recursive:string:upper 0))))
 (let string:lower (lambda str (do
-    (let xs ()) 
+    (let xs []) 
     (let n (array:length str))
     (let recursive:string:lower (lambda i (if (< i n) (apply (lambda (do
       (let current-char (array:get str i))
@@ -1240,10 +1240,10 @@ Trying to call undefined (lambda) array:mapz`
     (if (math:even? i) 
         (map:set! a (array:get args i) (array:get args (+ i 1))) 
         a)) 
-        (array () () () ()))))
+        (array [] [] [] []))))
 (let new:set (lambda args 
-  (array:fold args (lambda a b (set:add! a b)) (array () () () ()))))
-(let new:set4 (lambda (array () () () ())))
+  (array:fold args (lambda a b (set:add! a b)) (array [] [] [] []))))
+(let new:set4 (lambda (array [] [] [] [])))
 (let new:set8 (lambda (array:merge (new:set4) (new:set4))))
 (let new:set16 (lambda (array:merge (new:set8) (new:set8))))
 (let new:set32 (lambda (array:merge (new:set16) (new:set16))))
@@ -1255,14 +1255,14 @@ Trying to call undefined (lambda) array:mapz`
 (let new:map64 new:set64)
 
 (let new:array (lambda items (array:shallow-copy items)))
-(let new:list (lambda value (array () value ())))
-(let new:set-n (lambda n (array:map (math:zeroes n) (lambda . ()))))
+(let new:list (lambda value (array [] value [])))
+(let new:set-n (lambda n (array:map (math:zeroes n) (lambda . []))))
 (let new:date (lambda year month day (array year month day)))
-(let new:heap ())
-(let new:brray (lambda (array (array ()) ())))
+(let new:heap [])
+(let new:brray (lambda (array (array []) [])))
 (let new:queue new:brray)
 (let new:stack new:brray)
-(let new:binary-tree (lambda value (do (let xs ()) (array:set! xs 0 value) (array:set! xs 1 ()) (array:set! xs 2 ()) xs)))
+(let new:binary-tree (lambda value (do (let xs []) (array:set! xs 0 value) (array:set! xs 1 []) (array:set! xs 2 []) xs)))
 
 (let binary-tree:left (lambda node (array:get node 1)))
 (let binary-tree:right (lambda node (array:get node 2)))
@@ -1355,7 +1355,7 @@ Trying to call undefined (lambda) array:mapz`
 (let map:set! (lambda table key value
         (do
           (let idx (set:index table key))
-          (if (not (array:in-bounds? table idx)) (array:set! table idx ()))
+          (if (not (array:in-bounds? table idx)) (array:set! table idx []))
           (let current (array:get table idx))
           (let len (array:length current))
           (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
@@ -1368,7 +1368,7 @@ Trying to call undefined (lambda) array:mapz`
     (lambda table key
       (do
         (let idx (set:index table key))
-        (if (not (array:in-bounds? table idx)) (array:set! table idx ()))
+        (if (not (array:in-bounds? table idx)) (array:set! table idx []))
         (let current (array:get table idx))
         (let len (array:length current))
         (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
@@ -1448,8 +1448,8 @@ Trying to call undefined (lambda) array:mapz`
 (let brray:length (lambda q (+ (array:length (array:get q 0)) (array:length (array:get q 1)) -1)))
 (let brray:empty? (lambda q (= (brray:length q) 0)))
 (let brray:empty! (lambda q (do
-    (array:set! q 0 (array ()))
-    (array:set! q 1 ())
+    (array:set! q 0 (array []))
+    (array:set! q 1 [])
     q)))
 (let brray:get (lambda q offset (do
   (let offset-index (+ offset (brray:offset-left q)))
@@ -1708,7 +1708,7 @@ heap)))
 (let heap:empty! array:empty!)
 
 (let from:array->heap (lambda xs cb (do 
-  (let heap ())
+  (let heap [])
   (array:for xs (lambda x (heap:push! heap x cb)))
   heap)))
 
@@ -1749,7 +1749,7 @@ heap)))
           (if (< i bounds)
               (recursive:array:tail (+ i 1) (array:set! out (array:length out) (array:get xs i)))
               out)))
-        (recursive:array:tail 1 ()))))
+        (recursive:array:tail 1 []))))
 (let array:car array:head)
 (let array:cdr array:tail)
 (let array:for-range loop:for-range)
@@ -1777,14 +1777,14 @@ heap)))
 (let ast:leaf (lambda type value (array type value)))
 (let ast:leaf? (lambda arg (do (let c (array:head arg)) (and (atom? c) (or (= c ast:apply) (= c ast:atom) (= c ast:word))))))
 (let from:chars->ast (lambda source (do
-    (let tree ())
+    (let tree [])
     (let stack (array tree))
     (let head (var:def tree))
-    (let acc ())
+    (let acc [])
     (loop:for-n (array:length source) (lambda i (do 
     (let cursor (array:get source i))
     (if (= cursor char:left-brace) (apply (lambda (do 
-        (let temp ())
+        (let temp [])
         (let h (var:get head))
         (array:push! h temp)
         (array:push! stack h)
@@ -1827,7 +1827,7 @@ heap)))
 (let special-form:bit-wise-right-shift (lambda args env (>> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:bit-wise-left-shift (lambda args env (<< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:bit-wise-not (lambda args env (~ (evaluate (array:get args 0) env))))
-(let special-form:do (lambda args env (array:first (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) ()))))
+(let special-form:do (lambda args env (array:first (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) []))))
 (let special-form:if (lambda args env (if (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (if (= (array:length args) 3) (evaluate (array:get args 2) env)))))
 (let special-form:and (lambda args env (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
 (let special-form:or (lambda args env (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env))))
@@ -1879,7 +1879,7 @@ heap)))
       (= pattern ast:word) (map:get env (array:get head ast:value))
       (= pattern ast:apply) (apply tail env (map:get env (array:get head ast:value)))
       (= pattern ast:atom) (array:get head ast:value)
-      (*) ())) ()))))
+      (*) [])) []))))
 
   (let lisp:eval (lambda source (apply (from:charss->ast (array:spaces (array:exclude (string:lines source) array:empty?))) keywords (map:get keywords "do"))))
   

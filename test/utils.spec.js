@@ -24,7 +24,7 @@ describe('Utils', () => {
   (let recursive:iter (lambda xs out
   (if (list:nil? xs) out
   (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (recursive:iter xs ())))))
+  (list:reverse (recursive:iter xs [])))))
   (map (list 2 3 4) math:square)`,
       `; reverse array
       ; returns a copy of the array but reversed
@@ -34,7 +34,7 @@ describe('Utils', () => {
           (if (> (length arr) 0)
               (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
-        (recursive:iter arr ()))))
+        (recursive:iter arr []))))
       
       (let lazy (array reverse (array 1 2 3 4 5 6)))
       (apply (car (cdr lazy)) (car lazy))`,
@@ -70,7 +70,7 @@ describe('Utils', () => {
                  (array:fold arr (lambda a b (do
                     (let res (array:binary-search arr (cb b)))
                     (if (truthy? res) (array:merge a (array res)) a)))
-                 ())))
+                 [])))
             ; 514579
             (|> *input*
                 (string:lines)
