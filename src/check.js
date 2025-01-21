@@ -502,7 +502,14 @@ export const typeCheck = (ast) => {
                   const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
 
                   if (first[TYPE] === APPLY && !isSpecial) {
-                    if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
+                    if (env[first[VALUE]][STATS].type === ATOM) {
+                      errorStack.set(
+                        key,
+                        `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
+                          exp
+                        )})`
+                      )
+                    } else if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
                       env[first[VALUE]][STATS][RETURNS] = UNKNOWN
                       env[first[VALUE]][STATS].type = APPLY
                       env[first[VALUE]][STATS][ARGS_COUNT] = rest.length

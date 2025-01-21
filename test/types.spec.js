@@ -1937,7 +1937,12 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)`
         message: `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Application) (add idx 1)`
       }
     )
-
+    throws(() =>
+      type(parse(`(math:pi 10)`), {
+        name: 'TypeError',
+        message: `(math:pi) is not a (lambda) (math:pi 10)`
+      })
+    )
     throws(() =>
       type(
         parse(`(let array:get (lambda xs i (get xs i)))
