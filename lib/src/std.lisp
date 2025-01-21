@@ -105,6 +105,8 @@
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
 (let math:max-safe-integer 9007199254740991)
+(let math:decimal-scaling 1000000000000)
+
 (let math:range (lambda start end (do
                           (let recursive:math:range (lambda out count
                           (if (<= count end) (recursive:math:range (array:set! out (array:length out) count) (+ count 1)) out)))
@@ -826,6 +828,20 @@
             (let mantissa (|> right (from:chars->digits) (from:digits->number)))
             (* sign (/ (+ (* exponent n) mantissa) n)))))))
 (let from:strings->floats (lambda strings (array:map strings from:string->float)))
+(let from:float->string (lambda x (do 
+    (let flip (if (< x 0) -1 1))
+    (let exponent (math:floor x))
+    (let mantisa (- x exponent))
+    (let left (from:number->string exponent))
+    (let right (from:number->string (* mantisa math:decimal-scaling flip)))
+    (let len (array:length right))
+    (let recursive:while (lambda i 
+        (if (= (array:get right (- len i)) char:0) (do 
+            (array:pop! right)
+            (recursive:while (+ i 1))))))
+    (recursive:while 1)    
+    (array:concat [left [char:dot] right]))))
+(let from:floats->strings (lambda xs (array:map xs from:float->string)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->number)))))))
