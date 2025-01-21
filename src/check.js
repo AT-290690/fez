@@ -441,10 +441,10 @@ export const typeCheck = (ast) => {
                         }
                       }
                   }
-                  // if (env[SCOPE_NAME]) {
-                  //   const key = withScope(name, scope)
-                  //   if (errorStack.has(key)) errorStack.delete(key)
-                  // }
+                  if (env[SCOPE_NAME]) {
+                    const key = withScope(name, scope)
+                    if (errorStack.has(key)) errorStack.delete(key)
+                  }
                   check(rest.at(-1), env, scope)
                 }
               }
