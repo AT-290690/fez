@@ -505,138 +505,155 @@ export const typeCheck = (ast) => {
                     key.str,
                     `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
                   )
-                else if (
-                  env[first[VALUE]][STATS].type === APPLY &&
-                  env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
-                  env[first[VALUE]][STATS][ARGS_COUNT] !== rest.length
-                ) {
-                  errorStack.set(
-                    key.str,
-                    `Incorrect number of arguments for (${
-                      first[VALUE]
-                    }). Expected (= ${
-                      env[first[VALUE]][STATS][ARGS_COUNT]
-                    }) but got ${rest.length} (${stringifyArgs(
-                      exp
-                    )}) (check #8)`
-                  )
-                } else {
-                  const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
+                else {
+                  if (
+                    env[first[VALUE]][STATS].type === APPLY &&
+                    env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
+                    env[first[VALUE]][STATS][ARGS_COUNT] !== rest.length
+                  ) {
+                    errorStack.set(
+                      key.str,
+                      `Incorrect number of arguments for (${
+                        first[VALUE]
+                      }). Expected (= ${
+                        env[first[VALUE]][STATS][ARGS_COUNT]
+                      }) but got ${rest.length} (${stringifyArgs(
+                        exp
+                      )}) (check #8)`
+                    )
+                  } else {
+                    const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
 
-                  if (first[TYPE] === APPLY && !isSpecial) {
-                    if (env[first[VALUE]][STATS].type === ATOM) {
-                      errorStack.set(
-                        key.str,
-                        `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
-                          exp
-                        )}) (check #12)`
-                      )
-                    } else if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
-                      env[first[VALUE]][STATS][RETURNS] = UNKNOWN
-                      env[first[VALUE]][STATS].type = APPLY
-                      env[first[VALUE]][STATS][ARGS_COUNT] = rest.length
-                    }
-                  }
-                  // also type of arg
-                  const args = env[first[VALUE]][STATS][ARGS]
-                  if (args) {
-                    for (let i = 0; i < args.length; ++i) {
-                      if (
-                        args[i][STATS] &&
-                        args[i][STATS].type === APPLY &&
-                        env[rest[i][VALUE]] &&
-                        env[rest[i][VALUE]][STATS] &&
-                        env[rest[i][VALUE]][STATS][ARGS_COUNT] &&
-                        args[i][STATS][ARGS_COUNT] !== VARIADIC &&
-                        env[rest[i][VALUE]][STATS][ARGS_COUNT] !== VARIADIC
-                      ) {
-                        if (
-                          args[i][STATS][ARGS_COUNT] !==
-                          env[rest[i][VALUE]][STATS][ARGS_COUNT]
-                        ) {
-                          errorStack.set(
-                            key.str,
-                            `Incorrect number of arguments for (${
-                              first[VALUE]
-                            }). Expected (= ${
-                              args[i][STATS][ARGS_COUNT]
-                            }) but got ${rest.length} (${stringifyArgs(
-                              exp
-                            )}) (check #7)`
-                          )
-                        }
-                      } else if (
-                        args[i][STATS] &&
-                        args[i][STATS].type === APPLY &&
-                        !isLeaf(rest[i]) &&
-                        rest[i][0][TYPE] === APPLY &&
-                        rest[i][0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-                      ) {
-                        if (args[i][STATS][ARGS_COUNT] !== rest[i].length - 2)
-                          errorStack.set(
-                            key.str,
-                            `Incorrect number of arguments for (${
-                              first[VALUE]
-                            }). Expected (= ${
-                              args[i][STATS][ARGS_COUNT]
-                            }) but got ${rest.length} (${stringifyArgs(
-                              exp
-                            )}) (check #6)`
-                          )
+                    if (first[TYPE] === APPLY && !isSpecial) {
+                      if (env[first[VALUE]][STATS].type === ATOM) {
+                        errorStack.set(
+                          key.str,
+                          `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
+                            exp
+                          )}) (check #12)`
+                        )
+                      } else if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
+                        env[first[VALUE]][STATS][RETURNS] = UNKNOWN
+                        env[first[VALUE]][STATS].type = APPLY
+                        env[first[VALUE]][STATS][ARGS_COUNT] = rest.length
                       }
-
-                      // type check
-                      if (
-                        first[TYPE] === APPLY &&
-                        isSpecial &&
-                        env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC
-                      ) {
-                        const expectedArgs = env[first[VALUE]][STATS][ARGS]
-                        for (let i = 0; i < rest.length; ++i) {
-                          if (expectedArgs[i][TYPE] === UNKNOWN) continue
-                          if (!isLeaf(rest[i])) {
-                            const CAR = rest[i][0][VALUE]
-                            if (
-                              env[CAR] &&
-                              env[CAR][STATS][RETURNS] != undefined &&
-                              env[CAR][STATS][RETURNS] !== UNKNOWN &&
-                              env[CAR][STATS][RETURNS] !== expectedArgs[i][TYPE]
-                            ) {
-                              // console.log(env[CAR][STATS], expectedArgs[i][TYPE])
-                              errorStack.set(
-                                key.str,
-                                `Incorrect type of arguments for special form (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  expectedArgs[i][TYPE]
-                                )}) but got (${toTypeNames(
-                                  env[CAR][STATS][RETURNS]
-                                )}) (${stringifyArgs(exp)}) (check #1)`
-                              )
-                            }
-                            // else {
-                            //   console.log(env[CAR])
-                            // }
-                          }
+                    }
+                    // also type of arg
+                    const args = env[first[VALUE]][STATS][ARGS]
+                    if (args) {
+                      for (let i = 0; i < args.length; ++i) {
+                        if (
+                          args[i][STATS] &&
+                          args[i][STATS].type === APPLY &&
+                          env[rest[i][VALUE]] &&
+                          env[rest[i][VALUE]][STATS] &&
+                          env[rest[i][VALUE]][STATS][ARGS_COUNT] &&
+                          args[i][STATS][ARGS_COUNT] !== VARIADIC &&
+                          env[rest[i][VALUE]][STATS][ARGS_COUNT] !== VARIADIC
+                        ) {
                           if (
-                            env[rest[i][VALUE]] &&
-                            expectedArgs[i][TYPE] !== rest[i][TYPE]
+                            args[i][STATS][ARGS_COUNT] !==
+                            env[rest[i][VALUE]][STATS][ARGS_COUNT]
                           ) {
-                            switch (rest[i][TYPE]) {
-                              case UNKNOWN:
-                                env[first[VALUE]][STATS].type =
+                            errorStack.set(
+                              key.str,
+                              `Incorrect number of arguments for (${
+                                first[VALUE]
+                              }). Expected (= ${
+                                args[i][STATS][ARGS_COUNT]
+                              }) but got ${rest.length} (${stringifyArgs(
+                                exp
+                              )}) (check #7)`
+                            )
+                          }
+                        } else if (
+                          args[i][STATS] &&
+                          args[i][STATS].type === APPLY &&
+                          !isLeaf(rest[i]) &&
+                          rest[i][0][TYPE] === APPLY &&
+                          rest[i][0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                        ) {
+                          if (args[i][STATS][ARGS_COUNT] !== rest[i].length - 2)
+                            errorStack.set(
+                              key.str,
+                              `Incorrect number of arguments for (${
+                                first[VALUE]
+                              }). Expected (= ${
+                                args[i][STATS][ARGS_COUNT]
+                              }) but got ${rest.length} (${stringifyArgs(
+                                exp
+                              )}) (check #6)`
+                            )
+                        }
+
+                        // type check
+                        if (
+                          first[TYPE] === APPLY &&
+                          isSpecial &&
+                          env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC
+                        ) {
+                          const expectedArgs = env[first[VALUE]][STATS][ARGS]
+                          for (let i = 0; i < rest.length; ++i) {
+                            if (expectedArgs[i][TYPE] === UNKNOWN) continue
+                            if (!isLeaf(rest[i])) {
+                              const CAR = rest[i][0][VALUE]
+                              if (
+                                env[CAR] &&
+                                env[CAR][STATS][RETURNS] != undefined &&
+                                env[CAR][STATS][RETURNS] !== UNKNOWN &&
+                                env[CAR][STATS][RETURNS] !==
                                   expectedArgs[i][TYPE]
-                                break
-                              case WORD:
-                                const T = env[rest[i][VALUE]][STATS].type
-                                if (Array.isArray(T)) {
-                                  const TT = T[VALUE]
-                                  if (
-                                    env[TT][STATS][RETURNS] &&
-                                    env[TT][STATS][RETURNS] !== UNKNOWN &&
-                                    expectedArgs[i][TYPE] !==
-                                      env[TT][STATS][RETURNS]
-                                  )
+                              ) {
+                                // console.log(env[CAR][STATS], expectedArgs[i][TYPE])
+                                errorStack.set(
+                                  key.str,
+                                  `Incorrect type of arguments for special form (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    expectedArgs[i][TYPE]
+                                  )}) but got (${toTypeNames(
+                                    env[CAR][STATS][RETURNS]
+                                  )}) (${stringifyArgs(exp)}) (check #1)`
+                                )
+                              }
+                              // else {
+                              //   console.log(env[CAR])
+                              // }
+                            }
+                            if (
+                              env[rest[i][VALUE]] &&
+                              expectedArgs[i][TYPE] !== rest[i][TYPE]
+                            ) {
+                              switch (rest[i][TYPE]) {
+                                case UNKNOWN:
+                                  env[first[VALUE]][STATS].type =
+                                    expectedArgs[i][TYPE]
+                                  break
+                                case WORD:
+                                  const T = env[rest[i][VALUE]][STATS].type
+                                  if (Array.isArray(T)) {
+                                    const TT = T[VALUE]
+                                    if (
+                                      env[TT][STATS][RETURNS] &&
+                                      env[TT][STATS][RETURNS] !== UNKNOWN &&
+                                      expectedArgs[i][TYPE] !==
+                                        env[TT][STATS][RETURNS]
+                                    )
+                                      errorStack.set(
+                                        key.str,
+                                        `Incorrect type of arguments for special form (${
+                                          first[VALUE]
+                                        }). Expected (${toTypeNames(
+                                          expectedArgs[i][TYPE]
+                                        )}) but got (${toTypeNames(
+                                          rest[i][TYPE]
+                                        )}) (${stringifyArgs(exp)}) (check #2)`
+                                      )
+                                  } else if (
+                                    T !== UNKNOWN &&
+                                    expectedArgs[i][TYPE] !== UNKNOWN &&
+                                    expectedArgs[i][TYPE] !== T
+                                  ) {
                                     errorStack.set(
                                       key.str,
                                       `Incorrect type of arguments for special form (${
@@ -644,66 +661,89 @@ export const typeCheck = (ast) => {
                                       }). Expected (${toTypeNames(
                                         expectedArgs[i][TYPE]
                                       )}) but got (${toTypeNames(
-                                        rest[i][TYPE]
-                                      )}) (${stringifyArgs(exp)}) (check #2)`
+                                        T
+                                      )}) (${stringifyArgs(exp)}) (check #3)`
                                     )
-                                } else if (
-                                  T !== UNKNOWN &&
-                                  expectedArgs[i][TYPE] !== UNKNOWN &&
-                                  expectedArgs[i][TYPE] !== T
-                                ) {
+                                  } else {
+                                    env[rest[i][VALUE]][STATS].type =
+                                      expectedArgs[i][TYPE]
+                                  }
+                                  break
+                                case APPLY:
+                                case ATOM:
                                   errorStack.set(
                                     key.str,
-                                    `Incorrect type of arguments for special form (${
+                                    `Incorrect type of arguments for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
                                       expectedArgs[i][TYPE]
                                     )}) but got (${toTypeNames(
-                                      T
-                                    )}) (${stringifyArgs(exp)}) (check #3)`
+                                      rest[i][TYPE]
+                                    )}) (${stringifyArgs(exp)}) (check #5)`
                                   )
-                                } else {
-                                  env[rest[i][VALUE]][STATS].type =
-                                    expectedArgs[i][TYPE]
-                                }
-                                break
-                              case APPLY:
-                              case ATOM:
-                                errorStack.set(
-                                  key.str,
-                                  `Incorrect type of arguments for (${
-                                    first[VALUE]
-                                  }). Expected (${toTypeNames(
-                                    expectedArgs[i][TYPE]
-                                  )}) but got (${toTypeNames(
-                                    rest[i][TYPE]
-                                  )}) (${stringifyArgs(exp)}) (check #5)`
-                                )
-                                break
+                                  break
+                              }
                             }
                           }
                         }
-                      }
-                      // type checking
-                      else if (
-                        rest[i] &&
-                        args[i][STATS] &&
-                        rest[i][TYPE] !== args[i][STATS].type
-                      ) {
-                        if (isLeaf(rest[i])) {
-                          const T =
-                            rest[i][TYPE] === WORD && env[rest[i][VALUE]]
-                              ? env[rest[i][VALUE]][STATS].type
-                              : rest[i][TYPE]
-                          if (
-                            (args[i][STATS].type !== UNKNOWN &&
-                              T === ATOM &&
-                              args[i][STATS].type !== ATOM) ||
-                            (env[rest[i][VALUE]] &&
-                              env[rest[i][VALUE]][STATS].type !== UNKNOWN &&
-                              args[i][STATS].type !== UNKNOWN &&
-                              env[rest[i][VALUE]][STATS].type !==
-                                args[i][STATS].type)
+                        // type checking
+                        else if (
+                          rest[i] &&
+                          args[i][STATS] &&
+                          rest[i][TYPE] !== args[i][STATS].type
+                        ) {
+                          if (isLeaf(rest[i])) {
+                            const T =
+                              rest[i][TYPE] === WORD && env[rest[i][VALUE]]
+                                ? env[rest[i][VALUE]][STATS].type
+                                : rest[i][TYPE]
+                            if (
+                              (args[i][STATS].type !== UNKNOWN &&
+                                T === ATOM &&
+                                args[i][STATS].type !== ATOM) ||
+                              (env[rest[i][VALUE]] &&
+                                env[rest[i][VALUE]][STATS].type !== UNKNOWN &&
+                                args[i][STATS].type !== UNKNOWN &&
+                                env[rest[i][VALUE]][STATS].type !==
+                                  args[i][STATS].type)
+                            ) {
+                              errorStack.set(
+                                key.str,
+                                `Incorrect type of arguments ${i} for (${
+                                  first[VALUE]
+                                }). Expected (${toTypeNames(
+                                  args[i][STATS].type
+                                )}) but got (${toTypeNames(
+                                  T
+                                )}) (${stringifyArgs(exp)})`
+                              )
+                            } else {
+                              // env[rest[i][VALUE]][STATS] THiss SHOULD BE
+                              const retry = env[rest[i][VALUE]]
+                              if (
+                                retry &&
+                                !retry.retried &&
+                                args[i][STATS].type === UNKNOWN
+                              ) {
+                                retry.retried = true
+                                stack.unshift(() => check(exp, env, scope))
+                              }
+                              // console.log(
+                              //   first[VALUE],
+                              //   env[first[VALUE]][STATS],
+                              //   rest[i][TYPE],
+                              //   args[i][STATS].type
+                              // )
+                            }
+                          } else if (
+                            rest[i].length &&
+                            SPECIAL_FORMS_SET.has(rest[i][0][VALUE]) &&
+                            env[rest[i][0][VALUE]] &&
+                            env[rest[i][0][VALUE]][STATS][RETURNS] !==
+                              UNKNOWN &&
+                            args[i][STATS].type !== UNKNOWN &&
+                            env[rest[i][0][VALUE]][STATS][RETURNS] !==
+                              args[i][STATS].type
                           ) {
                             errorStack.set(
                               key.str,
@@ -711,58 +751,22 @@ export const typeCheck = (ast) => {
                                 first[VALUE]
                               }). Expected (${toTypeNames(
                                 args[i][STATS].type
-                              )}) but got (${toTypeNames(T)}) (${stringifyArgs(
-                                exp
-                              )})`
+                              )}) but got (${toTypeNames(
+                                env[rest[i][0][VALUE]][STATS][RETURNS]
+                              )}) (${stringifyArgs(exp)})`
                             )
                           } else {
-                            // env[rest[i][VALUE]][STATS] THiss SHOULD BE
-                            const retry = env[rest[i][VALUE]]
                             if (
-                              retry &&
-                              !retry.retried &&
-                              args[i][STATS].type === UNKNOWN
+                              rest[i].length &&
+                              env[rest[i][0][VALUE]] &&
+                              args[i][STATS].type === UNKNOWN &&
+                              !env[rest[i][0][VALUE]].retried
                             ) {
-                              retry.retried = true
+                              env[rest[i][0][VALUE]].retried = true
+                              if (!scope[SCOPE_NAME])
+                                scope[SCOPE_NAME] = scope[1][VALUE]
                               stack.unshift(() => check(exp, env, scope))
                             }
-                            // console.log(
-                            //   first[VALUE],
-                            //   env[first[VALUE]][STATS],
-                            //   rest[i][TYPE],
-                            //   args[i][STATS].type
-                            // )
-                          }
-                        } else if (
-                          rest[i].length &&
-                          SPECIAL_FORMS_SET.has(rest[i][0][VALUE]) &&
-                          env[rest[i][0][VALUE]] &&
-                          env[rest[i][0][VALUE]][STATS][RETURNS] !== UNKNOWN &&
-                          args[i][STATS].type !== UNKNOWN &&
-                          env[rest[i][0][VALUE]][STATS][RETURNS] !==
-                            args[i][STATS].type
-                        ) {
-                          errorStack.set(
-                            key.str,
-                            `Incorrect type of arguments ${i} for (${
-                              first[VALUE]
-                            }). Expected (${toTypeNames(
-                              args[i][STATS].type
-                            )}) but got (${toTypeNames(
-                              env[rest[i][0][VALUE]][STATS][RETURNS]
-                            )}) (${stringifyArgs(exp)})`
-                          )
-                        } else {
-                          if (
-                            rest[i].length &&
-                            env[rest[i][0][VALUE]] &&
-                            args[i][STATS].type === UNKNOWN &&
-                            !env[rest[i][0][VALUE]].retried
-                          ) {
-                            env[rest[i][0][VALUE]].retried = true
-                            if (!scope[SCOPE_NAME])
-                              scope[SCOPE_NAME] = scope[1][VALUE]
-                            stack.unshift(() => check(exp, env, scope))
                           }
                         }
                       }

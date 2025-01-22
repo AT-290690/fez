@@ -2146,5 +2146,23 @@ Trying to access undefined variable xs (check #11)`
 )))`)
       )
     )
+    throws(
+      () =>
+        type(
+          parse(`(let add (lambda x y z (do 
+    (let f (lambda a b c (do 
+        (+ x y z a b c)
+    )))
+    (f x y [])
+)))
+(add 1 2 [])
+`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Application) (add 1 2 (array))
+Incorrect type of arguments 2 for (f). Expected (Atom) but got (Application) (f x y (array))`
+      }
+    )
   })
 })
