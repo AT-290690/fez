@@ -303,7 +303,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 (let math:bit-equal (lambda a b (< (^ a b) 1)))
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
-(let math:median (lambda xs (do
+(let math:median (lambda 1xs (do
     (let len (array:length xs))
     (let half (math:floor (/ len 2)))
     (if (math:odd? len)
@@ -1888,7 +1888,8 @@ heap)))
         ),
       {
         name: 'TypeError',
-        message: `Trying to access undefined variable y3 (check #11)
+        message: `Trying to access undefined variable xs (check #11)
+Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable m (check #11)
 Trying to access undefined variable entityz (check #11)
 Trying to call undefined (lambda) from:charss->ast (check #9)
@@ -2066,6 +2067,33 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Applicat
         name: 'TypeError',
         message: `Incorrect type of arguments for special form (-). Expected (Atom) but got (Application) (- matrix:shallow-copy y2) (check #3)`
       }
+    )
+    // TODO: uncomment this and make it pass
+    // doesNotThrow(() =>
+    //   type(
+    //     parse(`(let math:decimal-scaling 1000)
+    // (from:float->string 10.2)`)
+    //   )
+    // )
+
+    throws(
+      () =>
+        type(
+          parse(`(let map (lambda xs1 cb (array:map xs cb)))
+(let fold (lambda xs cb x (array:fold xs1 cb x)))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Trying to access undefined variable xs (check #11)
+Trying to access undefined variable xs1 (check #11)`
+      }
+    )
+    doesNotThrow(() =>
+      type(
+        parse(`(let m (lambda xs (do 
+    (let map (lambda xs1 cb (array:map xs cb)))
+)))`)
+      )
     )
   })
 })

@@ -195,8 +195,34 @@ const extractDeps = (visited, deps) =>
     .map((x) => deps.get(x))
     .sort((a, b) => a.index - b.index)
     .map((x) => x.value)
-const toIgnore = (ast) =>
-  ast.filter(([x]) => isDefinition(x)).map(([_, x]) => x[VALUE])
+const toIgnore = (ast) => {
+  const out = []
+  const dfs = (exp) => {
+    const [head, ...tail] = isLeaf(exp) ? [exp] : exp
+    if (head == undefined) return []
+    switch (head[TYPE]) {
+      case WORD:
+        break
+      case ATOM:
+        break
+      case APPLY:
+        {
+          switch (head[VALUE]) {
+            case KEYWORDS.DEFINE_VARIABLE:
+              out.push(tail[0][VALUE])
+              break
+            default:
+              for (const r of tail) dfs(r)
+              break
+          }
+        }
+        break
+    }
+  }
+  dfs(ast[0])
+  return out
+  // ast.filter(([x]) => isDefinition(x)).map(([_, x]) => x[VALUE])
+}
 export const treeShake = (ast, libs) => {
   const deps = toDeps(libs)
   const visited = new Set()

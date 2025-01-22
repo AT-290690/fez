@@ -619,7 +619,6 @@ export const deSuggarAst = (ast, scope) => {
                       ]
                       deSuggarAst(exp[exp.length - 1])
                     } else if (prefix === OPTIMIZATIONS.CACHE) {
-                      // TODO: Make this
                       const args = last.slice(1, -1)
                       const newName = `*${performance
                         .now()
@@ -810,7 +809,7 @@ export const deSuggarAst = (ast, scope) => {
 export const replaceStrings = (source) => {
   // const quotes = source.match(/"(.*?)"/g)
   const quotes = source.match(/"(?:.*?(\n|\r))*?.*?"/g)
-  // TODO handle escaping
+  // TODO: handle escaping
   if (quotes)
     for (const q of quotes)
       source = source.replaceAll(

@@ -376,8 +376,7 @@ export const typeCheck = (ast) => {
     }
   }
   const errorStack = new Map()
-  const withScope = (name, env) =>
-    `${env[SCOPE_NAME] ?? root[SCOPE_NAME]}_${name}`
+  const withScope = (name, scope) => `${scope[SCOPE_NAME]}_${name}`
 
   const stack = []
   const check = (exp, env, scope) => {
@@ -402,48 +401,58 @@ export const typeCheck = (ast) => {
           switch (first[VALUE]) {
             case KEYWORDS.DEFINE_VARIABLE:
               {
-                if (
-                  rest.length &&
-                  rest.at(-1).length &&
-                  rest.at(-1)[0][TYPE] === APPLY &&
-                  rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-                ) {
-                  const name = rest[0][VALUE]
-                  const n = rest.at(-1).length
-                  env[name] = {
-                    [STATS]: {
-                      type: APPLY,
-                      [ARGS_COUNT]: n - 2,
-                      [ARGS]: []
-                    }
-                  }
-                  if (name[name.length - 1] === PREDICATE_SUFFIX)
-                    env[name][STATS][SUBTYPE] = PREDICATE
-
-                  scope = exp
-                  if (env[SCOPE_NAME]) {
-                    const key = withScope(name, scope)
-                    if (errorStack.has(key)) errorStack.delete(key)
-                  }
-                  check(rest.at(-1), env, scope)
+                if (rest.length !== 2) {
+                  throw new TypeError(
+                    `Incorrect number of arguments for (${
+                      first[VALUE]
+                    }). Expected (= 2) but got ${rest.length} (${stringifyArgs(
+                      exp
+                    )}) (check #10)`
+                  )
                 } else {
-                  const name = rest[0][VALUE]
-                  if (!(name in env)) {
-                    if (rest[1][TYPE] === WORD) env[name] = env[rest[1][VALUE]]
-                    else
-                      env[name] = {
-                        [STATS]: {
-                          type: isLeaf(rest.at(-1))
-                            ? rest.at(-1)[TYPE]
-                            : env[rest.at(-1)[0]?.[VALUE]]?.[STATS]?.[
-                                RETURNS
-                              ] ?? UNKNOWN
-                        }
+                  if (
+                    rest.at(-1).length &&
+                    rest.at(-1)[0][TYPE] === APPLY &&
+                    rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                  ) {
+                    const name = rest[0][VALUE]
+                    const n = rest.at(-1).length
+                    env[name] = {
+                      [STATS]: {
+                        type: APPLY,
+                        [ARGS_COUNT]: n - 2,
+                        [ARGS]: []
                       }
-                  }
-                  if (env[SCOPE_NAME]) {
+                    }
+                    if (name[name.length - 1] === PREDICATE_SUFFIX)
+                      env[name][STATS][SUBTYPE] = PREDICATE
                     const key = withScope(name, scope)
                     if (errorStack.has(key)) errorStack.delete(key)
+                    scope = exp
+                  } else {
+                    const name = rest[0][VALUE]
+                    if (!(name in env)) {
+                      if (rest[1][TYPE] === WORD)
+                        env[name] = env[rest[1][VALUE]]
+                      else
+                        env[name] = {
+                          [STATS]: {
+                            type: isLeaf(rest.at(-1))
+                              ? rest.at(-1)[TYPE]
+                              : env[rest.at(-1)[0]?.[VALUE]]?.[STATS]?.[
+                                  RETURNS
+                                ] ?? UNKNOWN
+                          }
+                        }
+                    }
+                    // if (name === 'math:decimal-scaling') {
+                    //   const key = withScope(name, scope)
+                    //   if (errorStack.has(key)) errorStack.delete(key)
+                    // }
+                    // if (scope[SCOPE_NAME]) {
+                    // const key = withScope(name, scope)
+                    // if (errorStack.has(key)) errorStack.delete(key)
+                    // }
                   }
                   check(rest.at(-1), env, scope)
                 }
@@ -464,11 +473,13 @@ export const typeCheck = (ast) => {
                 const copy = Object.create(env)
                 if (isLeaf(scope[1])) {
                   copy[SCOPE_NAME] = scope[1][VALUE]
-                } else
+                } else {
                   copy[SCOPE_NAME] = performance
                     .now()
                     .toString()
                     .replace('.', 0)
+                }
+
                 for (const param of params) {
                   copy[param[VALUE]] = { [STATS]: { type: UNKNOWN } }
                   if (env[copy[SCOPE_NAME]])
