@@ -542,50 +542,6 @@ export const typeCheck = (ast) => {
                     const args = env[first[VALUE]][STATS][ARGS]
                     if (args) {
                       for (let i = 0; i < args.length; ++i) {
-                        if (
-                          args[i][STATS] &&
-                          args[i][STATS].type === APPLY &&
-                          env[rest[i][VALUE]] &&
-                          env[rest[i][VALUE]][STATS] &&
-                          env[rest[i][VALUE]][STATS][ARGS_COUNT] &&
-                          args[i][STATS][ARGS_COUNT] !== VARIADIC &&
-                          env[rest[i][VALUE]][STATS][ARGS_COUNT] !== VARIADIC
-                        ) {
-                          if (
-                            args[i][STATS][ARGS_COUNT] !==
-                            env[rest[i][VALUE]][STATS][ARGS_COUNT]
-                          ) {
-                            errorStack.set(
-                              key.str,
-                              `Incorrect number of arguments for (${
-                                first[VALUE]
-                              }). Expected (= ${
-                                args[i][STATS][ARGS_COUNT]
-                              }) but got ${rest.length} (${stringifyArgs(
-                                exp
-                              )}) (check #7)`
-                            )
-                          }
-                        } else if (
-                          args[i][STATS] &&
-                          args[i][STATS].type === APPLY &&
-                          !isLeaf(rest[i]) &&
-                          rest[i][0][TYPE] === APPLY &&
-                          rest[i][0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-                        ) {
-                          if (args[i][STATS][ARGS_COUNT] !== rest[i].length - 2)
-                            errorStack.set(
-                              key.str,
-                              `Incorrect number of arguments for (${
-                                first[VALUE]
-                              }). Expected (= ${
-                                args[i][STATS][ARGS_COUNT]
-                              }) but got ${rest.length} (${stringifyArgs(
-                                exp
-                              )}) (check #6)`
-                            )
-                        }
-
                         // type check
                         if (
                           first[TYPE] === APPLY &&
@@ -753,7 +709,7 @@ export const typeCheck = (ast) => {
                                 args[i][STATS].type
                               )}) but got (${toTypeNames(
                                 env[rest[i][0][VALUE]][STATS][RETURNS]
-                              )}) (${stringifyArgs(exp)})`
+                              )}) (${stringifyArgs(exp)}) (check #4)`
                             )
                           } else {
                             if (

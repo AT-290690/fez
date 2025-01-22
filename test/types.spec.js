@@ -2160,8 +2160,8 @@ Trying to access undefined variable xs (check #11)`
         ),
       {
         name: 'TypeError',
-        message: `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Application) (add 1 2 (array))
-Incorrect type of arguments 2 for (f). Expected (Atom) but got (Application) (f x y (array))`
+        message: `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Application) (add 1 2 (array)) (check #4)
+Incorrect type of arguments 2 for (f). Expected (Atom) but got (Application) (f x y (array)) (check #4)`
       }
     )
   })
