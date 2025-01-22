@@ -4,6 +4,57 @@ import { throws, doesNotThrow } from 'assert'
 
 describe('Should throw errors', () => {
   it('Should throw', () => {
+    throws(
+      () =>
+        type(
+          parse(`(let fn1 (lambda 1y x (do 
+    (let fn2 (lambda 1x (do
+        (+ x y)
+    )))
+)))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Trying to access undefined variable y (check #11)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`(let arr [1 2 3 4])
+(let fn1 (lambda 1y x (do 
+    (let fn2 (lambda 1x (do
+        (array:first)
+        (+ x y)
+    )))
+    (array:first [1 2 3])
+    
+    (array:map arr (lambda fff (* fff fff)))
+    (let fn3 (lambda (do 
+        (array:map arr (lambda zzz (* zz fff)))
+
+        (let fn4 (lambda z (do
+            (+ (array:first arr) z [])
+        )))
+        (let fn5 (lambda (do 
+            z
+        )))
+        
+        (fn4 10)
+    )))
+    
+)))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Trying to access undefined variable z (check #11)
+Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ z (array)) (check #1)
+Trying to access undefined variable fff (check #11)
+Trying to access undefined variable zz (check #11)
+Trying to access undefined variable y (check #11)
+Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #8)`
+      }
+    )
     doesNotThrow(() =>
       type(
         parse(`(let p (lambda (do 
@@ -103,9 +154,9 @@ describe('Should throw errors', () => {
         ),
       {
         name: 'TypeError',
-        message: `Trying to access undefined variable array:nah-empty? (check #11)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #8)
+        message: `Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #8)
 Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #8)
+Trying to access undefined variable array:nah-empty? (check #11)
 Trying to call undefined (lambda) array:mapz (check #9)`
       }
     )
@@ -1888,17 +1939,17 @@ heap)))
         ),
       {
         name: 'TypeError',
-        message: `Trying to access undefined variable xs (check #11)
-Trying to access undefined variable y3 (check #11)
-Trying to access undefined variable m (check #11)
-Trying to access undefined variable entityz (check #11)
-Trying to call undefined (lambda) from:charss->ast (check #9)
+        message: `Trying to call undefined (lambda) from:charss->ast (check #9)
 Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #8)
 Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #8)
 Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #8)
 Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #8)
+Trying to access undefined variable entityz (check #11)
+Trying to access undefined variable m (check #11)
 Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #8)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #8)`
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #8)
+Trying to access undefined variable y3 (check #11)
+Trying to access undefined variable xs (check #11)`
       }
     )
 
@@ -2069,12 +2120,12 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Applicat
       }
     )
     // TODO: uncomment this and make it pass
-    // doesNotThrow(() =>
-    //   type(
-    //     parse(`(let math:decimal-scaling 1000)
-    // (from:float->string 10.2)`)
-    //   )
-    // )
+    doesNotThrow(() =>
+      type(
+        parse(`(let math:decimal-scaling 1000)
+    (from:float->string 10.2)`)
+      )
+    )
 
     throws(
       () =>
@@ -2084,8 +2135,8 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Applicat
         ),
       {
         name: 'TypeError',
-        message: `Trying to access undefined variable xs (check #11)
-Trying to access undefined variable xs1 (check #11)`
+        message: `Trying to access undefined variable xs1 (check #11)
+Trying to access undefined variable xs (check #11)`
       }
     )
     doesNotThrow(() =>

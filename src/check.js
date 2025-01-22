@@ -61,7 +61,6 @@ export const typeCheck = (ast) => {
     [DEBUG.SET_THEME]: {
       [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
     },
-    [SCOPE_NAME]: performance.now().toString().replace('.', 0),
     [KEYWORDS.BLOCK]: {
       [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
     },
@@ -376,7 +375,29 @@ export const typeCheck = (ast) => {
     }
   }
   const errorStack = new Map()
-  const withScope = (name, scope) => `${scope[SCOPE_NAME]}_${name}`
+  // const isDefinitionOfAFunction = (head, tail) =>
+  //   head[TYPE] === APPLY &&
+  //   head[VALUE] === KEYWORDS.DEFINE_VARIABLE &&
+  //   tail.at(-1)[0][TYPE] === APPLY &&
+  //   tail.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+  const getScopeNames = (scope) => {
+    const scopeNames = []
+    let current = scope
+
+    while (current) {
+      if (current[SCOPE_NAME]) {
+        scopeNames.push(current[SCOPE_NAME])
+      }
+      current = Object.getPrototypeOf(current)
+    }
+    return scopeNames.reverse()
+  }
+  const withScope = (name, scope) => {
+    const chain = getScopeNames(scope)
+    const str = `${chain.join('_')}_${name}`
+    // console.log({ str })
+    return { str, chain }
+  }
 
   const stack = []
   const check = (exp, env, scope) => {
@@ -385,14 +406,15 @@ export const typeCheck = (ast) => {
       switch (first[TYPE]) {
         case WORD:
           {
-            const key = withScope(first[VALUE], scope)
-            if (env[first[VALUE]] === undefined) {
-              errorStack.set(
-                key,
-                `Trying to access undefined variable ${first[VALUE]} (check #11)`
-              )
-            }
-            // else if (errorStack.has(key)) errorStack.delete(key)
+            stack.push(() => {
+              const key = withScope(first[VALUE], scope)
+              if (env[first[VALUE]] === undefined) {
+                errorStack.set(
+                  key.str,
+                  `Trying to access undefined variable ${first[VALUE]} (check #11)`
+                )
+              }
+            })
           }
           break
         case ATOM:
@@ -410,12 +432,11 @@ export const typeCheck = (ast) => {
                     )}) (check #10)`
                   )
                 } else {
+                  const name = rest[0][VALUE]
                   if (
-                    rest.at(-1).length &&
                     rest.at(-1)[0][TYPE] === APPLY &&
                     rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
                   ) {
-                    const name = rest[0][VALUE]
                     const n = rest.at(-1).length
                     env[name] = {
                       [STATS]: {
@@ -426,11 +447,8 @@ export const typeCheck = (ast) => {
                     }
                     if (name[name.length - 1] === PREDICATE_SUFFIX)
                       env[name][STATS][SUBTYPE] = PREDICATE
-                    const key = withScope(name, scope)
-                    if (errorStack.has(key)) errorStack.delete(key)
-                    scope = exp
+                    check(rest.at(-1), env, exp)
                   } else {
-                    const name = rest[0][VALUE]
                     if (!(name in env)) {
                       if (rest[1][TYPE] === WORD)
                         env[name] = env[rest[1][VALUE]]
@@ -445,16 +463,8 @@ export const typeCheck = (ast) => {
                           }
                         }
                     }
-                    // if (name === 'math:decimal-scaling') {
-                    //   const key = withScope(name, scope)
-                    //   if (errorStack.has(key)) errorStack.delete(key)
-                    // }
-                    // if (scope[SCOPE_NAME]) {
-                    // const key = withScope(name, scope)
-                    // if (errorStack.has(key)) errorStack.delete(key)
-                    // }
+                    check(rest.at(-1), env, scope)
                   }
-                  check(rest.at(-1), env, scope)
                 }
               }
               break
@@ -471,7 +481,7 @@ export const typeCheck = (ast) => {
                 }
                 const params = exp.slice(1, -1)
                 const copy = Object.create(env)
-                if (isLeaf(scope[1])) {
+                if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD) {
                   copy[SCOPE_NAME] = scope[1][VALUE]
                 } else {
                   copy[SCOPE_NAME] = performance
@@ -479,13 +489,12 @@ export const typeCheck = (ast) => {
                     .toString()
                     .replace('.', 0)
                 }
-
                 for (const param of params) {
                   copy[param[VALUE]] = { [STATS]: { type: UNKNOWN } }
                   if (env[copy[SCOPE_NAME]])
                     env[copy[SCOPE_NAME]][STATS][ARGS].push(copy[param[VALUE]])
                 }
-                check(rest.at(-1), copy, scope)
+                check(rest.at(-1), copy, copy)
               }
               break
             default:
@@ -493,7 +502,7 @@ export const typeCheck = (ast) => {
                 const key = withScope(first[VALUE], scope)
                 if (env[first[VALUE]] === undefined)
                   errorStack.set(
-                    key,
+                    key.str,
                     `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
                   )
                 else if (
@@ -502,7 +511,7 @@ export const typeCheck = (ast) => {
                   env[first[VALUE]][STATS][ARGS_COUNT] !== rest.length
                 ) {
                   errorStack.set(
-                    key,
+                    key.str,
                     `Incorrect number of arguments for (${
                       first[VALUE]
                     }). Expected (= ${
@@ -517,10 +526,10 @@ export const typeCheck = (ast) => {
                   if (first[TYPE] === APPLY && !isSpecial) {
                     if (env[first[VALUE]][STATS].type === ATOM) {
                       errorStack.set(
-                        key,
+                        key.str,
                         `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
                           exp
-                        )})`
+                        )}) (check #12)`
                       )
                     } else if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
                       env[first[VALUE]][STATS][RETURNS] = UNKNOWN
@@ -546,7 +555,7 @@ export const typeCheck = (ast) => {
                           env[rest[i][VALUE]][STATS][ARGS_COUNT]
                         ) {
                           errorStack.set(
-                            key,
+                            key.str,
                             `Incorrect number of arguments for (${
                               first[VALUE]
                             }). Expected (= ${
@@ -565,7 +574,7 @@ export const typeCheck = (ast) => {
                       ) {
                         if (args[i][STATS][ARGS_COUNT] !== rest[i].length - 2)
                           errorStack.set(
-                            key,
+                            key.str,
                             `Incorrect number of arguments for (${
                               first[VALUE]
                             }). Expected (= ${
@@ -595,7 +604,7 @@ export const typeCheck = (ast) => {
                             ) {
                               // console.log(env[CAR][STATS], expectedArgs[i][TYPE])
                               errorStack.set(
-                                key,
+                                key.str,
                                 `Incorrect type of arguments for special form (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
@@ -629,7 +638,7 @@ export const typeCheck = (ast) => {
                                       env[TT][STATS][RETURNS]
                                   )
                                     errorStack.set(
-                                      key,
+                                      key.str,
                                       `Incorrect type of arguments for special form (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
@@ -644,7 +653,7 @@ export const typeCheck = (ast) => {
                                   expectedArgs[i][TYPE] !== T
                                 ) {
                                   errorStack.set(
-                                    key,
+                                    key.str,
                                     `Incorrect type of arguments for special form (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
@@ -661,7 +670,7 @@ export const typeCheck = (ast) => {
                               case APPLY:
                               case ATOM:
                                 errorStack.set(
-                                  key,
+                                  key.str,
                                   `Incorrect type of arguments for (${
                                     first[VALUE]
                                   }). Expected (${toTypeNames(
@@ -697,7 +706,7 @@ export const typeCheck = (ast) => {
                                 args[i][STATS].type)
                           ) {
                             errorStack.set(
-                              key,
+                              key.str,
                               `Incorrect type of arguments ${i} for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
@@ -715,8 +724,6 @@ export const typeCheck = (ast) => {
                               args[i][STATS].type === UNKNOWN
                             ) {
                               retry.retried = true
-                              if (!scope[SCOPE_NAME])
-                                scope[SCOPE_NAME] = scope[1][VALUE]
                               stack.unshift(() => check(exp, env, scope))
                             }
                             // console.log(
@@ -736,7 +743,7 @@ export const typeCheck = (ast) => {
                             args[i][STATS].type
                         ) {
                           errorStack.set(
-                            key,
+                            key.str,
                             `Incorrect type of arguments ${i} for (${
                               first[VALUE]
                             }). Expected (${toTypeNames(
@@ -771,6 +778,7 @@ export const typeCheck = (ast) => {
     }
   }
   const copy = JSON.parse(JSON.stringify(ast))
+  copy[SCOPE_NAME] = 'root'
   check(copy, root, copy)
   while (stack.length) stack.pop()()
   if (errorStack.size)
