@@ -139,7 +139,7 @@ describe('Compilation & Interpretation', () => {
   (map (list 2 3 4) math:square)`,
       `(let memo (array [] []))
 (let fibonacci (lambda n (do 
-(let key (|> n (from:number->digits) (from:digits->chars)))
+(let key (|> n (from:integer->digits) (from:digits->chars)))
   (if (< n 2) n
     (if (map:has? memo key) 
         (map:get memo key)
@@ -283,7 +283,7 @@ describe('Compilation & Interpretation', () => {
           ; 514579
           (|> *input*
               (string:lines)
-              (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
+              (array:map (lambda d (|> d (from:chars->digits) (from:digits->integer))))
               (array:sort (lambda a b (> a b)))
               (solve (lambda x (- 2020 x)))
               (math:product))`,

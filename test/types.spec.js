@@ -422,8 +422,8 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 (let math:number-of-digits (lambda n
   (cond
     (= n 0) 1
-    (< n 0) (array:length (from:number->digits (| (* n -1) 0)))
-    (*) (array:length (from:number->digits (| n 0))))))
+    (< n 0) (array:length (from:integer->digits (| (* n -1) 0)))
+    (*) (array:length (from:integer->digits (| n 0))))))
 (let math:largest-power (lambda N (do
   ; changing all right side bits to 1.
   (let N1 (| N (>> N 1)))
@@ -835,7 +835,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 (let matrix:get (lambda matrix y x (array:get (array:get matrix y) x)))
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
 (let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] "Coordinates are outside of matrix bounds (matrix:get-option)"])))
-(let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
+(let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
 (let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x 
       (cond 
           (atom? x) (array x)
@@ -885,9 +885,9 @@ Trying to call undefined (lambda) array:mapz (check #9)`
                     (var:set! current-sign 1)))
                 a)) [])))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
-(let from:digits->number (lambda digits (do
-    (let recursive:from:digits->number (lambda i num base (if (> (array:length digits) i) (recursive:from:digits->number (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
-    (recursive:from:digits->number 0 0 (* (math:power 10 (array:length digits)) 0.1)))))
+(let from:digits->integer (lambda digits (do
+    (let recursive:from:digits->integer (lambda i num base (if (> (array:length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
+    (recursive:from:digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)))))
 (let from:positive-or-negative-digits->number (lambda digits-with-sign (do
     (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
@@ -900,12 +900,12 @@ Trying to call undefined (lambda) array:mapz (check #9)`
   (if (array:first x)
       (array:set! a (array:length a) (from:digit->char (array:second x)))
       (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x))))) []))))
-(let from:number->digits (lambda num (do
-  (let recursive:from:number->digits (lambda num res (cond
-                              (>= num 1) (recursive:from:number->digits (/ num 10) (array:set! res (array:length res) (| (mod num 10) 0)))
+(let from:integer->digits (lambda num (do
+  (let recursive:from:integer->digits (lambda num res (cond
+                              (>= num 1) (recursive:from:integer->digits (/ num 10) (array:set! res (array:length res) (| (mod num 10) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (array:reverse (recursive:from:number->digits num [])))))
+  (array:reverse (recursive:from:integer->digits num [])))))
 (let from:number->positive-or-negative-digits (lambda positive-or-negative-num (do
   (let negative? (math:negative? positive-or-negative-num))
   (let num (if negative? (* positive-or-negative-num -1) positive-or-negative-num))
@@ -922,21 +922,21 @@ Trying to call undefined (lambda) array:mapz (check #9)`
                               (= num 0) (array 0)
                               (*) res)))
   (array:reverse (recursive:from:number->bits num [])))))
-(let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:number->digits x))))))
-(let from:chars->number (lambda n (|> n (from:chars->digits) (from:digits->number))))
+(let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:integer->digits x))))))
+(let from:chars->number (lambda n (|> n (from:chars->digits) (from:digits->integer))))
 (let from:positive-or-negative-chars->number (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->number))))
-(let from:string->number from:positive-or-negative-chars->number)
+(let from:string->integer from:positive-or-negative-chars->number)
 (let from:strings->numbers (lambda strings (array:map strings from:positive-or-negative-chars->number)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
-        (|> d (from:chars->digits) (from:digits->number)))))))
-(let from:number->string (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars))))
-(let from:numbers->strings (lambda x (array:map x from:number->string)))
+        (|> d (from:chars->digits) (from:digits->integer)))))))
+(let from:integer->string (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars))))
+(let from:integers->strings (lambda x (array:map x from:integer->string)))
 (let from:array->set (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (set:add! s x))) s)))
 (let from:array->table (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (map:set! s x 0))) s)))
 (let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:map->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
-(let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
+(let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
 (let from:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (array:length initial) 0.5)))
@@ -1797,7 +1797,7 @@ heap)))
             (if (array:empty? h) (array:push! h (ast:leaf ast:apply token))
                 (if (match:number? token) 
                     (array:push! h (ast:leaf ast:atom 
-                        (from:digits->number 
+                        (from:digits->integer 
                             (from:chars->digits token)))) 
                     (array:push! h (ast:leaf ast:word token))))))))
         (if (= cursor char:right-brace) (var:set! head (array:pop! stack))))))

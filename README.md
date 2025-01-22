@@ -83,7 +83,7 @@ npm i fez-lisp
           (= (mod n 15) 0) "FizzBuzz"
           (= (mod n 3) 0) "Fizz"
           (= (mod n 5) 0) "Buzz"
-          (*) (from:number->string n))))
+          (*) (from:integer->string n))))
 
 (|> (math:range 1 100) (array:map fizz-buzz) (array:commas) (log "str"))
 ```

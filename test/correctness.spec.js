@@ -185,7 +185,7 @@ bbrgwb")
 
 
 (|> heights 
-    (array:map (lambda x (|> x (array:map from:numbers->strings) 
+    (array:map (lambda x (|> x (array:map from:integers->strings) 
                             (array:map (lambda x (array:append! (array:map x (lambda y 
                                 (if (= (car y) char:minus) [char:dot] y))) [char:new-line])))
                                 (array:flat-one))))))))
@@ -460,7 +460,7 @@ Prize: X=18641, Y=10279")
                                                                             y
                                                                             (array:select char:digit?)
                                                                             (from:chars->digits)
-                                                                            (from:digits->number)))))))
+                                                                            (from:digits->integer)))))))
                             (array:partition 3))))
 
 (let part1 (lambda input
@@ -989,7 +989,7 @@ ZZZ=ZZZ,ZZZ")
         `
       (let A (new:set (array "123" "100" "12" "14" "12" "42" "69" "666")))
       (let B (new:set (array "12" "1000" "3000")))
-      (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
+      (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
       (|> (set:union A B) (from:set->numbers))      
     `
       ),
@@ -1100,7 +1100,7 @@ ZZZ=ZZZ,ZZZ")
       evalJS(
         `(let memo (array [] []))
 (let fibonacci (lambda n (do 
-(let key (|> n (from:number->digits) (from:digits->chars)))
+(let key (|> n (from:integer->digits) (from:digits->chars)))
   (if (< n 2) n
     (if (map:has? memo key) 
         (map:get memo key)
@@ -1153,7 +1153,7 @@ ZZZ=ZZZ,ZZZ")
     ; 514579
     (|> *input*
         (string:lines)
-        (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
+        (array:map (lambda d (|> d (from:chars->digits) (from:digits->integer))))
         (array:sort (lambda a b (> a b)))
         (solve (lambda x (- 2020 x)))
         (math:product))`
@@ -1235,7 +1235,7 @@ ZZZ=ZZZ,ZZZ")
       (let list (car (cdr w)))
       (array 
         (|> springs (string:chars) (array:flat-one)) 
-        (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->number))))))
+        (|> list (string:commas) (array:map (lambda y (|> y (from:chars->digits) (from:digits->integer))))))
 ))))))
 (let sample (parse 
 "???.### 1,1,3
@@ -1338,7 +1338,7 @@ ZZZ=ZZZ,ZZZ")
                                                     (string:split char:x)
                                                     (array:map (lambda d (|> d
                                                                             (from:chars->digits)
-                                                                            (from:digits->number))))))))))
+                                                                            (from:digits->integer))))))))))
 (let sample (array:concat (array  
             "2x3x4" (array char:new-line) 
             "1x1x10")))
@@ -1382,8 +1382,8 @@ ZZZ=ZZZ,ZZZ")
                       (= char:up b) (array:increment! a 1 1)
                       (= char:down b) (array:increment! a 1 -1)
                       (*) a)
-                      (let A (from:digits->chars (from:number->digits (math:abs (car a)))))
-                      (let B (from:digits->chars (from:number->digits (math:abs (car (cdr a))))))
+                      (let A (from:digits->chars (from:integer->digits (math:abs (car a)))))
+                      (let B (from:digits->chars (from:integer->digits (math:abs (car (cdr a))))))
                       (let key (array:concat (array (if (math:negative? (car a)) "-" "+") A "," (if (math:negative? (car (cdr a))) "-" "+") B)))
                       (set:add! map key)
                       a)) (array 0 0))))
@@ -1852,7 +1852,7 @@ matrix
     "..........."
 ) char:new-line))
 (let parse (lambda input (|> input (string:lines))))
-(let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:number->digits) (from:digits->chars)))) char:dash)))
+(let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
 (let part1 (lambda matrix (do 
     (let output (var:def 0))
     (let target 64)
@@ -1925,7 +1925,7 @@ matrix
                                                       (array:map (lambda n (|> 
                                                                              n 
                                                                              (from:chars->digits) 
-                                                                             (from:digits->number))))))))))
+                                                                             (from:digits->integer))))))))))
 
 (let part1 (lambda input (|> 
                           input
@@ -1939,7 +1939,7 @@ matrix
 (let part2 (lambda input (do 
   (let left (array:map input array:first))
   (let right (array:map input array:second))
-  (let from:number->key (lambda num (|> num (from:number->digits))))
+  (let from:number->key (lambda num (|> num (from:integer->digits))))
   (let Map (|> left (array:fold (lambda a b (map:set! a (from:number->key b) 0)) (new:set4))))
   (array:for right (lambda R (do 
       (let key (from:number->key R))
@@ -1971,7 +1971,7 @@ matrix
 "8 6 4 4 1"
 "1 3 6 7 9"
 ) char:new-line))
-(let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (array:map (lambda w (|> w (from:chars->digits) (from:digits->number))))))))))
+(let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (array:map (lambda w (|> w (from:chars->digits) (from:digits->integer))))))))))
 
 (let part1 (lambda input (|> input 
 (array:select (lambda line (and 
@@ -2001,7 +2001,7 @@ matrix
 "8 6 4 4 1"
 "1 3 6 7 9"
 ) char:new-line))
-(let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (array:map (lambda w (|> w (from:chars->digits) (from:digits->number))))))))))
+(let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (array:map (lambda w (|> w (from:chars->digits) (from:digits->integer))))))))))
 
 (let part1 (lambda input (|> input (array:select (lambda line (do 
   (let slice (|> line (array:zip (array:slice line 1 (length line))) (array:map (lambda x (tuple:subtract x)))))
@@ -2078,7 +2078,7 @@ matrix
         (array:exclude array:empty?) 
         (array:select (lambda x (= (length x) 2)))
         (array:map (lambda x (|> x 
-                        (array:map (lambda x (|> x (from:chars->digits) (from:digits->number))))
+                        (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer))))
                         (math:product))))
         (math:summation))))
 
@@ -2168,7 +2168,7 @@ matrix
         (array:exclude array:empty?) 
         (array:select (lambda x (= (length x) 2)))
         (array:map (lambda x (|> x 
-                        (array:map (lambda x (|> x (from:chars->digits) (from:digits->number))))
+                        (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer))))
                         (math:product))))
         (math:summation))))
 
@@ -2293,7 +2293,7 @@ matrix
 
 (let sum-mid (lambda arr (|> arr 
     (array:map (lambda m (get m (math:floor (* (length m) 0.5)))))
-    (array:map (lambda x (|> x (from:chars->digits) (from:digits->number))))
+    (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer))))
     (math:summation))))
 
 (let part1 (lambda input (do 
@@ -2373,7 +2373,7 @@ matrix
   (let starting (matrix:find-index matrix (lambda x (= x 94))))
   (matrix:set! matrix (get starting 0) (get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
-  (let from:numbers->key (lambda a b (array:concat (array (from:digits->chars (from:number->digits a)) (array char:pipe) (from:digits->chars (from:number->digits b))))))
+  (let from:numbers->key (lambda a b (array:concat (array (from:digits->chars (from:integer->digits a)) (array char:pipe) (from:digits->chars (from:integer->digits b))))))
   (let recursive:step (lambda matrix start angle corners (do 
       (let current-dir (get dir (mod angle (length dir))))
       (let start-copy (array:shallow-copy start))
@@ -2430,8 +2430,8 @@ matrix
 (let parse (lambda input (do 
     (let lines (|> input (string:lines) (array:map (lambda x (do 
     (let sides (|> x (string:split (array:first ":"))))
-    (let L (|> sides (array:first) (from:chars->digits) (from:digits->number)))
-    (let R (|> sides (array:second) (string:words) (array:exclude array:empty?) (from:array->list) (list:map (lambda x (|> x (from:chars->digits) (from:digits->number))))))
+    (let L (|> sides (array:first) (from:chars->digits) (from:digits->integer)))
+    (let R (|> sides (array:second) (string:words) (array:exclude array:empty?) (from:array->list) (list:map (lambda x (|> x (from:chars->digits) (from:digits->integer))))))
     (array L R)))))))))
 
     
@@ -2648,7 +2648,7 @@ matrix
     evalJS(
       `
     (let INPUT "125 17")
-(let parse (lambda input (|> input (string:words) (array:map (lambda x (|> x (from:chars->digits) (from:digits->number)))))))
+(let parse (lambda input (|> input (string:words) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
 
 ; If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
 ; If the stone is engraved with a number that has an even number of digits, it is replaced by two stones. The left half of the digits are engraved on the new left stone, and the right half of the digits are engraved on the new right stone. (The new numbers don't keep extra leading zeroes: 1000 would become stones 10 and 0.)
@@ -2840,7 +2840,7 @@ matrix
                                                     (array:map (lambda chars 
                                                                       (|> chars 
                                                                           (from:chars->digits) 
-                                                                          (from:digits->number))))))))))
+                                                                          (from:digits->integer))))))))))
 (let solve (lambda input (|> (car input)
                              (array:zip (car (cdr input))) ; pair time with distance
                              (array:map (lambda input (do
@@ -2923,9 +2923,9 @@ matrix
 1,6
 2,0")
 
-(let parse (lambda input (|> input (string:lines) (array:map (lambda line (|> line (string:commas) (array:map from:string->number)))))))
+(let parse (lambda input (|> input (string:lines) (array:map (lambda line (|> line (string:commas) (array:map from:string->integer)))))))
 (let part1 (lambda input size (do
-    (let from:stats->key (lambda item (|> item (from:numbers->strings) (array:commas))))
+    (let from:stats->key (lambda item (|> item (from:integers->strings) (array:commas))))
     (let H (math:maximum (array:map input array:first)))
     (let W (math:maximum (array:map input array:second)))
     (let matrix (|> (math:zeroes (+ H 1)) (array:map (lambda . (array:map (math:zeroes (+ W 1)) (lambda . char:dot)) ))))
@@ -3102,7 +3102,7 @@ td-yn")
 100
 2024")
 
-(let parse (lambda input (|> input (string:lines) (array:map from:string->number))))
+(let parse (lambda input (|> input (string:lines) (array:map from:string->integer))))
 (let part1 (lambda input (do 
 
 
@@ -3318,7 +3318,7 @@ Program: 0,1,5,4,3,0"
   (let lines (|> input (string:lines)))
   (let program (|> lines (array:pop!) (string:words) (array:pop!) (string:commas) (array:flat-one) (from:chars->digits)))
   (array:pop! lines)
-  (let registers (|> lines (array:map (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->number))))))
+  (let registers (|> lines (array:map (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->integer))))))
   (array registers program))))
 
 (let part1 (lambda input (do 
@@ -3328,7 +3328,7 @@ Program: 0,1,5,4,3,0"
   (let get-instruction-pointer (lambda (var:get instruction-pointer)))
   (let move-pointer! (lambda (|> instruction-pointer (var:increment!) (var:increment!))))
   (let set-pointer! (lambda operand (var:set! instruction-pointer operand)))
-  (let log-outputs! (lambda (log-string! (array:commas (from:numbers->strings outputs)))))
+  (let log-outputs! (lambda (log-string! (array:commas (from:integers->strings outputs)))))
   ; (let halt? (lambda (not (array:in-bounds? program (var:get instruction-pointer)))))
   (let halt? (lambda (>= (var:get instruction-pointer) (length program))))
   (let outputs [])
