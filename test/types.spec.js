@@ -103,10 +103,10 @@ describe('Should throw errors', () => {
         ),
       {
         name: 'TypeError',
-        message: `Trying to access undefined variable array:nah-empty?
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4)
-Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1)
-Trying to call undefined (lambda) array:mapz`
+        message: `Trying to access undefined variable array:nah-empty? (check #11)
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #8)
+Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #8)
+Trying to call undefined (lambda) array:mapz (check #9)`
       }
     )
 
@@ -1888,16 +1888,16 @@ heap)))
         ),
       {
         name: 'TypeError',
-        message: `Trying to access undefined variable y3
-Trying to access undefined variable m
-Trying to access undefined variable entityz
-Trying to call undefined (lambda) from:charss->ast
-Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env))
-Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1)
-Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs)
-Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12)
-Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)`
+        message: `Trying to access undefined variable y3 (check #11)
+Trying to access undefined variable m (check #11)
+Trying to access undefined variable entityz (check #11)
+Trying to call undefined (lambda) from:charss->ast (check #9)
+Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #8)
+Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #8)
+Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #8)
+Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #8)
+Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #8)
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #8)`
       }
     )
 
@@ -1919,7 +1919,7 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)`
       {
         name: 'TypeError',
         message:
-          'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1)'
+          'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1) (check #8)'
       }
     )
 
@@ -1965,6 +1965,107 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2)`
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) idx)`
         }
       )
+    )
+
+    throws(
+      () =>
+        type(
+          parse(`(let INPUT
+"............
+........0...
+.....0......
+.......0....
+....0.......
+......A.....
+............
+............
+........A...
+.........A..
+............
+............")
+
+(let parse (lambda input (|> input (string:lines))))
+
+(let part1 (lambda matrix (do
+    (let coords [])
+    (matrix:enumerated-for matrix (lambda char y x (if (not (= char char:dot)) (array:push! coords (array char y x)))))
+    (let copy (matrix:shallow-copy matrix))
+    (let update! (lambda y1 y2 x1 x2 (do
+
+        (let distanceY (math:abs (- matrix:shallow-copy y2)))
+        (let distanceX (math:abs (- x1 x2)))
+        
+        (let Y1 (if (= y1 y2) y1 (if (> y1 y2) (+ y1 distanceY) (- y1 distanceY))))
+        (let X1 (if (= x1 x2) x1 (if (> x1 x2) (+ x1 distanceX) (- x1 distanceX))))
+        (let Y2 (if (= y1 y2) y2 (if (> y1 y2) (- y2 distanceY) (+ y2 distanceY))))
+        (let X2 (if (= x1 x2) x2 (if (> x1 x2) (- x2 distanceX) (+ x2 distanceX))))
+
+        (if (matrix:in-bounds? copy Y1 X1) (matrix:set! copy Y1 X1 char:hash))
+        (if (matrix:in-bounds? copy Y2 X2) (matrix:set! copy Y2 X2 char:hash)))))
+    
+     (let map (array:fold coords (lambda a b 
+        (if (map:has? a (array (array:first b))) 
+            (map:set! a (array (array:first b)) (array:merge (map:get a (array (array:first b))) (array (array:tail b)))) 
+            (map:set! a (array (array:first b)) (array (array:tail b))))) (new:set8)))
+     (let pairs (|> map (array:flat-one) (array:map array:second) (array:exclude (lambda x (= (array:length x) 1)))))
+     (array:enumerated-for pairs (lambda pair i (do
+                (loop:for-range 0 (array:length pair) (lambda i 
+                    (loop:for-range i (array:length pair) (lambda j 
+                        (if (<> i j) (do
+                         (let y1 (array:first (array:get pair i)))
+                         (let y2 (array:first (array:get pair j)))
+                         (let x1 (array:second (array:get pair i)))
+                         (let x2 (array:second (array:get pair j)))
+                         (update! y1 y2 x1 x2))))))))))
+    (|> copy (array:flat-one) (array:count char:hash)))))
+
+(let part2 (lambda matrix (do
+    (let coords [])
+    (matrix:enumerated-for matrix (lambda char y x (if (not (= char char:dot)) (array:push! coords (array char y x)))))
+    (let copy (matrix:shallow-copy matrix))
+    (let update! (lambda y1 y2 x1 x2 (do
+
+        (let distanceY (math:abs (- y1 y2)))
+        (let distanceX (math:abs (- x1 x2)))
+        (let recursive:iter (lambda i (do
+        
+            (let Y1 (if (= y1 y2) y1 (if (> y1 y2) (+ y1 (* distanceY i)) (- y1 (* distanceY i)))))
+            (let X1 (if (= x1 x2) x1 (if (> x1 x2) (+ x1 (* distanceX i)) (- x1 (* distanceX i)))))
+            (let Y2 (if (= y1 y2) y2 (if (> y1 y2) (- y2 (* distanceY i)) (+ y2 (* distanceY i)))))
+            (let X2 (if (= x1 x2) x2 (if (> x1 x2) (- x2 (* distanceX i)) (+ x2 (* distanceX i)))))
+            (let bounds1? (matrix:in-bounds? copy Y1 X1))
+            (let bounds2? (matrix:in-bounds? copy Y2 X2))
+            (if bounds1? (matrix:set! copy Y1 X1 char:hash))
+            (if bounds2? (matrix:set! copy Y2 X2 char:hash))
+            
+            (if (or bounds1? bounds2?) (recursive:iter (+ i 1))))))
+
+        (recursive:iter 1))))
+    
+     (let map (array:fold coords (lambda a b 
+        (if (map:has? a (array (array:first b))) 
+            (map:set! a (array (array:first b)) (array:merge (map:get a (array (array:first b))) (array (array:tail b)))) 
+            (map:set! a (array (array:first b)) (array (array:tail b))))) (new:set8)))
+     (let pairs (|> map (array:flat-one) (array:map array:second) (array:exclude (lambda x (= (array:length x) 1)))))
+     (array:enumerated-for pairs (lambda pair i (do
+                (loop:for-range 0 (array:length pair) (lambda i 
+                    (loop:for-range i (array:length pair) (lambda j 
+                        (if (<> i j) (do
+                         (let y1 (array:first (array:get pair i)))
+                         (let y2 (array:first (array:get pair j)))
+                         (let x1 (array:second (array:get pair i)))
+                         (let x2 (array:second (array:get pair j)))
+                         (update! y1 y2 x1 x2))))))))))
+    (|> copy (array:flat-one) (array:exclude (lambda x (= x char:dot))) (length)))))
+ 
+;  (let PARSED (parse INPUT))
+
+; [(part1 PARSED) (part2 PARSED)]`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments for special form (-). Expected (Atom) but got (Application) (- matrix:shallow-copy y2) (check #3)`
+      }
     )
   })
 })

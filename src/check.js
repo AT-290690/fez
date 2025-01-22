@@ -390,7 +390,7 @@ export const typeCheck = (ast) => {
             if (env[first[VALUE]] === undefined) {
               errorStack.set(
                 key,
-                `Trying to access undefined variable ${first[VALUE]}`
+                `Trying to access undefined variable ${first[VALUE]} (check #11)`
               )
             }
             // else if (errorStack.has(key)) errorStack.delete(key)
@@ -457,7 +457,7 @@ export const typeCheck = (ast) => {
                       first[VALUE]
                     }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
                       exp
-                    )})`
+                    )}) (check #10)`
                   )
                 }
                 const params = exp.slice(1, -1)
@@ -483,7 +483,7 @@ export const typeCheck = (ast) => {
                 if (env[first[VALUE]] === undefined)
                   errorStack.set(
                     key,
-                    `Trying to call undefined (lambda) ${first[VALUE]}`
+                    `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
                   )
                 else if (
                   env[first[VALUE]][STATS].type === APPLY &&
@@ -496,7 +496,9 @@ export const typeCheck = (ast) => {
                       first[VALUE]
                     }). Expected (= ${
                       env[first[VALUE]][STATS][ARGS_COUNT]
-                    }) but got ${rest.length} (${stringifyArgs(exp)})`
+                    }) but got ${rest.length} (${stringifyArgs(
+                      exp
+                    )}) (check #8)`
                   )
                 } else {
                   const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
@@ -538,7 +540,9 @@ export const typeCheck = (ast) => {
                               first[VALUE]
                             }). Expected (= ${
                               args[i][STATS][ARGS_COUNT]
-                            }) but got ${rest.length} (${stringifyArgs(exp)})`
+                            }) but got ${rest.length} (${stringifyArgs(
+                              exp
+                            )}) (check #7)`
                           )
                         }
                       } else if (
@@ -555,7 +559,9 @@ export const typeCheck = (ast) => {
                               first[VALUE]
                             }). Expected (= ${
                               args[i][STATS][ARGS_COUNT]
-                            }) but got ${rest.length} (${stringifyArgs(exp)})`
+                            }) but got ${rest.length} (${stringifyArgs(
+                              exp
+                            )}) (check #6)`
                           )
                       }
 
@@ -585,7 +591,7 @@ export const typeCheck = (ast) => {
                                   expectedArgs[i][TYPE]
                                 )}) but got (${toTypeNames(
                                   env[CAR][STATS][RETURNS]
-                                )}) (${stringifyArgs(exp)})`
+                                )}) (${stringifyArgs(exp)}) (check #1)`
                               )
                             }
                             // else {
@@ -613,13 +619,13 @@ export const typeCheck = (ast) => {
                                   )
                                     errorStack.set(
                                       key,
-                                      `Incorrect type of arguments for (${
+                                      `Incorrect type of arguments for special form (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
                                         expectedArgs[i][TYPE]
                                       )}) but got (${toTypeNames(
                                         rest[i][TYPE]
-                                      )}) (${stringifyArgs(exp)})`
+                                      )}) (${stringifyArgs(exp)}) (check #2)`
                                     )
                                 } else if (
                                   T !== UNKNOWN &&
@@ -628,13 +634,13 @@ export const typeCheck = (ast) => {
                                 ) {
                                   errorStack.set(
                                     key,
-                                    `Incorrect type of arguments for (${
+                                    `Incorrect type of arguments for special form (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
                                       expectedArgs[i][TYPE]
                                     )}) but got (${toTypeNames(
-                                      rest[i][TYPE]
-                                    )}) (${stringifyArgs(exp)})`
+                                      T
+                                    )}) (${stringifyArgs(exp)}) (check #3)`
                                   )
                                 } else {
                                   env[rest[i][VALUE]][STATS].type =
@@ -651,7 +657,7 @@ export const typeCheck = (ast) => {
                                     expectedArgs[i][TYPE]
                                   )}) but got (${toTypeNames(
                                     rest[i][TYPE]
-                                  )}) (${stringifyArgs(exp)})`
+                                  )}) (${stringifyArgs(exp)}) (check #5)`
                                 )
                                 break
                             }
