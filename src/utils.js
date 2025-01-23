@@ -190,11 +190,16 @@ const deepShake = (tree, deps, visited = new Set(), ignored = new Set()) => {
     deepShake(deps.get(value).value, deps, visited, ignored)
   }
 }
+
+export const hasBlock = (body) =>
+  body[0] && body[0][TYPE] === APPLY && body[0][VALUE] === KEYWORDS.BLOCK
+
 const extractDeps = (visited, deps) =>
   [...visited]
     .map((x) => deps.get(x))
     .sort((a, b) => a.index - b.index)
     .map((x) => x.value)
+
 const toIgnore = (ast) => {
   const out = []
   const dfs = (exp) => {

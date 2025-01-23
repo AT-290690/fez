@@ -11,7 +11,7 @@ import {
   WORD
 } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { stringifyArgs } from './utils.js'
+import { hasBlock, stringifyArgs } from './utils.js'
 const ARGS_COUNT = 'n'
 const VARIADIC = '...'
 const STATS = '__stats__'
@@ -395,7 +395,6 @@ export const typeCheck = (ast) => {
   const withScope = (name, scope) => {
     const chain = getScopeNames(scope)
     const str = `${chain.join('_')}_${name}`
-    // console.log({ str })
     return { str, chain }
   }
 
@@ -445,9 +444,65 @@ export const typeCheck = (ast) => {
                         [ARGS]: []
                       }
                     }
-                    if (name[name.length - 1] === PREDICATE_SUFFIX)
-                      env[name][STATS][SUBTYPE] = PREDICATE
-                    check(rest.at(-1), env, exp)
+                    const checkReturnType = () => {
+                      if (name[name.length - 1] === PREDICATE_SUFFIX) {
+                        env[name][STATS][RETURNS] = ATOM
+                        env[name][STATS][SUBTYPE] = PREDICATE
+                      } else {
+                        const body = rest.at(-1).at(-1)
+                        const rem = hasBlock(body) ? body.at(-1) : body
+                        const returns = isLeaf(rem) ? rem : rem[0]
+                        if (returns[TYPE] === ATOM) {
+                          env[name][STATS][RETURNS] = ATOM
+                        } else {
+                          switch (returns[VALUE]) {
+                            case KEYWORDS.IF:
+                              const re = rem.slice(2)
+                              if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+                                env[name][STATS][RETURNS] = ATOM
+                              else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
+                                env[name][STATS][RETURNS] =
+                                  env[re[0][0][VALUE]][STATS][RETURNS]
+                              } else {
+                                if (env[re[0][VALUE]])
+                                  env[name][STATS][RETURNS] =
+                                    env[re[0][VALUE]][STATS].type
+                                else env[name][STATS][RETURNS] = UNKNOWN
+                              }
+                              break
+                            default:
+                              if (env[returns[VALUE]]) {
+                                if (env[returns[VALUE]][STATS].type === APPLY) {
+                                  env[name][STATS][RETURNS] =
+                                    env[returns[VALUE]][STATS][RETURNS]
+                                  // env[name][STATS][SUBTYPE] =
+                                  //   env[returns[VALUE]][STATS][SUBTYPE]
+                                } else {
+                                  env[name][STATS][RETURNS] =
+                                    env[returns[VALUE]].type
+                                }
+                              } else {
+                                env[name][STATS][RETURNS] = UNKNOWN
+                              }
+                              break
+                          }
+                        }
+                      }
+                    }
+                    checkReturnType()
+                    if (
+                      env[name][STATS][RETURNS] === UNKNOWN &&
+                      !env[name].retried
+                    ) {
+                      env[name].retried = true
+                      stack.unshift(() => {
+                        checkReturnType()
+                        check(rest.at(-1), env, exp)
+                      })
+                      check(rest.at(-1), env, exp)
+                    } else {
+                      check(rest.at(-1), env, exp)
+                    }
                   } else {
                     if (!(name in env)) {
                       if (rest[1][TYPE] === WORD)
