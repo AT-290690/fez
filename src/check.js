@@ -599,14 +599,14 @@ export const typeCheck = (ast) => {
                         env[name][STATS][SUB_RETURN_TYPE] !== PREDICATE
                       ) {
                         warningStack.add(
-                          `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #7)`
+                          `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
                         )
                       } else if (
                         !isPredicate &&
                         env[name][STATS][SUB_RETURN_TYPE] === PREDICATE
                       ) {
                         warningStack.add(
-                          `${name} should end in (${PREDICATE_SUFFIX}) because it return (Predicate) (check #8)`
+                          `${name} should end in (${PREDICATE_SUFFIX}) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
                         )
                       }
                       // }
@@ -707,7 +707,7 @@ export const typeCheck = (ast) => {
                         env[first[VALUE]][STATS][ARGS_COUNT]
                       }) but got ${rest.length} (${stringifyArgs(
                         exp
-                      )}) (check #8)`
+                      )}) (check #15)`
                     )
                   } else {
                     const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])

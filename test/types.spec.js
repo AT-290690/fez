@@ -53,7 +53,7 @@ Incorrect type of arguments for special form (+). Expected (Atom) but got (Appli
 Trying to access undefined variable fff (check #11)
 Trying to access undefined variable zz (check #11)
 Trying to access undefined variable y (check #11)
-Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #8)`
+Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #15)`
       }
     )
     doesNotThrow(() =>
@@ -200,8 +200,8 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
         ),
       {
         name: 'TypeError',
-        message: `Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #8)
-Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #8)
+        message: `Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #15)
+Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #15)
 Trying to access undefined variable array:nah-empty? (check #11)
 Trying to call undefined (lambda) array:mapz (check #9)`
       }
@@ -212,33 +212,33 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     throws(() => type(parse(BROKEN_STD)), {
       name: 'TypeError',
       message: `Trying to call undefined (lambda) from:charss->ast (check #9)
-Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #8)
-Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #8)
-Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #8)
-Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #8)
+Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #15)
+Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #15)
+Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #15)
+Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #15)
 Trying to access undefined variable entityz (check #11)
 Trying to access undefined variable m (check #11)
-Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #8)
+Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #15)
 Incorrect type of arguments for special form (not). Expected (Predicate) but got (Atom) (not (set:exists? table key)) (check #13)
 Incorrect type of arguments for special form (if). Expected (Predicate) but got (Atom) (if (string:lesser? a b) b a) (check #13)
 Incorrect type of arguments for special form (if). Expected (Predicate) but got (Atom) (if (string:lesser? a b) a b) (check #13)
 Incorrect type of arguments for special form (or). Expected (Predicate) but got (Atom) (or (string:equal? A B) (string:lesser? A B)) (check #13)
 Incorrect type of arguments for special form (or). Expected (Predicate) but got (Atom) (or (string:equal? A B) (string:greater? A B)) (check #13)
 Incorrect type of arguments for special form (and). Expected (Predicate) but got (Atom) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #13)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #8)
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
-math:bit-equal should end in (?) because it return (Predicate) (check #8)
-is-good-enough should end in (?) because it return (Predicate) (check #8)
-math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-list:every? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-special-form:and should end in (?) because it return (Predicate) (check #8)
-special-form:or should end in (?) because it return (Predicate) (check #8)`
+math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+list:every? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
     })
 
     throws(
@@ -259,7 +259,7 @@ special-form:or should end in (?) because it return (Predicate) (check #8)`
       {
         name: 'TypeError',
         message:
-          'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1) (check #8)'
+          'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1) (check #15)'
       }
     )
 
