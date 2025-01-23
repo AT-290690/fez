@@ -112,11 +112,11 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
 (let is? (> 1 1))
 (if is? 1)
 
-(let from:positive-or-negative-digits->number (lambda digits-with-sign (do
+(let from:positive-or-negative-digits->integer (lambda digits-with-sign (do
     (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
-    (let recursive:from:positive-or-negative-digits->number (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->number (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
-    (* (recursive:from:positive-or-negative-digits->number 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
+    (let recursive:from:positive-or-negative-digits->integer (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
+    (* (recursive:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
 )))`)
       )
     )
@@ -137,7 +137,7 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
                                                       word
                                                       (string:words)
                                                       (array:select array:not-empty?)
-                                                      (from:strings->numbers)))))))
+                                                      (from:strings->integers)))))))
 
 (let part1 (lambda input (|>
                           input
@@ -178,7 +178,7 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
                                                             word
                                                             (string:words)
                                                             (array:select array:nah-empty?)
-                                                            (from:strings->numbers)))))))
+                                                            (from:strings->integers)))))))
       
       (let part1 (lambda input (|>
                                 input

@@ -6,6 +6,39 @@ const interpred = (source) => evaluate(parse(source))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`(let INPUT "12
+14
+1969
+100756")
+
+(let parse (lambda input 
+    (|> input (string:lines) (from:strings->integers))))
+
+(let PARSED (parse INPUT))
+
+(let part1 (lambda input (|>    
+    input 
+    (array:map (lambda x (- (// x 3) 2)))
+    (math:summation))))
+
+(let part2 (lambda input (do
+  (let calc (lambda x (- (// x 3) 2)))
+  (let retry (lambda x (do 
+      (let recursive:retry (lambda x out (do 
+          (let result (calc x))
+          (if (<= result 0) out 
+              (recursive:retry result (+ result out))))))
+      (recursive:retry x 0))))
+     
+ (|>    
+    input 
+    (array:map retry)
+    (math:summation)))))
+    
+[(part1 PARSED) (part2 PARSED)]`),
+      [34241, 51316]
+    )
     strictEqual(
       evalJS(
         `(from:string->integer (from:integer->string (from:digits->integer (from:integer->digits 1337))))`
@@ -985,7 +1018,7 @@ ZZZ=ZZZ,ZZZ")
         (set:add! B (array char:2))
         (set:add! B (array char:4))
         (set:add! B (array char:5))
-        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))        
+        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->integers))        
     `
       ),
       [[3, 4, 5], [3], [4, 5], [1, 2]]
@@ -995,8 +1028,8 @@ ZZZ=ZZZ,ZZZ")
         `
       (let A (new:set (array "123" "100" "12" "14" "12" "42" "69" "666")))
       (let B (new:set (array "12" "1000" "3000")))
-      (let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
-      (|> (set:union A B) (from:set->numbers))      
+      (let from:set->integers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
+      (|> (set:union A B) (from:set->integers))      
     `
       ),
       [100, 12, 3000, 123, 42, 666, 14, 69, 1000]
@@ -2711,7 +2744,7 @@ matrix
     (|> input 
         (string:lines)
         (array:map (lambda x 
-            (|> x (string:words) (array:map (lambda x (|> x (array:drop 2)  (string:commas) (array:map (lambda x (|> x (from:chars->positive-or-negative-digits)(from:positive-or-negative-digits->number)))))))))))))
+            (|> x (string:words) (array:map (lambda x (|> x (array:drop 2)  (string:commas) (array:map (lambda x (|> x (from:chars->positive-or-negative-digits)(from:positive-or-negative-digits->integer)))))))))))))
 (let part1 (lambda input (do 
     (let WIDTH 11)
     (let HEIGHT 7)
@@ -2887,7 +2920,7 @@ matrix
   (map:get object "x")
   (map:get object "y")
   (map:get object "price")
-   (|> U (array:flat-one) (array:map from:chars->number)))`
+   (|> U (array:flat-one) (array:map from:chars->integer)))`
     ),
     [100, 69, 29, 42, [40, 100, 200, 50]]
   )
@@ -2895,7 +2928,7 @@ matrix
   strictEqual(
     evalJS(
       `
-(|> (array "-123" "2345" "12" "8" "-0" "-2") (from:strings->numbers) (math:summation))`
+(|> (array "-123" "2345" "12" "8" "-0" "-2") (from:strings->integers) (math:summation))`
     ),
     2240
   )

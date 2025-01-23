@@ -50,7 +50,7 @@ evaluate(
      ())))
 (|> *input*
     (string:commas)
-    (array:map (lambda d (|> d (from:chars->digits) (from:digits->number))))
+    (array:map (lambda d (|> d (from:chars->digits) (from:digits->integer))))
     (array:sort (lambda a b (> a b)))
     (solve (lambda x (- 2020 x)))
     (math:product)

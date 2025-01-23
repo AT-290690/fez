@@ -296,7 +296,7 @@ describe('Compilation & Interpretation', () => {
         (set:add! B (array char:2))
         (set:add! B (array char:4))
         (set:add! B (array char:5))
-        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->numbers))`,
+        (|> (array (set:xor A B) (set:difference A B) (set:difference B A) (set:intersection B A)) (array:map from:set->integers))`,
       `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
       `(|> 
   (array 1 2 3 4)

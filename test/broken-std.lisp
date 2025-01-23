@@ -771,11 +771,11 @@
 (let from:digits->integer (lambda digits (do
     (let recursive:from:digits->integer (lambda i num base (if (> (array:length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
     (recursive:from:digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)))))
-(let from:positive-or-negative-digits->number (lambda digits-with-sign (do
+(let from:positive-or-negative-digits->integer (lambda digits-with-sign (do
     (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
-    (let recursive:from:positive-or-negative-digits->number (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->number (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
-    (* (recursive:from:positive-or-negative-digits->number 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
+    (let recursive:from:positive-or-negative-digits->integer (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
+    (* (recursive:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
 (let from:positive-or-negative-digits->chars (lambda xs (|>
   xs
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
@@ -806,10 +806,10 @@
                               (*) res)))
   (array:reverse (recursive:from:number->bits num [])))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:integer->digits x))))))
-(let from:chars->number (lambda n (|> n (from:chars->digits) (from:digits->integer))))
-(let from:positive-or-negative-chars->number (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->number))))
-(let from:string->integer from:positive-or-negative-chars->number)
-(let from:strings->numbers (lambda strings (array:map strings from:positive-or-negative-chars->number)))
+(let from:chars->integer (lambda n (|> n (from:chars->digits) (from:digits->integer))))
+(let from:positive-or-negative-chars->integer (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->integer))))
+(let from:string->integer from:positive-or-negative-chars->integer)
+(let from:strings->integers (lambda strings (array:map strings from:positive-or-negative-chars->integer)))
 (let from:string->date 
     (lambda str (|> str (string:dashes) (array:map (lambda d 
         (|> d (from:chars->digits) (from:digits->integer)))))))
@@ -819,7 +819,7 @@
 (let from:array->table (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (map:set! s x 0))) s)))
 (let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
 (let from:map->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
-(let from:set->numbers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
+(let from:set->integers (lambda set (|> set (from:set->array) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
 (let from:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (array:length initial) 0.5)))
