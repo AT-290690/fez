@@ -58,7 +58,7 @@
   const keywords: Record<Keyword, Fn> = {
     ['loop']: (args, env) => {
       while (evaluate(args[0], env) === TRUE) evaluate(args[1], env)
-      return 0
+      return -1
     },
     ['mod']: (args, env) => {
       const a = evaluate(args[0], env)

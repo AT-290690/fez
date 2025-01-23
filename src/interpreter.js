@@ -17,7 +17,7 @@ export const keywords = {
     if (args.length != 2)
       throw new RangeError(`Wrong number of args to ${KEYWORDS.LOOP}`)
     while (evaluate(args[0], env) === TRUE) evaluate(args[1], env)
-    return FALSE
+    return -1
   },
   [KEYWORDS.ADDITION]: (args, env) => {
     if (args.length !== 2)

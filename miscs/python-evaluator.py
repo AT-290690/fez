@@ -95,7 +95,7 @@ def do_block(args, env):
 def loop(args, env):
     while evaluate(args[0], env):
         evaluate(args[1], env)
-    return 0
+    return -1
 
 def let(args, env):
     name = args[0][VALUE]

@@ -100,7 +100,7 @@ fn main() {
                             break; // Exit the loop if the value is not 1.0
                         }
                     }
-                    return Evaluated::Number(0.0);
+                    return Evaluated::Number(-1.0);
                 },
             )),
         );

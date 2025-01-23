@@ -47,7 +47,7 @@ const keywords = {
   },
   ['loop']: (args, env) => {
     while (evaluate(args[0], env) === TRUE) evaluate(args[1], env)
-    return 0
+    return -1
   },
   ['set!']: (args, env) => {
     const array = evaluate(args[0], env)

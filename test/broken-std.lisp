@@ -986,18 +986,19 @@
                                                         word) i (recursive:string:match (array:tail xs) (+ i 1)))
                                                     -1)))
                                               (recursive:string:match str 0)))))))
-(let string:has? (lambda str word (cond
-                                    (< (array:length str) (array:length word)) 0
-                                    (string:equal? str word) 1
-                                    (*) (apply (lambda (do
-                                          (let recursive:string:has? (lambda xs i
-                                                (if (and (> (array:length xs) 0) (>= (array:length xs) (array:length word)))
-                                                      (if (string:equal?
-                                                        (|> str (array:slice i (+ i (array:length word))) (array) (array:join (array char:empty)))
-                                                        word) 
-                                                        1 
-                                                        (recursive:string:has? (array:tail xs) (+ i 1))))))
-                                              (recursive:string:has? str 0)))))))
+(let string:has? (lambda str word (true? 
+                                    (cond
+                                        (< (array:length str) (array:length word)) 0
+                                        (string:equal? str word) 1
+                                        (*) (apply (lambda (do
+                                              (let recursive:string:has? (lambda xs i
+                                                    (if (and (> (array:length xs) 0) (>= (array:length xs) (array:length word)))
+                                                          (if (string:equal?
+                                                            (|> str (array:slice i (+ i (array:length word))) (array) (array:join (array char:empty)))
+                                                            word) 
+                                                            1 
+                                                            (recursive:string:has? (array:tail xs) (+ i 1))))))
+                                                  (recursive:string:has? str 0))))))))
 (let string:lesser? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (array:length A) (array:length B)) (array:merge! A (math:zeroes (- (array:length B) (array:length A)))) A))
   (let b (if (> (array:length A) (array:length B)) (array:merge! B (math:zeroes (- (array:length A) (array:length B)))) B))
@@ -1020,7 +1021,7 @@
    (bool:true? is?)))))))
 (let string:greater-or-equal? (lambda A B (or (string:equal? A B) (string:greater? A B))))
 (let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (string:lesser? A B))))
-(let string:equal? (lambda a b (if (= (array:length a) (array:length b)) (apply (lambda (do
+(let string:equal? (lambda a b (and (= (array:length a) (array:length b)) (apply (lambda (do
   (|>
    a
    (array:zip b)
@@ -1195,8 +1196,8 @@
 (let set:exists? (lambda table key (if (> (array:length key) 0) (set:has? table key))))
 (let set:not-exists? (lambda table key (not (set:exists? table key))))
 
-(let set:add-and-get! (lambda memo key (do (set:add! memo key) key)))
-(let set:remove-and-get! (lambda memo key (do (set:remove! memo key) key)))
+(let set:add-and-get! (lambda table key (do (set:add! table key) key)))
+(let set:remove-and-get! (lambda table key (do (set:remove! table key) key)))
 (let set:with! (lambda initial args
   (array:fold args (lambda a b (set:add! a b)) initial)))
 (let set:max-capacity (lambda a b (array:buckets (math:max (array:length a) (array:length b)))))
@@ -1257,8 +1258,8 @@
         (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
         (if (not (= index -1)) (and (array:set! current index (array:at current -1)) (del! current)))
         table)))
-(let map:set-and-get! (lambda memo key value (do (map:set! memo key value) value)))
-(let map:remove-and-get! (lambda memo key (do (let value (map:get memo key)) (map:remove! memo key) value)))
+(let map:set-and-get! (lambda table key value (do (map:set! table key value) value)))
+(let map:remove-and-get! (lambda table key (do (let value (map:get table key)) (map:remove! table key) value)))
 (let map:get
   (lambda table key
     (do
@@ -1285,13 +1286,13 @@
             (>= (array:find-index current
               (lambda x
                 (string:equal? x key))) 0))))))
-(let map:exists? (lambda table key (if (> (array:length key) 0 4) (map:has? table key))))
+(let map:exists? (lambda table key (true? (if (> (array:length key) 0 4) (map:has? table key)))))
 (let map:not-exists? (lambda table key (not (map:exists? table key))))
 (let map:count (lambda arr 
-    (|> arr (array:fold (lambda memo key (do 
-        (if (map:has? memo key) 
-            (map:set! memo key (+ (map:get memo key) 1))
-            (map:set! memo key 1)))) (new:map64)))))
+    (|> arr (array:fold (lambda table key (do 
+        (if (map:has? table key) 
+            (map:set! table key (+ (map:get table key) 1))
+            (map:set! table key 1)))) (new:map64)))))
 
 (let doubly-linked-list:prev! (lambda list node (array:set! list 0 (array:set! node 2 list))))
 (let doubly-linked-list:next! (lambda list node (array:set! list 2 (array:set! node 0 list))))

@@ -2,16 +2,18 @@ import {
   APPLY,
   ATOM,
   DEBUG,
+  FALSE,
   KEYWORDS,
   PLACEHOLDER,
   PREDICATE_SUFFIX,
   SPECIAL_FORMS_SET,
+  TRUE,
   TYPE,
   VALUE,
   WORD
 } from './keywords.js'
 import { isLeaf } from './parser.js'
-import { hasBlock, stringifyArgs } from './utils.js'
+import { hasApplyLambdaBlock, hasBlock, stringifyArgs } from './utils.js'
 const ARGS_COUNT = 'n'
 const VARIADIC = '...'
 const STATS = '__stats__'
@@ -19,10 +21,11 @@ const ARGS = 'args'
 const UNKNOWN = -1
 const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
-const SUBTYPE = 'subtype'
+const SUB_RETURN_TYPE = 'sub_return_type'
 const PREDICATE = 3
 const RETRY_COUNT = 1
 const DEFINITON_RETRY_COUNT = 1
+const SUB = 2
 const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -130,8 +133,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER, PREDICATE],
           [UNKNOWN, PLACEHOLDER]
         ],
-        [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [RETURNS]: ATOM
       }
     },
     [KEYWORDS.ADDITION]: {
@@ -326,7 +328,7 @@ export const typeCheck = (ast) => {
         [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER, PREDICATE]],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.EQUAL]: {
@@ -339,7 +341,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.LESS_THAN]: {
@@ -352,7 +354,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.GREATHER_THAN]: {
@@ -365,7 +367,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
@@ -378,7 +380,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.LESS_THAN_OR_EQUAL]: {
@@ -391,7 +393,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.AND]: {
@@ -404,7 +406,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER, PREDICATE]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.OR]: {
@@ -417,7 +419,7 @@ export const typeCheck = (ast) => {
           [ATOM, PLACEHOLDER, PREDICATE]
         ],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.IS_ATOM]: {
@@ -427,7 +429,7 @@ export const typeCheck = (ast) => {
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.IS_LAMBDA]: {
@@ -437,7 +439,7 @@ export const typeCheck = (ast) => {
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM,
-        [SUBTYPE]: PREDICATE
+        [SUB_RETURN_TYPE]: PREDICATE
       }
     },
     [KEYWORDS.ERROR]: {
@@ -451,6 +453,8 @@ export const typeCheck = (ast) => {
     }
   }
   const errorStack = new Map()
+  const warningStack = new Set()
+
   // const isDefinitionOfAFunction = (head, tail) =>
   //   head[TYPE] === APPLY &&
   //   head[VALUE] === KEYWORDS.DEFINE_VARIABLE &&
@@ -487,6 +491,12 @@ export const typeCheck = (ast) => {
                 errorStack.set(
                   key.str,
                   `Trying to access undefined variable ${first[VALUE]} (check #11)`
+
+                  // `Trying to access undefined variable ${
+                  //   first[VALUE]
+                  // }\n${formatCallstack(
+                  //   key.chain.filter((x) => isNaN(Number(x[0])))
+                  // )}\n(check #11)`
                 )
               }
             })
@@ -522,49 +532,84 @@ export const typeCheck = (ast) => {
                       }
                     }
                     const checkReturnType = () => {
-                      if (name[name.length - 1] === PREDICATE_SUFFIX) {
+                      // if (name[name.length - 1] === PREDICATE_SUFFIX) {
+                      //   env[name][STATS][RETURNS] = ATOM
+                      //   env[name][STATS][SUB_RETURN_TYPE] = PREDICATE
+                      // } else {
+                      const isPredicate =
+                        name[name.length - 1] === PREDICATE_SUFFIX
+                      const last = rest.at(-1).at(-1)
+                      const body = hasApplyLambdaBlock(last)
+                        ? last.at(-1).at(-1)
+                        : last
+                      const rem = hasBlock(body) ? body.at(-1) : body
+                      const returns = isLeaf(rem) ? rem : rem[0]
+                      if (returns[TYPE] === ATOM) {
                         env[name][STATS][RETURNS] = ATOM
-                        env[name][STATS][SUBTYPE] = PREDICATE
                       } else {
-                        const body = rest.at(-1).at(-1)
-                        const rem = hasBlock(body) ? body.at(-1) : body
-                        const returns = isLeaf(rem) ? rem : rem[0]
-                        if (returns[TYPE] === ATOM) {
-                          env[name][STATS][RETURNS] = ATOM
-                        } else {
-                          switch (returns[VALUE]) {
-                            case KEYWORDS.IF:
-                              const re = rem.slice(2)
-                              if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
-                                env[name][STATS][RETURNS] = ATOM
-                              else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
+                        switch (returns[VALUE]) {
+                          case KEYWORDS.IF:
+                            const re = rem.slice(2)
+                            if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                              env[name][STATS][RETURNS] = ATOM
+                              // if (
+                              //   re[0][VALUE] === FALSE ||
+                              //   re[0][VALUE] === TRUE ||
+                              //   re[1][VALUE] === FALSE ||
+                              //   re[1][VALUE] === TRUE
+                              // ) {
+                              //   env[name][STATS][SUB_RETURN_TYPE] = PREDICATE
+                              // }
+                            } else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
+                              env[name][STATS][RETURNS] =
+                                env[re[0][0][VALUE]][STATS][RETURNS]
+                              env[name][STATS][SUB_RETURN_TYPE] =
+                                env[re[0][0][VALUE]][STATS][SUB_RETURN_TYPE]
+                            } else {
+                              if (env[re[0][VALUE]]) {
                                 env[name][STATS][RETURNS] =
-                                  env[re[0][0][VALUE]][STATS][RETURNS]
+                                  env[re[0][VALUE]][STATS].type
+                                env[name][STATS][SUB_RETURN_TYPE] =
+                                  env[re[0][VALUE]][STATS][SUB_RETURN_TYPE]
+                              } else env[name][STATS][RETURNS] = UNKNOWN
+                            }
+                            break
+                          default:
+                            if (env[returns[VALUE]]) {
+                              if (env[returns[VALUE]][STATS].type === APPLY) {
+                                env[name][STATS][RETURNS] =
+                                  env[returns[VALUE]][STATS][RETURNS]
+                                env[name][STATS][SUB_RETURN_TYPE] =
+                                  env[returns[VALUE]][STATS][SUB_RETURN_TYPE]
                               } else {
-                                if (env[re[0][VALUE]])
-                                  env[name][STATS][RETURNS] =
-                                    env[re[0][VALUE]][STATS].type
-                                else env[name][STATS][RETURNS] = UNKNOWN
+                                env[name][STATS][RETURNS] =
+                                  env[returns[VALUE]][STATS].type
+                                env[name][STATS][SUB_RETURN_TYPE] =
+                                  env[returns[VALUE]][SUB_RETURN_TYPE]
                               }
-                              break
-                            default:
-                              if (env[returns[VALUE]]) {
-                                if (env[returns[VALUE]][STATS].type === APPLY) {
-                                  env[name][STATS][RETURNS] =
-                                    env[returns[VALUE]][STATS][RETURNS]
-                                  // env[name][STATS][SUBTYPE] =
-                                  //   env[returns[VALUE]][STATS][SUBTYPE]
-                                } else {
-                                  env[name][STATS][RETURNS] =
-                                    env[returns[VALUE]].type
-                                }
-                              } else {
-                                env[name][STATS][RETURNS] = UNKNOWN
-                              }
-                              break
-                          }
+                            } else {
+                              env[name][STATS][RETURNS] = UNKNOWN
+                            }
+                            break
                         }
                       }
+                      if (
+                        isPredicate &&
+                        env[name][STATS][RETURNS] !== UNKNOWN &&
+                        env[name][STATS][SUB_RETURN_TYPE] !== PREDICATE
+                      ) {
+                        warningStack.add(
+                          `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #7)`
+                        )
+                      } else if (
+                        !isPredicate &&
+                        env[name][STATS][SUB_RETURN_TYPE] === PREDICATE
+                      ) {
+                        warningStack.add(
+                          `${name} should end in (${PREDICATE_SUFFIX}) because it return (Predicate) (check #8)`
+                        )
+                      }
+                      // }
                       // if (
                       //   env[name][STATS][RETURNS] === UNKNOWN &&
                       //   env[name][STATS].retried < RETRY_COUNT
@@ -696,10 +741,12 @@ export const typeCheck = (ast) => {
                             if (expectedArgs[i][TYPE] === UNKNOWN) continue
                             if (!isLeaf(rest[i])) {
                               const CAR = rest[i][0][VALUE]
-                              if (
+                              const isKnown =
                                 env[CAR] &&
                                 env[CAR][STATS][RETURNS] != undefined &&
-                                env[CAR][STATS][RETURNS] !== UNKNOWN &&
+                                env[CAR][STATS][RETURNS] !== UNKNOWN
+                              if (
+                                isKnown &&
                                 env[CAR][STATS][RETURNS] !==
                                   expectedArgs[i][TYPE]
                               ) {
@@ -714,10 +761,24 @@ export const typeCheck = (ast) => {
                                     env[CAR][STATS][RETURNS]
                                   )}) (${stringifyArgs(exp)}) (check #1)`
                                 )
+                              } else if (
+                                isKnown &&
+                                expectedArgs[i][SUB] &&
+                                env[CAR][STATS][SUB_RETURN_TYPE] !==
+                                  expectedArgs[i][SUB]
+                              ) {
+                                errorStack.set(
+                                  key.str,
+                                  `Incorrect type of arguments for special form (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    expectedArgs[i][SUB]
+                                  )}) but got (${toTypeNames(
+                                    env[CAR][STATS][SUB_RETURN_TYPE] ??
+                                      env[CAR][STATS][RETURNS]
+                                  )}) (${stringifyArgs(exp)}) (check #13)`
+                                )
                               }
-                              // else {
-                              //   console.log(env[CAR])
-                              // }
                             }
                             if (
                               env[rest[i][VALUE]] &&
@@ -886,6 +947,8 @@ export const typeCheck = (ast) => {
   check(copy, root, copy)
   while (stack.length) stack.pop()()
   if (errorStack.size)
-    throw new TypeError([...new Set(errorStack.values())].join('\n'))
+    throw new TypeError(
+      [...new Set(errorStack.values()), ...warningStack].join('\n')
+    )
   return ast
 }

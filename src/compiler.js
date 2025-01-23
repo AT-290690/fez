@@ -258,7 +258,7 @@ const comp = (tree, Drill) => {
         return `(()=>{while(${comp(tail[0], Drill)}){${comp(
           tail[1],
           Drill
-        )}}return 0})();`
+        )}}return -1})();`
       }
       case KEYWORDS.ERROR: {
         Drill.Helpers.add('__error')

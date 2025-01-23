@@ -11,11 +11,13 @@ import {
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
-export const formatErrorWithCallstack = (error, callstack) => {
-  return `${error.message}\n${callstack
+export const formatCallstack = (callstack) =>
+  callstack
     .reverse()
     .map((x, i) => `${Array(i + 2).join(' ')}(${x} ...)`)
-    .join('\n')}`
+    .join('\n')
+export const formatErrorWithCallstack = (error, callstack) => {
+  return `${error.message}\n${formatCallstack(callstack)}`
 }
 export const removeNoCode = (source) =>
   source
@@ -193,7 +195,12 @@ const deepShake = (tree, deps, visited = new Set(), ignored = new Set()) => {
 
 export const hasBlock = (body) =>
   body[0] && body[0][TYPE] === APPLY && body[0][VALUE] === KEYWORDS.BLOCK
-
+export const hasApplyLambdaBlock = (body) =>
+  body[0] &&
+  body[0][TYPE] === APPLY &&
+  body[0][VALUE] === KEYWORDS.CALL_FUNCTION &&
+  body[1][0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION &&
+  body[1][1][0][VALUE] === KEYWORDS.BLOCK
 const extractDeps = (visited, deps) =>
   [...visited]
     .map((x) => deps.get(x))
