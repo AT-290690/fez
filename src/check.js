@@ -609,6 +609,10 @@ export const typeCheck = (ast) => {
                           `${name} should end in (${PREDICATE_SUFFIX}) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
                         )
                       }
+                      if (isPredicate) {
+                        env[name][STATS][RETURNS] = ATOM
+                        env[name][STATS][SUB_RETURN_TYPE] = PREDICATE
+                      }
                       // }
                       // if (
                       //   env[name][STATS][RETURNS] === UNKNOWN &&
@@ -675,12 +679,20 @@ export const typeCheck = (ast) => {
                     .toString()
                     .replace('.', 0)
                 }
-                for (const param of params) {
+                for (let i = 0; i < params.length; ++i) {
+                  const param = params[i]
                   copy[param[VALUE]] = {
                     [STATS]: { type: UNKNOWN, retried: 0 }
                   }
-                  if (env[copy[SCOPE_NAME]])
-                    env[copy[SCOPE_NAME]][STATS][ARGS].push(copy[param[VALUE]])
+                  if (env[copy[SCOPE_NAME]]) {
+                    env[copy[SCOPE_NAME]][STATS][ARGS][i] = copy[param[VALUE]]
+                    if (
+                      param[VALUE][param[VALUE].length - 1] === PREDICATE_SUFFIX
+                    ) {
+                      copy[param[VALUE]][STATS][RETURNS] = ATOM
+                      copy[param[VALUE]][STATS][SUB_RETURN_TYPE] = PREDICATE
+                    }
+                  }
                 }
                 check(rest.at(-1), copy, copy)
               }
