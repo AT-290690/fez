@@ -21,6 +21,8 @@ const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
 const SUBTYPE = 'subtype'
 const PREDICATE = 3
+const RETRY_COUNT = 1
+const DEFINITON_RETRY_COUNT = 1
 const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -38,6 +40,7 @@ export const typeCheck = (ast) => {
     [DEBUG.LOG]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
           [APPLY, PLACEHOLDER]
@@ -47,35 +50,81 @@ export const typeCheck = (ast) => {
       }
     },
     [DEBUG.STRING]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: APPLY }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: APPLY
+      }
     },
     [DEBUG.ASSERT]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: UNKNOWN
+      }
     },
     [DEBUG.SIGNATURE]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: UNKNOWN
+      }
     },
     [DEBUG.LIST_THEMES]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: UNKNOWN
+      }
     },
     [DEBUG.SET_THEME]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: UNKNOWN
+      }
     },
     [KEYWORDS.BLOCK]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: UNKNOWN
+      }
     },
     [KEYWORDS.ANONYMOUS_FUNCTION]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: APPLY }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: APPLY
+      }
     },
     [KEYWORDS.CALL_FUNCTION]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: UNKNOWN }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: UNKNOWN
+      }
     },
     [KEYWORDS.CREATE_ARRAY]: {
-      [STATS]: { type: APPLY, [ARGS_COUNT]: VARIADIC, [RETURNS]: APPLY }
+      [STATS]: {
+        type: APPLY,
+        retried: 0,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: APPLY
+      }
     },
     [KEYWORDS.LOOP]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -88,6 +137,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ADDITION]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -99,6 +149,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.MULTIPLICATION]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -110,6 +161,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SUBTRACTION]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -121,6 +173,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.DIVISION]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -132,6 +185,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.REMAINDER_OF_DIVISION]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -143,6 +197,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_AND]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -154,6 +209,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_NOT]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER]],
         [RETURNS]: ATOM
@@ -162,6 +218,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_OR]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -173,6 +230,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_XOR]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -184,6 +242,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_LEFT_SHIFT]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -195,6 +254,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_RIGHT_SHIFT]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -206,6 +266,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GET_ARRAY]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
@@ -217,6 +278,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SET_ARRAY]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 3,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
@@ -229,6 +291,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.POP_ARRAY]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
@@ -237,6 +300,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ARRAY_LENGTH]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM
@@ -245,6 +309,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IF]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 3,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -257,6 +322,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.NOT]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER, PREDICATE]],
         [RETURNS]: ATOM,
@@ -266,6 +332,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.EQUAL]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -278,6 +345,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -290,6 +358,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GREATHER_THAN]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -302,6 +371,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -314,6 +384,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN_OR_EQUAL]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -326,6 +397,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.AND]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -338,6 +410,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.OR]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -350,6 +423,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IS_ATOM]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM,
@@ -359,6 +433,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IS_LAMBDA]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: ATOM,
@@ -368,6 +443,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ERROR]: {
       [STATS]: {
         type: APPLY,
+        retried: 0,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
@@ -440,6 +516,7 @@ export const typeCheck = (ast) => {
                     env[name] = {
                       [STATS]: {
                         type: APPLY,
+                        retried: 0,
                         [ARGS_COUNT]: n - 2,
                         [ARGS]: []
                       }
@@ -488,13 +565,21 @@ export const typeCheck = (ast) => {
                           }
                         }
                       }
+                      // if (
+                      //   env[name][STATS][RETURNS] === UNKNOWN &&
+                      //   env[name][STATS].retried < RETRY_COUNT
+                      // ) {
+                      //   env[name][STATS].retried += 1
+                      //   console.log(name, env[name][STATS])
+                      //   checkReturnType()
+                      // }
                     }
                     checkReturnType()
                     if (
                       env[name][STATS][RETURNS] === UNKNOWN &&
-                      !env[name].retried
+                      env[name][STATS].retried < DEFINITON_RETRY_COUNT
                     ) {
-                      env[name].retried = true
+                      env[name][STATS].retried += 1
                       stack.unshift(() => {
                         checkReturnType()
                         check(rest.at(-1), env, exp)
@@ -510,6 +595,7 @@ export const typeCheck = (ast) => {
                       else
                         env[name] = {
                           [STATS]: {
+                            retried: 0,
                             type: isLeaf(rest.at(-1))
                               ? rest.at(-1)[TYPE]
                               : env[rest.at(-1)[0]?.[VALUE]]?.[STATS]?.[
@@ -545,7 +631,9 @@ export const typeCheck = (ast) => {
                     .replace('.', 0)
                 }
                 for (const param of params) {
-                  copy[param[VALUE]] = { [STATS]: { type: UNKNOWN } }
+                  copy[param[VALUE]] = {
+                    [STATS]: { type: UNKNOWN, retried: 0 }
+                  }
                   if (env[copy[SCOPE_NAME]])
                     env[copy[SCOPE_NAME]][STATS][ARGS].push(copy[param[VALUE]])
                 }
@@ -733,10 +821,10 @@ export const typeCheck = (ast) => {
                               const retry = env[rest[i][VALUE]]
                               if (
                                 retry &&
-                                !retry.retried &&
+                                retry[STATS].retried < RETRY_COUNT &&
                                 args[i][STATS].type === UNKNOWN
                               ) {
-                                retry.retried = true
+                                retry[STATS].retried += 1
                                 stack.unshift(() => check(exp, env, scope))
                               }
                               // console.log(
@@ -771,9 +859,10 @@ export const typeCheck = (ast) => {
                               rest[i].length &&
                               env[rest[i][0][VALUE]] &&
                               args[i][STATS].type === UNKNOWN &&
-                              !env[rest[i][0][VALUE]].retried
+                              env[rest[i][0][VALUE]][STATS].retried <
+                                RETRY_COUNT
                             ) {
-                              env[rest[i][0][VALUE]].retried = true
+                              env[rest[i][0][VALUE]][STATS].retried += 1
                               if (!scope[SCOPE_NAME])
                                 scope[SCOPE_NAME] = scope[1][VALUE]
                               stack.unshift(() => check(exp, env, scope))
