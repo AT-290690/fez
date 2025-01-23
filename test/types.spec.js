@@ -4,57 +4,13 @@ import { throws, doesNotThrow } from 'assert'
 import { readFileSync } from 'fs'
 const BROKEN_STD = readFileSync('./test/broken-std.lisp', 'utf-8')
 describe('Should throw errors', () => {
-  it('Should throw', () => {
-    throws(
-      () =>
-        type(
-          parse(`(let fn1 (lambda 1y x (do 
-    (let fn2 (lambda 1x (do
-        (+ x y)
-    )))
-)))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Trying to access undefined variable y (check #11)`
-      }
-    )
-    throws(
-      () =>
-        type(
-          parse(`(let arr [1 2 3 4])
-(let fn1 (lambda 1y x (do 
-    (let fn2 (lambda 1x (do
-        (array:first)
-        (+ x y)
-    )))
-    (array:first [1 2 3])
-    
-    (array:map arr (lambda fff (* fff fff)))
-    (let fn3 (lambda (do 
-        (array:map arr (lambda zzz (* zz fff)))
-
-        (let fn4 (lambda z (do
-            (+ (array:first arr) z [])
-        )))
-        (let fn5 (lambda (do 
-            z
-        )))
-        
-        (fn4 10)
-    )))
-    
-)))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Trying to access undefined variable z (check #11)
-Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ z (array)) (check #1)
-Trying to access undefined variable fff (check #11)
-Trying to access undefined variable zz (check #11)
-Trying to access undefined variable y (check #11)
-Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #15)`
-      }
+  it('Does not throw', () => {
+    doesNotThrow(() =>
+      type(
+        parse(`(let e? (array:every? [1 2 3] math:odd?))
+(and e? (= 1 1))
+`)
+      )
     )
     doesNotThrow(() =>
       type(
@@ -76,30 +32,6 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
 
 `)
       )
-    )
-    throws(
-      () =>
-        type(
-          parse(`(let add (lambda a b (+ a b)))
-(let f1 (lambda x x))
-(let f2 (lambda x (add x 1)))
-(let f3 (lambda x [(add x 1) (add x 1)]))
-(let add2 (lambda a b (do
-    (let m 10)
-    (* (+ a b) m))))
-(let f4 (lambda 1))
-(let f5 (lambda a (if (> a 10) [1] [0])))
-(let f6 (lambda a (if (> a 10) (add a 5) (add2 a -1))))
-(let f7 (lambda a (if (> a 10) 10)))
-(let f8 (lambda (if 1 10)))
-
-(+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ (f8) (f5 1)) (check #1)`
-      }
     )
     doesNotThrow(() =>
       type(
@@ -160,6 +92,205 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
    `)
       )
     )
+    doesNotThrow(() =>
+      type(
+        parse(`(let math:decimal-scaling 1000)
+    (from:float->string 10.2)`)
+      )
+    )
+    doesNotThrow(() =>
+      type(
+        parse(`(let m (lambda xs (do 
+    (let map (lambda xs1 cb (array:map xs cb)))
+)))`)
+      )
+    )
+    doesNotThrow(() =>
+      type(
+        parse(`(do
+      (let fn? (lambda x (apply x math:even?)))
+      )
+      (do
+      (let fn? (lambda x (apply x (lambda x (math:even? x))))))`)
+      )
+    )
+    doesNotThrow(() => type(std))
+  })
+
+  it('Should throw', () => {
+    throws(() => type(parse(`(and (apply [1] math:summation) 1)`)), {
+      name: 'TypeError',
+      message: `Incorrect type of arguments for (and). Expected (Predicate) but got an (undefined) which is neither 1 or 0 (and (apply (array 1) math:summation) 1) (check #27)`
+    })
+    throws(
+      () =>
+        type(
+          parse(`(do
+(let add (lambda a (+ a 1)))
+(let fn? (lambda x (apply x add)))
+)
+(do
+(let add (lambda a (+ a 1)))
+(let fn? (lambda x (apply x (lambda x (add x))))))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)
+fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(
+            `(let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply ["Hello"] array:first))))`
+          )
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments for (and). Expected (Predicate) but got an (undefined) which is neither 1 or 0 (and (not (string:equal? A B)) (apply (array (array 72 101 108 108 111)) array:first)) (check #27)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`(let x (apply 1 math:odd?))
+`)
+        ),
+      {
+        name: 'TypeError',
+        message: `x is assigned to math:odd? which ends in (?) so x must also end in (?) (check #24)`
+      }
+    )
+    throws(() => type(parse(`(let x? (apply 1 math:increment))`)), {
+      name: 'TypeError',
+      message: `x? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
+    })
+    throws(
+      () => type(parse(`(let math:bit-equal (lambda a b (< (^ a b) 1)))`)),
+      {
+        name: 'TypeError',
+        message:
+          'math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)'
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`(let list:some? (lambda xs f (cond 
+                              (list:nil? xs) 0
+                              (f (list:head xs)) 1
+                              (*) (list:some? (list:tail xs) f))))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) 1 (if (1) (list:some? (list:tail xs) f) 0)) (check #21)
+list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`
+(let err 2)
+(and err (= 1 1))
+`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`
+(let err 1)
+(and err (= 1 1))
+`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`(let fn1 (lambda 1y x (do 
+    (let fn2 (lambda 1x (do
+        (+ x y)
+    )))
+)))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Trying to access undefined variable y (check #11)`
+      }
+    )
+    throws(
+      () =>
+        type(
+          parse(`(let arr [1 2 3 4])
+(let fn1 (lambda 1y x (do 
+    (let fn2 (lambda 1x (do
+        (array:first)
+        (+ x y)
+    )))
+    (array:first [1 2 3])
+    
+    (array:map arr (lambda fff (* fff fff)))
+    (let fn3 (lambda (do 
+        (array:map arr (lambda zzz (* zz fff)))
+
+        (let fn4 (lambda z (do
+            (+ (array:first arr) z [])
+        )))
+        (let fn5 (lambda (do 
+            z
+        )))
+        
+        (fn4 10)
+    )))
+    
+)))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Trying to access undefined variable z (check #11)
+Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ z (array)) (check #1)
+Trying to access undefined variable fff (check #11)
+Trying to access undefined variable zz (check #11)
+Trying to access undefined variable y (check #11)
+Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #15)`
+      }
+    )
+
+    throws(
+      () =>
+        type(
+          parse(`(let add (lambda a b (+ a b)))
+(let f1 (lambda x x))
+(let f2 (lambda x (add x 1)))
+(let f3 (lambda x [(add x 1) (add x 1)]))
+(let add2 (lambda a b (do
+    (let m 10)
+    (* (+ a b) m))))
+(let f4 (lambda 1))
+(let f5 (lambda a (if (> a 10) [1] [0])))
+(let f6 (lambda a (if (> a 10) (add a 5) (add2 a -1))))
+(let f7 (lambda a (if (> a 10) 10)))
+(let f8 (lambda (if 1 10)))
+
+(+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
+`)
+        ),
+      {
+        name: 'TypeError',
+        message: `Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ (f8) (f5 1)) (check #1)`
+      }
+    )
+
     throws(
       () =>
         type(
@@ -206,35 +337,6 @@ Trying to access undefined variable array:nah-empty? (check #11)
 Trying to call undefined (lambda) array:mapz (check #9)`
       }
     )
-
-    doesNotThrow(() => type(std))
-
-    throws(() => type(parse(BROKEN_STD)), {
-      name: 'TypeError',
-      message: `Trying to call undefined (lambda) from:charss->ast (check #9)
-Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #15)
-Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #15)
-Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #15)
-Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #15)
-Trying to access undefined variable entityz (check #11)
-Trying to access undefined variable m (check #11)
-Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #15)
-Incorrect type of arguments for special form (and). Expected (Predicate) but got (Atom) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #13)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
-Trying to access undefined variable y3 (check #11)
-Trying to access undefined variable xs (check #11)
-math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-list:every? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
-    })
 
     throws(
       () =>
@@ -403,12 +505,6 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Applicat
       }
     )
     // TODO: uncomment this and make it pass
-    doesNotThrow(() =>
-      type(
-        parse(`(let math:decimal-scaling 1000)
-    (from:float->string 10.2)`)
-      )
-    )
 
     throws(
       () =>
@@ -422,13 +518,7 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Applicat
 Trying to access undefined variable xs (check #11)`
       }
     )
-    doesNotThrow(() =>
-      type(
-        parse(`(let m (lambda xs (do 
-    (let map (lambda xs1 cb (array:map xs cb)))
-)))`)
-      )
-    )
+
     throws(
       () =>
         type(
@@ -447,5 +537,73 @@ Trying to access undefined variable xs (check #11)`
 Incorrect type of arguments 2 for (f). Expected (Atom) but got (Application) (f x y (array)) (check #4)`
       }
     )
+
+    throws(
+      () =>
+        type(
+          parse(`
+      (let e? array:every?)
+      (let err e?)
+      (let e (array:every? [1 2 3] math:odd?))`)
+        ),
+      {
+        name: 'TypeError',
+        message: `err is assigned to e? which ends in (?) so err must also end in (?) (check #17)
+e is assigned to array:every? which ends in (?) so e must also end in (?) (check #19)
+e is assigned to the result of a (Predicate) so e must end in (?) (check #23)`
+      }
+    )
+  })
+
+  it('broken std errors', () => {
+    throws(() => type(parse(BROKEN_STD)), {
+      name: 'TypeError',
+      message: `Trying to call undefined (lambda) from:charss->ast (check #9)
+Incorrect type of arguments (0) for (loop). Expected (Predicate) but got (Uknown) (loop (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #21)
+Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Uknown) (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #21)
+Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (if (= (array:length args) 3) (evaluate (array:get args 2) env) 0)) (check #21)
+Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #15)
+Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #15)
+Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #15)
+Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (< (node:right (var:get node)) (array:length heap)) (heap:greater heap (node:right (var:get node)) (node:left (var:get node)) cb)) (check #21)
+Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (< (node:left (var:get node)) (array:length heap)) (heap:greater heap (node:left (var:get node)) (var:get node) cb)) (check #21)
+Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (> (var:get node) heap:top) (heap:greater heap (var:get node) (node:parent (var:get node)) cb)) (check #21)
+Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #15)
+Trying to access undefined variable entityz (check #11)
+Trying to access undefined variable m (check #11)
+Incorrect type of arguments (0) for (not). Expected (Predicate) but got (Uknown) (not (array:get variable 0)) (check #21)
+Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #15)
+Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (array:set! current index (array:at current -1)) (del! current)) (check #21)
+Incorrect type of arguments for special form (and). Expected (Predicate) but got (Atom) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #13)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (array:first x) (array:set! a (array:length a) (from:digit->char (array:second x))) (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x)))) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (cb cell) (array:push! coords (array y x)) 0) (check #21)
+Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Uknown) (or (= i 0) (cb x (array:get xs (- i 1)))) (check #21)
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
+Incorrect type of arguments (0) for (not). Expected (Predicate) but got (Uknown) (not (cb (array:get xs i))) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (cb (array:get xs i)) (array:set! out (array:length out) (array:get xs i)) out) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (cb b) (+ a 1) a) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) 1 (if (1) (list:some? (list:tail xs) f) 0)) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) xs (if (1) (list:find-tail (list:tail xs) f) 0)) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) (list:head xs) (if (1) (list:find (list:tail xs) f) 0)) (check #21)
+Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f)) (list:filter (list:tail xs) f)) (check #21)
+Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Uknown) (or (= n 2) (recursive:math:prime 2 (math:sqrt n))) (check #21)
+Trying to access undefined variable y3 (check #11)
+Trying to access undefined variable xs (check #11)
+math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+list:every? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+predicate is assigned to the result of a (Predicate) so predicate must end in (?) (check #23)
+string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+is-negative is assigned to match:negative? which ends in (?) so is-negative must also end in (?) (check #19)
+is-negative is assigned to the result of a (Predicate) so is-negative must end in (?) (check #23)
+special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
+    })
   })
 })

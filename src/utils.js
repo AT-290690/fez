@@ -19,6 +19,7 @@ export const formatCallstack = (callstack) =>
 export const formatErrorWithCallstack = (error, callstack) => {
   return `${error.message}\n${formatCallstack(callstack)}`
 }
+export const getSuffix = (str) => str[str.length - 1]
 export const removeNoCode = (source) =>
   source
     .replace(/(;.+|;)/g, '')

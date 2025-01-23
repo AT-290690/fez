@@ -620,12 +620,12 @@
       [])))
 (let array:ranges (lambda xs predicate? (array:sliding-window (array:enumerated-fold xs (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
 (let array:chunks (lambda xs predicate? (|> xs (array:ranges predicate?) (array:map (lambda [start end .] (array:exclude (array:slice xs start end) predicate?))))))
-(let array:adjacent-find (lambda xs cb (do
+(let array:adjacent-find (lambda xs cb? (do
   (let len (array:length xs))
   (if (not (= len 1)) (apply (lambda (do
       (let recursive:array:adjacent-find (lambda i
       (if (< i len)
-      (if (cb (let prev (array:get xs (- i 1))) (let current (array:get xs i)))
+      (if (cb? (let prev (array:get xs (- i 1))) (let current (array:get xs i)))
       prev
       (recursive:array:adjacent-find (+ i 1))) [])))
       (recursive:array:adjacent-find 1))))))))
@@ -909,10 +909,10 @@
                               (recursive:array:enumerated-some (+ i 1))
                               (not (= (> (array:length xs) i) 0)))))
                         (recursive:array:enumerated-some 0))))
-(let array:find-index (lambda xs cb (do
+(let array:find-index (lambda xs cb? (do
                     (let recursive:array:find-index (lambda i
                           (if (> (array:length xs) i)
-                              (if (cb (array:get xs i)) i (recursive:array:find-index (+ i 1))) -1)))
+                              (if (cb? (array:get xs i)) i (recursive:array:find-index (+ i 1))) -1)))
                         (recursive:array:find-index 0))))
 (let array:remove (lambda xs i
       (array:fold xs (lambda a x (do (if (= x i) a (array:set! a (array:length a) x)))) [])))
