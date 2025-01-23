@@ -946,9 +946,7 @@ export const typeCheck = (ast) => {
   copy[SCOPE_NAME] = 'root'
   check(copy, root, copy)
   while (stack.length) stack.pop()()
-  if (errorStack.size)
-    throw new TypeError(
-      [...new Set(errorStack.values()), ...warningStack].join('\n')
-    )
+  const issues = [...new Set(errorStack.values()), ...warningStack]
+  if (issues.length) throw new TypeError(issues.join('\n'))
   return ast
 }
