@@ -14,7 +14,7 @@ editor.setKeyboardHandler('ace/keyboard/vscode')
 // tomorrow_night_bright
 // dracula
 // terminal
-const THEME = new URLSearchParams(location.search).get('t') ?? 'dracula'
+const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
 const EDITOR_THEME = THEME
 const TERMINAL_THEME = THEME
 // 'chrome' => 'Chrome',

@@ -571,7 +571,10 @@ export const typeCheck = (ast) => {
                                   env[re[0][VALUE]][STATS].type
                                 env[name][STATS][SUB_RETURN_TYPE] =
                                   env[re[0][VALUE]][STATS][SUB_RETURN_TYPE]
-                              } else env[name][STATS][RETURNS] = UNKNOWN
+                              } else {
+                                env[name][STATS][RETURNS] = UNKNOWN
+                                // env[name][STATS][RETURNS] = APPLY
+                              }
                             }
                             break
                           default:
@@ -589,6 +592,7 @@ export const typeCheck = (ast) => {
                               }
                             } else {
                               env[name][STATS][RETURNS] = UNKNOWN
+                              // env[name][STATS][RETURNS] = APPLY
                             }
                             break
                         }

@@ -298,10 +298,10 @@
         (= n 1) 0
         (< n 0) 0
         (*) (apply (lambda (do
-        (let recursive:math:prime? (lambda i end (do
+        (let recursive:math:prime (lambda i end (do
             (let prime? (not (= (mod n i) 0)))
-            (if (and (<= i end) prime?) (recursive:math:prime? (+ i 1) end) prime?))))
-            (or (= n 2) (recursive:math:prime? 2 (math:sqrt n)))))))))
+            (if (and (<= i end) prime?) (recursive:math:prime (+ i 1) end) prime?))))
+            (or (= n 2) (recursive:math:prime 2 (math:sqrt n)))))))))
 (let math:number-of-digits (lambda n
   (cond
     (= n 0) 1
@@ -468,17 +468,17 @@
                             out)))
                       (recursive:array:fold 0 initial))))
 (let array:every? (lambda xs predicate? (do
-                    (let recursive:array:every? (lambda i
+                    (let recursive:array:every (lambda i
                           (if (and (> (array:length xs) i) (predicate? (array:get xs i)))
-                              (recursive:array:every? (+ i 1))
+                              (recursive:array:every (+ i 1))
                               (not (> (array:length xs) i)))))
-                        (recursive:array:every? 0))))
+                        (recursive:array:every 0))))
 (let array:some? (lambda xs predicate? (do
-                    (let recursive:array:some? (lambda i
+                    (let recursive:array:some (lambda i
                           (if (and (> (array:length xs) i)  (not (predicate? (array:get xs i))))
-                              (recursive:array:some? (+ i 1))
+                              (recursive:array:some (+ i 1))
                               (not (= (> (array:length xs) i) 0)))))
-                        (recursive:array:some? 0))))
+                        (recursive:array:some 0))))
 
 (let array:find (lambda xs predicate? (array:get xs (array:find-index xs predicate?))))
 
@@ -487,10 +487,10 @@
   (if (= index -1 2) [[] "No such item found in (array:find-option)"] [[(array:get xs index)] []]))))
 
 (let array:has? (lambda xs predicate? (do
-                    (let recursive:array:has? (lambda i
+                    (let recursive:array:has (lambda i
                           (if (> (array:length xs) i)
-                              (if (predicate? (array:get xs i)) 1 (recursive:array:has? (+ i 1))))))
-                        (recursive:array:has? 0))))
+                              (if (predicate? (array:get xs i)) 1 (recursive:array:has (+ i 1))))))
+                        (recursive:array:has 0))))
 (let array:reverse (lambda xs (do
                     (let recursive:array:reverse (lambda i out
                           (if (> (array:length xs) i)
@@ -898,17 +898,17 @@
                               (if (predicate? (array:get xs i) i) i (recursive:array:enumerated-find-index (+ i 1))) -1)))
                         (recursive:array:enumerated-find-index xs 0))))
 (let array:enumerated-every? (lambda xs predicate? (do
-                    (let recursive:array:enumerated-every? (lambda i
+                    (let recursive:array:enumerated-every (lambda i
                           (if (and (> (array:length xs) i) (predicate? (array:get xs i) i))
-                              (recursive:array:enumerated-every? (+ i 1))
+                              (recursive:array:enumerated-every (+ i 1))
                               (not (> (array:length xs) i)))))
-                        (recursive:array:enumerated-every? 0))))
+                        (recursive:array:enumerated-every 0))))
 (let array:enumerated-some? (lambda xs predicate? (do
-                    (let recursive:array:enumerated-some? (lambda i
+                    (let recursive:array:enumerated-some (lambda i
                           (if (and (> (array:length xs) i) (not (predicate? (array:get xs i) i)))
-                              (recursive:array:enumerated-some? (+ i 1))
+                              (recursive:array:enumerated-some (+ i 1))
                               (not (= (> (array:length xs) i) 0)))))
-                        (recursive:array:enumerated-some? 0))))
+                        (recursive:array:enumerated-some 0))))
 (let array:find-index (lambda xs cb (do
                     (let recursive:array:find-index (lambda i
                           (if (> (array:length xs) i)
@@ -991,33 +991,33 @@
                                         (< (array:length str) (array:length word)) 0
                                         (string:equal? str word) 1
                                         (*) (apply (lambda (do
-                                              (let recursive:string:has? (lambda xs i
+                                              (let recursive:string:has (lambda xs i
                                                     (if (and (> (array:length xs) 0) (>= (array:length xs) (array:length word)))
                                                           (if (string:equal?
                                                             (|> str (array:slice i (+ i (array:length word))) (array) (array:join (array char:empty)))
                                                             word) 
                                                             1 
-                                                            (recursive:string:has? (array:tail xs) (+ i 1))))))
-                                                  (recursive:string:has? str 0))))))))
+                                                            (recursive:string:has (array:tail xs) (+ i 1))))))
+                                                  (recursive:string:has str 0))))))))
 (let string:lesser? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (array:length A) (array:length B)) (array:merge! A (math:zeroes (- (array:length B) (array:length A)))) A))
   (let b (if (> (array:length A) (array:length B)) (array:merge! B (math:zeroes (- (array:length A) (array:length B)))) B))
    (let pairs (array:reverse (array:zip a b)))
    (let is? (bool:false))
-   (let recursive:string:lesser? (lambda (unless (array:empty? pairs) (do 
+   (let recursive:string:lesser (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (recursive:string:lesser?) (bool:set! is? (< (array:first current) (array:second current))))))))
-   (recursive:string:lesser?)
+    (if (= (array:first current) (array:second current)) (recursive:string:lesser) (bool:set! is? (< (array:first current) (array:second current))))))))
+   (recursive:string:lesser)
    (bool:true? is?)))))))
 (let string:greater? (lambda A B (if (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (array:length A) (array:length B)) (array:merge! A (math:zeroes (- (array:length B) (array:length A)))) A))
   (let b (if (> (array:length A) (array:length B)) (array:merge! B (math:zeroes (- (array:length A) (array:length B)))) B))
    (let pairs (array:reverse (array:zip a b)))
    (let is? (bool:false))
-   (let recursive:string:greater? (lambda (unless (array:empty? pairs) (do 
+   (let recursive:string:greater (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (recursive:string:greater?) (bool:set! is? (> (array:first current) (array:second current))))))))
-   (recursive:string:greater?)
+    (if (= (array:first current) (array:second current)) (recursive:string:greater) (bool:set! is? (> (array:first current) (array:second current))))))))
+   (recursive:string:greater)
    (bool:true? is?)))))))
 (let string:greater-or-equal? (lambda A B (or (string:equal? A B) (string:greater? A B))))
 (let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (string:lesser? A B))))
@@ -1519,16 +1519,16 @@ q)))
                           (recursive:loop:repeat 0))))
 
 (let loop:some-n? (lambda n predicate? (do
-                          (let recursive:loop:some-n? (lambda i
+                          (let recursive:loop:some-n (lambda i
                           (if (< i n)
-                                (if (predicate? i) 1 (recursive:loop:some-n? (+ i 1))))))
-                          (recursive:loop:some-n? n))))
+                                (if (predicate? i) 1 (recursive:loop:some-n (+ i 1))))))
+                          (recursive:loop:some-n n))))
 
 (let loop:some-range? (lambda start end predicate? (do
-                          (let recursive:loop:some-range? (lambda i
+                          (let recursive:loop:some-range (lambda i
                           (if (< i end)
-                                (if (predicate? i) 1 (recursive:loop:some-range? (+ i 1))))))
-                          (recursive:loop:some-range? start))))
+                                (if (predicate? i) 1 (recursive:loop:some-range (+ i 1))))))
+                          (recursive:loop:some-range start))))
 
 (let node:parent (lambda i (- (>> (+ i 1) 1) 1)))
 (let node:left (lambda i (+ (<< i 1) 1)))

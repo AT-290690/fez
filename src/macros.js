@@ -10,6 +10,7 @@ import {
   FALSE,
   KEYWORDS,
   PLACEHOLDER,
+  PREDICATE_SUFFIX,
   TRUE,
   TYPE,
   VALUE,
@@ -523,6 +524,11 @@ export const deSuggarAst = (ast, scope) => {
                     const name = exp[1][VALUE]
                     const prefix = name.split(':')[0]
                     if (prefix === OPTIMIZATIONS.RECURSION) {
+                      if (name[name.length - 1] === PREDICATE_SUFFIX) {
+                        throw new TypeError(
+                          `Optimized (lambda) ${name} can't be a (Predicate) as it will return a (lambda). Remove the (${PREDICATE_SUFFIX}) from the name`
+                        )
+                      }
                       const args = last.slice(1, -1)
                       const newName = `*${performance
                         .now()
@@ -619,6 +625,11 @@ export const deSuggarAst = (ast, scope) => {
                       ]
                       deSuggarAst(exp[exp.length - 1])
                     } else if (prefix === OPTIMIZATIONS.CACHE) {
+                      if (name[name.length - 1] === PREDICATE_SUFFIX) {
+                        throw new TypeError(
+                          `Optimized (lambda) ${name} can't be a (Predicate) as it will return a (lambda). Remove the (${PREDICATE_SUFFIX}) from the name`
+                        )
+                      }
                       const args = last.slice(1, -1)
                       const newName = `*${performance
                         .now()
