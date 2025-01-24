@@ -1283,8 +1283,7 @@
             (array:set! current (array:length current) entry)
             (array:set! current index entry))
           table)))
-(let map:remove!
-    (lambda table key
+(let map:remove! (lambda table key
       (do
         (let idx (set:index table key))
         (if (not (array:in-bounds? table idx)) (array:set! table idx []))
@@ -1295,17 +1294,16 @@
         table)))
 (let map:set-and-get! (lambda table key value (do (map:set! table key value) value)))
 (let map:remove-and-get! (lambda table key (do (let value (map:get table key)) (map:remove! table key) value)))
-(let map:get
-  (lambda table key
+(let map:get (lambda table key
     (do
       (let idx (set:index table key))
       (if (array:in-bounds? table idx)
         (apply (lambda (do
           (let current (array:get table idx))
           (let found-index (array:find-index current (lambda x (string:equal? key (array:get x 0)))))
-          (unless (= found-index -1) (array:get (array:get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))))))
-(let map:get-option
-  (lambda table key
+          (unless (= found-index -1) (array:get (array:get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))
+        []))))
+(let map:get-option (lambda table key
     (do
       (let idx (set:index table key))
       (if (array:in-bounds? table idx)

@@ -541,6 +541,7 @@ export const typeCheck = (ast) => {
                       case KEYWORDS.IF:
                         {
                           const re = rem.slice(2)
+                          // If either is an ATOM then IF returns an ATOM
                           if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
                             env[name][STATS][prop] = ATOM
                             // if (
