@@ -1,7 +1,6 @@
 import { APPLY, ATOM, TYPE, WORD, VALUE } from './keywords.js'
 export const leaf = (type, value) => [type, value]
 export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
-export const toPair = (exp) => []
 export const LISP = {
   parse: (source) => {
     const tree = []
@@ -30,14 +29,13 @@ export const LISP = {
     return tree
   },
   stringify: (array) => {
-    if (array == undefined) return '()'
-    else if (typeof array === 'function') return '(lambda)'
+    if (typeof array === 'function') return '(lambda)'
     else if (typeof array === 'boolean') return +array
     else if (typeof array === 'object')
       if (Array.isArray(array))
         return array.length
           ? `(array ${array.map(LISP.stringify).join(' ')})`
-          : '()'
+          : '(array)'
       else
         return `(array ${array
           .map(([key, value]) => `("${key}" ${LISP.stringify(value)})`)
@@ -48,7 +46,6 @@ export const LISP = {
     const dfs = (exp) => {
       let out = ''
       const [head, ...tail] = isLeaf(exp) ? [exp] : exp
-      if (head == undefined) return (out += '(array)')
       switch (head[TYPE]) {
         case WORD:
           out += head[VALUE]
@@ -110,9 +107,6 @@ export const AST = {
     const dfs = (exp) => {
       let out = ''
       const [head, ...tail] = isLeaf(exp) ? [exp] : exp
-      if (head == undefined)
-        return (out +=
-          '(Expression::Apply(vec![Expression::Word("array".to_string())]))')
       switch (head[TYPE]) {
         case WORD:
           out += `Expression::Word("${head[VALUE]}".to_string())`

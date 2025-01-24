@@ -16,7 +16,6 @@ export const evaluate = (exp, env = keywords) => {
   if (isLeaf(exp)) head = exp
   else {
     head = exp[0]
-    if (head == undefined) return []
     tail = exp.slice(1)
   }
   const value = head[VALUE]

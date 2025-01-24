@@ -6,6 +6,65 @@ const interpred = (source) => evaluate(parse(source))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      evalJS(`; outdated
+(let parse (lambda input (|> input (array:map (lambda x (do 
+(let arr (array:map (string:split x char:colon) string:trim))
+(let index (|> 
+            arr 
+            (car) 
+            (string:words) 
+            (cdr) 
+            (car) 
+            (from:chars->digits)))
+(let cards (|>  
+          arr 
+          (cdr) 
+          (car) 
+          (string:split char:pipe) 
+          (array:map (lambda x 
+                          (|> 
+                            x 
+                            (string:words)
+                            (array:select truthy?)
+                            (array:map (lambda x 
+                                (|> 
+                                  x 
+                                  (from:chars->digits)
+                                  (from:digits->integer)))))))))
+(array index cards)))))))
+(let sample (array
+"Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53"
+"Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19"
+"Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1"
+"Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83"
+"Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36"
+"Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"))
+
+(let part1 (lambda input
+                  (|>
+                    input
+                      (array:map (lambda x (car (cdr x))))
+                      (array:fold (lambda a b (do
+                          (let left (car b))
+                          (let right (car (cdr b)))
+                          (let dub (array:fold right (lambda a b (set:add! a (array b))) [[] [] [] [] []]))
+                          (let matches (var:def 0))
+                          (let reward (var:def 1))
+                          (array:for left (lambda card
+                                          (if (set:has? dub (array card)) (do
+                                            (var:set! matches (+ (var:get matches) 1))
+                                            (array:set! a 0 (+ (car a) (var:get reward)))
+                                            (if (> (var:get matches) 1)
+                                                      (var:set! reward
+                                                        (* (var:get reward) 2)))))))
+                          a))
+                        (array 0))
+                      (car))))
+
+(|> sample (parse) (part1))`),
+      13
+    )
     deepStrictEqual(
       evalJS(`(let INPUT "12
 14
@@ -1283,21 +1342,21 @@ ZZZ=ZZZ,ZZZ")
 ????.#...#... 4,1,1
 ????.######..#####. 1,6,5
 ?###???????? 3,2,1"))
-(let dp (lambda left right (do 
+(let dp? (lambda left right (do 
   (if (array:empty? left) (array:empty? right)
   (if (array:empty? right) (not (array:has? left (lambda x (= x char:hash))))
   (apply (lambda (do 
     (let l (car left))
     (let r (car right))
     (+ 
-      (if (or (= l char:dot) (= l char:question-mark)) (dp (cdr left) right))
+      (if (or (= l char:dot) (= l char:question-mark)) (dp? (cdr left) right))
       (if (and 
               (or (= l char:hash) (= l char:question-mark))
               (<= r (length left))
               (not (array:has? (array:slice left 0 r) (lambda x (= x char:dot))))
               (or (= r (length left)) (not (= (get left r) char:hash)))
             )
-          (dp (array:slice left (+ r 1) (length left)) (cdr right))))
+          (dp? (array:slice left (+ r 1) (length left)) (cdr right))))
   )))))
 )))
 (let dpm (lambda left right memo (do 
@@ -1320,7 +1379,7 @@ ZZZ=ZZZ,ZZZ")
        res
     ))))))
 )))
-(let part1 (lambda input (|> input (array:fold (lambda a b (+ a (dp (car b) (car (cdr b))))) 0))))
+(let part1 (lambda input (|> input (array:fold (lambda a b (+ a (dp? (car b) (car (cdr b))))) 0))))
 (let part2 (lambda input (|> input (array:map (lambda arg (do 
   (let left (car arg))
   (let right (car (cdr arg)))
@@ -1565,11 +1624,11 @@ ZZZ=ZZZ,ZZZ")
         (if (or (= out 1) (= (length rest) 2)) 
             out 
             (apply (lambda (do
-            (let match (and 
+            (let match? (and 
                          (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
                          (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest (array (car rest) (car rest) (car rest))) -1))
                          ))
-            (recursive:iterate match
+            (recursive:iterate match?
             (cdr rest))))))))
     (recursive:iterate 0 str)
 )))

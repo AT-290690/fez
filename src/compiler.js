@@ -145,8 +145,6 @@ const comp = (tree, Drill) => {
   if (isLeaf(tree)) head = tree
   else {
     head = tree[0]
-    if (head == undefined) return '[];'
-
     tail = tree.slice(1)
   }
   const token = head[VALUE]

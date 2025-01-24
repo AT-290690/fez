@@ -166,6 +166,11 @@ fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrappi
       name: 'TypeError',
       message: `x? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
     })
+    throws(() => type(parse(`(let x ())`)), {
+      name: 'TypeError',
+      message:
+        '(lambda) invocation with missing (Application) name () Provide an (Application) name as the (1) argument.'
+    })
     throws(
       () => type(parse(`(let math:bit-equal (lambda a b (< (^ a b) 1)))`)),
       {
