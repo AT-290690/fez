@@ -263,7 +263,7 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try
       {
         name: 'TypeError',
         message: `Trying to access undefined variable z (check #11)
-Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ z (array)) (check #1)
+Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ z (array)) (check #1)
 Trying to access undefined variable fff (check #11)
 Trying to access undefined variable zz (check #11)
 Trying to access undefined variable y (check #11)
@@ -292,7 +292,7 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
         ),
       {
         name: 'TypeError',
-        message: `Incorrect type of arguments for special form (+). Expected (Atom) but got (Application) (+ (f8) (f5 1)) (check #1)`
+        message: `Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (f8) (f5 1)) (check #1)`
       }
     )
 
@@ -376,7 +376,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
         ),
       {
         name: 'TypeError',
-        message: `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Application) (add idx 1)`
+        message: `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1)`
       }
     )
     throws(() =>
@@ -538,8 +538,8 @@ Trying to access undefined variable xs (check #11)`
         ),
       {
         name: 'TypeError',
-        message: `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Application) (add 1 2 (array)) (check #4)
-Incorrect type of arguments 2 for (f). Expected (Atom) but got (Application) (f x y (array)) (check #4)`
+        message: `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #4)
+Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x y (array)) (check #4)`
       }
     )
 
@@ -579,7 +579,7 @@ Trying to access undefined variable entityz (check #11)
 Trying to access undefined variable m (check #11)
 Incorrect type of arguments (0) for (not). Expected (Predicate) but got (Uknown) (not (array:get variable 0)) (check #21)
 Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #15)
-Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (array:set! current index (array:at current -1)) (del! current)) (check #21)
+Incorrect type of argument (1) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
 Incorrect type of arguments for special form (and). Expected (Predicate) but got (Atom) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #13)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (array:first x) (array:set! a (array:length a) (from:digit->char (array:second x))) (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x)))) (check #21)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (cb cell) (array:push! coords (array y x)) 0) (check #21)

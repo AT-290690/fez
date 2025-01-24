@@ -30,6 +30,7 @@ const SCOPE_NAME = '__scope__'
 const SUB_TYPE = 'subType'
 const TYPE_PROP = 'type'
 const PREDICATE = 3
+const COLLECTION = 4
 const RETRY_COUNT = 1
 const DEFINITON_RETRY_COUNT = 1
 const SUB = 2
@@ -43,6 +44,8 @@ const toTypeNames = (type) => {
       return 'Uknown'
     case PREDICATE:
       return 'Predicate'
+    case COLLECTION:
+      return 'Collection'
   }
 }
 export const typeCheck = (ast) => {
@@ -53,7 +56,7 @@ export const typeCheck = (ast) => {
         retried: 0,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
-          [APPLY, PLACEHOLDER]
+          [COLLECTION, PLACEHOLDER]
         ],
         [ARGS_COUNT]: 2,
         [RETURNS]: UNKNOWN
@@ -63,8 +66,9 @@ export const typeCheck = (ast) => {
       [STATS]: {
         type: APPLY,
         retried: 0,
-        [ARGS_COUNT]: VARIADIC,
-        [RETURNS]: APPLY
+        [ARGS_COUNT]: 1,
+        [ARGS]: [[COLLECTION, PLACEHOLDER]],
+        [RETURNS]: COLLECTION
       }
     },
     [DEBUG.ASSERT]: {
@@ -128,7 +132,7 @@ export const typeCheck = (ast) => {
         type: APPLY,
         retried: 0,
         [ARGS_COUNT]: VARIADIC,
-        [RETURNS]: APPLY
+        [RETURNS]: COLLECTION
       }
     },
     [KEYWORDS.LOOP]: {
@@ -278,7 +282,7 @@ export const typeCheck = (ast) => {
         retried: 0,
         [ARGS_COUNT]: 2,
         [ARGS]: [
-          [UNKNOWN, PLACEHOLDER],
+          [COLLECTION, PLACEHOLDER],
           [ATOM, PLACEHOLDER]
         ],
         [RETURNS]: UNKNOWN
@@ -290,11 +294,11 @@ export const typeCheck = (ast) => {
         retried: 0,
         [ARGS_COUNT]: 3,
         [ARGS]: [
-          [UNKNOWN, PLACEHOLDER],
+          [COLLECTION, PLACEHOLDER],
           [ATOM, PLACEHOLDER],
           [UNKNOWN, PLACEHOLDER]
         ],
-        [RETURNS]: UNKNOWN
+        [RETURNS]: COLLECTION
       }
     },
     [KEYWORDS.POP_ARRAY]: {
@@ -302,8 +306,8 @@ export const typeCheck = (ast) => {
         type: APPLY,
         retried: 0,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
-        [RETURNS]: UNKNOWN
+        [ARGS]: [[COLLECTION, PLACEHOLDER]],
+        [RETURNS]: COLLECTION
       }
     },
     [KEYWORDS.ARRAY_LENGTH]: {
@@ -311,7 +315,7 @@ export const typeCheck = (ast) => {
         type: APPLY,
         retried: 0,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [RETURNS]: ATOM
       }
     },
@@ -454,7 +458,7 @@ export const typeCheck = (ast) => {
         type: APPLY,
         retried: 0,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [RETURNS]: UNKNOWN
       }
     }
@@ -1105,7 +1109,7 @@ export const typeCheck = (ast) => {
                               // console.log(env[CAR][STATS], expectedArgs[i][TYPE])
                               errorStack.set(
                                 key.str,
-                                `Incorrect type of arguments for special form (${
+                                `Incorrect type of argument (${i}) for special form (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
                                   expectedArgs[i][TYPE]
