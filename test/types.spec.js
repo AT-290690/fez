@@ -273,7 +273,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 (let add (lambda a b (+ a b)))
 (add idx 1))))
 `,
-      `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1)`
+      `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1) (check #30)`
     )
     fails(
       `(math:pi 10)`,
@@ -294,7 +294,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx)
+      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) (lambda 1)) (check #4)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #4)`
     )

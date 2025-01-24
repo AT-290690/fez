@@ -1230,7 +1230,7 @@ export const typeCheck = (ast) => {
                                 args[i][STATS].type
                               )}) but got (${toTypeNames(T)}) (${stringifyArgs(
                                 exp
-                              )})`
+                              )}) (check #30)`
                             )
                           } else {
                             // env[rest[i][VALUE]][STATS] THiss SHOULD BE
