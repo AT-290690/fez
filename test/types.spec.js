@@ -2,19 +2,18 @@ import std from 'fez-lisp/lib/baked/std.js'
 import { type, parse } from '../index.js'
 import { throws, doesNotThrow } from 'assert'
 import { readFileSync } from 'fs'
+
 const BROKEN_STD = readFileSync('./test/broken-std.lisp', 'utf-8')
+const passes = (source) => doesNotThrow(() => type(parse(source)))
+const fails = (source, message, name = 'TypeError') =>
+  throws(() => type(parse(source)), { name, message })
+
 describe('Should throw errors', () => {
   it('Does not throw', () => {
-    doesNotThrow(() =>
-      type(
-        parse(`(let e? (array:every? [1 2 3] math:odd?))
+    passes(`(let e? (array:every? [1 2 3] math:odd?))
 (and e? (= 1 1))
 `)
-      )
-    )
-    doesNotThrow(() =>
-      type(
-        parse(`(let add (lambda a b (+ a b)))
+    passes(`(let add (lambda a b (+ a b)))
 (let f1 (lambda x x))
 (let f2 (lambda x (add x 1)))
 (let f3 (lambda x [(add x 1) (add x 1)]))
@@ -31,11 +30,7 @@ describe('Should throw errors', () => {
 (+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f4))
 
 `)
-      )
-    )
-    doesNotThrow(() =>
-      type(
-        parse(`(let p (lambda (do 
+    passes(`(let p (lambda (do 
 (let idx 2)
 (get [1 2 3] idx)
 (let base 10)
@@ -50,11 +45,7 @@ describe('Should throw errors', () => {
     (let recursive:from:positive-or-negative-digits->integer (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
     (* (recursive:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
 )))`)
-      )
-    )
-    doesNotThrow(() =>
-      type(
-        parse(`(let INPUT
+    passes(`(let INPUT
 "3   4
 4   3
 2   5
@@ -90,153 +81,87 @@ describe('Should throw errors', () => {
 
       
    `)
-      )
-    )
-    doesNotThrow(() =>
-      type(
-        parse(`(let math:decimal-scaling 1000)
+    passes(`(let math:decimal-scaling 1000)
     (from:float->string 10.2)`)
-      )
-    )
-    doesNotThrow(() =>
-      type(
-        parse(`(let m (lambda xs (do 
+    passes(`(let m (lambda xs (do 
     (let map (lambda xs1 cb (array:map xs cb)))
 )))`)
-      )
-    )
-    doesNotThrow(() =>
-      type(
-        parse(`(do
+    passes(`(do
       (let fn? (lambda x (apply x math:even?)))
       )
       (do
       (let fn? (lambda x (apply x (lambda x (math:even? x))))))`)
-      )
-    )
     doesNotThrow(() => type(std))
   })
 
   it('Should throw', () => {
-    throws(() => type(parse(`(and (apply [1] math:summation) 1)`)), {
-      name: 'TypeError',
-      message: `Incorrect type of arguments for (and). Expected (Predicate) but got an (undefined) which is neither 1 or 0 (and (apply (array 1) math:summation) 1) (check #27)`
-    })
-    throws(
-      () =>
-        type(
-          parse(`(do
+    fails(
+      `(and (apply [1] math:summation) 1)`,
+      `Incorrect type of arguments for (and). Expected (Predicate) but got an (undefined) which is neither 1 or 0 (and (apply (array 1) math:summation) 1) (check #27)`
+    )
+    fails(
+      `(do
 (let add (lambda a (+ a 1)))
 (let fn? (lambda x (apply x add)))
 )
 (do
 (let add (lambda a (+ a 1)))
-(let fn? (lambda x (apply x (lambda x (add x))))))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)
+(let fn? (lambda x (apply x (lambda x (add x))))))`,
+      `fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)
 fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
-      }
     )
-    throws(
-      () =>
-        type(
-          parse(
-            `(let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply ["Hello"] array:first))))`
-          )
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments for (and). Expected (Predicate) but got an (undefined) which is neither 1 or 0 (and (not (string:equal? A B)) (apply (array (array 72 101 108 108 111)) array:first)) (check #27)`
-      }
+    fails(
+      `(let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply ["Hello"] array:first))))`,
+      `Incorrect type of arguments for (and). Expected (Predicate) but got an (undefined) which is neither 1 or 0 (and (not (string:equal? A B)) (apply (array (array 72 101 108 108 111)) array:first)) (check #27)`
     )
-    throws(
-      () =>
-        type(
-          parse(`(let x (apply 1 math:odd?))
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `x is assigned to math:odd? which ends in (?) so x must also end in (?) (check #24)`
-      }
+    fails(
+      `(let x (apply 1 math:odd?))`,
+      `x is assigned to math:odd? which ends in (?) so x must also end in (?) (check #24)`
     )
-    throws(() => type(parse(`(let x? (apply 1 math:increment))`)), {
-      name: 'TypeError',
-      message: `x? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
-    })
-    throws(() => type(parse(`(let x ())`)), {
-      name: 'TypeError',
-      message:
-        '(lambda) invocation with missing (Application) name () Provide an (Application) name as the (1) argument.'
-    })
-    throws(
-      () => type(parse(`(let math:bit-equal (lambda a b (< (^ a b) 1)))`)),
-      {
-        name: 'TypeError',
-        message:
-          'math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)'
-      }
+    fails(
+      `(let x? (apply 1 math:increment))`,
+      `x? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
     )
-    throws(
-      () =>
-        type(
-          parse(`(let list:some? (lambda xs f (cond 
+    fails(
+      `(let x ())`,
+      '(lambda) invocation with missing (Application) name () Provide an (Application) name as the (1) argument.'
+    )
+    fails(
+      `(let math:bit-equal (lambda a b (< (^ a b) 1)))`,
+      'math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)'
+    )
+    fails(
+      `(let list:some? (lambda xs f (cond 
                               (list:nil? xs) 0
                               (f (list:head xs)) 1
-                              (*) (list:some? (list:tail xs) f))))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) 1 (if (1) (list:some? (list:tail xs) f) 0)) (check #21)
+                              (*) (list:some? (list:tail xs) f))))`,
+      `Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Uknown) (if (f (list:head xs)) 1 (if (1) (list:some? (list:tail xs) f) 0)) (check #21)
 list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
-      }
     )
-    throws(
-      () =>
-        type(
-          parse(`
+    fails(
+      `
 (let err 2)
 (and err (= 1 1))
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)`
-      }
+`,
+      `Incorrect type of arguments for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)`
     )
-    throws(
-      () =>
-        type(
-          parse(`
+    fails(
+      `
 (let err 1)
 (and err (= 1 1))
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)`
-      }
+`,
+      `Incorrect type of arguments for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)`
     )
-    throws(
-      () =>
-        type(
-          parse(`(let fn1 (lambda 1y x (do 
+    fails(
+      `(let fn1 (lambda 1y x (do 
     (let fn2 (lambda 1x (do
         (+ x y)
     )))
-)))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Trying to access undefined variable y (check #11)`
-      }
+)))`,
+      `Trying to access undefined variable y (check #11)`
     )
-    throws(
-      () =>
-        type(
-          parse(`(let arr [1 2 3 4])
+    fails(
+      `(let arr [1 2 3 4])
 (let fn1 (lambda 1y x (do 
     (let fn2 (lambda 1x (do
         (array:first)
@@ -258,23 +183,17 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try
         (fn4 10)
     )))
     
-)))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Trying to access undefined variable z (check #11)
+)))`,
+      `Trying to access undefined variable z (check #11)
 Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ z (array)) (check #1)
 Trying to access undefined variable fff (check #11)
 Trying to access undefined variable zz (check #11)
 Trying to access undefined variable y (check #11)
 Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #15)`
-      }
     )
 
-    throws(
-      () =>
-        type(
-          parse(`(let add (lambda a b (+ a b)))
+    fails(
+      `(let add (lambda a b (+ a b)))
 (let f1 (lambda x x))
 (let f2 (lambda x (add x 1)))
 (let f3 (lambda x [(add x 1) (add x 1)]))
@@ -288,18 +207,12 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
 (let f8 (lambda (if 1 10)))
 
 (+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (f8) (f5 1)) (check #1)`
-      }
+`,
+      `Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (f8) (f5 1)) (check #1)`
     )
 
-    throws(
-      () =>
-        type(
-          parse(`(let INPUT
+    fails(
+      `(let INPUT
       "3   4
       4   3
       2   5
@@ -332,21 +245,15 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
           left
           (array:map (lambda l (* l (array:count-of right (lambda r (= l r 4))))))
           (math:summation)))))
-    `)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #15)
+    `,
+      `Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #15)
 Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #15)
 Trying to access undefined variable array:nah-empty? (check #11)
 Trying to call undefined (lambda) array:mapz (check #9)`
-      }
     )
 
-    throws(
-      () =>
-        type(
-          parse(`(let p (lambda (do
+    fails(
+      `(let p (lambda (do
 
     (let list:pair (lambda first second (array first second)))
     (let list:car (lambda pair (array:get pair 0)))
@@ -356,38 +263,24 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     (let list:nil? (lambda pair (= (array:length pair) 0)))
     (let array:get get)
     
-)))`)
-        ),
-      {
-        name: 'TypeError',
-        message:
-          'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1) (check #15)'
-      }
+)))`,
+      'Incorrect number of arguments for (array:get). Expected (= 2) but got 4 (array:get pair 1 8 1) (check #15)'
     )
 
-    throws(
-      () =>
-        type(
-          parse(`(let p (lambda (do 
+    fails(
+      `(let p (lambda (do 
 (let idx [])
 (let add (lambda a b (+ a b)))
 (add idx 1))))
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1)`
-      }
+`,
+      `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1)`
     )
-    throws(() =>
-      type(parse(`(math:pi 10)`), {
-        name: 'TypeError',
-        message: `(math:pi) is not a (lambda) (math:pi 10)`
-      })
+    fails(
+      `(math:pi 10)`,
+      `(math:pi) is not a (lambda) (math:pi 10) (check #12)`
     )
-    throws(() =>
-      type(
-        parse(`(let array:get (lambda xs i (get xs i)))
+    fails(
+      `(let array:get (lambda xs i (get xs i)))
     (let p1 (lambda (do
     (let idx [])
     (array:get [1 2 3] idx)
@@ -400,19 +293,14 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     )))
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
-    )))`),
-        {
-          name: 'TypeError',
-          message: `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) (lambda 1))
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) idx)`
-        }
-      )
+    )))`,
+      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) (lambda 1)) (check #4)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #4)`
     )
 
-    throws(
-      () =>
-        type(
-          parse(`(let INPUT
+    fails(
+      `(let INPUT
 "............
 ........0...
 .....0......
@@ -502,68 +390,45 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Applicat
  
 ;  (let PARSED (parse INPUT))
 
-; [(part1 PARSED) (part2 PARSED)]`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments for special form (-). Expected (Atom) but got (Application) (- matrix:shallow-copy y2) (check #3)`
-      }
+; [(part1 PARSED) (part2 PARSED)]`,
+      `Incorrect type of arguments for special form (-). Expected (Atom) but got (Application) (- matrix:shallow-copy y2) (check #3)`
     )
     // TODO: uncomment this and make it pass
 
-    throws(
-      () =>
-        type(
-          parse(`(let map (lambda xs1 cb (array:map xs cb)))
-(let fold (lambda xs cb x (array:fold xs1 cb x)))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Trying to access undefined variable xs1 (check #11)
+    fails(
+      `(let map (lambda xs1 cb (array:map xs cb)))
+(let fold (lambda xs cb x (array:fold xs1 cb x)))`,
+      `Trying to access undefined variable xs1 (check #11)
 Trying to access undefined variable xs (check #11)`
-      }
     )
 
-    throws(
-      () =>
-        type(
-          parse(`(let add (lambda x y z (do 
+    fails(
+      `(let add (lambda x y z (do 
     (let f (lambda a b c (do 
         (+ x y z a b c)
     )))
     (f x y [])
 )))
 (add 1 2 [])
-`)
-        ),
-      {
-        name: 'TypeError',
-        message: `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #4)
+`,
+      `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #4)
 Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x y (array)) (check #4)`
-      }
     )
 
-    throws(
-      () =>
-        type(
-          parse(`
-      (let e? array:every?)
-      (let err e?)
-      (let e (array:every? [1 2 3] math:odd?))`)
-        ),
-      {
-        name: 'TypeError',
-        message: `err is assigned to e? which ends in (?) so err must also end in (?) (check #17)
+    fails(
+      `(let e? array:every?)
+(let err e?)
+(let e (array:every? [1 2 3] math:odd?))`,
+      `err is assigned to e? which ends in (?) so err must also end in (?) (check #17)
 e is assigned to array:every? which ends in (?) so e must also end in (?) (check #19)
 e is assigned to the result of a (Predicate) so e must end in (?) (check #23)`
-      }
     )
   })
 
   it('broken std errors', () => {
-    throws(() => type(parse(BROKEN_STD)), {
-      name: 'TypeError',
-      message: `Trying to call undefined (lambda) from:charss->ast (check #9)
+    fails(
+      BROKEN_STD,
+      `Trying to call undefined (lambda) from:charss->ast (check #9)
 Incorrect type of arguments (0) for (loop). Expected (Predicate) but got (Uknown) (loop (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #21)
 Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Uknown) (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #21)
 Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Uknown) (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #21)
@@ -609,6 +474,6 @@ is-negative is assigned to match:negative? which ends in (?) so is-negative must
 is-negative is assigned to the result of a (Predicate) so is-negative must end in (?) (check #23)
 special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
-    })
+    )
   })
 })
