@@ -11,6 +11,10 @@ export const LISP = {
       const cursor = source[i]
       if (cursor === '(') {
         const temp = []
+        if (head == undefined)
+          throw new SyntaxError(
+            `Failed to parse due to invalid lisp programm near ${acc}`
+          )
         head.push(temp)
         stack.push(head)
         head = temp
