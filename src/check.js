@@ -1250,6 +1250,14 @@ export const typeCheck = (ast) => {
                             const isKnown =
                               env[CAR] &&
                               env[CAR][STATS][RETURNS][0] !== UNKNOWN
+                            if (CAR === 'option:value')
+                              console.log(
+                                env[CAR][STATS],
+                                CAR,
+                                first[VALUE],
+                                expectedArgs[i][TYPE],
+                                isKnown
+                              )
                             if (
                               isKnown &&
                               env[CAR][STATS][RETURNS][0] !==

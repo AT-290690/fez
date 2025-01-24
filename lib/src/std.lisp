@@ -1302,14 +1302,13 @@
           (let current (array:get table idx))
           (let found-index (array:find-index current (lambda x (string:equal? key (array:get x 0)))))
           (unless (= found-index -1) (array:get (array:get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"])))))))))))
-(let map:get-option (lambda table key
-    (do
+(let map:get-option (lambda table key (do
       (let idx (set:index table key))
-      (if (array:in-bounds? table idx)
-        (apply (lambda (do
+      (if (array:in-bounds? table idx) (do
           (let current (array:get table idx))
             (let index (array:find-index current (lambda x (string:equal? key (array:get x 0)))))
-            (if (= index -1) [[] "No such item found in (map:get-option)"] [[(array:get current index)] []]))))))))
+            (if (= index -1) [[] "No such item found in (map:get-option)"] [[(array:second (array:get current index))] []]))
+            [[] []]))))
 (let map:has? (lambda table key (do 
           (let idx (set:index table key))
           (let current (array:map (array:get table idx) (lambda x (array:first x))))

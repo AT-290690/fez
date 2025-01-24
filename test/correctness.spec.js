@@ -7,6 +7,13 @@ const interpred = (source) => evaluate(parse(source))
 describe('Corretness', () => {
   it('Should be correct', () => {
     strictEqual(
+      evalJS(`(let map (new:map ["name" "Anthony" "age" 34]))
+(let option (map:get-option map "age"))
+(if (option:value? option) 
+    (- (option:value option) 10))`),
+      24
+    )
+    strictEqual(
       evalJS(`; outdated
 (let parse (lambda input (|> input (array:map (lambda x (do 
 (let arr (array:map (string:split x char:colon) string:trim))

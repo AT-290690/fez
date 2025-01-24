@@ -8,6 +8,7 @@ import {
   FALSE,
   KEYWORDS,
   RUNTIME_TYPES,
+  STATIC_TYPES,
   TRUE,
   TYPE,
   VALUE,
@@ -19,6 +20,59 @@ import { formatErrorWithCallstack, stringifyArgs } from '../src/utils.js'
 export const debug = (ast) => {
   const debugEnv = {
     ...keywords,
+    [STATIC_TYPES.APPLICATION]: (args, env) => {
+      const T = evaluate(args[0], env)
+      const t = typeof T
+      if (t !== 'function')
+        throw new TypeError(
+          `Argument of (${STATIC_TYPES.APPLICATION}) must be an (${
+            RUNTIME_TYPES.LAMBDA
+          }) but got something else (${
+            STATIC_TYPES.APPLICATION
+          } ${stringifyArgs(args)})`
+        )
+      return T
+    },
+    [STATIC_TYPES.ATOM]: (args, env) => {
+      const T = evaluate(args[0], env)
+      const t = typeof T
+      if (t !== 'number')
+        throw new TypeError(
+          `Argument of (${STATIC_TYPES.ATOM}) must be an (${
+            RUNTIME_TYPES.NUMBER
+          }) but got something else (${STATIC_TYPES.ATOM} ${stringifyArgs(
+            args
+          )})`
+        )
+      return T
+    },
+    [STATIC_TYPES.COLLECTION]: (args, env) => {
+      const T = evaluate(args[0], env)
+      const t = typeof T
+      if (!Array.isArray(T))
+        throw new TypeError(
+          `Argument of (${STATIC_TYPES.COLLECTION}) must be an (${
+            RUNTIME_TYPES.ARRAY
+          }) but got something else(${STATIC_TYPES.COLLECTION} ${stringifyArgs(
+            args
+          )})`
+        )
+      return T
+    },
+    [STATIC_TYPES.PREDICATE]: (args, env) => {
+      const T = evaluate(args[0], env)
+      const t = typeof T
+      if (t !== 'number' && T !== TRUE && T !== FALSE)
+        throw new TypeError(
+          `Argument of (${STATIC_TYPES.PREDICATE}) must be an (${
+            RUNTIME_TYPES.NUMBER
+          }) that is exactly (or ${TRUE} ${FALSE}) but got something else (${
+            STATIC_TYPES.PREDICATE
+          } ${stringifyArgs(args)})`
+        )
+      return T
+    },
+    [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
     [DEBUG.CALLSTACK]: [KEYWORDS.BLOCK],
     [DEBUG.SIGNATURE]: (args, env) => {
       const signatures =

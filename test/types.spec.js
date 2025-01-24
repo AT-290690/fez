@@ -10,6 +10,10 @@ const fails = (source, message, name = 'TypeError') =>
 
 describe('Should throw errors', () => {
   it('Does not throw', () => {
+    passes(`(let map (new:map ["name" "Anthony" "age" 34]))
+(let option (map:get-option map "age"))
+(if (option:value? option) 
+    (- (option:value option) 10))`)
     passes(`      
 (let a (lambda input (apply (lambda (apply (lambda 
   
@@ -472,7 +476,14 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
 `,
       `Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (f8) (f5 1)) (check #1)`
     )
-
+    fails(
+      `(let map (new:map ["name" "Anthony" "age" 34]))
+(let option (map:get-option map "name"))
+(if (option:value? option) (do 
+    (let item (Collection (option:value option)))
+    (- item 10)))`,
+      `Incorrect type of arguments for special form (-). Expected (Atom) but got (Collection) (- item 10) (check #3)`
+    )
     fails(
       `(let INPUT
       "3   4

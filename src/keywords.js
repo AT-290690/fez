@@ -60,7 +60,8 @@ export const TYPES = {
 }
 export const RUNTIME_TYPES = {
   NUMBER: 'number',
-  ARRAY: 'array'
+  ARRAY: 'array',
+  LAMBDA: 'lambda'
 }
 export const DEBUG = {
   STRING: 'string',
