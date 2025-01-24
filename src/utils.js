@@ -1,5 +1,13 @@
 import std from '../lib/baked/std.js'
-import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import {
+  APPLY,
+  ATOM,
+  KEYWORDS,
+  STATIC_TYPES,
+  TYPE,
+  VALUE,
+  WORD
+} from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isLeaf, LISP } from './parser.js'
 import {
@@ -307,6 +315,19 @@ export const parse = (source) =>
       std
     )
   )
+
+export const addTypeIdentities = (ast) => {
+  const block = ast[1][1]
+  const temp = block.shift()
+  block.unshift(
+    temp,
+    identity(STATIC_TYPES.APPLICATION),
+    identity(STATIC_TYPES.ATOM),
+    identity(STATIC_TYPES.COLLECTION),
+    identity(STATIC_TYPES.PREDICATE),
+    identity(STATIC_TYPES.UNKNOWN)
+  )
+}
 
 export const UTILS = {
   handleUnbalancedQuotes,

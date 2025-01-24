@@ -1,5 +1,5 @@
 import debugStd from '../lib/debug/std.js'
-import { typeCheck } from '../src/check.js'
+import { identity, typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
 import {
@@ -16,15 +16,6 @@ import {
 import { LISP } from '../src/parser.js'
 import { formatErrorWithCallstack, stringifyArgs } from '../src/utils.js'
 
-const identity = (name) => [
-  [0, 'let'],
-  [1, name],
-  [
-    [0, 'lambda'],
-    [1, 'x'],
-    [1, 'x']
-  ]
-]
 export const debug = (ast) => {
   const debugEnv = {
     ...keywords,
@@ -239,6 +230,7 @@ export const debug = (ast) => {
       error: null
     }
   } catch (error) {
+    // console.log(error)
     const isMaxCallStack =
       error.message.includes('Maximum call stack size exceeded') ||
       error.message.includes('too much recursion')

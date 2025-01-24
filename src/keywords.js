@@ -8,6 +8,13 @@ export const FALSE = 0
 export const PLACEHOLDER = '.'
 export const MUTATION_SUFFIX = '!'
 export const PREDICATE_SUFFIX = '?'
+export const STATIC_TYPES = {
+  APPLICATION: 'Application',
+  UNKNOWN: 'Unknown',
+  ATOM: 'Atom',
+  COLLECTION: 'Collection',
+  PREDICATE: 'Predicate'
+}
 export const KEYWORDS = {
   LOOP: 'loop',
   CREATE_ARRAY: 'array',

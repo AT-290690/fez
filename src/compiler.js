@@ -5,7 +5,8 @@ import {
   KEYWORDS,
   TYPE,
   VALUE,
-  WORD
+  WORD,
+  STATIC_TYPES
 } from './keywords.js'
 import { OPTIMIZATIONS } from './macros.js'
 import { leaf, isLeaf, AST } from './parser.js'
@@ -262,6 +263,14 @@ const comp = (tree, Drill) => {
         Drill.Helpers.add('__error')
         return `__error(${compile(tail[0], Drill)})`
       }
+
+      case STATIC_TYPES.APPLICATION:
+      case STATIC_TYPES.COLLECTION:
+      case STATIC_TYPES.UNKNOWN:
+      case STATIC_TYPES.ATOM:
+      case STATIC_TYPES.PREDICATE:
+        return compile(tail[0], Drill)
+
       default: {
         const camelCased = lispToJavaScriptVariableName(token)
         if (camelCased in Helpers) Drill.Helpers.add(camelCased)

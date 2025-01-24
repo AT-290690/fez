@@ -41,13 +41,22 @@ const toTypeNames = (type) => {
     case ATOM:
       return 'Atom'
     case UNKNOWN:
-      return 'Uknown'
+      return 'Unknown'
     case PREDICATE:
       return 'Predicate'
     case COLLECTION:
       return 'Collection'
   }
 }
+export const identity = (name) => [
+  [0, 'let'],
+  [1, name],
+  [
+    [0, 'lambda'],
+    [1, 'x'],
+    [1, 'x']
+  ]
+]
 const drillReturnType = (rest, condition) => {
   const body = rest.at(-1)
   const rem = hasBlock(body) ? body.at(-1) : body
@@ -55,6 +64,11 @@ const drillReturnType = (rest, condition) => {
   return condition(returns)
     ? drillReturnType(rem.at(-1), condition)
     : [returns, rem]
+}
+const deepLambdaReturn = (rest, condition) => {
+  const body = rest.at(-1)
+  const rem = hasBlock(body) ? body.at(-1) : body
+  return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
 const getScopeNames = (scope) => {
   const scopeNames = []
@@ -74,10 +88,55 @@ const withScope = (name, scope) => {
 }
 export const typeCheck = (ast) => {
   const root = {
+    [toTypeNames(APPLY)]: {
+      [STATS]: Object.freeze({
+        [TYPE_PROP]: [APPLY],
+        retried: RETRY_COUNT,
+        [ARGS_COUNT]: 1,
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [RETURNS]: [APPLY]
+      })
+    },
+    [toTypeNames(ATOM)]: {
+      [STATS]: Object.freeze({
+        [TYPE_PROP]: [APPLY],
+        retried: RETRY_COUNT,
+        [ARGS_COUNT]: 1,
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [RETURNS]: [ATOM]
+      })
+    },
+    [toTypeNames(PREDICATE)]: {
+      [STATS]: Object.freeze({
+        [TYPE_PROP]: [APPLY],
+        retried: RETRY_COUNT,
+        [ARGS_COUNT]: 1,
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [RETURNS]: [ATOM, PREDICATE]
+      })
+    },
+    [toTypeNames(COLLECTION)]: {
+      [STATS]: Object.freeze({
+        [TYPE_PROP]: [APPLY],
+        retried: RETRY_COUNT,
+        [ARGS_COUNT]: 1,
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [RETURNS]: [COLLECTION]
+      })
+    },
+    [toTypeNames(UNKNOWN)]: {
+      [STATS]: Object.freeze({
+        [TYPE_PROP]: [APPLY],
+        retried: RETRY_COUNT,
+        [ARGS_COUNT]: 1,
+        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
+        [RETURNS]: [UNKNOWN]
+      })
+    },
     [DEBUG.LOG]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS]: [
           [UNKNOWN, PLACEHOLDER],
           [COLLECTION, PLACEHOLDER]
@@ -89,7 +148,7 @@ export const typeCheck = (ast) => {
     [DEBUG.STRING]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [RETURNS]: [COLLECTION]
@@ -98,7 +157,7 @@ export const typeCheck = (ast) => {
     [DEBUG.ASSERT]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -106,7 +165,7 @@ export const typeCheck = (ast) => {
     [DEBUG.SIGNATURE]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -114,7 +173,7 @@ export const typeCheck = (ast) => {
     [DEBUG.LIST_THEMES]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -122,7 +181,7 @@ export const typeCheck = (ast) => {
     [DEBUG.SET_THEME]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -130,7 +189,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BLOCK]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -138,7 +197,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ANONYMOUS_FUNCTION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [APPLY]
       }
@@ -146,7 +205,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.CALL_FUNCTION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -154,7 +213,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.CREATE_ARRAY]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [COLLECTION]
       }
@@ -162,7 +221,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LOOP]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -174,7 +233,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ADDITION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -186,7 +245,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.MULTIPLICATION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -198,7 +257,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SUBTRACTION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -210,7 +269,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.DIVISION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -222,7 +281,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.REMAINDER_OF_DIVISION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -234,7 +293,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_AND]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -246,7 +305,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_NOT]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER]],
         [RETURNS]: [ATOM]
@@ -255,7 +314,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_OR]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -267,7 +326,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_XOR]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -279,7 +338,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_LEFT_SHIFT]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -291,7 +350,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.BITWISE_RIGHT_SHIFT]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -303,7 +362,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GET_ARRAY]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [COLLECTION, PLACEHOLDER],
@@ -315,7 +374,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SET_ARRAY]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 3,
         [ARGS]: [
           [COLLECTION, PLACEHOLDER],
@@ -328,7 +387,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.POP_ARRAY]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [RETURNS]: [COLLECTION]
@@ -337,7 +396,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ARRAY_LENGTH]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [RETURNS]: [ATOM]
@@ -346,7 +405,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IF]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 3,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -359,7 +418,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.NOT]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[ATOM, PLACEHOLDER, PREDICATE]],
         [RETURNS]: [ATOM, PREDICATE]
@@ -368,7 +427,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.EQUAL]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -380,7 +439,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -392,7 +451,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GREATHER_THAN]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -404,7 +463,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -416,7 +475,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN_OR_EQUAL]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER],
@@ -428,7 +487,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.AND]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -440,7 +499,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.OR]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
         [ARGS]: [
           [ATOM, PLACEHOLDER, PREDICATE],
@@ -452,7 +511,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IS_ATOM]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: [ATOM, PREDICATE]
@@ -461,7 +520,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.IS_LAMBDA]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [RETURNS]: [ATOM, PREDICATE]
@@ -470,7 +529,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.ERROR]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: 0,
+        retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
         [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [RETURNS]: [UNKNOWN]
@@ -556,7 +615,6 @@ export const typeCheck = (ast) => {
                             // const alternative = isLeaf(re[1])
                             //   ? env[re[1][VALUE]]
                             //   : env[re[1][0][VALUE]]
-
                             env[name][STATS][prop] =
                               env[re[0][0][VALUE]][STATS][RETURNS]
                             if (
@@ -728,6 +786,7 @@ export const typeCheck = (ast) => {
                   // if (!(name in env)) {
                   if (rest[1][TYPE] === WORD) {
                     env[name] = env[rest[1][VALUE]]
+
                     if (
                       getSuffix(rest[1][VALUE]) === PREDICATE_SUFFIX &&
                       getSuffix(name) !== PREDICATE_SUFFIX
@@ -820,7 +879,6 @@ export const typeCheck = (ast) => {
                             const body = rest.at(-1).at(-1).at(-1)
                             const rem = hasBlock(body) ? body.at(-1) : body
                             const returns = isLeaf(rem) ? rem : rem[0]
-                            // console.log({ returns })
                             resolveRetunType(
                               returns,
                               rem,
@@ -885,12 +943,64 @@ export const typeCheck = (ast) => {
                     retried: 0
                   }
                 }
-                if (env[copy[SCOPE_NAME]]) {
-                  if (env[copy[SCOPE_NAME]][STATS][ARGS])
-                    env[copy[SCOPE_NAME]][STATS][ARGS][i] = copy[param[VALUE]]
+                const ref = env[copy[SCOPE_NAME]]
+                if (ref) {
+                  if (ref[STATS][ARGS]) ref[STATS][ARGS][i] = copy[param[VALUE]]
                   if (getSuffix(param[VALUE]) === PREDICATE_SUFFIX) {
                     copy[param[VALUE]][STATS][RETURNS] = [ATOM, PREDICATE]
                   } else {
+                    const returns = deepLambdaReturn(
+                      hasBlock(exp) ? exp.at(-1) : exp,
+                      (result) => result[VALUE] !== KEYWORDS.IF
+                    )
+                    if (isLeaf(returns)) {
+                    } else {
+                      const ret = returns[0]
+                      switch (ret[VALUE]) {
+                        case KEYWORDS.IF:
+                          const re = returns.slice(2)
+                          // If either is an ATOM then IF returns an ATOM
+                          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                            ref[STATS][RETURNS][0] = ATOM
+                            // TODO check that both brancehs are predicates if one is
+                            if (
+                              getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
+                              getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
+                            ) {
+                              ref[STATS][RETURNS][1] = PREDICATE
+                            }
+                          } else {
+                            const concequent = isLeaf(re[0])
+                              ? copy[re[0][VALUE]]
+                              : copy[re[0][0][VALUE]]
+                            const alternative = isLeaf(re[1])
+                              ? copy[re[1][VALUE]]
+                              : copy[re[1][0][VALUE]]
+
+                            // todo check if condition matches alternative
+                            if (
+                              concequent &&
+                              concequent[STATS][RETURNS][0] !== UNKNOWN
+                            ) {
+                              ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                            } else if (
+                              alternative &&
+                              alternative[STATS][RETURNS][0] !== UNKNOWN
+                            ) {
+                              ref[STATS][RETURNS] = alternative[STATS][RETURNS]
+                            } else if (concequent) {
+                              ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                            }
+                          }
+
+                          break
+                        default:
+                          if (copy[ret[VALUE]])
+                            ref[STATS][RETURNS] =
+                              copy[ret[VALUE]][STATS][RETURNS]
+                          break
+                      }
+                    }
                     // TODO overwrite return type check here
                     // console.log(copy[SCOPE_NAME], env[copy[SCOPE_NAME]], copy)
                   }
@@ -925,7 +1035,6 @@ export const typeCheck = (ast) => {
                   )
                 } else {
                   const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
-
                   if (first[TYPE] === APPLY && !isSpecial) {
                     if (env[first[VALUE]][STATS][TYPE_PROP][0] === ATOM) {
                       errorStack.set(
@@ -939,6 +1048,7 @@ export const typeCheck = (ast) => {
                       if (env[first[VALUE]][STATS][RETURNS][0] === APPLY) {
                         env[first[VALUE]][STATS][RETURNS] = [UNKNOWN]
                       }
+
                       env[first[VALUE]][STATS][TYPE_PROP] = [APPLY]
                       env[first[VALUE]][STATS][ARGS_COUNT] = rest.length
                     }
@@ -1103,17 +1213,7 @@ export const typeCheck = (ast) => {
                                     )
                                   }
                                 }
-
-                                // // console.log({ returns })
-                                // resolveRetunType(
-                                //   returns,
-                                //   rem,
-                                //   TYPE_PROP,
-                                //   isPredicate
-                                // )
                               }
-
-                              // console.log(args[i], env[current[VALUE]][STATS])
                             } else if (
                               args[i][SUB] &&
                               env[current[VALUE]] &&
@@ -1189,10 +1289,10 @@ export const typeCheck = (ast) => {
                             expectedArgs[i][TYPE] !== rest[i][TYPE]
                           ) {
                             switch (rest[i][TYPE]) {
-                              case UNKNOWN:
-                                env[first[VALUE]][STATS][TYPE_PROP][0] =
-                                  expectedArgs[i][TYPE]
-                                break
+                              // case UNKNOWN:
+                              //   env[first[VALUE]][STATS][TYPE_PROP][0] =
+                              //     expectedArgs[i][TYPE]
+                              //   break
                               case WORD:
                                 const T =
                                   env[rest[i][VALUE]][STATS][TYPE_PROP][0]
@@ -1230,6 +1330,7 @@ export const typeCheck = (ast) => {
                                 )
                                 break
                             }
+                          } else {
                           }
                         }
                       }
@@ -1274,6 +1375,12 @@ export const typeCheck = (ast) => {
                             ) {
                               retry[STATS].retried += 1
                               stack.unshift(() => check(exp, env, scope))
+                            } else if (
+                              args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
+                              args[i][STATS].retried < DEFINITON_RETRY_COUNT
+                            ) {
+                              args[i][STATS].retried += 1
+                              stack.unshift(() => check(exp, env, scope))
                             }
                           }
                         } else if (
@@ -1315,7 +1422,6 @@ export const typeCheck = (ast) => {
                 }
               }
             })
-            // console.log(env)
             for (const r of rest) check(r, env, scope)
             break
         }

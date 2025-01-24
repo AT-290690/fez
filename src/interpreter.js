@@ -7,7 +7,8 @@ import {
   TRUE,
   TYPES,
   RUNTIME_TYPES,
-  DEBUG
+  DEBUG,
+  STATIC_TYPES
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
 import { isForbiddenVariableName, stringifyArgs } from './utils.js'
@@ -837,5 +838,11 @@ export const keywords = {
         }) but got (${expression}) (${KEYWORDS.ERROR} ${stringifyArgs(args)})`
       )
     throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
-  }
+  },
+
+  [STATIC_TYPES.APPLICATION]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.ATOM]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.COLLECTION]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.PREDICATE]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env)
 }
