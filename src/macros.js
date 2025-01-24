@@ -92,17 +92,15 @@ export const deSuggarAst = (ast, scope) => {
               case KEYWORDS.BLOCK:
                 {
                   if (
-                    prev == undefined ||
-                    (prev &&
-                      prev[TYPE] === APPLY &&
-                      prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION)
+                    prev &&
+                    prev[TYPE] === APPLY &&
+                    prev[VALUE] !== KEYWORDS.ANONYMOUS_FUNCTION
                   ) {
                     exp[0][VALUE] = KEYWORDS.CALL_FUNCTION
                     exp[0][TYPE] = APPLY
                     exp.length = 1
                     scope = [[APPLY, KEYWORDS.BLOCK], ...rest]
                     exp[1] = [[APPLY, KEYWORDS.ANONYMOUS_FUNCTION], scope]
-
                     deSuggarAst(exp, scope)
                   } else {
                     scope = exp
@@ -851,6 +849,7 @@ const iron = (scope) => {
         copy.push(scope[i])
       }
     }
+
     for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
   }
 }

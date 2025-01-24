@@ -10,6 +10,178 @@ const fails = (source, message, name = 'TypeError') =>
 
 describe('Should throw errors', () => {
   it('Does not throw', () => {
+    passes(`(let a (lambda input (apply (lambda (apply (lambda 1))))))`)
+    passes(`(let a (lambda input (apply (lambda (apply (lambda (do 1 )))))))`)
+    passes(`(apply (lambda (do (apply (lambda (do 
+(let part1 (lambda input (apply (lambda (apply (lambda 
+    (do (let current-dir (array 1 1)) 
+    (let start-copy (array 1 1)) 
+    (let cdy (get current-dir 0)) 
+    (let cdx (get current-dir 1)) 
+    (let y (get start-copy 0)) 
+    (let x (get start-copy 1)))))))))))))))`)
+    passes(`(let part1 (lambda input (do
+    (let current-dir [1 1])
+    (let start-copy [1 1])
+    (let [cdy cdx .] current-dir)
+    (let [y x .] start-copy)
+)))`)
+    passes(`(let INPUT (array:concat-with [
+  "....#....."
+  ".........#"
+  ".........."
+  "..#......."
+  ".......#.."
+  ".........."
+  ".#..^....."
+  "........#."
+  "#........."
+  "......#..."
+] char:new-line))
+(let parse (lambda input (|> input (string:lines))))
+(let dir [[-1 0] [0 1] [1 0] [0 -1]])
+
+(let part1 (lambda input (do
+  (let matrix (matrix:shallow-copy input)) 
+  (let starting (matrix:find-index input (lambda x (= x 94))))
+  (let [sy sx .] starting)
+  (matrix:set! matrix sy sx char:X)
+  (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
+  (let recursive:step (lambda start angle (do 
+      (let current-dir (get dir (mod angle (length dir))))
+      (let start-copy (array:shallow-copy start))
+      (let [syc sxc .] start-copy)
+      (let [cdy cdx .] current-dir)
+      (set! start-copy 0 (+ syc cdy))
+      (set! start-copy 1 (+ sxc cdx))
+      (let [y x .] start-copy)
+      (if (matrix:in-bounds? matrix y x) (do 
+      (let current (matrix:get matrix y x))
+      (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
+      (cond 
+          (= current char:hash) (recursive:step start (+ angle 1))
+          (or (= current char:dot) (= current char:X)) (recursive:step start-copy angle)))))))
+  (recursive:step starting 0)
+  (|> matrix (array:flat-one) (array:count char:X)))))
+
+(let part2 (lambda input (do
+  (let matrix (matrix:shallow-copy input)) 
+  (let loops (var:def 0))
+  (let starting (matrix:find-index matrix (lambda x (= x 94))))
+  (matrix:set! matrix (get starting 0) (get starting 1) char:X)
+  (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
+  (let from:numbers->key (lambda a b (array:concat (array (from:digits->chars (from:integer->digits a)) (array char:pipe) (from:digits->chars (from:integer->digits b))))))
+  (let recursive:step (lambda matrix start angle corners (do 
+      (let current-dir (get dir (mod angle (length dir))))
+      (let start-copy (array:shallow-copy start))
+      (let [syc sxc .] start-copy)
+      (let [cdy cdx .] current-dir)
+      (set! start-copy 0 (+ syc cdy))
+      (set! start-copy 1 (+ sxc cdx))
+      (let [y x .] start-copy)
+      (if (matrix:in-bounds? matrix y x) (do 
+      (let current (matrix:get matrix y x))
+      (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
+      (cond 
+          (= current char:hash) (do
+          (let key (from:numbers->key y x))
+          (let c (if (map:has? corners key) (map:get corners key) -1))
+          (if (= c 4) 
+          (var:set! loops (+ (var:get loops) 1))
+          (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
+          (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)))))))
+  (recursive:step matrix starting 0 (new:set64))
+  (let path [])
+  (let [Y X .] starting)
+  (matrix:enumerated-for matrix (lambda current y x (if 
+      (= current char:X) (array:push! path [y x]))))
+  (array:for path (lambda pos (do 
+      (let copy (matrix:shallow-copy input))
+      (let [y x .] pos)
+      (matrix:set! copy Y X char:X)
+      (matrix:set! copy y x char:hash)
+      (if (not (and (= y Y) (= x X))) (recursive:step copy starting 0 (new:set64))))))
+  (var:get loops))))
+  
+(let PARSED (parse INPUT))
+(array (part1 PARSED) (part2 PARSED))`)
+    passes(`(let sample1 
+"RL
+
+AAA=BBB,CCC
+BBB=DDD,EEE
+CCC=ZZZ,GGG
+DDD=DDD,DDD
+EEE=EEE,EEE
+GGG=GGG,GGG
+ZZZ=ZZZ,ZZZ")
+      (let parse (lambda input (do 
+        (let split (string:lines input))
+        (let path (car split))
+        (let list (cdr (cdr split)))
+        
+        (let dirs (|> path (array:map (lambda x (string:equal? (array x) "R")))))
+        (let adj (|> list (array:map (lambda x (string:split x (array:first "="))))))
+        
+        (array 
+          dirs 
+          (array:fold adj (lambda object entry (do 
+          (let key (car entry))
+          (let value (car (cdr entry)))
+          (map:set! object key (string:commas value))))
+          (array [] [] [] []))
+          adj))))
+      
+      (let sample2 (array:concat (array  
+      "LLR" (array char:new-line)
+      (array char:new-line)
+      "AAA=BBB,BBB" (array char:new-line)
+      "BBB=AAA,ZZZ" (array char:new-line)
+      "ZZZ=ZZZ,ZZZ")))
+      
+      (let sample3 (array:concat (array 
+      "LR" (array char:new-line)
+      (array char:new-line)
+      "11A=11B,XXX" (array char:new-line)
+      "11B=XXX,11Z" (array char:new-line)
+      "11Z=11B,XXX" (array char:new-line)
+      "22A=22B,XXX" (array char:new-line)
+      "22B=22C,22C" (array char:new-line)
+      "22C=22Z,22Z" (array char:new-line)
+      "22Z=22B,22B" (array char:new-line)
+      "XXX=XXX,XXX")))
+      
+      (let part1 (lambda input (do 
+        (let [dirs adj .] input)
+        (let recursive:move (lambda source target step (do 
+          (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
+          (if (string:equal? node target)
+              step 
+              (recursive:move node target (+ step 1))))))
+        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
+      
+      
+      (let part2 (lambda input (do 
+        (let [dirs adj keys .] input)
+        (let recursive:move (lambda source target step (do 
+          (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
+          (if (string:equal? [(array:at node -1)] target)
+              step 
+              (recursive:move node target (+ step 1))))))
+      
+        (|> 
+          keys
+          (array:map car)
+          (array:select (lambda source 
+            (|> source 
+                (array:at -1)
+                []
+                (string:equal? "A"))))
+          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
+          (array:fold math:least-common-divisor 1)))))
+      
+  [[(part1 (parse sample1)) (part1 (parse sample2))] (part2 (parse sample3))]
+   `)
     passes(`(let e? (array:every? [1 2 3] math:odd?))
 (and e? (= 1 1))
 `)
@@ -159,6 +331,11 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try
     )))
 )))`,
       `Trying to access undefined variable y (check #11)`
+    )
+    fails(
+      `(let parse (la1mbda input (|> input (string:lines))))`,
+      `Trying to access undefined variable input (check #11)
+Trying to call undefined (lambda) la1mbda (check #9)`
     )
     fails(
       `(let arr [1 2 3 4])

@@ -100,8 +100,8 @@
     (cond
      (atom? x) (= x 0)
      (array? x) (= (array:length x) 0))))
-(let true? (lambda x (= x 1)))
-(let false? (lambda x (= x 0)))
+(let true? (lambda x (and (atom? x) (= x 1))))
+(let false? (lambda x (and (atom? x) (= x 0))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
@@ -479,13 +479,13 @@
                           (if (and (> (array:length xs) i) (predicate? (array:get xs i)))
                               (recursive:array:every (+ i 1))
                               (not (> (array:length xs) i)))))
-                        (recursive:array:every 0))))
+                        (true? (recursive:array:every 0)))))
 (let array:some? (lambda xs predicate? (do
                     (let recursive:array:some (lambda i
                           (if (and (> (array:length xs) i)  (not (predicate? (array:get xs i))))
                               (recursive:array:some (+ i 1))
                               (not (= (> (array:length xs) i) 0)))))
-                        (recursive:array:some 0))))
+                        (true? (recursive:array:some 0)))))
 
 (let array:find (lambda xs predicate? (array:get xs (array:find-index xs predicate?))))
 
