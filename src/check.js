@@ -13,6 +13,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
+import { OPTIMIZED_PREFIX } from './macros.js'
 import { isLeaf } from './parser.js'
 import {
   getSuffix,
@@ -538,31 +539,64 @@ export const typeCheck = (ast) => {
                   } else {
                     switch (returns[VALUE]) {
                       case KEYWORDS.IF:
-                        const re = rem.slice(2)
-                        if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
-                          env[name][STATS][RETURNS] = ATOM
-                          // if (
-                          //   re[0][VALUE] === FALSE ||
-                          //   re[0][VALUE] === TRUE ||
-                          //   re[1][VALUE] === FALSE ||
-                          //   re[1][VALUE] === TRUE
-                          // ) {
-                          //   env[name][STATS][SUB_TYPE] = PREDICATE
-                          // }
-                        } else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
-                          env[name][STATS][RETURNS] =
-                            env[re[0][0][VALUE]][STATS][RETURNS]
-                          env[name][STATS][SUB_TYPE] =
-                            env[re[0][0][VALUE]][STATS][SUB_TYPE]
-                        } else {
-                          if (env[re[0][VALUE]]) {
-                            env[name][STATS][RETURNS] =
-                              env[re[0][VALUE]][STATS].type
+                        {
+                          const re = rem.slice(2)
+                          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                            env[name][STATS][prop] = ATOM
+                            // if (
+                            //   re[0][VALUE] === FALSE ||
+                            //   re[0][VALUE] === TRUE ||
+                            //   re[1][VALUE] === FALSE ||
+                            //   re[1][VALUE] === TRUE
+                            // ) {
+                            //   env[name][STATS][SUB_TYPE] = PREDICATE
+                            // }
+                          } else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
+                            env[name][STATS][prop] =
+                              env[re[0][0][VALUE]][STATS][RETURNS]
                             env[name][STATS][SUB_TYPE] =
-                              env[re[0][VALUE]][STATS][SUB_TYPE]
+                              env[re[0][0][VALUE]][STATS][SUB_TYPE]
+
+                            if (
+                              re[0][0][TYPE] === APPLY &&
+                              // turn off typechecks for optimized functions
+                              !name.startsWith(OPTIMIZED_PREFIX)
+                            ) {
+                              switch (re[0][0][VALUE]) {
+                                case KEYWORDS.ANONYMOUS_FUNCTION:
+                                  //   env[name][STATS][prop] =
+                                  //   env[re[0][0][VALUE]][STATS][RETURNS]
+                                  // env[name][STATS][SUB_TYPE] =
+                                  //   env[re[0][0][VALUE]][STATS][SUB_TYPE]
+
+                                  env[name][STATS][RETURNS] = UNKNOWN
+                                  env[name][STATS][ARGS_COUNT] =
+                                    re[0].length - 2
+                                  // check(
+                                  //   [
+                                  //     [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                  //     [WORD, name],
+                                  //     re[0]
+                                  //   ],
+                                  //   env,
+                                  //   scope
+                                  // )
+                                  break
+                              }
+                            }
+                            // env[name][STATS] = env[re[0][0][VALUE]][STATS]
                           } else {
-                            env[name][STATS][RETURNS] = UNKNOWN
-                            // env[name][STATS][RETURNS] = APPLY
+                            if (env[re[0][VALUE]]) {
+                              env[name][STATS][prop] =
+                                env[re[0][VALUE]][STATS].type
+                              env[name][STATS][SUB_TYPE] =
+                                env[re[0][VALUE]][STATS][SUB_TYPE]
+                              // env[name][STATS] = env[name][STATS]
+                              //   env[re[0][VALUE]][STATS][SUB_TYPE]
+                            } else {
+                              env[name][STATS][prop] = UNKNOWN
+                              // env[name][STATS][RETURNS] = APPLY
+                            }
                           }
                         }
                         break
@@ -793,6 +827,13 @@ export const typeCheck = (ast) => {
                               isPredicate
                             )
                           }
+                        } else {
+                          // TIODO finish this
+                          const body = rest.at(-1)
+                          const rem = hasBlock(body) ? body.at(-1) : body
+                          const returns = isLeaf(rem) ? rem : rem[0]
+                          resolveRetunType(returns, rem, TYPE_PROP, isPredicate)
+                          // console.log({ name })
                         }
                         if (env[right[VALUE]]?.[STATS]?.[SUB_TYPE]) {
                           if (
@@ -1288,6 +1329,7 @@ export const typeCheck = (ast) => {
                 }
               }
             })
+            // console.log(env)
             for (const r of rest) check(r, env, scope)
             break
         }

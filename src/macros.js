@@ -33,6 +33,7 @@ export const OPTIMIZATIONS = {
   RECURSION: 'recursive',
   CACHE: 'memoized'
 }
+export const OPTIMIZED_PREFIX = 'optimized-lambda::'
 const deepTransform = (predicate, transform, tree) => {
   if (!isLeaf(tree))
     for (const leaf of tree) {
@@ -530,7 +531,7 @@ export const deSuggarAst = (ast, scope) => {
                         )
                       }
                       const args = last.slice(1, -1)
-                      const newName = `*${performance
+                      const newName = `${OPTIMIZED_PREFIX}*${performance
                         .now()
                         .toString()
                         .replace('.', 0)}*`
@@ -631,7 +632,7 @@ export const deSuggarAst = (ast, scope) => {
                         )
                       }
                       const args = last.slice(1, -1)
-                      const newName = `*${performance
+                      const newName = `${OPTIMIZED_PREFIX}*${performance
                         .now()
                         .toString()
                         .replace('.', 0)}*`

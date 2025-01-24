@@ -421,7 +421,14 @@ Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x
 (let e (array:every? [1 2 3] math:odd?))`,
       `err is assigned to e? which ends in (?) so err must also end in (?) (check #17)
 e is assigned to array:every? which ends in (?) so e must also end in (?) (check #19)
+e should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 e is assigned to the result of a (Predicate) so e must end in (?) (check #23)`
+    )
+
+    fails(
+      `(let x (if (= 1 1) (lambda x 1) (lambda x 2)))
+(x 1 2)`,
+      `Incorrect number of arguments for (x). Expected (= 1) but got 2 (x 1 2) (check #15)`
     )
   })
 
@@ -466,14 +473,17 @@ math:perfect-square? ends in (?) and is expected to return (Predicate) but it do
 math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
 list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
 list:every? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+predicate should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 predicate is assigned to the result of a (Predicate) so predicate must end in (?) (check #23)
 string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
 string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
 set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
 is-negative is assigned to match:negative? which ends in (?) so is-negative must also end in (?) (check #19)
+is-negative should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-negative is assigned to the result of a (Predicate) so is-negative must end in (?) (check #23)
 special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
+special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+at-least-one? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
     )
   })
 })
