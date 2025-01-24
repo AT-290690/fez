@@ -1,4 +1,5 @@
 import debugStd from '../lib/debug/std.js'
+import { typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
 import {
@@ -228,6 +229,7 @@ export const debug = (ast) => {
     }
   }
   try {
+    typeCheck(ast)
     const evaluated = evaluate(ast, debugEnv)
     const block = ast[1][1]
     const temp = block.shift()
@@ -243,9 +245,10 @@ export const debug = (ast) => {
     return {
       evaluated: null,
       error: {
-        message: isMaxCallStack
-          ? error.message
-          : formatErrorWithCallstack(error, debugEnv[DEBUG.CALLSTACK]),
+        message:
+          isMaxCallStack || debugEnv[DEBUG.CALLSTACK].length === 1
+            ? error.message
+            : formatErrorWithCallstack(error, debugEnv[DEBUG.CALLSTACK]),
         stack: debugEnv[DEBUG.CALLSTACK]
       }
     }

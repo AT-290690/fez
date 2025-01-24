@@ -16,9 +16,8 @@ export const formatCallstack = (callstack) =>
     .reverse()
     .map((x, i) => `${Array(i + 2).join(' ')}(${x} ...)`)
     .join('\n')
-export const formatErrorWithCallstack = (error, callstack) => {
-  return `${error.message}\n${formatCallstack(callstack)}`
-}
+export const formatErrorWithCallstack = (error, callstack) =>
+  `${error.message}\n${formatCallstack(callstack)}`
 export const getSuffix = (str) => str[str.length - 1]
 export const removeNoCode = (source) =>
   source

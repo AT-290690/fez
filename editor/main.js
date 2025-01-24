@@ -1,5 +1,4 @@
 import { parse, compile } from '../index.js'
-import { typeCheck } from '../src/check.js'
 import { debug } from './debug.js'
 const editor = ace.edit('editor')
 editor.setOptions({
@@ -102,7 +101,6 @@ document.addEventListener('keydown', (e) => {
       try {
         const compressed = LZString.compressToBase64(editor.getValue())
         const parsed = parse(editor.getValue())
-        typeCheck(parsed)
         const { evaluated, error } = debug(parsed)
         terminal.setValue(error == null ? serialise(evaluated) : error.message)
         terminal.clearSelection()
