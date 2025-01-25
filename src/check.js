@@ -1820,24 +1820,28 @@ export const typeCheck = (ast) => {
 
                   // also type of arg
                   // DELETE THIS
-                  const args = env[first[VALUE]][STATS][ARGS]
-                  // const args2 = env[first[VALUE]][STATS][ARGUMENTS]
+                  // const args = env[first[VALUE]][STATS][ARGS]
+                  const args = env[first[VALUE]][STATS][ARGUMENTS]
                   if (args) {
                     for (let i = 0; i < args.length; ++i) {
                       // type check
-                      if (args[i][SUB] != undefined) {
+                      // const PRED_TYPE = args[i][SUB]
+                      // const MAIN_TYPE = args[i][TYPE]
+                      const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
+                      const MAIN_TYPE = args[i][STATS][TYPE_PROP][0]
+                      if (PRED_TYPE != undefined) {
                         if (isLeaf(rest[i])) {
                           if (rest[i][TYPE] === WORD) {
                             if (
                               env[rest[i][VALUE]] &&
-                              args[i][SUB] !==
+                              PRED_TYPE !==
                                 env[rest[i][VALUE]][STATS][RETURNS][1]
                             ) {
                               errorStack.add(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
-                                  args[i][SUB]
+                                  PRED_TYPE
                                 )}) but got (${toTypeNames(
                                   env[rest[i][VALUE]][STATS][RETURNS][1] ??
                                     env[rest[i][VALUE]][STATS][TYPE_PROP][0]
@@ -1846,7 +1850,7 @@ export const typeCheck = (ast) => {
                             }
                           } else if (rest[i][TYPE] === ATOM) {
                             if (
-                              args[i][SUB] === PREDICATE &&
+                              PRED_TYPE === PREDICATE &&
                               rest[i][VALUE] !== TRUE &&
                               rest[i][VALUE] !== FALSE
                             ) {
@@ -1854,7 +1858,7 @@ export const typeCheck = (ast) => {
                                 `Incorrect type of arguments for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
-                                  args[i][SUB]
+                                  PRED_TYPE
                                 )}) but got an (${toTypeNames(
                                   rest[i][TYPE]
                                 )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
@@ -1870,29 +1874,23 @@ export const typeCheck = (ast) => {
                               if (isLeaf(rest[i].at(-1))) {
                                 const fnName = rest[i].at(-1)[VALUE]
                                 const fn = env[fnName]
-                                if (
-                                  fn &&
-                                  fn[STATS][RETURNS][0] !== args[i][TYPE]
-                                ) {
+                                if (fn && fn[STATS][RETURNS][0] !== MAIN_TYPE) {
                                   errorStack.add(
                                     `Incorrect type of argument (${i}) for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
-                                      args[i][TYPE]
+                                      MAIN_TYPE
                                     )}) but got an (${toTypeNames(
                                       fn[STATS][RETURNS][0]
                                     )}) (${stringifyArgs(exp)}) (check #26)`
                                   )
                                 }
-                                if (
-                                  fn &&
-                                  fn[STATS][RETURNS][1] !== args[i][SUB]
-                                ) {
+                                if (fn && fn[STATS][RETURNS][1] !== PRED_TYPE) {
                                   errorStack.add(
                                     `Incorrect type of argument (${i}) for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
-                                      args[i][SUB]
+                                      PRED_TYPE
                                     )}) but got an (${toTypeNames(
                                       fn[STATS][RETURNS][1] ??
                                         fn[STATS][RETURNS][0]
@@ -1906,20 +1904,20 @@ export const typeCheck = (ast) => {
                                 const rem = hasBlock(body) ? body.at(-1) : body
                                 const returns = isLeaf(rem) ? rem : rem[0]
                                 if (returns[TYPE] === ATOM) {
-                                  if (args[i][TYPE] !== ATOM) {
+                                  if (MAIN_TYPE !== ATOM) {
                                     errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
-                                        args[i][TYPE]
+                                        MAIN_TYPE
                                       )}) but got an (${toTypeNames(
                                         ATOM
                                       )})  (${stringifyArgs(exp)}) (check #27)`
                                     )
                                   }
                                   if (
-                                    args[i][SUB] &&
-                                    args[i][SUB] === PREDICATE &&
+                                    PRED_TYPE &&
+                                    PRED_TYPE === PREDICATE &&
                                     returns[VALUE] !== TRUE &&
                                     returns[VALUE] !== FALSE
                                   ) {
@@ -1927,7 +1925,7 @@ export const typeCheck = (ast) => {
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
-                                        args[i][SUB]
+                                        PRED_TYPE
                                       )}) but got an (${toTypeNames(
                                         ATOM
                                       )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
@@ -1937,29 +1935,29 @@ export const typeCheck = (ast) => {
                                   }
                                 } else if (env[returns[VALUE]]) {
                                   if (
-                                    args[i][TYPE] !==
+                                    MAIN_TYPE !==
                                     env[returns[VALUE]][STATS][RETURNS][0]
                                   ) {
                                     errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
-                                        args[i][TYPE]
+                                        MAIN_TYPE
                                       )}) but got (${toTypeNames(
                                         env[returns[VALUE]][STATS][TYPE_PROP]
                                       )})  (${stringifyArgs(exp)}) (check #29)`
                                     )
                                   }
                                   if (
-                                    args[i][SUB] &&
-                                    args[i][SUB] !==
+                                    PRED_TYPE &&
+                                    PRED_TYPE !==
                                       env[returns[VALUE]][STATS][RETURNS][1]
                                   ) {
                                     errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
-                                        args[i][SUB]
+                                        PRED_TYPE
                                       )}) but got (${toTypeNames(
                                         env[returns[VALUE]][STATS][RETURNS][1]
                                       )}) (${stringifyArgs(exp)}) (check #28)`
@@ -1968,16 +1966,16 @@ export const typeCheck = (ast) => {
                                 }
                               }
                             } else if (
-                              args[i][SUB] &&
+                              PRED_TYPE &&
                               env[current[VALUE]] &&
                               env[current[VALUE]][STATS][RETURNS][1] !==
-                                args[i][SUB]
+                                PRED_TYPE
                             ) {
                               errorStack.add(
                                 `Incorrect type of arguments (${i}) for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
-                                  args[i][SUB]
+                                  PRED_TYPE
                                 )}) but got (${toTypeNames(
                                   env[current[VALUE]][STATS][RETURNS][1] ??
                                     env[current[VALUE]][STATS][RETURNS][0]
