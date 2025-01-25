@@ -416,7 +416,7 @@ Incorrect type of argument (1) for (and). Expected (Predicate) but got an (Unkno
     )
     fails(
       `(let x ())`,
-      '(lambda) invocation with missing (Application) name () Provide an (Application) name as the (1) argument.'
+      '(lambda) invocation with missing (Abstraction) name () Provide an (Abstraction) name as the (1) argument.'
     )
     fails(
       `(let math:bit-equal (lambda a b (< (^ a b) 1)))`,
@@ -601,7 +601,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     (array:get [1 2 3] 1)
     )))`,
       `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) (lambda 1)) (check #4)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #4)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #4)`
     )
     fails(
@@ -706,7 +706,7 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
 ;  (let PARSED (parse INPUT))
 
 ; [(part1 PARSED) (part2 PARSED)]`,
-      `Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Application) (- matrix:shallow-copy y2) (check #3)`
+      `Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Abstraction) (- matrix:shallow-copy y2) (check #3)`
     )
     // TODO: uncomment this and make it pass
 

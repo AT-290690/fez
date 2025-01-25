@@ -8,6 +8,7 @@ import {
   PLACEHOLDER,
   PREDICATE_SUFFIX,
   SPECIAL_FORMS_SET,
+  STATIC_TYPES_SET,
   TRUE,
   TYPE,
   VALUE,
@@ -37,7 +38,7 @@ const DEFINITON_RETRY_COUNT = 1
 const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
-      return 'Application'
+      return 'Abstraction'
     case ATOM:
       return 'Atom'
     case UNKNOWN:
@@ -122,8 +123,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [APPLY],
-              [RETURNS]: [APPLY],
+              [TYPE_PROP]: [UNKNOWN],
+              [RETURNS]: [UNKNOWN],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -144,8 +145,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [ATOM],
-              [RETURNS]: [ATOM],
+              [TYPE_PROP]: [UNKNOWN],
+              [RETURNS]: [UNKNOWN],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -166,8 +167,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [APPLY, PREDICATE],
-              [RETURNS]: [APPLY, PREDICATE],
+              [TYPE_PROP]: [UNKNOWN],
+              [RETURNS]: [UNKNOWN],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -188,8 +189,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [COLLECTION],
-              [RETURNS]: [COLLECTION],
+              [TYPE_PROP]: [UNKNOWN],
+              [RETURNS]: [UNKNOWN],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -1233,7 +1234,7 @@ export const typeCheck = (ast) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first === undefined) {
       throw new TypeError(
-        `(lambda) invocation with missing (Application) name () Provide an (Application) name as the (1) argument.`
+        `(lambda) invocation with missing (Abstraction) name () Provide an (Abstraction) name as the (1) argument.`
       )
     }
     switch (first[TYPE]) {
@@ -1896,17 +1897,18 @@ export const typeCheck = (ast) => {
                       }
 
                       if (first[TYPE] === APPLY && isSpecial) {
+                        const isCast = STATIC_TYPES_SET.has(first[VALUE])
                         const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
                         for (let i = 0; i < rest.length; ++i) {
                           const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                           const MAIN_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
-                          if (MAIN_TYPE === UNKNOWN) continue
+                          if (MAIN_TYPE === UNKNOWN && !isCast) continue
                           if (!isLeaf(rest[i])) {
                             const CAR = rest[i][0][VALUE]
                             const isKnown =
                               env[CAR] &&
                               env[CAR][STATS][RETURNS][0] !== UNKNOWN
-                            if (isKnown) {
+                            if (isKnown && !isCast) {
                               if (env[CAR][STATS][RETURNS][0] !== MAIN_TYPE) {
                                 errorStack.add(
                                   `Incorrect type of argument (${i}) for special form (${
@@ -1941,7 +1943,7 @@ export const typeCheck = (ast) => {
                                   const isKnown =
                                     env[CAR] &&
                                     env[CAR][STATS][TYPE_PROP][0] !== UNKNOWN
-                                  if (isKnown) {
+                                  if (isKnown && !isCast) {
                                     if (
                                       MAIN_TYPE !==
                                       env[CAR][STATS][TYPE_PROP][0]
@@ -1957,7 +1959,9 @@ export const typeCheck = (ast) => {
                                       )
                                     } else if (
                                       PRED_TYPE &&
-                                      env[CAR][STATS][RETURNS][1] !== PRED_TYPE
+                                      env[CAR][STATS][RETURNS][1] !==
+                                        PRED_TYPE &&
+                                      !isCast
                                     )
                                       errorStack.add(
                                         `Incorrect type of argument (${i}) for special form (${
@@ -1970,8 +1974,15 @@ export const typeCheck = (ast) => {
                                         )}) (${stringifyArgs(exp)}) (check #6)`
                                       )
                                   } else if (env[rest[i][VALUE]]) {
-                                    env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
-                                      MAIN_TYPE
+                                    if (isCast) {
+                                      env[rest[i][VALUE]][STATS][TYPE_PROP] =
+                                        root[first[VALUE]][STATS][RETURNS]
+                                      root[first[VALUE]][STATS][RETURNS] =
+                                        root[first[VALUE]][STATS][RETURNS]
+                                    } else {
+                                      env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
+                                        MAIN_TYPE
+                                    }
                                   }
                                 }
                                 break

@@ -863,6 +863,11 @@ const iron = (scope) => {
     for (let i = 0; i < copy.length; ++i) scope[i] = copy[i]
   }
 }
+export const seeIfProgramIsInvalid = (source) => {
+  if (source.includes('()') || source.includes(',') || source.includes(';'))
+    throw new SyntaxError(`Failed to parse due to invalid lisp programm near`)
+  return source
+}
 export const replaceQuotes = (source) =>
   source
     .replaceAll(/\[/g, `(${KEYWORDS.CREATE_ARRAY} `)
