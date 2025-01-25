@@ -61,7 +61,6 @@ export const debug = (ast) => {
     },
     [STATIC_TYPES.PREDICATE]: (args, env) => {
       const T = evaluate(args[0], env)
-      const t = typeof T
       if (T !== TRUE && T !== FALSE)
         throw new TypeError(
           `Argument of (${STATIC_TYPES.PREDICATE}) must be an (${

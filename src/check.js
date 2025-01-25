@@ -70,22 +70,25 @@ const deepLambdaReturn = (rest, condition) => {
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
-const getScopeNames = (scope) => {
-  const scopeNames = []
-  let current = scope
-  while (current) {
-    if (current[SCOPE_NAME]) {
-      scopeNames.push(current[SCOPE_NAME])
-    }
-    current = Object.getPrototypeOf(current)
-  }
-  return scopeNames.reverse()
-}
-const withScope = (name, scope) => {
-  const chain = getScopeNames(scope)
-  const str = `${chain.join('_')}_${name}`
-  return { str, chain }
-}
+// const getScopeNames = (scope) => {
+//   const scopeNames = []
+//   let current = scope
+//   while (current) {
+//     if (current[SCOPE_NAME]) {
+//       scopeNames.push(current[SCOPE_NAME])
+//     }
+//     current = Object.getPrototypeOf(current)
+//   }
+//   return scopeNames.reverse()
+// }
+// const withScope = (name, scope) => {
+//   const chain = getScopeNames(scope)
+//   const str = `${chain.join('_')}_${name}::${performance
+//     .now()
+//     .toString()
+//     .replace('.', 0)}`
+//   return { str, chain }
+// }
 export const typeCheck = (ast) => {
   const root = {
     [toTypeNames(APPLY)]: {
@@ -536,7 +539,7 @@ export const typeCheck = (ast) => {
       }
     }
   }
-  const errorStack = new Map()
+  const errorStack = new Set()
   const warningStack = new Set()
 
   // const isDefinitionOfAFunction = (head, tail) =>
@@ -557,10 +560,8 @@ export const typeCheck = (ast) => {
       case WORD:
         {
           stack.push(() => {
-            const key = withScope(first[VALUE], scope)
             if (env[first[VALUE]] === undefined) {
-              errorStack.set(
-                key.str,
+              errorStack.add(
                 `Trying to access undefined variable ${first[VALUE]} (check #11)`
 
                 // `Trying to access undefined variable ${
@@ -1011,10 +1012,8 @@ export const typeCheck = (ast) => {
             break
           default:
             stack.push(() => {
-              const key = withScope(first[VALUE], scope)
               if (env[first[VALUE]] === undefined)
-                errorStack.set(
-                  key.str,
+                errorStack.add(
                   `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
                 )
               else {
@@ -1023,8 +1022,7 @@ export const typeCheck = (ast) => {
                   env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
                   env[first[VALUE]][STATS][ARGS_COUNT] !== rest.length
                 ) {
-                  errorStack.set(
-                    key.str,
+                  errorStack.add(
                     `Incorrect number of arguments for (${
                       first[VALUE]
                     }). Expected (= ${
@@ -1037,8 +1035,7 @@ export const typeCheck = (ast) => {
                   const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
                   if (first[TYPE] === APPLY && !isSpecial) {
                     if (env[first[VALUE]][STATS][TYPE_PROP][0] === ATOM) {
-                      errorStack.set(
-                        key.str,
+                      errorStack.add(
                         `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
                           exp
                         )}) (check #12)`
@@ -1073,9 +1070,8 @@ export const typeCheck = (ast) => {
                               args[i][SUB] !==
                                 env[rest[i][VALUE]][STATS][RETURNS][1]
                             ) {
-                              errorStack.set(
-                                key.str,
-                                `Incorrect type of arguments for (${
+                              errorStack.add(
+                                `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
                                   args[i][SUB]
@@ -1091,8 +1087,7 @@ export const typeCheck = (ast) => {
                               rest[i][VALUE] !== TRUE &&
                               rest[i][VALUE] !== FALSE
                             ) {
-                              errorStack.set(
-                                key.str,
+                              errorStack.add(
                                 `Incorrect type of arguments for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
@@ -1116,9 +1111,8 @@ export const typeCheck = (ast) => {
                                   fn &&
                                   fn[STATS][RETURNS][0] !== args[i][TYPE]
                                 ) {
-                                  errorStack.set(
-                                    key.str,
-                                    `Incorrect type of arguments for (${
+                                  errorStack.add(
+                                    `Incorrect type of argument (${i}) for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
                                       args[i][TYPE]
@@ -1131,14 +1125,14 @@ export const typeCheck = (ast) => {
                                   fn &&
                                   fn[STATS][RETURNS][1] !== args[i][SUB]
                                 ) {
-                                  errorStack.set(
-                                    key.str,
-                                    `Incorrect type of arguments for (${
+                                  errorStack.add(
+                                    `Incorrect type of argument (${i}) for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
                                       args[i][SUB]
                                     )}) but got an (${toTypeNames(
-                                      fn[STATS][RETURNS][1]
+                                      fn[STATS][RETURNS][1] ??
+                                        fn[STATS][RETURNS][0]
                                     )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
                                       exp
                                     )}) (check #27)`
@@ -1150,8 +1144,7 @@ export const typeCheck = (ast) => {
                                 const returns = isLeaf(rem) ? rem : rem[0]
                                 if (returns[TYPE] === ATOM) {
                                   if (args[i][TYPE] !== ATOM) {
-                                    errorStack.set(
-                                      key.str,
+                                    errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
@@ -1167,8 +1160,7 @@ export const typeCheck = (ast) => {
                                     returns[VALUE] !== TRUE &&
                                     returns[VALUE] !== FALSE
                                   ) {
-                                    errorStack.set(
-                                      key.str,
+                                    errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
@@ -1185,8 +1177,7 @@ export const typeCheck = (ast) => {
                                     args[i][TYPE] !==
                                     env[returns[VALUE]][STATS][RETURNS][0]
                                   ) {
-                                    errorStack.set(
-                                      key.str,
+                                    errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
@@ -1201,8 +1192,7 @@ export const typeCheck = (ast) => {
                                     args[i][SUB] !==
                                       env[returns[VALUE]][STATS][RETURNS][1]
                                   ) {
-                                    errorStack.set(
-                                      key.str,
+                                    errorStack.add(
                                       `Incorrect type of argument ${i} for (${
                                         first[VALUE]
                                       }). Expected (${toTypeNames(
@@ -1220,8 +1210,7 @@ export const typeCheck = (ast) => {
                               env[current[VALUE]][STATS][RETURNS][1] !==
                                 args[i][SUB]
                             ) {
-                              errorStack.set(
-                                key.str,
+                              errorStack.add(
                                 `Incorrect type of arguments (${i}) for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
@@ -1236,12 +1225,7 @@ export const typeCheck = (ast) => {
                         }
                       }
 
-                      if (
-                        first[TYPE] === APPLY &&
-                        isSpecial
-                        // &&
-                        // env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC
-                      ) {
+                      if (first[TYPE] === APPLY && isSpecial) {
                         const expectedArgs = env[first[VALUE]][STATS][ARGS]
                         for (let i = 0; i < rest.length; ++i) {
                           if (expectedArgs[i][TYPE] === UNKNOWN) continue
@@ -1250,88 +1234,154 @@ export const typeCheck = (ast) => {
                             const isKnown =
                               env[CAR] &&
                               env[CAR][STATS][RETURNS][0] !== UNKNOWN
-                            if (
-                              isKnown &&
-                              env[CAR][STATS][RETURNS][0] !==
+                            if (isKnown) {
+                              if (
+                                env[CAR][STATS][RETURNS][0] !==
                                 expectedArgs[i][TYPE]
-                            ) {
-                              errorStack.set(
-                                key.str,
-                                `Incorrect type of argument (${i}) for special form (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  expectedArgs[i][TYPE]
-                                )}) but got (${toTypeNames(
-                                  env[CAR][STATS][RETURNS][0]
-                                )}) (${stringifyArgs(exp)}) (check #1)`
-                              )
-                            } else if (
-                              isKnown &&
-                              expectedArgs[i][SUB] &&
-                              env[CAR][STATS][RETURNS][1] !==
-                                expectedArgs[i][SUB]
-                            ) {
-                              errorStack.set(
-                                key.str,
-                                `Incorrect type of arguments for special form (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  expectedArgs[i][SUB]
-                                )}) but got (${toTypeNames(
-                                  env[CAR][STATS][RETURNS][1] ??
-                                    env[CAR][STATS][RETURNS][0]
-                                )}) (${stringifyArgs(exp)}) (check #13)`
-                              )
-                            }
-                          }
-                          if (
-                            env[rest[i][VALUE]] &&
-                            expectedArgs[i][TYPE] !== rest[i][TYPE]
-                          ) {
-                            switch (rest[i][TYPE]) {
-                              // case UNKNOWN:
-                              //   env[first[VALUE]][STATS][TYPE_PROP][0] =
-                              //     expectedArgs[i][TYPE]
-                              //   break
-                              case WORD:
-                                const T =
-                                  env[rest[i][VALUE]][STATS][TYPE_PROP][0]
-                                if (
-                                  T !== UNKNOWN &&
-                                  expectedArgs[i][TYPE] !== UNKNOWN &&
-                                  expectedArgs[i][TYPE] !== T
-                                ) {
-                                  errorStack.set(
-                                    key.str,
-                                    `Incorrect type of arguments for special form (${
-                                      first[VALUE]
-                                    }). Expected (${toTypeNames(
-                                      expectedArgs[i][TYPE]
-                                    )}) but got (${toTypeNames(
-                                      T
-                                    )}) (${stringifyArgs(exp)}) (check #3)`
-                                  )
-                                } else {
-                                  env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
-                                    expectedArgs[i][TYPE]
-                                }
-                                break
-                              case APPLY:
-                              case ATOM:
-                                errorStack.set(
-                                  key.str,
-                                  `Incorrect type of arguments for (${
+                              ) {
+                                errorStack.add(
+                                  `Incorrect type of argument (${i}) for special form (${
                                     first[VALUE]
                                   }). Expected (${toTypeNames(
                                     expectedArgs[i][TYPE]
                                   )}) but got (${toTypeNames(
-                                    rest[i][TYPE]
-                                  )}) (${stringifyArgs(exp)}) (check #5)`
+                                    env[CAR][STATS][RETURNS][0]
+                                  )}) (${stringifyArgs(exp)}) (check #1)`
                                 )
-                                break
+                              } else if (
+                                expectedArgs[i][SUB] &&
+                                env[CAR][STATS][RETURNS][1] !==
+                                  expectedArgs[i][SUB]
+                              ) {
+                                errorStack.add(
+                                  `Incorrect type of arguments for special form (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    expectedArgs[i][SUB]
+                                  )}) but got (${toTypeNames(
+                                    env[CAR][STATS][RETURNS][1] ??
+                                      env[CAR][STATS][RETURNS][0]
+                                  )}) (${stringifyArgs(exp)}) (check #13)`
+                                )
+                              }
                             }
                           } else {
+                            switch (rest[i][TYPE]) {
+                              case WORD:
+                                {
+                                  const CAR = rest[i][VALUE]
+                                  const isKnown =
+                                    env[CAR] &&
+                                    env[CAR][STATS][TYPE_PROP][0] !== UNKNOWN
+                                  if (isKnown) {
+                                    if (
+                                      expectedArgs[i][TYPE] !==
+                                      env[CAR][STATS][TYPE_PROP][0]
+                                    ) {
+                                      errorStack.add(
+                                        `Incorrect type of argument (${i}) for special form (${
+                                          first[VALUE]
+                                        }). Expected (${toTypeNames(
+                                          expectedArgs[i][TYPE]
+                                        )}) but got (${toTypeNames(
+                                          env[CAR][STATS][TYPE_PROP][0]
+                                        )}) (${stringifyArgs(exp)}) (check #3)`
+                                      )
+                                    } else if (
+                                      expectedArgs[i][SUB] &&
+                                      env[CAR][STATS][RETURNS][1] !==
+                                        expectedArgs[i][SUB]
+                                    )
+                                      errorStack.add(
+                                        `Incorrect type of argument (${i}) for special form (${
+                                          first[VALUE]
+                                        }). Expected (${toTypeNames(
+                                          expectedArgs[i][SUB]
+                                        )}) but got (${toTypeNames(
+                                          env[CAR][STATS][RETURNS][1] ??
+                                            env[CAR][STATS][TYPE_PROP][0]
+                                        )}) (${stringifyArgs(exp)}) (check #6)`
+                                      )
+                                  } else if (env[rest[i][VALUE]]) {
+                                    env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
+                                      expectedArgs[i][TYPE]
+                                  }
+                                }
+                                break
+                              // case APPLY:
+                              //   errorStack.add(
+                              //     `Incorrect type of arguments for (${
+                              //       first[VALUE]
+                              //     }). Expected (${toTypeNames(
+                              //       expectedArgs[i][TYPE]
+                              //     )}) but got (${toTypeNames(
+                              //       rest[i][TYPE]
+                              //     )}) (${stringifyArgs(exp)}) (check #5)`
+                              //   )
+                              //   break
+                              case ATOM: {
+                                if (rest[i][TYPE] !== expectedArgs[i][TYPE]) {
+                                  errorStack.add(
+                                    `Incorrect type of argument (${i}) for special form (${
+                                      first[VALUE]
+                                    }). Expected (${toTypeNames(
+                                      expectedArgs[i][TYPE]
+                                    )}) but got (${toTypeNames(
+                                      rest[i][TYPE]
+                                    )}) (${stringifyArgs(exp)}) (check #2)`
+                                  )
+                                }
+                                break
+                              }
+                            }
                           }
+                          // if (
+                          //   env[rest[i][VALUE]] &&
+                          //   expectedArgs[i][TYPE] !== rest[i][TYPE]
+                          // ) {
+                          //   switch (rest[i][TYPE]) {
+                          //     // case UNKNOWN:
+                          //     //   env[first[VALUE]][STATS][TYPE_PROP][0] =
+                          //     //     expectedArgs[i][TYPE]
+                          //     //   break
+                          //     case WORD:
+                          //       const T =
+                          //         env[rest[i][VALUE]][STATS][TYPE_PROP][0]
+                          //       if (
+                          //         T !== UNKNOWN &&
+                          //         expectedArgs[i][TYPE] !== UNKNOWN &&
+                          //         expectedArgs[i][TYPE] !== T
+                          //       ) {
+                          //         errorStack.add(
+                          //           `Incorrect type of argument (${i}) for special form (${
+                          //             first[VALUE]
+                          //           }). Expected (${toTypeNames(
+                          //             expectedArgs[i][TYPE]
+                          //           )}) but got (${toTypeNames(
+                          //             T
+                          //           )}) (${stringifyArgs(exp)}) (check #3.1)`
+                          //         )
+                          //       } else {
+                          //         env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
+                          //           expectedArgs[i][TYPE]
+                          //       }
+                          //       break
+                          //     case APPLY:
+                          //     case ATOM:
+                          //       errorStack.add(
+                          //         `Incorrect type of arguments for (${
+                          //           first[VALUE]
+                          //         }). Expected (${toTypeNames(
+                          //           expectedArgs[i][TYPE]
+                          //         )}) but got (${toTypeNames(
+                          //           rest[i][TYPE]
+                          //         )}) (${stringifyArgs(exp)}) (check #5)`
+                          //       )
+                          //       break
+                          //   }
+                          // } else {
+                          //   // TIDI fugyre iyt wgat ti di gere
+                          // }
                         }
                       }
                       // type checking
@@ -1356,8 +1406,7 @@ export const typeCheck = (ast) => {
                               env[rest[i][VALUE]][STATS][TYPE_PROP][0] !==
                                 args[i][STATS][TYPE_PROP][0])
                           ) {
-                            errorStack.set(
-                              key.str,
+                            errorStack.add(
                               `Incorrect type of arguments ${i} for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
@@ -1393,8 +1442,7 @@ export const typeCheck = (ast) => {
                           env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
                             args[i][STATS][TYPE_PROP][0]
                         ) {
-                          errorStack.set(
-                            key.str,
+                          errorStack.add(
                             `Incorrect type of arguments ${i} for (${
                               first[VALUE]
                             }). Expected (${toTypeNames(
@@ -1403,19 +1451,21 @@ export const typeCheck = (ast) => {
                               env[rest[i][0][VALUE]][STATS][RETURNS][0]
                             )}) (${stringifyArgs(exp)}) (check #4)`
                           )
-                        } else {
-                          if (
-                            rest[i].length &&
-                            env[rest[i][0][VALUE]] &&
-                            args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
-                            env[rest[i][0][VALUE]][STATS].retried < RETRY_COUNT
-                          ) {
-                            env[rest[i][0][VALUE]][STATS].retried += 1
-                            if (!scope[SCOPE_NAME])
-                              scope[SCOPE_NAME] = scope[1][VALUE]
-                            stack.unshift(() => check(exp, env, scope))
-                          }
                         }
+                        // TODO figure out why we don't need this anymore
+                        // else {
+                        //   if (
+                        //     rest[i].length &&
+                        //     env[rest[i][0][VALUE]] &&
+                        //     args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
+                        //     env[rest[i][0][VALUE]][STATS].retried < RETRY_COUNT
+                        //   ) {
+                        //     env[rest[i][0][VALUE]][STATS].retried += 1
+                        //     if (!scope[SCOPE_NAME])
+                        //       scope[SCOPE_NAME] = scope[1][VALUE]
+                        //     stack.unshift(() => check(exp, env, scope))
+                        //   }
+                        // }
                       }
                     }
                   }
@@ -1432,7 +1482,7 @@ export const typeCheck = (ast) => {
   copy[SCOPE_NAME] = 'root'
   check(copy, root, copy)
   while (stack.length) stack.pop()()
-  const issues = [...new Set(errorStack.values()), ...warningStack]
+  const issues = [...errorStack, ...warningStack]
   if (issues.length) throw new TypeError(issues.join('\n'))
   return ast
 }
