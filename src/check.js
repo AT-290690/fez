@@ -1275,10 +1275,9 @@ export const typeCheck = (ast) => {
                   {
                     const isPredicate =
                       getSuffix(first[VALUE]) === PREDICATE_SUFFIX
-                    if (!isKnown && isPredicate) {
-                      T[TYPE_PROP][1] = PREDICATE
+                    if (isPredicate) {
+                      if (isKnown) T[TYPE_PROP][1] = PREDICATE
                       T[RETURNS] = [ATOM, PREDICATE]
-                      console.log(T)
                     }
                   }
                   break
