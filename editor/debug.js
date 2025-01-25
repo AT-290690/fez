@@ -75,8 +75,8 @@ export const debug = (ast) => {
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
       return [...types.entries()]
-        .filter(([k, v]) => v.includes(args[0][VALUE]))
-        .map(([k, v]) => `${k}\n${v}`)
+        .filter(([k, v]) => v().includes(args[0][VALUE]))
+        .map(([k, v]) => `${k}\n${v()}`)
         .join('\n\n')
     },
     [DEBUG.SIGNATURE]: (args, env) => {

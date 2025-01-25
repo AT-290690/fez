@@ -34,7 +34,6 @@ const PREDICATE = 3
 const COLLECTION = 4
 const RETRY_COUNT = 1
 const DEFINITON_RETRY_COUNT = 1
-const SUB = 2
 const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -123,8 +122,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [UNKNOWN],
-              [RETURNS]: [UNKNOWN],
+              [TYPE_PROP]: [APPLY],
+              [RETURNS]: [APPLY],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -145,8 +144,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [UNKNOWN],
-              [RETURNS]: [UNKNOWN],
+              [TYPE_PROP]: [ATOM],
+              [RETURNS]: [ATOM],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -167,8 +166,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [UNKNOWN],
-              [RETURNS]: [UNKNOWN],
+              [TYPE_PROP]: [APPLY, PREDICATE],
+              [RETURNS]: [APPLY, PREDICATE],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -189,8 +188,8 @@ export const typeCheck = (ast) => {
             [STATS]: {
               retried: RETRY_COUNT,
               [SIGNATURE]: PLACEHOLDER,
-              [TYPE_PROP]: [UNKNOWN],
-              [RETURNS]: [UNKNOWN],
+              [TYPE_PROP]: [COLLECTION],
+              [RETURNS]: [COLLECTION],
               [ARGS_COUNT]: [],
               [ARGUMENTS]: [],
               [ARGS_COUNT]: 0
@@ -1593,7 +1592,7 @@ export const typeCheck = (ast) => {
                   // }
                   check(rest.at(-1), env, scope)
                 }
-                Types.set(withScope(name, env), formatType(name, env))
+                Types.set(withScope(name, env), () => formatType(name, env))
               }
             }
             break
@@ -1901,7 +1900,6 @@ export const typeCheck = (ast) => {
                         for (let i = 0; i < rest.length; ++i) {
                           const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                           const MAIN_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
-
                           if (MAIN_TYPE === UNKNOWN) continue
                           if (!isLeaf(rest[i])) {
                             const CAR = rest[i][0][VALUE]

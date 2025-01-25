@@ -73,4 +73,6 @@ export const DEBUG = {
   TYPE_SIGNATURE: 'type?'
 }
 
-export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))
+export const SPECIAL_FORMS_SET = new Set(
+  Object.values(KEYWORDS).concat(Object.values(STATIC_TYPES))
+)
