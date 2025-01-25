@@ -415,7 +415,7 @@ export const typeCheck = (ast) => {
           [UNKNOWN, PLACEHOLDER],
           [UNKNOWN, PLACEHOLDER]
         ],
-        [RETURNS]: [ATOM]
+        [RETURNS]: [UNKNOWN]
       }
     },
     [KEYWORDS.NOT]: {
@@ -587,7 +587,16 @@ export const typeCheck = (ast) => {
                           const re = rem.slice(2)
                           if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
                             env[name][STATS][prop][0] = ATOM
-                          } else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
+                            if (
+                              getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
+                              getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
+                            )
+                              env[name][STATS][RETURNS] = [ATOM, PREDICATE]
+                          } else if (
+                            !isLeaf(re[0]) &&
+                            env[re[0][0][VALUE]] &&
+                            env[re[0][0][VALUE]][STATS][RETURNS][0] !== UNKNOWN
+                          ) {
                             env[name][STATS][prop] =
                               env[re[0][0][VALUE]][STATS][RETURNS]
                             if (
@@ -603,11 +612,36 @@ export const typeCheck = (ast) => {
                               }
                             }
                             // env[name][STATS] = env[re[0][0][VALUE]][STATS]
+                          } else if (
+                            !isLeaf(re[1]) &&
+                            env[re[1][0][VALUE]] &&
+                            env[re[1][0][VALUE]][STATS][RETURNS][0] !== UNKNOWN
+                          ) {
+                            env[name][STATS][prop] =
+                              env[re[1][0][VALUE]][STATS][RETURNS]
+                            if (
+                              re[1][0][TYPE] === APPLY &&
+                              !name.startsWith(OPTIMIZED_PREFIX)
+                            ) {
+                              switch (re[1][0][VALUE]) {
+                                case KEYWORDS.ANONYMOUS_FUNCTION:
+                                  env[name][STATS][RETURNS] = [UNKNOWN]
+                                  env[name][STATS][ARGS_COUNT] =
+                                    re[1].length - 2
+                                  break
+                              }
+                            }
+                            // env[name][STATS] = env[re[0][0][VALUE]][STATS]
                           } else if (env[re[0][VALUE]]) {
                             env[name][STATS][prop][0] =
                               env[re[0][VALUE]][STATS][TYPE_PROP][0]
                             env[name][STATS][RETURNS][1] =
                               env[re[0][VALUE]][STATS][RETURNS][1]
+                          } else if (env[re[1][VALUE]]) {
+                            env[name][STATS][prop][1] =
+                              env[re[1][VALUE]][STATS][TYPE_PROP][0]
+                            env[name][STATS][RETURNS][1] =
+                              env[re[1][VALUE]][STATS][RETURNS][1]
                           } else env[name][STATS][prop] = [UNKNOWN]
                         }
                         break
@@ -924,7 +958,6 @@ export const typeCheck = (ast) => {
                             const alternative = isLeaf(re[1])
                               ? copy[re[1][VALUE]]
                               : copy[re[1][0][VALUE]]
-
                             // todo check if condition matches alternative
                             if (
                               concequent &&

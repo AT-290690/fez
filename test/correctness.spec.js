@@ -1240,6 +1240,20 @@ ZZZ=ZZZ,ZZZ")
       evalJS(`(array:exclude (array 1 2 3 4 5) math:even?)`),
       [1, 3, 5]
     )
+    deepStrictEqual(
+      evalJS(`(let array:unique (lambda xs (|>
+        (let sorted (array:sort xs (lambda a b (> a b))))
+        (array:zip (math:sequence sorted))
+        (array:select (lambda x (do 
+                    (let index (array:second x)) 
+                    (or (not (> index 0))
+                    (not (= (get sorted (- index 1)) (get sorted index)))))))
+        (array:map array:first))))
+        
+  (array:unique [1 1 1 1 2 3 3 4 4 4 4])`),
+      [1, 2, 3, 4]
+    )
+
     strictEqual(
       evalJS(
         `(let *input*

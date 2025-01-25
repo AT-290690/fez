@@ -11,6 +11,7 @@ import {
   KEYWORDS,
   PLACEHOLDER,
   PREDICATE_SUFFIX,
+  STATIC_TYPES,
   TRUE,
   TYPE,
   VALUE,
@@ -529,7 +530,7 @@ export const deSuggarAst = (ast, scope) => {
                         )
                       }
                       const args = last.slice(1, -1)
-                      const newName = `${OPTIMIZED_PREFIX}*${performance
+                      const newName = `${OPTIMIZED_PREFIX}${name}::*${performance
                         .now()
                         .toString()
                         .replace('.', 0)}*`
@@ -549,76 +550,79 @@ export const deSuggarAst = (ast, scope) => {
                       )
 
                       exp[exp.length - 1] = [
-                        [APPLY, KEYWORDS.CALL_FUNCTION],
+                        [APPLY, STATIC_TYPES.UNKNOWN],
                         [
-                          [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                          [APPLY, KEYWORDS.CALL_FUNCTION],
                           [
-                            [APPLY, KEYWORDS.BLOCK],
+                            [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
                             [
-                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              [WORD, newName],
-                              last
-                            ],
-                            args.length < 5
-                              ? [
-                                  [
-                                    APPLY,
-                                    `optimization:tail-calls-${args.length}`
-                                  ],
-                                  [WORD, newName]
-                                ]
-                              : [
-                                  [APPLY, KEYWORDS.CALL_FUNCTION],
-                                  [WORD, newName],
-                                  [
-                                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                    [WORD, '*fn*'],
+                              [APPLY, KEYWORDS.BLOCK],
+                              [
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                [WORD, newName],
+                                last
+                              ],
+                              args.length < 5
+                                ? [
+                                    [
+                                      APPLY,
+                                      `optimization:tail-calls-${args.length}`
+                                    ],
+                                    [WORD, newName]
+                                  ]
+                                : [
+                                    [APPLY, KEYWORDS.CALL_FUNCTION],
+                                    [WORD, newName],
                                     [
                                       [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                      ...args,
+                                      [WORD, '*fn*'],
                                       [
-                                        [APPLY, KEYWORDS.BLOCK],
+                                        [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                        ...args,
                                         [
-                                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                          [WORD, '*res*'],
+                                          [APPLY, KEYWORDS.BLOCK],
                                           [
-                                            [APPLY, KEYWORDS.CREATE_ARRAY],
-                                            [[APPLY, '*fn*'], ...args]
-                                          ]
-                                        ],
-                                        [
-                                          [APPLY, KEYWORDS.LOOP],
-                                          [
-                                            [APPLY, KEYWORDS.IS_LAMBDA],
+                                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                            [WORD, '*res*'],
                                             [
-                                              [APPLY, KEYWORDS.GET_ARRAY],
-                                              [WORD, '*res*'],
-                                              [ATOM, 0]
+                                              [APPLY, KEYWORDS.CREATE_ARRAY],
+                                              [[APPLY, '*fn*'], ...args]
                                             ]
                                           ],
                                           [
-                                            [APPLY, KEYWORDS.SET_ARRAY],
-                                            [WORD, '*res*'],
-                                            [ATOM, 0],
+                                            [APPLY, KEYWORDS.LOOP],
                                             [
-                                              [APPLY, KEYWORDS.CALL_FUNCTION],
+                                              [APPLY, KEYWORDS.IS_LAMBDA],
                                               [
                                                 [APPLY, KEYWORDS.GET_ARRAY],
                                                 [WORD, '*res*'],
                                                 [ATOM, 0]
                                               ]
+                                            ],
+                                            [
+                                              [APPLY, KEYWORDS.SET_ARRAY],
+                                              [WORD, '*res*'],
+                                              [ATOM, 0],
+                                              [
+                                                [APPLY, KEYWORDS.CALL_FUNCTION],
+                                                [
+                                                  [APPLY, KEYWORDS.GET_ARRAY],
+                                                  [WORD, '*res*'],
+                                                  [ATOM, 0]
+                                                ]
+                                              ]
                                             ]
+                                          ],
+                                          [
+                                            [APPLY, KEYWORDS.GET_ARRAY],
+                                            [WORD, '*res*'],
+                                            [ATOM, 0]
                                           ]
-                                        ],
-                                        [
-                                          [APPLY, KEYWORDS.GET_ARRAY],
-                                          [WORD, '*res*'],
-                                          [ATOM, 0]
                                         ]
                                       ]
                                     ]
                                   ]
-                                ]
+                            ]
                           ]
                         ]
                       ]
@@ -630,7 +634,7 @@ export const deSuggarAst = (ast, scope) => {
                         )
                       }
                       const args = last.slice(1, -1)
-                      const newName = `${OPTIMIZED_PREFIX}*${performance
+                      const newName = `${OPTIMIZED_PREFIX}${name}::*${performance
                         .now()
                         .toString()
                         .replace('.', 0)}*`
@@ -647,55 +651,61 @@ export const deSuggarAst = (ast, scope) => {
                       const keyName = newName + ':key'
 
                       exp[exp.length - 1] = [
-                        [APPLY, KEYWORDS.CALL_FUNCTION],
+                        [APPLY, STATIC_TYPES.UNKNOWN],
                         [
-                          [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                          [APPLY, KEYWORDS.CALL_FUNCTION],
                           [
-                            [APPLY, KEYWORDS.BLOCK],
+                            [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
                             [
-                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              [WORD, memoName],
-                              [[APPLY, 'new:map64']]
-                            ],
-                            [
-                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                              [WORD, newName],
+                              [APPLY, KEYWORDS.BLOCK],
                               [
-                                [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                ...args,
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                [WORD, memoName],
+                                [[APPLY, 'new:map64']]
+                              ],
+                              [
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                [WORD, newName],
                                 [
-                                  [APPLY, KEYWORDS.BLOCK],
+                                  [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                  ...args,
                                   [
-                                    [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                    [WORD, keyName],
+                                    [APPLY, KEYWORDS.BLOCK],
                                     [
-                                      [APPLY, 'from:string-or-number->key'],
-                                      [[APPLY, KEYWORDS.CREATE_ARRAY], ...args]
-                                    ]
-                                  ],
-                                  [
-                                    [APPLY, KEYWORDS.IF],
-                                    [
-                                      [APPLY, 'map:exists?'],
-                                      [WORD, memoName],
-                                      [WORD, keyName]
-                                    ],
-                                    [
-                                      [APPLY, 'map:get'],
-                                      [WORD, memoName],
-                                      [WORD, keyName]
-                                    ],
-                                    [
-                                      [APPLY, 'map:set-and-get!'],
-                                      [WORD, memoName],
+                                      [APPLY, KEYWORDS.DEFINE_VARIABLE],
                                       [WORD, keyName],
-                                      last.at(-1)
+                                      [
+                                        [APPLY, 'from:string-or-number->key'],
+                                        [
+                                          [APPLY, KEYWORDS.CREATE_ARRAY],
+                                          ...args
+                                        ]
+                                      ]
+                                    ],
+                                    [
+                                      [APPLY, KEYWORDS.IF],
+                                      [
+                                        [APPLY, 'map:exists?'],
+                                        [WORD, memoName],
+                                        [WORD, keyName]
+                                      ],
+                                      [
+                                        [APPLY, 'map:get'],
+                                        [WORD, memoName],
+                                        [WORD, keyName]
+                                      ],
+                                      [
+                                        [APPLY, 'map:set-and-get!'],
+                                        [WORD, memoName],
+                                        [WORD, keyName],
+                                        last.at(-1)
+                                      ]
                                     ]
                                   ]
                                 ]
-                              ]
-                            ],
-                            [WORD, newName]
+                              ],
+                              [WORD, newName]
+                            ]
                           ]
                         ]
                       ]

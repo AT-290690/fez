@@ -10,6 +10,14 @@ const fails = (source, message, name = 'TypeError') =>
 
 describe('Should throw errors', () => {
   it('Does not throw', () => {
+    passes(`(let array:unique (lambda xs (|>
+      (let sorted (array:sort xs (lambda a b (> a b))))
+      (array:zip (math:sequence sorted))
+      (array:select (lambda x (do 
+                  (let index (array:second x)) 
+                  (or (not (> index 0))
+                  (not (= (get sorted (- index 1)) (get sorted index)))))))
+      (array:map array:first))))`)
     passes(`(set! [] 0 10)`)
     passes(`(let map (new:map ["name" "Anthony" "age" 34]))
 (let option (map:get-option map "age"))
@@ -596,7 +604,16 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Application) (array:get (array 1 2 3) (lambda 1)) (check #4)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #4)`
     )
-
+    fails(
+      `(let array:unique (lambda xs (|>
+      (let sorted (array:sort xs (lambda a b (> a b))))
+      (array:zip (math:sequence sorted))
+      (array:select (lambda x (do 
+                  (let index (array:second x)) (or (not (> x 0))
+                  (not (= (get sorted (- index 1)) (get sorted index)))))))
+      (array:map array:first))))`,
+      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)`
+    )
     fails(
       `(let INPUT
 "............
@@ -794,8 +811,7 @@ Incorrect type of arguments (0) for (and). Expected (Predicate) but got (Collect
 Incorrect type of argument (0) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
 Incorrect type of argument (1) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
 Incorrect type of arguments (1) for (and). Expected (Predicate) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #21)
-Incorrect type of arguments (0) for (and). Expected (Predicate) but got (Atom) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #21)
-Incorrect type of arguments for special form (and). Expected (Predicate) but got (Atom) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #13)
+Incorrect type of arguments (0) for (and). Expected (Predicate) but got (Unknown) (and (if (= ch letter) (var:get (var:set! at-least-one? 1)) 0) (not (= (& (var:get bitmask) mask) 0))) (check #21)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (array:first x) (array:set! a (array:length a) (from:digit->char (array:second x))) (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x)))) (check #21)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (cb cell) (array:push! coords (array y x)) 0) (check #21)
 Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Unknown) (or (= i 0) (cb x (array:get xs (- i 1)))) (check #21)
