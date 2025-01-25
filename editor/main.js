@@ -112,7 +112,7 @@ document.addEventListener('keydown', (e) => {
           `?t=${THEME}&l=${encodeURIComponent(compressed)}`
         window.history.pushState({ path: newurl }, '', newurl)
       } catch (error) {
-        // console.log(error)
+        console.log(error)
         terminal.setValue(error.message)
         terminal.clearSelection()
       }
@@ -133,6 +133,7 @@ document.addEventListener('keydown', (e) => {
           )
         )
       } catch (error) {
+        console.log(compile(parse(editor.getValue())))
         terminal.setValue(error.message)
       }
       terminal.clearSelection()

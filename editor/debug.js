@@ -282,7 +282,7 @@ export const debug = (ast) => {
       error: null
     }
   } catch (error) {
-    // console.log(error)
+    console.log(error)
     return {
       evaluated: null,
       error: {
