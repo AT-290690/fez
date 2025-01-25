@@ -5,14 +5,14 @@
 </p>
 
 ```lisp
-(let fizz-buzz (lambda n
+(let fezz-buzz (lambda n
         (cond
-          (= (mod n 15) 0) "FizzBuzz"
-          (= (mod n 3) 0) "Fizz"
+          (= (mod n 15) 0) "FezzBuzz"
+          (= (mod n 3) 0) "Fezz"
           (= (mod n 5) 0) "Buzz"
           (*) (from:integer->string n))))
 
-(|> (math:range 1 100) (array:map fizz-buzz) (array:spaces) (string))
+(|> (math:range 1 100) (array:map fezz-buzz) (array:spaces) (string))
 ```
 
 ## [Try it in online editor](https://at-290690.github.io/fez/)
