@@ -133,7 +133,6 @@ document.addEventListener('keydown', (e) => {
           )
         )
       } catch (error) {
-        console.log(compile(parse(editor.getValue())))
         terminal.setValue(error.message)
       }
       terminal.clearSelection()

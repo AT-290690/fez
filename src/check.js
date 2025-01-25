@@ -79,12 +79,15 @@ const formatType = (name, env) => {
   const stats = env[name][STATS]
   return stats
     ? stats[TYPE_PROP][0] === APPLY
-      ? `${name}: ${toTypeNames(APPLY)} = (${(stats[ARGS] ?? [])
-          .map((x) => `${x[VALUE]}: ${toTypeNames(x[TYPE], x)}`)
+      ? `${name} (${(stats[ARGUMENTS] ?? [])
+          .map(
+            (x) =>
+              `${x[STATS][SIGNATURE]} ${toTypeNames(x[STATS][TYPE_PROP][0])}`
+          )
           .join(' ')}) -> ${toTypeNames(
           stats[RETURNS][1] ?? stats[RETURNS][0]
         )}`
-      : `${name}: ${toTypeNames(stats[TYPE_PROP][0])}}`
+      : `${name} ${toTypeNames(stats[TYPE_PROP][0])}`
     : name
 }
 const formatTypes = (env) => {
@@ -94,25 +97,21 @@ const formatTypes = (env) => {
   }
   return out
 }
-// const getScopeNames = (scope) => {
-//   const scopeNames = []
-//   let current = scope
-//   while (current) {
-//     if (current[SCOPE_NAME]) {
-//       scopeNames.push(current[SCOPE_NAME])
-//     }
-//     current = Object.getPrototypeOf(current)
-//   }
-//   return scopeNames.reverse()
-// }
-// const withScope = (name, scope) => {
-//   const chain = getScopeNames(scope)
-//   const str = `${chain.join('_')}_${name}::${performance
-//     .now()
-//     .toString()
-//     .replace('.', 0)}`
-//   return { str, chain }
-// }
+const getScopeNames = (scope) => {
+  const scopeNames = []
+  let current = scope
+  while (current) {
+    if (current[SCOPE_NAME]) {
+      scopeNames.push(current[SCOPE_NAME])
+    }
+    current = Object.getPrototypeOf(current)
+  }
+  return scopeNames.reverse()
+}
+const withScope = (name, scope) => {
+  const chain = getScopeNames(scope)
+  return `${chain.join(' ')} ${name}`
+}
 export const typeCheck = (ast) => {
   const root = {
     [toTypeNames(APPLY)]: {
@@ -1322,6 +1321,7 @@ export const typeCheck = (ast) => {
   }
   const errorStack = new Set()
   const warningStack = new Set()
+  const Types = new Map()
   const stack = []
   const check = (exp, env, scope) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
@@ -1527,6 +1527,7 @@ export const typeCheck = (ast) => {
                       retried: 0,
                       [ARGS_COUNT]: n - 2,
                       [ARGS]: [],
+                      [ARGUMENTS]: [],
                       [RETURNS]: [UNKNOWN]
                     }
                   }
@@ -1676,6 +1677,7 @@ export const typeCheck = (ast) => {
                   // }
                   check(rest.at(-1), env, scope)
                 }
+                Types.set(withScope(name, env), formatType(name, env))
               }
             }
             break
@@ -1701,14 +1703,19 @@ export const typeCheck = (ast) => {
                 const param = params[i]
                 copy[param[VALUE]] = {
                   [STATS]: {
+                    [SIGNATURE]: param[VALUE],
                     [TYPE_PROP]: [UNKNOWN],
                     [RETURNS]: [UNKNOWN],
+                    [ARGS]: [],
+                    [ARGUMENTS]: [],
                     retried: 0
                   }
                 }
                 const ref = env[copy[SCOPE_NAME]]
                 if (ref) {
-                  if (ref[STATS][ARGS]) ref[STATS][ARGS][i] = copy[param[VALUE]]
+                  // DELETE THIS
+                  ref[STATS][ARGS][i] = copy[param[VALUE]]
+                  ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
                   if (getSuffix(param[VALUE]) === PREDICATE_SUFFIX) {
                     copy[param[VALUE]][STATS][RETURNS] = [ATOM, PREDICATE]
                   } else {
@@ -1812,7 +1819,9 @@ export const typeCheck = (ast) => {
                   }
 
                   // also type of arg
+                  // DELETE THIS
                   const args = env[first[VALUE]][STATS][ARGS]
+                  // const args2 = env[first[VALUE]][STATS][ARGUMENTS]
                   if (args) {
                     for (let i = 0; i < args.length; ++i) {
                       // type check
@@ -1980,7 +1989,10 @@ export const typeCheck = (ast) => {
                       }
 
                       if (first[TYPE] === APPLY && isSpecial) {
+                        //  DEEKETE THIS
                         const expectedArgs = env[first[VALUE]][STATS][ARGS]
+                        // const expectedArgs2 = env[first[VALUE]][STATS][ARGUMENTS]
+
                         for (let i = 0; i < rest.length; ++i) {
                           if (expectedArgs[i][TYPE] === UNKNOWN) continue
                           if (!isLeaf(rest[i])) {
@@ -2155,7 +2167,6 @@ export const typeCheck = (ast) => {
                 }
               }
             })
-            // console.log(formatTypes(env))
             for (const r of rest) check(r, env, scope)
             break
         }
@@ -2167,6 +2178,7 @@ export const typeCheck = (ast) => {
   check(copy, root, copy)
   while (stack.length) stack.pop()()
   const issues = [...errorStack, ...warningStack]
+  // console.log([...Types.entries()].map(([k, v]) => `${v}`).join('\n\n'))
   if (issues.length) throw new TypeError(issues.join('\n'))
   return ast
 }
