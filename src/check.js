@@ -1397,7 +1397,7 @@ export const typeCheck = (ast) => {
                                   fn[STATS][RETURNS][1] !== PREDICATE
                                 ) {
                                   warningStack.add(
-                                    `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
+                                    `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
                                   )
                                 }
                                 env[name][STATS][TYPE_PROP][0] =
@@ -1439,7 +1439,7 @@ export const typeCheck = (ast) => {
                     env[name][STATS][RETURNS][1] !== PREDICATE
                   ) {
                     warningStack.add(
-                      `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+                      `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #7)`
                     )
                   } else if (
                     !isPredicate &&
@@ -1587,7 +1587,7 @@ export const typeCheck = (ast) => {
                               fn[STATS][RETURNS][1] !== PREDICATE
                             ) {
                               warningStack.add(
-                                `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
+                                `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
                               )
                             }
                             env[name][STATS][TYPE_PROP] = fn[STATS][RETURNS]

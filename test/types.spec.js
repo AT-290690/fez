@@ -397,8 +397,8 @@ Incorrect type of argument (0) for special form (set!). Expected (Collection) bu
 (do
 (let add (lambda a (+ a 1)))
 (let fn? (lambda x (apply x (lambda x (add x))))))`,
-      `fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)
-fn? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+      `fn? ends in (?) and is expected to return (Predicate) but it doesn't (check #25)
+fn? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
     )
     fails(
       `(let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply ["Hello"] array:first))))`,
@@ -411,7 +411,7 @@ Incorrect type of argument (1) for (and). Expected (Predicate) but got an (Unkno
     )
     fails(
       `(let x? (apply 1 math:increment))`,
-      `x? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #25)`
+      `x? ends in (?) and is expected to return (Predicate) but it doesn't (check #25)`
     )
     fails(
       `(let x ())`,
@@ -427,7 +427,7 @@ Incorrect type of argument (1) for (and). Expected (Predicate) but got an (Unkno
                               (f (list:head xs)) 1
                               (*) (list:some? (list:tail xs) f))))`,
       `Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (f (list:head xs)) 1 (if (1) (list:some? (list:tail xs) f) 0)) (check #21)
-list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
     )
     fails(
       `
@@ -524,7 +524,7 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try
 
 [(part1 PARSED)]
 `,
-      `fit? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+      `fit? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
     )
     fails(
       `(let fn1 (lambda 1y x (do 
@@ -910,21 +910,21 @@ Trying to access undefined variable xs (check #11)
 Incorrect type of arguments 0 for (math:sequence). Expected (Collection) but got (Atom) (math:sequence a) (check #30)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-list:every? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+list:every? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 predicate should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 predicate is assigned to the result of a (Predicate) so predicate must end in (?) (check #23)
-string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
-set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)
+string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 is-negative is assigned to match:negative? which ends in (?) so is-negative must also end in (?) (check #19)
 is-negative should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-negative is assigned to the result of a (Predicate) so is-negative must end in (?) (check #23)
 special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-at-least-one? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)`
+at-least-one? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
     )
   })
 })
