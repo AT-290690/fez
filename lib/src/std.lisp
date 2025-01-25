@@ -162,12 +162,12 @@
 (let math:multiplication (lambda a b (* a b)))
 (let math:division (lambda a b (/ a b)))
 (let math:subtraction (lambda a b (- a b)))
-(let math:summation (lambda xs (array:fold xs (lambda a b (+ a b)) (+))))
-(let math:product (lambda xs (array:fold xs (lambda a b (* a b)) (*))))
+(let math:summation (lambda xs (Atom (array:fold xs (lambda a b (+ a b)) (+)))))
+(let math:product (lambda xs (Atom (array:fold xs (lambda a b (* a b)) (*)))))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
-(let math:maximum (lambda xs (array:fold xs math:max (array:first xs))))
-(let math:minimum (lambda xs (array:fold xs math:min (array:first xs))))
+(let math:maximum (lambda xs (Atom (array:fold xs math:max (array:first xs)))))
+(let math:minimum (lambda xs (Atom (array:fold xs math:min (array:first xs)))))
 (let math:maximum-index (lambda xs (array:second (array:enumerated-fold xs (lambda a x i (if (> x (array:first a)) (array x i) a)) (array (array:first xs) math:min-safe-integer)))))
 (let math:minimum-index (lambda xs (array:second (array:enumerated-fold xs (lambda a x i (if (< x (array:first a)) (array x i) a)) (array (array:first xs) math:max-safe-integer)))))
 (let math:max-length (lambda xs (array:fold xs (lambda a b (if (> (length b) a) (length b) a)) math:min-safe-integer)))
@@ -449,7 +449,7 @@
                               (recursive:array:map (+ i 1)
                                 (set! out (length out) (cb (get xs i))))
                               out)))
-                      (recursive:array:map 0 []))))
+                      (Collection (recursive:array:map 0 [])))))
 (let array:select (lambda xs cb? (do
                   (let recursive:array:select (lambda i out
                         (if (> (length xs) i)
@@ -527,7 +527,7 @@
   xs)))
 (let array:empty? (lambda xs (= (length xs) 0)))
 (let array:not-empty? (lambda xs (not (= (length xs) 0))))
-(let array:count-of (lambda xs cb (length (array:select xs cb))))
+(let array:count-of (lambda xs cb? (length (array:select xs cb?))))
 (let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
 (let array:empty! (lambda xs (do (let recursive:array:empty! (lambda (if (> (length xs) 0) (apply (lambda (do (del! xs) (recursive:array:empty!)))) xs))) (recursive:array:empty!))))
 (let array:in-bounds? (lambda xs index (and (< index (length xs)) (>= index 0))))
@@ -538,7 +538,7 @@
           (if (< i bounds)
               (recursive:array:slice (+ i 1) (set! out (length out) (get xs (+ start i))))
               out)))
-        (recursive:array:slice 0 []))))
+        (Collection (recursive:array:slice 0 [])))))
 
 (let car (lambda xs (get xs 0)))
 (let cdr (lambda xs (do

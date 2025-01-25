@@ -387,8 +387,7 @@ Incorrect type of argument (0) for special form (set!). Expected (Collection) bu
     )
     fails(
       `(and (apply [1] math:summation) 1)`,
-      `Incorrect type of argument (0) for (and). Expected (Atom) but got an (Unknown) (and (apply (array 1) math:summation) 1) (check #26)
-Incorrect type of argument (0) for (and). Expected (Predicate) but got an (Unknown) which is neither 1 or 0 (and (apply (array 1) math:summation) 1) (check #27)`
+      `Incorrect type of argument (0) for (and). Expected (Predicate) but got an (Atom) which is neither 1 or 0 (and (apply (array 1) math:summation) 1) (check #27)`
     )
     fails(
       `(do
@@ -815,6 +814,7 @@ Incorrect type of arguments (0) for (and). Expected (Predicate) but got (Unknown
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (array:first x) (array:set! a (array:length a) (from:digit->char (array:second x))) (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x)))) (check #21)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (cb cell) (array:push! coords (array y x)) 0) (check #21)
 Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Unknown) (or (= i 0) (cb x (array:get xs (- i 1)))) (check #21)
+Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)
 Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
 Incorrect type of arguments (0) for (not). Expected (Predicate) but got (Unknown) (not (cb (array:get xs i))) (check #21)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (cb (array:get xs i)) (array:set! out (array:length out) (array:get xs i)) out) (check #21)
@@ -826,6 +826,7 @@ Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown)
 Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Unknown) (or (= n 2) (recursive:math:prime 2 (math:sqrt n))) (check #21)
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
+Incorrect type of arguments 0 for (math:sequence). Expected (Collection) but got (Atom) (math:sequence a) (check #30)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (try wrapping it in a (true?) or (false?)) (check #7)

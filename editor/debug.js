@@ -17,7 +17,7 @@ import {
 import { LISP } from '../src/parser.js'
 import { stringifyArgs } from '../src/utils.js'
 
-export const debug = (ast) => {
+export const debug = (ast, checkTypes = true) => {
   let types
   const debugEnv = {
     ...keywords,
@@ -74,8 +74,15 @@ export const debug = (ast) => {
     },
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
+      if (args.length !== 1)
+        throw new RangeError(
+          `Invalid number of arguments to (${DEBUG.TYPE_SIGNATURE}) (= 1) (${
+            DEBUG.TYPE_SIGNATURE
+          } ${stringifyArgs(args)})`
+        )
       return [...types.entries()]
         .filter(([k, v]) => v().includes(args[0][VALUE]))
+        .sort((a, b) => a[0].length - b[0].length)
         .map(([k, v]) => `${k}\n${v()}`)
         .join('\n\n')
     },
@@ -279,7 +286,7 @@ export const debug = (ast) => {
     }
   }
   try {
-    types = typeCheck(ast)[1]
+    types = checkTypes ? typeCheck(ast)[1] : []
     const evaluated = evaluate(ast, debugEnv)
     const block = ast[1][1]
     const temp = block.shift()

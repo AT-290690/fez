@@ -143,7 +143,7 @@ document.addEventListener('keydown', (e) => {
     const selection = terminal.getSelectedText()?.trim()
     if (selection) {
       const parsed = parse(selection)
-      const { evaluated, error } = debug(parsed)
+      const { evaluated, error } = debug(parsed, false)
       terminal.setValue(`${selection
         .split('\n')
         .map((x) => `; ${x}`)

@@ -8,6 +8,7 @@ import {
   PLACEHOLDER,
   PREDICATE_SUFFIX,
   SPECIAL_FORMS_SET,
+  STATIC_TYPES,
   STATIC_TYPES_SET,
   TRUE,
   TYPE,
@@ -80,7 +81,15 @@ const formatType = (name, env) => {
       ? `${name} (${(stats[ARGUMENTS] ?? [])
           .map(
             (x) =>
-              `${x[STATS][SIGNATURE]} ${toTypeNames(x[STATS][TYPE_PROP][0])}`
+              `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map((x) =>
+                toTypeNames(x)
+              ).join(' ')}${
+                x[STATS][TYPE_PROP][0] === APPLY
+                  ? ` ${toTypeNames(
+                      x[STATS][RETURNS][1] ?? x[STATS][RETURNS][0]
+                    )}`
+                  : ''
+              }`
           )
           .join(' ')}) -> ${toTypeNames(
           stats[RETURNS][1] ?? stats[RETURNS][0]
@@ -108,7 +117,9 @@ const getScopeNames = (scope) => {
 }
 const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
-  return `${chain.join(' ')} ${name}`
+  return `${chain
+    .map((x) => (Number.isInteger(+x) ? '~' : x))
+    .join(' ')} ${name}`
 }
 export const typeCheck = (ast) => {
   const root = {
@@ -1245,6 +1256,33 @@ export const typeCheck = (ast) => {
               errorStack.add(
                 `Trying to access undefined variable ${first[VALUE]} (check #11)`
               )
+            } else {
+              const T = env[first[VALUE]][STATS]
+              const isKnown = T[TYPE_PROP][0] !== UNKNOWN
+              switch (first[VALUE]) {
+                case 'xs':
+                  if (isKnown && T[TYPE_PROP][0] !== COLLECTION) {
+                    warningStack.add(
+                      `A variable named xs must be of type (${
+                        STATIC_TYPES.COLLECTION
+                      }) but got type (${toTypeNames(
+                        T[TYPE_PROP][0]
+                      )}) (check #32)`
+                    )
+                  } else T[TYPE_PROP] = [COLLECTION]
+                  break
+                default:
+                  {
+                    const isPredicate =
+                      getSuffix(first[VALUE]) === PREDICATE_SUFFIX
+                    if (!isKnown && isPredicate) {
+                      T[TYPE_PROP][1] = PREDICATE
+                      T[RETURNS] = [ATOM, PREDICATE]
+                      console.log(T)
+                    }
+                  }
+                  break
+              }
             }
           })
         }
