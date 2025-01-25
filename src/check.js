@@ -81,8 +81,8 @@ const formatType = (name, env) => {
       ? `${name} (${(stats[ARGUMENTS] ?? [])
           .map(
             (x) =>
-              `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map((x) =>
-                toTypeNames(x)
+              `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map(
+                toTypeNames
               ).join(' ')}${
                 x[STATS][TYPE_PROP][0] === APPLY
                   ? ` ${toTypeNames(
@@ -94,7 +94,7 @@ const formatType = (name, env) => {
           .join(' ')}) -> ${toTypeNames(
           stats[RETURNS][1] ?? stats[RETURNS][0]
         )}`
-      : `${name} ${toTypeNames(stats[TYPE_PROP][0])}`
+      : `${name} ${stats[TYPE_PROP].map(toTypeNames).join(' ')}`
     : name
 }
 const formatTypes = (env) => {
@@ -1780,6 +1780,7 @@ export const typeCheck = (ast) => {
                         if (isLeaf(rest[i])) {
                           if (rest[i][TYPE] === WORD) {
                             if (
+                              !isSpecial &&
                               env[rest[i][VALUE]] &&
                               PRED_TYPE !==
                                 env[rest[i][VALUE]][STATS][RETURNS][1]

@@ -321,7 +321,7 @@ export const addTypeIdentities = (ast) => {
   const temp = block.shift()
   block.unshift(
     temp,
-    identity(STATIC_TYPES.APPLICATION),
+    identity(STATIC_TYPES.ABSTRACTION),
     identity(STATIC_TYPES.ATOM),
     identity(STATIC_TYPES.COLLECTION),
     identity(STATIC_TYPES.PREDICATE),

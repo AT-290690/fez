@@ -21,15 +21,15 @@ export const debug = (ast, checkTypes = true) => {
   let types
   const debugEnv = {
     ...keywords,
-    [STATIC_TYPES.APPLICATION]: (args, env) => {
+    [STATIC_TYPES.ABSTRACTION]: (args, env) => {
       const T = evaluate(args[0], env)
       const t = typeof T
       if (t !== 'function')
         throw new TypeError(
-          `Argument of (${STATIC_TYPES.APPLICATION}) must be an (${
+          `Argument of (${STATIC_TYPES.ABSTRACTION}) must be an (${
             RUNTIME_TYPES.LAMBDA
           }) but got something else (${
-            STATIC_TYPES.APPLICATION
+            STATIC_TYPES.ABSTRACTION
           } ${stringifyArgs(args)})`
         )
       return T

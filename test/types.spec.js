@@ -434,16 +434,14 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (try
 (let err 2)
 (and err (= 1 1))
 `,
-      `Incorrect type of argument (0) for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)
-Incorrect type of argument (0) for special form (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #6)`
+      `Incorrect type of argument (0) for special form (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #6)`
     )
     fails(
       `
 (let err 1)
 (and err (= 1 1))
 `,
-      `Incorrect type of argument (0) for (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #16)
-Incorrect type of argument (0) for special form (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #6)`
+      `Incorrect type of argument (0) for special form (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #6)`
     )
     fails(
       `(let fn1 (lambda 1y x (do 

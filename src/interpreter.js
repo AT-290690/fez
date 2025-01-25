@@ -833,7 +833,7 @@ export const keywords = {
     throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
   },
 
-  [STATIC_TYPES.APPLICATION]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.ABSTRACTION]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.ATOM]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.COLLECTION]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.PREDICATE]: (args, env) => evaluate(args[0], env),

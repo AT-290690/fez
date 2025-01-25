@@ -264,7 +264,7 @@ const comp = (tree, Drill) => {
         return `__error(${compile(tail[0], Drill)})`
       }
 
-      case STATIC_TYPES.APPLICATION:
+      case STATIC_TYPES.ABSTRACTION:
       case STATIC_TYPES.COLLECTION:
       case STATIC_TYPES.UNKNOWN:
       case STATIC_TYPES.ATOM:
