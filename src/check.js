@@ -541,13 +541,6 @@ export const typeCheck = (ast) => {
   }
   const errorStack = new Set()
   const warningStack = new Set()
-
-  // const isDefinitionOfAFunction = (head, tail) =>
-  //   head[TYPE] === APPLY &&
-  //   head[VALUE] === KEYWORDS.DEFINE_VARIABLE &&
-  //   tail.at(-1)[0][TYPE] === APPLY &&
-  //   tail.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-
   const stack = []
   const check = (exp, env, scope) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
@@ -563,12 +556,6 @@ export const typeCheck = (ast) => {
             if (env[first[VALUE]] === undefined) {
               errorStack.add(
                 `Trying to access undefined variable ${first[VALUE]} (check #11)`
-
-                // `Trying to access undefined variable ${
-                //   first[VALUE]
-                // }\n${formatCallstack(
-                //   key.chain.filter((x) => isNaN(Number(x[0])))
-                // )}\n(check #11)`
               )
             }
           })
@@ -598,67 +585,30 @@ export const typeCheck = (ast) => {
                       case KEYWORDS.IF:
                         {
                           const re = rem.slice(2)
-                          // If either is an ATOM then IF returns an ATOM
                           if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
                             env[name][STATS][prop][0] = ATOM
-                            // if (
-                            //   re[0][VALUE] === FALSE ||
-                            //   re[0][VALUE] === TRUE ||
-                            //   re[1][VALUE] === FALSE ||
-                            //   re[1][VALUE] === TRUE
-                            // ) {
-                            //   env[name][STATS][RETURNS][1] = PREDICATE
-                            // }
                           } else if (!isLeaf(re[0]) && env[re[0][0][VALUE]]) {
-                            // const concequent = isLeaf(re[0])
-                            //   ? env[re[0][VALUE]]
-                            //   : env[re[0][0][VALUE]]
-                            // const alternative = isLeaf(re[1])
-                            //   ? env[re[1][VALUE]]
-                            //   : env[re[1][0][VALUE]]
                             env[name][STATS][prop] =
                               env[re[0][0][VALUE]][STATS][RETURNS]
                             if (
                               re[0][0][TYPE] === APPLY &&
-                              // turn off typechecks for optimized functions
                               !name.startsWith(OPTIMIZED_PREFIX)
                             ) {
                               switch (re[0][0][VALUE]) {
                                 case KEYWORDS.ANONYMOUS_FUNCTION:
-                                  //   env[name][STATS][prop] =
-                                  //   env[re[0][0][VALUE]][STATS][RETURNS]
-                                  // env[name][STATS][SUB_TYPE] =
-                                  //   env[re[0][0][VALUE]][STATS][SUB_TYPE]
-
                                   env[name][STATS][RETURNS] = [UNKNOWN]
                                   env[name][STATS][ARGS_COUNT] =
                                     re[0].length - 2
-                                  // check(
-                                  //   [
-                                  //     [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                  //     [WORD, name],
-                                  //     re[0]
-                                  //   ],
-                                  //   env,
-                                  //   scope
-                                  // )
                                   break
                               }
                             }
                             // env[name][STATS] = env[re[0][0][VALUE]][STATS]
-                          } else {
-                            if (env[re[0][VALUE]]) {
-                              env[name][STATS][prop][0] =
-                                env[re[0][VALUE]][STATS][TYPE_PROP][0]
-                              env[name][STATS][RETURNS][1] =
-                                env[re[0][VALUE]][STATS][RETURNS][1]
-                              // env[name][STATS] = env[name][STATS]
-                              //   env[re[0][VALUE]][STATS][SUB_TYPE]
-                            } else {
-                              env[name][STATS][prop] = [UNKNOWN]
-                              // env[name][STATS][RETURNS] = APPLY
-                            }
-                          }
+                          } else if (env[re[0][VALUE]]) {
+                            env[name][STATS][prop][0] =
+                              env[re[0][VALUE]][STATS][TYPE_PROP][0]
+                            env[name][STATS][RETURNS][1] =
+                              env[re[0][VALUE]][STATS][RETURNS][1]
+                          } else env[name][STATS][prop] = [UNKNOWN]
                         }
                         break
                       default:
@@ -690,9 +640,6 @@ export const typeCheck = (ast) => {
                                 env[name][STATS][RETURNS][1] =
                                   fn[STATS][RETURNS][1]
                               } else {
-                                // const body = rest.at(-1).at(-1).at(-1).at(-1)
-                                // const rem = hasBlock(body) ? body.at(-1) : body
-                                // const returns = isLeaf(rem) ? rem : rem[0]
                                 const [returns, rem] = drillReturnType(
                                   rest.at(-1).at(-1).at(-1),
                                   (returns) =>
@@ -1003,7 +950,6 @@ export const typeCheck = (ast) => {
                       }
                     }
                     // TODO overwrite return type check here
-                    // console.log(copy[SCOPE_NAME], env[copy[SCOPE_NAME]], copy)
                   }
                 }
               }
@@ -1056,15 +1002,9 @@ export const typeCheck = (ast) => {
                   if (args) {
                     for (let i = 0; i < args.length; ++i) {
                       // type check
-                      // todo finish this
-
                       if (args[i][SUB] != undefined) {
-                        // first[TYPE] === APPLY &&
-                        // env[first[VALUE]][STATS][SUB_TYPE] === PREDICATE
-                        // args[i][SUB] = env[rest[i][VALUE]][SUB_TYPE]
                         if (isLeaf(rest[i])) {
                           if (rest[i][TYPE] === WORD) {
-                            // TODO finish this
                             if (
                               env[rest[i][VALUE]] &&
                               args[i][SUB] !==
@@ -1308,17 +1248,6 @@ export const typeCheck = (ast) => {
                                   }
                                 }
                                 break
-                              // case APPLY:
-                              //   errorStack.add(
-                              //     `Incorrect type of arguments for (${
-                              //       first[VALUE]
-                              //     }). Expected (${toTypeNames(
-                              //       expectedArgs[i][TYPE]
-                              //     )}) but got (${toTypeNames(
-                              //       rest[i][TYPE]
-                              //     )}) (${stringifyArgs(exp)}) (check #5)`
-                              //   )
-                              //   break
                               case ATOM: {
                                 if (rest[i][TYPE] !== expectedArgs[i][TYPE]) {
                                   errorStack.add(
@@ -1335,53 +1264,6 @@ export const typeCheck = (ast) => {
                               }
                             }
                           }
-                          // if (
-                          //   env[rest[i][VALUE]] &&
-                          //   expectedArgs[i][TYPE] !== rest[i][TYPE]
-                          // ) {
-                          //   switch (rest[i][TYPE]) {
-                          //     // case UNKNOWN:
-                          //     //   env[first[VALUE]][STATS][TYPE_PROP][0] =
-                          //     //     expectedArgs[i][TYPE]
-                          //     //   break
-                          //     case WORD:
-                          //       const T =
-                          //         env[rest[i][VALUE]][STATS][TYPE_PROP][0]
-                          //       if (
-                          //         T !== UNKNOWN &&
-                          //         expectedArgs[i][TYPE] !== UNKNOWN &&
-                          //         expectedArgs[i][TYPE] !== T
-                          //       ) {
-                          //         errorStack.add(
-                          //           `Incorrect type of argument (${i}) for special form (${
-                          //             first[VALUE]
-                          //           }). Expected (${toTypeNames(
-                          //             expectedArgs[i][TYPE]
-                          //           )}) but got (${toTypeNames(
-                          //             T
-                          //           )}) (${stringifyArgs(exp)}) (check #3.1)`
-                          //         )
-                          //       } else {
-                          //         env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
-                          //           expectedArgs[i][TYPE]
-                          //       }
-                          //       break
-                          //     case APPLY:
-                          //     case ATOM:
-                          //       errorStack.add(
-                          //         `Incorrect type of arguments for (${
-                          //           first[VALUE]
-                          //         }). Expected (${toTypeNames(
-                          //           expectedArgs[i][TYPE]
-                          //         )}) but got (${toTypeNames(
-                          //           rest[i][TYPE]
-                          //         )}) (${stringifyArgs(exp)}) (check #5)`
-                          //       )
-                          //       break
-                          //   }
-                          // } else {
-                          //   // TIDI fugyre iyt wgat ti di gere
-                          // }
                         }
                       }
                       // type checking
@@ -1452,20 +1334,7 @@ export const typeCheck = (ast) => {
                             )}) (${stringifyArgs(exp)}) (check #4)`
                           )
                         }
-                        // TODO figure out why we don't need this anymore
-                        // else {
-                        //   if (
-                        //     rest[i].length &&
-                        //     env[rest[i][0][VALUE]] &&
-                        //     args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
-                        //     env[rest[i][0][VALUE]][STATS].retried < RETRY_COUNT
-                        //   ) {
-                        //     env[rest[i][0][VALUE]][STATS].retried += 1
-                        //     if (!scope[SCOPE_NAME])
-                        //       scope[SCOPE_NAME] = scope[1][VALUE]
-                        //     stack.unshift(() => check(exp, env, scope))
-                        //   }
-                        // }
+                        // TODO figure out what cann we do in this else ?
                       }
                     }
                   }
