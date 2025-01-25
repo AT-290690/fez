@@ -158,7 +158,7 @@ export const typeCheck = (ast) => {
     },
     [toTypeNames(PREDICATE)]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: toTypeNames(PREDICATE),
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
@@ -899,7 +899,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.NOT]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.NOT,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
@@ -921,7 +921,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.EQUAL]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.EQUAL,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
@@ -954,7 +954,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.LESS_THAN]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         retried: RETRY_COUNT,
         [SIGNATURE]: KEYWORDS.LESS_THAN,
         [ARGS_COUNT]: 2,
@@ -987,7 +987,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.GREATHER_THAN]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.GREATHER_THAN,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
@@ -1020,7 +1020,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.GREATHER_THAN_OR_EQUAL,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
@@ -1053,7 +1053,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.LESS_THAN_OR_EQUAL]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.LESS_THAN_OR_EQUAL,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
@@ -1086,7 +1086,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.AND]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.AND,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
@@ -1119,7 +1119,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.OR]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.OR,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
@@ -1152,7 +1152,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.IS_ATOM]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.IS_ATOM,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
@@ -1174,7 +1174,7 @@ export const typeCheck = (ast) => {
     },
     [KEYWORDS.IS_LAMBDA]: {
       [STATS]: {
-        [TYPE_PROP]: [APPLY],
+        [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.IS_LAMBDA,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
@@ -1269,8 +1269,10 @@ export const typeCheck = (ast) => {
                             if (
                               getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
                               getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
-                            )
+                            ) {
+                              // env[name][STATS][TYPE_PROP][1] = PREDICATE
                               env[name][STATS][RETURNS] = [ATOM, PREDICATE]
+                            }
                           } else if (
                             !isLeaf(re[0]) &&
                             env[re[0][0][VALUE]] &&
@@ -1310,7 +1312,6 @@ export const typeCheck = (ast) => {
                                   break
                               }
                             }
-                            // env[name][STATS] = env[re[0][0][VALUE]][STATS]
                           } else if (env[re[0][VALUE]]) {
                             env[name][STATS][prop][0] =
                               env[re[0][VALUE]][STATS][TYPE_PROP][0]
@@ -1398,7 +1399,7 @@ export const typeCheck = (ast) => {
                     )
                   }
                   if (isPredicate) {
-                    env[name][STATS][prop] = [ATOM]
+                    env[name][STATS][prop] = [ATOM, PREDICATE]
                     env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                   }
                 }
@@ -1487,8 +1488,10 @@ export const typeCheck = (ast) => {
                           [RETURNS]: [UNKNOWN]
                         }
                       }
-                      if (isPredicate)
+                      if (isPredicate) {
+                        env[name][STATS][TYPE_PROP][1] = PREDICATE
                         env[name][STATS][RETURNS] = [ATOM, PREDICATE]
+                      }
                     } else {
                       const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
                       if (
@@ -1512,8 +1515,10 @@ export const typeCheck = (ast) => {
                           [RETURNS]: [UNKNOWN]
                         }
                       }
-                      if (isPredicate)
+                      if (isPredicate) {
+                        env[name][STATS][TYPE_PROP][1] = PREDICATE
                         env[name][STATS][RETURNS] = [ATOM, PREDICATE]
+                      }
                       if (right && right[VALUE]) {
                         if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
                           if (isLeaf(rest.at(-1).at(-1))) {
@@ -1609,7 +1614,6 @@ export const typeCheck = (ast) => {
                 }
                 const ref = env[copy[SCOPE_NAME]]
                 if (ref) {
-                  // DELETE THIS
                   ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
                   if (getSuffix(param[VALUE]) === PREDICATE_SUFFIX) {
                     copy[param[VALUE]][STATS][RETURNS] = [ATOM, PREDICATE]
