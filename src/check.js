@@ -1988,40 +1988,39 @@ export const typeCheck = (ast) => {
 
                       if (first[TYPE] === APPLY && isSpecial) {
                         //  DEEKETE THIS
-                        const expectedArgs = env[first[VALUE]][STATS][ARGS]
-                        // const expectedArgs2 = env[first[VALUE]][STATS][ARGUMENTS]
+                        // const expectedArgs = env[first[VALUE]][STATS][ARGS]
+                        const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
 
                         for (let i = 0; i < rest.length; ++i) {
-                          if (expectedArgs[i][TYPE] === UNKNOWN) continue
+                          const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
+                          const MAIN_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
+
+                          if (MAIN_TYPE === UNKNOWN) continue
                           if (!isLeaf(rest[i])) {
                             const CAR = rest[i][0][VALUE]
                             const isKnown =
                               env[CAR] &&
                               env[CAR][STATS][RETURNS][0] !== UNKNOWN
                             if (isKnown) {
-                              if (
-                                env[CAR][STATS][RETURNS][0] !==
-                                expectedArgs[i][TYPE]
-                              ) {
+                              if (env[CAR][STATS][RETURNS][0] !== MAIN_TYPE) {
                                 errorStack.add(
                                   `Incorrect type of argument (${i}) for special form (${
                                     first[VALUE]
                                   }). Expected (${toTypeNames(
-                                    expectedArgs[i][TYPE]
+                                    MAIN_TYPE
                                   )}) but got (${toTypeNames(
                                     env[CAR][STATS][RETURNS][0]
                                   )}) (${stringifyArgs(exp)}) (check #1)`
                                 )
                               } else if (
-                                expectedArgs[i][SUB] &&
-                                env[CAR][STATS][RETURNS][1] !==
-                                  expectedArgs[i][SUB]
+                                PRED_TYPE &&
+                                env[CAR][STATS][RETURNS][1] !== PRED_TYPE
                               ) {
                                 errorStack.add(
                                   `Incorrect type of arguments for special form (${
                                     first[VALUE]
                                   }). Expected (${toTypeNames(
-                                    expectedArgs[i][SUB]
+                                    PRED_TYPE
                                   )}) but got (${toTypeNames(
                                     env[CAR][STATS][RETURNS][1] ??
                                       env[CAR][STATS][RETURNS][0]
@@ -2039,28 +2038,27 @@ export const typeCheck = (ast) => {
                                     env[CAR][STATS][TYPE_PROP][0] !== UNKNOWN
                                   if (isKnown) {
                                     if (
-                                      expectedArgs[i][TYPE] !==
+                                      MAIN_TYPE !==
                                       env[CAR][STATS][TYPE_PROP][0]
                                     ) {
                                       errorStack.add(
                                         `Incorrect type of argument (${i}) for special form (${
                                           first[VALUE]
                                         }). Expected (${toTypeNames(
-                                          expectedArgs[i][TYPE]
+                                          MAIN_TYPE
                                         )}) but got (${toTypeNames(
                                           env[CAR][STATS][TYPE_PROP][0]
                                         )}) (${stringifyArgs(exp)}) (check #3)`
                                       )
                                     } else if (
-                                      expectedArgs[i][SUB] &&
-                                      env[CAR][STATS][RETURNS][1] !==
-                                        expectedArgs[i][SUB]
+                                      PRED_TYPE &&
+                                      env[CAR][STATS][RETURNS][1] !== PRED_TYPE
                                     )
                                       errorStack.add(
                                         `Incorrect type of argument (${i}) for special form (${
                                           first[VALUE]
                                         }). Expected (${toTypeNames(
-                                          expectedArgs[i][SUB]
+                                          PRED_TYPE
                                         )}) but got (${toTypeNames(
                                           env[CAR][STATS][RETURNS][1] ??
                                             env[CAR][STATS][TYPE_PROP][0]
@@ -2068,17 +2066,17 @@ export const typeCheck = (ast) => {
                                       )
                                   } else if (env[rest[i][VALUE]]) {
                                     env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
-                                      expectedArgs[i][TYPE]
+                                      MAIN_TYPE
                                   }
                                 }
                                 break
                               case ATOM: {
-                                if (rest[i][TYPE] !== expectedArgs[i][TYPE]) {
+                                if (rest[i][TYPE] !== MAIN_TYPE) {
                                   errorStack.add(
                                     `Incorrect type of argument (${i}) for special form (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
-                                      expectedArgs[i][TYPE]
+                                      MAIN_TYPE
                                     )}) but got (${toTypeNames(
                                       rest[i][TYPE]
                                     )}) (${stringifyArgs(exp)}) (check #2)`
