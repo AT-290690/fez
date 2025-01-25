@@ -24,9 +24,7 @@ import {
 const ARGS_COUNT = 'n'
 const VARIADIC = Infinity
 const STATS = '__stats__'
-const ARGS = 'args'
 const ARGUMENTS = 'arguments'
-
 const UNKNOWN = -1
 const RETURNS = 'returns'
 const SCOPE_NAME = '__scope__'
@@ -120,7 +118,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: toTypeNames(APPLY),
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -143,7 +140,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: toTypeNames(ATOM),
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -231,10 +227,6 @@ export const typeCheck = (ast) => {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.LOG,
         retried: RETRY_COUNT,
-        [ARGS]: [
-          [UNKNOWN, PLACEHOLDER],
-          [COLLECTION, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -269,7 +261,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: DEBUG.STRING,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -364,10 +355,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.LOOP,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER, PREDICATE],
-          [UNKNOWN, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -401,10 +388,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.ADDITION,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -438,10 +421,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.MULTIPLICATION,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -475,10 +454,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.SUBTRACTION,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -512,10 +487,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.DIVISION,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -548,10 +519,6 @@ export const typeCheck = (ast) => {
         [TYPE_PROP]: [APPLY],
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -585,10 +552,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.BITWISE_AND,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -622,7 +585,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.BITWISE_NOT,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[ATOM, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -645,10 +607,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.BITWISE_OR,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -682,10 +640,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.BITWISE_XOR,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -719,10 +673,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.BITWISE_LEFT_SHIFT,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -756,10 +706,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.BITWISE_RIGHT_SHIFT,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -793,10 +739,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.GET_ARRAY,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [COLLECTION, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -829,11 +771,6 @@ export const typeCheck = (ast) => {
         [TYPE_PROP]: [APPLY],
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 3,
-        [ARGS]: [
-          [COLLECTION, PLACEHOLDER],
-          [ATOM, PLACEHOLDER],
-          [UNKNOWN, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -878,7 +815,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.POP_ARRAY,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -901,7 +837,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.ARRAY_LENGTH,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -924,11 +859,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.IF,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 3,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER, PREDICATE],
-          [UNKNOWN, PLACEHOLDER],
-          [UNKNOWN, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -973,7 +903,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.NOT,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[ATOM, PLACEHOLDER, PREDICATE]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -996,10 +925,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.EQUAL,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1033,10 +958,6 @@ export const typeCheck = (ast) => {
         retried: RETRY_COUNT,
         [SIGNATURE]: KEYWORDS.LESS_THAN,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1070,10 +991,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.GREATHER_THAN,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1107,10 +1024,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.GREATHER_THAN_OR_EQUAL,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1144,10 +1057,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.LESS_THAN_OR_EQUAL,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER],
-          [ATOM, PLACEHOLDER]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1181,10 +1090,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.AND,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER, PREDICATE],
-          [ATOM, PLACEHOLDER, PREDICATE]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1218,10 +1123,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.OR,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 2,
-        [ARGS]: [
-          [ATOM, PLACEHOLDER, PREDICATE],
-          [ATOM, PLACEHOLDER, PREDICATE]
-        ],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1255,7 +1156,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.IS_ATOM,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1278,7 +1178,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.IS_LAMBDA,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[UNKNOWN, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1301,7 +1200,6 @@ export const typeCheck = (ast) => {
         [SIGNATURE]: KEYWORDS.ERROR,
         retried: RETRY_COUNT,
         [ARGS_COUNT]: 1,
-        [ARGS]: [[COLLECTION, PLACEHOLDER]],
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -1526,7 +1424,6 @@ export const typeCheck = (ast) => {
                       [TYPE_PROP]: [APPLY],
                       retried: 0,
                       [ARGS_COUNT]: n - 2,
-                      [ARGS]: [],
                       [ARGUMENTS]: [],
                       [RETURNS]: [UNKNOWN]
                     }
@@ -1706,7 +1603,6 @@ export const typeCheck = (ast) => {
                     [SIGNATURE]: param[VALUE],
                     [TYPE_PROP]: [UNKNOWN],
                     [RETURNS]: [UNKNOWN],
-                    [ARGS]: [],
                     [ARGUMENTS]: [],
                     retried: 0
                   }
@@ -1714,7 +1610,6 @@ export const typeCheck = (ast) => {
                 const ref = env[copy[SCOPE_NAME]]
                 if (ref) {
                   // DELETE THIS
-                  ref[STATS][ARGS][i] = copy[param[VALUE]]
                   ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
                   if (getSuffix(param[VALUE]) === PREDICATE_SUFFIX) {
                     copy[param[VALUE]][STATS][RETURNS] = [ATOM, PREDICATE]
@@ -1819,14 +1714,10 @@ export const typeCheck = (ast) => {
                   }
 
                   // also type of arg
-                  // DELETE THIS
-                  // const args = env[first[VALUE]][STATS][ARGS]
                   const args = env[first[VALUE]][STATS][ARGUMENTS]
                   if (args) {
                     for (let i = 0; i < args.length; ++i) {
                       // type check
-                      // const PRED_TYPE = args[i][SUB]
-                      // const MAIN_TYPE = args[i][TYPE]
                       const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                       const MAIN_TYPE = args[i][STATS][TYPE_PROP][0]
                       if (PRED_TYPE != undefined) {
@@ -1987,10 +1878,7 @@ export const typeCheck = (ast) => {
                       }
 
                       if (first[TYPE] === APPLY && isSpecial) {
-                        //  DEEKETE THIS
-                        // const expectedArgs = env[first[VALUE]][STATS][ARGS]
                         const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
-
                         for (let i = 0; i < rest.length; ++i) {
                           const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                           const MAIN_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
