@@ -7,7 +7,6 @@ import {
   TRUE,
   TYPES,
   RUNTIME_TYPES,
-  DEBUG,
   STATIC_TYPES
 } from './keywords.js'
 import { evaluate } from './evaluator.js'
@@ -755,12 +754,6 @@ export const keywords = {
         const value = evaluate(props[i], scope)
         localEnv[params[i][VALUE]] = value
       }
-      if (
-        name &&
-        Array.isArray(env[DEBUG.CALLSTACK]) &&
-        name !== env[DEBUG.CALLSTACK].at(-1)
-      )
-        env[DEBUG.CALLSTACK].push(name)
       return evaluate(body, localEnv)
     }
   },

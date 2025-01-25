@@ -1,14 +1,5 @@
 import { keywords } from './interpreter.js'
-import {
-  APPLY,
-  ATOM,
-  DEBUG,
-  KEYWORDS,
-  SPECIAL_FORMS_SET,
-  TYPE,
-  VALUE,
-  WORD
-} from './keywords.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
 import { isLeaf } from './parser.js'
 import { stringifyArgs } from './utils.js'
 export const evaluate = (exp, env = keywords) => {
@@ -23,23 +14,26 @@ export const evaluate = (exp, env = keywords) => {
     case WORD: {
       const word = env[value]
       if (word == undefined)
-        throw new ReferenceError(`Undefined variable ${value}`)
+        throw new ReferenceError(
+          `Undefined variable ${value} (${stringifyArgs(exp)})`
+        )
       return word
     }
     case APPLY: {
       const apply = env[value]
       if (apply == undefined)
         throw new ReferenceError(
-          `Undefined (${KEYWORDS.ANONYMOUS_FUNCTION}) (${value})`
+          `Undefined (${
+            KEYWORDS.ANONYMOUS_FUNCTION
+          }) (${value}) (${stringifyArgs(exp)})`
         )
       if (typeof apply !== 'function')
         throw new TypeError(
-          `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION})`
+          `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION}) (${stringifyArgs(
+            exp
+          )})`
         )
-      const isSpecial = SPECIAL_FORMS_SET.has(value)
       const result = apply(tail, env, value)
-      if (!isSpecial && Array.isArray(env[DEBUG.CALLSTACK]))
-        env[DEBUG.CALLSTACK].pop()
       return result
     }
     case ATOM:

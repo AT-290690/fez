@@ -69,8 +69,7 @@ export const DEBUG = {
   ASSERT: 'assert',
   SIGNATURE: '?',
   LIST_THEMES: 'theme?',
-  SET_THEME: 'theme!',
-  CALLSTACK: '(CALLSTACK)' // so that you can't use it in the code
+  SET_THEME: 'theme!'
 }
 
 export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))

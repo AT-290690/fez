@@ -15,7 +15,7 @@ import {
   WORD
 } from '../src/keywords.js'
 import { LISP } from '../src/parser.js'
-import { formatErrorWithCallstack, stringifyArgs } from '../src/utils.js'
+import { stringifyArgs } from '../src/utils.js'
 
 export const debug = (ast) => {
   const debugEnv = {
@@ -72,7 +72,6 @@ export const debug = (ast) => {
       return T
     },
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
-    [DEBUG.CALLSTACK]: [KEYWORDS.BLOCK],
     [DEBUG.SIGNATURE]: (args, env) => {
       const signatures =
         args.length === 0
@@ -284,17 +283,10 @@ export const debug = (ast) => {
     }
   } catch (error) {
     // console.log(error)
-    const isMaxCallStack =
-      error.message.includes('Maximum call stack size exceeded') ||
-      error.message.includes('too much recursion')
     return {
       evaluated: null,
       error: {
-        message:
-          isMaxCallStack || debugEnv[DEBUG.CALLSTACK].length === 1
-            ? error.message
-            : formatErrorWithCallstack(error, debugEnv[DEBUG.CALLSTACK]),
-        stack: debugEnv[DEBUG.CALLSTACK]
+        message: error.message
       }
     }
   }
