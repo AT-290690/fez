@@ -12,8 +12,10 @@
           (= (mod n 5) 0) "Buzz"
           (*) (from:integer->string n))))
 
-(|> (math:range 1 100) (array:map fizz-buzz) (array:commas))
+(|> (math:range 1 100) (array:map fizz-buzz) (array:spaces) (string))
 ```
+
+## [Try it in online editor](https://at-290690.github.io/fez/)
 
 ```lisp
 ; Build-in keywords
@@ -21,8 +23,6 @@
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
 (length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...) (throw ...)
 ```
-
-[Try it in online editor](https://at-290690.github.io/fez/)
 
 ## ⚠️ Important: Do not use this programming language in production!
 
