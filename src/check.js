@@ -295,6 +295,15 @@ export const typeCheck = (ast) => {
         [RETURNS]: [UNKNOWN]
       }
     },
+    [DEBUG.TYPE_SIGNATURE]: {
+      [STATS]: {
+        [TYPE_PROP]: [APPLY],
+        [SIGNATURE]: DEBUG.TYPE_SIGNATURE,
+        retried: RETRY_COUNT,
+        [ARGS_COUNT]: VARIADIC,
+        [RETURNS]: [UNKNOWN]
+      }
+    },
     [DEBUG.LIST_THEMES]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
@@ -2072,7 +2081,7 @@ export const typeCheck = (ast) => {
   check(copy, root, copy)
   while (stack.length) stack.pop()()
   const issues = [...errorStack, ...warningStack]
-  // console.log([...Types.entries()].map(([k, v]) => `${v}`).join('\n\n'))
   if (issues.length) throw new TypeError(issues.join('\n'))
-  return ast
+  return [ast, Types]
 }
+export const type = (ast) => typeCheck(ast)[0]

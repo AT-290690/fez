@@ -18,6 +18,7 @@ import { LISP } from '../src/parser.js'
 import { stringifyArgs } from '../src/utils.js'
 
 export const debug = (ast) => {
+  let types
   const debugEnv = {
     ...keywords,
     [STATIC_TYPES.APPLICATION]: (args, env) => {
@@ -72,6 +73,12 @@ export const debug = (ast) => {
       return T
     },
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
+    [DEBUG.TYPE_SIGNATURE]: (args, env) => {
+      return [...types.entries()]
+        .filter(([k, v]) => v.includes(args[0][VALUE]))
+        .map(([k, v]) => `${k}\n${v}`)
+        .join('\n\n')
+    },
     [DEBUG.SIGNATURE]: (args, env) => {
       const signatures =
         args.length === 0
@@ -272,7 +279,7 @@ export const debug = (ast) => {
     }
   }
   try {
-    typeCheck(ast)
+    types = typeCheck(ast)[1]
     const evaluated = evaluate(ast, debugEnv)
     const block = ast[1][1]
     const temp = block.shift()
@@ -282,7 +289,7 @@ export const debug = (ast) => {
       error: null
     }
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return {
       evaluated: null,
       error: {

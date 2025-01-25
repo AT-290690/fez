@@ -69,7 +69,8 @@ export const DEBUG = {
   ASSERT: 'assert',
   SIGNATURE: '?',
   LIST_THEMES: 'theme?',
-  SET_THEME: 'theme!'
+  SET_THEME: 'theme!',
+  TYPE_SIGNATURE: 'type?'
 }
 
 export const SPECIAL_FORMS_SET = new Set(Object.values(KEYWORDS))
