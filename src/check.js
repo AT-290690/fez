@@ -117,7 +117,7 @@ const getScopeNames = (scope) => {
 }
 const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
-  return `${chain
+  return `${chain.length === 1 ? '· ' : ''}${chain
     .map((x) => (Number.isInteger(+x) ? '~' : x))
     .join(' ')} ${name}`
 }

@@ -574,7 +574,7 @@
   (and (atom? a) (atom? b) (= (Atom a) (Atom b)))
   (and (array? a)
         (= (length a) (length b))
-          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
+          (not (array:some? (math:sequence (Collection a)) (lambda i (not (array:equal? (get a i) (get b i))))))))))
 (let array:not-equal? (lambda a b (not (array:equal? a b))))
 (let array:join (lambda xs delim (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
 (let array:chars (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
