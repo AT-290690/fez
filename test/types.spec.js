@@ -936,6 +936,7 @@ math:perfect-square? ends in (?) and is expected to return (Predicate) but it do
 math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 list:every? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
 predicate should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 predicate is assigned to the result of a (Predicate) so predicate must end in (?) (check #23)
 string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)

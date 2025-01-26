@@ -81,8 +81,8 @@ const formatType = (name, env) => {
       ? `${name} (${(stats[ARGUMENTS] ?? [])
           .map(
             (x) =>
-              `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map(
-                toTypeNames
+              `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map((x) =>
+                toTypeNames(x)
               ).join(' ')}${
                 getSuffix(x[STATS][SIGNATURE]) === PREDICATE_SUFFIX
                   ? ' ' + toTypeNames(PREDICATE)
@@ -1259,9 +1259,12 @@ export const typeCheck = (ast) => {
               const isKnown = T[TYPE_PROP][0] !== UNKNOWN
               switch (first[VALUE]) {
                 case 'xs':
+                case 'arr':
+                case 'matrix':
+                case 'table':
                   if (isKnown && T[TYPE_PROP][0] !== COLLECTION) {
                     warningStack.add(
-                      `A variable named xs must be of type (${
+                      `A variable named ${first[VALUE]} must be of type (${
                         STATIC_TYPES.COLLECTION
                       }) but got type (${toTypeNames(
                         T[TYPE_PROP][0]
@@ -1646,6 +1649,16 @@ export const typeCheck = (ast) => {
               }
               for (let i = 0; i < params.length; ++i) {
                 const param = params[i]
+                // TODO move this somewhere else
+                if (!isLeaf(param)) {
+                  warningStack.add(
+                    `Invalid body for (${
+                      first[VALUE]
+                    }) if it takes more than one expression it must be wrapped in a (${
+                      KEYWORDS.BLOCK
+                    }) (${stringifyArgs(exp)}) (check #666)`
+                  )
+                }
                 copy[param[VALUE]] = {
                   [STATS]: {
                     [SIGNATURE]: param[VALUE],

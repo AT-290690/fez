@@ -905,19 +905,19 @@ array:chunks (xs Collection predicate? Unknown Predicate) -> Collection
 array:adjacent-find (xs Collection cb? Abstraction Predicate) -> Atom
 
 · ~ matrix:points
-matrix:points (matrix Unknown cb? Abstraction Predicate) -> Unknown
+matrix:points (matrix Collection cb? Abstraction Predicate) -> Unknown
 
 · ~ matrix:for
-matrix:for (matrix Unknown cb Unknown 1,matrix Unknown) -> Unknown
+matrix:for (matrix Collection cb Unknown) -> Unknown
 
 · ~ matrix:shallow-copy
-matrix:shallow-copy (matrix Unknown) -> Collection
+matrix:shallow-copy (matrix Collection) -> Collection
 
 · ~ matrix:find-index
-matrix:find-index (matrix Unknown cb Unknown) -> Collection
+matrix:find-index (matrix Collection cb Unknown) -> Collection
 
 · ~ matrix:find
-matrix:find (matrix Unknown cb Unknown) -> Unknown
+matrix:find (matrix Collection cb Unknown) -> Unknown
 
 · ~ matrix:enumerated-for
 matrix:enumerated-for (matrix Collection cb Abstraction) -> Unknown
@@ -962,7 +962,7 @@ matrix:set! (matrix Collection y Atom x Atom value Unknown) -> Collection
 matrix:get (matrix Collection y Atom x Atom) -> Unknown
 
 · ~ matrix:set-and-get!
-matrix:set-and-get! (matrix Unknown y Unknown x Unknown value Unknown) -> Unknown
+matrix:set-and-get! (matrix Collection y Unknown x Unknown value Unknown) -> Unknown
 
 · ~ matrix:get-option
 matrix:get-option (xs Collection y Unknown x Unknown) -> Collection
@@ -971,7 +971,7 @@ matrix:get-option (xs Collection y Unknown x Unknown) -> Collection
 from:yx->key (y Unknown x Unknown) -> Unknown
 
 · ~ from:string-or-number->key
-from:string-or-number->key (arr Unknown) -> Unknown
+from:string-or-number->key (arr Collection) -> Unknown
 
 · ~ from:list->array
 from:list->array (list Unknown) -> Unknown
@@ -1070,7 +1070,7 @@ from:array->brray (initial Collection) -> Unknown
 from:brray->array (q Unknown) -> Unknown
 
 · ~ from:matrix->string
-from:matrix->string (matrix Unknown) -> Unknown
+from:matrix->string (matrix Collection) -> Unknown
 
 · ~ array:shallow-copy
 array:shallow-copy (xs Collection) -> Unknown
@@ -1223,7 +1223,7 @@ string:min (a Unknown b Unknown) -> Unknown
 string:max (a Unknown b Unknown) -> Unknown
 
 · ~ string:join-as-table-with
-string:join-as-table-with (table Unknown colum Unknown row Unknown) -> Unknown
+string:join-as-table-with (table Collection colum Unknown row Unknown) -> Unknown
 
 · ~ string:starts-with?
 string:starts-with? (str Collection pattern Collection) -> Predicate
@@ -1232,7 +1232,7 @@ string:starts-with? (str Collection pattern Collection) -> Predicate
 string:ends-with? (str Collection pattern Collection) -> Predicate
 
 · ~ string:join-as-table
-string:join-as-table (table Unknown) -> Unknown
+string:join-as-table (table Collection) -> Unknown
 
 · ~ string:trim-left
 string:trim-left (str Unknown) -> Unknown
@@ -1379,16 +1379,16 @@ set:remove! (table Collection key Unknown) -> Unknown
 set:has? (table Collection key Unknown) -> Predicate
 
 · ~ set:exists?
-set:exists? (table Unknown key Collection) -> Predicate
+set:exists? (table Collection key Collection) -> Predicate
 
 · ~ set:not-exists?
-set:not-exists? (table Unknown key Unknown) -> Predicate
+set:not-exists? (table Collection key Unknown) -> Predicate
 
 · ~ set:add-and-get!
-set:add-and-get! (table Unknown key Unknown) -> Unknown
+set:add-and-get! (table Collection key Unknown) -> Unknown
 
 · ~ set:remove-and-get!
-set:remove-and-get! (table Unknown key Unknown) -> Unknown
+set:remove-and-get! (table Collection key Unknown) -> Unknown
 
 · ~ set:with!
 set:with! (initial Unknown args Unknown) -> Unknown
@@ -1400,7 +1400,7 @@ set:max-capacity (a Collection b Collection) -> Unknown
 set:min-capacity (a Collection b Collection) -> Unknown
 
 · ~ set:values
-set:values (table Unknown) -> Unknown
+set:values (table Collection) -> Unknown
 
 · ~ set:intersection
 set:intersection (a Unknown b Unknown) -> Unknown
@@ -1415,19 +1415,19 @@ set:xor (a Unknown b Unknown) -> Unknown
 set:union (a Unknown b Unknown) -> Unknown
 
 · ~ set:empty!
-set:empty! (table Unknown) -> Collection
+set:empty! (table Collection) -> Collection
 
 · ~ map:with!
 map:with! (initial Unknown args Collection) -> Unknown
 
 · ~ map:empty!
-map:empty! (table Unknown) -> Collection
+map:empty! (table Collection) -> Collection
 
 · ~ map:keys
-map:keys (table Unknown) -> Collection
+map:keys (table Collection) -> Collection
 
 · ~ map:values
-map:values (table Unknown) -> Collection
+map:values (table Collection) -> Collection
 
 · ~ map:set!
 map:set! (table Collection key Unknown value Unknown) -> Unknown
@@ -1436,10 +1436,10 @@ map:set! (table Collection key Unknown value Unknown) -> Unknown
 map:remove! (table Collection key Unknown) -> Unknown
 
 · ~ map:set-and-get!
-map:set-and-get! (table Unknown key Unknown value Unknown) -> Unknown
+map:set-and-get! (table Collection key Unknown value Unknown) -> Unknown
 
 · ~ map:remove-and-get!
-map:remove-and-get! (table Unknown key Unknown) -> Unknown
+map:remove-and-get! (table Collection key Unknown) -> Unknown
 
 · ~ map:get
 map:get (table Collection key Unknown) -> Unknown
@@ -1451,13 +1451,13 @@ map:get-option (table Collection key Unknown) -> Collection
 map:has? (table Collection key Unknown) -> Predicate
 
 · ~ map:exists?
-map:exists? (table Unknown key Collection) -> Predicate
+map:exists? (table Collection key Collection) -> Predicate
 
 · ~ map:not-exists?
-map:not-exists? (table Unknown key Unknown) -> Predicate
+map:not-exists? (table Collection key Unknown) -> Predicate
 
 · ~ map:count
-map:count (arr Unknown) -> Unknown
+map:count (arr Collection) -> Unknown
 
 · ~ doubly-linked-list:prev!
 doubly-linked-list:prev! (list Collection node Collection) -> Collection

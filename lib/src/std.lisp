@@ -644,9 +644,8 @@
    (let coords [])
    (matrix:enumerated-for matrix (lambda cell y x (if (cb? cell) (array:push! coords (array y x))))) 
     coords)))
-(let matrix:for (lambda matrix cb 
-  (array:for matrix (lambda row (array:for row cb)))
-   matrix))
+(let matrix:for (lambda matrix cb (do (array:for matrix (lambda row (array:for row cb)))
+   matrix)))
 (let matrix:shallow-copy (lambda matrix (|> matrix (array:map (lambda x (|> x (array:map identity)))))))
 (let matrix:find-index (lambda matrix cb (do 
   (let coords (array -1 -1))
