@@ -1,20 +1,23 @@
 import debugStd from '../lib/debug/std.js'
-import { identity, typeCheck } from '../src/check.js'
+import { formatType, identity, typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
 import {
   APPLY,
+  ATOM,
   DEBUG,
   FALSE,
   KEYWORDS,
   RUNTIME_TYPES,
+  SPECIAL_FORMS_SET,
   STATIC_TYPES,
   TRUE,
   TYPE,
   VALUE,
   WORD
 } from '../src/keywords.js'
-import { LISP } from '../src/parser.js'
+import { isLeaf, LISP } from '../src/parser.js'
+import { SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
 
 export const debug = (ast, checkTypes = true) => {
@@ -74,17 +77,23 @@ export const debug = (ast, checkTypes = true) => {
     },
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
-      if (args.length !== 1)
+      if (args.length !== 1 && args.length !== 2)
         throw new RangeError(
           `Invalid number of arguments to (${DEBUG.TYPE_SIGNATURE}) (= 1) (${
             DEBUG.TYPE_SIGNATURE
           } ${stringifyArgs(args)})`
         )
-      return [...types.entries()]
-        .filter(([k, v]) => v().includes(args[0][VALUE]))
-        .sort((a, b) => a[0].length - b[0].length)
-        .map(([k, v]) => `${k}\n${v()}`)
-        .join('\n\n')
+      if (args[1] === 'Variable') {
+        const t = types.get(`· ~ ${args[0]}`)
+        return t ? t() : ''
+      } else if (args[1] === 'Special') {
+        return formatType(args[0], SPECIAL_FORM_TYPES)
+      } else
+        return [...types.entries()]
+          .filter(([k, v]) => v().includes(args[0][VALUE]))
+          .sort((a, b) => a[0].length - b[0].length)
+          .map(([k, v]) => `${k}\n${v()}`)
+          .join('\n\n')
     },
     [DEBUG.SIGNATURE]: (args, env) => {
       const signatures =
@@ -291,13 +300,38 @@ export const debug = (ast, checkTypes = true) => {
     const block = ast[1][1]
     const temp = block.shift()
     block.unshift(temp, identity(DEBUG.LOG), identity(DEBUG.ASSERT))
+    const exp = ast.at(-1).at(-1).at(-1)
+    const [head, ...rest] = isLeaf(exp) ? [exp] : exp
+    let type = ''
+    switch (head[TYPE]) {
+      case ATOM:
+        type = STATIC_TYPES.ATOM
+        break
+      case WORD:
+      case APPLY:
+        switch (head[VALUE]) {
+          case KEYWORDS.DEFINE_VARIABLE:
+            type = debugEnv[DEBUG.TYPE_SIGNATURE]([rest[0][VALUE], 'Variable'])
+            break
+          default:
+            if (SPECIAL_FORMS_SET.has(head[VALUE]))
+              type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE], 'Special'])
+            else type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE]])
+            break
+        }
+
+        break
+    }
+    type = type.split('\n').pop()
     return {
+      type,
       evaluated,
       error: null
     }
   } catch (error) {
     // console.log(error)
     return {
+      type: null,
       evaluated: null,
       error: {
         message: error.message

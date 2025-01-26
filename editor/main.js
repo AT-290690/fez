@@ -90,7 +90,7 @@ const serialise = (arg) => {
   if (typeof arg === 'number' || typeof arg === 'string') return arg.toString()
   else if (Array.isArray(arg))
     return arg.length ? `[${arg.map((a) => serialise(a)).join(' ')}]` : '[]'
-  else return ''
+  else return '(lambda)'
 }
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
@@ -101,8 +101,14 @@ document.addEventListener('keydown', (e) => {
       try {
         const compressed = LZString.compressToBase64(editor.getValue())
         const parsed = parse(editor.getValue())
-        const { evaluated, error } = debug(parsed)
-        terminal.setValue(error == null ? serialise(evaluated) : error.message)
+        const { evaluated, type, error } = debug(parsed)
+        terminal.setValue(
+          error == null
+            ? type
+              ? `${type}\n${serialise(evaluated)}`
+              : serialise(evaluated)
+            : error.message
+        )
         terminal.clearSelection()
         const newurl =
           window.location.protocol +
