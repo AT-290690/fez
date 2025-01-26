@@ -1,3 +1,4 @@
+import std from '../lib/baked/std.js'
 import debugStd from '../lib/debug/std.js'
 import { formatType, identity, typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
@@ -19,7 +20,7 @@ import {
 import { isLeaf, LISP } from '../src/parser.js'
 import { SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
-
+const libraryTypes = typeCheck(std[0])[1]
 export const debug = (ast, checkTypes = true) => {
   let types
   const debugEnv = {
@@ -95,8 +96,21 @@ export const debug = (ast, checkTypes = true) => {
         return t ? t() : ''
       } else if (option === 'Special') {
         return formatType(name, SPECIAL_FORM_TYPES)
+      } else if (option === 'Type') {
+        const [from, to] = name.split('->').map((x) => x.trim())
+        return [...libraryTypes.entries()]
+          .filter(([k, v]) => {
+            const T = v()
+            if (T && T.includes('->')) {
+              const [left, right] = T.split('->').map((x) => x.trim())
+              return left.includes(from) && right.includes(to)
+            }
+          })
+          .sort((a, b) => a[0].length - b[0].length)
+          .map(([k, v]) => `${k}\n${v()}`)
+          .join('\n\n')
       } else if (option === 'Library') {
-        return [...types.entries()]
+        return [...libraryTypes.entries()]
           .filter(([k, v]) => v().includes(name))
           .sort((a, b) => a[0].length - b[0].length)
           .map(([k, v]) => `${k}\n${v()}`)
@@ -106,6 +120,13 @@ export const debug = (ast, checkTypes = true) => {
       }
     },
     [DEBUG.SIGNATURE]: (args, env) => {
+      const name =
+        Array.isArray(args[0]) && args[0][0][VALUE] === DEBUG.STRING
+          ? args[0][1]
+              .slice(1)
+              .map((x) => String.fromCharCode(x[VALUE]))
+              .join('')
+          : args[0][VALUE]
       const signatures =
         args.length === 0
           ? debugStd[0][1][1].slice(1)
@@ -114,7 +135,7 @@ export const debug = (ast, checkTypes = true) => {
                 x[0][TYPE] === APPLY &&
                 x[0][VALUE] === KEYWORDS.DEFINE_VARIABLE &&
                 x[1][TYPE] === WORD &&
-                x[1][VALUE].toString().includes(args[0][VALUE])
+                x[1][VALUE].toString().includes(name)
             )
       return signatures.length === 0
         ? 'Not defined in library'
@@ -326,12 +347,13 @@ export const debug = (ast, checkTypes = true) => {
             type = debugEnv[DEBUG.TYPE_SIGNATURE]([rest[0], [WORD, 'Scope']])
             break
           default:
-            if (SPECIAL_FORMS_SET.has(head[VALUE]))
-              type = debugEnv[DEBUG.TYPE_SIGNATURE]([
-                [WORD, head[VALUE]],
+            if (SPECIAL_FORMS_SET.has(head[VALUE])) {
+              // type = debugEnv[DEBUG.TYPE_SIGNATURE]([head, [WORD, 'Special']])
+              type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
+                head,
                 [WORD, 'Special']
-              ])
-            else
+              ])}) ${rest.map((x) => stringifyArgs([x])).join(' ')}`
+            } else
               type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
                 head,
                 [WORD, 'Scope']

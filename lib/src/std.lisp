@@ -94,6 +94,7 @@
 (let Scope identity)
 (let Special identity)
 (let Library identity)
+(let Type identity)
 
 (let truthy? (lambda x
     (cond
