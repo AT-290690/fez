@@ -10,6 +10,13 @@ const fails = (source, message, name = 'TypeError') =>
 
 describe('Should throw errors', () => {
   it('Does not throw', () => {
+    // TODO make this pass
+    //     passes(
+    //       `(let x? (lambda 0))
+    // (let y? (lambda 1))
+    // (let z? (lambda 0))
+    // (let m? 1)`
+    //     )
     passes(`(let array:unique (lambda xs (|>
       (let sorted (array:sort xs (lambda a b (> a b))))
       (array:zip (math:sequence sorted))

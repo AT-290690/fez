@@ -34,8 +34,7 @@ const TYPE_PROP = 'type'
 const SIGNATURE = 'name'
 const PREDICATE = 3
 const COLLECTION = 4
-const RETRY_COUNT = 1
-const DEFINITON_RETRY_COUNT = 1
+const MAX_RETRY_DEFINITION = 1
 const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -125,12 +124,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: toTypeNames(APPLY),
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -147,12 +146,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: toTypeNames(ATOM),
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -169,12 +168,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: toTypeNames(PREDICATE),
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -191,12 +190,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: toTypeNames(COLLECTION),
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -213,12 +212,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: toTypeNames(UNKNOWN),
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -235,7 +234,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.LOG,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGUMENTS]: [
           {
             [STATS]: {
@@ -268,7 +267,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.STRING,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
@@ -290,7 +289,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.ASSERT,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -299,7 +298,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.SIGNATURE,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -308,7 +307,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.TYPE_SIGNATURE,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -317,7 +316,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.LIST_THEMES,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -326,7 +325,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: DEBUG.SET_THEME,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -335,7 +334,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BLOCK,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -344,7 +343,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.ANONYMOUS_FUNCTION,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [APPLY]
       }
@@ -353,7 +352,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.CALL_FUNCTION,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [UNKNOWN]
       }
@@ -362,7 +361,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.CREATE_ARRAY,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: VARIADIC,
         [RETURNS]: [COLLECTION]
       }
@@ -371,7 +370,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.LOOP,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -404,7 +403,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.ADDITION,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -437,7 +436,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.MULTIPLICATION,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -470,7 +469,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.SUBTRACTION,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -503,7 +502,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.DIVISION,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -535,7 +534,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.REMAINDER_OF_DIVISION]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -568,7 +567,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BITWISE_AND,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -601,7 +600,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BITWISE_NOT,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
@@ -623,7 +622,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BITWISE_OR,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -656,7 +655,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BITWISE_XOR,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -689,7 +688,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BITWISE_LEFT_SHIFT,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -722,7 +721,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.BITWISE_RIGHT_SHIFT,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -755,7 +754,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.GET_ARRAY,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
@@ -787,7 +786,7 @@ export const typeCheck = (ast) => {
     [KEYWORDS.SET_ARRAY]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 3,
         [ARGUMENTS]: [
           {
@@ -831,7 +830,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.POP_ARRAY,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
@@ -853,7 +852,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.ARRAY_LENGTH,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
@@ -875,7 +874,7 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.IF,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 3,
         [ARGUMENTS]: [
           {
@@ -919,12 +918,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.NOT,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM, PREDICATE],
               [RETURNS]: [ATOM, PREDICATE],
@@ -941,12 +940,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.EQUAL,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -957,7 +956,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -973,13 +972,13 @@ export const typeCheck = (ast) => {
     [KEYWORDS.LESS_THAN]: {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [SIGNATURE]: KEYWORDS.LESS_THAN,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -990,7 +989,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1007,12 +1006,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.GREATHER_THAN,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1023,7 +1022,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1040,12 +1039,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.GREATHER_THAN_OR_EQUAL,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1056,7 +1055,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1073,12 +1072,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.LESS_THAN_OR_EQUAL,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1089,7 +1088,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM],
               [RETURNS]: [ATOM],
@@ -1106,12 +1105,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.AND,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM, PREDICATE],
               [RETURNS]: [ATOM, PREDICATE],
@@ -1122,7 +1121,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM, PREDICATE],
               [RETURNS]: [ATOM, PREDICATE],
@@ -1139,12 +1138,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.OR,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 2,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM, PREDICATE],
               [RETURNS]: [ATOM, PREDICATE],
@@ -1155,7 +1154,7 @@ export const typeCheck = (ast) => {
           },
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [ATOM, PREDICATE],
               [RETURNS]: [ATOM, PREDICATE],
@@ -1172,12 +1171,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.IS_ATOM,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -1194,12 +1193,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY, PREDICATE],
         [SIGNATURE]: KEYWORDS.IS_LAMBDA,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [UNKNOWN],
               [RETURNS]: [UNKNOWN],
@@ -1216,12 +1215,12 @@ export const typeCheck = (ast) => {
       [STATS]: {
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: KEYWORDS.ERROR,
-        retried: RETRY_COUNT,
+        retried: Infinity,
         [ARGS_COUNT]: 1,
         [ARGUMENTS]: [
           {
             [STATS]: {
-              retried: RETRY_COUNT,
+              retried: Infinity,
               [SIGNATURE]: PLACEHOLDER,
               [TYPE_PROP]: [COLLECTION],
               [RETURNS]: [COLLECTION],
@@ -1487,7 +1486,7 @@ export const typeCheck = (ast) => {
                   checkReturnType()
                   if (
                     env[name][STATS][RETURNS][0] === UNKNOWN &&
-                    env[name][STATS].retried < DEFINITON_RETRY_COUNT
+                    env[name][STATS].retried < MAX_RETRY_DEFINITION
                   ) {
                     env[name][STATS].retried += 1
                     stack.unshift(() => {
@@ -2112,16 +2111,17 @@ export const typeCheck = (ast) => {
                             )
                           } else {
                             const retry = env[rest[i][VALUE]]
+                            // if (
+                            //   retry &&
+                            //   retry[STATS].retried < RETRY_COUNT &&
+                            //   args[i][STATS][TYPE_PROP][0] === UNKNOWN
+                            // ) {
+                            //   retry[STATS].retried += 1
+                            //   stack.unshift(() => check(exp, env, scope))
+                            // } else
                             if (
-                              retry &&
-                              retry[STATS].retried < RETRY_COUNT &&
-                              args[i][STATS][TYPE_PROP][0] === UNKNOWN
-                            ) {
-                              retry[STATS].retried += 1
-                              stack.unshift(() => check(exp, env, scope))
-                            } else if (
                               args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
-                              args[i][STATS].retried < DEFINITON_RETRY_COUNT
+                              args[i][STATS].retried < MAX_RETRY_DEFINITION
                             ) {
                               args[i][STATS].retried += 1
                               stack.unshift(() => check(exp, env, scope))
