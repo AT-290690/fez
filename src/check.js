@@ -1466,13 +1466,14 @@ export const typeCheck = (ast) => {
                   const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
                   resolveRetunType(returns, rem, RETURNS, isPredicate)
                 }
+                const rightHand = rest.at(-1)
                 if (
-                  rest.at(-1) &&
-                  rest.at(-1)[0] &&
-                  rest.at(-1)[0][TYPE] === APPLY &&
-                  rest.at(-1)[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                  rightHand &&
+                  rightHand[0] &&
+                  rightHand[0][TYPE] === APPLY &&
+                  rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
                 ) {
-                  const n = rest.at(-1).length
+                  const n = rightHand.length
                   env[name] = {
                     [STATS]: {
                       [TYPE_PROP]: [APPLY],
@@ -1491,15 +1492,16 @@ export const typeCheck = (ast) => {
                     env[name][STATS].retried += 1
                     stack.unshift(() => {
                       checkReturnType()
-                      check(rest.at(-1), env, exp)
+                      check(rightHand, env, exp)
                     })
-                    check(rest.at(-1), env, exp)
+                    check(rightHand, env, exp)
                   } else {
-                    check(rest.at(-1), env, exp)
+                    check(rightHand, env, exp)
                   }
                 } else {
+                  const isL = isLeaf(rightHand)
                   // if (!(name in env)) {
-                  if (rest[1][TYPE] === WORD) {
+                  if (isL && rightHand[TYPE] === WORD) {
                     env[name] = env[rest[1][VALUE]]
 
                     if (
@@ -1516,115 +1518,114 @@ export const typeCheck = (ast) => {
                       warningStack.add(
                         `${name} is assigned to ${rest[1][VALUE]} which ends in (${MUTATION_SUFFIX}) so ${name} must also end in (${MUTATION_SUFFIX}) (check #18)`
                       )
-                  } else {
-                    const isL = isLeaf(rest.at(-1))
-                    const right = isL ? rest.at(-1) : rest.at(-1)[0]
-                    if (isL && right[TYPE] === ATOM) {
-                      const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
-                      // This never happens
-                      // if (
-                      //   isPredicate &&
-                      //   right[VALUE] !== TRUE &&
-                      //   right[VALUE] !== FALSE
-                      // ) {
-                      // }
-                      env[name] = {
-                        [STATS]: {
-                          retried: 0,
-                          [TYPE_PROP]: [ATOM],
-                          [RETURNS]: [ATOM]
-                        }
+                  } else if (isL && rightHand[TYPE] === ATOM) {
+                    const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
+                    // This never happens
+                    // if (
+                    //   isPredicate &&
+                    //   right[VALUE] !== TRUE &&
+                    //   right[VALUE] !== FALSE
+                    // ) {
+                    // }
+                    env[name] = {
+                      [STATS]: {
+                        retried: 0,
+                        [TYPE_PROP]: [ATOM],
+                        [RETURNS]: [ATOM]
                       }
-                      if (isPredicate) {
-                        env[name][STATS][TYPE_PROP][1] = PREDICATE
-                        env[name][STATS][RETURNS] = [ATOM, PREDICATE]
-                      }
-                    } else {
-                      const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
-                      if (
-                        right &&
-                        right[VALUE] &&
-                        getSuffix(right[VALUE]) === PREDICATE_SUFFIX &&
-                        !isPredicate
-                      )
+                    }
+                    if (isPredicate) {
+                      if (rightHand[VALUE] !== TRUE && rightHand !== FALSE) {
                         warningStack.add(
-                          `${name} is assigned to ${right[VALUE]} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #19)`
+                          `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but the (Atom) value is neither ${TRUE} or ${FALSE} (${stringifyArgs(
+                            exp
+                          )}) (check #14)`
                         )
-                      env[name] = {
-                        [STATS]: {
-                          retried: 0,
-                          [TYPE_PROP]: [
-                            isL
-                              ? right[TYPE]
-                              : env[right?.[VALUE]]?.[STATS]?.[RETURNS]?.[0] ??
-                                UNKNOWN
-                          ],
-                          [RETURNS]: [UNKNOWN]
-                        }
-                      }
-                      if (isPredicate) {
+                      } else {
                         env[name][STATS][TYPE_PROP][1] = PREDICATE
                         env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                       }
-                      if (right && right[VALUE]) {
-                        if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
-                          if (isLeaf(rest.at(-1).at(-1))) {
-                            const fnName = rest.at(-1).at(-1)[VALUE]
-                            const fn = env[fnName]
-                            if (
-                              !isPredicate &&
-                              fn[STATS][RETURNS][1] === PREDICATE
-                            ) {
-                              warningStack.add(
-                                `${name} is assigned to ${fnName} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #24)`
-                              )
-                            } else if (
-                              isPredicate &&
-                              fn[STATS][RETURNS][1] !== PREDICATE
-                            ) {
-                              warningStack.add(
-                                `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
-                              )
-                            }
-                            env[name][STATS][TYPE_PROP] = fn[STATS][RETURNS]
-                            env[name][STATS][RETURNS] = fn[STATS][RETURNS]
-                          } else {
-                            const body = rest.at(-1).at(-1).at(-1)
-                            const rem = hasBlock(body) ? body.at(-1) : body
-                            const returns = isLeaf(rem) ? rem : rem[0]
-                            resolveRetunType(
-                              returns,
-                              rem,
-                              TYPE_PROP,
-                              isPredicate
+                    }
+                  } else {
+                    const right = rightHand[0]
+                    const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
+                    if (
+                      right &&
+                      right[VALUE] &&
+                      getSuffix(right[VALUE]) === PREDICATE_SUFFIX &&
+                      !isPredicate
+                    )
+                      warningStack.add(
+                        `${name} is assigned to ${right[VALUE]} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #19)`
+                      )
+                    env[name] = {
+                      [STATS]: {
+                        retried: 0,
+                        [TYPE_PROP]: [
+                          isL
+                            ? right[TYPE]
+                            : env[right?.[VALUE]]?.[STATS]?.[RETURNS]?.[0] ??
+                              UNKNOWN
+                        ],
+                        [RETURNS]: [UNKNOWN]
+                      }
+                    }
+                    if (isPredicate) {
+                      env[name][STATS][TYPE_PROP][1] = PREDICATE
+                      env[name][STATS][RETURNS] = [ATOM, PREDICATE]
+                    }
+                    if (right && right[VALUE]) {
+                      if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
+                        if (isLeaf(rightHand.at(-1))) {
+                          const fnName = rightHand.at(-1)[VALUE]
+                          const fn = env[fnName]
+                          if (
+                            !isPredicate &&
+                            fn[STATS][RETURNS][1] === PREDICATE
+                          ) {
+                            warningStack.add(
+                              `${name} is assigned to ${fnName} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #24)`
+                            )
+                          } else if (
+                            isPredicate &&
+                            fn[STATS][RETURNS][1] !== PREDICATE
+                          ) {
+                            warningStack.add(
+                              `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
                             )
                           }
+                          env[name][STATS][TYPE_PROP] = fn[STATS][RETURNS]
+                          env[name][STATS][RETURNS] = fn[STATS][RETURNS]
                         } else {
-                          const body = rest.at(-1)
+                          const body = rightHand.at(-1).at(-1)
                           const rem = hasBlock(body) ? body.at(-1) : body
                           const returns = isLeaf(rem) ? rem : rem[0]
                           resolveRetunType(returns, rem, TYPE_PROP, isPredicate)
                         }
-                        if (env[right[VALUE]]?.[STATS]?.[RETURNS]?.[1]) {
-                          if (
-                            env[right[VALUE]][STATS][RETURNS][1] ===
-                              PREDICATE &&
-                            !isPredicate
-                          ) {
-                            warningStack.add(
-                              `${name} is assigned to the result of a (${toTypeNames(
-                                PREDICATE
-                              )}) so ${name} must end in (${PREDICATE_SUFFIX}) (check #23)`
-                            )
-                          }
-                          env[name][STATS][RETURNS] =
-                            env[right[VALUE]][STATS][RETURNS]
+                      } else {
+                        const body = rightHand
+                        const rem = hasBlock(body) ? body.at(-1) : body
+                        const returns = isLeaf(rem) ? rem : rem[0]
+                        resolveRetunType(returns, rem, TYPE_PROP, isPredicate)
+                      }
+                      if (env[right[VALUE]]?.[STATS]?.[RETURNS]?.[1]) {
+                        if (
+                          env[right[VALUE]][STATS][RETURNS][1] === PREDICATE &&
+                          !isPredicate
+                        ) {
+                          warningStack.add(
+                            `${name} is assigned to the result of a (${toTypeNames(
+                              PREDICATE
+                            )}) so ${name} must end in (${PREDICATE_SUFFIX}) (check #23)`
+                          )
                         }
+                        env[name][STATS][RETURNS] =
+                          env[right[VALUE]][STATS][RETURNS]
                       }
                     }
                   }
                   // }
-                  check(rest.at(-1), env, scope)
+                  check(rightHand, env, scope)
                 }
                 Types.set(withScope(name, env), () => formatType(name, env))
               }

@@ -370,6 +370,16 @@ ZZZ=ZZZ,ZZZ")
 
   it('Should throw', () => {
     fails(
+      `(let x? (lambda 2))
+(let y? (lambda 3))
+(let z? (lambda 10))
+(let m? 10)`,
+      `x? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+y? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+z? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+m? ends in (?) and is expected to return (Predicate) but the (Atom) value is neither 1 or 0 (let m? 10) (check #14)`
+    )
+    fails(
       `(let x 1)
 (let y 2)
 (set! x 1 10)
