@@ -1068,39 +1068,33 @@ export const typeCheck = (ast) => {
                                 args[i][STATS][RETURNS]
                             }
                           }
-                        } else if (rest[i].length) {
-                          // TODO figure out what cann we do in this else ?
-                          // Check arg types (check 4)
-                          // )
-                          // TODO figure out if we need this
+                        } else if (
+                          rest[i].length &&
+                          rest[i][0][TYPE] === APPLY &&
+                          env[rest[i][0][VALUE]]
+                        ) {
+                          const actual = env[rest[i][0][VALUE]][STATS][RETURNS]
+                          const expected = args[i][STATS][TYPE_PROP]
                           if (
-                            rest[i][0][TYPE] === APPLY &&
-                            env[rest[i][0][VALUE]]
+                            expected[0] !== UNKNOWN &&
+                            actual[0] !== UNKNOWN
                           ) {
-                            const actual =
-                              env[rest[i][0][VALUE]][STATS][RETURNS]
-                            const expected = args[i][STATS][TYPE_PROP]
-                            if (
-                              expected[0] !== UNKNOWN &&
-                              actual[0] !== UNKNOWN
-                            ) {
-                              if (expected[0] !== actual[0])
-                                errorStack.add(
-                                  `Incorrect type of arguments ${i} for (${
-                                    first[VALUE]
-                                  }). Expected (${toTypeNames(
-                                    expected[0]
-                                  )}) but got (${toTypeNames(
-                                    actual[0]
-                                  )}) (${stringifyArgs(exp)}) (check #16)`
-                                )
-                            } else if (
-                              args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
-                              args[i][STATS].retried < MAX_RETRY_DEFINITION
-                            ) {
-                              args[i][STATS].retried += 1
-                              stack.unshift(() => check(exp, env, scope))
-                            }
+                            if (expected[0] !== actual[0])
+                              errorStack.add(
+                                `Incorrect type of arguments ${i} for (${
+                                  first[VALUE]
+                                }). Expected (${toTypeNames(
+                                  expected[0]
+                                )}) but got (${toTypeNames(
+                                  actual[0]
+                                )}) (${stringifyArgs(exp)}) (check #16)`
+                              )
+                          } else if (
+                            args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
+                            args[i][STATS].retried < MAX_RETRY_DEFINITION
+                          ) {
+                            args[i][STATS].retried += 1
+                            stack.unshift(() => check(exp, env, scope))
                           }
                         }
                       }
