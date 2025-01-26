@@ -623,13 +623,13 @@ list:tail (pair Collection) -> Unknown
 list:nil? (pair Collection) -> Predicate
 
 · ~ list:map
-list:map (xs Collection f Abstraction Unknown) -> Collection
+list:map (xs Collection f Abstraction) -> Collection
 
 · ~ list:filter
 list:filter (xs Collection f? Abstraction Predicate Predicate) -> Collection
 
 · ~ list:fold
-list:fold (xs Collection f Abstraction Unknown out Unknown) -> Unknown
+list:fold (xs Collection f Abstraction out Unknown) -> Unknown
 
 · ~ list:zip
 list:zip (a Unknown b Unknown) -> Collection
@@ -704,25 +704,25 @@ list:after (lista Unknown pos Atom) -> Unknown
 list:slice (lista Unknown i Atom k Atom) -> Collection
 
 · ~ list:for
-list:for (xs Collection f Abstraction Unknown) -> Collection
+list:for (xs Collection f Abstraction) -> Collection
 
 · ~ array:for
-array:for (xs Collection cb Abstraction Unknown) -> Unknown
+array:for (xs Collection cb Abstraction) -> Unknown
 
 · ~ array:buckets
 array:buckets (n Unknown) -> Unknown
 
 · ~ array:enumerated-for
-array:enumerated-for (xs Collection cb Abstraction Unknown) -> Unknown
+array:enumerated-for (xs Collection cb Abstraction) -> Unknown
 
 · ~ array:fill
-array:fill (n Unknown cb Abstraction Unknown) -> Unknown
+array:fill (n Unknown cb Abstraction) -> Unknown
 
 · ~ array:of
-array:of (n Atom cb Abstraction Unknown) -> Unknown
+array:of (n Atom cb Abstraction) -> Unknown
 
 · ~ array:map
-array:map (xs Collection cb Abstraction Unknown) -> Collection
+array:map (xs Collection cb Abstraction) -> Collection
 
 · ~ array:select
 array:select (xs Collection cb? Abstraction Predicate) -> Unknown
@@ -731,7 +731,7 @@ array:select (xs Collection cb? Abstraction Predicate) -> Unknown
 array:exclude (xs Collection cb? Abstraction Predicate) -> Unknown
 
 · ~ array:fold
-array:fold (xs Collection cb Abstraction Unknown initial Unknown) -> Unknown
+array:fold (xs Collection cb Abstraction initial Unknown) -> Unknown
 
 · ~ array:every?
 array:every? (xs Collection predicate? Abstraction Predicate) -> Predicate
@@ -740,10 +740,10 @@ array:every? (xs Collection predicate? Abstraction Predicate) -> Predicate
 array:some? (xs Collection predicate? Abstraction Predicate) -> Predicate
 
 · ~ array:find
-array:find (xs Collection predicate? Unknown) -> Unknown
+array:find (xs Collection predicate? Unknown Predicate) -> Unknown
 
 · ~ array:find-option
-array:find-option (xs Collection predicate? Unknown) -> Collection
+array:find-option (xs Collection predicate? Unknown Predicate) -> Collection
 
 · ~ array:has?
 array:has? (xs Collection predicate? Abstraction Predicate) -> Predicate
@@ -785,7 +785,7 @@ array:empty? (xs Collection) -> Predicate
 array:not-empty? (xs Collection) -> Predicate
 
 · ~ array:count-of
-array:count-of (xs Collection cb? Unknown) -> Atom
+array:count-of (xs Collection cb? Unknown Predicate) -> Atom
 
 · ~ array:count
 array:count (input Unknown item Atom) -> Atom
@@ -866,7 +866,7 @@ array:flat-one (xs Collection) -> Unknown
 array:flat (xs Collection) -> Unknown
 
 · ~ array:sort
-array:sort (xs Collection cb Abstraction Unknown) -> Unknown
+array:sort (xs Collection cb Abstraction) -> Unknown
 
 · ~ array:sorted-ascending?
 array:sorted-ascending? (xs Collection) -> Predicate
@@ -890,7 +890,7 @@ set (xs Collection index Atom item Unknown) -> Collection
 array:sliding-window (xs Collection size Atom) -> Unknown
 
 · ~ array:adjacent-difference
-array:adjacent-difference (xs Collection cb Abstraction Unknown) -> Unknown
+array:adjacent-difference (xs Collection cb Abstraction) -> Unknown
 
 · ~ array:partition
 array:partition (xs Collection n Atom) -> Unknown
@@ -899,7 +899,7 @@ array:partition (xs Collection n Atom) -> Unknown
 array:ranges (xs Collection predicate? Abstraction Predicate) -> Unknown
 
 · ~ array:chunks
-array:chunks (xs Collection predicate? Unknown) -> Collection
+array:chunks (xs Collection predicate? Unknown Predicate) -> Collection
 
 · ~ array:adjacent-find
 array:adjacent-find (xs Collection cb? Abstraction Predicate) -> Atom
@@ -920,10 +920,10 @@ matrix:find-index (matrix Unknown cb Unknown) -> Collection
 matrix:find (matrix Unknown cb Unknown) -> Unknown
 
 · ~ matrix:enumerated-for
-matrix:enumerated-for (matrix Collection cb Abstraction Unknown) -> Unknown
+matrix:enumerated-for (matrix Collection cb Abstraction) -> Unknown
 
 · ~ matrix:of
-matrix:of (matrix Collection cb Abstraction Unknown) -> Unknown
+matrix:of (matrix Collection cb Abstraction) -> Unknown
 
 · ~ matrix:rotate-square
 matrix:rotate-square (matrix Collection) -> Unknown
@@ -947,13 +947,13 @@ matrix:moore-neighborhood Collection
 matrix:von-neumann-neighborhood Collection
 
 · ~ matrix:adjacent
-matrix:adjacent (xs Collection directions Unknown y Atom x Atom cb Abstraction Unknown) -> Unknown
+matrix:adjacent (xs Collection directions Unknown y Atom x Atom cb Abstraction) -> Unknown
 
 · ~ matrix:adjacent-sum
-matrix:adjacent-sum (xs Collection directions Unknown y Atom x Atom cb Abstraction Unknown) -> Unknown
+matrix:adjacent-sum (xs Collection directions Unknown y Atom x Atom cb Abstraction) -> Unknown
 
 · ~ matrix:sliding-adjacent-sum
-matrix:sliding-adjacent-sum (xs Collection directions Unknown y Atom x Atom N Unknown cb Abstraction Unknown) -> Unknown
+matrix:sliding-adjacent-sum (xs Collection directions Unknown y Atom x Atom N Unknown cb Abstraction) -> Unknown
 
 · ~ matrix:set!
 matrix:set! (matrix Collection y Atom x Atom value Unknown) -> Collection
@@ -1106,7 +1106,7 @@ array:index-of (xs Collection item Atom) -> Unknown
 array:enumerate (xs Collection) -> Unknown
 
 · ~ array:enumerated-map
-array:enumerated-map (xs Collection cb Abstraction Unknown) -> Unknown
+array:enumerated-map (xs Collection cb Abstraction) -> Unknown
 
 · ~ array:enumerated-select
 array:enumerated-select (xs Collection predicate? Abstraction Predicate) -> Unknown
@@ -1115,7 +1115,7 @@ array:enumerated-select (xs Collection predicate? Abstraction Predicate) -> Unkn
 array:enumerated-exclude (xs Collection predicate? Abstraction Predicate) -> Unknown
 
 · ~ array:enumerated-fold
-array:enumerated-fold (xs Collection cb Abstraction Unknown initial Unknown) -> Unknown
+array:enumerated-fold (xs Collection cb Abstraction initial Unknown) -> Unknown
 
 · ~ array:enumerated-find
 array:enumerated-find (xs Collection predicate? Abstraction Predicate) -> Unknown
@@ -1532,22 +1532,22 @@ bool:true? (variable Collection) -> Predicate
 bool:false? (variable Collection) -> Predicate
 
 · ~ curry:ternary
-curry:ternary (f Abstraction Unknown b Unknown c Unknown) -> Abstraction
+curry:ternary (f Abstraction b Unknown c Unknown) -> Abstraction
 
 · ~ curry:binary
-curry:binary (f Abstraction Unknown b Unknown) -> Abstraction
+curry:binary (f Abstraction b Unknown) -> Abstraction
 
 · ~ curry:unary
-curry:unary (f Abstraction Unknown) -> Abstraction
+curry:unary (f Abstraction) -> Abstraction
 
 · ~ curry:three
-curry:three (f Abstraction Unknown b Unknown c Unknown) -> Abstraction
+curry:three (f Abstraction b Unknown c Unknown) -> Abstraction
 
 · ~ curry:two
-curry:two (f Abstraction Unknown b Unknown) -> Abstraction
+curry:two (f Abstraction b Unknown) -> Abstraction
 
 · ~ curry:one
-curry:one (f Abstraction Unknown) -> Abstraction
+curry:one (f Abstraction) -> Abstraction
 
 · ~ brray:offset-left
 brray:offset-left (q Collection) -> Atom
@@ -1583,10 +1583,10 @@ brray:remove-from-left! (q Collection) -> Atom
 brray:remove-from-right! (q Collection) -> Atom
 
 · ~ brray:iter
-brray:iter (q Unknown cb Abstraction Unknown) -> Unknown
+brray:iter (q Unknown cb Abstraction) -> Unknown
 
 · ~ brray:map
-brray:map (q Unknown cb Abstraction Unknown) -> Unknown
+brray:map (q Unknown cb Abstraction) -> Unknown
 
 · ~ brray:balance?
 brray:balance? (q Unknown) -> Predicate
@@ -1664,7 +1664,7 @@ stack:pop! (stack Unknown) -> Unknown
 stack:peek (stack Unknown) -> Unknown
 
 · ~ tuple:apply
-tuple:apply (x Unknown cb Abstraction Unknown) -> Unknown
+tuple:apply (x Unknown cb Abstraction) -> Unknown
 
 · ~ tuple:add
 tuple:add (x Unknown) -> Atom
@@ -1742,13 +1742,13 @@ date:month-day (date Unknown) -> Unknown
 date:year-month (date Unknown) -> Collection
 
 · ~ loop:for-range
-loop:for-range (start Unknown end Atom cb Abstraction Unknown) -> Unknown
+loop:for-range (start Unknown end Atom cb Abstraction) -> Unknown
 
 · ~ loop:for-n
-loop:for-n (n Atom cb Abstraction Unknown) -> Unknown
+loop:for-n (n Atom cb Abstraction) -> Unknown
 
 · ~ loop:repeat
-loop:repeat (n Atom cb Abstraction Unknown) -> Unknown
+loop:repeat (n Atom cb Abstraction) -> Unknown
 
 · ~ loop:some-n?
 loop:some-n? (n Atom predicate? Abstraction Predicate) -> Predicate
@@ -1805,19 +1805,19 @@ from:array->heap (xs Collection cb Unknown) -> Unknown
 optimization:tail-call-loop (result Unknown) -> Unknown
 
 · ~ optimization:tail-calls-0
-optimization:tail-calls-0 (fn Abstraction Unknown) -> Abstraction
+optimization:tail-calls-0 (fn Abstraction) -> Abstraction
 
 · ~ optimization:tail-calls-1
-optimization:tail-calls-1 (fn Abstraction Unknown) -> Abstraction
+optimization:tail-calls-1 (fn Abstraction) -> Abstraction
 
 · ~ optimization:tail-calls-2
-optimization:tail-calls-2 (fn Abstraction Unknown) -> Abstraction
+optimization:tail-calls-2 (fn Abstraction) -> Abstraction
 
 · ~ optimization:tail-calls-3
-optimization:tail-calls-3 (fn Abstraction Unknown) -> Abstraction
+optimization:tail-calls-3 (fn Abstraction) -> Abstraction
 
 · ~ optimization:tail-calls-4
-optimization:tail-calls-4 (fn Abstraction Unknown) -> Abstraction
+optimization:tail-calls-4 (fn Abstraction) -> Abstraction
 
 · ~ option:error?
 option:error? (x Unknown) -> Predicate
@@ -1874,7 +1874,7 @@ array:car (xs Collection) -> Unknown
 array:cdr (xs Collection) -> Unknown
 
 · ~ array:for-range
-array:for-range (start Unknown end Atom cb Abstraction Unknown) -> Unknown
+array:for-range (start Unknown end Atom cb Abstraction) -> Unknown
 
 · ~ progn
 progn () -> Unknown

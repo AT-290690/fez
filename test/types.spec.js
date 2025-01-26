@@ -124,6 +124,10 @@ describe('Should throw errors', () => {
 (let part2 (lambda input (|> input (parse) (array:map nicer?) (math:summation))))
 
 [[(part1 sample) (part2 sample2)] [(part2 sample3) (part2 sample4)]]`)
+    passes(
+      `(let fn (lambda x y? (+ x (or y? 1))))
+(fn 1 1)`
+    )
     passes(`(let INPUT (array:concat-with [
   "....#....."
   ".........#"
@@ -527,6 +531,15 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (che
       `fit? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
     )
     fails(
+      `(let fn (lambda x y? (+ x (or y? 1))))
+(fn 1 2)`,
+      `Incorrect type of arguments 1 for (fn). Expected (Predicate) but got (Atom) (fn 1 2) (check #13)`
+    )
+    fails(
+      `(let fn (lambda x y? (+ x (or y? 2))))`,
+      `Incorrect type of argument (1) for special form (or). Expected (Predicate) but got (Atom) (or y? 2) (check #5)`
+    )
+    fails(
       `(let xs 1)
 (identity xs)`,
       `A variable named xs must be of type (Collection) but got type (Atom) (check #32)`
@@ -697,7 +710,9 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
                   (let index (array:second x)) (or (not (> x 0))
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
       (array:map array:first))))`,
-      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)`
+      // TODO - remove Duplication
+      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)
+Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)`
     )
     fails(
       `(let INPUT
@@ -900,6 +915,7 @@ Incorrect type of arguments (0) for (and). Expected (Predicate) but got (Unknown
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (array:first x) (array:set! a (array:length a) (from:digit->char (array:second x))) (array:set! (array:set! a (array:length a) char:dash) (array:length a) (from:digit->char (array:second x)))) (check #21)
 Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown) (if (cb cell) (array:push! coords (array y x)) 0) (check #21)
 Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Unknown) (or (= i 0) (cb x (array:get xs (- i 1)))) (check #21)
+Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)
 Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)
 Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
 Incorrect type of arguments (0) for (not). Expected (Predicate) but got (Unknown) (not (cb (array:get xs i))) (check #21)
@@ -912,6 +928,7 @@ Incorrect type of arguments (0) for (if). Expected (Predicate) but got (Unknown)
 Incorrect type of arguments (1) for (or). Expected (Predicate) but got (Unknown) (or (= n 2) (recursive:math:prime 2 (math:sqrt n))) (check #21)
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
+Incorrect type of arguments 0 for (math:sequence). Expected (Collection) but got (Atom) (math:sequence a) (check #10)
 Incorrect type of arguments 0 for (math:sequence). Expected (Collection) but got (Atom) (math:sequence a) (check #30)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)

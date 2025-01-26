@@ -84,10 +84,8 @@ const formatType = (name, env) => {
               `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map(
                 toTypeNames
               ).join(' ')}${
-                x[STATS][TYPE_PROP][0] === APPLY
-                  ? ` ${toTypeNames(
-                      x[STATS][RETURNS][1] ?? x[STATS][RETURNS][0]
-                    )}`
+                getSuffix(x[STATS][SIGNATURE]) === PREDICATE_SUFFIX
+                  ? ' ' + toTypeNames(PREDICATE)
                   : ''
               }`
           )
@@ -1959,7 +1957,7 @@ export const typeCheck = (ast) => {
                                         )}) (${stringifyArgs(exp)}) (check #3)`
                                       )
                                     } else if (
-                                      PRED_TYPE &&
+                                      PRED_TYPE === PREDICATE &&
                                       env[CAR][STATS][RETURNS][1] !==
                                         PRED_TYPE &&
                                       !isCast
@@ -1999,6 +1997,21 @@ export const typeCheck = (ast) => {
                                     )}) (${stringifyArgs(exp)}) (check #2)`
                                   )
                                 }
+                                if (
+                                  PRED_TYPE === PREDICATE &&
+                                  rest[i][VALUE] !== TRUE &&
+                                  rest[i][VALUE] !== FALSE
+                                ) {
+                                  errorStack.add(
+                                    `Incorrect type of argument (${i}) for special form (${
+                                      first[VALUE]
+                                    }). Expected (${toTypeNames(
+                                      PRED_TYPE
+                                    )}) but got (${toTypeNames(
+                                      rest[i][VALUE]
+                                    )}) (${stringifyArgs(exp)}) (check #5)`
+                                  )
+                                }
                                 break
                               }
                             }
@@ -2016,16 +2029,45 @@ export const typeCheck = (ast) => {
                             rest[i][TYPE] === WORD && env[rest[i][VALUE]]
                               ? env[rest[i][VALUE]][STATS][TYPE_PROP][0]
                               : rest[i][TYPE]
-                          if (
-                            (args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                              T === ATOM &&
-                              args[i][STATS][TYPE_PROP][0] !== ATOM) ||
-                            (env[rest[i][VALUE]] &&
-                              env[rest[i][VALUE]][STATS][TYPE_PROP][0] !==
-                                UNKNOWN &&
+                          if (T === ATOM) {
+                            if (
                               args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                              env[rest[i][VALUE]][STATS][TYPE_PROP][0] !==
-                                args[i][STATS][TYPE_PROP][0])
+                              args[i][STATS][TYPE_PROP][0] !== ATOM
+                            ) {
+                              errorStack.add(
+                                `Incorrect type of arguments ${i} for (${
+                                  first[VALUE]
+                                }). Expected (${toTypeNames(
+                                  args[i][STATS][TYPE_PROP][0]
+                                )}) but got (${toTypeNames(
+                                  T
+                                )}) (${stringifyArgs(exp)}) (check #10)`
+                              )
+                            } else if (
+                              args[i][STATS][RETURNS][0] === ATOM &&
+                              args[i][STATS][RETURNS][1] === PREDICATE &&
+                              rest[i][VALUE] !== TRUE &&
+                              rest[i][VALUE] !== FALSE
+                            ) {
+                              errorStack.add(
+                                `Incorrect type of arguments ${i} for (${
+                                  first[VALUE]
+                                }). Expected (${toTypeNames(
+                                  args[i][STATS][RETURNS][1]
+                                )}) but got (${toTypeNames(
+                                  T
+                                )}) (${stringifyArgs(exp)}) (check #13)`
+                              )
+                            }
+                          }
+
+                          if (
+                            env[rest[i][VALUE]] &&
+                            env[rest[i][VALUE]][STATS][TYPE_PROP][0] !==
+                              UNKNOWN &&
+                            args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                            env[rest[i][VALUE]][STATS][TYPE_PROP][0] !==
+                              args[i][STATS][TYPE_PROP][0]
                           ) {
                             errorStack.add(
                               `Incorrect type of arguments ${i} for (${
