@@ -842,6 +842,17 @@ Incorrect type of arguments 0 for (array:second). Expected (Collection) but got 
 ; [(part1 PARSED) (part2 PARSED)]`,
       `Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Abstraction) (- matrix:shallow-copy y2) (check #3)`
     )
+    // Maybe this is ok since all branches return different stuff
+    fails(
+      `(let array:equal? (lambda a b
+  (or
+  (and (atom? a) (atom? b) (= a b))
+  (and (array? a)
+        (= (length a) (length b))
+          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))`,
+      `Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
+Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)`
+    )
     // TODO: uncomment this and make it pass
 
     fails(

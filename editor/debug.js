@@ -52,7 +52,6 @@ export const debug = (ast, checkTypes = true) => {
     },
     [STATIC_TYPES.COLLECTION]: (args, env) => {
       const T = evaluate(args[0], env)
-      const t = typeof T
       if (!Array.isArray(T))
         throw new TypeError(
           `Argument of (${STATIC_TYPES.COLLECTION}) must be an (${
@@ -316,7 +315,8 @@ export const debug = (ast, checkTypes = true) => {
           default:
             if (SPECIAL_FORMS_SET.has(head[VALUE]))
               type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE], 'Special'])
-            else type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE]])
+            else
+              type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE], 'Variable'])
             break
         }
 

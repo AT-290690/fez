@@ -28,7 +28,7 @@ export const toTypeNames = (type) => {
   }
 }
 export const SPECIAL_FORM_TYPES = {
-  [SCOPE_NAME]: 'root',
+  [SCOPE_NAME]: '·',
   [toTypeNames(APPLY)]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
