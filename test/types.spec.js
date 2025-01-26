@@ -718,6 +718,24 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #4)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #4)`
     )
+    // TODO tere should be mre errors
+    fails(
+      `(let fn (lambda x (+ x 1)))
+(let x 10)
+(let y 23)
+(fn [])
+`,
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #4)`
+    )
+    fails(
+      `(let fn (lambda x (+ x 1)))
+(let x 10)
+(let y 23)
+(fn [])
+(fn (lambda 1))
+`,
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #4)`
+    )
     fails(
       `(let array:unique (lambda xs (|>
       (let sorted (array:sort xs (lambda a b (> a b))))
@@ -906,6 +924,8 @@ Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Co
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
 Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
 Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #15)
+Incorrect type of arguments 1 for (array:set!). Expected (Atom) but got (Collection) (array:set! (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (evaluate (array:get args 2) env)) (check #16)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #16)
 Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #15)
 Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #15)
 Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #15)
@@ -932,6 +952,7 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
+Incorrect type of arguments 1 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (> (array:first current) (array:second current))) (check #4)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)

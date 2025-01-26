@@ -62,6 +62,9 @@ const deepLambdaReturn = (rest, condition) => {
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
+const assign = (a, b, i) => {
+  a[i] = b[i]
+}
 export const formatType = (name, env) => {
   const stats = env[name][STATS]
   return stats
@@ -126,43 +129,45 @@ export const typeCheck = (ast) => {
     switch (first[TYPE]) {
       case WORD:
         {
-          stack.push(() => {
-            if (env[first[VALUE]] === undefined) {
-              errorStack.add(
-                `Trying to access undefined variable ${first[VALUE]} (check #11)`
-              )
-            } else {
-              const T = env[first[VALUE]][STATS]
-              const isKnown = T[TYPE_PROP][0] !== UNKNOWN
-              switch (first[VALUE]) {
-                case 'xs':
-                case 'arr':
-                case 'matrix':
-                case 'table':
-                  if (isKnown && T[TYPE_PROP][0] !== COLLECTION) {
-                    warningStack.add(
-                      `A variable named ${first[VALUE]} must be of type (${
-                        STATIC_TYPES.COLLECTION
-                      }) but got type (${toTypeNames(
-                        T[TYPE_PROP][0]
-                      )}) (check #32)`
-                    )
-                  }
-                  //else T[TYPE_PROP] = [COLLECTION]
-                  break
-                default:
-                  {
-                    const isPredicate =
-                      getSuffix(first[VALUE]) === PREDICATE_SUFFIX
-                    if (isPredicate) {
-                      if (isKnown) T[TYPE_PROP][1] = PREDICATE
-                      T[RETURNS] = [ATOM, PREDICATE]
+          if (!isSpecial)
+            stack.push(() => {
+              if (env[first[VALUE]] === undefined) {
+                errorStack.add(
+                  `Trying to access undefined variable ${first[VALUE]} (check #11)`
+                )
+              } else {
+                const T = env[first[VALUE]][STATS]
+                const isKnown = T[TYPE_PROP][0] !== UNKNOWN
+                switch (first[VALUE]) {
+                  case 'xs':
+                  case 'arr':
+                  case 'matrix':
+                  case 'table':
+                    if (isKnown && T[TYPE_PROP][0] !== COLLECTION) {
+                      warningStack.add(
+                        `A variable named ${first[VALUE]} must be of type (${
+                          STATIC_TYPES.COLLECTION
+                        }) but got type (${toTypeNames(
+                          T[TYPE_PROP][0]
+                        )}) (check #32)`
+                      )
                     }
-                  }
-                  break
+                    //else T[TYPE_PROP] = [COLLECTION]
+                    break
+                  default:
+                    {
+                      const isPredicate =
+                        getSuffix(first[VALUE]) === PREDICATE_SUFFIX
+                      if (isPredicate) {
+                        // PRED ASSIGMENT
+                        if (isKnown) T[TYPE_PROP][1] = PREDICATE
+                        T[RETURNS] = [ATOM, PREDICATE]
+                      }
+                    }
+                    break
+                }
               }
-            }
-          })
+            })
         }
         break
       case ATOM:
@@ -183,6 +188,7 @@ export const typeCheck = (ast) => {
                 const name = rest[0][VALUE]
                 const resolveRetunType = (returns, rem, prop, isPredicate) => {
                   if (returns[TYPE] === ATOM) {
+                    // ATOM ASSIGMENT
                     env[name][STATS][prop][0] = ATOM
                     env[name][STATS][RETURNS][0] = ATOM
                   } else {
@@ -191,13 +197,14 @@ export const typeCheck = (ast) => {
                         {
                           const re = rem.slice(2)
                           if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                            // ATOM ASSIGMENT
                             env[name][STATS][prop][0] = ATOM
                             env[name][STATS][RETURNS][0] = ATOM
                             if (
                               getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
                               getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
                             ) {
-                              // env[name][STATS][TYPE_PROP][1] = PREDICATE
+                              // ATOM ASSIGMENT PREDICATE ASSIGMENT
                               env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                             }
                           } else if (
@@ -213,6 +220,7 @@ export const typeCheck = (ast) => {
                             ) {
                               switch (re[0][0][VALUE]) {
                                 case KEYWORDS.ANONYMOUS_FUNCTION:
+                                  // FN UKNONW ASSIGMENT
                                   env[name][STATS][RETURNS] = [UNKNOWN]
                                   env[name][STATS][ARGS_COUNT] =
                                     re[0].length - 2
@@ -235,6 +243,7 @@ export const typeCheck = (ast) => {
                             ) {
                               switch (re[1][0][VALUE]) {
                                 case KEYWORDS.ANONYMOUS_FUNCTION:
+                                  // FN ASSIGMENT
                                   env[name][STATS][TYPE_PROP] = [APPLY]
                                   env[name][STATS][RETURNS] = [UNKNOWN]
                                   env[name][STATS][ARGS_COUNT] =
@@ -243,11 +252,13 @@ export const typeCheck = (ast) => {
                               }
                             }
                           } else if (env[re[0][VALUE]]) {
+                            // ASSIGMENT
                             env[name][STATS][prop] =
                               env[re[0][VALUE]][STATS][prop]
                             env[name][STATS][RETURNS] =
                               env[re[0][VALUE]][STATS][RETURNS]
                           } else if (env[re[1][VALUE]]) {
+                            // ASSIGMENT
                             env[name][STATS][prop] =
                               env[re[1][VALUE]][STATS][prop]
                             env[name][STATS][RETURNS] =
@@ -300,10 +311,19 @@ export const typeCheck = (ast) => {
                             env[name][STATS][RETURNS] =
                               env[returns[VALUE]][STATS][RETURNS]
                           } else {
-                            env[name][STATS][RETURNS] =
-                              env[returns[VALUE]][STATS][RETURNS]
-                            env[name][STATS][RETURNS][0] =
-                              env[returns[VALUE]][STATS][TYPE_PROP][0]
+                            // Enclose function with it's own scope
+                            const args = env[name][STATS][ARGUMENTS] ?? []
+                            const fnScope = args.length
+                              ? Object.create(env)
+                              : env
+                            for (const arg of args)
+                              fnScope[arg[STATS][SIGNATURE]] = arg
+                            // RETURN TYPE OF FUNCTION ASSIGGMENT
+                            fnScope[name][STATS][RETURNS] =
+                              fnScope[returns[VALUE]][STATS][RETURNS]
+                            // assign(env[name][STATS][RETURNS],env[returns[VALUE]][STATS][RETURNS], 0)
+                            fnScope[name][STATS][RETURNS][0] =
+                              fnScope[returns[VALUE]][STATS][TYPE_PROP][0]
                           }
                         } else {
                           env[name][STATS][RETURNS] = [UNKNOWN]
@@ -329,6 +349,7 @@ export const typeCheck = (ast) => {
                     )
                   }
                   if (isPredicate) {
+                    // ATOM ASSIGMENT PREDICATE ASSIGMENT
                     env[name][STATS][prop] = [ATOM, PREDICATE]
                     env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                   }
@@ -379,8 +400,8 @@ export const typeCheck = (ast) => {
                   const isL = isLeaf(rightHand)
                   // if (!(name in env)) {
                   if (isL && rightHand[TYPE] === WORD) {
+                    // FULL REFF ASSIGMENT
                     env[name] = env[rest[1][VALUE]]
-
                     if (
                       getSuffix(rest[1][VALUE]) === PREDICATE_SUFFIX &&
                       getSuffix(name) !== PREDICATE_SUFFIX
@@ -404,6 +425,7 @@ export const typeCheck = (ast) => {
                     //   right[VALUE] !== FALSE
                     // ) {
                     // }
+                    // DECLARATION of ATOM
                     env[name] = {
                       [STATS]: {
                         retried: 0,
@@ -419,6 +441,7 @@ export const typeCheck = (ast) => {
                           )}) (check #14)`
                         )
                       } else {
+                        // PREDICATE ASSIGMENT
                         env[name][STATS][TYPE_PROP][1] = PREDICATE
                         env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                       }
@@ -435,6 +458,7 @@ export const typeCheck = (ast) => {
                       warningStack.add(
                         `${name} is assigned to ${right[VALUE]} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #19)`
                       )
+                    //DECLARATION
                     env[name] = {
                       [STATS]: {
                         retried: 0,
@@ -448,6 +472,7 @@ export const typeCheck = (ast) => {
                       }
                     }
                     if (isPredicate) {
+                      // PREDICATE ASSIGMENT
                       env[name][STATS][TYPE_PROP][1] = PREDICATE
                       env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                     }
@@ -471,6 +496,7 @@ export const typeCheck = (ast) => {
                               `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
                             )
                           }
+                          // FB assigment
                           env[name][STATS][TYPE_PROP] = fn[STATS][RETURNS]
                           env[name][STATS][RETURNS] = fn[STATS][RETURNS]
                         } else {
@@ -496,6 +522,7 @@ export const typeCheck = (ast) => {
                             )}) so ${name} must end in (${PREDICATE_SUFFIX}) (check #23)`
                           )
                         }
+                        // FN assigment
                         env[name][STATS][RETURNS] =
                           env[right[VALUE]][STATS][RETURNS]
                       }
@@ -559,6 +586,7 @@ export const typeCheck = (ast) => {
                       (result) => result[VALUE] !== KEYWORDS.IF
                     )
                     if (isLeaf(returns)) {
+                      // TODO figure out what we do here
                       // console.log({ returns }, ref, copy[param[VALUE]][STATS])
                     } else {
                       const ret = returns[0]
@@ -648,7 +676,7 @@ export const typeCheck = (ast) => {
                       if (env[first[VALUE]][STATS][RETURNS][0] === APPLY) {
                         env[first[VALUE]][STATS][RETURNS] = [UNKNOWN]
                       }
-
+                      // FN ASSIGMENT
                       env[first[VALUE]][STATS][TYPE_PROP] = [APPLY]
                       env[first[VALUE]][STATS][ARGS_COUNT] = rest.length
                     }
@@ -882,11 +910,13 @@ export const typeCheck = (ast) => {
                                       )
                                   } else if (env[rest[i][VALUE]]) {
                                     if (isCast) {
+                                      // CAST assigment
                                       env[rest[i][VALUE]][STATS][TYPE_PROP] =
                                         root[first[VALUE]][STATS][RETURNS]
                                       root[first[VALUE]][STATS][RETURNS] =
                                         root[first[VALUE]][STATS][RETURNS]
                                     } else {
+                                      // VALUE assigment
                                       env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
                                         MAIN_TYPE
                                     }
@@ -1011,6 +1041,7 @@ export const typeCheck = (ast) => {
                                   UNKNOWN &&
                                 args[i][STATS][TYPE_PROP][0] !== APPLY
                               ) {
+                                // REFF ASSIGMENT
                                 env[rest[i][VALUE]][STATS][TYPE_PROP] =
                                   args[i][STATS][TYPE_PROP]
                                 env[rest[i][VALUE]][STATS][RETURNS] =
@@ -1018,27 +1049,68 @@ export const typeCheck = (ast) => {
                               }
                             }
                           }
-                        } else if (
-                          rest[i].length &&
-                          SPECIAL_FORMS_SET.has(rest[i][0][VALUE]) &&
-                          env[rest[i][0][VALUE]] &&
-                          env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
-                            UNKNOWN &&
-                          args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                          env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
-                            args[i][STATS][TYPE_PROP][0]
-                        ) {
-                          errorStack.add(
-                            `Incorrect type of arguments ${i} for (${
-                              first[VALUE]
-                            }). Expected (${toTypeNames(
+                        } else if (rest[i].length) {
+                          // TODO figure out what cann we do in this else ?
+                          // Check arg types
+                          // errorStack.add(
+                          //   `Incorrect type of arguments ${i} for (${
+                          //     first[VALUE]
+                          //   }). Expected (${toTypeNames(
+                          //     args[i][STATS][TYPE_PROP][0]
+                          //   )}) but got (${toTypeNames(
+                          //     env[rest[i][0][VALUE]][STATS][RETURNS][0]
+                          //   )}) (${stringifyArgs(exp)}) (check #4)`
+                          // )
+                          // TODO figure out if we need this
+                          if (
+                            SPECIAL_FORMS_SET.has(rest[i][0][VALUE]) &&
+                            env[rest[i][0][VALUE]] &&
+                            env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
+                              UNKNOWN &&
+                            args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                            env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
                               args[i][STATS][TYPE_PROP][0]
-                            )}) but got (${toTypeNames(
-                              env[rest[i][0][VALUE]][STATS][RETURNS][0]
-                            )}) (${stringifyArgs(exp)}) (check #4)`
                           )
+                            errorStack.add(
+                              `Incorrect type of arguments ${i} for (${
+                                first[VALUE]
+                              }). Expected (${toTypeNames(
+                                args[i][STATS][TYPE_PROP][0]
+                              )}) but got (${toTypeNames(
+                                env[rest[i][0][VALUE]][STATS][RETURNS][0]
+                              )}) (${stringifyArgs(exp)}) (check #4)`
+                            )
+                          else if (
+                            rest[i][0][TYPE] === APPLY &&
+                            env[rest[i][0][VALUE]]
+                          ) {
+                            const actual =
+                              env[rest[i][0][VALUE]][STATS][RETURNS]
+                            const expected = args[i][STATS][TYPE_PROP]
+                            if (
+                              expected[0] !== UNKNOWN &&
+                              actual[0] !== UNKNOWN
+                            ) {
+                              if (expected[0] !== actual[0])
+                                errorStack.add(
+                                  `Incorrect type of arguments ${i} for (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    expected[0]
+                                  )}) but got (${toTypeNames(
+                                    actual[0]
+                                  )}) (${stringifyArgs(exp)}) (check #16)`
+                                )
+                            } else {
+                              if (
+                                args[i][STATS].retried < MAX_RETRY_DEFINITION
+                              ) {
+                                args[i][STATS].retried += 1
+                                stack.unshift(() => check(exp, env, scope))
+                              }
+                            }
+                          }
                         }
-                        // TODO figure out what cann we do in this else ?
                       }
                     }
                   }
