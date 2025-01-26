@@ -1081,36 +1081,11 @@ export const typeCheck = (ast) => {
                           }
                         } else if (rest[i].length) {
                           // TODO figure out what cann we do in this else ?
-                          // Check arg types
-                          // errorStack.add(
-                          //   `Incorrect type of arguments ${i} for (${
-                          //     first[VALUE]
-                          //   }). Expected (${toTypeNames(
-                          //     args[i][STATS][TYPE_PROP][0]
-                          //   )}) but got (${toTypeNames(
-                          //     env[rest[i][0][VALUE]][STATS][RETURNS][0]
-                          //   )}) (${stringifyArgs(exp)}) (check #4)`
+                          // Check arg types (check 4)
                           // )
                           // TODO figure out if we need this
+
                           if (
-                            SPECIAL_FORMS_SET.has(rest[i][0][VALUE]) &&
-                            env[rest[i][0][VALUE]] &&
-                            env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
-                              UNKNOWN &&
-                            args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                            env[rest[i][0][VALUE]][STATS][RETURNS][0] !==
-                              args[i][STATS][TYPE_PROP][0]
-                          )
-                            errorStack.add(
-                              `Incorrect type of arguments ${i} for (${
-                                first[VALUE]
-                              }). Expected (${toTypeNames(
-                                args[i][STATS][TYPE_PROP][0]
-                              )}) but got (${toTypeNames(
-                                env[rest[i][0][VALUE]][STATS][RETURNS][0]
-                              )}) (${stringifyArgs(exp)}) (check #4)`
-                            )
-                          else if (
                             rest[i][0][TYPE] === APPLY &&
                             env[rest[i][0][VALUE]]
                           ) {

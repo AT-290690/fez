@@ -813,8 +813,8 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     (array:get [1 2 3] 1)
     )))`,
       `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #4)
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #4)`
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #16)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
     )
     // TODO tere should be mre errors
     fails(
@@ -823,7 +823,7 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
 (let y 23)
 (fn [])
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #4)`
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -832,7 +832,7 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
 (fn [])
 (fn (lambda 1))
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #4)`
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)`
     )
     fails(
       `(let array:unique (lambda xs (|>
@@ -971,8 +971,8 @@ Trying to access undefined variable xs (check #11)`
 )))
 (add 1 2 [])
 `,
-      `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #4)
-Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x y (array)) (check #4)`
+      `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #16)
+Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x y (array)) (check #16)`
     )
 
     fails(
