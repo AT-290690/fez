@@ -91,6 +91,10 @@
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 
 (let identity (lambda x x))
+(let Scope identity)
+(let Special identity)
+(let Library identity)
+
 (let truthy? (lambda x
     (cond
      (atom? x) (not (= (Atom x) 0))

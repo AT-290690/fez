@@ -76,23 +76,34 @@ export const debug = (ast, checkTypes = true) => {
     },
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
-      if (args.length !== 1 && args.length !== 2)
+      if (args.length !== 2)
         throw new RangeError(
           `Invalid number of arguments to (${DEBUG.TYPE_SIGNATURE}) (= 1) (${
             DEBUG.TYPE_SIGNATURE
           } ${stringifyArgs(args)})`
         )
-      if (args[1] === 'Variable') {
-        const t = types.get(`· ~ ${args[0]}`)
+      const name =
+        Array.isArray(args[0]) && args[0][0][VALUE] === DEBUG.STRING
+          ? args[0][1]
+              .slice(1)
+              .map((x) => String.fromCharCode(x[VALUE]))
+              .join('')
+          : args[0][VALUE]
+      const option = args[1][VALUE]
+      if (option === 'Scope') {
+        const t = types.get(`· ~ ${name}`)
         return t ? t() : ''
-      } else if (args[1] === 'Special') {
-        return formatType(args[0], SPECIAL_FORM_TYPES)
-      } else
+      } else if (option === 'Special') {
+        return formatType(name, SPECIAL_FORM_TYPES)
+      } else if (option === 'Library') {
         return [...types.entries()]
-          .filter(([k, v]) => v().includes(args[0][VALUE]))
+          .filter(([k, v]) => v().includes(name))
           .sort((a, b) => a[0].length - b[0].length)
           .map(([k, v]) => `${k}\n${v()}`)
           .join('\n\n')
+      } else {
+        return ''
+      }
     },
     [DEBUG.SIGNATURE]: (args, env) => {
       const signatures =
@@ -309,14 +320,22 @@ export const debug = (ast, checkTypes = true) => {
       case WORD:
       case APPLY:
         switch (head[VALUE]) {
+          case DEBUG.TYPE_SIGNATURE:
+            break
           case KEYWORDS.DEFINE_VARIABLE:
-            type = debugEnv[DEBUG.TYPE_SIGNATURE]([rest[0][VALUE], 'Variable'])
+            type = debugEnv[DEBUG.TYPE_SIGNATURE]([rest[0], [WORD, 'Scope']])
             break
           default:
             if (SPECIAL_FORMS_SET.has(head[VALUE]))
-              type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE], 'Special'])
+              type = debugEnv[DEBUG.TYPE_SIGNATURE]([
+                [WORD, head[VALUE]],
+                [WORD, 'Special']
+              ])
             else
-              type = debugEnv[DEBUG.TYPE_SIGNATURE]([head[VALUE], 'Variable'])
+              type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
+                head,
+                [WORD, 'Scope']
+              ])}) ${rest.map((x) => stringifyArgs([x])).join(' ')}`
             break
         }
 
