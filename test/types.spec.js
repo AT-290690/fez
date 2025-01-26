@@ -527,6 +527,11 @@ list:some? ends in (?) and is expected to return (Predicate) but it doesn't (che
       `fit? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
     )
     fails(
+      `(let xs 1)
+(identity xs)`,
+      `A variable named xs must be of type (Collection) but got type (Atom) (check #32)`
+    )
+    fails(
       `(let fn1 (lambda 1y x (do 
     (let fn2 (lambda 1x (do
         (+ x y)

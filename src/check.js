@@ -1298,7 +1298,7 @@ export const typeCheck = (ast) => {
                     first[VALUE]
                   }). Expected (= 2) but got ${rest.length} (${stringifyArgs(
                     exp
-                  )}) (check #10)`
+                  )})`
                 )
               } else {
                 const name = rest[0][VALUE]
@@ -1519,19 +1519,13 @@ export const typeCheck = (ast) => {
                     const right = isL ? rest.at(-1) : rest.at(-1)[0]
                     if (isL && right[TYPE] === ATOM) {
                       const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
-                      if (
-                        isPredicate &&
-                        right[VALUE] !== TRUE &&
-                        right[VALUE] !== FALSE
-                      ) {
-                        warningStack.add(
-                          `${name} ends in (${PREDICATE_SUFFIX}) but is assigned to ${
-                            right[VALUE]
-                          } which is not a (${toTypeNames(
-                            PREDICATE
-                          )}). Either remove (${PREDICATE_SUFFIX}) or change the value to ${TRUE} or ${FALSE} (check #20)`
-                        )
-                      }
+                      // This never happens
+                      // if (
+                      //   isPredicate &&
+                      //   right[VALUE] !== TRUE &&
+                      //   right[VALUE] !== FALSE
+                      // ) {
+                      // }
                       env[name] = {
                         [STATS]: {
                           retried: 0,
@@ -1642,7 +1636,7 @@ export const typeCheck = (ast) => {
                     first[VALUE]
                   }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
                     exp
-                  )}) (check #10)`
+                  )})`
                 )
               }
               const params = exp.slice(1, -1)
@@ -1776,163 +1770,140 @@ export const typeCheck = (ast) => {
                       // type check
                       const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                       const MAIN_TYPE = args[i][STATS][TYPE_PROP][0]
-                      if (PRED_TYPE != undefined) {
-                        if (isLeaf(rest[i])) {
-                          if (rest[i][TYPE] === WORD) {
-                            if (
-                              !isSpecial &&
-                              env[rest[i][VALUE]] &&
-                              PRED_TYPE !==
-                                env[rest[i][VALUE]][STATS][RETURNS][1]
-                            ) {
-                              errorStack.add(
-                                `Incorrect type of argument (${i}) for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  PRED_TYPE
-                                )}) but got (${toTypeNames(
-                                  env[rest[i][VALUE]][STATS][RETURNS][1] ??
-                                    env[rest[i][VALUE]][STATS][TYPE_PROP][0]
-                                )}) (${stringifyArgs(exp)}) (check #16)`
-                              )
-                            }
-                          } else if (rest[i][TYPE] === ATOM) {
-                            if (
-                              PRED_TYPE === PREDICATE &&
-                              rest[i][VALUE] !== TRUE &&
-                              rest[i][VALUE] !== FALSE
-                            ) {
-                              errorStack.add(
-                                `Incorrect type of arguments for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  PRED_TYPE
-                                )}) but got an (${toTypeNames(
-                                  rest[i][TYPE]
-                                )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
-                                  exp
-                                )}) (check #22)`
-                              )
-                            }
-                          }
-                        } else {
-                          const current = rest[i][0]
-                          if (current[TYPE] === APPLY) {
-                            if (current[VALUE] == KEYWORDS.CALL_FUNCTION) {
-                              if (isLeaf(rest[i].at(-1))) {
-                                const fnName = rest[i].at(-1)[VALUE]
-                                const fn = env[fnName]
-                                if (fn && fn[STATS][RETURNS][0] !== MAIN_TYPE) {
+                      if (PRED_TYPE != undefined && !isLeaf(rest[i])) {
+                        const current = rest[i][0]
+                        if (current[TYPE] === APPLY) {
+                          if (current[VALUE] == KEYWORDS.CALL_FUNCTION) {
+                            if (isLeaf(rest[i].at(-1))) {
+                              const fnName = rest[i].at(-1)[VALUE]
+                              const fn = env[fnName]
+                              if (fn && fn[STATS][RETURNS][0] !== MAIN_TYPE) {
+                                errorStack.add(
+                                  `Incorrect type of argument (${i}) for (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    MAIN_TYPE
+                                  )}) but got an (${toTypeNames(
+                                    fn[STATS][RETURNS][0]
+                                  )}) (${stringifyArgs(exp)}) (check #26)`
+                                )
+                              }
+                              if (fn && fn[STATS][RETURNS][1] !== PRED_TYPE) {
+                                errorStack.add(
+                                  `Incorrect type of argument (${i}) for (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    PRED_TYPE
+                                  )}) but got an (${toTypeNames(
+                                    fn[STATS][RETURNS][1] ??
+                                      fn[STATS][RETURNS][0]
+                                  )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
+                                    exp
+                                  )}) (check #27)`
+                                )
+                              }
+                            } else {
+                              const body = rest[i].at(-1).at(-1)
+                              const rem = hasBlock(body) ? body.at(-1) : body
+                              const returns = isLeaf(rem) ? rem : rem[0]
+                              if (returns[TYPE] === ATOM) {
+                                if (MAIN_TYPE !== ATOM) {
                                   errorStack.add(
-                                    `Incorrect type of argument (${i}) for (${
+                                    `Incorrect type of argument ${i} for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
                                       MAIN_TYPE
                                     )}) but got an (${toTypeNames(
-                                      fn[STATS][RETURNS][0]
-                                    )}) (${stringifyArgs(exp)}) (check #26)`
+                                      ATOM
+                                    )})  (${stringifyArgs(exp)}) (check #27)`
                                   )
                                 }
-                                if (fn && fn[STATS][RETURNS][1] !== PRED_TYPE) {
+                                if (
+                                  PRED_TYPE &&
+                                  PRED_TYPE === PREDICATE &&
+                                  returns[VALUE] !== TRUE &&
+                                  returns[VALUE] !== FALSE
+                                ) {
                                   errorStack.add(
-                                    `Incorrect type of argument (${i}) for (${
+                                    `Incorrect type of argument ${i} for (${
                                       first[VALUE]
                                     }). Expected (${toTypeNames(
                                       PRED_TYPE
                                     )}) but got an (${toTypeNames(
-                                      fn[STATS][RETURNS][1] ??
-                                        fn[STATS][RETURNS][0]
+                                      ATOM
                                     )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
                                       exp
                                     )}) (check #27)`
                                   )
                                 }
-                              } else {
-                                const body = rest[i].at(-1).at(-1)
-                                const rem = hasBlock(body) ? body.at(-1) : body
-                                const returns = isLeaf(rem) ? rem : rem[0]
-                                if (returns[TYPE] === ATOM) {
-                                  if (MAIN_TYPE !== ATOM) {
-                                    errorStack.add(
-                                      `Incorrect type of argument ${i} for (${
-                                        first[VALUE]
-                                      }). Expected (${toTypeNames(
-                                        MAIN_TYPE
-                                      )}) but got an (${toTypeNames(
-                                        ATOM
-                                      )})  (${stringifyArgs(exp)}) (check #27)`
-                                    )
-                                  }
-                                  if (
-                                    PRED_TYPE &&
-                                    PRED_TYPE === PREDICATE &&
-                                    returns[VALUE] !== TRUE &&
-                                    returns[VALUE] !== FALSE
-                                  ) {
-                                    errorStack.add(
-                                      `Incorrect type of argument ${i} for (${
-                                        first[VALUE]
-                                      }). Expected (${toTypeNames(
-                                        PRED_TYPE
-                                      )}) but got an (${toTypeNames(
-                                        ATOM
-                                      )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
-                                        exp
-                                      )}) (check #27)`
-                                    )
-                                  }
-                                } else if (env[returns[VALUE]]) {
-                                  if (
-                                    MAIN_TYPE !==
-                                    env[returns[VALUE]][STATS][RETURNS][0]
-                                  ) {
-                                    errorStack.add(
-                                      `Incorrect type of argument ${i} for (${
-                                        first[VALUE]
-                                      }). Expected (${toTypeNames(
-                                        MAIN_TYPE
-                                      )}) but got (${toTypeNames(
-                                        env[returns[VALUE]][STATS][TYPE_PROP]
-                                      )})  (${stringifyArgs(exp)}) (check #29)`
-                                    )
-                                  }
-                                  if (
-                                    PRED_TYPE &&
-                                    PRED_TYPE !==
-                                      env[returns[VALUE]][STATS][RETURNS][1]
-                                  ) {
-                                    errorStack.add(
-                                      `Incorrect type of argument ${i} for (${
-                                        first[VALUE]
-                                      }). Expected (${toTypeNames(
-                                        PRED_TYPE
-                                      )}) but got (${toTypeNames(
-                                        env[returns[VALUE]][STATS][RETURNS][1]
-                                      )}) (${stringifyArgs(exp)}) (check #28)`
-                                    )
-                                  }
+                              } else if (env[returns[VALUE]]) {
+                                if (
+                                  MAIN_TYPE !==
+                                  env[returns[VALUE]][STATS][RETURNS][0]
+                                ) {
+                                  errorStack.add(
+                                    `Incorrect type of argument ${i} for (${
+                                      first[VALUE]
+                                    }). Expected (${toTypeNames(
+                                      MAIN_TYPE
+                                    )}) but got (${toTypeNames(
+                                      env[returns[VALUE]][STATS][TYPE_PROP]
+                                    )})  (${stringifyArgs(exp)}) (check #29)`
+                                  )
                                 }
+                                // Never happens because there is only 1 sub type at the moment
+                                // if (
+                                //   PRED_TYPE &&
+                                //   PRED_TYPE !==
+                                //     env[returns[VALUE]][STATS][RETURNS][1]
+                                // ) {
+                                // }
                               }
-                            } else if (
-                              PRED_TYPE &&
-                              env[current[VALUE]] &&
-                              env[current[VALUE]][STATS][RETURNS][1] !==
-                                PRED_TYPE
-                            ) {
-                              errorStack.add(
-                                `Incorrect type of arguments (${i}) for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  PRED_TYPE
-                                )}) but got (${toTypeNames(
-                                  env[current[VALUE]][STATS][RETURNS][1] ??
-                                    env[current[VALUE]][STATS][RETURNS][0]
-                                )}) (${stringifyArgs(exp)}) (check #21)`
-                              )
                             }
+                          } else if (
+                            PRED_TYPE &&
+                            env[current[VALUE]] &&
+                            env[current[VALUE]][STATS][RETURNS][1] !== PRED_TYPE
+                          ) {
+                            errorStack.add(
+                              `Incorrect type of arguments (${i}) for (${
+                                first[VALUE]
+                              }). Expected (${toTypeNames(
+                                PRED_TYPE
+                              )}) but got (${toTypeNames(
+                                env[current[VALUE]][STATS][RETURNS][1] ??
+                                  env[current[VALUE]][STATS][RETURNS][0]
+                              )}) (${stringifyArgs(exp)}) (check #21)`
+                            )
                           }
                         }
                       }
+
+                      // if (PRED_TYPE != undefined) {
+                      //   if (isLeaf(rest[i])) {
+                      //     // if (rest[i][TYPE] === WORD) {
+                      //     // Never reached because there is only 1 subtype
+                      //     // if (
+                      //     //   !isSpecial &&
+                      //     //   env[rest[i][VALUE]] &&
+                      //     //   PRED_TYPE !==
+                      //     //     env[rest[i][VALUE]][STATS][RETURNS][1]
+                      //     // ) {
+                      //     // }
+                      //     // }
+                      //     // never happens
+                      //     // else if (rest[i][TYPE] === ATOM) {
+                      //     //   if (
+                      //     //     PRED_TYPE === PREDICATE &&
+                      //     //     rest[i][VALUE] !== TRUE &&
+                      //     //     rest[i][VALUE] !== FALSE
+                      //     //   ) {
+                      //     //   }
+                      //     // }
+                      //   } else {
+                      //     // above code used to be ere
+                      //   }
+                      // }
 
                       if (first[TYPE] === APPLY && isSpecial) {
                         const isCast = STATIC_TYPES_SET.has(first[VALUE])
@@ -1957,21 +1928,13 @@ export const typeCheck = (ast) => {
                                     env[CAR][STATS][RETURNS][0]
                                   )}) (${stringifyArgs(exp)}) (check #1)`
                                 )
-                              } else if (
-                                PRED_TYPE &&
-                                env[CAR][STATS][RETURNS][1] !== PRED_TYPE
-                              ) {
-                                errorStack.add(
-                                  `Incorrect type of arguments for special form (${
-                                    first[VALUE]
-                                  }). Expected (${toTypeNames(
-                                    PRED_TYPE
-                                  )}) but got (${toTypeNames(
-                                    env[CAR][STATS][RETURNS][1] ??
-                                      env[CAR][STATS][RETURNS][0]
-                                  )}) (${stringifyArgs(exp)}) (check #13)`
-                                )
                               }
+                              // never reached because there is only 1 subtype at the moment
+                              // else if (
+                              //   PRED_TYPE &&
+                              //   env[CAR][STATS][RETURNS][1] !== PRED_TYPE
+                              // ) {
+                              // }
                             }
                           } else {
                             switch (rest[i][TYPE]) {
