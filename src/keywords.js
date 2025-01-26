@@ -68,10 +68,10 @@ export const DEBUG = {
   STRING: 'string',
   LOG: 'log',
   ASSERT: 'assert',
-  SIGNATURE: '?',
+  SIGNATURE: 'Info',
   LIST_THEMES: 'theme?',
   SET_THEME: 'theme!',
-  TYPE_SIGNATURE: 't?'
+  TYPE_SIGNATURE: 'T'
 }
 
 export const SPECIAL_FORMS_SET = new Set(

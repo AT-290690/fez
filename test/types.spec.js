@@ -1,14 +1,69 @@
 import std from 'fez-lisp/lib/baked/std.js'
 import { type, parse } from '../index.js'
-import { throws, doesNotThrow } from 'assert'
+import { throws, doesNotThrow, deepStrictEqual } from 'assert'
 import { readFileSync } from 'fs'
+import { typeCheck } from '../src/check.js'
 
 const BROKEN_STD = readFileSync('./test/broken-std.lisp', 'utf-8')
 const passes = (source) => doesNotThrow(() => type(parse(source)))
 const fails = (source, message, name = 'TypeError') =>
   throws(() => type(parse(source)), { name, message })
+const inference = (source, keys) => {
+  const map = typeCheck(parse(source))[1]
+  return keys.map((key) => map.get(`· :: ${key}`)())
+}
 
 describe('Should throw errors', () => {
+  it('Types Signatures should match expected', () => {
+    deepStrictEqual(
+      inference(
+        `[math:overlap? matrix:enumerated-for math:prime?]
+        `,
+        ['matrix:enumerated-for', 'math:overlap?', 'math:prime?']
+      ),
+      [
+        'matrix:enumerated-for (matrix Collection cb Abstraction) -> Unknown',
+        'math:overlap? (v Atom min Atom max Atom) -> Predicate',
+        'math:prime? (n Atom) -> Predicate'
+      ]
+    )
+    deepStrictEqual(
+      inference(
+        `    (let a 10)
+(let b [])
+(let box (lambda x [x]))
+(let add (lambda a b (math:summation [(+ a 1) (length b)])))
+(let c (add 8 [1 2 3]))
+(let is12? (lambda x (= x 12)))`,
+        ['is12?', 'a', 'c', 'b', 'box', 'add']
+      ),
+      [
+        'is12? (x Atom) -> Predicate',
+        'a Atom',
+        'c Atom',
+        'b Collection',
+        'box (x Unknown) -> Collection',
+        'add (a Atom b Collection) -> Atom'
+      ]
+    )
+    deepStrictEqual(
+      inference(
+        `(let y 8)
+(let add (lambda x (do
+    (let f (+ x y))
+    (let z (* f x))
+    (let inner (lambda m (do
+        (let arr [f x z (length m)])
+        (math:summation arr)
+    )))
+    (inner [f])
+)))
+(let m (add y))`,
+        ['m', 'y', 'add']
+      ),
+      ['m Atom', 'y Atom', 'add (x Atom) -> Atom']
+    )
+  })
   it('Does not throw', () => {
     // TODO make this pass
     //     passes(
@@ -17,6 +72,35 @@ describe('Should throw errors', () => {
     // (let z? (lambda 0))
     // (let m? 1)`
     //     )
+    passes(`(let y 8)
+(let add (lambda x (do
+    (let f (+ x y))
+    (let z (* f x))
+    (let inner (lambda m (do
+        (let arr [f x z (length m)])
+        (math:summation arr)
+    )))
+    (inner [f])
+)))
+(let m (add y))`)
+    passes(`(let y 8)
+(let add (lambda x (do
+    (let f (+ x y))
+    (let z (* f x))
+    (let inner (lambda m (do
+        (let arr [f x z (length m)])
+        (math:summation arr)
+    )))
+    (inner [f])
+)))`)
+    passes(`(let a 10)
+(let b [])
+(let box (lambda x [x]))
+(let add (lambda a b (math:summation [(+ a 1) (length b)])))
+(let c (add 8 [1 2 3]))
+(let is12? (lambda x (= x 12)))
+(is12? c)
+`)
     passes(`(let array:unique (lambda xs (|>
       (let sorted (array:sort xs (lambda a b (> a b))))
       (array:zip (math:sequence sorted))
@@ -989,7 +1073,6 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
-Incorrect type of arguments 1 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (> (array:first current) (array:second current))) (check #4)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)

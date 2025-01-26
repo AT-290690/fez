@@ -91,9 +91,22 @@ export const debug = (ast, checkTypes = true) => {
               .join('')
           : args[0][VALUE]
       const option = args[1][VALUE]
+      const wildcard = name === '*'
       if (option === 'Scope') {
-        const t = types.get(`· ~ ${name}`)
+        if (wildcard) {
+          return [...types.entries()]
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([k, v]) => `${k}\n${v()}`)
+            .join('\n\n')
+        }
+        const t = types.get(`· :: ${name}`)
         return t ? t() : ''
+      } else if (option === 'Search') {
+        return [...types.entries()]
+          .filter((x) => x[0].includes(name))
+          .sort((a, b) => a[0].localeCompare(b[0]))
+          .map(([k, v]) => `${k}\n${v()}`)
+          .join('\n\n')
       } else if (option === 'Special') {
         return formatType(name, SPECIAL_FORM_TYPES)
       } else if (option === 'Type') {
@@ -110,8 +123,10 @@ export const debug = (ast, checkTypes = true) => {
           .map(([k, v]) => `${k}\n${v()}`)
           .join('\n\n')
       } else if (option === 'Library') {
-        return [...libraryTypes.entries()]
-          .filter(([k, v]) => v().includes(name))
+        const matches = wildcard
+          ? [...libraryTypes.entries()]
+          : [...libraryTypes.entries()].filter(([k, v]) => v().includes(name))
+        return matches
           .sort((a, b) => a[0].length - b[0].length)
           .map(([k, v]) => `${k}\n${v()}`)
           .join('\n\n')

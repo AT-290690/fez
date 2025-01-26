@@ -87,7 +87,7 @@ export const formatType = (name, env) => {
                 )
                 .join(' ')
         }) -> ${toTypeNames(stats[RETURNS][1] ?? stats[RETURNS][0])}`
-      : `${name} ${stats[TYPE_PROP].map(toTypeNames).join(' ')}`
+      : `${name} ${stats[TYPE_PROP].map(toTypeNames).join(' ')}`.trim()
     : name
 }
 const formatTypes = (env) => {
@@ -111,7 +111,7 @@ const getScopeNames = (scope) => {
 const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '· ' : ''}${chain
-    .map((x) => (Number.isInteger(+x) ? '~' : x))
+    .map((x) => (Number.isInteger(+x) ? '::' : x))
     .join(' ')} ${name}`
 }
 export const typeCheck = (ast) => {
@@ -312,6 +312,16 @@ export const typeCheck = (ast) => {
                                 )
                               }
                             }
+                            // ALWAYS APPLY
+                            // rest.at(-1)[0][TYPE] === APPLY
+                            // Here is upon application to store the result in the variable
+                            if (env[name][STATS][TYPE_PROP][0] === UNKNOWN)
+                              stack.unshift(() => {
+                                env[name][STATS][TYPE_PROP][0] =
+                                  env[returns[VALUE]][STATS][RETURNS][0]
+                                env[name][STATS][TYPE_PROP][1] =
+                                  env[returns[VALUE]][STATS][RETURNS][1]
+                              })
                             env[name][STATS][RETURNS] =
                               env[returns[VALUE]][STATS][RETURNS]
                           } else {
@@ -603,7 +613,6 @@ export const typeCheck = (ast) => {
                     )
                     if (isLeaf(returns)) {
                       // TODO figure out what we do here
-                      // console.log({ returns }, ref, copy[param[VALUE]][STATS])
                     } else {
                       const ret = returns[0]
                       switch (ret[VALUE]) {
@@ -647,7 +656,12 @@ export const typeCheck = (ast) => {
                           if (copy[ret[VALUE]])
                             ref[STATS][RETURNS] =
                               copy[ret[VALUE]][STATS][RETURNS]
-                          // function is anonymous
+                          else
+                            stack.push(() => {
+                              if (copy[ret[VALUE]])
+                                ref[STATS][RETURNS] =
+                                  copy[ret[VALUE]][STATS][RETURNS]
+                            })
                           break
                       }
                     }

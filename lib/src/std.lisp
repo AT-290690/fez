@@ -95,6 +95,7 @@
 (let Special identity)
 (let Library identity)
 (let Type identity)
+(let Search identity)
 
 (let truthy? (lambda x
     (cond
