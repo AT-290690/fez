@@ -1047,36 +1047,25 @@ export const typeCheck = (ast) => {
                                 exp
                               )}) (check #30)`
                             )
+                          } else if (
+                            args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
+                            args[i][STATS].retried < MAX_RETRY_DEFINITION
+                          ) {
+                            args[i][STATS].retried += 1
+                            stack.unshift(() => check(exp, env, scope))
                           } else {
-                            // const retry = env[rest[i][VALUE]]
-                            // if (
-                            //   retry &&
-                            //   retry[STATS].retried < RETRY_COUNT &&
-                            //   args[i][STATS][TYPE_PROP][0] === UNKNOWN
-                            // ) {
-                            //   retry[STATS].retried += 1
-                            //   stack.unshift(() => check(exp, env, scope))
-                            // } else
                             if (
-                              args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
-                              args[i][STATS].retried < MAX_RETRY_DEFINITION
+                              env[rest[i][VALUE]] &&
+                              args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                              env[rest[i][VALUE]][STATS][TYPE_PROP][0] ===
+                                UNKNOWN &&
+                              args[i][STATS][TYPE_PROP][0] !== APPLY
                             ) {
-                              args[i][STATS].retried += 1
-                              stack.unshift(() => check(exp, env, scope))
-                            } else {
-                              if (
-                                env[rest[i][VALUE]] &&
-                                args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                                env[rest[i][VALUE]][STATS][TYPE_PROP][0] ===
-                                  UNKNOWN &&
-                                args[i][STATS][TYPE_PROP][0] !== APPLY
-                              ) {
-                                // REFF ASSIGMENT
-                                env[rest[i][VALUE]][STATS][TYPE_PROP] =
-                                  args[i][STATS][TYPE_PROP]
-                                env[rest[i][VALUE]][STATS][RETURNS] =
-                                  args[i][STATS][RETURNS]
-                              }
+                              // REFF ASSIGMENT
+                              env[rest[i][VALUE]][STATS][TYPE_PROP] =
+                                args[i][STATS][TYPE_PROP]
+                              env[rest[i][VALUE]][STATS][RETURNS] =
+                                args[i][STATS][RETURNS]
                             }
                           }
                         } else if (rest[i].length) {
@@ -1084,7 +1073,6 @@ export const typeCheck = (ast) => {
                           // Check arg types (check 4)
                           // )
                           // TODO figure out if we need this
-
                           if (
                             rest[i][0][TYPE] === APPLY &&
                             env[rest[i][0][VALUE]]
@@ -1106,13 +1094,12 @@ export const typeCheck = (ast) => {
                                     actual[0]
                                   )}) (${stringifyArgs(exp)}) (check #16)`
                                 )
-                            } else {
-                              if (
-                                args[i][STATS].retried < MAX_RETRY_DEFINITION
-                              ) {
-                                args[i][STATS].retried += 1
-                                stack.unshift(() => check(exp, env, scope))
-                              }
+                            } else if (
+                              args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
+                              args[i][STATS].retried < MAX_RETRY_DEFINITION
+                            ) {
+                              args[i][STATS].retried += 1
+                              stack.unshift(() => check(exp, env, scope))
                             }
                           }
                         }
@@ -1124,13 +1111,18 @@ export const typeCheck = (ast) => {
             })
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
-              if (isLeaf(r) && r[TYPE] !== ATOM && env[r[VALUE]] == undefined) {
-                errorStack.add(
-                  `(${first[VALUE]}) is trying to access undefined variable (${
-                    r[VALUE]
-                  }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
-                )
+              if (isLeaf(r) && r[TYPE] !== ATOM) {
+                if (env[r[VALUE]] == undefined) {
+                  errorStack.add(
+                    `(${
+                      first[VALUE]
+                    }) is trying to access undefined variable (${
+                      r[VALUE]
+                    }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
+                  )
+                }
               }
+
               check(r, env, scope)
             }
             break
