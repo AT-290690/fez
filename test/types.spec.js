@@ -12,19 +12,29 @@ const inference = (source, keys) => {
   const map = typeCheck(parse(source))[1]
   return keys.map((key) => map.get(`· :: ${key}`)())
 }
+const signatures = (abstractions) =>
+  inference(`[${abstractions.join(' ')}]`, abstractions)
 
 describe('Should throw errors', () => {
   it('Types Signatures should match expected', () => {
     deepStrictEqual(
-      inference(
-        `[math:overlap? matrix:enumerated-for math:prime?]
-        `,
-        ['matrix:enumerated-for', 'math:overlap?', 'math:prime?']
-      ),
+      signatures([
+        'matrix:enumerated-for',
+        'math:overlap?',
+        'math:prime?',
+        'matrix:adjacent',
+        'array:every?',
+        'list:find',
+        'list:every?'
+      ]),
       [
         'matrix:enumerated-for (matrix Collection cb Abstraction) -> Unknown',
         'math:overlap? (v Atom min Atom max Atom) -> Predicate',
-        'math:prime? (n Atom) -> Predicate'
+        'math:prime? (n Atom) -> Predicate',
+        'matrix:adjacent (xs Collection directions Collection y Atom x Atom cb Abstraction) -> Unknown',
+        'array:every? (xs Collection predicate? Abstraction Predicate) -> Predicate',
+        'list:find (xs Collection f? Abstraction Predicate Predicate) -> Collection',
+        'list:every? (xs Collection f? Abstraction Predicate Predicate) -> Predicate'
       ]
     )
     deepStrictEqual(
@@ -830,9 +840,35 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
 (let x 10)
 (let y 23)
 (fn [])
+(fn [1])
+(fn [2])
+(fn [1])
+(fn [3])
+(fn [4])
+(fn [5])
+(fn [6])
+(fn [7])
+(fn [8])
+`,
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 8)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 7)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 6)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 5)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 4)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 3)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 1)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 2)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
+    )
+    fails(
+      `(let fn (lambda x (+ x 1)))
+(let x 10)
+(let y 23)
+(fn [])
 (fn (lambda 1))
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)`
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)
+Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
     )
     fails(
       `(let array:unique (lambda xs (|>
