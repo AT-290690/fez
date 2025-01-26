@@ -1270,7 +1270,8 @@ export const typeCheck = (ast) => {
                         T[TYPE_PROP][0]
                       )}) (check #32)`
                     )
-                  } else T[TYPE_PROP] = [COLLECTION]
+                  }
+                  //else T[TYPE_PROP] = [COLLECTION]
                   break
                 default:
                   {
@@ -1723,6 +1724,7 @@ export const typeCheck = (ast) => {
                           if (copy[ret[VALUE]])
                             ref[STATS][RETURNS] =
                               copy[ret[VALUE]][STATS][RETURNS]
+                          // function is anonymous
                           break
                       }
                     }
@@ -1756,6 +1758,7 @@ export const typeCheck = (ast) => {
                   )
                 } else {
                   const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
+
                   if (first[TYPE] === APPLY && !isSpecial) {
                     if (env[first[VALUE]][STATS][TYPE_PROP][0] === ATOM) {
                       errorStack.add(
@@ -1876,16 +1879,31 @@ export const typeCheck = (ast) => {
                             env[current[VALUE]] &&
                             env[current[VALUE]][STATS][RETURNS][1] !== PRED_TYPE
                           ) {
-                            errorStack.add(
-                              `Incorrect type of arguments (${i}) for (${
-                                first[VALUE]
-                              }). Expected (${toTypeNames(
-                                PRED_TYPE
-                              )}) but got (${toTypeNames(
-                                env[current[VALUE]][STATS][RETURNS][1] ??
-                                  env[current[VALUE]][STATS][RETURNS][0]
-                              )}) (${stringifyArgs(exp)}) (check #21)`
-                            )
+                            if (
+                              current[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                            ) {
+                              const body = rest[i].at(-1)
+                              const rem = hasBlock(body) ? body.at(-1) : body
+                              const returns = isLeaf(rem) ? rem : rem[0]
+                              if (
+                                env[returns[VALUE]] &&
+                                root[returns[VALUE]][STATS][RETURNS][1] ===
+                                  PREDICATE
+                              ) {
+                                // TODO invert this logic
+                              } else {
+                                errorStack.add(
+                                  `Incorrect type of arguments (${i}) for (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    PRED_TYPE
+                                  )}) but got (${toTypeNames(
+                                    env[current[VALUE]][STATS][RETURNS][1] ??
+                                      env[current[VALUE]][STATS][RETURNS][0]
+                                  )}) (${stringifyArgs(exp)}) (check #21)`
+                                )
+                              }
+                            }
                           }
                         }
                       }
@@ -2106,6 +2124,19 @@ export const typeCheck = (ast) => {
                             ) {
                               args[i][STATS].retried += 1
                               stack.unshift(() => check(exp, env, scope))
+                            } else {
+                              if (
+                                env[rest[i][VALUE]] &&
+                                args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                                env[rest[i][VALUE]][STATS][TYPE_PROP][0] ===
+                                  UNKNOWN &&
+                                args[i][STATS][TYPE_PROP][0] !== APPLY
+                              ) {
+                                env[rest[i][VALUE]][STATS][TYPE_PROP] =
+                                  args[i][STATS][TYPE_PROP]
+                                env[rest[i][VALUE]][STATS][RETURNS] =
+                                  args[i][STATS][RETURNS]
+                              }
                             }
                           }
                         } else if (

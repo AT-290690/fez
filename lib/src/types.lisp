@@ -482,10 +482,10 @@ math:abs (n Atom) -> Atom
 math:nth-digit (digit Atom n Atom) -> Atom
 
 · ~ math:remove-nth-digits
-math:remove-nth-digits (digit Atom n Unknown) -> Atom
+math:remove-nth-digits (digit Atom n Atom) -> Atom
 
 · ~ math:keep-nth-digits
-math:keep-nth-digits (digit Unknown n Unknown) -> Unknown
+math:keep-nth-digits (digit Atom n Atom) -> Unknown
 
 · ~ math:normalize
 math:normalize (value Atom math:min Atom math:max Atom) -> Atom
@@ -557,10 +557,10 @@ math:divisible? (a Atom b Atom) -> Predicate
 math:factorial (n Atom) -> Atom
 
 · ~ math:sine
-math:sine (rad Unknown terms Atom) -> Unknown
+math:sine (rad Atom terms Atom) -> Unknown
 
 · ~ math:cosine
-math:cosine (rad Unknown terms Atom) -> Unknown
+math:cosine (rad Atom terms Atom) -> Unknown
 
 · ~ math:prime-factors
 math:prime-factors (N Unknown) -> Unknown
@@ -575,7 +575,7 @@ math:number-of-digits (n Atom) -> Atom
 math:largest-power (N Atom) -> Atom
 
 · ~ math:cartesian-product
-math:cartesian-product (a Unknown b Unknown) -> Unknown
+math:cartesian-product (a Collection b Collection) -> Unknown
 
 · ~ math:fibonacci
 math:fibonacci (n Unknown) -> Unknown
@@ -632,19 +632,19 @@ list:filter (xs Collection f? Abstraction Predicate Predicate) -> Collection
 list:fold (xs Collection f Abstraction out Unknown) -> Unknown
 
 · ~ list:zip
-list:zip (a Unknown b Unknown) -> Collection
+list:zip (a Unknown b Collection) -> Collection
 
 · ~ list:unzip
-list:unzip (xs Collection) -> Collection
+list:unzip (xs Unknown) -> Collection
 
 · ~ list:length
-list:length (list Unknown) -> Unknown
+list:length (list Collection) -> Unknown
 
 · ~ list:enumerate
-list:enumerate (list Unknown) -> Collection
+list:enumerate (list Collection) -> Collection
 
 · ~ list:reverse
-list:reverse (list Unknown) -> Unknown
+list:reverse (list Collection) -> Unknown
 
 · ~ list:find
 list:find (xs Collection f? Abstraction Predicate Predicate) -> Collection
@@ -665,22 +665,22 @@ list:remove-at (xs Collection pos Atom) -> Unknown
 list:insert-at (xs Collection pos Atom elem Unknown) -> Collection
 
 · ~ list:get
-list:get (list Unknown i Atom) -> Unknown
+list:get (list Collection i Atom) -> Unknown
 
 · ~ list:end
 list:end (xs Collection) -> Unknown
 
 · ~ list:rotate-left
-list:rotate-left (xs Collection) -> Collection
+list:rotate-left (xs Unknown) -> Collection
 
 · ~ list:rotate-right
 list:rotate-right (xs Collection) -> Collection
 
 · ~ list:concat!
-list:concat! (lists Unknown) -> Unknown
+list:concat! (lists Collection) -> Unknown
 
 · ~ list:merge!
-list:merge! (a Unknown b Unknown) -> Unknown
+list:merge! (a Collection b Unknown) -> Unknown
 
 · ~ list:flatten
 list:flatten (xs Collection) -> Collection
@@ -692,16 +692,16 @@ list:equal? (a Unknown b Unknown) -> Predicate
 list:count-of (xs Collection cb? Abstraction Predicate) -> Unknown
 
 · ~ list:count
-list:count (input Unknown item Atom) -> Unknown
+list:count (input Collection item Atom) -> Unknown
 
 · ~ list:take
 list:take (lista Unknown pos Atom) -> Collection
 
 · ~ list:after
-list:after (lista Unknown pos Atom) -> Unknown
+list:after (lista Collection pos Atom) -> Unknown
 
 · ~ list:slice
-list:slice (lista Unknown i Atom k Atom) -> Collection
+list:slice (lista Collection i Atom k Atom) -> Collection
 
 · ~ list:for
 list:for (xs Collection f Abstraction) -> Collection
@@ -710,7 +710,7 @@ list:for (xs Collection f Abstraction) -> Collection
 array:for (xs Collection cb Abstraction) -> Unknown
 
 · ~ array:buckets
-array:buckets (n Unknown) -> Unknown
+array:buckets (n Atom) -> Unknown
 
 · ~ array:enumerated-for
 array:enumerated-for (xs Collection cb Abstraction) -> Unknown
@@ -758,19 +758,19 @@ array:append! (q Collection item Unknown) -> Collection
 array:set-and-get! (q Collection index Atom item Unknown) -> Unknown
 
 · ~ array:tail!
-array:tail! (q Unknown) -> Collection
+array:tail! (q Collection) -> Collection
 
 · ~ array:push!
 array:push! (q Collection item Unknown) -> Unknown
 
 · ~ array:pop!
-array:pop! (q Unknown) -> Unknown
+array:pop! (q Collection) -> Unknown
 
 · ~ array:even-indexed
-array:even-indexed (x Unknown) -> Unknown
+array:even-indexed (x Collection) -> Unknown
 
 · ~ array:odd-indexed
-array:odd-indexed (x Unknown) -> Unknown
+array:odd-indexed (x Collection) -> Unknown
 
 · ~ array:unique
 array:unique (xs Collection) -> Collection
@@ -809,13 +809,13 @@ car (xs Collection) -> Unknown
 cdr (xs Collection) -> Unknown
 
 · ~ cons
-cons (a Unknown b Unknown) -> Unknown
+cons (a Collection b Collection) -> Unknown
 
 · ~ array:take
-array:take (xs Collection n Unknown) -> Collection
+array:take (xs Collection n Atom) -> Collection
 
 · ~ array:drop
-array:drop (xs Collection n Unknown) -> Collection
+array:drop (xs Collection n Atom) -> Collection
 
 · ~ array:binary-search
 array:binary-search (xs Collection target Unknown) -> Unknown
@@ -830,10 +830,10 @@ array:unzip (xs Collection) -> Collection
 array:equal? (a Atom b Atom) -> Predicate
 
 · ~ array:not-equal?
-array:not-equal? (a Unknown b Unknown) -> Predicate
+array:not-equal? (a Atom b Atom) -> Predicate
 
 · ~ array:join
-array:join (xs Collection delim Unknown) -> Unknown
+array:join (xs Collection delim Collection) -> Unknown
 
 · ~ array:chars
 array:chars (xs Collection) -> Unknown
@@ -935,7 +935,7 @@ matrix:flip-square (matrix Collection) -> Unknown
 matrix:dimensions (matrix Collection) -> Collection
 
 · ~ matrix:in-bounds?
-matrix:in-bounds? (matrix Collection y Atom x Unknown) -> Predicate
+matrix:in-bounds? (matrix Collection y Atom x Atom) -> Predicate
 
 · ~ matrix:diagonal-neighborhood
 matrix:diagonal-neighborhood Collection
@@ -947,13 +947,13 @@ matrix:moore-neighborhood Collection
 matrix:von-neumann-neighborhood Collection
 
 · ~ matrix:adjacent
-matrix:adjacent (xs Collection directions Unknown y Atom x Atom cb Abstraction) -> Unknown
+matrix:adjacent (xs Collection directions Collection y Atom x Atom cb Abstraction) -> Unknown
 
 · ~ matrix:adjacent-sum
-matrix:adjacent-sum (xs Collection directions Unknown y Atom x Atom cb Abstraction) -> Unknown
+matrix:adjacent-sum (xs Collection directions Collection y Atom x Atom cb Abstraction) -> Unknown
 
 · ~ matrix:sliding-adjacent-sum
-matrix:sliding-adjacent-sum (xs Collection directions Unknown y Atom x Atom N Unknown cb Abstraction) -> Unknown
+matrix:sliding-adjacent-sum (xs Collection directions Collection y Atom x Atom N Atom cb Abstraction) -> Unknown
 
 · ~ matrix:set!
 matrix:set! (matrix Collection y Atom x Atom value Unknown) -> Collection
@@ -962,10 +962,10 @@ matrix:set! (matrix Collection y Atom x Atom value Unknown) -> Collection
 matrix:get (matrix Collection y Atom x Atom) -> Unknown
 
 · ~ matrix:set-and-get!
-matrix:set-and-get! (matrix Collection y Unknown x Unknown value Unknown) -> Unknown
+matrix:set-and-get! (matrix Collection y Atom x Atom value Unknown) -> Unknown
 
 · ~ matrix:get-option
-matrix:get-option (xs Collection y Unknown x Unknown) -> Collection
+matrix:get-option (xs Collection y Atom x Atom) -> Collection
 
 · ~ from:yx->key
 from:yx->key (y Unknown x Unknown) -> Unknown
@@ -986,19 +986,19 @@ from:digit->char (d Atom) -> Atom
 from:char->digit (c Atom) -> Atom
 
 · ~ from:chars->digits
-from:chars->digits (chars Unknown) -> Collection
+from:chars->digits (chars Collection) -> Collection
 
 · ~ from:chars->positive-or-negative-digits
-from:chars->positive-or-negative-digits (chars Unknown) -> Unknown
+from:chars->positive-or-negative-digits (chars Collection) -> Unknown
 
 · ~ from:digits->chars
-from:digits->chars (numbers Unknown) -> Collection
+from:digits->chars (numbers Collection) -> Collection
 
 · ~ from:digits->integer
 from:digits->integer (digits Collection) -> Unknown
 
 · ~ from:positive-or-negative-digits->integer
-from:positive-or-negative-digits->integer (digits-with-sign Unknown) -> Atom
+from:positive-or-negative-digits->integer (digits-with-sign Collection) -> Atom
 
 · ~ from:positive-or-negative-digits->chars
 from:positive-or-negative-digits->chars (xs Collection) -> Unknown
@@ -1013,25 +1013,25 @@ from:number->positive-or-negative-digits (positive-or-negative-num Atom) -> Unkn
 from:number->bits (num Unknown) -> Unknown
 
 · ~ from:numbers->chars
-from:numbers->chars (x Unknown) -> Collection
+from:numbers->chars (x Collection) -> Collection
 
 · ~ from:chars->integer
-from:chars->integer (n Unknown) -> Unknown
+from:chars->integer (n Collection) -> Unknown
 
 · ~ from:positive-or-negative-chars->integer
-from:positive-or-negative-chars->integer (x Unknown) -> Atom
+from:positive-or-negative-chars->integer (x Collection) -> Atom
 
 · ~ from:string->integer
-from:string->integer (x Unknown) -> Atom
+from:string->integer (x Collection) -> Atom
 
 · ~ from:strings->integers
-from:strings->integers (strings Unknown) -> Collection
+from:strings->integers (strings Collection) -> Collection
 
 · ~ from:string->float
 from:string->float (str Collection) -> Atom
 
 · ~ from:strings->floats
-from:strings->floats (strings Unknown) -> Collection
+from:strings->floats (strings Collection) -> Collection
 
 · ~ from:float->string
 from:float->string (x Atom) -> Unknown
@@ -1043,10 +1043,10 @@ from:floats->strings (xs Collection) -> Collection
 from:string->date (str Unknown) -> Collection
 
 · ~ from:integer->string
-from:integer->string (x Unknown) -> Unknown
+from:integer->string (x Atom) -> Unknown
 
 · ~ from:integers->strings
-from:integers->strings (x Unknown) -> Collection
+from:integers->strings (x Collection) -> Collection
 
 · ~ from:array->set
 from:array->set (xs Collection) -> Unknown
@@ -1055,19 +1055,19 @@ from:array->set (xs Collection) -> Unknown
 from:array->table (xs Collection) -> Unknown
 
 · ~ from:set->array
-from:set->array (set Unknown) -> Unknown
+from:set->array (set Collection) -> Unknown
 
 · ~ from:map->array
-from:map->array (set Unknown) -> Unknown
+from:map->array (set Collection) -> Unknown
 
 · ~ from:set->integers
-from:set->integers (set Unknown) -> Collection
+from:set->integers (set Collection) -> Collection
 
 · ~ from:array->brray
 from:array->brray (initial Collection) -> Unknown
 
 · ~ from:brray->array
-from:brray->array (q Unknown) -> Unknown
+from:brray->array (q Collection) -> Unknown
 
 · ~ from:matrix->string
 from:matrix->string (matrix Collection) -> Unknown
@@ -1079,10 +1079,10 @@ array:shallow-copy (xs Collection) -> Unknown
 array:deep-copy (xs Collection) -> Unknown
 
 · ~ array:merge!
-array:merge! (a Collection b Unknown) -> Unknown
+array:merge! (a Collection b Collection) -> Unknown
 
 · ~ array:merge
-array:merge (a Unknown b Unknown) -> Unknown
+array:merge (a Collection b Collection) -> Unknown
 
 · ~ array:concat
 array:concat (xs Collection) -> Unknown
@@ -1169,19 +1169,19 @@ array:last (xs Collection) -> Unknown
 string:character-occurances (str Collection letter Atom) -> Unknown
 
 · ~ string:slice-from
-string:slice-from (a Collection b Unknown) -> Collection
+string:slice-from (a Collection b Collection) -> Collection
 
 · ~ string:slice-after
 string:slice-after (a Collection b Collection) -> Collection
 
 · ~ string:slice-to
-string:slice-to (A Unknown B Unknown) -> Unknown
+string:slice-to (A Collection B Collection) -> Unknown
 
 · ~ string:slice-before
-string:slice-before (A Unknown B Unknown) -> Unknown
+string:slice-before (A Collection B Collection) -> Unknown
 
 · ~ string:split
-string:split (str Unknown char Unknown) -> Collection
+string:split (str Collection char Unknown) -> Collection
 
 · ~ string:match
 string:match (str Collection word Collection) -> Atom
@@ -1196,16 +1196,16 @@ string:lesser? (A Collection B Collection) -> Predicate
 string:greater? (A Collection B Collection) -> Predicate
 
 · ~ string:greater-or-equal?
-string:greater-or-equal? (A Unknown B Unknown) -> Predicate
+string:greater-or-equal? (A Collection B Collection) -> Predicate
 
 · ~ string:lesser-or-equal?
-string:lesser-or-equal? (A Unknown B Unknown) -> Predicate
+string:lesser-or-equal? (A Collection B Collection) -> Predicate
 
 · ~ string:equal?
 string:equal? (a Collection b Collection) -> Predicate
 
 · ~ string:not-equal?
-string:not-equal? (a Unknown b Unknown) -> Predicate
+string:not-equal? (a Collection b Collection) -> Predicate
 
 · ~ string:one-equal?
 string:one-equal? (a Unknown b Unknown) -> Predicate
@@ -1214,16 +1214,16 @@ string:one-equal? (a Unknown b Unknown) -> Predicate
 string:two-equal? (a Unknown b Unknown) -> Predicate
 
 · ~ string:three-equal?
-string:three-equal? (a Unknown b Unknown) -> Predicate
+string:three-equal? (a Collection b Collection) -> Predicate
 
 · ~ string:min
-string:min (a Unknown b Unknown) -> Unknown
+string:min (a Collection b Collection) -> Unknown
 
 · ~ string:max
-string:max (a Unknown b Unknown) -> Unknown
+string:max (a Collection b Collection) -> Unknown
 
 · ~ string:join-as-table-with
-string:join-as-table-with (table Collection colum Unknown row Unknown) -> Unknown
+string:join-as-table-with (table Collection colum Collection row Unknown) -> Unknown
 
 · ~ string:starts-with?
 string:starts-with? (str Collection pattern Collection) -> Predicate
@@ -1235,19 +1235,19 @@ string:ends-with? (str Collection pattern Collection) -> Predicate
 string:join-as-table (table Collection) -> Unknown
 
 · ~ string:trim-left
-string:trim-left (str Unknown) -> Unknown
+string:trim-left (str Collection) -> Unknown
 
 · ~ string:trim-right
-string:trim-right (str Unknown) -> Unknown
+string:trim-right (str Collection) -> Unknown
 
 · ~ string:trim
-string:trim (str Unknown) -> Unknown
+string:trim (str Collection) -> Unknown
 
 · ~ string:lines
 string:lines (str Unknown) -> Collection
 
 · ~ string:chars
-string:chars (str Unknown) -> Collection
+string:chars (str Collection) -> Collection
 
 · ~ string:words
 string:words (str Unknown) -> Collection
@@ -1265,22 +1265,22 @@ string:colons (str Unknown) -> Collection
 string:semi-colons (str Unknown) -> Collection
 
 · ~ string:dashes
-string:dashes (str Unknown) -> Collection
+string:dashes (str Collection) -> Collection
 
 · ~ string:multilines
 string:multilines (input Unknown) -> Collection
 
 · ~ string:append
-string:append (a Unknown b Unknown) -> Unknown
+string:append (a Collection b Collection) -> Unknown
 
 · ~ string:prepend
-string:prepend (a Unknown b Unknown) -> Unknown
+string:prepend (a Collection b Collection) -> Unknown
 
 · ~ string:pad-left
-string:pad-left (str Collection N Atom ch Unknown) -> Unknown
+string:pad-left (str Collection N Atom ch Collection) -> Unknown
 
 · ~ string:pad-right
-string:pad-right (str Collection N Atom ch Unknown) -> Unknown
+string:pad-right (str Collection N Atom ch Collection) -> Unknown
 
 · ~ string:upper
 string:upper (str Collection) -> Unknown
@@ -1292,7 +1292,7 @@ string:lower (str Collection) -> Unknown
 new:map (args Collection) -> Unknown
 
 · ~ new:set
-new:set (args Unknown) -> Unknown
+new:set (args Collection) -> Unknown
 
 · ~ new:set4
 new:set4 () -> Collection
@@ -1325,13 +1325,13 @@ new:map32 () -> Unknown
 new:map64 () -> Unknown
 
 · ~ new:array
-new:array (items Unknown) -> Unknown
+new:array (items Collection) -> Unknown
 
 · ~ new:list
 new:list (value Unknown) -> Collection
 
 · ~ new:set-n
-new:set-n (n Unknown) -> Collection
+new:set-n (n Atom) -> Collection
 
 · ~ new:date
 new:date (year Unknown month Unknown day Unknown) -> Collection
@@ -1370,28 +1370,28 @@ binary-tree:value (node Collection) -> Unknown
 set:index (table Collection key Collection) -> Unknown
 
 · ~ set:add!
-set:add! (table Collection key Unknown) -> Unknown
+set:add! (table Collection key Collection) -> Unknown
 
 · ~ set:remove!
-set:remove! (table Collection key Unknown) -> Unknown
+set:remove! (table Collection key Collection) -> Unknown
 
 · ~ set:has?
-set:has? (table Collection key Unknown) -> Predicate
+set:has? (table Collection key Collection) -> Predicate
 
 · ~ set:exists?
 set:exists? (table Collection key Collection) -> Predicate
 
 · ~ set:not-exists?
-set:not-exists? (table Collection key Unknown) -> Predicate
+set:not-exists? (table Unknown key Collection) -> Predicate
 
 · ~ set:add-and-get!
-set:add-and-get! (table Collection key Unknown) -> Unknown
+set:add-and-get! (table Collection key Collection) -> Unknown
 
 · ~ set:remove-and-get!
-set:remove-and-get! (table Collection key Unknown) -> Unknown
+set:remove-and-get! (table Collection key Collection) -> Unknown
 
 · ~ set:with!
-set:with! (initial Unknown args Unknown) -> Unknown
+set:with! (initial Unknown args Collection) -> Unknown
 
 · ~ set:max-capacity
 set:max-capacity (a Collection b Collection) -> Unknown
@@ -1403,16 +1403,16 @@ set:min-capacity (a Collection b Collection) -> Unknown
 set:values (table Collection) -> Unknown
 
 · ~ set:intersection
-set:intersection (a Unknown b Unknown) -> Unknown
+set:intersection (a Collection b Collection) -> Unknown
 
 · ~ set:difference
-set:difference (a Unknown b Unknown) -> Unknown
+set:difference (a Collection b Collection) -> Unknown
 
 · ~ set:xor
-set:xor (a Unknown b Unknown) -> Unknown
+set:xor (a Collection b Collection) -> Unknown
 
 · ~ set:union
-set:union (a Unknown b Unknown) -> Unknown
+set:union (a Collection b Collection) -> Unknown
 
 · ~ set:empty!
 set:empty! (table Collection) -> Collection
@@ -1430,31 +1430,31 @@ map:keys (table Collection) -> Collection
 map:values (table Collection) -> Collection
 
 · ~ map:set!
-map:set! (table Collection key Unknown value Unknown) -> Unknown
+map:set! (table Collection key Collection value Unknown) -> Unknown
 
 · ~ map:remove!
-map:remove! (table Collection key Unknown) -> Unknown
+map:remove! (table Collection key Collection) -> Unknown
 
 · ~ map:set-and-get!
-map:set-and-get! (table Collection key Unknown value Unknown) -> Unknown
+map:set-and-get! (table Collection key Collection value Unknown) -> Unknown
 
 · ~ map:remove-and-get!
-map:remove-and-get! (table Collection key Unknown) -> Unknown
+map:remove-and-get! (table Collection key Collection) -> Unknown
 
 · ~ map:get
-map:get (table Collection key Unknown) -> Unknown
+map:get (table Collection key Collection) -> Unknown
 
 · ~ map:get-option
-map:get-option (table Collection key Unknown) -> Collection
+map:get-option (table Collection key Collection) -> Collection
 
 · ~ map:has?
-map:has? (table Collection key Unknown) -> Predicate
+map:has? (table Collection key Collection) -> Predicate
 
 · ~ map:exists?
 map:exists? (table Collection key Collection) -> Predicate
 
 · ~ map:not-exists?
-map:not-exists? (table Collection key Unknown) -> Predicate
+map:not-exists? (table Unknown key Collection) -> Predicate
 
 · ~ map:count
 map:count (arr Collection) -> Unknown
@@ -1484,10 +1484,10 @@ var:get (variable Collection) -> Unknown
 var:set! (variable Collection value Unknown) -> Collection
 
 · ~ var:del!
-var:del! (variable Unknown) -> Collection
+var:del! (variable Collection) -> Collection
 
 · ~ var:set-and-get!
-var:set-and-get! (variable Unknown value Unknown) -> Unknown
+var:set-and-get! (variable Collection value Unknown) -> Unknown
 
 · ~ var:increment!
 var:increment! (variable Collection) -> Collection
@@ -1502,13 +1502,13 @@ var:increment-and-get! (variable Collection) -> Unknown
 var:decrement-and-get! (variable Collection) -> Unknown
 
 · ~ bool:def
-bool:def (val Unknown) -> Collection
+bool:def (val Atom) -> Collection
 
 · ~ bool:get
 bool:get (variable Collection) -> Unknown
 
 · ~ bool:set!
-bool:set! (variable Collection value Unknown) -> Collection
+bool:set! (variable Collection value Atom) -> Collection
 
 · ~ bool:toggle!
 bool:toggle! (variable Collection) -> Collection
@@ -1559,7 +1559,7 @@ brray:offset-right (q Collection) -> Atom
 brray:length (q Collection) -> Atom
 
 · ~ brray:empty?
-brray:empty? (q Unknown) -> Predicate
+brray:empty? (q Collection) -> Predicate
 
 · ~ brray:empty!
 brray:empty! (q Collection) -> Unknown
@@ -1583,52 +1583,52 @@ brray:remove-from-left! (q Collection) -> Atom
 brray:remove-from-right! (q Collection) -> Atom
 
 · ~ brray:iter
-brray:iter (q Unknown cb Abstraction) -> Unknown
+brray:iter (q Collection cb Abstraction) -> Unknown
 
 · ~ brray:map
-brray:map (q Unknown cb Abstraction) -> Unknown
+brray:map (q Collection cb Abstraction) -> Unknown
 
 · ~ brray:balance?
 brray:balance? (q Unknown) -> Predicate
 
 · ~ brray:balance!
-brray:balance! (q Unknown) -> Unknown
+brray:balance! (q Collection) -> Unknown
 
 · ~ brray:append!
-brray:append! (q Unknown item Unknown) -> Unknown
+brray:append! (q Collection item Unknown) -> Unknown
 
 · ~ brray:prepend!
-brray:prepend! (q Unknown item Unknown) -> Unknown
+brray:prepend! (q Collection item Unknown) -> Unknown
 
 · ~ brray:head!
-brray:head! (q Unknown) -> Unknown
+brray:head! (q Collection) -> Unknown
 
 · ~ brray:tail!
-brray:tail! (q Unknown) -> Unknown
+brray:tail! (q Collection) -> Unknown
 
 · ~ brray:first
-brray:first (q Unknown) -> Unknown
+brray:first (q Collection) -> Unknown
 
 · ~ brray:last
-brray:last (q Unknown) -> Unknown
+brray:last (q Collection) -> Unknown
 
 · ~ brray:pop-right!
-brray:pop-right! (q Unknown) -> Unknown
+brray:pop-right! (q Collection) -> Unknown
 
 · ~ brray:pop-left!
-brray:pop-left! (q Unknown) -> Unknown
+brray:pop-left! (q Collection) -> Unknown
 
 · ~ brray:rotate-left!
-brray:rotate-left! (q Unknown n Atom) -> Unknown
+brray:rotate-left! (q Collection n Atom) -> Unknown
 
 · ~ brray:rotate-right!
-brray:rotate-right! (q Unknown n Atom) -> Unknown
+brray:rotate-right! (q Collection n Atom) -> Unknown
 
 · ~ brray:slice
-brray:slice (entity Unknown s Atom e Atom) -> Unknown
+brray:slice (entity Collection s Atom e Atom) -> Unknown
 
 · ~ queue:empty?
-queue:empty? (q Unknown) -> Predicate
+queue:empty? (q Collection) -> Predicate
 
 · ~ queue:not-empty?
 queue:not-empty? (q Unknown) -> Predicate
@@ -1637,16 +1637,16 @@ queue:not-empty? (q Unknown) -> Predicate
 queue:empty! (q Collection) -> Unknown
 
 · ~ queue:enqueue!
-queue:enqueue! (queue Unknown item Unknown) -> Unknown
+queue:enqueue! (queue Collection item Unknown) -> Unknown
 
 · ~ queue:dequeue!
-queue:dequeue! (queue Unknown) -> Unknown
+queue:dequeue! (queue Collection) -> Unknown
 
 · ~ queue:peek
-queue:peek (queue Unknown) -> Unknown
+queue:peek (queue Collection) -> Unknown
 
 · ~ stack:empty?
-stack:empty? (q Unknown) -> Predicate
+stack:empty? (q Collection) -> Predicate
 
 · ~ stack:not-empty?
 stack:not-empty? (q Unknown) -> Predicate
@@ -1655,31 +1655,31 @@ stack:not-empty? (q Unknown) -> Predicate
 stack:empty! (q Collection) -> Unknown
 
 · ~ stack:push!
-stack:push! (stack Unknown item Unknown) -> Unknown
+stack:push! (stack Collection item Unknown) -> Unknown
 
 · ~ stack:pop!
-stack:pop! (stack Unknown) -> Unknown
+stack:pop! (stack Collection) -> Unknown
 
 · ~ stack:peek
-stack:peek (stack Unknown) -> Unknown
+stack:peek (stack Collection) -> Unknown
 
 · ~ tuple:apply
-tuple:apply (x Unknown cb Abstraction) -> Unknown
+tuple:apply (x Collection cb Abstraction) -> Unknown
 
 · ~ tuple:add
-tuple:add (x Unknown) -> Atom
+tuple:add (x Collection) -> Atom
 
 · ~ tuple:subtract
-tuple:subtract (x Unknown) -> Atom
+tuple:subtract (x Collection) -> Atom
 
 · ~ tuple:multiply
-tuple:multiply (x Unknown) -> Atom
+tuple:multiply (x Collection) -> Atom
 
 · ~ tuple:divide
-tuple:divide (x Unknown) -> Atom
+tuple:divide (x Collection) -> Atom
 
 · ~ tuple:swap
-tuple:swap (x Unknown) -> Collection
+tuple:swap (x Collection) -> Collection
 
 · ~ tuple:swap!
 tuple:swap! (x Collection) -> Collection
@@ -1727,19 +1727,19 @@ time:sub-months (date-time Atom months Atom) -> Atom
 time:sub-years (date-time Atom years Atom) -> Atom
 
 · ~ date:year
-date:year (date Unknown) -> Unknown
+date:year (date Collection) -> Unknown
 
 · ~ date:month
-date:month (date Unknown) -> Unknown
+date:month (date Collection) -> Unknown
 
 · ~ date:day
-date:day (date Unknown) -> Unknown
+date:day (date Collection) -> Unknown
 
 · ~ date:month-day
-date:month-day (date Unknown) -> Unknown
+date:month-day (date Collection) -> Unknown
 
 · ~ date:year-month
-date:year-month (date Unknown) -> Collection
+date:year-month (date Collection) -> Collection
 
 · ~ loop:for-range
 loop:for-range (start Unknown end Atom cb Abstraction) -> Unknown
@@ -1802,7 +1802,7 @@ heap:empty! (xs Collection) -> Unknown
 from:array->heap (xs Collection cb Unknown) -> Unknown
 
 · ~ optimization:tail-call-loop
-optimization:tail-call-loop (result Unknown) -> Unknown
+optimization:tail-call-loop (result Collection) -> Unknown
 
 · ~ optimization:tail-calls-0
 optimization:tail-calls-0 (fn Abstraction) -> Abstraction
@@ -1820,19 +1820,19 @@ optimization:tail-calls-3 (fn Abstraction) -> Abstraction
 optimization:tail-calls-4 (fn Abstraction) -> Abstraction
 
 · ~ option:error?
-option:error? (x Unknown) -> Predicate
+option:error? (x Collection) -> Predicate
 
 · ~ option:value?
-option:value? (x Unknown) -> Predicate
+option:value? (x Collection) -> Predicate
 
 · ~ option:value
-option:value (x Unknown) -> Unknown
+option:value (x Collection) -> Unknown
 
 · ~ option:throw-error
-option:throw-error (x Unknown) -> Unknown
+option:throw-error (x Collection) -> Unknown
 
 · ~ option:error
-option:error (x Unknown) -> Unknown
+option:error (x Collection) -> Unknown
 
 · ~ array:get
 array:get (. Collection . Atom) -> Unknown
@@ -1856,7 +1856,7 @@ array:del! (xs Collection) -> Collection
 equal? (a Atom b Atom) -> Predicate
 
 · ~ not-equal?
-not-equal? (a Unknown b Unknown) -> Predicate
+not-equal? (a Atom b Atom) -> Predicate
 
 · ~ array:at
 array:at (xs Collection i Atom) -> Unknown
@@ -1892,16 +1892,16 @@ array? (x Unknown) -> Predicate
 char? (cc Atom) -> Predicate
 
 · ~ match:negative?
-match:negative? (str Unknown) -> Predicate
+match:negative? (str Collection) -> Predicate
 
 · ~ match:number?
-match:number? (str Unknown) -> Predicate
+match:number? (str Collection) -> Predicate
 
 · ~ match:digit?
 match:digit? (char Atom) -> Predicate
 
 · ~ match:digits?
-match:digits? (str Unknown) -> Predicate
+match:digits? (str Collection) -> Predicate
 
 · ~ ast:type
 ast:type Atom
@@ -1922,118 +1922,118 @@ ast:atom Atom
 ast:leaf (type Unknown value Unknown) -> Collection
 
 · ~ ast:leaf?
-ast:leaf? (arg Unknown) -> Predicate
+ast:leaf? (arg Collection) -> Predicate
 
 · ~ from:chars->ast
 from:chars->ast (source Collection) -> Unknown
 
 · ~ special-form:let
-special-form:let (args Collection env Unknown) -> Unknown
+special-form:let (args Collection env Collection) -> Unknown
 
 · ~ special-form:lambda
 special-form:lambda (args Collection env Unknown) -> Abstraction
 
 · ~ special-form:apply
-special-form:apply (args Unknown env Unknown) -> Unknown
+special-form:apply (args Collection env Collection) -> Unknown
 
 · ~ special-form:array
-special-form:array (args Unknown env Unknown) -> Collection
+special-form:array (args Collection env Collection) -> Collection
 
 · ~ special-form:length
-special-form:length (args Collection env Unknown) -> Atom
+special-form:length (args Collection env Collection) -> Atom
 
 · ~ special-form:get
-special-form:get (args Collection env Unknown) -> Unknown
+special-form:get (args Collection env Collection) -> Unknown
 
 · ~ special-form:set!
-special-form:set! (args Collection env Unknown) -> Collection
+special-form:set! (args Collection env Collection) -> Collection
 
 · ~ special-form:pop!
-special-form:pop! (args Collection env Unknown) -> Collection
+special-form:pop! (args Collection env Collection) -> Collection
 
 · ~ special-form:equal?
-special-form:equal? (args Collection env Unknown) -> Predicate
+special-form:equal? (args Collection env Collection) -> Predicate
 
 · ~ special-form:add
-special-form:add (args Collection env Unknown) -> Atom
+special-form:add (args Collection env Collection) -> Atom
 
 · ~ special-form:subtract
-special-form:subtract (args Collection env Unknown) -> Atom
+special-form:subtract (args Collection env Collection) -> Atom
 
 · ~ special-form:multiply
-special-form:multiply (args Collection env Unknown) -> Atom
+special-form:multiply (args Collection env Collection) -> Atom
 
 · ~ special-form:divide
-special-form:divide (args Collection env Unknown) -> Atom
+special-form:divide (args Collection env Collection) -> Atom
 
 · ~ special-form:greater-than?
-special-form:greater-than? (args Collection env Unknown) -> Predicate
+special-form:greater-than? (args Collection env Collection) -> Predicate
 
 · ~ special-form:less-than?
-special-form:less-than? (args Collection env Unknown) -> Predicate
+special-form:less-than? (args Collection env Collection) -> Predicate
 
 · ~ special-form:greater-than-or-equal?
-special-form:greater-than-or-equal? (args Collection env Unknown) -> Predicate
+special-form:greater-than-or-equal? (args Collection env Collection) -> Predicate
 
 · ~ special-form:less-than-or-equal?
-special-form:less-than-or-equal? (args Collection env Unknown) -> Predicate
+special-form:less-than-or-equal? (args Collection env Collection) -> Predicate
 
 · ~ special-form:mod
-special-form:mod (args Collection env Unknown) -> Atom
+special-form:mod (args Collection env Collection) -> Atom
 
 · ~ special-form:bit-wise-and
-special-form:bit-wise-and (args Collection env Unknown) -> Atom
+special-form:bit-wise-and (args Collection env Collection) -> Atom
 
 · ~ special-form:bit-wise-or
-special-form:bit-wise-or (args Collection env Unknown) -> Atom
+special-form:bit-wise-or (args Collection env Collection) -> Atom
 
 · ~ special-form:bit-wise-xor
-special-form:bit-wise-xor (args Collection env Unknown) -> Atom
+special-form:bit-wise-xor (args Collection env Collection) -> Atom
 
 · ~ special-form:bit-wise-right-shift
-special-form:bit-wise-right-shift (args Collection env Unknown) -> Atom
+special-form:bit-wise-right-shift (args Collection env Collection) -> Atom
 
 · ~ special-form:bit-wise-left-shift
-special-form:bit-wise-left-shift (args Collection env Unknown) -> Atom
+special-form:bit-wise-left-shift (args Collection env Collection) -> Atom
 
 · ~ special-form:bit-wise-not
-special-form:bit-wise-not (args Collection env Unknown) -> Atom
+special-form:bit-wise-not (args Collection env Collection) -> Atom
 
 · ~ special-form:do
-special-form:do (args Unknown env Unknown) -> Unknown
+special-form:do (args Collection env Collection) -> Unknown
 
 · ~ special-form:if
-special-form:if (args Collection env Unknown) -> Collection
+special-form:if (args Collection env Collection) -> Collection
 
 · ~ special-form:and?
-special-form:and? (args Collection env Unknown) -> Predicate
+special-form:and? (args Collection env Collection) -> Predicate
 
 · ~ special-form:or?
-special-form:or? (args Collection env Unknown) -> Predicate
+special-form:or? (args Collection env Collection) -> Predicate
 
 · ~ special-form:throw
-special-form:throw (args Collection env Unknown) -> Unknown
+special-form:throw (args Collection env Collection) -> Unknown
 
 · ~ special-form:loop
-special-form:loop (args Collection env Unknown) -> Atom
+special-form:loop (args Collection env Collection) -> Atom
 
 · ~ special-form:atom?
-special-form:atom? (args Collection env Unknown) -> Predicate
+special-form:atom? (args Collection env Collection) -> Predicate
 
 · ~ special-form:lambda?
-special-form:lambda? (args Collection env Unknown) -> Predicate
+special-form:lambda? (args Collection env Collection) -> Predicate
 
 · ~ keywords
-keywords Unknown
+keywords Collection
 
 · ~ prototype:get
-prototype:get (_arg1 Collection key Unknown) -> Unknown
+prototype:get (_arg1 Collection key Collection) -> Unknown
 
 · ~ prototype:create!
-prototype:create! (xs Collection) -> Unknown
+prototype:create! (xs Unknown) -> Unknown
 
 · ~ evaluate
-evaluate (exp Unknown env Unknown) -> Collection
+evaluate (exp Unknown env Collection) -> Collection
 
 · ~ lisp:eval
 lisp:eval (source Unknown) -> Unknown
