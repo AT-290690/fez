@@ -8,6 +8,8 @@ export const RETURNS = 'returns'
 export const SCOPE_NAME = '__scope__'
 export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
+export const ORDER = '__order__'
+export const VARIABLE_ORDER_INDEX = 'index'
 export const PREDICATE = 3
 export const COLLECTION = 4
 export const MAX_RETRY_DEFINITION = 1
@@ -29,6 +31,7 @@ export const toTypeNames = (type) => {
 }
 export const SPECIAL_FORM_TYPES = {
   [SCOPE_NAME]: '·',
+  [ORDER]: 0,
   [toTypeNames(APPLY)]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],

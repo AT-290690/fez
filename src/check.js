@@ -31,7 +31,9 @@ import {
   SIGNATURE,
   PREDICATE,
   COLLECTION,
-  MAX_RETRY_DEFINITION
+  MAX_RETRY_DEFINITION,
+  ORDER,
+  VARIABLE_ORDER_INDEX
 } from './types.js'
 import {
   getSuffix,
@@ -114,6 +116,7 @@ const withScope = (name, scope) => {
 }
 export const typeCheck = (ast) => {
   const root = structuredClone(SPECIAL_FORM_TYPES)
+  root[ORDER] = 0
   const errorStack = new Set()
   const warningStack = new Set()
   const Types = new Map()
@@ -131,6 +134,7 @@ export const typeCheck = (ast) => {
         {
           if (!isSpecial)
             stack.push(() => {
+              // Figure out how to determine if varible is define after it's used
               if (env[first[VALUE]] === undefined) {
                 errorStack.add(
                   `Trying to access undefined variable ${first[VALUE]} (check #11)`
@@ -376,6 +380,7 @@ export const typeCheck = (ast) => {
                     [STATS]: {
                       [TYPE_PROP]: [APPLY],
                       retried: 0,
+                      [VARIABLE_ORDER_INDEX]: env[ORDER],
                       [ARGS_COUNT]: n - 2,
                       [ARGUMENTS]: [],
                       [RETURNS]: [UNKNOWN]
@@ -400,8 +405,15 @@ export const typeCheck = (ast) => {
                   const isL = isLeaf(rightHand)
                   // if (!(name in env)) {
                   if (isL && rightHand[TYPE] === WORD) {
+                    // TODO make sure this prevents the assigment all together
+                    if (env[rest[1][VALUE]] === undefined) {
+                      errorStack.add(
+                        `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
+                      )
+                    }
                     // FULL REFF ASSIGMENT
                     env[name] = env[rest[1][VALUE]]
+
                     if (
                       getSuffix(rest[1][VALUE]) === PREDICATE_SUFFIX &&
                       getSuffix(name) !== PREDICATE_SUFFIX
@@ -429,6 +441,7 @@ export const typeCheck = (ast) => {
                     env[name] = {
                       [STATS]: {
                         retried: 0,
+                        [VARIABLE_ORDER_INDEX]: env[ORDER],
                         [TYPE_PROP]: [ATOM],
                         [RETURNS]: [ATOM]
                       }
@@ -462,6 +475,7 @@ export const typeCheck = (ast) => {
                     env[name] = {
                       [STATS]: {
                         retried: 0,
+                        [VARIABLE_ORDER_INDEX]: env[ORDER],
                         [TYPE_PROP]: [
                           isL
                             ? right[TYPE]
@@ -522,6 +536,7 @@ export const typeCheck = (ast) => {
                             )}) so ${name} must end in (${PREDICATE_SUFFIX}) (check #23)`
                           )
                         }
+
                         // FN assigment
                         env[name][STATS][RETURNS] =
                           env[right[VALUE]][STATS][RETURNS]
@@ -533,6 +548,7 @@ export const typeCheck = (ast) => {
                 }
                 Types.set(withScope(name, env), () => formatType(name, env))
               }
+              root[ORDER]++
             }
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
@@ -1117,7 +1133,17 @@ export const typeCheck = (ast) => {
                 }
               }
             })
-            for (const r of rest) check(r, env, scope)
+            for (let i = 0; i < rest.length; ++i) {
+              const r = rest[i]
+              if (isLeaf(r) && r[TYPE] !== ATOM && env[r[VALUE]] == undefined) {
+                errorStack.add(
+                  `(${first[VALUE]}) is trying to access undefined variable (${
+                    r[VALUE]
+                  }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
+                )
+              }
+              check(r, env, scope)
+            }
             break
         }
       }

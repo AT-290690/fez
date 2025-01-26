@@ -362,8 +362,9 @@ ZZZ=ZZZ,ZZZ")
 
       
    `)
-    passes(`(let math:decimal-scaling 1000)
-    (from:float->string 10.2)`)
+    // If we apply order of definition we can no longer do this
+    // passes(`(let math:decimal-scaling 1000)
+    // (from:float->string 10.2)`)
     passes(`(let m (lambda xs (do 
     (let map (lambda xs1 cb (array:map xs cb)))
 )))`)
@@ -385,6 +386,11 @@ ZZZ=ZZZ,ZZZ")
 y? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 z? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 m? ends in (?) and is expected to return (Predicate) but the (Atom) value is neither 1 or 0 (let m? 10) (check #14)`
+    )
+    fails(
+      `(let x y)
+(let y 1)`,
+      `Trying to access undefined variable y (check #22)`
     )
     fails(
       `(let x 1)
@@ -566,11 +572,14 @@ Incorrect type of argument (1) for (and). Expected (Predicate) but got an (Unkno
         (+ x y)
     )))
 )))`,
-      `Trying to access undefined variable y (check #11)`
+      `(+) is trying to access undefined variable (y) at argument (1) (+ x y) (check #20)
+Trying to access undefined variable y (check #11)`
     )
     fails(
       `(let parse (la1mbda input (|> input (string:lines))))`,
-      `Trying to access undefined variable input (check #11)
+      `(la1mbda) is trying to access undefined variable (input) at argument (0) (la1mbda input (string:lines input)) (check #20)
+(string:lines) is trying to access undefined variable (input) at argument (0) (string:lines input) (check #20)
+Trying to access undefined variable input (check #11)
 Trying to call undefined (lambda) la1mbda (check #9)`
     )
     fails(
@@ -597,7 +606,11 @@ Trying to call undefined (lambda) la1mbda (check #9)`
     )))
     
 )))`,
-      `Trying to access undefined variable z (check #11)
+      `(+) is trying to access undefined variable (y) at argument (1) (+ x y) (check #20)
+(*) is trying to access undefined variable (zz) at argument (0) (* zz fff) (check #20)
+(*) is trying to access undefined variable (fff) at argument (1) (* zz fff) (check #20)
+(do) is trying to access undefined variable (z) at argument (0) (do z) (check #20)
+Trying to access undefined variable z (check #11)
 Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ z (array)) (check #1)
 Trying to access undefined variable fff (check #11)
 Trying to access undefined variable zz (check #11)
@@ -666,7 +679,8 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
           (array:map (lambda l (* l (array:count-of right (lambda r (= l r 4))))))
           (math:summation)))))
     `,
-      `Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #15)
+      `(array:select) is trying to access undefined variable (array:nah-empty?) at argument (1) (array:select (string:words word) array:nah-empty?) (check #20)
+Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #15)
 Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #15)
 Trying to access undefined variable array:nah-empty? (check #11)
 Trying to call undefined (lambda) array:mapz (check #9)`
@@ -858,7 +872,9 @@ Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Co
     fails(
       `(let map (lambda xs1 cb (array:map xs cb)))
 (let fold (lambda xs cb x (array:fold xs1 cb x)))`,
-      `Trying to access undefined variable xs1 (check #11)
+      `(array:map) is trying to access undefined variable (xs) at argument (0) (array:map xs cb) (check #20)
+(array:fold) is trying to access undefined variable (xs1) at argument (0) (array:fold xs1 cb x) (check #20)
+Trying to access undefined variable xs1 (check #11)
 Trying to access undefined variable xs (check #11)`
     )
 
@@ -895,7 +911,17 @@ e is assigned to the result of a (Predicate) so e must end in (?) (check #23)`
   it('broken std errors', () => {
     fails(
       BROKEN_STD,
-      `Trying to call undefined (lambda) from:charss->ast (check #9)
+      `(array:length) is trying to access undefined variable (xs) at argument (0) (array:length xs) (check #20)
+(array:get) is trying to access undefined variable (xs) at argument (0) (array:get xs half) (check #20)
+(array:get) is trying to access undefined variable (xs) at argument (0) (array:get xs (- half 1)) (check #20)
+(-) is trying to access undefined variable (y3) at argument (1) (- y2 y3) (check #20)
+(array:map) is trying to access undefined variable (tuple:subtract) at argument (1) (array:map (array:zip xs (array:reverse xs)) tuple:subtract) (check #20)
+(array:map) is trying to access undefined variable (array:first) at argument (1) (array:map (array:select (array:zip (let sorted (array:sort xs (lambda a b (> a b)))) (math:sequence sorted)) (lambda x (do (let index (array:second x)) (or (not (> x 0)) (not (= (array:get sorted (- index 1)) (array:get sorted index))))))) array:first) (check #20)
+(array:map) is trying to access undefined variable (array:first) at argument (1) (array:map xs array:first) (check #20)
+(array:map) is trying to access undefined variable (array:second) at argument (1) (array:map xs array:second) (check #20)
+(-) is trying to access undefined variable (m) at argument (1) (- 1 m) (check #20)
+(brray:length) is trying to access undefined variable (entityz) at argument (0) (brray:length entityz) (check #20)
+Trying to call undefined (lambda) from:charss->ast (check #9)
 Incorrect type of argument (0) for special form (loop). Expected (Atom) but got (Collection) (loop (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
 Incorrect type of argument (0) for special form (or). Expected (Atom) but got (Collection) (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
 Incorrect type of argument (1) for special form (or). Expected (Atom) but got (Collection) (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)

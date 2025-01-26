@@ -108,6 +108,22 @@
 (let math:max-safe-integer 9007199254740991)
 (let math:decimal-scaling 1000000000000)
 
+
+
+
+(let tuple:apply (lambda x cb (cb (array:first x) (array:second x))))
+(let tuple:add (lambda x (+ (array:first x) (array:second x))))
+(let tuple:subtract (lambda x (- (array:first x) (array:second x))))
+(let tuple:multiply (lambda x (* (array:first x) (array:second x))))
+(let tuple:divide (lambda x (/ (array:first x) (array:second x))))
+(let tuple:swap (lambda x (array (array:second x) (array:first x))))
+(let tuple:swap! (lambda x (do
+ (let temp (array:first x))
+ (set! x 0 (array:second x))
+ (set! x 1 temp))))
+(let tuple:zip (lambda xs (array:zip (array:first xs) (array:second xs))))
+(let tuple:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
+
 (let math:range (lambda start end (do
                           (let recursive:math:range (lambda out count
                           (if (<= count end) (recursive:math:range (set! out (length out) count) (+ count 1)) out)))
@@ -428,6 +444,10 @@
                               (apply (lambda (do 
                                 (f (list:head xs)) 
                                 (list:for (list:tail xs) f)))))))
+(let array:first (lambda xs (get xs 0)))
+(let array:second (lambda xs (get xs 1)))
+(let array:third (lambda xs (get xs 2)))
+(let array:last (lambda xs (array:at xs -1)))
 (let array:for (lambda xs cb (do 
                     (let recursive:array:for (lambda i 
                       (if (> (length xs) i) (apply (lambda (do (cb (get xs i)) (recursive:array:for (+ i 1))))))))
@@ -968,10 +988,6 @@
      (array:merge! (math:zeroes (- (length b) (length a))) a))))
 (let array:rotate-right (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  n) (length xs)) (array:first b))) (math:zeroes (length xs))))))
 (let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
-(let array:first (lambda xs (get xs 0)))
-(let array:second (lambda xs (get xs 1)))
-(let array:third (lambda xs (get xs 2)))
-(let array:last (lambda xs (array:at xs -1)))
 (let string:character-occurances (lambda str letter (do
   (let xs str)
   (let bitmask (var:def 0))
@@ -1494,18 +1510,6 @@ q)))
 (let stack:pop! (lambda stack (brray:head! stack)))
 (let stack:peek (lambda stack (brray:last stack)))
 
-(let tuple:apply (lambda x cb (cb (array:first x) (array:second x))))
-(let tuple:add (lambda x (+ (array:first x) (array:second x))))
-(let tuple:subtract (lambda x (- (array:first x) (array:second x))))
-(let tuple:multiply (lambda x (* (array:first x) (array:second x))))
-(let tuple:divide (lambda x (/ (array:first x) (array:second x))))
-(let tuple:swap (lambda x (array (array:second x) (array:first x))))
-(let tuple:swap! (lambda x (do
- (let temp (array:first x))
- (set! x 0 (array:second x))
- (set! x 1 temp))))
-(let tuple:zip (lambda xs (array:zip (array:first xs) (array:second xs))))
-(let tuple:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
 
 
 (let time:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))

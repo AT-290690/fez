@@ -295,8 +295,38 @@ math:max-safe-integer Atom
 · ~ math:decimal-scaling
 math:decimal-scaling Atom
 
-· ~ math:range ~ optimized-lambda::recursive:math:range::*490495625*
-optimized-lambda::recursive:math:range::*490495625* (out Collection count Atom) -> Abstraction
+· ~ tuple:apply
+tuple:apply (x Collection cb Abstraction) -> Unknown
+
+· ~ tuple:add
+tuple:add (x Collection) -> Atom
+
+· ~ tuple:subtract
+tuple:subtract (x Collection) -> Atom
+
+· ~ tuple:multiply
+tuple:multiply (x Collection) -> Atom
+
+· ~ tuple:divide
+tuple:divide (x Collection) -> Atom
+
+· ~ tuple:swap
+tuple:swap (x Collection) -> Collection
+
+· ~ tuple:swap! temp
+temp Unknown
+
+· ~ tuple:swap!
+tuple:swap! (x Collection) -> Collection
+
+· ~ tuple:zip
+tuple:zip (xs Collection) -> Unknown
+
+· ~ tuple:list-zip
+tuple:list-zip (xs Collection) -> Collection
+
+· ~ math:range ~ optimized-lambda::recursive:math:range::*500142958*
+optimized-lambda::recursive:math:range::*500142958* (out Collection count Atom) -> Abstraction
 
 · ~ math:range recursive:math:range
 recursive:math:range () -> Unknown
@@ -307,8 +337,8 @@ math:range (start Unknown end Atom) -> Unknown
 · ~ math:sequence end
 end Atom
 
-· ~ math:sequence ~ optimized-lambda::recursive:math:sequence::*490598709*
-optimized-lambda::recursive:math:sequence::*490598709* (out Collection count Atom) -> Abstraction
+· ~ math:sequence ~ optimized-lambda::recursive:math:sequence::*500265125*
+optimized-lambda::recursive:math:sequence::*500265125* (out Collection count Atom) -> Abstraction
 
 · ~ math:sequence recursive:math:sequence
 recursive:math:sequence () -> Unknown
@@ -316,8 +346,8 @@ recursive:math:sequence () -> Unknown
 · ~ math:sequence
 math:sequence (xs Collection) -> Unknown
 
-· ~ math:sequence-n ~ optimized-lambda::recursive:sequence-n::*490641542*
-optimized-lambda::recursive:sequence-n::*490641542* (out Collection count Atom) -> Abstraction
+· ~ math:sequence-n ~ optimized-lambda::recursive:sequence-n::*500305333*
+optimized-lambda::recursive:sequence-n::*500305333* (out Collection count Atom) -> Abstraction
 
 · ~ math:sequence-n recursive:sequence-n
 recursive:sequence-n () -> Unknown
@@ -325,8 +355,8 @@ recursive:sequence-n () -> Unknown
 · ~ math:sequence-n
 math:sequence-n (n Atom) -> Unknown
 
-· ~ math:zeroes ~ optimized-lambda::recursive:math:zeroes::*490674459*
-optimized-lambda::recursive:math:zeroes::*490674459* (out Collection) -> Abstraction
+· ~ math:zeroes ~ optimized-lambda::recursive:math:zeroes::*500956417*
+optimized-lambda::recursive:math:zeroes::*500956417* (out Collection) -> Abstraction
 
 · ~ math:zeroes recursive:math:zeroes
 recursive:math:zeroes () -> Unknown
@@ -334,8 +364,8 @@ recursive:math:zeroes () -> Unknown
 · ~ math:zeroes
 math:zeroes (n Atom) -> Unknown
 
-· ~ math:ones ~ optimized-lambda::recursive:math:ones::*490702959*
-optimized-lambda::recursive:math:ones::*490702959* (out Collection) -> Abstraction
+· ~ math:ones ~ optimized-lambda::recursive:math:ones::*50098825*
+optimized-lambda::recursive:math:ones::*50098825* (out Collection) -> Abstraction
 
 · ~ math:ones recursive:math:ones
 recursive:math:ones () -> Unknown
@@ -343,8 +373,8 @@ recursive:math:ones () -> Unknown
 · ~ math:ones
 math:ones (n Atom) -> Unknown
 
-· ~ math:numbers ~ optimized-lambda::recursive:math:numbers::*490736584*
-optimized-lambda::recursive:math:numbers::*490736584* (out Collection) -> Abstraction
+· ~ math:numbers ~ optimized-lambda::recursive:math:numbers::*510016792*
+optimized-lambda::recursive:math:numbers::*510016792* (out Collection) -> Abstraction
 
 · ~ math:numbers recursive:math:numbers
 recursive:math:numbers () -> Unknown
@@ -502,8 +532,8 @@ n2 Atom
 · ~ math:bit-count32
 math:bit-count32 (n0 Atom) -> Atom
 
-· ~ math:bit-count ~ optimized-lambda::recursive:math:bit-count::*500542959*
-optimized-lambda::recursive:math:bit-count::*500542959* (n Atom bits Atom) -> Abstraction
+· ~ math:bit-count ~ optimized-lambda::recursive:math:bit-count::*510346667*
+optimized-lambda::recursive:math:bit-count::*510346667* (n Atom bits Atom) -> Abstraction
 
 · ~ math:bit-count recursive:math:bit-count
 recursive:math:bit-count () -> Unknown
@@ -517,8 +547,8 @@ math:square (x Atom) -> Atom
 · ~ math:power
 math:power (base Atom exp Atom) -> Unknown
 
-· ~ math:greatest-common-divisor ~ optimized-lambda::recursive:math:greatest-common-divisor::*500626417*
-optimized-lambda::recursive:math:greatest-common-divisor::*500626417* (a Atom b Atom) -> Abstraction
+· ~ math:greatest-common-divisor ~ optimized-lambda::recursive:math:greatest-common-divisor::*510427833*
+optimized-lambda::recursive:math:greatest-common-divisor::*510427833* (a Atom b Atom) -> Abstraction
 
 · ~ math:greatest-common-divisor recursive:math:greatest-common-divisor
 recursive:math:greatest-common-divisor () -> Unknown
@@ -538,8 +568,8 @@ good-enough? (g Atom x Atom) -> Predicate
 · ~ math:sqrt improve-guess
 improve-guess (g Atom x Atom) -> Atom
 
-· ~ math:sqrt ~ optimized-lambda::recursive:math:sqrt::*500687959*
-optimized-lambda::recursive:math:sqrt::*500687959* (g Atom x Atom) -> Abstraction
+· ~ math:sqrt ~ optimized-lambda::recursive:math:sqrt::*510487292*
+optimized-lambda::recursive:math:sqrt::*510487292* (g Atom x Atom) -> Abstraction
 
 · ~ math:sqrt recursive:math:sqrt
 recursive:math:sqrt () -> Unknown
@@ -565,8 +595,8 @@ math:nth-digit (digit Atom n Atom) -> Atom
 · ~ math:remove-nth-digits
 math:remove-nth-digits (digit Atom n Unknown) -> Atom
 
-· ~ math:keep-nth-digits ~ optimized-lambda::recursive:math:keep-nth-digits::*500748792*
-optimized-lambda::recursive:math:keep-nth-digits::*500748792* (i Atom out Atom base Atom) -> Abstraction
+· ~ math:keep-nth-digits ~ optimized-lambda::recursive:math:keep-nth-digits::*510552333*
+optimized-lambda::recursive:math:keep-nth-digits::*510552333* (i Atom out Atom base Atom) -> Abstraction
 
 · ~ math:keep-nth-digits recursive:math:keep-nth-digits
 recursive:math:keep-nth-digits () -> Unknown
@@ -652,8 +682,8 @@ math:factorial (n Atom) -> Atom
 · ~ math:sine sine
 sine Collection
 
-· ~ math:sine ~ optimized-lambda::recursive:math:sine::*500929375*
-optimized-lambda::recursive:math:sine::*500929375* (i Atom) -> Abstraction
+· ~ math:sine ~ optimized-lambda::recursive:math:sine::*510744583*
+optimized-lambda::recursive:math:sine::*510744583* (i Atom) -> Abstraction
 
 · ~ math:sine recursive:math:sine
 recursive:math:sine () -> Unknown
@@ -664,8 +694,8 @@ math:sine (rad Atom terms Atom) -> Unknown
 · ~ math:cosine cosine
 cosine Collection
 
-· ~ math:cosine ~ optimized-lambda::recursive:math:cosine::*500995417*
-optimized-lambda::recursive:math:cosine::*500995417* (i Atom) -> Abstraction
+· ~ math:cosine ~ optimized-lambda::recursive:math:cosine::*510814125*
+optimized-lambda::recursive:math:cosine::*510814125* (i Atom) -> Abstraction
 
 · ~ math:cosine recursive:math:cosine
 recursive:math:cosine () -> Unknown
@@ -682,8 +712,8 @@ n Collection
 · ~ math:prime-factors f
 f Collection
 
-· ~ math:prime-factors ~ optimized-lambda::recursive:math:prime-factors::*51005575*
-optimized-lambda::recursive:math:prime-factors::*51005575* () -> Collection
+· ~ math:prime-factors ~ optimized-lambda::recursive:math:prime-factors::*51087725*
+optimized-lambda::recursive:math:prime-factors::*51087725* () -> Collection
 
 · ~ math:prime-factors recursive:math:prime-factors
 recursive:math:prime-factors () -> Unknown
@@ -691,11 +721,11 @@ recursive:math:prime-factors () -> Unknown
 · ~ math:prime-factors
 math:prime-factors (N Unknown) -> Unknown
 
-· ~ math:prime? ~ ~ optimized-lambda::recursive:math:prime::*510133125* prime?
+· ~ math:prime? ~ ~ optimized-lambda::recursive:math:prime::*510958583* prime?
 prime? Atom Predicate
 
-· ~ math:prime? ~ ~ optimized-lambda::recursive:math:prime::*510133125*
-optimized-lambda::recursive:math:prime::*510133125* (i Atom end Atom) -> Abstraction
+· ~ math:prime? ~ ~ optimized-lambda::recursive:math:prime::*510958583*
+optimized-lambda::recursive:math:prime::*510958583* (i Atom end Atom) -> Abstraction
 
 · ~ math:prime? ~ recursive:math:prime
 recursive:math:prime () -> Unknown
@@ -724,14 +754,14 @@ math:largest-power (N Atom) -> Atom
 · ~ math:cartesian-product
 math:cartesian-product (a Collection b Collection) -> Unknown
 
-· ~ math:fibonacci ~ optimized-lambda::memoized:math:fibonacci::*510254959*:memo
-optimized-lambda::memoized:math:fibonacci::*510254959*:memo Collection
+· ~ math:fibonacci ~ optimized-lambda::memoized:math:fibonacci::*5200875*:memo
+optimized-lambda::memoized:math:fibonacci::*5200875*:memo Collection
 
-· ~ math:fibonacci ~ optimized-lambda::memoized:math:fibonacci::*510254959* optimized-lambda::memoized:math:fibonacci::*510254959*:key
-optimized-lambda::memoized:math:fibonacci::*510254959*:key Collection
+· ~ math:fibonacci ~ optimized-lambda::memoized:math:fibonacci::*5200875* optimized-lambda::memoized:math:fibonacci::*5200875*:key
+optimized-lambda::memoized:math:fibonacci::*5200875*:key Collection
 
-· ~ math:fibonacci ~ optimized-lambda::memoized:math:fibonacci::*510254959*
-optimized-lambda::memoized:math:fibonacci::*510254959* (n Atom) -> Unknown
+· ~ math:fibonacci ~ optimized-lambda::memoized:math:fibonacci::*5200875*
+optimized-lambda::memoized:math:fibonacci::*5200875* (n Atom) -> Unknown
 
 · ~ math:fibonacci memoized:math:fibonacci
 memoized:math:fibonacci () -> Unknown
@@ -892,8 +922,20 @@ list:slice (lista Collection i Atom k Atom) -> Collection
 · ~ list:for
 list:for (xs Collection f Abstraction) -> Collection
 
-· ~ array:for ~ optimized-lambda::recursive:array:for::*510904292*
-optimized-lambda::recursive:array:for::*510904292* (i Atom) -> Atom
+· ~ array:first
+array:first (xs Collection) -> Unknown
+
+· ~ array:second
+array:second (xs Collection) -> Unknown
+
+· ~ array:third
+array:third (xs Collection) -> Unknown
+
+· ~ array:last
+array:last (xs Collection) -> Unknown
+
+· ~ array:for ~ optimized-lambda::recursive:array:for::*520762333*
+optimized-lambda::recursive:array:for::*520762333* (i Atom) -> Atom
 
 · ~ array:for recursive:array:for
 recursive:array:for () -> Unknown
@@ -910,8 +952,8 @@ array:buckets (n Atom) -> Unknown
 · ~ array:enumerated-for
 array:enumerated-for (xs Collection cb Abstraction) -> Unknown
 
-· ~ array:fill ~ optimized-lambda::recursive:array:fill::*510961084*
-optimized-lambda::recursive:array:fill::*510961084* (xs Collection i Atom) -> Abstraction
+· ~ array:fill ~ optimized-lambda::recursive:array:fill::*520817375*
+optimized-lambda::recursive:array:fill::*520817375* (xs Collection i Atom) -> Abstraction
 
 · ~ array:fill recursive:array:fill
 recursive:array:fill () -> Unknown
@@ -919,8 +961,8 @@ recursive:array:fill () -> Unknown
 · ~ array:fill
 array:fill (n Unknown cb Abstraction) -> Unknown
 
-· ~ array:of ~ optimized-lambda::recursive:array:of::*510991625*
-optimized-lambda::recursive:array:of::*510991625* (xs Collection i Atom) -> Abstraction
+· ~ array:of ~ optimized-lambda::recursive:array:of::*520866292*
+optimized-lambda::recursive:array:of::*520866292* (xs Collection i Atom) -> Abstraction
 
 · ~ array:of recursive:array:of
 recursive:array:of () -> Unknown
@@ -928,8 +970,8 @@ recursive:array:of () -> Unknown
 · ~ array:of
 array:of (n Atom cb Abstraction) -> Unknown
 
-· ~ array:map ~ optimized-lambda::recursive:array:map::*520022959*
-optimized-lambda::recursive:array:map::*520022959* (i Atom out Collection) -> Abstraction
+· ~ array:map ~ optimized-lambda::recursive:array:map::*5209*
+optimized-lambda::recursive:array:map::*5209* (i Atom out Collection) -> Abstraction
 
 · ~ array:map recursive:array:map
 recursive:array:map () -> Unknown
@@ -937,8 +979,8 @@ recursive:array:map () -> Unknown
 · ~ array:map
 array:map (xs Collection cb Abstraction) -> Collection
 
-· ~ array:select ~ optimized-lambda::recursive:array:select::*520077584*
-optimized-lambda::recursive:array:select::*520077584* (i Atom out Collection) -> Abstraction
+· ~ array:select ~ optimized-lambda::recursive:array:select::*520944792*
+optimized-lambda::recursive:array:select::*520944792* (i Atom out Collection) -> Abstraction
 
 · ~ array:select recursive:array:select
 recursive:array:select () -> Unknown
@@ -946,8 +988,8 @@ recursive:array:select () -> Unknown
 · ~ array:select
 array:select (xs Collection cb? Abstraction Predicate) -> Unknown
 
-· ~ array:exclude ~ optimized-lambda::recursive:array:exclude::*520121667*
-optimized-lambda::recursive:array:exclude::*520121667* (i Atom out Collection) -> Abstraction
+· ~ array:exclude ~ optimized-lambda::recursive:array:exclude::*520988125*
+optimized-lambda::recursive:array:exclude::*520988125* (i Atom out Collection) -> Abstraction
 
 · ~ array:exclude recursive:array:exclude
 recursive:array:exclude () -> Unknown
@@ -955,8 +997,8 @@ recursive:array:exclude () -> Unknown
 · ~ array:exclude
 array:exclude (xs Collection cb? Abstraction Predicate) -> Unknown
 
-· ~ array:fold ~ optimized-lambda::recursive:array:fold::*5201665*
-optimized-lambda::recursive:array:fold::*5201665* (i Atom out Unknown) -> Abstraction
+· ~ array:fold ~ optimized-lambda::recursive:array:fold::*5300325*
+optimized-lambda::recursive:array:fold::*5300325* (i Atom out Unknown) -> Abstraction
 
 · ~ array:fold recursive:array:fold
 recursive:array:fold () -> Unknown
@@ -964,8 +1006,8 @@ recursive:array:fold () -> Unknown
 · ~ array:fold
 array:fold (xs Collection cb Abstraction initial Unknown) -> Unknown
 
-· ~ array:every? ~ optimized-lambda::recursive:array:every::*520199584*
-optimized-lambda::recursive:array:every::*520199584* (i Atom) -> Abstraction
+· ~ array:every? ~ optimized-lambda::recursive:array:every::*530069375*
+optimized-lambda::recursive:array:every::*530069375* (i Atom) -> Abstraction
 
 · ~ array:every? recursive:array:every
 recursive:array:every () -> Unknown
@@ -973,8 +1015,8 @@ recursive:array:every () -> Unknown
 · ~ array:every?
 array:every? (xs Collection predicate? Abstraction Predicate) -> Predicate
 
-· ~ array:some? ~ optimized-lambda::recursive:array:some::*520240209*
-optimized-lambda::recursive:array:some::*520240209* (i Atom) -> Abstraction
+· ~ array:some? ~ optimized-lambda::recursive:array:some::*530109708*
+optimized-lambda::recursive:array:some::*530109708* (i Atom) -> Abstraction
 
 · ~ array:some? recursive:array:some
 recursive:array:some () -> Unknown
@@ -991,8 +1033,8 @@ index Atom
 · ~ array:find-option
 array:find-option (xs Collection predicate? Unknown Predicate) -> Collection
 
-· ~ array:has? ~ optimized-lambda::recursive:array:has::*520313375*
-optimized-lambda::recursive:array:has::*520313375* (i Atom) -> Atom
+· ~ array:has? ~ optimized-lambda::recursive:array:has::*530181625*
+optimized-lambda::recursive:array:has::*530181625* (i Atom) -> Atom
 
 · ~ array:has? recursive:array:has
 recursive:array:has () -> Unknown
@@ -1000,8 +1042,8 @@ recursive:array:has () -> Unknown
 · ~ array:has?
 array:has? (xs Collection predicate? Abstraction Predicate) -> Predicate
 
-· ~ array:reverse ~ optimized-lambda::recursive:array:reverse::*520349542*
-optimized-lambda::recursive:array:reverse::*520349542* (i Atom out Collection) -> Abstraction
+· ~ array:reverse ~ optimized-lambda::recursive:array:reverse::*530216583*
+optimized-lambda::recursive:array:reverse::*530216583* (i Atom out Collection) -> Abstraction
 
 · ~ array:reverse recursive:array:reverse
 recursive:array:reverse () -> Unknown
@@ -1057,8 +1099,8 @@ array:count-of (xs Unknown cb? Unknown Predicate) -> Atom
 · ~ array:count
 array:count (input Unknown item Atom) -> Atom
 
-· ~ array:empty! ~ optimized-lambda::recursive:array:empty!::*520482792*
-optimized-lambda::recursive:array:empty!::*520482792* () -> Unknown
+· ~ array:empty! ~ optimized-lambda::recursive:array:empty!::*530343458*
+optimized-lambda::recursive:array:empty!::*530343458* () -> Unknown
 
 · ~ array:empty! recursive:array:empty!
 recursive:array:empty! () -> Unknown
@@ -1075,8 +1117,8 @@ get-option (xs Collection i Atom) -> Collection
 · ~ array:slice bounds
 bounds Atom
 
-· ~ array:slice ~ optimized-lambda::recursive:array:slice::*520547417*
-optimized-lambda::recursive:array:slice::*520547417* (i Atom out Collection) -> Abstraction
+· ~ array:slice ~ optimized-lambda::recursive:array:slice::*530411625*
+optimized-lambda::recursive:array:slice::*530411625* (i Atom out Collection) -> Abstraction
 
 · ~ array:slice recursive:array:slice
 recursive:array:slice () -> Unknown
@@ -1090,8 +1132,8 @@ car (xs Collection) -> Unknown
 · ~ cdr bounds
 bounds Atom
 
-· ~ cdr ~ optimized-lambda::recursive:cdr::*52058725*
-optimized-lambda::recursive:cdr::*52058725* (i Atom out Collection) -> Abstraction
+· ~ cdr ~ optimized-lambda::recursive:cdr::*5304635*
+optimized-lambda::recursive:cdr::*5304635* (i Atom out Collection) -> Abstraction
 
 · ~ cdr recursive:cdr
 recursive:cdr () -> Unknown
@@ -1111,14 +1153,14 @@ array:take (xs Unknown n Unknown) -> Collection
 · ~ array:drop
 array:drop (xs Collection n Unknown) -> Collection
 
-· ~ array:binary-search ~ optimized-lambda::recursive:array:binary-search::*520674375* ~ index
+· ~ array:binary-search ~ optimized-lambda::recursive:array:binary-search::*530981125* ~ index
 index Atom
 
-· ~ array:binary-search ~ optimized-lambda::recursive:array:binary-search::*520674375* ~ current
+· ~ array:binary-search ~ optimized-lambda::recursive:array:binary-search::*530981125* ~ current
 current Atom
 
-· ~ array:binary-search ~ optimized-lambda::recursive:array:binary-search::*520674375*
-optimized-lambda::recursive:array:binary-search::*520674375* (xs Collection target Atom start Atom end Atom) -> Atom
+· ~ array:binary-search ~ optimized-lambda::recursive:array:binary-search::*530981125*
+optimized-lambda::recursive:array:binary-search::*530981125* (xs Collection target Atom start Atom end Atom) -> Atom
 
 · ~ array:binary-search recursive:array:binary-search
 recursive:array:binary-search () -> Unknown
@@ -1126,8 +1168,8 @@ recursive:array:binary-search () -> Unknown
 · ~ array:binary-search
 array:binary-search (xs Collection target Unknown) -> Unknown
 
-· ~ array:zip ~ optimized-lambda::recursive:array:zip::*520746417*
-optimized-lambda::recursive:array:zip::*520746417* (i Atom j Atom output Collection) -> Abstraction
+· ~ array:zip ~ optimized-lambda::recursive:array:zip::*540050208*
+optimized-lambda::recursive:array:zip::*540050208* (i Atom j Atom output Collection) -> Abstraction
 
 · ~ array:zip recursive:array:zip
 recursive:array:zip () -> Unknown
@@ -1183,20 +1225,20 @@ array:flat (xs Collection) -> Unknown
 · ~ array:sort ~ pivot
 pivot Unknown
 
-· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*550583959* current
+· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*54028225* current
 current Unknown
 
-· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*550583959* predicate
+· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*54028225* predicate
 predicate Atom
 
-· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*550583959* left
+· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*54028225* left
 left Unknown
 
-· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*550583959* right
+· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*54028225* right
 right Unknown
 
-· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*550583959*
-optimized-lambda::recursive:array:sort::*550583959* (i Atom bounds Atom a Unknown b Unknown) -> Abstraction
+· ~ array:sort ~ ~ optimized-lambda::recursive:array:sort::*54028225*
+optimized-lambda::recursive:array:sort::*54028225* (i Atom bounds Atom a Unknown b Unknown) -> Abstraction
 
 · ~ array:sort ~ recursive:array:sort
 recursive:array:sort () -> Unknown
@@ -1237,8 +1279,8 @@ array:sliding-window (xs Collection size Atom) -> Unknown
 · ~ array:adjacent-difference len
 len Atom
 
-· ~ array:adjacent-difference ~ ~ optimized-lambda::recursive:array:adjacent-difference::*550753084*
-optimized-lambda::recursive:array:adjacent-difference::*550753084* (i Atom result Collection) -> Unknown
+· ~ array:adjacent-difference ~ ~ optimized-lambda::recursive:array:adjacent-difference::*540438*
+optimized-lambda::recursive:array:adjacent-difference::*540438* (i Atom result Collection) -> Unknown
 
 · ~ array:adjacent-difference ~ recursive:array:adjacent-difference
 recursive:array:adjacent-difference () -> Unknown
@@ -1270,14 +1312,14 @@ array:chunks (xs Collection predicate? Unknown Predicate) -> Collection
 · ~ array:adjacent-find len
 len Atom
 
-· ~ array:adjacent-find ~ ~ optimized-lambda::recursive:array:adjacent-find::*550960417* prev
+· ~ array:adjacent-find ~ ~ optimized-lambda::recursive:array:adjacent-find::*540624917* prev
 prev Unknown
 
-· ~ array:adjacent-find ~ ~ optimized-lambda::recursive:array:adjacent-find::*550960417* current
+· ~ array:adjacent-find ~ ~ optimized-lambda::recursive:array:adjacent-find::*540624917* current
 current Unknown
 
-· ~ array:adjacent-find ~ ~ optimized-lambda::recursive:array:adjacent-find::*550960417*
-optimized-lambda::recursive:array:adjacent-find::*550960417* (i Atom) -> Collection
+· ~ array:adjacent-find ~ ~ optimized-lambda::recursive:array:adjacent-find::*540624917*
+optimized-lambda::recursive:array:adjacent-find::*540624917* (i Atom) -> Collection
 
 · ~ array:adjacent-find ~ recursive:array:adjacent-find
 recursive:array:adjacent-find () -> Unknown
@@ -1339,14 +1381,14 @@ len Atom
 · ~ matrix:rotate-square out
 out Collection
 
-· ~ matrix:rotate-square ~ optimized-lambda::recursive:outer:matrix:rotate-square::*56010025* ~ ~ optimized-lambda::recursive:inner:matrix:rotate-square::*560129334*
-optimized-lambda::recursive:inner:matrix:rotate-square::*560129334* (col Atom) -> Atom
+· ~ matrix:rotate-square ~ optimized-lambda::recursive:outer:matrix:rotate-square::*540756167* ~ ~ optimized-lambda::recursive:inner:matrix:rotate-square::*540782375*
+optimized-lambda::recursive:inner:matrix:rotate-square::*540782375* (col Atom) -> Atom
 
-· ~ matrix:rotate-square ~ optimized-lambda::recursive:outer:matrix:rotate-square::*56010025* ~ recursive:inner:matrix:rotate-square
+· ~ matrix:rotate-square ~ optimized-lambda::recursive:outer:matrix:rotate-square::*540756167* ~ recursive:inner:matrix:rotate-square
 recursive:inner:matrix:rotate-square () -> Unknown
 
-· ~ matrix:rotate-square ~ optimized-lambda::recursive:outer:matrix:rotate-square::*56010025*
-optimized-lambda::recursive:outer:matrix:rotate-square::*56010025* (row Atom) -> Atom
+· ~ matrix:rotate-square ~ optimized-lambda::recursive:outer:matrix:rotate-square::*540756167*
+optimized-lambda::recursive:outer:matrix:rotate-square::*540756167* (row Atom) -> Atom
 
 · ~ matrix:rotate-square recursive:outer:matrix:rotate-square
 recursive:outer:matrix:rotate-square () -> Unknown
@@ -1360,14 +1402,14 @@ len Atom
 · ~ matrix:flip-square out
 out Collection
 
-· ~ matrix:flip-square ~ optimized-lambda::recursive:outer:matrix:flip-square::*560243875* ~ ~ optimized-lambda::recursive:inner:matrix:flip-square::*560265792*
-optimized-lambda::recursive:inner:matrix:flip-square::*560265792* (col Atom) -> Atom
+· ~ matrix:flip-square ~ optimized-lambda::recursive:outer:matrix:flip-square::*540887708* ~ ~ optimized-lambda::recursive:inner:matrix:flip-square::*540907125*
+optimized-lambda::recursive:inner:matrix:flip-square::*540907125* (col Atom) -> Atom
 
-· ~ matrix:flip-square ~ optimized-lambda::recursive:outer:matrix:flip-square::*560243875* ~ recursive:inner:matrix:flip-square
+· ~ matrix:flip-square ~ optimized-lambda::recursive:outer:matrix:flip-square::*540887708* ~ recursive:inner:matrix:flip-square
 recursive:inner:matrix:flip-square () -> Unknown
 
-· ~ matrix:flip-square ~ optimized-lambda::recursive:outer:matrix:flip-square::*560243875*
-optimized-lambda::recursive:outer:matrix:flip-square::*560243875* (row Atom) -> Atom
+· ~ matrix:flip-square ~ optimized-lambda::recursive:outer:matrix:flip-square::*540887708*
+optimized-lambda::recursive:outer:matrix:flip-square::*540887708* (row Atom) -> Atom
 
 · ~ matrix:flip-square recursive:outer:matrix:flip-square
 recursive:outer:matrix:flip-square () -> Unknown
@@ -1435,8 +1477,8 @@ from:yx->key (y Unknown x Unknown) -> Unknown
 · ~ from:string-or-number->key
 from:string-or-number->key (arr Collection) -> Unknown
 
-· ~ from:list->array ~ optimized-lambda::recursive:from:list->array::*560578167*
-optimized-lambda::recursive:from:list->array::*560578167* (lst Collection out Collection) -> Abstraction
+· ~ from:list->array ~ optimized-lambda::recursive:from:list->array::*55018925*
+optimized-lambda::recursive:from:list->array::*55018925* (lst Collection out Collection) -> Abstraction
 
 · ~ from:list->array recursive:from:list->array
 recursive:from:list->array () -> Unknown
@@ -1444,8 +1486,8 @@ recursive:from:list->array () -> Unknown
 · ~ from:list->array
 from:list->array (list Unknown) -> Unknown
 
-· ~ from:array->list ~ optimized-lambda::recursive:from:array->list::*560606709*
-optimized-lambda::recursive:from:array->list::*560606709* (xs Collection out Unknown) -> Abstraction
+· ~ from:array->list ~ optimized-lambda::recursive:from:array->list::*55021625*
+optimized-lambda::recursive:from:array->list::*55021625* (xs Collection out Unknown) -> Abstraction
 
 · ~ from:array->list recursive:from:array->list
 recursive:from:array->list () -> Unknown
@@ -1471,8 +1513,8 @@ from:chars->positive-or-negative-digits (chars Collection) -> Unknown
 · ~ from:digits->chars
 from:digits->chars (numbers Unknown) -> Collection
 
-· ~ from:digits->integer ~ optimized-lambda::recursive:from:digits->integer::*560835667*
-optimized-lambda::recursive:from:digits->integer::*560835667* (i Atom num Atom base Atom) -> Abstraction
+· ~ from:digits->integer ~ optimized-lambda::recursive:from:digits->integer::*550453125*
+optimized-lambda::recursive:from:digits->integer::*550453125* (i Atom num Atom base Atom) -> Abstraction
 
 · ~ from:digits->integer recursive:from:digits->integer
 recursive:from:digits->integer () -> Unknown
@@ -1486,20 +1528,20 @@ negative? Atom Predicate
 · ~ from:positive-or-negative-digits->integer digits
 digits Collection
 
-· ~ from:positive-or-negative-digits->integer ~ optimized-lambda::recursive:from:positive-or-negative-digits->integer::*560882459*
-optimized-lambda::recursive:from:positive-or-negative-digits->integer::*560882459* (i Atom num Atom base Atom) -> Abstraction
+· ~ from:positive-or-negative-digits->integer ~ optimized-lambda::recursive:from:positive-or-negative-digits->integer::*550479667*
+optimized-lambda::recursive:from:positive-or-negative-digits->integer::*550479667* (i Atom num Atom base Atom) -> Abstraction
 
 · ~ from:positive-or-negative-digits->integer recursive:from:positive-or-negative-digits->integer
 recursive:from:positive-or-negative-digits->integer () -> Unknown
 
 · ~ from:positive-or-negative-digits->integer
-from:positive-or-negative-digits->integer (digits-with-sign Collection) -> Atom
+from:positive-or-negative-digits->integer (digits-with-sign Unknown) -> Atom
 
 · ~ from:positive-or-negative-digits->chars
 from:positive-or-negative-digits->chars (xs Collection) -> Unknown
 
-· ~ from:integer->digits ~ optimized-lambda::recursive:from:integer->digits::*560976459*
-optimized-lambda::recursive:from:integer->digits::*560976459* (num Atom res Collection) -> Abstraction
+· ~ from:integer->digits ~ optimized-lambda::recursive:from:integer->digits::*550529792*
+optimized-lambda::recursive:from:integer->digits::*550529792* (num Atom res Collection) -> Abstraction
 
 · ~ from:integer->digits recursive:from:integer->digits
 recursive:from:integer->digits () -> Unknown
@@ -1513,8 +1555,8 @@ negative? Atom Predicate
 · ~ from:number->positive-or-negative-digits num
 num Atom
 
-· ~ from:number->positive-or-negative-digits ~ optimized-lambda::recursive:from:number->positive-or-negative-digits::*570065167*
-optimized-lambda::recursive:from:number->positive-or-negative-digits::*570065167* (num Atom res Collection) -> Abstraction
+· ~ from:number->positive-or-negative-digits ~ optimized-lambda::recursive:from:number->positive-or-negative-digits::*550567958*
+optimized-lambda::recursive:from:number->positive-or-negative-digits::*550567958* (num Atom res Collection) -> Abstraction
 
 · ~ from:number->positive-or-negative-digits recursive:from:number->positive-or-negative-digits
 recursive:from:number->positive-or-negative-digits () -> Unknown
@@ -1525,8 +1567,8 @@ out Collection
 · ~ from:number->positive-or-negative-digits
 from:number->positive-or-negative-digits (positive-or-negative-num Atom) -> Unknown
 
-· ~ from:number->bits ~ optimized-lambda::recursive:from:number->bits::*570115542*
-optimized-lambda::recursive:from:number->bits::*570115542* (num Atom res Collection) -> Abstraction
+· ~ from:number->bits ~ optimized-lambda::recursive:from:number->bits::*550604792*
+optimized-lambda::recursive:from:number->bits::*550604792* (num Atom res Collection) -> Abstraction
 
 · ~ from:number->bits recursive:from:number->bits
 recursive:from:number->bits () -> Unknown
@@ -1597,8 +1639,8 @@ right Collection
 · ~ from:float->string ~ len
 len Atom
 
-· ~ from:float->string ~ ~ optimized-lambda::recursive:while::*57060625*
-optimized-lambda::recursive:while::*57060625* (i Atom) -> Atom
+· ~ from:float->string ~ ~ optimized-lambda::recursive:while::*560043458*
+optimized-lambda::recursive:while::*560043458* (i Atom) -> Atom
 
 · ~ from:float->string ~ recursive:while
 recursive:while () -> Unknown
@@ -1645,14 +1687,14 @@ q Collection
 · ~ from:array->brray half
 half Atom
 
-· ~ from:array->brray ~ optimized-lambda::recursive:left:from:array->brray::*57076625*
-optimized-lambda::recursive:left:from:array->brray::*57076625* (index Atom) -> Atom
+· ~ from:array->brray ~ optimized-lambda::recursive:left:from:array->brray::*56017325*
+optimized-lambda::recursive:left:from:array->brray::*56017325* (index Atom) -> Atom
 
 · ~ from:array->brray recursive:left:from:array->brray
 recursive:left:from:array->brray () -> Unknown
 
-· ~ from:array->brray ~ optimized-lambda::recursive:right:from:array->brray::*570797209*
-optimized-lambda::recursive:right:from:array->brray::*570797209* (index Atom bounds Atom) -> Atom
+· ~ from:array->brray ~ optimized-lambda::recursive:right:from:array->brray::*560196333*
+optimized-lambda::recursive:right:from:array->brray::*560196333* (index Atom bounds Atom) -> Atom
 
 · ~ from:array->brray recursive:right:from:array->brray
 recursive:right:from:array->brray () -> Unknown
@@ -1663,8 +1705,8 @@ from:array->brray (initial Collection) -> Unknown
 · ~ from:brray->array out
 out Collection
 
-· ~ from:brray->array ~ optimized-lambda::recursive:from:brray->array::*570837209*
-optimized-lambda::recursive:from:brray->array::*570837209* (index Atom bounds Atom) -> Atom
+· ~ from:brray->array ~ optimized-lambda::recursive:from:brray->array::*560224708*
+optimized-lambda::recursive:from:brray->array::*560224708* (index Atom bounds Atom) -> Atom
 
 · ~ from:brray->array recursive:from:brray->array
 recursive:from:brray->array () -> Unknown
@@ -1708,8 +1750,8 @@ temp Unknown
 · ~ array:swap!
 array:swap! (xs Collection i Atom j Atom) -> Collection
 
-· ~ array:index-of ~ optimized-lambda::recursive:array:index-of::*5709765*
-optimized-lambda::recursive:array:index-of::*5709765* (i Atom) -> Atom
+· ~ array:index-of ~ optimized-lambda::recursive:array:index-of::*560334042*
+optimized-lambda::recursive:array:index-of::*560334042* (i Atom) -> Atom
 
 · ~ array:index-of recursive:array:index-of
 recursive:array:index-of () -> Unknown
@@ -1720,8 +1762,8 @@ array:index-of (xs Collection item Atom) -> Unknown
 · ~ array:enumerate
 array:enumerate (xs Collection) -> Unknown
 
-· ~ array:enumerated-map ~ optimized-lambda::recursive:array:enumerated-map::*580018542*
-optimized-lambda::recursive:array:enumerated-map::*580018542* (i Atom out Collection) -> Abstraction
+· ~ array:enumerated-map ~ optimized-lambda::recursive:array:enumerated-map::*560368917*
+optimized-lambda::recursive:array:enumerated-map::*560368917* (i Atom out Collection) -> Abstraction
 
 · ~ array:enumerated-map recursive:array:enumerated-map
 recursive:array:enumerated-map () -> Unknown
@@ -1729,8 +1771,8 @@ recursive:array:enumerated-map () -> Unknown
 · ~ array:enumerated-map
 array:enumerated-map (xs Collection cb Abstraction) -> Unknown
 
-· ~ array:enumerated-select ~ optimized-lambda::recursive:array:enumerated-select::*580057375*
-optimized-lambda::recursive:array:enumerated-select::*580057375* (i Atom out Collection) -> Abstraction
+· ~ array:enumerated-select ~ optimized-lambda::recursive:array:enumerated-select::*560398917*
+optimized-lambda::recursive:array:enumerated-select::*560398917* (i Atom out Collection) -> Abstraction
 
 · ~ array:enumerated-select recursive:array:enumerated-select
 recursive:array:enumerated-select () -> Unknown
@@ -1738,8 +1780,8 @@ recursive:array:enumerated-select () -> Unknown
 · ~ array:enumerated-select
 array:enumerated-select (xs Collection predicate? Abstraction Predicate) -> Unknown
 
-· ~ array:enumerated-exclude ~ optimized-lambda::recursive:array:enumerated-exclude::*580098792*
-optimized-lambda::recursive:array:enumerated-exclude::*580098792* (i Atom out Collection) -> Abstraction
+· ~ array:enumerated-exclude ~ optimized-lambda::recursive:array:enumerated-exclude::*560435*
+optimized-lambda::recursive:array:enumerated-exclude::*560435* (i Atom out Collection) -> Abstraction
 
 · ~ array:enumerated-exclude recursive:array:enumerated-exclude
 recursive:array:enumerated-exclude () -> Unknown
@@ -1747,8 +1789,8 @@ recursive:array:enumerated-exclude () -> Unknown
 · ~ array:enumerated-exclude
 array:enumerated-exclude (xs Collection predicate? Abstraction Predicate) -> Unknown
 
-· ~ array:enumerated-fold ~ optimized-lambda::recursive:array:enumerated-fold::*580142125*
-optimized-lambda::recursive:array:enumerated-fold::*580142125* (i Atom out Unknown) -> Abstraction
+· ~ array:enumerated-fold ~ optimized-lambda::recursive:array:enumerated-fold::*560472958*
+optimized-lambda::recursive:array:enumerated-fold::*560472958* (i Atom out Unknown) -> Abstraction
 
 · ~ array:enumerated-fold recursive:array:enumerated-fold
 recursive:array:enumerated-fold () -> Unknown
@@ -1756,8 +1798,8 @@ recursive:array:enumerated-fold () -> Unknown
 · ~ array:enumerated-fold
 array:enumerated-fold (xs Collection cb Abstraction initial Unknown) -> Unknown
 
-· ~ array:enumerated-find ~ optimized-lambda::recursive:array:enumerated-find::*580174834*
-optimized-lambda::recursive:array:enumerated-find::*580174834* (i Atom) -> Collection
+· ~ array:enumerated-find ~ optimized-lambda::recursive:array:enumerated-find::*56049975*
+optimized-lambda::recursive:array:enumerated-find::*56049975* (i Atom) -> Collection
 
 · ~ array:enumerated-find recursive:array:enumerated-find
 recursive:array:enumerated-find () -> Unknown
@@ -1765,8 +1807,8 @@ recursive:array:enumerated-find () -> Unknown
 · ~ array:enumerated-find
 array:enumerated-find (xs Collection predicate? Abstraction Predicate) -> Unknown
 
-· ~ array:enumerated-find-index ~ optimized-lambda::recursive:array:enumerated-find-index::*580212209*
-optimized-lambda::recursive:array:enumerated-find-index::*580212209* (i Atom) -> Atom
+· ~ array:enumerated-find-index ~ optimized-lambda::recursive:array:enumerated-find-index::*560532375*
+optimized-lambda::recursive:array:enumerated-find-index::*560532375* (i Atom) -> Atom
 
 · ~ array:enumerated-find-index recursive:array:enumerated-find-index
 recursive:array:enumerated-find-index () -> Unknown
@@ -1774,8 +1816,8 @@ recursive:array:enumerated-find-index () -> Unknown
 · ~ array:enumerated-find-index
 array:enumerated-find-index (xs Collection predicate? Abstraction Predicate) -> Unknown
 
-· ~ array:enumerated-every? ~ optimized-lambda::recursive:array:enumerated-every::*580250959*
-optimized-lambda::recursive:array:enumerated-every::*580250959* (i Atom) -> Abstraction
+· ~ array:enumerated-every? ~ optimized-lambda::recursive:array:enumerated-every::*560563417*
+optimized-lambda::recursive:array:enumerated-every::*560563417* (i Atom) -> Abstraction
 
 · ~ array:enumerated-every? recursive:array:enumerated-every
 recursive:array:enumerated-every () -> Unknown
@@ -1783,8 +1825,8 @@ recursive:array:enumerated-every () -> Unknown
 · ~ array:enumerated-every?
 array:enumerated-every? (xs Collection predicate? Abstraction Predicate) -> Predicate
 
-· ~ array:enumerated-some? ~ optimized-lambda::recursive:array:enumerated-some::*580290042*
-optimized-lambda::recursive:array:enumerated-some::*580290042* (i Atom) -> Abstraction
+· ~ array:enumerated-some? ~ optimized-lambda::recursive:array:enumerated-some::*560597083*
+optimized-lambda::recursive:array:enumerated-some::*560597083* (i Atom) -> Abstraction
 
 · ~ array:enumerated-some? recursive:array:enumerated-some
 recursive:array:enumerated-some () -> Unknown
@@ -1792,8 +1834,8 @@ recursive:array:enumerated-some () -> Unknown
 · ~ array:enumerated-some?
 array:enumerated-some? (xs Collection predicate? Abstraction Predicate) -> Predicate
 
-· ~ array:find-index ~ optimized-lambda::recursive:array:find-index::*580336417*
-optimized-lambda::recursive:array:find-index::*580336417* (i Atom) -> Atom
+· ~ array:find-index ~ optimized-lambda::recursive:array:find-index::*560633875*
+optimized-lambda::recursive:array:find-index::*560633875* (i Atom) -> Atom
 
 · ~ array:find-index recursive:array:find-index
 recursive:array:find-index () -> Unknown
@@ -1822,18 +1864,6 @@ array:rotate-right (xs Collection n Atom) -> Unknown
 · ~ array:rotate-left
 array:rotate-left (xs Collection n Atom) -> Unknown
 
-· ~ array:first
-array:first (xs Collection) -> Unknown
-
-· ~ array:second
-array:second (xs Collection) -> Unknown
-
-· ~ array:third
-array:third (xs Collection) -> Unknown
-
-· ~ array:last
-array:last (xs Collection) -> Unknown
-
 · ~ string:character-occurances xs
 xs Collection
 
@@ -1849,17 +1879,17 @@ count Collection
 · ~ string:character-occurances at-least-one
 at-least-one Collection
 
-· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*580503334* ch
+· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*560776333* ch
 ch Atom
 
-· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*580503334* code
+· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*560776333* code
 code Atom
 
-· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*580503334* mask
+· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*560776333* mask
 mask Atom
 
-· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*580503334*
-optimized-lambda::recursive:string:character-occurances::*580503334* (i Atom bounds Atom) -> Abstraction
+· ~ string:character-occurances ~ optimized-lambda::recursive:string:character-occurances::*560776333*
+optimized-lambda::recursive:string:character-occurances::*560776333* (i Atom bounds Atom) -> Abstraction
 
 · ~ string:character-occurances recursive:string:character-occurances
 recursive:string:character-occurances () -> Unknown
@@ -1909,8 +1939,8 @@ prev Collection
 · ~ string:split
 string:split (str Unknown char Unknown) -> Collection
 
-· ~ string:match ~ ~ optimized-lambda::recursive:string:match::*580732542*
-optimized-lambda::recursive:string:match::*580732542* (xs Collection i Atom) -> Atom
+· ~ string:match ~ ~ optimized-lambda::recursive:string:match::*570006417*
+optimized-lambda::recursive:string:match::*570006417* (xs Collection i Atom) -> Atom
 
 · ~ string:match ~ recursive:string:match
 recursive:string:match () -> Unknown
@@ -1918,8 +1948,8 @@ recursive:string:match () -> Unknown
 · ~ string:match
 string:match (str Collection word Collection) -> Atom
 
-· ~ string:has? ~ ~ optimized-lambda::recursive:string:has::*580848125*
-optimized-lambda::recursive:string:has::*580848125* (xs Collection i Atom) -> Atom
+· ~ string:has? ~ ~ optimized-lambda::recursive:string:has::*570121542*
+optimized-lambda::recursive:string:has::*570121542* (xs Collection i Atom) -> Atom
 
 · ~ string:has? ~ recursive:string:has
 recursive:string:has () -> Unknown
@@ -1939,11 +1969,11 @@ pairs Unknown
 · ~ string:lesser? ~ is
 is Collection
 
-· ~ string:lesser? ~ ~ optimized-lambda::recursive:string:lesser::*580979334* ~ current
+· ~ string:lesser? ~ ~ optimized-lambda::recursive:string:lesser::*570251833* ~ current
 current Unknown
 
-· ~ string:lesser? ~ ~ optimized-lambda::recursive:string:lesser::*580979334*
-optimized-lambda::recursive:string:lesser::*580979334* () -> Atom
+· ~ string:lesser? ~ ~ optimized-lambda::recursive:string:lesser::*570251833*
+optimized-lambda::recursive:string:lesser::*570251833* () -> Atom
 
 · ~ string:lesser? ~ recursive:string:lesser
 recursive:string:lesser () -> Unknown
@@ -1963,11 +1993,11 @@ pairs Unknown
 · ~ string:greater? ~ is
 is Collection
 
-· ~ string:greater? ~ ~ optimized-lambda::recursive:string:greater::*590081417* ~ current
+· ~ string:greater? ~ ~ optimized-lambda::recursive:string:greater::*57035075* ~ current
 current Collection
 
-· ~ string:greater? ~ ~ optimized-lambda::recursive:string:greater::*590081417*
-optimized-lambda::recursive:string:greater::*590081417* () -> Atom
+· ~ string:greater? ~ ~ optimized-lambda::recursive:string:greater::*57035075*
+optimized-lambda::recursive:string:greater::*57035075* () -> Atom
 
 · ~ string:greater? ~ recursive:string:greater
 recursive:string:greater () -> Unknown
@@ -2077,8 +2107,8 @@ string:prepend (a Collection b Collection) -> Unknown
 · ~ string:pad-left n
 n Atom
 
-· ~ string:pad-left ~ optimized-lambda::recursive:string:pad-left::*590514875*
-optimized-lambda::recursive:string:pad-left::*590514875* (i Atom str Collection) -> Abstraction
+· ~ string:pad-left ~ optimized-lambda::recursive:string:pad-left::*570712833*
+optimized-lambda::recursive:string:pad-left::*570712833* (i Atom str Collection) -> Abstraction
 
 · ~ string:pad-left recursive:string:pad-left
 recursive:string:pad-left () -> Unknown
@@ -2089,8 +2119,8 @@ string:pad-left (str Collection N Atom ch Collection) -> Unknown
 · ~ string:pad-right n
 n Atom
 
-· ~ string:pad-right ~ optimized-lambda::recursive:string:pad-right::*590552542*
-optimized-lambda::recursive:string:pad-right::*590552542* (i Atom str Collection) -> Abstraction
+· ~ string:pad-right ~ optimized-lambda::recursive:string:pad-right::*570745333*
+optimized-lambda::recursive:string:pad-right::*570745333* (i Atom str Collection) -> Abstraction
 
 · ~ string:pad-right recursive:string:pad-right
 recursive:string:pad-right () -> Unknown
@@ -2104,11 +2134,11 @@ xs Collection
 · ~ string:upper n
 n Atom
 
-· ~ string:upper ~ optimized-lambda::recursive:string:upper::*590585334* ~ current-char
+· ~ string:upper ~ optimized-lambda::recursive:string:upper::*5707765* ~ current-char
 current-char Atom
 
-· ~ string:upper ~ optimized-lambda::recursive:string:upper::*590585334*
-optimized-lambda::recursive:string:upper::*590585334* (i Atom) -> Collection
+· ~ string:upper ~ optimized-lambda::recursive:string:upper::*5707765*
+optimized-lambda::recursive:string:upper::*5707765* (i Atom) -> Collection
 
 · ~ string:upper recursive:string:upper
 recursive:string:upper () -> Unknown
@@ -2122,11 +2152,11 @@ xs Collection
 · ~ string:lower n
 n Atom
 
-· ~ string:lower ~ optimized-lambda::recursive:string:lower::*590641417* ~ current-char
+· ~ string:lower ~ optimized-lambda::recursive:string:lower::*570832667* ~ current-char
 current-char Atom
 
-· ~ string:lower ~ optimized-lambda::recursive:string:lower::*590641417*
-optimized-lambda::recursive:string:lower::*590641417* (i Atom) -> Collection
+· ~ string:lower ~ optimized-lambda::recursive:string:lower::*570832667*
+optimized-lambda::recursive:string:lower::*570832667* (i Atom) -> Collection
 
 · ~ string:lower recursive:string:lower
 recursive:string:lower () -> Unknown
@@ -2221,11 +2251,11 @@ prime-num Atom
 · ~ set:index total
 total Collection
 
-· ~ set:index ~ optimized-lambda::recursive:set:index::*590796209* letter
+· ~ set:index ~ optimized-lambda::recursive:set:index::*570983333* letter
 letter Atom
 
-· ~ set:index ~ optimized-lambda::recursive:set:index::*590796209*
-optimized-lambda::recursive:set:index::*590796209* (i Atom bounds Atom) -> Abstraction
+· ~ set:index ~ optimized-lambda::recursive:set:index::*570983333*
+optimized-lambda::recursive:set:index::*570983333* (i Atom bounds Atom) -> Abstraction
 
 · ~ set:index recursive:set:index
 recursive:set:index () -> Unknown
@@ -2563,8 +2593,8 @@ len Atom
 · ~ brray:remove-from-right!
 brray:remove-from-right! (q Collection) -> Atom
 
-· ~ brray:iter ~ optimized-lambda::recursive:brray:iter::*600641792*
-optimized-lambda::recursive:brray:iter::*600641792* (index Atom bounds Atom) -> Atom
+· ~ brray:iter ~ optimized-lambda::recursive:brray:iter::*580844083*
+optimized-lambda::recursive:brray:iter::*580844083* (index Atom bounds Atom) -> Atom
 
 · ~ brray:iter recursive:brray:iter
 recursive:brray:iter () -> Unknown
@@ -2581,14 +2611,14 @@ len Atom
 · ~ brray:map half
 half Atom
 
-· ~ brray:map ~ optimized-lambda::recursive:left:brray:map::*600702875*
-optimized-lambda::recursive:left:brray:map::*600702875* (index Atom) -> Atom
+· ~ brray:map ~ optimized-lambda::recursive:left:brray:map::*5808835*
+optimized-lambda::recursive:left:brray:map::*5808835* (index Atom) -> Atom
 
 · ~ brray:map recursive:left:brray:map
 recursive:left:brray:map () -> Unknown
 
-· ~ brray:map ~ optimized-lambda::recursive:right:brray:map::*600730792*
-optimized-lambda::recursive:right:brray:map::*600730792* (index Atom bounds Atom) -> Atom
+· ~ brray:map ~ optimized-lambda::recursive:right:brray:map::*580929292*
+optimized-lambda::recursive:right:brray:map::*580929292* (index Atom bounds Atom) -> Atom
 
 · ~ brray:map recursive:right:brray:map
 recursive:right:brray:map () -> Unknown
@@ -2605,14 +2635,14 @@ initial Collection
 · ~ brray:balance! ~ half
 half Atom
 
-· ~ brray:balance! ~ ~ optimized-lambda::recursive:left:brray:balance!::*600770792*
-optimized-lambda::recursive:left:brray:balance!::*600770792* (index Atom) -> Atom
+· ~ brray:balance! ~ ~ optimized-lambda::recursive:left:brray:balance!::*580971333*
+optimized-lambda::recursive:left:brray:balance!::*580971333* (index Atom) -> Atom
 
 · ~ brray:balance! ~ recursive:left:brray:balance!
 recursive:left:brray:balance! () -> Unknown
 
-· ~ brray:balance! ~ ~ optimized-lambda::recursive:right:brray:balance!::*600794959*
-optimized-lambda::recursive:right:brray:balance!::*600794959* (index Atom bounds Atom) -> Atom
+· ~ brray:balance! ~ ~ optimized-lambda::recursive:right:brray:balance!::*580992458*
+optimized-lambda::recursive:right:brray:balance!::*580992458* (index Atom bounds Atom) -> Atom
 
 · ~ brray:balance! ~ recursive:right:brray:balance!
 recursive:right:brray:balance! () -> Unknown
@@ -2653,8 +2683,8 @@ brray:pop-left! (q Collection) -> Unknown
 · ~ brray:rotate-left! N
 N Atom
 
-· ~ brray:rotate-left! ~ optimized-lambda::recursive:brray:rotate-left!::*600865834*
-optimized-lambda::recursive:brray:rotate-left!::*600865834* (index Atom bounds Atom) -> Atom
+· ~ brray:rotate-left! ~ optimized-lambda::recursive:brray:rotate-left!::*590060792*
+optimized-lambda::recursive:brray:rotate-left!::*590060792* (index Atom bounds Atom) -> Atom
 
 · ~ brray:rotate-left! recursive:brray:rotate-left!
 recursive:brray:rotate-left! () -> Unknown
@@ -2665,8 +2695,8 @@ brray:rotate-left! (q Collection n Atom) -> Unknown
 · ~ brray:rotate-right! N
 N Atom
 
-· ~ brray:rotate-right! ~ optimized-lambda::recursive:brray:rotate-left!::*600904334*
-optimized-lambda::recursive:brray:rotate-left!::*600904334* (index Atom bounds Atom) -> Atom
+· ~ brray:rotate-right! ~ optimized-lambda::recursive:brray:rotate-left!::*590099042*
+optimized-lambda::recursive:brray:rotate-left!::*590099042* (index Atom bounds Atom) -> Atom
 
 · ~ brray:rotate-right! recursive:brray:rotate-left!
 recursive:brray:rotate-left! () -> Unknown
@@ -2692,14 +2722,14 @@ slice-len Atom
 · ~ brray:slice half
 half Atom
 
-· ~ brray:slice ~ optimized-lambda::recursive:left:brray:slice::*600960459*
-optimized-lambda::recursive:left:brray:slice::*600960459* (index Atom) -> Atom
+· ~ brray:slice ~ optimized-lambda::recursive:left:brray:slice::*590155125*
+optimized-lambda::recursive:left:brray:slice::*590155125* (index Atom) -> Atom
 
 · ~ brray:slice recursive:left:brray:slice
 recursive:left:brray:slice () -> Unknown
 
-· ~ brray:slice ~ optimized-lambda::recursive:right:brray:slice::*600985584*
-optimized-lambda::recursive:right:brray:slice::*600985584* (index Atom bounds Atom) -> Atom
+· ~ brray:slice ~ optimized-lambda::recursive:right:brray:slice::*590178625*
+optimized-lambda::recursive:right:brray:slice::*590178625* (index Atom bounds Atom) -> Atom
 
 · ~ brray:slice recursive:right:brray:slice
 recursive:right:brray:slice () -> Unknown
@@ -2742,36 +2772,6 @@ stack:pop! (stack Collection) -> Unknown
 
 · ~ stack:peek
 stack:peek (stack Collection) -> Unknown
-
-· ~ tuple:apply
-tuple:apply (x Collection cb Abstraction) -> Unknown
-
-· ~ tuple:add
-tuple:add (x Unknown) -> Atom
-
-· ~ tuple:subtract
-tuple:subtract (x Unknown) -> Atom
-
-· ~ tuple:multiply
-tuple:multiply (x Unknown) -> Atom
-
-· ~ tuple:divide
-tuple:divide (x Unknown) -> Atom
-
-· ~ tuple:swap
-tuple:swap (x Unknown) -> Collection
-
-· ~ tuple:swap! temp
-temp Unknown
-
-· ~ tuple:swap!
-tuple:swap! (x Collection) -> Collection
-
-· ~ tuple:zip
-tuple:zip (xs Collection) -> Unknown
-
-· ~ tuple:list-zip
-tuple:list-zip (xs Collection) -> Collection
 
 · ~ time:add-seconds
 time:add-seconds (date-time Atom seconds Atom) -> Atom
@@ -2824,8 +2824,8 @@ date:month-day (date Collection) -> Unknown
 · ~ date:year-month
 date:year-month (date Unknown) -> Collection
 
-· ~ loop:for-range ~ optimized-lambda::recursive:loop:for-range::*610169959*
-optimized-lambda::recursive:loop:for-range::*610169959* (i Atom) -> Atom
+· ~ loop:for-range ~ optimized-lambda::recursive:loop:for-range::*590618208*
+optimized-lambda::recursive:loop:for-range::*590618208* (i Atom) -> Atom
 
 · ~ loop:for-range recursive:loop:for-range
 recursive:loop:for-range () -> Unknown
@@ -2833,8 +2833,8 @@ recursive:loop:for-range () -> Unknown
 · ~ loop:for-range
 loop:for-range (start Unknown end Atom cb Abstraction) -> Unknown
 
-· ~ loop:for-n ~ optimized-lambda::recursive:loop:for-n::*610194334*
-optimized-lambda::recursive:loop:for-n::*610194334* (i Atom) -> Atom
+· ~ loop:for-n ~ optimized-lambda::recursive:loop:for-n::*590645917*
+optimized-lambda::recursive:loop:for-n::*590645917* (i Atom) -> Atom
 
 · ~ loop:for-n recursive:loop:for-n
 recursive:loop:for-n () -> Unknown
@@ -2842,8 +2842,8 @@ recursive:loop:for-n () -> Unknown
 · ~ loop:for-n
 loop:for-n (n Atom cb Abstraction) -> Unknown
 
-· ~ loop:repeat ~ optimized-lambda::recursive:loop:repeat::*610218834*
-optimized-lambda::recursive:loop:repeat::*610218834* (i Atom) -> Atom
+· ~ loop:repeat ~ optimized-lambda::recursive:loop:repeat::*590667792*
+optimized-lambda::recursive:loop:repeat::*590667792* (i Atom) -> Atom
 
 · ~ loop:repeat recursive:loop:repeat
 recursive:loop:repeat () -> Unknown
@@ -2851,8 +2851,8 @@ recursive:loop:repeat () -> Unknown
 · ~ loop:repeat
 loop:repeat (n Atom cb Abstraction) -> Unknown
 
-· ~ loop:some-n? ~ optimized-lambda::recursive:loop:some-n::*610241084*
-optimized-lambda::recursive:loop:some-n::*610241084* (i Atom) -> Atom
+· ~ loop:some-n? ~ optimized-lambda::recursive:loop:some-n::*590688208*
+optimized-lambda::recursive:loop:some-n::*590688208* (i Atom) -> Atom
 
 · ~ loop:some-n? recursive:loop:some-n
 recursive:loop:some-n () -> Unknown
@@ -2860,8 +2860,8 @@ recursive:loop:some-n () -> Unknown
 · ~ loop:some-n?
 loop:some-n? (n Atom predicate? Abstraction Predicate) -> Predicate
 
-· ~ loop:some-range? ~ optimized-lambda::recursive:loop:some-range::*610264584*
-optimized-lambda::recursive:loop:some-range::*610264584* (i Atom) -> Atom
+· ~ loop:some-range? ~ optimized-lambda::recursive:loop:some-range::*590709583*
+optimized-lambda::recursive:loop:some-range::*590709583* (i Atom) -> Atom
 
 · ~ loop:some-range? recursive:loop:some-range
 recursive:loop:some-range () -> Unknown
@@ -2887,8 +2887,8 @@ heap:greater? (heap Collection i Atom j Atom cb? Abstraction Predicate) -> Predi
 · ~ heap:sift-up! node
 node Collection
 
-· ~ heap:sift-up! ~ optimized-lambda::recursive:heap:sift-up!::*610307792*
-optimized-lambda::recursive:heap:sift-up!::*610307792* () -> Atom
+· ~ heap:sift-up! ~ optimized-lambda::recursive:heap:sift-up!::*590748167*
+optimized-lambda::recursive:heap:sift-up!::*590748167* () -> Atom
 
 · ~ heap:sift-up! recursive:heap:sift-up!
 recursive:heap:sift-up! () -> Unknown
@@ -2899,11 +2899,11 @@ heap:sift-up! (heap Collection cb Unknown) -> Unknown
 · ~ heap:sift-down! node
 node Collection
 
-· ~ heap:sift-down! ~ optimized-lambda::recursive:heap:sift-down!::*610728375* ~ max-child
+· ~ heap:sift-down! ~ optimized-lambda::recursive:heap:sift-down!::*590792417* ~ max-child
 max-child Atom
 
-· ~ heap:sift-down! ~ optimized-lambda::recursive:heap:sift-down!::*610728375*
-optimized-lambda::recursive:heap:sift-down!::*610728375* () -> Atom
+· ~ heap:sift-down! ~ optimized-lambda::recursive:heap:sift-down!::*590792417*
+optimized-lambda::recursive:heap:sift-down!::*590792417* () -> Atom
 
 · ~ heap:sift-down! recursive:heap:sift-down!
 recursive:heap:sift-down! () -> Unknown
@@ -3007,8 +3007,8 @@ array:head (xs Collection) -> Unknown
 · ~ array:tail bounds
 bounds Atom
 
-· ~ array:tail ~ optimized-lambda::recursive:array:tail::*610940875*
-optimized-lambda::recursive:array:tail::*610940875* (i Atom out Collection) -> Abstraction
+· ~ array:tail ~ optimized-lambda::recursive:array:tail::*590982583*
+optimized-lambda::recursive:array:tail::*590982583* (i Atom out Collection) -> Abstraction
 
 · ~ array:tail recursive:array:tail
 recursive:array:tail () -> Unknown
