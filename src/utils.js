@@ -26,7 +26,8 @@ export const formatCallstack = (callstack) =>
     .join('\n')
 export const formatErrorWithCallstack = (error, callstack) =>
   `${error.message}\n${formatCallstack(callstack)}`
-export const getSuffix = (str) => str[str.length - 1]
+// TODO figure out why name is sometimes undefined
+export const getSuffix = (str) => (str ? str[str.length - 1] : '')
 export const removeNoCode = (source) =>
   source
     .replace(/(;.+|;)/g, '')

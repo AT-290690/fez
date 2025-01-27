@@ -1,5 +1,5 @@
 import { APPLY, ATOM, DEBUG, KEYWORDS, PLACEHOLDER } from './keywords.js'
-export const ARGS_COUNT = 'n'
+export const ARG_COUNT = 'argumentsN'
 export const VARIADIC = Infinity
 export const STATS = '__stats__'
 export const ARGUMENTS = 'arguments'
@@ -38,7 +38,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: toTypeNames(APPLY),
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -46,9 +46,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -60,7 +60,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: toTypeNames(ATOM),
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -68,9 +68,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -82,7 +82,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: toTypeNames(PREDICATE),
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -90,9 +90,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -104,7 +104,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: toTypeNames(COLLECTION),
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -112,9 +112,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -126,7 +126,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: toTypeNames(UNKNOWN),
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -134,9 +134,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -155,9 +155,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -166,13 +166,13 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -181,7 +181,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: DEBUG.STRING,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -189,9 +189,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -203,7 +203,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: DEBUG.ASSERT,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -212,7 +212,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: DEBUG.SIGNATURE,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -221,7 +221,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: DEBUG.TYPE_SIGNATURE,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -230,7 +230,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: DEBUG.LIST_THEMES,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -239,7 +239,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: DEBUG.SET_THEME,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -248,7 +248,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BLOCK,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -257,7 +257,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.ANONYMOUS_FUNCTION,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [APPLY]
     }
   },
@@ -266,7 +266,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.CALL_FUNCTION,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [UNKNOWN]
     }
   },
@@ -275,7 +275,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.CREATE_ARRAY,
       retried: Infinity,
-      [ARGS_COUNT]: VARIADIC,
+      [ARG_COUNT]: VARIADIC,
       [RETURNS]: [COLLECTION]
     }
   },
@@ -284,7 +284,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.LOOP,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -292,9 +292,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -303,9 +303,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -317,7 +317,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.ADDITION,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -325,9 +325,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -336,9 +336,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -350,7 +350,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.MULTIPLICATION,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -358,9 +358,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -369,9 +369,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -383,7 +383,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.SUBTRACTION,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -391,9 +391,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -402,9 +402,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -416,7 +416,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.DIVISION,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -424,9 +424,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -435,9 +435,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -448,7 +448,7 @@ export const SPECIAL_FORM_TYPES = {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -456,9 +456,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -467,9 +467,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -481,7 +481,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BITWISE_AND,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -489,9 +489,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -500,9 +500,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -514,7 +514,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BITWISE_NOT,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -522,9 +522,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -536,7 +536,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BITWISE_OR,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -544,9 +544,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -555,9 +555,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -569,7 +569,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BITWISE_XOR,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -577,9 +577,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -588,9 +588,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -602,7 +602,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BITWISE_LEFT_SHIFT,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -610,9 +610,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -621,9 +621,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -635,7 +635,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.BITWISE_RIGHT_SHIFT,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -643,9 +643,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -654,9 +654,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -668,7 +668,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.GET_ARRAY,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -676,9 +676,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -687,9 +687,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -700,7 +700,7 @@ export const SPECIAL_FORM_TYPES = {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
       retried: Infinity,
-      [ARGS_COUNT]: 3,
+      [ARG_COUNT]: 3,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -708,9 +708,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -719,9 +719,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -730,9 +730,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -744,7 +744,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.POP_ARRAY,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -752,9 +752,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -766,7 +766,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.ARRAY_LENGTH,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -774,9 +774,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -788,7 +788,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.IF,
       retried: Infinity,
-      [ARGS_COUNT]: 3,
+      [ARG_COUNT]: 3,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -796,9 +796,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -807,9 +807,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -818,9 +818,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -832,7 +832,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.NOT,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -840,9 +840,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -854,7 +854,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.EQUAL,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -862,9 +862,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -873,9 +873,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -887,7 +887,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       retried: Infinity,
       [SIGNATURE]: KEYWORDS.LESS_THAN,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -895,9 +895,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -906,9 +906,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -920,7 +920,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.GREATHER_THAN,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -928,9 +928,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -939,9 +939,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -953,7 +953,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.GREATHER_THAN_OR_EQUAL,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -961,9 +961,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -972,9 +972,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -986,7 +986,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.LESS_THAN_OR_EQUAL,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -994,9 +994,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -1005,9 +1005,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -1019,7 +1019,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.AND,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -1027,9 +1027,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -1038,9 +1038,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -1052,7 +1052,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.OR,
       retried: Infinity,
-      [ARGS_COUNT]: 2,
+      [ARG_COUNT]: 2,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -1060,9 +1060,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         },
         {
@@ -1071,9 +1071,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM, PREDICATE],
             [RETURNS]: [ATOM, PREDICATE],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -1085,7 +1085,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.IS_ATOM,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -1093,9 +1093,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -1107,7 +1107,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY, PREDICATE],
       [SIGNATURE]: KEYWORDS.IS_LAMBDA,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -1115,9 +1115,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],
@@ -1129,7 +1129,7 @@ export const SPECIAL_FORM_TYPES = {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.ERROR,
       retried: Infinity,
-      [ARGS_COUNT]: 1,
+      [ARG_COUNT]: 1,
       [ARGUMENTS]: [
         {
           [STATS]: {
@@ -1137,9 +1137,9 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-            [ARGS_COUNT]: [],
+
             [ARGUMENTS]: [],
-            [ARGS_COUNT]: 0
+            [ARG_COUNT]: 0
           }
         }
       ],

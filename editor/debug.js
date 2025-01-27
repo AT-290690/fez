@@ -22,7 +22,6 @@ import { SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
 // const libraryTypes = [] ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0])[1]
-
 export const debug = (ast, checkTypes = true) => {
   let types
   const debugEnv = {

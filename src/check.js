@@ -20,7 +20,7 @@ import { isLeaf } from './parser.js'
 import {
   SPECIAL_FORM_TYPES,
   toTypeNames,
-  ARGS_COUNT,
+  ARG_COUNT,
   VARIADIC,
   STATS,
   ARGUMENTS,
@@ -65,15 +65,28 @@ const deepLambdaReturn = (rest, condition) => {
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
-const assign = (a, b, i) => {
-  a[i] = b[i]
-}
+// const assign = (a, b, i) => {
+//   a[i] = b[i]
+// }
+const fillUknownArgs = (n) =>
+  Array.from({ length: n })
+    .fill(null)
+    .map(() => ({
+      [STATS]: {
+        retried: 0,
+        [SIGNATURE]: PLACEHOLDER,
+        [TYPE_PROP]: [UNKNOWN],
+        [RETURNS]: [UNKNOWN],
+        [ARGUMENTS]: [],
+        [ARG_COUNT]: 0
+      }
+    }))
 export const formatType = (name, env) => {
   const stats = env[name][STATS]
   return stats
     ? stats[TYPE_PROP][0] === APPLY
       ? `${name} (${
-          stats[ARGS_COUNT] === VARIADIC
+          stats[ARG_COUNT] === VARIADIC
             ? '... ' + STATIC_TYPES.UNKNOWN
             : (stats[ARGUMENTS] ?? [])
                 .map(
@@ -227,8 +240,10 @@ export const typeCheck = (ast) => {
                                 case KEYWORDS.ANONYMOUS_FUNCTION:
                                   // FN UKNONW ASSIGMENT
                                   env[name][STATS][RETURNS] = [UNKNOWN]
-                                  env[name][STATS][ARGS_COUNT] =
+                                  env[name][STATS][ARG_COUNT] = re[0].length - 2
+                                  env[name][STATS][ARGUMENTS] = fillUknownArgs(
                                     re[0].length - 2
+                                  )
                                   break
                               }
                             }
@@ -251,8 +266,10 @@ export const typeCheck = (ast) => {
                                   // FN ASSIGMENT
                                   env[name][STATS][TYPE_PROP] = [APPLY]
                                   env[name][STATS][RETURNS] = [UNKNOWN]
-                                  env[name][STATS][ARGS_COUNT] =
+                                  env[name][STATS][ARG_COUNT] = re[1].length - 2
+                                  env[name][STATS][ARGUMENTS] = fillUknownArgs(
                                     re[1].length - 2
+                                  )
                                   break
                               }
                             }
@@ -393,8 +410,8 @@ export const typeCheck = (ast) => {
                       retried: 0,
                       counter: 0,
                       [VARIABLE_ORDER_INDEX]: env[ORDER],
-                      [ARGS_COUNT]: n - 2,
-                      [ARGUMENTS]: [],
+                      [ARG_COUNT]: n - 2,
+                      [ARGUMENTS]: fillUknownArgs(n - 2),
                       [RETURNS]: [UNKNOWN]
                     }
                   }
@@ -687,14 +704,14 @@ export const typeCheck = (ast) => {
                 )
               else if (
                 env[first[VALUE]][STATS][TYPE_PROP][0] === APPLY &&
-                env[first[VALUE]][STATS][ARGS_COUNT] !== VARIADIC &&
-                env[first[VALUE]][STATS][ARGS_COUNT] !== rest.length
+                env[first[VALUE]][STATS][ARG_COUNT] !== VARIADIC &&
+                env[first[VALUE]][STATS][ARG_COUNT] !== rest.length
               ) {
                 errorStack.add(
                   `Incorrect number of arguments for (${
                     first[VALUE]
                   }). Expected (= ${
-                    env[first[VALUE]][STATS][ARGS_COUNT]
+                    env[first[VALUE]][STATS][ARG_COUNT]
                   }) but got ${rest.length} (${stringifyArgs(exp)}) (check #15)`
                 )
               } else {
@@ -705,14 +722,40 @@ export const typeCheck = (ast) => {
                         exp
                       )}) (check #12)`
                     )
-                  } else if (!env[first[VALUE]][STATS][ARGS_COUNT]) {
+                  } else if (!env[first[VALUE]][STATS][ARG_COUNT]) {
                     // TODO recursively take return type of applicaion
                     if (env[first[VALUE]][STATS][RETURNS][0] === APPLY) {
                       env[first[VALUE]][STATS][RETURNS] = [UNKNOWN]
                     }
                     // FN ASSIGMENT
                     env[first[VALUE]][STATS][TYPE_PROP] = [APPLY]
-                    env[first[VALUE]][STATS][ARGS_COUNT] = rest.length
+                    env[first[VALUE]][STATS][ARG_COUNT] = rest.length
+                    env[first[VALUE]][STATS][ARGUMENTS] = fillUknownArgs(
+                      rest.length
+                    )
+                    // ASSIGMENT of paramaters of lambda that are a lambda
+                    for (let i = 0; i < rest.length; ++i) {
+                      const arg = env[first[VALUE]][STATS][ARGUMENTS]
+                      arg[i] = {
+                        [STATS]: {
+                          retried: 0,
+                          [SIGNATURE]: PLACEHOLDER,
+                          [TYPE_PROP]: [UNKNOWN],
+                          [RETURNS]: [UNKNOWN],
+                          [ARGUMENTS]: [],
+                          [ARG_COUNT]: 0
+                        }
+                      }
+                      switch (rest[i][TYPE]) {
+                        case ATOM:
+                          arg[i][STATS][TYPE_PROP][0] = ATOM
+                          break
+                        case WORD:
+                        case APPLY:
+                          arg[i][STATS] = env[rest[i][VALUE]][STATS]
+                          break
+                      }
+                    }
                   }
                 }
 
@@ -1054,6 +1097,31 @@ export const typeCheck = (ast) => {
                               actual[0]
                             )}) (${stringifyArgs(exp)}) (check #16)`
                           )
+                        else {
+                          switch (expected[0]) {
+                            case APPLY:
+                              {
+                                const argsN = rest[i].length - 2
+                                if (
+                                  env[rest[i][0][VALUE]][STATS][SIGNATURE] ===
+                                  KEYWORDS.ANONYMOUS_FUNCTION
+                                ) {
+                                  if (argsN !== args[i][STATS][ARG_COUNT]) {
+                                    errorStack.add(
+                                      `Incorrect number of arguments for (${
+                                        first[VALUE]
+                                      }). Expected (= ${
+                                        env[first[VALUE]][STATS][ARG_COUNT]
+                                      }) but got ${
+                                        rest.length
+                                      } (${stringifyArgs(exp)}) (check #777)`
+                                    )
+                                  }
+                                }
+                              }
+                              break
+                          }
+                        }
                       } else if (
                         expected[0] === UNKNOWN &&
                         args[i][STATS].retried < MAX_RETRY_DEFINITION
