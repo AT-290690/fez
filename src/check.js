@@ -228,6 +228,7 @@ export const typeCheck = (ast) => {
                               getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
                             ) {
                               // ATOM ASSIGMENT PREDICATE ASSIGMENT
+                              env[name][STATS][TYPE_PROP][1] = [PREDICATE]
                               env[name][STATS][RETURNS] = [ATOM, PREDICATE]
                             }
                           } else if (
@@ -645,6 +646,17 @@ export const typeCheck = (ast) => {
                     )
                     if (isLeaf(returns)) {
                       // TODO figure out what we do here
+                      // this here is a variable WORD
+                      // so return type of that function is that varible type
+                      if (copy[returns[VALUE]])
+                        ref[STATS][RETURNS] =
+                          copy[returns[VALUE]][STATS][TYPE_PROP]
+                      else
+                        stack.push(() => {
+                          if (copy[returns[VALUE]])
+                            ref[STATS][RETURNS] =
+                              copy[returns[VALUE]][STATS][TYPE_PROP]
+                        })
                     } else {
                       const ret = returns[0]
                       switch (ret[VALUE]) {
@@ -658,6 +670,7 @@ export const typeCheck = (ast) => {
                               getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
                               getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
                             ) {
+                              ref[STATS][TYPE_PROP][1] = PREDICATE
                               ref[STATS][RETURNS][1] = PREDICATE
                             }
                           } else {
@@ -694,6 +707,7 @@ export const typeCheck = (ast) => {
                                 ref[STATS][RETURNS] =
                                   copy[ret[VALUE]][STATS][RETURNS]
                             })
+
                           break
                       }
                     }

@@ -10,8 +10,8 @@ export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
 export const ORDER = '__order__'
 export const VARIABLE_ORDER_INDEX = 'index'
-export const PREDICATE = 3
-export const COLLECTION = 4
+export const PREDICATE = 4
+export const COLLECTION = 3
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 10
 export const toTypeNames = (type) => {

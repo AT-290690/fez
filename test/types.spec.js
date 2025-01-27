@@ -31,7 +31,7 @@ describe('Should throw errors', () => {
         '(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Unknown)))',
         '(let math:overlap? (lambda Atom Atom Atom (do Predicate)))',
         '(let math:prime? (lambda Atom (do Predicate)))',
-        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Unknown)))',
+        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Collection)))',
         '(let array:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))',
         '(let list:find (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))',
         '(let list:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))'
