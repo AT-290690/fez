@@ -1111,10 +1111,10 @@ export const typeCheck = (ast) => {
                                       `Incorrect number of arguments for (${
                                         first[VALUE]
                                       }). Expected (= ${
-                                        env[first[VALUE]][STATS][ARG_COUNT]
-                                      }) but got ${
-                                        rest.length
-                                      } (${stringifyArgs(exp)}) (check #777)`
+                                        args[i][STATS][ARG_COUNT]
+                                      }) but got ${argsN} (${stringifyArgs(
+                                        exp
+                                      )}) (check #777)`
                                     )
                                   }
                                 }
