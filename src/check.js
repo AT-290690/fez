@@ -680,19 +680,35 @@ export const typeCheck = (ast) => {
                             const alternative = isLeaf(re[1])
                               ? copy[re[1][VALUE]]
                               : copy[re[1][0][VALUE]]
+
                             // todo check if condition matches alternative
+                            // TODO make this more simple - it's so many different things just because types are functions or not
+                            // WHY not consiter making return types for everything
                             if (
                               concequent &&
-                              concequent[STATS][RETURNS][0] !== UNKNOWN
+                              concequent[STATS][TYPE_PROP][0] !== UNKNOWN
                             ) {
-                              ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                              if (concequent[STATS][TYPE_PROP][0] === APPLY)
+                                ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                              else
+                                ref[STATS][RETURNS] =
+                                  concequent[STATS][TYPE_PROP]
                             } else if (
                               alternative &&
-                              alternative[STATS][RETURNS][0] !== UNKNOWN
+                              alternative[STATS][TYPE_PROP][0] !== UNKNOWN
                             ) {
-                              ref[STATS][RETURNS] = alternative[STATS][RETURNS]
+                              if (alternative[STATS][TYPE_PROP][0] === APPLY)
+                                ref[STATS][RETURNS] =
+                                  alternative[STATS][RETURNS]
+                              else
+                                ref[STATS][RETURNS] =
+                                  alternative[STATS][TYPE_PROP]
                             } else if (concequent) {
-                              ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                              if (concequent[STATS][TYPE_PROP][0] === APPLY)
+                                ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                              else
+                                ref[STATS][RETURNS] =
+                                  concequent[STATS][TYPE_PROP]
                             }
                           }
 
