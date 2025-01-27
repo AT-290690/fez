@@ -83,9 +83,10 @@ const fillUknownArgs = (n) =>
     }))
 export const formatType = (name, env) => {
   const stats = env[name][STATS]
+  const isAnonymous = typeof name === 'number'
   return stats
     ? stats[TYPE_PROP][0] === APPLY
-      ? `(${typeof name !== 'number' ? `${name} ` : ''}${
+      ? `${isAnonymous ? '' : `(let ${name} `}(lambda ${
           stats[ARG_COUNT] === VARIADIC
             ? '... ' + STATIC_TYPES.UNKNOWN
             : (stats[ARGUMENTS] ?? [])
@@ -93,17 +94,19 @@ export const formatType = (name, env) => {
                   (x, i) =>
                     `${
                       x[STATS][TYPE_PROP][0] === APPLY
-                        ? `(${formatType(i, stats[ARGUMENTS])})`
+                        ? `${formatType(i, stats[ARGUMENTS])}`
                         : `${toTypeNames(
                             x[STATS][TYPE_PROP][1] ?? x[STATS][TYPE_PROP][0]
                           )}`
                     }`
                 )
                 .join(' ')
-        }) -> ${toTypeNames(stats[RETURNS][1] ?? stats[RETURNS][0])}`
-      : `(${name} ${toTypeNames(
+        } (${KEYWORDS.BLOCK} ${toTypeNames(
+          stats[RETURNS][1] ?? stats[RETURNS][0]
+        )})${isAnonymous ? '' : ')'})`
+      : `(let ${name} ${toTypeNames(
           stats[TYPE_PROP][1] ?? stats[TYPE_PROP][0]
-        )})`.trim()
+        )})`
     : name
 }
 const formatTypes = (env) => {
@@ -126,7 +129,7 @@ const getScopeNames = (scope) => {
 }
 const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
-  return `${chain.length === 1 ? '· ' : ''}${chain
+  return `${chain.length === 1 ? '; ' : ''}${chain
     .map((x) => (Number.isInteger(+x) ? '::' : x))
     .join(' ')} ${name}`
 }

@@ -1679,7 +1679,6 @@ heap)))
 (let array:car array:head)
 (let array:cdr array:tail)
 (let array:for-range loop:for-range)
-(let progn do)
 
 (let π math:pi)
 (let λ lambda)

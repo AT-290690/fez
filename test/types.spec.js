@@ -10,7 +10,7 @@ const fails = (source, message, name = 'TypeError') =>
   throws(() => type(parse(source)), { name, message })
 const inference = (source, keys) => {
   const map = typeCheck(parse(source))[1]
-  return keys.map((key) => map.get(`· :: ${key}`)())
+  return keys.map((key) => map.get(`; :: ${key}`)())
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
@@ -28,13 +28,13 @@ describe('Should throw errors', () => {
         'list:every?'
       ]),
       [
-        '(matrix:enumerated-for Collection ((Unknown Atom Atom) -> Unknown)) -> Unknown',
-        '(math:overlap? Atom Atom Atom) -> Predicate',
-        '(math:prime? Atom) -> Predicate',
-        '(matrix:adjacent Collection Collection Atom Atom ((Unknown Collection Atom Atom) -> Unknown)) -> Unknown',
-        '(array:every? Collection ((Unknown) -> Predicate)) -> Predicate',
-        '(list:find Collection ((Unknown) -> Predicate)) -> Collection',
-        '(list:every? Collection ((Unknown) -> Predicate)) -> Predicate'
+        '(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Unknown)))',
+        '(let math:overlap? (lambda Atom Atom Atom (do Predicate)))',
+        '(let math:prime? (lambda Atom (do Predicate)))',
+        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Unknown)))',
+        '(let array:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))',
+        '(let list:find (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))',
+        '(let list:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))'
       ]
     )
     deepStrictEqual(
@@ -49,13 +49,13 @@ describe('Should throw errors', () => {
         ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?']
       ),
       [
-        '(is12? Atom) -> Predicate',
-        '(a Atom)',
-        '(c Atom)',
-        '(b Collection)',
-        '(box Unknown) -> Collection',
-        '(add Atom Collection) -> Atom',
-        '(x? Predicate)'
+        '(let is12? (lambda Atom (do Predicate)))',
+        '(let a Atom)',
+        '(let c Atom)',
+        '(let b Collection)',
+        '(let box (lambda Unknown (do Collection)))',
+        '(let add (lambda Atom Collection (do Atom)))',
+        '(let x? Predicate)'
       ]
     )
     deepStrictEqual(
@@ -73,7 +73,7 @@ describe('Should throw errors', () => {
 (let m (add y))`,
         ['m', 'y', 'add']
       ),
-      ['(m Atom)', '(y Atom)', '(add Atom) -> Atom']
+      ['(let m Atom)', '(let y Atom)', '(let add (lambda Atom (do Atom)))']
     )
   })
   it('Does not throw', () => {

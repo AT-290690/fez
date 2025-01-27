@@ -100,7 +100,7 @@ export const debug = (ast, checkTypes = true) => {
             .map(([k, v]) => `${k}\n${v()}`)
             .join('\n\n')
         }
-        const t = types.get(`· :: ${name}`)
+        const t = types.get(`; :: ${name}`)
         return t ? t() : ''
       } else if (option === 'Search') {
         return [...types.entries()]
@@ -111,12 +111,12 @@ export const debug = (ast, checkTypes = true) => {
       } else if (option === 'Special') {
         return formatType(name, SPECIAL_FORM_TYPES)
       } else if (option === 'Type') {
-        const [from, to] = name.split('->').map((x) => x.trim())
+        const [from, to] = name.split(KEYWORDS.BLOCK).map((x) => x.trim())
         return [...libraryTypes.entries()]
           .filter(([k, v]) => {
             const T = v()
-            if (T && T.includes('->')) {
-              const [left, right] = T.split('->').map((x) => x.trim())
+            if (T && T.includes(KEYWORDS.BLOCK)) {
+              const [left, right] = T.split(KEYWORDS.BLOCK).map((x) => x.trim())
               return left.includes(from) && right.includes(to)
             }
           })
@@ -365,15 +365,15 @@ export const debug = (ast, checkTypes = true) => {
           default:
             if (SPECIAL_FORMS_SET.has(head[VALUE])) {
               // type = debugEnv[DEBUG.TYPE_SIGNATURE]([head, [WORD, 'Special']])
-              type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
+              type = `${debugEnv[DEBUG.TYPE_SIGNATURE]([
                 head,
                 [WORD, 'Special']
-              ])})`
+              ])}`
             } else
-              type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
+              type = `${debugEnv[DEBUG.TYPE_SIGNATURE]([
                 head,
                 [WORD, 'Scope']
-              ])})`
+              ])}`
             break
         }
 

@@ -31,7 +31,7 @@ export const toTypeNames = (type) => {
   }
 }
 export const SPECIAL_FORM_TYPES = {
-  [SCOPE_NAME]: '·',
+  [SCOPE_NAME]: ';',
   [ORDER]: 0,
   [toTypeNames(APPLY)]: {
     [STATS]: {
