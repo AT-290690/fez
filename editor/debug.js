@@ -368,12 +368,12 @@ export const debug = (ast, checkTypes = true) => {
               type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
                 head,
                 [WORD, 'Special']
-              ])}) ${rest.map((x) => stringifyArgs([x])).join(' ')}`
+              ])})`
             } else
               type = `(${debugEnv[DEBUG.TYPE_SIGNATURE]([
                 head,
                 [WORD, 'Scope']
-              ])}) ${rest.map((x) => stringifyArgs([x])).join(' ')}`
+              ])})`
             break
         }
 
