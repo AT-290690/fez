@@ -85,18 +85,16 @@ export const formatType = (name, env) => {
   const stats = env[name][STATS]
   return stats
     ? stats[TYPE_PROP][0] === APPLY
-      ? `${name} (${
+      ? `${typeof name !== 'number' ? `${name} ` : ''}(${
           stats[ARG_COUNT] === VARIADIC
             ? '... ' + STATIC_TYPES.UNKNOWN
             : (stats[ARGUMENTS] ?? [])
                 .map(
-                  (x) =>
-                    `${x[STATS][SIGNATURE]} ${x[STATS][TYPE_PROP].map((x) =>
-                      toTypeNames(x)
-                    ).join(' ')}${
-                      getSuffix(x[STATS][SIGNATURE]) === PREDICATE_SUFFIX
-                        ? ' ' + toTypeNames(PREDICATE)
-                        : ''
+                  (x, i) =>
+                    `${
+                      x[STATS][TYPE_PROP][0] === APPLY
+                        ? `${formatType(i, stats[ARGUMENTS])}`
+                        : `${x[STATS][TYPE_PROP].map(toTypeNames).join(' ')}`
                     }`
                 )
                 .join(' ')
@@ -407,6 +405,7 @@ export const typeCheck = (ast) => {
                   env[name] = {
                     [STATS]: {
                       [TYPE_PROP]: [APPLY],
+                      [SIGNATURE]: name,
                       retried: 0,
                       counter: 0,
                       [VARIABLE_ORDER_INDEX]: env[ORDER],
@@ -471,6 +470,7 @@ export const typeCheck = (ast) => {
                     // DECLARATION of ATOM
                     env[name] = {
                       [STATS]: {
+                        [SIGNATURE]: name,
                         retried: 0,
                         counter: 0,
                         [VARIABLE_ORDER_INDEX]: env[ORDER],
@@ -508,6 +508,7 @@ export const typeCheck = (ast) => {
                       [STATS]: {
                         retried: 0,
                         counter: 0,
+                        [SIGNATURE]: name,
                         [VARIABLE_ORDER_INDEX]: env[ORDER],
                         [TYPE_PROP]: [
                           isL
