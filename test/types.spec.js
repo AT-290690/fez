@@ -44,8 +44,9 @@ describe('Should throw errors', () => {
 (let box (lambda x [x]))
 (let add (lambda a b (math:summation [(+ a 1) (length b)])))
 (let c (add 8 [1 2 3]))
-(let is12? (lambda x (= x 12)))`,
-        ['is12?', 'a', 'c', 'b', 'box', 'add']
+(let is12? (lambda x (= x 12)))
+(let x? 1)`,
+        ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?']
       ),
       [
         'is12? (Atom) -> Predicate',
@@ -53,7 +54,8 @@ describe('Should throw errors', () => {
         'c Atom',
         'b Collection',
         'box (Unknown) -> Collection',
-        'add (Atom Collection) -> Atom'
+        'add (Atom Collection) -> Atom',
+        'x? Predicate'
       ]
     )
     deepStrictEqual(

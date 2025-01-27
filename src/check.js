@@ -94,12 +94,16 @@ export const formatType = (name, env) => {
                     `${
                       x[STATS][TYPE_PROP][0] === APPLY
                         ? `${formatType(i, stats[ARGUMENTS])}`
-                        : `${x[STATS][TYPE_PROP].map(toTypeNames).join(' ')}`
+                        : `${toTypeNames(
+                            x[STATS][TYPE_PROP][1] ?? x[STATS][TYPE_PROP][0]
+                          )}`
                     }`
                 )
                 .join(' ')
         }) -> ${toTypeNames(stats[RETURNS][1] ?? stats[RETURNS][0])}`
-      : `${name} ${stats[TYPE_PROP].map(toTypeNames).join(' ')}`.trim()
+      : `${name} ${toTypeNames(
+          stats[TYPE_PROP][1] ?? stats[TYPE_PROP][0]
+        )}`.trim()
     : name
 }
 const formatTypes = (env) => {
