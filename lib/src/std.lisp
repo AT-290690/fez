@@ -501,17 +501,17 @@
                             out)))
                       (recursive:array:fold 0 initial))))
 (let array:every? (lambda xs predicate? (do
-                    (let recursive:array:every (lambda i
+                    (let recursive:array:every? (lambda i
                           (if (and (> (length xs) i) (predicate? (get xs i)))
-                              (recursive:array:every (+ i 1))
+                              (recursive:array:every? (+ i 1))
                               (not (> (length xs) i)))))
-                        (true? (recursive:array:every 0)))))
+                        (true? (recursive:array:every? 0)))))
 (let array:some? (lambda xs predicate? (do
-                    (let recursive:array:some (lambda i
+                    (let recursive:array:some? (lambda i
                           (if (and (> (length xs) i)  (not (predicate? (get xs i))))
-                              (recursive:array:some (+ i 1))
+                              (recursive:array:some? (+ i 1))
                               (not (= (> (length xs) i) 0)))))
-                        (true? (recursive:array:some 0)))))
+                        (true? (recursive:array:some? 0)))))
 
 (let array:find (lambda xs predicate? (get xs (array:find-index xs predicate?))))
 
@@ -959,19 +959,19 @@
                     (let recursive:array:enumerated-find-index (lambda i
                           (if (> (length xs) i)
                               (if (predicate? (get xs i) i) i (recursive:array:enumerated-find-index (+ i 1))) -1)))
-                        (recursive:array:enumerated-find-index xs 0))))
+                        (recursive:array:enumerated-find-index 0))))
 (let array:enumerated-every? (lambda xs predicate? (do
-                    (let recursive:array:enumerated-every (lambda i
+                    (let recursive:array:enumerated-every? (lambda i
                           (if (and (> (length xs) i) (predicate? (get xs i) i))
-                              (recursive:array:enumerated-every (+ i 1))
+                              (recursive:array:enumerated-every? (+ i 1))
                               (not (> (length xs) i)))))
-                        (recursive:array:enumerated-every 0))))
+                        (recursive:array:enumerated-every? 0))))
 (let array:enumerated-some? (lambda xs predicate? (do
-                    (let recursive:array:enumerated-some (lambda i
+                    (let recursive:array:enumerated-some? (lambda i
                           (if (and (> (length xs) i) (not (predicate? (get xs i) i)))
-                              (recursive:array:enumerated-some (+ i 1))
+                              (recursive:array:enumerated-some? (+ i 1))
                               (not (= (> (length xs) i) 0)))))
-                        (recursive:array:enumerated-some 0))))
+                        (recursive:array:enumerated-some? 0))))
 (let array:find-index (lambda xs cb? (do
                     (let recursive:array:find-index (lambda i
                           (if (> (length xs) i)

@@ -226,42 +226,30 @@
 (let tuple:zip (lambda Collection (do Unknown)))
 ; :: tuple:list-zip
 (let tuple:list-zip (lambda Collection (do Collection)))
-; :: math:range :: optimized-lambda::recursive:math:range::*5008375*
-(let optimized-lambda::recursive:math:range::*5008375* (lambda Collection Atom (do Abstraction)))
 ; :: math:range recursive:math:range
-(let recursive:math:range (lambda Unknown Unknown (do Unknown)))
+(let recursive:math:range (lambda Collection Atom (do Unknown)))
 ; :: math:range
-(let math:range (lambda Unknown Atom (do Unknown)))
+(let math:range (lambda Atom Atom (do Unknown)))
 ; :: math:sequence end
 (let end Atom)
-; :: math:sequence :: optimized-lambda::recursive:math:sequence::*500949875*
-(let optimized-lambda::recursive:math:sequence::*500949875* (lambda Collection Atom (do Abstraction)))
 ; :: math:sequence recursive:math:sequence
-(let recursive:math:sequence (lambda Unknown Atom (do Unknown)))
+(let recursive:math:sequence (lambda Collection Atom (do Unknown)))
 ; :: math:sequence
 (let math:sequence (lambda Collection (do Unknown)))
-; :: math:sequence-n :: optimized-lambda::recursive:sequence-n::*500984416*
-(let optimized-lambda::recursive:sequence-n::*500984416* (lambda Collection Atom (do Abstraction)))
 ; :: math:sequence-n recursive:sequence-n
-(let recursive:sequence-n (lambda Unknown Atom (do Unknown)))
+(let recursive:sequence-n (lambda Collection Atom (do Unknown)))
 ; :: math:sequence-n
 (let math:sequence-n (lambda Atom (do Unknown)))
-; :: math:zeroes :: optimized-lambda::recursive:math:zeroes::*510013916*
-(let optimized-lambda::recursive:math:zeroes::*510013916* (lambda Collection (do Abstraction)))
 ; :: math:zeroes recursive:math:zeroes
-(let recursive:math:zeroes (lambda Unknown (do Unknown)))
+(let recursive:math:zeroes (lambda Collection (do Unknown)))
 ; :: math:zeroes
 (let math:zeroes (lambda Atom (do Unknown)))
-; :: math:ones :: optimized-lambda::recursive:math:ones::*51004025*
-(let optimized-lambda::recursive:math:ones::*51004025* (lambda Collection (do Abstraction)))
 ; :: math:ones recursive:math:ones
-(let recursive:math:ones (lambda Unknown (do Unknown)))
+(let recursive:math:ones (lambda Collection (do Unknown)))
 ; :: math:ones
 (let math:ones (lambda Atom (do Unknown)))
-; :: math:numbers :: optimized-lambda::recursive:math:numbers::*510066208*
-(let optimized-lambda::recursive:math:numbers::*510066208* (lambda Collection (do Abstraction)))
 ; :: math:numbers recursive:math:numbers
-(let recursive:math:numbers (lambda Unknown (do Unknown)))
+(let recursive:math:numbers (lambda Collection (do Unknown)))
 ; :: math:numbers
 (let math:numbers (lambda Atom Unknown (do Unknown)))
 ; :: math:between?
@@ -273,7 +261,7 @@
 ; :: math:combinations out
 (let out Collection)
 ; :: math:combinations combinations
-(let combinations (lambda Collection Atom Unknown Unknown (do Unknown)))
+(let combinations (lambda Collection Atom Atom Unknown (do Unknown)))
 ; :: math:combinations
 (let math:combinations (lambda Collection (do Collection)))
 ; :: math:greater?
@@ -364,36 +352,30 @@
 (let n2 Atom)
 ; :: math:bit-count32
 (let math:bit-count32 (lambda Atom (do Atom)))
-; :: math:bit-count :: optimized-lambda::recursive:math:bit-count::*510369208*
-(let optimized-lambda::recursive:math:bit-count::*510369208* (lambda Atom Atom (do Abstraction)))
 ; :: math:bit-count recursive:math:bit-count
-(let recursive:math:bit-count (lambda Unknown Atom (do Unknown)))
+(let recursive:math:bit-count (lambda Atom Atom (do Unknown)))
 ; :: math:bit-count
-(let math:bit-count (lambda Unknown (do Unknown)))
+(let math:bit-count (lambda Atom (do Unknown)))
 ; :: math:square
 (let math:square (lambda Atom (do Atom)))
 ; :: math:power
 (let math:power (lambda Atom Atom (do Unknown)))
-; :: math:greatest-common-divisor :: optimized-lambda::recursive:math:greatest-common-divisor::*51044225*
-(let optimized-lambda::recursive:math:greatest-common-divisor::*51044225* (lambda Atom Atom (do Abstraction)))
 ; :: math:greatest-common-divisor recursive:math:greatest-common-divisor
-(let recursive:math:greatest-common-divisor (lambda Unknown Unknown (do Unknown)))
+(let recursive:math:greatest-common-divisor (lambda Atom Atom (do Unknown)))
 ; :: math:greatest-common-divisor
-(let math:greatest-common-divisor (lambda Unknown Unknown (do Unknown)))
+(let math:greatest-common-divisor (lambda Atom Atom (do Unknown)))
 ; :: math:least-common-divisor
 (let math:least-common-divisor (lambda Atom Atom (do Atom)))
 ; :: math:coprime?
-(let math:coprime? (lambda Unknown Unknown (do Predicate)))
+(let math:coprime? (lambda Atom Atom (do Predicate)))
 ; :: math:sqrt good-enough?
 (let good-enough? (lambda Atom Atom (do Predicate)))
 ; :: math:sqrt improve-guess
 (let improve-guess (lambda Atom Atom (do Atom)))
-; :: math:sqrt :: optimized-lambda::recursive:math:sqrt::*510495416*
-(let optimized-lambda::recursive:math:sqrt::*510495416* (lambda Atom Atom (do Abstraction)))
 ; :: math:sqrt recursive:math:sqrt
-(let recursive:math:sqrt (lambda Atom Unknown (do Unknown)))
+(let recursive:math:sqrt (lambda Atom Atom (do Unknown)))
 ; :: math:sqrt
-(let math:sqrt (lambda Unknown (do Unknown)))
+(let math:sqrt (lambda Atom (do Unknown)))
 ; :: math:perfect-square?
 (let math:perfect-square? (lambda Atom (do Predicate)))
 ; :: math:circumference
@@ -406,10 +388,8 @@
 (let math:nth-digit (lambda Atom Atom (do Atom)))
 ; :: math:remove-nth-digits
 (let math:remove-nth-digits (lambda Atom Atom (do Atom)))
-; :: math:keep-nth-digits :: optimized-lambda::recursive:math:keep-nth-digits::*510555666*
-(let optimized-lambda::recursive:math:keep-nth-digits::*510555666* (lambda Atom Atom Atom (do Abstraction)))
 ; :: math:keep-nth-digits recursive:math:keep-nth-digits
-(let recursive:math:keep-nth-digits (lambda Atom Atom Unknown (do Unknown)))
+(let recursive:math:keep-nth-digits (lambda Atom Atom Atom (do Unknown)))
 ; :: math:keep-nth-digits
 (let math:keep-nth-digits (lambda Atom Atom (do Unknown)))
 ; :: math:normalize
@@ -464,16 +444,12 @@
 (let math:factorial (lambda Atom (do Atom)))
 ; :: math:sine sine
 (let sine Collection)
-; :: math:sine :: optimized-lambda::recursive:math:sine::*510735*
-(let optimized-lambda::recursive:math:sine::*510735* (lambda Atom (do Abstraction)))
 ; :: math:sine recursive:math:sine
 (let recursive:math:sine (lambda Atom (do Unknown)))
 ; :: math:sine
 (let math:sine (lambda Atom Atom (do Unknown)))
 ; :: math:cosine cosine
 (let cosine Collection)
-; :: math:cosine :: optimized-lambda::recursive:math:cosine::*510801791*
-(let optimized-lambda::recursive:math:cosine::*510801791* (lambda Atom (do Abstraction)))
 ; :: math:cosine recursive:math:cosine
 (let recursive:math:cosine (lambda Atom (do Unknown)))
 ; :: math:cosine
@@ -484,18 +460,14 @@
 (let n Collection)
 ; :: math:prime-factors f
 (let f Collection)
-; :: math:prime-factors :: optimized-lambda::recursive:math:prime-factors::*510860166*
-(let optimized-lambda::recursive:math:prime-factors::*510860166* (lambda  (do Collection)))
 ; :: math:prime-factors recursive:math:prime-factors
-(let recursive:math:prime-factors (lambda  (do Unknown)))
+(let recursive:math:prime-factors (lambda  (do Collection)))
 ; :: math:prime-factors
-(let math:prime-factors (lambda Unknown (do Unknown)))
-; :: math:prime? :: :: optimized-lambda::recursive:math:prime::*5109345* prime?
+(let math:prime-factors (lambda Unknown (do Collection)))
+; :: math:prime? :: recursive:math:prime prime?
 (let prime? Predicate)
-; :: math:prime? :: :: optimized-lambda::recursive:math:prime::*5109345*
-(let optimized-lambda::recursive:math:prime::*5109345* (lambda Atom Atom (do Abstraction)))
 ; :: math:prime? :: recursive:math:prime
-(let recursive:math:prime (lambda Atom Unknown (do Unknown)))
+(let recursive:math:prime (lambda Atom Atom (do Unknown)))
 ; :: math:prime?
 (let math:prime? (lambda Atom (do Predicate)))
 ; :: math:number-of-digits
@@ -512,16 +484,10 @@
 (let math:largest-power (lambda Atom (do Atom)))
 ; :: math:cartesian-product
 (let math:cartesian-product (lambda Collection Collection (do Unknown)))
-; :: math:fibonacci :: optimized-lambda::memoized:math:fibonacci::*520051958*:memo
-(let optimized-lambda::memoized:math:fibonacci::*520051958*:memo Collection)
-; :: math:fibonacci :: optimized-lambda::memoized:math:fibonacci::*520051958* optimized-lambda::memoized:math:fibonacci::*520051958*:key
-(let optimized-lambda::memoized:math:fibonacci::*520051958*:key Unknown)
-; :: math:fibonacci :: optimized-lambda::memoized:math:fibonacci::*520051958*
-(let optimized-lambda::memoized:math:fibonacci::*520051958* (lambda Atom (do Unknown)))
 ; :: math:fibonacci memoized:math:fibonacci
-(let memoized:math:fibonacci (lambda Unknown (do Unknown)))
+(let memoized:math:fibonacci (lambda Atom (do Atom)))
 ; :: math:fibonacci
-(let math:fibonacci (lambda Unknown (do Unknown)))
+(let math:fibonacci (lambda Atom (do Atom)))
 ; :: math:enumeration I
 (let I Collection)
 ; :: math:enumeration enumeration i
@@ -611,7 +577,7 @@
 ; :: list:flatten
 (let list:flatten (lambda Collection (do Collection)))
 ; :: list:equal?
-(let list:equal? (lambda Unknown Unknown (do Predicate)))
+(let list:equal? (lambda Collection Collection (do Predicate)))
 ; :: list:count-of
 (let list:count-of (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
 ; :: list:count
@@ -632,10 +598,8 @@
 (let array:third (lambda Collection (do Unknown)))
 ; :: array:last
 (let array:last (lambda Unknown (do Unknown)))
-; :: array:for :: optimized-lambda::recursive:array:for::*520653916*
-(let optimized-lambda::recursive:array:for::*520653916* (lambda Atom (do Atom)))
 ; :: array:for recursive:array:for
-(let recursive:array:for (lambda Atom (do Unknown)))
+(let recursive:array:for (lambda Atom (do Atom)))
 ; :: array:for
 (let array:for (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: array:buckets out
@@ -644,52 +608,36 @@
 (let array:buckets (lambda Atom (do Collection)))
 ; :: array:enumerated-for
 (let array:enumerated-for (lambda Collection (lambda Unknown Atom (do Unknown)) (do Collection)))
-; :: array:fill :: optimized-lambda::recursive:array:fill::*520704583*
-(let optimized-lambda::recursive:array:fill::*520704583* (lambda Collection Atom (do Abstraction)))
 ; :: array:fill recursive:array:fill
-(let recursive:array:fill (lambda Unknown Unknown (do Unknown)))
+(let recursive:array:fill (lambda Collection Atom (do Unknown)))
 ; :: array:fill
-(let array:fill (lambda Unknown (lambda  (do Unknown)) (do Unknown)))
-; :: array:of :: optimized-lambda::recursive:array:of::*520749208*
-(let optimized-lambda::recursive:array:of::*520749208* (lambda Collection Atom (do Abstraction)))
+(let array:fill (lambda Atom (lambda  (do Unknown)) (do Unknown)))
 ; :: array:of recursive:array:of
-(let recursive:array:of (lambda Unknown Atom (do Unknown)))
+(let recursive:array:of (lambda Collection Atom (do Unknown)))
 ; :: array:of
 (let array:of (lambda Atom (lambda Atom (do Unknown)) (do Unknown)))
-; :: array:map :: optimized-lambda::recursive:array:map::*520783083*
-(let optimized-lambda::recursive:array:map::*520783083* (lambda Atom Collection (do Abstraction)))
 ; :: array:map recursive:array:map
-(let recursive:array:map (lambda Atom Unknown (do Unknown)))
+(let recursive:array:map (lambda Atom Collection (do Unknown)))
 ; :: array:map
 (let array:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
-; :: array:select :: optimized-lambda::recursive:array:select::*520826458*
-(let optimized-lambda::recursive:array:select::*520826458* (lambda Atom Collection (do Abstraction)))
 ; :: array:select recursive:array:select
-(let recursive:array:select (lambda Atom Unknown (do Unknown)))
+(let recursive:array:select (lambda Atom Collection (do Unknown)))
 ; :: array:select
 (let array:select (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
-; :: array:exclude :: optimized-lambda::recursive:array:exclude::*520872625*
-(let optimized-lambda::recursive:array:exclude::*520872625* (lambda Atom Collection (do Abstraction)))
 ; :: array:exclude recursive:array:exclude
-(let recursive:array:exclude (lambda Atom Unknown (do Unknown)))
+(let recursive:array:exclude (lambda Atom Collection (do Unknown)))
 ; :: array:exclude
 (let array:exclude (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
-; :: array:fold :: optimized-lambda::recursive:array:fold::*520923375*
-(let optimized-lambda::recursive:array:fold::*520923375* (lambda Atom Unknown (do Abstraction)))
 ; :: array:fold recursive:array:fold
 (let recursive:array:fold (lambda Atom Unknown (do Unknown)))
 ; :: array:fold
 (let array:fold (lambda Collection (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
-; :: array:every? :: optimized-lambda::recursive:array:every::*520958958*
-(let optimized-lambda::recursive:array:every::*520958958* (lambda Atom (do Abstraction)))
-; :: array:every? recursive:array:every
-(let recursive:array:every (lambda Atom (do Unknown)))
+; :: array:every? recursive:array:every?
+(let recursive:array:every? (lambda Atom (do Predicate)))
 ; :: array:every?
 (let array:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))
-; :: array:some? :: optimized-lambda::recursive:array:some::*53*
-(let optimized-lambda::recursive:array:some::*53* (lambda Atom (do Abstraction)))
-; :: array:some? recursive:array:some
-(let recursive:array:some (lambda Atom (do Unknown)))
+; :: array:some? recursive:array:some?
+(let recursive:array:some? (lambda Atom (do Predicate)))
 ; :: array:some?
 (let array:some? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))
 ; :: array:find
@@ -698,16 +646,12 @@
 (let index Atom)
 ; :: array:find-option
 (let array:find-option (lambda Collection Unknown (do Collection)))
-; :: array:has? :: optimized-lambda::recursive:array:has::*530071708*
-(let optimized-lambda::recursive:array:has::*530071708* (lambda Atom (do Atom)))
 ; :: array:has? recursive:array:has
-(let recursive:array:has (lambda Atom (do Unknown)))
+(let recursive:array:has (lambda Atom (do Atom)))
 ; :: array:has?
-(let array:has? (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
-; :: array:reverse :: optimized-lambda::recursive:array:reverse::*530105666*
-(let optimized-lambda::recursive:array:reverse::*530105666* (lambda Atom Unknown (do Abstraction)))
+(let array:has? (lambda Collection (lambda Unknown (do Predicate)) (do Atom)))
 ; :: array:reverse recursive:array:reverse
-(let recursive:array:reverse (lambda Atom Unknown (do Unknown)))
+(let recursive:array:reverse (lambda Atom Collection (do Unknown)))
 ; :: array:reverse
 (let array:reverse (lambda Collection (do Unknown)))
 ; :: array:append!
@@ -742,8 +686,6 @@
 (let array:count-of (lambda Collection Unknown (do Atom)))
 ; :: array:count
 (let array:count (lambda Collection Atom (do Atom)))
-; :: array:empty! :: optimized-lambda::recursive:array:empty!::*530231*
-(let optimized-lambda::recursive:array:empty!::*530231* (lambda  (do Unknown)))
 ; :: array:empty! recursive:array:empty!
 (let recursive:array:empty! (lambda  (do Unknown)))
 ; :: array:empty!
@@ -754,20 +696,16 @@
 (let get-option (lambda Collection Atom (do Collection)))
 ; :: array:slice bounds
 (let bounds Atom)
-; :: array:slice :: optimized-lambda::recursive:array:slice::*530296875*
-(let optimized-lambda::recursive:array:slice::*530296875* (lambda Atom Collection (do Abstraction)))
 ; :: array:slice recursive:array:slice
-(let recursive:array:slice (lambda Atom Unknown (do Unknown)))
+(let recursive:array:slice (lambda Atom Collection (do Unknown)))
 ; :: array:slice
 (let array:slice (lambda Collection Atom Atom (do Collection)))
 ; :: car
 (let car (lambda Collection (do Unknown)))
 ; :: cdr bounds
 (let bounds Atom)
-; :: cdr :: optimized-lambda::recursive:cdr::*530869833*
-(let optimized-lambda::recursive:cdr::*530869833* (lambda Atom Collection (do Abstraction)))
 ; :: cdr recursive:cdr
-(let recursive:cdr (lambda Atom Unknown (do Unknown)))
+(let recursive:cdr (lambda Atom Collection (do Unknown)))
 ; :: cdr
 (let cdr (lambda Collection (do Unknown)))
 ; :: cons out
@@ -778,20 +716,16 @@
 (let array:take (lambda Unknown Unknown (do Collection)))
 ; :: array:drop
 (let array:drop (lambda Collection Unknown (do Collection)))
-; :: array:binary-search :: optimized-lambda::recursive:array:binary-search::*530927458* :: index
+; :: array:binary-search recursive:array:binary-search :: index
 (let index Atom)
-; :: array:binary-search :: optimized-lambda::recursive:array:binary-search::*530927458* :: current
+; :: array:binary-search recursive:array:binary-search :: current
 (let current Unknown)
-; :: array:binary-search :: optimized-lambda::recursive:array:binary-search::*530927458*
-(let optimized-lambda::recursive:array:binary-search::*530927458* (lambda Collection Atom Atom Atom (do Atom)))
 ; :: array:binary-search recursive:array:binary-search
-(let recursive:array:binary-search (lambda Collection Unknown Atom Unknown (do Unknown)))
+(let recursive:array:binary-search (lambda Collection Atom Atom Atom (do Atom)))
 ; :: array:binary-search
-(let array:binary-search (lambda Collection Unknown (do Unknown)))
-; :: array:zip :: optimized-lambda::recursive:array:zip::*530994291*
-(let optimized-lambda::recursive:array:zip::*530994291* (lambda Atom Atom Collection (do Abstraction)))
+(let array:binary-search (lambda Collection Atom (do Atom)))
 ; :: array:zip recursive:array:zip
-(let recursive:array:zip (lambda Atom Atom Unknown (do Unknown)))
+(let recursive:array:zip (lambda Atom Atom Collection (do Unknown)))
 ; :: array:zip
 (let array:zip (lambda Collection Collection (do Unknown)))
 ; :: array:unzip
@@ -826,18 +760,16 @@
 (let array:flat (lambda Collection (do Unknown)))
 ; :: array:sort :: pivot
 (let pivot Unknown)
-; :: array:sort :: :: optimized-lambda::recursive:array:sort::*540224291* current
+; :: array:sort :: recursive:array:sort current
 (let current Unknown)
-; :: array:sort :: :: optimized-lambda::recursive:array:sort::*540224291* predicate
+; :: array:sort :: recursive:array:sort predicate
 (let predicate Atom)
-; :: array:sort :: :: optimized-lambda::recursive:array:sort::*540224291* left
+; :: array:sort :: recursive:array:sort left
 (let left Collection)
-; :: array:sort :: :: optimized-lambda::recursive:array:sort::*540224291* right
+; :: array:sort :: recursive:array:sort right
 (let right Collection)
-; :: array:sort :: :: optimized-lambda::recursive:array:sort::*540224291*
-(let optimized-lambda::recursive:array:sort::*540224291* (lambda Atom Atom Unknown Unknown (do Abstraction)))
 ; :: array:sort :: recursive:array:sort
-(let recursive:array:sort (lambda Atom Unknown Unknown Unknown (do Unknown)))
+(let recursive:array:sort (lambda Atom Atom Unknown Unknown (do Collection)))
 ; :: array:sort :: sorted
 (let sorted Collection)
 ; :: array:sort :: left
@@ -847,11 +779,11 @@
 ; :: array:sort
 (let array:sort (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Unknown)))
 ; :: array:sorted-ascending?
-(let array:sorted-ascending? (lambda Collection (do Unknown)))
+(let array:sorted-ascending? (lambda Collection (do Predicate)))
 ; :: array:sorted-descending?
-(let array:sorted-descending? (lambda Collection (do Unknown)))
+(let array:sorted-descending? (lambda Collection (do Predicate)))
 ; :: array:sorted-by?
-(let array:sorted-by? (lambda Collection (lambda Unknown Unknown (do Predicate)) (do Unknown)))
+(let array:sorted-by? (lambda Collection (lambda Unknown Unknown (do Predicate)) (do Predicate)))
 ; :: array:increment!
 (let array:increment! (lambda Collection Atom Atom (do Collection)))
 ; :: array:set
@@ -862,8 +794,6 @@
 (let array:sliding-window (lambda Collection Atom (do Unknown)))
 ; :: array:adjacent-difference len
 (let len Atom)
-; :: array:adjacent-difference :: :: optimized-lambda::recursive:array:adjacent-difference::*540378458*
-(let optimized-lambda::recursive:array:adjacent-difference::*540378458* (lambda Atom Collection (do Unknown)))
 ; :: array:adjacent-difference :: recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Atom Collection (do Unknown)))
 ; :: array:adjacent-difference
@@ -884,12 +814,10 @@
 (let array:chunks (lambda Collection Unknown (do Collection)))
 ; :: array:adjacent-find len
 (let len Atom)
-; :: array:adjacent-find :: :: optimized-lambda::recursive:array:adjacent-find::*540557083* prev
+; :: array:adjacent-find :: recursive:array:adjacent-find prev
 (let prev Unknown)
-; :: array:adjacent-find :: :: optimized-lambda::recursive:array:adjacent-find::*540557083* current
+; :: array:adjacent-find :: recursive:array:adjacent-find current
 (let current Unknown)
-; :: array:adjacent-find :: :: optimized-lambda::recursive:array:adjacent-find::*540557083*
-(let optimized-lambda::recursive:array:adjacent-find::*540557083* (lambda Atom (do Unknown)))
 ; :: array:adjacent-find :: recursive:array:adjacent-find
 (let recursive:array:adjacent-find (lambda Atom (do Unknown)))
 ; :: array:adjacent-find
@@ -930,28 +858,20 @@
 (let len Atom)
 ; :: matrix:rotate-square out
 (let out Unknown)
-; :: matrix:rotate-square :: optimized-lambda::recursive:outer:matrix:rotate-square::*540687666* :: :: optimized-lambda::recursive:inner:matrix:rotate-square::*540714208*
-(let optimized-lambda::recursive:inner:matrix:rotate-square::*540714208* (lambda Atom (do Atom)))
-; :: matrix:rotate-square :: optimized-lambda::recursive:outer:matrix:rotate-square::*540687666* :: recursive:inner:matrix:rotate-square
-(let recursive:inner:matrix:rotate-square (lambda Atom (do Unknown)))
-; :: matrix:rotate-square :: optimized-lambda::recursive:outer:matrix:rotate-square::*540687666*
-(let optimized-lambda::recursive:outer:matrix:rotate-square::*540687666* (lambda Atom (do Atom)))
+; :: matrix:rotate-square recursive:outer:matrix:rotate-square :: recursive:inner:matrix:rotate-square
+(let recursive:inner:matrix:rotate-square (lambda Atom (do Atom)))
 ; :: matrix:rotate-square recursive:outer:matrix:rotate-square
-(let recursive:outer:matrix:rotate-square (lambda Atom (do Unknown)))
+(let recursive:outer:matrix:rotate-square (lambda Atom (do Atom)))
 ; :: matrix:rotate-square
 (let matrix:rotate-square (lambda Collection (do Unknown)))
 ; :: matrix:flip-square len
 (let len Atom)
 ; :: matrix:flip-square out
 (let out Unknown)
-; :: matrix:flip-square :: optimized-lambda::recursive:outer:matrix:flip-square::*540818958* :: :: optimized-lambda::recursive:inner:matrix:flip-square::*540837791*
-(let optimized-lambda::recursive:inner:matrix:flip-square::*540837791* (lambda Atom (do Atom)))
-; :: matrix:flip-square :: optimized-lambda::recursive:outer:matrix:flip-square::*540818958* :: recursive:inner:matrix:flip-square
-(let recursive:inner:matrix:flip-square (lambda Atom (do Unknown)))
-; :: matrix:flip-square :: optimized-lambda::recursive:outer:matrix:flip-square::*540818958*
-(let optimized-lambda::recursive:outer:matrix:flip-square::*540818958* (lambda Atom (do Atom)))
+; :: matrix:flip-square recursive:outer:matrix:flip-square :: recursive:inner:matrix:flip-square
+(let recursive:inner:matrix:flip-square (lambda Atom (do Atom)))
 ; :: matrix:flip-square recursive:outer:matrix:flip-square
-(let recursive:outer:matrix:flip-square (lambda Atom (do Unknown)))
+(let recursive:outer:matrix:flip-square (lambda Atom (do Atom)))
 ; :: matrix:flip-square
 (let matrix:flip-square (lambda Collection (do Unknown)))
 ; :: matrix:dimensions
@@ -994,16 +914,12 @@
 (let from:yx->key (lambda Unknown Unknown (do Unknown)))
 ; :: from:string-or-number->key
 (let from:string-or-number->key (lambda Collection (do Unknown)))
-; :: from:list->array :: optimized-lambda::recursive:from:list->array::*550126125*
-(let optimized-lambda::recursive:from:list->array::*550126125* (lambda Collection Unknown (do Abstraction)))
 ; :: from:list->array recursive:from:list->array
-(let recursive:from:list->array (lambda Unknown Unknown (do Unknown)))
+(let recursive:from:list->array (lambda Collection Collection (do Unknown)))
 ; :: from:list->array
-(let from:list->array (lambda Unknown (do Unknown)))
-; :: from:array->list :: optimized-lambda::recursive:from:array->list::*550158375*
-(let optimized-lambda::recursive:from:array->list::*550158375* (lambda Collection Unknown (do Abstraction)))
+(let from:list->array (lambda Collection (do Unknown)))
 ; :: from:array->list recursive:from:array->list
-(let recursive:from:array->list (lambda Unknown Unknown (do Unknown)))
+(let recursive:from:array->list (lambda Collection Unknown (do Unknown)))
 ; :: from:array->list
 (let from:array->list (lambda Collection (do Unknown)))
 ; :: from:digit->char
@@ -1018,48 +934,38 @@
 (let from:chars->positive-or-negative-digits (lambda Collection (do Unknown)))
 ; :: from:digits->chars
 (let from:digits->chars (lambda Unknown (do Collection)))
-; :: from:digits->integer :: optimized-lambda::recursive:from:digits->integer::*550882708*
-(let optimized-lambda::recursive:from:digits->integer::*550882708* (lambda Atom Atom Atom (do Abstraction)))
 ; :: from:digits->integer recursive:from:digits->integer
-(let recursive:from:digits->integer (lambda Atom Atom Unknown (do Unknown)))
+(let recursive:from:digits->integer (lambda Atom Atom Atom (do Unknown)))
 ; :: from:digits->integer
 (let from:digits->integer (lambda Collection (do Unknown)))
 ; :: from:positive-or-negative-digits->integer negative?
 (let negative? Predicate)
 ; :: from:positive-or-negative-digits->integer digits
 (let digits Collection)
-; :: from:positive-or-negative-digits->integer :: optimized-lambda::recursive:from:positive-or-negative-digits->integer::*550922625*
-(let optimized-lambda::recursive:from:positive-or-negative-digits->integer::*550922625* (lambda Atom Atom Atom (do Abstraction)))
 ; :: from:positive-or-negative-digits->integer recursive:from:positive-or-negative-digits->integer
-(let recursive:from:positive-or-negative-digits->integer (lambda Atom Atom Unknown (do Unknown)))
+(let recursive:from:positive-or-negative-digits->integer (lambda Atom Atom Atom (do Unknown)))
 ; :: from:positive-or-negative-digits->integer
 (let from:positive-or-negative-digits->integer (lambda Unknown (do Atom)))
 ; :: from:positive-or-negative-digits->chars
 (let from:positive-or-negative-digits->chars (lambda Collection (do Unknown)))
-; :: from:integer->digits :: optimized-lambda::recursive:from:integer->digits::*550998791*
-(let optimized-lambda::recursive:from:integer->digits::*550998791* (lambda Atom Collection (do Abstraction)))
 ; :: from:integer->digits recursive:from:integer->digits
-(let recursive:from:integer->digits (lambda Unknown Unknown (do Unknown)))
+(let recursive:from:integer->digits (lambda Atom Collection (do Unknown)))
 ; :: from:integer->digits
-(let from:integer->digits (lambda Unknown (do Unknown)))
+(let from:integer->digits (lambda Atom (do Unknown)))
 ; :: from:number->positive-or-negative-digits negative?
 (let negative? Predicate)
 ; :: from:number->positive-or-negative-digits num
 (let num Atom)
-; :: from:number->positive-or-negative-digits :: optimized-lambda::recursive:from:number->positive-or-negative-digits::*560055458*
-(let optimized-lambda::recursive:from:number->positive-or-negative-digits::*560055458* (lambda Atom Collection (do Abstraction)))
 ; :: from:number->positive-or-negative-digits recursive:from:number->positive-or-negative-digits
-(let recursive:from:number->positive-or-negative-digits (lambda Atom Unknown (do Unknown)))
+(let recursive:from:number->positive-or-negative-digits (lambda Atom Collection (do Unknown)))
 ; :: from:number->positive-or-negative-digits out
 (let out Unknown)
 ; :: from:number->positive-or-negative-digits
 (let from:number->positive-or-negative-digits (lambda Atom (do Unknown)))
-; :: from:number->bits :: optimized-lambda::recursive:from:number->bits::*560108625*
-(let optimized-lambda::recursive:from:number->bits::*560108625* (lambda Atom Collection (do Abstraction)))
 ; :: from:number->bits recursive:from:number->bits
-(let recursive:from:number->bits (lambda Unknown Unknown (do Unknown)))
+(let recursive:from:number->bits (lambda Atom Collection (do Unknown)))
 ; :: from:number->bits
-(let from:number->bits (lambda Unknown (do Unknown)))
+(let from:number->bits (lambda Atom (do Unknown)))
 ; :: from:numbers->chars
 (let from:numbers->chars (lambda Unknown (do Collection)))
 ; :: from:chars->integer
@@ -1102,10 +1008,8 @@
 (let right Unknown)
 ; :: from:float->string :: len
 (let len Atom)
-; :: from:float->string :: :: optimized-lambda::recursive:while::*560274416*
-(let optimized-lambda::recursive:while::*560274416* (lambda Atom (do Atom)))
 ; :: from:float->string :: recursive:while
-(let recursive:while (lambda Atom (do Unknown)))
+(let recursive:while (lambda Atom (do Atom)))
 ; :: from:float->string
 (let from:float->string (lambda Atom (do Unknown)))
 ; :: from:floats->strings
@@ -1134,22 +1038,16 @@
 (let q Collection)
 ; :: from:array->brray half
 (let half Atom)
-; :: from:array->brray :: optimized-lambda::recursive:left:from:array->brray::*560418041*
-(let optimized-lambda::recursive:left:from:array->brray::*560418041* (lambda Atom (do Atom)))
 ; :: from:array->brray recursive:left:from:array->brray
-(let recursive:left:from:array->brray (lambda Unknown (do Unknown)))
-; :: from:array->brray :: optimized-lambda::recursive:right:from:array->brray::*560441833*
-(let optimized-lambda::recursive:right:from:array->brray::*560441833* (lambda Atom Atom (do Atom)))
+(let recursive:left:from:array->brray (lambda Atom (do Atom)))
 ; :: from:array->brray recursive:right:from:array->brray
-(let recursive:right:from:array->brray (lambda Atom Unknown (do Unknown)))
+(let recursive:right:from:array->brray (lambda Atom Atom (do Atom)))
 ; :: from:array->brray
 (let from:array->brray (lambda Collection (do Collection)))
 ; :: from:brray->array out
 (let out Collection)
-; :: from:brray->array :: optimized-lambda::recursive:from:brray->array::*560470208*
-(let optimized-lambda::recursive:from:brray->array::*560470208* (lambda Atom Atom (do Atom)))
 ; :: from:brray->array recursive:from:brray->array
-(let recursive:from:brray->array (lambda Atom Unknown (do Unknown)))
+(let recursive:from:brray->array (lambda Atom Atom (do Atom)))
 ; :: from:brray->array
 (let from:brray->array (lambda Collection (do Collection)))
 ; :: from:matrix->string
@@ -1176,68 +1074,48 @@
 (let temp Unknown)
 ; :: array:swap!
 (let array:swap! (lambda Collection Atom Atom (do Collection)))
-; :: array:index-of :: optimized-lambda::recursive:array:index-of::*560582875*
-(let optimized-lambda::recursive:array:index-of::*560582875* (lambda Atom (do Atom)))
 ; :: array:index-of recursive:array:index-of
-(let recursive:array:index-of (lambda Atom (do Unknown)))
+(let recursive:array:index-of (lambda Atom (do Atom)))
 ; :: array:index-of
-(let array:index-of (lambda Collection Atom (do Unknown)))
+(let array:index-of (lambda Collection Atom (do Atom)))
 ; :: array:enumerate
 (let array:enumerate (lambda Collection (do Unknown)))
-; :: array:enumerated-map :: optimized-lambda::recursive:array:enumerated-map::*560619208*
-(let optimized-lambda::recursive:array:enumerated-map::*560619208* (lambda Atom Collection (do Abstraction)))
 ; :: array:enumerated-map recursive:array:enumerated-map
-(let recursive:array:enumerated-map (lambda Atom Unknown (do Unknown)))
+(let recursive:array:enumerated-map (lambda Atom Collection (do Unknown)))
 ; :: array:enumerated-map
 (let array:enumerated-map (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
-; :: array:enumerated-select :: optimized-lambda::recursive:array:enumerated-select::*560648*
-(let optimized-lambda::recursive:array:enumerated-select::*560648* (lambda Atom Collection (do Abstraction)))
 ; :: array:enumerated-select recursive:array:enumerated-select
-(let recursive:array:enumerated-select (lambda Atom Unknown (do Unknown)))
+(let recursive:array:enumerated-select (lambda Atom Collection (do Unknown)))
 ; :: array:enumerated-select
 (let array:enumerated-select (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
-; :: array:enumerated-exclude :: optimized-lambda::recursive:array:enumerated-exclude::*56068375*
-(let optimized-lambda::recursive:array:enumerated-exclude::*56068375* (lambda Atom Collection (do Abstraction)))
 ; :: array:enumerated-exclude recursive:array:enumerated-exclude
-(let recursive:array:enumerated-exclude (lambda Atom Unknown (do Unknown)))
+(let recursive:array:enumerated-exclude (lambda Atom Collection (do Unknown)))
 ; :: array:enumerated-exclude
 (let array:enumerated-exclude (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
-; :: array:enumerated-fold :: optimized-lambda::recursive:array:enumerated-fold::*560720833*
-(let optimized-lambda::recursive:array:enumerated-fold::*560720833* (lambda Atom Unknown (do Abstraction)))
 ; :: array:enumerated-fold recursive:array:enumerated-fold
 (let recursive:array:enumerated-fold (lambda Atom Unknown (do Unknown)))
 ; :: array:enumerated-fold
 (let array:enumerated-fold (lambda Collection (lambda Unknown Unknown Atom (do Unknown)) Unknown (do Unknown)))
-; :: array:enumerated-find :: optimized-lambda::recursive:array:enumerated-find::*560747333*
-(let optimized-lambda::recursive:array:enumerated-find::*560747333* (lambda Atom (do Unknown)))
 ; :: array:enumerated-find recursive:array:enumerated-find
 (let recursive:array:enumerated-find (lambda Atom (do Unknown)))
 ; :: array:enumerated-find
 (let array:enumerated-find (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
-; :: array:enumerated-find-index :: optimized-lambda::recursive:array:enumerated-find-index::*56078*
-(let optimized-lambda::recursive:array:enumerated-find-index::*56078* (lambda Atom (do Atom)))
 ; :: array:enumerated-find-index recursive:array:enumerated-find-index
-(let recursive:array:enumerated-find-index (lambda Collection Atom (do Unknown)))
+(let recursive:array:enumerated-find-index (lambda Atom (do Atom)))
 ; :: array:enumerated-find-index
-(let array:enumerated-find-index (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
-; :: array:enumerated-every? :: optimized-lambda::recursive:array:enumerated-every::*560810625*
-(let optimized-lambda::recursive:array:enumerated-every::*560810625* (lambda Atom (do Abstraction)))
-; :: array:enumerated-every? recursive:array:enumerated-every
-(let recursive:array:enumerated-every (lambda Atom (do Unknown)))
+(let array:enumerated-find-index (lambda Collection (lambda Unknown Atom (do Predicate)) (do Atom)))
+; :: array:enumerated-every? recursive:array:enumerated-every?
+(let recursive:array:enumerated-every? (lambda Atom (do Predicate)))
 ; :: array:enumerated-every?
-(let array:enumerated-every? (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
-; :: array:enumerated-some? :: optimized-lambda::recursive:array:enumerated-some::*560843583*
-(let optimized-lambda::recursive:array:enumerated-some::*560843583* (lambda Atom (do Abstraction)))
-; :: array:enumerated-some? recursive:array:enumerated-some
-(let recursive:array:enumerated-some (lambda Atom (do Unknown)))
+(let array:enumerated-every? (lambda Collection (lambda Unknown Atom (do Predicate)) (do Predicate)))
+; :: array:enumerated-some? recursive:array:enumerated-some?
+(let recursive:array:enumerated-some? (lambda Atom (do Predicate)))
 ; :: array:enumerated-some?
-(let array:enumerated-some? (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
-; :: array:find-index :: optimized-lambda::recursive:array:find-index::*560879875*
-(let optimized-lambda::recursive:array:find-index::*560879875* (lambda Atom (do Atom)))
+(let array:enumerated-some? (lambda Collection (lambda Unknown Atom (do Predicate)) (do Predicate)))
 ; :: array:find-index recursive:array:find-index
-(let recursive:array:find-index (lambda Atom (do Unknown)))
+(let recursive:array:find-index (lambda Atom (do Atom)))
 ; :: array:find-index
-(let array:find-index (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
+(let array:find-index (lambda Collection (lambda Unknown (do Predicate)) (do Atom)))
 ; :: array:remove
 (let array:remove (lambda Collection Atom (do Unknown)))
 ; :: array:pad-right
@@ -1262,18 +1140,16 @@
 (let count Collection)
 ; :: string:character-occurances at-least-one
 (let at-least-one Collection)
-; :: string:character-occurances :: optimized-lambda::recursive:string:character-occurances::*570023291* ch
+; :: string:character-occurances recursive:string:character-occurances ch
 (let ch Unknown)
-; :: string:character-occurances :: optimized-lambda::recursive:string:character-occurances::*570023291* code
+; :: string:character-occurances recursive:string:character-occurances code
 (let code Atom)
-; :: string:character-occurances :: optimized-lambda::recursive:string:character-occurances::*570023291* mask
+; :: string:character-occurances recursive:string:character-occurances mask
 (let mask Atom)
-; :: string:character-occurances :: optimized-lambda::recursive:string:character-occurances::*570023291*
-(let optimized-lambda::recursive:string:character-occurances::*570023291* (lambda Atom Atom (do Abstraction)))
 ; :: string:character-occurances recursive:string:character-occurances
-(let recursive:string:character-occurances (lambda Atom Unknown (do Unknown)))
+(let recursive:string:character-occurances (lambda Atom Atom (do Atom)))
 ; :: string:character-occurances
-(let string:character-occurances (lambda Collection Atom (do Unknown)))
+(let string:character-occurances (lambda Collection Atom (do Atom)))
 ; :: string:slice-from index
 (let index Atom)
 ; :: string:slice-from
@@ -1302,16 +1178,12 @@
 (let prev Unknown)
 ; :: string:split
 (let string:split (lambda Collection Unknown (do Collection)))
-; :: string:match :: :: optimized-lambda::recursive:string:match::*570250416*
-(let optimized-lambda::recursive:string:match::*570250416* (lambda Collection Atom (do Atom)))
 ; :: string:match :: recursive:string:match
-(let recursive:string:match (lambda Collection Atom (do Unknown)))
+(let recursive:string:match (lambda Collection Atom (do Atom)))
 ; :: string:match
 (let string:match (lambda Collection Unknown (do Atom)))
-; :: string:has? :: :: optimized-lambda::recursive:string:has::*570360708*
-(let optimized-lambda::recursive:string:has::*570360708* (lambda Collection Atom (do Atom)))
 ; :: string:has? :: recursive:string:has
-(let recursive:string:has (lambda Collection Atom (do Unknown)))
+(let recursive:string:has (lambda Collection Atom (do Atom)))
 ; :: string:has?
 (let string:has? (lambda Collection Collection (do Predicate)))
 ; :: string:lesser? :: a
@@ -1322,12 +1194,10 @@
 (let pairs Collection)
 ; :: string:lesser? :: is
 (let is Collection)
-; :: string:lesser? :: :: optimized-lambda::recursive:string:lesser::*570487458* :: current
+; :: string:lesser? :: recursive:string:lesser :: current
 (let current Unknown)
-; :: string:lesser? :: :: optimized-lambda::recursive:string:lesser::*570487458*
-(let optimized-lambda::recursive:string:lesser::*570487458* (lambda  (do Atom)))
 ; :: string:lesser? :: recursive:string:lesser
-(let recursive:string:lesser (lambda  (do Unknown)))
+(let recursive:string:lesser (lambda  (do Atom)))
 ; :: string:lesser?
 (let string:lesser? (lambda Collection Collection (do Predicate)))
 ; :: string:greater? :: a
@@ -1338,12 +1208,10 @@
 (let pairs Collection)
 ; :: string:greater? :: is
 (let is Collection)
-; :: string:greater? :: :: optimized-lambda::recursive:string:greater::*570584583* :: current
+; :: string:greater? :: recursive:string:greater :: current
 (let current Collection)
-; :: string:greater? :: :: optimized-lambda::recursive:string:greater::*570584583*
-(let optimized-lambda::recursive:string:greater::*570584583* (lambda  (do Atom)))
 ; :: string:greater? :: recursive:string:greater
-(let recursive:string:greater (lambda  (do Unknown)))
+(let recursive:string:greater (lambda  (do Atom)))
 ; :: string:greater?
 (let string:greater? (lambda Collection Collection (do Predicate)))
 ; :: string:greater-or-equal?
@@ -1414,16 +1282,12 @@
 (let string:prepend (lambda Collection Collection (do Collection)))
 ; :: string:pad-left n
 (let n Atom)
-; :: string:pad-left :: optimized-lambda::recursive:string:pad-left::*570967*
-(let optimized-lambda::recursive:string:pad-left::*570967* (lambda Atom Collection (do Abstraction)))
 ; :: string:pad-left recursive:string:pad-left
 (let recursive:string:pad-left (lambda Atom Collection (do Unknown)))
 ; :: string:pad-left
 (let string:pad-left (lambda Collection Atom Collection (do Unknown)))
 ; :: string:pad-right n
 (let n Atom)
-; :: string:pad-right :: optimized-lambda::recursive:string:pad-right::*580000333*
-(let optimized-lambda::recursive:string:pad-right::*580000333* (lambda Atom Collection (do Abstraction)))
 ; :: string:pad-right recursive:string:pad-right
 (let recursive:string:pad-right (lambda Atom Collection (do Unknown)))
 ; :: string:pad-right
@@ -1432,10 +1296,8 @@
 (let xs Collection)
 ; :: string:upper n
 (let n Atom)
-; :: string:upper :: optimized-lambda::recursive:string:upper::*580032208* :: current-char
+; :: string:upper recursive:string:upper :: current-char
 (let current-char Unknown)
-; :: string:upper :: optimized-lambda::recursive:string:upper::*580032208*
-(let optimized-lambda::recursive:string:upper::*580032208* (lambda Atom (do Unknown)))
 ; :: string:upper recursive:string:upper
 (let recursive:string:upper (lambda Atom (do Unknown)))
 ; :: string:upper
@@ -1444,10 +1306,8 @@
 (let xs Collection)
 ; :: string:lower n
 (let n Atom)
-; :: string:lower :: optimized-lambda::recursive:string:lower::*580088166* :: current-char
+; :: string:lower recursive:string:lower :: current-char
 (let current-char Unknown)
-; :: string:lower :: optimized-lambda::recursive:string:lower::*580088166*
-(let optimized-lambda::recursive:string:lower::*580088166* (lambda Atom (do Unknown)))
 ; :: string:lower recursive:string:lower
 (let recursive:string:lower (lambda Atom (do Unknown)))
 ; :: string:lower
@@ -1510,12 +1370,10 @@
 (let prime-num Atom)
 ; :: set:index total
 (let total Collection)
-; :: set:index :: optimized-lambda::recursive:set:index::*580242875* letter
+; :: set:index recursive:set:index letter
 (let letter Unknown)
-; :: set:index :: optimized-lambda::recursive:set:index::*580242875*
-(let optimized-lambda::recursive:set:index::*580242875* (lambda Atom Atom (do Abstraction)))
 ; :: set:index recursive:set:index
-(let recursive:set:index (lambda Atom Unknown (do Unknown)))
+(let recursive:set:index (lambda Atom Atom (do Unknown)))
 ; :: set:index
 (let set:index (lambda Collection Collection (do Unknown)))
 ; :: set:add! idx
@@ -1619,7 +1477,7 @@
 ; :: map:get :: current
 (let current Unknown)
 ; :: map:get :: found-index
-(let found-index Unknown)
+(let found-index Atom)
 ; :: map:get
 (let map:get (lambda Unknown Collection (do Unknown)))
 ; :: map:get-option idx
@@ -1627,7 +1485,7 @@
 ; :: map:get-option :: current
 (let current Collection)
 ; :: map:get-option :: index
-(let index Unknown)
+(let index Atom)
 ; :: map:get-option
 (let map:get-option (lambda Collection Collection (do Unknown)))
 ; :: map:has? idx
@@ -1637,9 +1495,9 @@
 ; :: map:has?
 (let map:has? (lambda Collection Unknown (do Predicate)))
 ; :: map:exists?
-(let map:exists? (lambda Collection Unknown (do Predicate)))
+(let map:exists? (lambda Collection Collection (do Predicate)))
 ; :: map:not-exists?
-(let map:not-exists? (lambda Collection Unknown (do Predicate)))
+(let map:not-exists? (lambda Collection Collection (do Predicate)))
 ; :: map:count
 (let map:count (lambda Collection (do Unknown)))
 ; :: doubly-linked-list:prev!
@@ -1738,26 +1596,20 @@
 (let len Atom)
 ; :: brray:remove-from-right!
 (let brray:remove-from-right! (lambda Collection (do Atom)))
-; :: brray:iter :: optimized-lambda::recursive:brray:iter::*590079375*
-(let optimized-lambda::recursive:brray:iter::*590079375* (lambda Atom Atom (do Atom)))
 ; :: brray:iter recursive:brray:iter
-(let recursive:brray:iter (lambda Atom Unknown (do Unknown)))
+(let recursive:brray:iter (lambda Atom Atom (do Atom)))
 ; :: brray:iter
-(let brray:iter (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
+(let brray:iter (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: brray:map result
 (let result Collection)
 ; :: brray:map len
 (let len Atom)
 ; :: brray:map half
 (let half Atom)
-; :: brray:map :: optimized-lambda::recursive:left:brray:map::*590112291*
-(let optimized-lambda::recursive:left:brray:map::*590112291* (lambda Atom (do Atom)))
 ; :: brray:map recursive:left:brray:map
-(let recursive:left:brray:map (lambda Unknown (do Unknown)))
-; :: brray:map :: optimized-lambda::recursive:right:brray:map::*590135208*
-(let optimized-lambda::recursive:right:brray:map::*590135208* (lambda Atom Atom (do Atom)))
+(let recursive:left:brray:map (lambda Atom (do Atom)))
 ; :: brray:map recursive:right:brray:map
-(let recursive:right:brray:map (lambda Atom Unknown (do Unknown)))
+(let recursive:right:brray:map (lambda Atom Atom (do Atom)))
 ; :: brray:map
 (let brray:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: brray:balance?
@@ -1766,14 +1618,10 @@
 (let initial Collection)
 ; :: brray:balance! :: half
 (let half Atom)
-; :: brray:balance! :: :: optimized-lambda::recursive:left:brray:balance!::*590174916*
-(let optimized-lambda::recursive:left:brray:balance!::*590174916* (lambda Atom (do Atom)))
 ; :: brray:balance! :: recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Unknown (do Unknown)))
-; :: brray:balance! :: :: optimized-lambda::recursive:right:brray:balance!::*590196125*
-(let optimized-lambda::recursive:right:brray:balance!::*590196125* (lambda Atom Atom (do Atom)))
+(let recursive:left:brray:balance! (lambda Atom (do Atom)))
 ; :: brray:balance! :: recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Atom Unknown (do Unknown)))
+(let recursive:right:brray:balance! (lambda Atom Atom (do Atom)))
 ; :: brray:balance!
 (let brray:balance! (lambda Collection (do Unknown)))
 ; :: brray:append!
@@ -1798,18 +1646,14 @@
 (let brray:pop-left! (lambda Collection (do Unknown)))
 ; :: brray:rotate-left! N
 (let N Atom)
-; :: brray:rotate-left! :: optimized-lambda::recursive:brray:rotate-left!::*590267*
-(let optimized-lambda::recursive:brray:rotate-left!::*590267* (lambda Atom Atom (do Atom)))
 ; :: brray:rotate-left! recursive:brray:rotate-left!
-(let recursive:brray:rotate-left! (lambda Atom Atom (do Unknown)))
+(let recursive:brray:rotate-left! (lambda Atom Atom (do Atom)))
 ; :: brray:rotate-left!
 (let brray:rotate-left! (lambda Collection Atom (do Unknown)))
 ; :: brray:rotate-right! N
 (let N Atom)
-; :: brray:rotate-right! :: optimized-lambda::recursive:brray:rotate-left!::*590303791*
-(let optimized-lambda::recursive:brray:rotate-left!::*590303791* (lambda Atom Atom (do Atom)))
 ; :: brray:rotate-right! recursive:brray:rotate-left!
-(let recursive:brray:rotate-left! (lambda Atom Atom (do Unknown)))
+(let recursive:brray:rotate-left! (lambda Atom Atom (do Atom)))
 ; :: brray:rotate-right!
 (let brray:rotate-right! (lambda Collection Atom (do Unknown)))
 ; :: brray:slice len
@@ -1824,14 +1668,10 @@
 (let slice-len Atom)
 ; :: brray:slice half
 (let half Atom)
-; :: brray:slice :: optimized-lambda::recursive:left:brray:slice::*590388166*
-(let optimized-lambda::recursive:left:brray:slice::*590388166* (lambda Atom (do Atom)))
 ; :: brray:slice recursive:left:brray:slice
-(let recursive:left:brray:slice (lambda Unknown (do Unknown)))
-; :: brray:slice :: optimized-lambda::recursive:right:brray:slice::*590410833*
-(let optimized-lambda::recursive:right:brray:slice::*590410833* (lambda Atom Atom (do Atom)))
+(let recursive:left:brray:slice (lambda Atom (do Atom)))
 ; :: brray:slice recursive:right:brray:slice
-(let recursive:right:brray:slice (lambda Atom Unknown (do Unknown)))
+(let recursive:right:brray:slice (lambda Atom Atom (do Atom)))
 ; :: brray:slice
 (let brray:slice (lambda Collection Atom Atom (do Collection)))
 ; :: queue:empty?
@@ -1892,36 +1732,26 @@
 (let date:month-day (lambda Collection (do Unknown)))
 ; :: date:year-month
 (let date:year-month (lambda Collection (do Collection)))
-; :: loop:for-range :: optimized-lambda::recursive:loop:for-range::*590922083*
-(let optimized-lambda::recursive:loop:for-range::*590922083* (lambda Atom (do Atom)))
 ; :: loop:for-range recursive:loop:for-range
-(let recursive:loop:for-range (lambda Unknown (do Unknown)))
+(let recursive:loop:for-range (lambda Atom (do Atom)))
 ; :: loop:for-range
-(let loop:for-range (lambda Unknown Atom (lambda Atom (do Unknown)) (do Unknown)))
-; :: loop:for-n :: optimized-lambda::recursive:loop:for-n::*590952958*
-(let optimized-lambda::recursive:loop:for-n::*590952958* (lambda Atom (do Atom)))
+(let loop:for-range (lambda Atom Atom (lambda Atom (do Unknown)) (do Atom)))
 ; :: loop:for-n recursive:loop:for-n
-(let recursive:loop:for-n (lambda Atom (do Unknown)))
+(let recursive:loop:for-n (lambda Atom (do Atom)))
 ; :: loop:for-n
-(let loop:for-n (lambda Atom (lambda Atom (do Unknown)) (do Unknown)))
-; :: loop:repeat :: optimized-lambda::recursive:loop:repeat::*590976416*
-(let optimized-lambda::recursive:loop:repeat::*590976416* (lambda Atom (do Atom)))
+(let loop:for-n (lambda Atom (lambda Atom (do Unknown)) (do Atom)))
 ; :: loop:repeat recursive:loop:repeat
-(let recursive:loop:repeat (lambda Atom (do Unknown)))
+(let recursive:loop:repeat (lambda Atom (do Atom)))
 ; :: loop:repeat
-(let loop:repeat (lambda Atom (lambda  (do Unknown)) (do Unknown)))
-; :: loop:some-n? :: optimized-lambda::recursive:loop:some-n::*590996291*
-(let optimized-lambda::recursive:loop:some-n::*590996291* (lambda Atom (do Atom)))
+(let loop:repeat (lambda Atom (lambda  (do Unknown)) (do Atom)))
 ; :: loop:some-n? recursive:loop:some-n
-(let recursive:loop:some-n (lambda Atom (do Unknown)))
+(let recursive:loop:some-n (lambda Atom (do Atom)))
 ; :: loop:some-n?
-(let loop:some-n? (lambda Atom (lambda Atom (do Predicate)) (do Unknown)))
-; :: loop:some-range? :: optimized-lambda::recursive:loop:some-range::*600016541*
-(let optimized-lambda::recursive:loop:some-range::*600016541* (lambda Atom (do Atom)))
+(let loop:some-n? (lambda Atom (lambda Atom (do Predicate)) (do Atom)))
 ; :: loop:some-range? recursive:loop:some-range
-(let recursive:loop:some-range (lambda Unknown (do Unknown)))
+(let recursive:loop:some-range (lambda Atom (do Atom)))
 ; :: loop:some-range?
-(let loop:some-range? (lambda Unknown Atom (lambda Atom (do Predicate)) (do Unknown)))
+(let loop:some-range? (lambda Atom Atom (lambda Atom (do Predicate)) (do Atom)))
 ; :: node:parent
 (let node:parent (lambda Atom (do Atom)))
 ; :: node:left
@@ -1934,22 +1764,18 @@
 (let heap:greater? (lambda Collection Atom Atom (lambda Unknown Unknown (do Predicate)) (do Predicate)))
 ; :: heap:sift-up! node
 (let node Collection)
-; :: heap:sift-up! :: optimized-lambda::recursive:heap:sift-up!::*600053875*
-(let optimized-lambda::recursive:heap:sift-up!::*600053875* (lambda  (do Atom)))
 ; :: heap:sift-up! recursive:heap:sift-up!
-(let recursive:heap:sift-up! (lambda  (do Unknown)))
+(let recursive:heap:sift-up! (lambda  (do Atom)))
 ; :: heap:sift-up!
-(let heap:sift-up! (lambda Collection Unknown (do Unknown)))
+(let heap:sift-up! (lambda Collection Unknown (do Atom)))
 ; :: heap:sift-down! node
 (let node Collection)
-; :: heap:sift-down! :: optimized-lambda::recursive:heap:sift-down!::*60009825* :: max-child
+; :: heap:sift-down! recursive:heap:sift-down! :: max-child
 (let max-child Atom)
-; :: heap:sift-down! :: optimized-lambda::recursive:heap:sift-down!::*60009825*
-(let optimized-lambda::recursive:heap:sift-down!::*60009825* (lambda  (do Atom)))
 ; :: heap:sift-down! recursive:heap:sift-down!
-(let recursive:heap:sift-down! (lambda  (do Unknown)))
+(let recursive:heap:sift-down! (lambda  (do Atom)))
 ; :: heap:sift-down!
-(let heap:sift-down! (lambda Collection Unknown (do Unknown)))
+(let heap:sift-down! (lambda Collection Unknown (do Atom)))
 ; :: heap:peek
 (let heap:peek (lambda Collection (do Unknown)))
 ; :: heap:push!
@@ -2014,10 +1840,8 @@
 (let array:head (lambda Collection (do Unknown)))
 ; :: array:tail bounds
 (let bounds Atom)
-; :: array:tail :: optimized-lambda::recursive:array:tail::*600285958*
-(let optimized-lambda::recursive:array:tail::*600285958* (lambda Atom Collection (do Abstraction)))
 ; :: array:tail recursive:array:tail
-(let recursive:array:tail (lambda Atom Unknown (do Unknown)))
+(let recursive:array:tail (lambda Atom Collection (do Unknown)))
 ; :: array:tail
 (let array:tail (lambda Collection (do Unknown)))
 ; :: array:car
@@ -2025,7 +1849,7 @@
 ; :: array:cdr
 (let array:cdr (lambda Collection (do Unknown)))
 ; :: array:for-range
-(let array:for-range (lambda Unknown Atom (lambda Atom (do Unknown)) (do Unknown)))
+(let array:for-range (lambda Atom Atom (lambda Atom (do Unknown)) (do Atom)))
 ; :: π
 (let π Atom)
 ; :: λ

@@ -719,7 +719,14 @@ Trying to access undefined variable zz (check #11)
 Trying to access undefined variable y (check #11)
 Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #15)`
     )
-
+    fails(
+      `(let array:enumerated-find-index (lambda xs predicate? (do
+                    (let recursive:array:enumerated-find-index (lambda i
+                          (if (> (length xs) i)
+                              (if (predicate? (get xs i) i) i (recursive:array:enumerated-find-index (+ i 1))) -1)))
+                        (recursive:array:enumerated-find-index xs 0))))`,
+      `Incorrect number of arguments for (recursive:array:enumerated-find-index). Expected (= 1) but got 2 (recursive:array:enumerated-find-index xs 0) (check #15)`
+    )
     fails(
       `(let add (lambda a b (+ a b)))
 (let f1 (lambda x x))
@@ -1078,6 +1085,7 @@ Incorrect type of arguments 0 for (var:get). Expected (Collection) but got (Atom
 Incorrect type of arguments 0 for (var:get). Expected (Collection) but got (Atom) (var:get at-least-one?) (check #30)
 Incorrect type of arguments 0 for (var:set!). Expected (Collection) but got (Atom) (var:set! at-least-one? 1) (check #10)
 Incorrect type of arguments 0 for (var:set!). Expected (Collection) but got (Atom) (var:set! at-least-one? 1) (check #30)
+Incorrect number of arguments for (recursive:array:enumerated-find-index). Expected (= 1) but got 2 (recursive:array:enumerated-find-index xs 0) (check #15)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)
@@ -1086,17 +1094,19 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
-Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Abstraction) (array:second sorted) (check #30)
-Incorrect type of arguments 0 for (array:first). Expected (Collection) but got (Abstraction) (array:first sorted) (check #30)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 list:every? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
+recursive:array:every should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+recursive:array:some should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
 predicate should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 predicate is assigned to the result of a (Predicate) so predicate must end in (?) (check #23)
+recursive:array:enumerated-every should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
+recursive:array:enumerated-some should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
 set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)

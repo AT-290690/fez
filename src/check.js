@@ -238,10 +238,7 @@ export const typeCheck = (ast) => {
                           ) {
                             env[name][STATS][prop] =
                               env[re[0][0][VALUE]][STATS][RETURNS]
-                            if (
-                              re[0][0][TYPE] === APPLY &&
-                              !name.startsWith(OPTIMIZED_PREFIX)
-                            ) {
+                            if (re[0][0][TYPE] === APPLY) {
                               switch (re[0][0][VALUE]) {
                                 case KEYWORDS.ANONYMOUS_FUNCTION:
                                   // FN UKNONW ASSIGMENT
@@ -263,10 +260,7 @@ export const typeCheck = (ast) => {
                               env[re[1][0][VALUE]][STATS][prop]
                             env[name][STATS][prop] =
                               env[re[1][0][VALUE]][STATS][RETURNS]
-                            if (
-                              re[1][0][TYPE] === APPLY &&
-                              !name.startsWith(OPTIMIZED_PREFIX)
-                            ) {
+                            if (re[1][0][TYPE] === APPLY) {
                               switch (re[1][0][VALUE]) {
                                 case KEYWORDS.ANONYMOUS_FUNCTION:
                                   // FN ASSIGMENT

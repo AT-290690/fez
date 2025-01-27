@@ -523,7 +523,7 @@ export const deSuggarAst = (ast, scope) => {
                   ) {
                     const name = exp[1][VALUE]
                     const prefix = name.split(':')[0]
-                    if (prefix === OPTIMIZATIONS.RECURSION) {
+                    if (false && prefix === OPTIMIZATIONS.RECURSION) {
                       if (getSuffix(name) === PREDICATE_SUFFIX) {
                         throw new TypeError(
                           `Optimized (lambda) ${name} can't be a (Predicate) as it will return a (lambda). Remove the (${PREDICATE_SUFFIX}) from the name`
@@ -624,7 +624,7 @@ export const deSuggarAst = (ast, scope) => {
                         ]
                       ]
                       deSuggarAst(exp[exp.length - 1])
-                    } else if (prefix === OPTIMIZATIONS.CACHE) {
+                    } else if (false && prefix === OPTIMIZATIONS.CACHE) {
                       if (getSuffix(name) === PREDICATE_SUFFIX) {
                         throw new TypeError(
                           `Optimized (lambda) ${name} can't be a (Predicate) as it will return a (lambda). Remove the (${PREDICATE_SUFFIX}) from the name`
