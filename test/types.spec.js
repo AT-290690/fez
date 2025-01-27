@@ -976,6 +976,10 @@ Incorrect type of arguments 0 for (array:second). Expected (Collection) but got 
 ; [(part1 PARSED) (part2 PARSED)]`,
       `Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Abstraction) (- matrix:shallow-copy y2) (check #3)`
     )
+    fails(
+      `(array:fold [1 2 3] (lambda x y x (+ x 1)) 11)`,
+      `Incorrect number of arguments for (array:fold). Expected (= 2) but got 3 (array:fold (array 1 2 3) (lambda x y x (+ x 1)) 11) (check #777)`
+    )
     // Maybe this is ok since all branches return different stuff
     fails(
       `(let array:equal? (lambda a b
