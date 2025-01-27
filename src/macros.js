@@ -550,79 +550,76 @@ export const deSuggarAst = (ast, scope) => {
                       )
 
                       exp[exp.length - 1] = [
-                        [APPLY, STATIC_TYPES.UNKNOWN],
+                        [APPLY, KEYWORDS.CALL_FUNCTION],
                         [
-                          [APPLY, KEYWORDS.CALL_FUNCTION],
+                          [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
                           [
-                            [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                            [APPLY, KEYWORDS.BLOCK],
                             [
-                              [APPLY, KEYWORDS.BLOCK],
-                              [
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                [WORD, newName],
-                                last
-                              ],
-                              args.length < 5
-                                ? [
-                                    [
-                                      APPLY,
-                                      `optimization:tail-calls-${args.length}`
-                                    ],
-                                    [WORD, newName]
-                                  ]
-                                : [
-                                    [APPLY, KEYWORDS.CALL_FUNCTION],
-                                    [WORD, newName],
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, newName],
+                              last
+                            ],
+                            args.length < 5
+                              ? [
+                                  [
+                                    APPLY,
+                                    `optimization:tail-calls-${args.length}`
+                                  ],
+                                  [WORD, newName]
+                                ]
+                              : [
+                                  [APPLY, KEYWORDS.CALL_FUNCTION],
+                                  [WORD, newName],
+                                  [
+                                    [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                    [WORD, '*fn*'],
                                     [
                                       [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                      [WORD, '*fn*'],
+                                      ...args,
                                       [
-                                        [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                        ...args,
+                                        [APPLY, KEYWORDS.BLOCK],
                                         [
-                                          [APPLY, KEYWORDS.BLOCK],
+                                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                          [WORD, '*res*'],
                                           [
-                                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                            [WORD, '*res*'],
+                                            [APPLY, KEYWORDS.CREATE_ARRAY],
+                                            [[APPLY, '*fn*'], ...args]
+                                          ]
+                                        ],
+                                        [
+                                          [APPLY, KEYWORDS.LOOP],
+                                          [
+                                            [APPLY, KEYWORDS.IS_LAMBDA],
                                             [
-                                              [APPLY, KEYWORDS.CREATE_ARRAY],
-                                              [[APPLY, '*fn*'], ...args]
+                                              [APPLY, KEYWORDS.GET_ARRAY],
+                                              [WORD, '*res*'],
+                                              [ATOM, 0]
                                             ]
                                           ],
                                           [
-                                            [APPLY, KEYWORDS.LOOP],
+                                            [APPLY, KEYWORDS.SET_ARRAY],
+                                            [WORD, '*res*'],
+                                            [ATOM, 0],
                                             [
-                                              [APPLY, KEYWORDS.IS_LAMBDA],
+                                              [APPLY, KEYWORDS.CALL_FUNCTION],
                                               [
                                                 [APPLY, KEYWORDS.GET_ARRAY],
                                                 [WORD, '*res*'],
                                                 [ATOM, 0]
                                               ]
-                                            ],
-                                            [
-                                              [APPLY, KEYWORDS.SET_ARRAY],
-                                              [WORD, '*res*'],
-                                              [ATOM, 0],
-                                              [
-                                                [APPLY, KEYWORDS.CALL_FUNCTION],
-                                                [
-                                                  [APPLY, KEYWORDS.GET_ARRAY],
-                                                  [WORD, '*res*'],
-                                                  [ATOM, 0]
-                                                ]
-                                              ]
                                             ]
-                                          ],
-                                          [
-                                            [APPLY, KEYWORDS.GET_ARRAY],
-                                            [WORD, '*res*'],
-                                            [ATOM, 0]
                                           ]
+                                        ],
+                                        [
+                                          [APPLY, KEYWORDS.GET_ARRAY],
+                                          [WORD, '*res*'],
+                                          [ATOM, 0]
                                         ]
                                       ]
                                     ]
                                   ]
-                            ]
+                                ]
                           ]
                         ]
                       ]
@@ -651,61 +648,55 @@ export const deSuggarAst = (ast, scope) => {
                       const keyName = newName + ':key'
 
                       exp[exp.length - 1] = [
-                        [APPLY, STATIC_TYPES.UNKNOWN],
+                        [APPLY, KEYWORDS.CALL_FUNCTION],
                         [
-                          [APPLY, KEYWORDS.CALL_FUNCTION],
+                          [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
                           [
-                            [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                            [APPLY, KEYWORDS.BLOCK],
                             [
-                              [APPLY, KEYWORDS.BLOCK],
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, memoName],
+                              [[APPLY, 'new:map64']]
+                            ],
+                            [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, newName],
                               [
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                [WORD, memoName],
-                                [[APPLY, 'new:map64']]
-                              ],
-                              [
-                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                [WORD, newName],
+                                [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
+                                ...args,
                                 [
-                                  [APPLY, KEYWORDS.ANONYMOUS_FUNCTION],
-                                  ...args,
+                                  [APPLY, KEYWORDS.BLOCK],
                                   [
-                                    [APPLY, KEYWORDS.BLOCK],
+                                    [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                    [WORD, keyName],
                                     [
-                                      [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                      [WORD, keyName],
-                                      [
-                                        [APPLY, 'from:string-or-number->key'],
-                                        [
-                                          [APPLY, KEYWORDS.CREATE_ARRAY],
-                                          ...args
-                                        ]
-                                      ]
+                                      [APPLY, 'from:string-or-number->key'],
+                                      [[APPLY, KEYWORDS.CREATE_ARRAY], ...args]
+                                    ]
+                                  ],
+                                  [
+                                    [APPLY, KEYWORDS.IF],
+                                    [
+                                      [APPLY, 'map:exists?'],
+                                      [WORD, memoName],
+                                      [WORD, keyName]
                                     ],
                                     [
-                                      [APPLY, KEYWORDS.IF],
-                                      [
-                                        [APPLY, 'map:exists?'],
-                                        [WORD, memoName],
-                                        [WORD, keyName]
-                                      ],
-                                      [
-                                        [APPLY, 'map:get'],
-                                        [WORD, memoName],
-                                        [WORD, keyName]
-                                      ],
-                                      [
-                                        [APPLY, 'map:set-and-get!'],
-                                        [WORD, memoName],
-                                        [WORD, keyName],
-                                        last.at(-1)
-                                      ]
+                                      [APPLY, 'map:get'],
+                                      [WORD, memoName],
+                                      [WORD, keyName]
+                                    ],
+                                    [
+                                      [APPLY, 'map:set-and-get!'],
+                                      [WORD, memoName],
+                                      [WORD, keyName],
+                                      last.at(-1)
                                     ]
                                   ]
                                 ]
-                              ],
-                              [WORD, newName]
-                            ]
+                              ]
+                            ],
+                            [WORD, newName]
                           ]
                         ]
                       ]

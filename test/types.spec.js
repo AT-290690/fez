@@ -1109,6 +1109,8 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
+Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Abstraction) (array:second sorted) (check #30)
+Incorrect type of arguments 0 for (array:first). Expected (Collection) but got (Abstraction) (array:first sorted) (check #30)
 math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
 math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
