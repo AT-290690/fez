@@ -15,7 +15,7 @@ import {
   deSuggarSource,
   handleUnbalancedQuotes
 } from './macros.js'
-import { OPTIMIZATIONS } from './optimize.js'
+import { OPTIMIZATIONS } from './enchance.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')

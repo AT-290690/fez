@@ -1,4 +1,4 @@
-import { parse, compile, optimize } from '../index.js'
+import { parse, compile, enhance } from '../index.js'
 import { debug } from './debug.js'
 const editor = ace.edit('editor')
 editor.setOptions({
@@ -100,7 +100,7 @@ document.addEventListener('keydown', (e) => {
     if (value.trim()) {
       try {
         const compressed = LZString.compressToBase64(editor.getValue())
-        const parsed = optimize(parse(editor.getValue()))
+        const parsed = parse(editor.getValue())
         const { evaluated, type, error } = debug(parsed)
         terminal.setValue(
           error == null
@@ -136,7 +136,7 @@ document.addEventListener('keydown', (e) => {
         terminal.setValue(
           serialise(
             new Function(
-              `return ${compile(optimize(parse(editor.getValue())))}`
+              `return ${compile(enhance(parse(editor.getValue())))}`
             )()
           )
         )

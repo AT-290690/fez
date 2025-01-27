@@ -30,15 +30,6 @@ export const SUGGAR = {
   INTEGER_DEVISION: '//',
   CONDITION: 'cond'
 }
-const deepTransform = (predicate, transform, tree) => {
-  if (!isLeaf(tree))
-    for (const leaf of tree) {
-      // Figure out a non mutable solution so
-      // I can get rid of deep clone AST.parse(AST.stringify(ast))
-      if (predicate(leaf)) transform(leaf)
-      else deepTransform(predicate, transform, leaf)
-    }
-}
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
   if (ast.length === 0) throw new SyntaxError(`No expressions...`)

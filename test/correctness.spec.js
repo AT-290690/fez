@@ -1,8 +1,9 @@
 import { deepStrictEqual, strictEqual } from 'assert'
-import { compile, parse, evaluate } from '../index.js'
+import { compile, parse, evaluate, enhance } from '../index.js'
 
-const evalJS = (source) => new Function(`return ${compile(parse(source))}`)()
-const interpred = (source) => evaluate(parse(source))
+const evalJS = (source) =>
+  new Function(`return ${compile(enhance(parse(source)))}`)()
+const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {

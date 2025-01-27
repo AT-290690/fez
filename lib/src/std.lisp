@@ -1,5 +1,4 @@
 (apply (lambda (do
-
 (let char:A 65)
 (let char:B 66)
 (let char:C 67)

@@ -1,5 +1,4 @@
 import std from '../lib/baked/std.js'
-import debugStd from '../lib/debug/std.js'
 import { formatType, identity, typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
@@ -17,13 +16,13 @@ import {
   VALUE,
   WORD
 } from '../src/keywords.js'
+import { enhance } from '../src/enchance.js'
 import { isLeaf, LISP } from '../src/parser.js'
 import { SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
-// const libraryTypes = [] ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0])[1]
 export const debug = (ast, checkTypes = true) => {
-  let types
+  let types = new Map()
   const debugEnv = {
     ...keywords,
     [STATIC_TYPES.ABSTRACTION]: (args, env) => {
@@ -145,8 +144,8 @@ export const debug = (ast, checkTypes = true) => {
           : args[0][VALUE]
       const signatures =
         args.length === 0
-          ? debugStd[0][1][1].slice(1)
-          : debugStd[0][1][1].filter(
+          ? std[0][1][1].slice(1)
+          : std[0][1][1].filter(
               (x) =>
                 x[0][TYPE] === APPLY &&
                 x[0][VALUE] === KEYWORDS.DEFINE_VARIABLE &&
@@ -342,8 +341,8 @@ export const debug = (ast, checkTypes = true) => {
     }
   }
   try {
-    types = checkTypes ? typeCheck(ast)[1] : []
-    const evaluated = evaluate(ast, debugEnv)
+    types = checkTypes ? typeCheck(ast)[1] : new Map()
+    const evaluated = evaluate(enhance(ast), debugEnv)
     const block = ast[1][1]
     const temp = block.shift()
     block.unshift(temp, identity(DEBUG.LOG), identity(DEBUG.ASSERT))

@@ -1,8 +1,8 @@
-import std from 'fez-lisp/lib/baked/std.js'
 import { type, parse } from '../index.js'
 import { throws, doesNotThrow, deepStrictEqual } from 'assert'
 import { readFileSync } from 'fs'
 import { typeCheck } from '../src/check.js'
+import std from '../lib/baked/std.js'
 
 const BROKEN_STD = readFileSync('./test/broken-std.lisp', 'utf-8')
 const passes = (source) => doesNotThrow(() => type(parse(source)))
