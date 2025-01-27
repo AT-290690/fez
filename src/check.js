@@ -85,7 +85,7 @@ export const formatType = (name, env) => {
   const stats = env[name][STATS]
   return stats
     ? stats[TYPE_PROP][0] === APPLY
-      ? `${typeof name !== 'number' ? `${name} ` : ''}(${
+      ? `(${typeof name !== 'number' ? `${name} ` : ''}${
           stats[ARG_COUNT] === VARIADIC
             ? '... ' + STATIC_TYPES.UNKNOWN
             : (stats[ARGUMENTS] ?? [])
@@ -93,7 +93,7 @@ export const formatType = (name, env) => {
                   (x, i) =>
                     `${
                       x[STATS][TYPE_PROP][0] === APPLY
-                        ? `${formatType(i, stats[ARGUMENTS])}`
+                        ? `(${formatType(i, stats[ARGUMENTS])})`
                         : `${toTypeNames(
                             x[STATS][TYPE_PROP][1] ?? x[STATS][TYPE_PROP][0]
                           )}`
@@ -101,9 +101,9 @@ export const formatType = (name, env) => {
                 )
                 .join(' ')
         }) -> ${toTypeNames(stats[RETURNS][1] ?? stats[RETURNS][0])}`
-      : `${name} ${toTypeNames(
+      : `(${name} ${toTypeNames(
           stats[TYPE_PROP][1] ?? stats[TYPE_PROP][0]
-        )}`.trim()
+        )})`.trim()
     : name
 }
 const formatTypes = (env) => {

@@ -28,13 +28,13 @@ describe('Should throw errors', () => {
         'list:every?'
       ]),
       [
-        'matrix:enumerated-for (Collection (Unknown Atom Atom) -> Unknown) -> Unknown',
-        'math:overlap? (Atom Atom Atom) -> Predicate',
-        'math:prime? (Atom) -> Predicate',
-        'matrix:adjacent (Collection Collection Atom Atom (Unknown Collection Atom Atom) -> Unknown) -> Unknown',
-        'array:every? (Collection (Unknown) -> Predicate) -> Predicate',
-        'list:find (Collection (Unknown) -> Predicate) -> Collection',
-        'list:every? (Collection (Unknown) -> Predicate) -> Predicate'
+        '(matrix:enumerated-for Collection ((Unknown Atom Atom) -> Unknown)) -> Unknown',
+        '(math:overlap? Atom Atom Atom) -> Predicate',
+        '(math:prime? Atom) -> Predicate',
+        '(matrix:adjacent Collection Collection Atom Atom ((Unknown Collection Atom Atom) -> Unknown)) -> Unknown',
+        '(array:every? Collection ((Unknown) -> Predicate)) -> Predicate',
+        '(list:find Collection ((Unknown) -> Predicate)) -> Collection',
+        '(list:every? Collection ((Unknown) -> Predicate)) -> Predicate'
       ]
     )
     deepStrictEqual(
@@ -49,13 +49,13 @@ describe('Should throw errors', () => {
         ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?']
       ),
       [
-        'is12? (Atom) -> Predicate',
-        'a Atom',
-        'c Atom',
-        'b Collection',
-        'box (Unknown) -> Collection',
-        'add (Atom Collection) -> Atom',
-        'x? Predicate'
+        '(is12? Atom) -> Predicate',
+        '(a Atom)',
+        '(c Atom)',
+        '(b Collection)',
+        '(box Unknown) -> Collection',
+        '(add Atom Collection) -> Atom',
+        '(x? Predicate)'
       ]
     )
     deepStrictEqual(
@@ -73,7 +73,7 @@ describe('Should throw errors', () => {
 (let m (add y))`,
         ['m', 'y', 'add']
       ),
-      ['m Atom', 'y Atom', 'add (Atom) -> Atom']
+      ['(m Atom)', '(y Atom)', '(add Atom) -> Atom']
     )
   })
   it('Does not throw', () => {
