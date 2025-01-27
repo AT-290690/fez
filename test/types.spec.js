@@ -977,8 +977,13 @@ Incorrect type of arguments 0 for (array:second). Expected (Collection) but got 
       `Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Abstraction) (- matrix:shallow-copy y2) (check #3)`
     )
     fails(
+      `(let add (lambda a b c (+ a b c)))
+(array:fold [1 2 3] add 11)`,
+      `Incorrect number of arguments for (cb) the (lambda) argument of (array:fold) at position (1). Expected (= 2) but got 3 (array:fold (array 1 2 3) add 11) (check #778)`
+    )
+    fails(
       `(array:fold [1 2 3] (lambda x y x (+ x 1)) 11)`,
-      `Incorrect number of arguments for (array:fold). Expected (= 2) but got 3 (array:fold (array 1 2 3) (lambda x y x (+ x 1)) 11) (check #777)`
+      `Incorrect number of arguments for (cb) the (lambda) argument of (array:fold) at position (1). Expected (= 2) but got 3 (array:fold (array 1 2 3) (lambda x y x (+ x 1)) 11) (check #777)`
     )
     // Maybe this is ok since all branches return different stuff
     fails(

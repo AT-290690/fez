@@ -1036,8 +1036,30 @@ export const typeCheck = (ast) => {
                           exp
                         )}) (check #13)`
                       )
+                    } else if (
+                      T === APPLY &&
+                      args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                      env[rest[i][VALUE]][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                      env[rest[i][VALUE]][STATS][ARG_COUNT] !== VARIADIC
+                    ) {
+                      // Handles words that are Lambdas
+                      if (
+                        env[rest[i][VALUE]][STATS][ARG_COUNT] !==
+                        args[i][STATS][ARG_COUNT]
+                      ) {
+                        errorStack.add(
+                          `Incorrect number of arguments for (${
+                            args[i][STATS][SIGNATURE]
+                          }) the (lambda) argument of (${
+                            first[VALUE]
+                          }) at position (${i}). Expected (= ${
+                            args[i][STATS][ARG_COUNT]
+                          }) but got ${
+                            env[rest[i][VALUE]][STATS][ARG_COUNT]
+                          } (${stringifyArgs(exp)}) (check #778)`
+                        )
+                      }
                     }
-
                     if (
                       env[rest[i][VALUE]] &&
                       env[rest[i][VALUE]][STATS][TYPE_PROP][0] !== UNKNOWN &&
@@ -1074,11 +1096,7 @@ export const typeCheck = (ast) => {
                           args[i][STATS][RETURNS]
                       }
                     }
-                  } else if (
-                    rest[i].length &&
-                    rest[i][0][TYPE] === APPLY &&
-                    env[rest[i][0][VALUE]]
-                  ) {
+                  } else if (env[rest[i][0][VALUE]]) {
                     const match = () => {
                       const actual = env[rest[i][0][VALUE]][STATS][RETURNS]
                       const expected = args[i][STATS][TYPE_PROP]
@@ -1099,6 +1117,7 @@ export const typeCheck = (ast) => {
                           )
                         else {
                           switch (expected[0]) {
+                            // almost exclusively for anonymous lambdas
                             case APPLY:
                               {
                                 const argsN = rest[i].length - 2
@@ -1109,17 +1128,24 @@ export const typeCheck = (ast) => {
                                   if (argsN !== args[i][STATS][ARG_COUNT]) {
                                     errorStack.add(
                                       `Incorrect number of arguments for (${
+                                        args[i][STATS][SIGNATURE]
+                                      }) the (lambda) argument of (${
                                         first[VALUE]
-                                      }). Expected (= ${
+                                      }) at position (${i}). Expected (= ${
                                         args[i][STATS][ARG_COUNT]
                                       }) but got ${argsN} (${stringifyArgs(
                                         exp
                                       )}) (check #777)`
                                     )
                                   }
+                                } else {
+                                  // TODO fix curry: lambdas enter here as undefined
                                 }
                               }
                               break
+                            // case ATOM:
+                            // case COLLECTION:
+                            //   break
                           }
                         }
                       } else if (
@@ -1130,7 +1156,6 @@ export const typeCheck = (ast) => {
                         stack.unshift(() => match())
                       }
                     }
-
                     match()
                   }
                 }
@@ -1149,7 +1174,6 @@ export const typeCheck = (ast) => {
                   )
                 }
               }
-
               check(r, env, scope)
             }
             break

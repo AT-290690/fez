@@ -159,32 +159,3 @@ ${error == null ? serialise(evaluated) : error.message}`)
     }
   }
 })
-
-// // TODO DELETE THIS
-// const value = editor.getValue()
-// if (value.trim()) {
-//   try {
-//     const compressed = LZString.compressToBase64(editor.getValue())
-//     const parsed = parse(editor.getValue())
-//     const { evaluated, type, error } = debug(parsed)
-//     terminal.setValue(
-//       error == null
-//         ? type
-//           ? `${type}\n${serialise(evaluated)}`
-//           : serialise(evaluated)
-//         : error.message
-//     )
-//     terminal.clearSelection()
-//     const newurl =
-//       window.location.protocol +
-//       '//' +
-//       window.location.host +
-//       window.location.pathname +
-//       `?t=${THEME}&l=${encodeURIComponent(compressed)}`
-//     window.history.pushState({ path: newurl }, '', newurl)
-//   } catch (error) {
-//     console.log(error)
-//     terminal.setValue(error.message)
-//     terminal.clearSelection()
-//   }
-// }
