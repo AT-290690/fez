@@ -15,7 +15,6 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { OPTIMIZED_PREFIX } from './macros.js'
 import { isLeaf } from './parser.js'
 import {
   SPECIAL_FORM_TYPES,

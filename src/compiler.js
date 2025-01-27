@@ -8,7 +8,6 @@ import {
   WORD,
   STATIC_TYPES
 } from './keywords.js'
-import { OPTIMIZATIONS } from './macros.js'
 import { leaf, isLeaf, AST } from './parser.js'
 const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
