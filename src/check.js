@@ -574,10 +574,10 @@ export const typeCheck = (ast) => {
                     }
                   }
                 }
-
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
                 for (let i = 0; i < args.length; ++i) {
+                  const isRestILeaf = isLeaf(rest[i])
                   // type check
                   // TODO get rof pred type
                   // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
@@ -585,50 +585,57 @@ export const typeCheck = (ast) => {
                   if (first[TYPE] === APPLY && isSpecial) {
                     if (
                       MAIN_TYPE === ATOM &&
-                      PREDICATES_SET.has(first[VALUE]) &&
-                      !isLeaf(rest[i]) &&
-                      rest[i][0][TYPE] === APPLY &&
-                      rest[i][0][VALUE] === KEYWORDS.CALL_FUNCTION
+                      PREDICATES_SET.has(first[VALUE])
                     ) {
-                      if (isLeaf(rest[i].at(-1))) {
-                        const fnName = rest[i].at(-1)[VALUE]
-                        const fn = env[fnName]
-                        if (fn && fn[STATS][RETURNS][0] !== MAIN_TYPE) {
-                          errorStack.add(
-                            `Incorrect type of argument (${i}) for (${
-                              first[VALUE]
-                            }). Expected (${toTypeNames(
-                              MAIN_TYPE
-                            )}) but got an (${toTypeNames(
-                              fn[STATS][RETURNS][0]
-                            )}) (${stringifyArgs(exp)}) (check #26)`
-                          )
-                        }
-                      } else {
-                        const body = rest[i].at(-1).at(-1)
-                        const rem = hasBlock(body) ? body.at(-1) : body
-                        const returns = isLeaf(rem) ? rem : rem[0]
-                        if (returns[TYPE] === ATOM) {
-                          if (MAIN_TYPE !== ATOM) {
+                      // if (isRestILeaf && rest[i][TYPE] === ATOM && rest[i][VALUE] !== TRUE && rest[i][TYPE] !== FALSE) throw some rror
+                      //  else if (
+                      //  isRestILeaf && est[i][TYPE] === ATOM && (rest[i][VALUE] === TRUE || rest[i][VALUE] === FALSE)
+                      // )  continue
+                      // else
+                      if (
+                        !isRestILeaf &&
+                        rest[i][0][TYPE] === APPLY &&
+                        rest[i][0][VALUE] === KEYWORDS.CALL_FUNCTION
+                      ) {
+                        if (isLeaf(rest[i].at(-1))) {
+                          const fnName = rest[i].at(-1)[VALUE]
+                          const fn = env[fnName]
+                          if (fn && fn[STATS][RETURNS][0] !== ATOM) {
                             errorStack.add(
-                              `Incorrect type of argument ${i} for (${
+                              `Incorrect type of argument (${i}) for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
-                                MAIN_TYPE
-                              )}) but got an (${toTypeNames(
                                 ATOM
-                              )})  (${stringifyArgs(exp)}) (check #27)`
+                              )}) but got an (${toTypeNames(
+                                fn[STATS][RETURNS][0]
+                              )}) (${stringifyArgs(exp)}) (check #26)`
                             )
                           }
-                        } else if (env[returns[VALUE]]) {
-                          if (
-                            MAIN_TYPE !== env[returns[VALUE]][STATS][RETURNS][0]
+                        } else {
+                          const body = rest[i].at(-1).at(-1)
+                          const rem = hasBlock(body) ? body.at(-1) : body
+                          const returns = isLeaf(rem) ? rem : rem[0]
+                          if (returns[TYPE] === ATOM) {
+                            if (MAIN_TYPE !== ATOM) {
+                              errorStack.add(
+                                `Incorrect type of argument ${i} for (${
+                                  first[VALUE]
+                                }). Expected (${toTypeNames(
+                                  MAIN_TYPE
+                                )}) but got an (${toTypeNames(
+                                  ATOM
+                                )})  (${stringifyArgs(exp)}) (check #27)`
+                              )
+                            }
+                          } else if (
+                            env[returns[VALUE]] &&
+                            env[returns[VALUE]][STATS][RETURNS][0] !== ATOM
                           ) {
                             errorStack.add(
                               `Incorrect type of argument ${i} for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
-                                MAIN_TYPE
+                                ATOM
                               )}) but got (${toTypeNames(
                                 env[returns[VALUE]][STATS][TYPE_PROP]
                               )})  (${stringifyArgs(exp)}) (check #29)`
@@ -639,89 +646,88 @@ export const typeCheck = (ast) => {
                     }
                     const isCast = STATIC_TYPES_SET.has(first[VALUE])
                     const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
-                    for (let i = 0; i < rest.length; ++i) {
-                      const MAIN_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
-                      if (MAIN_TYPE === UNKNOWN && !isCast) continue
-                      if (!isLeaf(rest[i])) {
-                        const CAR = rest[i][0][VALUE]
-                        const isKnown =
-                          env[CAR] && env[CAR][STATS][RETURNS][0] !== UNKNOWN
-                        if (isKnown && !isCast) {
-                          if (env[CAR][STATS][RETURNS][0] !== MAIN_TYPE) {
+                    const EXPECTED_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
+                    // IF UKNOWN andnot csted -we have nothing much to do
+                    if (EXPECTED_TYPE === UNKNOWN && !isCast) continue
+                    if (!isRestILeaf) {
+                      const CAR = rest[i][0][VALUE]
+                      const isKnown =
+                        env[CAR] && env[CAR][STATS][RETURNS][0] !== UNKNOWN
+                      if (isKnown && !isCast) {
+                        if (env[CAR][STATS][RETURNS][0] !== EXPECTED_TYPE) {
+                          errorStack.add(
+                            `Incorrect type of argument (${i}) for special form (${
+                              first[VALUE]
+                            }). Expected (${toTypeNames(
+                              EXPECTED_TYPE
+                            )}) but got (${toTypeNames(
+                              env[CAR][STATS][RETURNS][0]
+                            )}) (${stringifyArgs(exp)}) (check #1)`
+                          )
+                        }
+                        // never reached because there is only 1 subtype at the moment
+                        // else if (
+                        //   PRED_TYPE &&
+                        //   env[CAR][STATS][RETURNS][1] !== PRED_TYPE
+                        // ) {
+                        // }
+                      }
+                    } else {
+                      switch (rest[i][TYPE]) {
+                        case WORD:
+                          {
+                            const CAR = rest[i][VALUE]
+                            const isKnown =
+                              env[CAR] &&
+                              env[CAR][STATS][TYPE_PROP][0] !== UNKNOWN
+                            if (isKnown && !isCast) {
+                              if (
+                                EXPECTED_TYPE !== env[CAR][STATS][TYPE_PROP][0]
+                              ) {
+                                errorStack.add(
+                                  `Incorrect type of argument (${i}) for special form (${
+                                    first[VALUE]
+                                  }). Expected (${toTypeNames(
+                                    EXPECTED_TYPE
+                                  )}) but got (${toTypeNames(
+                                    env[CAR][STATS][TYPE_PROP][0]
+                                  )}) (${stringifyArgs(exp)}) (check #3)`
+                                )
+                              }
+                            } else if (env[CAR]) {
+                              if (isCast) {
+                                // CAST assigment
+                                env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
+                                  root[first[VALUE]][STATS][RETURNS][0]
+
+                                // root[first[VALUE]][STATS][RETURNS] =
+                                //   root[first[VALUE]][STATS][RETURNS]
+                              } else {
+                                // VALUE assigment
+                                env[CAR][STATS][TYPE_PROP][0] = EXPECTED_TYPE
+                              }
+                            }
+                          }
+                          break
+                        case ATOM: {
+                          if (rest[i][TYPE] !== EXPECTED_TYPE) {
                             errorStack.add(
                               `Incorrect type of argument (${i}) for special form (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
-                                MAIN_TYPE
+                                EXPECTED_TYPE
                               )}) but got (${toTypeNames(
-                                env[CAR][STATS][RETURNS][0]
-                              )}) (${stringifyArgs(exp)}) (check #1)`
+                                rest[i][TYPE]
+                              )}) (${stringifyArgs(exp)}) (check #2)`
                             )
                           }
-                          // never reached because there is only 1 subtype at the moment
-                          // else if (
-                          //   PRED_TYPE &&
-                          //   env[CAR][STATS][RETURNS][1] !== PRED_TYPE
-                          // ) {
-                          // }
-                        }
-                      } else {
-                        switch (rest[i][TYPE]) {
-                          case WORD:
-                            {
-                              const CAR = rest[i][VALUE]
-                              const isKnown =
-                                env[CAR] &&
-                                env[CAR][STATS][TYPE_PROP][0] !== UNKNOWN
-                              if (isKnown && !isCast) {
-                                if (
-                                  MAIN_TYPE !== env[CAR][STATS][TYPE_PROP][0]
-                                ) {
-                                  errorStack.add(
-                                    `Incorrect type of argument (${i}) for special form (${
-                                      first[VALUE]
-                                    }). Expected (${toTypeNames(
-                                      MAIN_TYPE
-                                    )}) but got (${toTypeNames(
-                                      env[CAR][STATS][TYPE_PROP][0]
-                                    )}) (${stringifyArgs(exp)}) (check #3)`
-                                  )
-                                }
-                              } else if (env[CAR]) {
-                                if (isCast) {
-                                  // CAST assigment
-                                  env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
-                                    root[first[VALUE]][STATS][RETURNS][0]
-
-                                  // root[first[VALUE]][STATS][RETURNS] =
-                                  //   root[first[VALUE]][STATS][RETURNS]
-                                } else {
-                                  // VALUE assigment
-                                  env[CAR][STATS][TYPE_PROP][0] = MAIN_TYPE
-                                }
-                              }
-                            }
-                            break
-                          case ATOM: {
-                            if (rest[i][TYPE] !== MAIN_TYPE) {
-                              errorStack.add(
-                                `Incorrect type of argument (${i}) for special form (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  MAIN_TYPE
-                                )}) but got (${toTypeNames(
-                                  rest[i][TYPE]
-                                )}) (${stringifyArgs(exp)}) (check #2)`
-                              )
-                            }
-                            break
-                          }
+                          break
                         }
                       }
                     }
                   }
                   // type checking
-                  else if (isLeaf(rest[i])) {
+                  else if (isRestILeaf) {
                     const T =
                       rest[i][TYPE] === WORD && env[rest[i][VALUE]]
                         ? env[rest[i][VALUE]][STATS][TYPE_PROP][0]
