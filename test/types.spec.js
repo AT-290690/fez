@@ -88,13 +88,12 @@ describe('Should throw errors', () => {
     )
   })
   it('Does not throw', () => {
-    // TODO make this pass
-    //     passes(
-    //       `(let x? (lambda 0))
-    // (let y? (lambda 1))
-    // (let z? (lambda 0))
-    // (let m? 1)`
-    //     )
+    passes(
+      `(let x? (lambda 0))
+    (let y? (lambda 1))
+    (let z? (lambda 0))
+    (let m? 1)`
+    )
     passes(`(let y 8)
 (let add (lambda x (do
     (let f (+ x y))
@@ -475,7 +474,7 @@ ZZZ=ZZZ,ZZZ")
     passes(`(let m (lambda xs (do 
     (let map (lambda xs1 cb (array:map xs cb)))
 )))`)
-    // TODO finishthis #1 (shouldfail on non predicate)
+    // TODO finishthis #1 (should fail on non predicate)
     passes(`(let x? (if (= 1 1) (apply 1 math:odd?)  (apply 1 math:odd?)))`)
     passes(`(let fn1? (lambda (apply [1] array:empty?)))
 (let fn2? (lambda x (apply x (lambda x (array:empty? [1])))))
@@ -712,7 +711,6 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #16)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
     )
-    // TODO tere should be mre errors
     fails(
       `(let fn (lambda x (+ x 1)))
 (let x 10)
@@ -764,7 +762,6 @@ Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn
                   (let index (array:second x)) (or (not (> x 0))
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
       (array:map array:first))))`,
-      // TODO - remove Duplication
       `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
     )
     fails(
@@ -881,8 +878,6 @@ Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn
       `Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)`
     )
-    // TODO: uncomment this and make it pass
-
     fails(
       `(let map (lambda xs1 cb (array:map xs cb)))
 (let fold (lambda xs cb x (array:fold xs1 cb x)))`,
