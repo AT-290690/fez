@@ -3,7 +3,7 @@ import {
   ATOM,
   KEYWORDS,
   PLACEHOLDER,
-  PREDICATES_SET,
+  PREDICATES_INPUT_SET,
   SPECIAL_FORMS_SET,
   STATIC_TYPES,
   STATIC_TYPES_SET,
@@ -585,7 +585,7 @@ export const typeCheck = (ast) => {
                   if (first[TYPE] === APPLY && isSpecial) {
                     if (
                       MAIN_TYPE === ATOM &&
-                      PREDICATES_SET.has(first[VALUE])
+                      PREDICATES_INPUT_SET.has(first[VALUE])
                     ) {
                       // if (isRestILeaf && rest[i][TYPE] === ATOM && rest[i][VALUE] !== TRUE && rest[i][TYPE] !== FALSE) throw some rror
                       //  else if (
