@@ -925,7 +925,9 @@ Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
-Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)`
+Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
+Assigning predicate (ending in ?) variable (var:def) to another variable which is not a predicate (also ending in ?) (let at-least-one? (var:def 0))
+Assigning predicate (ending in ?) variable (bool:false) to another variable which is not a predicate (also ending in ?) (let is? (bool:false))`
     )
   })
 })

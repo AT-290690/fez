@@ -1,12 +1,16 @@
 import {
   APPLY,
   ATOM,
+  FALSE,
   KEYWORDS,
   PLACEHOLDER,
+  PREDICATE_SUFFIX,
   PREDICATES_INPUT_SET,
+  PREDICATES_OUTPUT_SET,
   SPECIAL_FORMS_SET,
   STATIC_TYPES,
   STATIC_TYPES_SET,
+  TRUE,
   TYPE,
   VALUE,
   WORD
@@ -30,7 +34,12 @@ import {
   VARIABLE_ORDER_INDEX,
   COLLECTION
 } from './types.js'
-import { hasApplyLambdaBlock, hasBlock, stringifyArgs } from './utils.js'
+import {
+  getSuffix,
+  hasApplyLambdaBlock,
+  hasBlock,
+  stringifyArgs
+} from './utils.js'
 
 export const identity = (name) => [
   [0, 'let'],
@@ -53,6 +62,50 @@ const deepLambdaReturn = (rest, condition) => {
   const body = rest.at(-1)
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
+}
+const checkPredicateName = (exp, rest, warningStack) => {
+  if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
+    const last = rest.at(-1)
+    if (isLeaf(last)) {
+      if (last[TYPE] === ATOM && last[VALUE] !== TRUE && last[VALUE] !== FALSE)
+        warningStack.add(
+          `Assigning predicate (ending in ?) variable (${
+            rest[0][VALUE]
+          }) to an (${
+            STATIC_TYPES.ATOM
+          }) that is not (or ${TRUE} ${FALSE}) (${stringifyArgs(rest)})`
+        )
+      else if (
+        last[TYPE] === WORD &&
+        getSuffix(last[VALUE]) !== PREDICATE_SUFFIX &&
+        !PREDICATES_OUTPUT_SET.has(last[VALUE])
+      )
+        warningStack.add(
+          `Assigning predicate (ending in ?) variable (${
+            rest[0][VALUE]
+          }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
+            exp
+          )})`
+        )
+    } else if (last[0][0] === APPLY) {
+      const application = last[0]
+      switch (application[VALUE]) {
+        default:
+          if (
+            getSuffix(application[VALUE]) !== PREDICATE_SUFFIX &&
+            !PREDICATES_OUTPUT_SET.has(application[VALUE])
+          )
+            warningStack.add(
+              `Assigning predicate (ending in ?) variable (${
+                application[VALUE]
+              }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
+                exp
+              )})`
+            )
+          break
+      }
+    }
+  }
 }
 // const assign = (a, b, i) => {
 //   a[i] = b[i]
@@ -164,6 +217,7 @@ export const typeCheck = (ast) => {
                 )
               } else {
                 const name = rest[0][VALUE]
+                //  Predicate name consistency
                 const resolveRetunType = (returns, rem, prop) => {
                   if (returns[TYPE] === ATOM) {
                     // ATOM ASSIGMENT
@@ -324,6 +378,7 @@ export const typeCheck = (ast) => {
                     check(rightHand, env, exp)
                   }
                 } else {
+                  checkPredicateName(exp, rest, warningStack)
                   const isL = isLeaf(rightHand)
                   if (isL && rightHand[TYPE] === WORD) {
                     // TODO make sure this prevents the assigment all together

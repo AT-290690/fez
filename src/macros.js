@@ -10,15 +10,12 @@ import {
   FALSE,
   KEYWORDS,
   PLACEHOLDER,
-  PREDICATE_SUFFIX,
-  PREDICATES_OUTPUT_SET,
-  STATIC_TYPES,
   TRUE,
   TYPE,
   VALUE,
   WORD
 } from './keywords.js'
-import { getSuffix, hasBlock, stringifyArgs } from './utils.js'
+import { hasBlock, stringifyArgs } from './utils.js'
 export const SUGGAR = {
   // Syntactic suggars
   PIPE: '|>',
@@ -501,60 +498,6 @@ export const deSuggarAst = (ast, scope) => {
                     exp.iron = true
                     exp.push(newScope)
                     deSuggarAst(scope)
-                  }
-
-                  //  Predicate name consistency
-                  else if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
-                    const last = rest.at(-1)
-                    if (isLeaf(last)) {
-                      if (
-                        last[TYPE] === ATOM &&
-                        last[VALUE] !== TRUE &&
-                        last[VALUE] !== FALSE
-                      )
-                        throw new TypeError(
-                          `Assigning predicate (ending in ?) variable (${
-                            rest[0][VALUE]
-                          }) to an (${
-                            STATIC_TYPES.ATOM
-                          }) that is not (or ${TRUE} ${FALSE}) (${stringifyArgs(
-                            exp
-                          )})`
-                        )
-                      else if (
-                        last[TYPE] === WORD &&
-                        getSuffix(last[VALUE]) !== PREDICATE_SUFFIX &&
-                        !PREDICATES_OUTPUT_SET.has(last[VALUE])
-                      )
-                        throw new TypeError(
-                          `Assigning predicate (ending in ?) variable (${
-                            rest[0][VALUE]
-                          }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
-                            exp
-                          )})`
-                        )
-                      else {
-                        // exp[0][VALUE] = KEYWORDS.NOT
-                        // exp[1] = [[APPLY, KEYWORDS.EQUAL], exp[1], exp[2]]
-                        // exp.length = 2
-                        // deSuggarAst(exp, scope)
-                        // console.log(first[VALUE], rest[0][VALUE], rest.at(-1))
-                      }
-                    } else if (last[0][0] === APPLY) {
-                      const application = last[0]
-                      switch (application[VALUE]) {
-                        case KEYWORDS.ANONYMOUS_FUNCTION:
-                          break
-                        case KEYWORDS.CALL_FUNCTION:
-                          break
-                        case KEYWORDS.BLOCK:
-                          break
-                        case KEYWORDS.IF:
-                          break
-                        default:
-                          break
-                      }
-                    }
                   }
                 }
                 break
