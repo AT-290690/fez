@@ -475,6 +475,8 @@ ZZZ=ZZZ,ZZZ")
     passes(`(let m (lambda xs (do 
     (let map (lambda xs1 cb (array:map xs cb)))
 )))`)
+    // TODO finishthis #1 (shouldfail on non predicate)
+    passes(`(let x? (if (= 1 1) (apply 1 math:odd?)  (apply 1 math:odd?)))`)
     passes(`(let fn1? (lambda (apply [1] array:empty?)))
 (let fn2? (lambda x (apply x (lambda x (array:empty? [1])))))
 (let x1? (array:empty? [1]))

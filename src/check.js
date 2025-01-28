@@ -90,6 +90,9 @@ const checkPredicateName = (exp, rest, warningStack) => {
     } else if (last[0][0] === APPLY) {
       const application = last[0]
       switch (application[VALUE]) {
+        case KEYWORDS.IF:
+          // TODO finishthis #1
+          break
         default:
           if (
             getSuffix(application[VALUE]) !== PREDICATE_SUFFIX &&
@@ -105,6 +108,23 @@ const checkPredicateName = (exp, rest, warningStack) => {
           break
       }
     }
+  }
+}
+const checkPredicateNameDeep = (name, exp, rest, returns, warningStack) => {
+  if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
+    const fn = rest.at(-1).at(-1).at(-1)
+    checkPredicateName(
+      exp,
+      [
+        [WORD, name],
+        isLeaf(fn)
+          ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
+          : drillReturnType(fn, (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
+      ],
+      warningStack
+    )
+  } else {
+    checkPredicateName(exp, [[WORD, name], returns], warningStack)
   }
 }
 // const assign = (a, b, i) => {
@@ -306,9 +326,11 @@ export const typeCheck = (ast) => {
                         }
                         break
                       default:
-                        checkPredicateName(
+                        checkPredicateNameDeep(
+                          name,
                           exp,
-                          [[WORD, name], returns],
+                          rest,
+                          returns,
                           warningStack
                         )
                         if (!env[returns[VALUE]])
@@ -317,41 +339,6 @@ export const typeCheck = (ast) => {
                         else if (
                           env[returns[VALUE]][STATS][TYPE_PROP][0] === APPLY
                         ) {
-                          if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
-                            const fn = rest.at(-1).at(-1).at(-1)
-                            checkPredicateName(
-                              exp,
-                              [
-                                [WORD, name],
-                                isLeaf(fn)
-                                  ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
-                                  : drillReturnType(
-                                      fn,
-                                      (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION
-                                    ) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
-                              ],
-                              warningStack
-                            )
-                          }
-
-                          // TODO This seems to be able to be deleted
-                          // FOR NOT IT CAN BE
-                          // if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
-                          //   if (isLeaf(rest.at(-1).at(-1).at(-1))) {
-                          //     const fnName = rest.at(-1).at(-1).at(-1)[VALUE]
-                          //     const fn = env[fnName]
-                          //     env[name][STATS][TYPE_PROP][0] =
-                          //       fn[STATS][RETURNS][0]
-                          //   } else {
-                          //     const [returns, rem] = drillReturnType(
-                          //       rest.at(-1).at(-1).at(-1),
-                          //       (returns) =>
-                          //         returns[VALUE] === KEYWORDS.CALL_FUNCTION
-                          //     )
-                          //     resolveRetunType(returns, rem, TYPE_PROP)
-                          //   }
-                          // }
-
                           // ALWAYS APPLY
                           // rest.at(-1)[0][TYPE] === APPLY
                           // Here is upon application to store the result in the variable
