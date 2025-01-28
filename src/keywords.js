@@ -15,7 +15,6 @@ export const STATIC_TYPES = {
   COLLECTION: 'Collection',
   PREDICATE: 'Predicate'
 }
-export const STATIC_TYPES_SET = new Set(Object.values(STATIC_TYPES))
 export const KEYWORDS = {
   LOOP: 'loop',
   CREATE_ARRAY: 'array',
@@ -77,3 +76,11 @@ export const DEBUG = {
 export const SPECIAL_FORMS_SET = new Set(
   Object.values(KEYWORDS).concat(Object.values(STATIC_TYPES))
 )
+export const STATIC_TYPES_SET = new Set(Object.values(STATIC_TYPES))
+export const PREDICATES_SET = new Set([
+  KEYWORDS.IF,
+  KEYWORDS.AND,
+  KEYWORDS.OR,
+  KEYWORDS.NOT,
+  KEYWORDS.LOOP
+])

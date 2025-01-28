@@ -3,6 +3,7 @@ import {
   ATOM,
   KEYWORDS,
   PLACEHOLDER,
+  PREDICATES_SET,
   SPECIAL_FORMS_SET,
   STATIC_TYPES,
   STATIC_TYPES_SET,
@@ -176,6 +177,7 @@ export const typeCheck = (ast) => {
                           if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
                             // ATOM ASSIGMENT
                             env[name][STATS][prop][0] = ATOM
+                            // TODO maybe delete this
                             env[name][STATS][RETURNS][0] = ATOM
                           } else if (
                             !isLeaf(re[0]) &&
@@ -235,55 +237,43 @@ export const typeCheck = (ast) => {
                         }
                         break
                       default:
-                        if (env[returns[VALUE]]) {
-                          if (
-                            env[returns[VALUE]][STATS][TYPE_PROP][0] === APPLY
-                          ) {
-                            if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
-                              if (isLeaf(rest.at(-1).at(-1).at(-1))) {
-                                const fnName = rest.at(-1).at(-1).at(-1)[VALUE]
-                                const fn = env[fnName]
-                                env[name][STATS][TYPE_PROP][0] =
-                                  fn[STATS][RETURNS][0]
-                              } else {
-                                const [returns, rem] = drillReturnType(
-                                  rest.at(-1).at(-1).at(-1),
-                                  (returns) =>
-                                    returns[VALUE] === KEYWORDS.CALL_FUNCTION
-                                )
-                                resolveRetunType(returns, rem, TYPE_PROP)
-                              }
-                            }
-                            // ALWAYS APPLY
-                            // rest.at(-1)[0][TYPE] === APPLY
-                            // Here is upon application to store the result in the variable
-                            if (env[name][STATS][TYPE_PROP][0] === UNKNOWN)
-                              stack.unshift(() => {
-                                env[name][STATS][TYPE_PROP][0] =
-                                  env[returns[VALUE]][STATS][RETURNS][0]
-                                env[name][STATS][TYPE_PROP][1] =
-                                  env[returns[VALUE]][STATS][RETURNS][1]
-                              })
-                            env[name][STATS][RETURNS] =
-                              env[returns[VALUE]][STATS][RETURNS]
-                          } else {
-                            // Enclose function with it's own scope
-                            const args = env[name][STATS][ARGUMENTS] ?? []
-                            const fnScope = args.length
-                              ? Object.create(env)
-                              : env
-                            for (const arg of args)
-                              fnScope[arg[STATS][SIGNATURE]] = arg
-                            // RETURN TYPE OF FUNCTION ASSIGGMENT
-                            fnScope[name][STATS][RETURNS] =
-                              fnScope[returns[VALUE]][STATS][RETURNS]
-                            // assign(env[name][STATS][RETURNS],env[returns[VALUE]][STATS][RETURNS], 0)
-                            fnScope[name][STATS][RETURNS][0] =
-                              fnScope[returns[VALUE]][STATS][TYPE_PROP][0]
-                          }
-                        } else {
+                        if (!env[returns[VALUE]])
                           env[name][STATS][RETURNS] = [UNKNOWN]
-                          // env[name][STATS][RETURNS] = APPLY
+                        // env[name][STATS][RETURNS] = APPLY
+                        else if (
+                          env[returns[VALUE]][STATS][TYPE_PROP][0] === APPLY
+                        ) {
+                          // TODO This seems to be able to be deleted
+                          // FOR NOT IT CAN BE
+                          // if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
+                          //   if (isLeaf(rest.at(-1).at(-1).at(-1))) {
+                          //     const fnName = rest.at(-1).at(-1).at(-1)[VALUE]
+                          //     const fn = env[fnName]
+                          //     env[name][STATS][TYPE_PROP][0] =
+                          //       fn[STATS][RETURNS][0]
+                          //   } else {
+                          //     const [returns, rem] = drillReturnType(
+                          //       rest.at(-1).at(-1).at(-1),
+                          //       (returns) =>
+                          //         returns[VALUE] === KEYWORDS.CALL_FUNCTION
+                          //     )
+                          //     resolveRetunType(returns, rem, TYPE_PROP)
+                          //   }
+                          // }
+
+                          // ALWAYS APPLY
+                          // rest.at(-1)[0][TYPE] === APPLY
+                          // Here is upon application to store the result in the variable
+                          if (env[name][STATS][TYPE_PROP][0] === UNKNOWN)
+                            stack.unshift(() => {
+                              env[name][STATS][TYPE_PROP][0] =
+                                env[returns[VALUE]][STATS][RETURNS][0]
+                              // this seems to be able to be deleted
+                              // env[name][STATS][TYPE_PROP][1] =
+                              //   env[returns[VALUE]][STATS][RETURNS][1]
+                            })
+                          env[name][STATS][RETURNS] =
+                            env[returns[VALUE]][STATS][RETURNS]
                         }
                         break
                     }
@@ -335,7 +325,6 @@ export const typeCheck = (ast) => {
                   }
                 } else {
                   const isL = isLeaf(rightHand)
-                  // if (!(name in env)) {
                   if (isL && rightHand[TYPE] === WORD) {
                     // TODO make sure this prevents the assigment all together
                     if (env[rest[1][VALUE]] === undefined) {
@@ -359,7 +348,7 @@ export const typeCheck = (ast) => {
                         [RETURNS]: [ATOM]
                       }
                     }
-                  } else {
+                  } else if (rightHand[0]) {
                     const right = rightHand[0]
                     //DECLARATION
                     env[name] = {
@@ -371,35 +360,27 @@ export const typeCheck = (ast) => {
                         [TYPE_PROP]: [
                           isL
                             ? right[TYPE]
-                            : env[right?.[VALUE]]?.[STATS]?.[RETURNS]?.[0] ??
-                              UNKNOWN
+                            : env[right[VALUE]] == undefined
+                            ? UNKNOWN
+                            : env[right[VALUE]][STATS][RETURNS][0]
                         ],
                         [RETURNS]: [UNKNOWN]
                       }
                     }
-                    if (right && right[VALUE]) {
-                      if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
-                        if (isLeaf(rightHand.at(-1))) {
-                          const fnName = rightHand.at(-1)[VALUE]
-                          const fn = env[fnName]
-                          // FB assigment
-                          env[name][STATS][TYPE_PROP] = fn[STATS][RETURNS]
-                          env[name][STATS][RETURNS] = fn[STATS][RETURNS]
-                        } else {
-                          const body = rightHand.at(-1).at(-1)
-                          const rem = hasBlock(body) ? body.at(-1) : body
-                          const returns = isLeaf(rem) ? rem : rem[0]
-                          resolveRetunType(returns, rem, TYPE_PROP)
-                        }
-                      } else {
-                        const body = rightHand
+                    if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
+                      if (!isLeaf(rightHand.at(-1))) {
+                        const body = rightHand.at(-1).at(-1)
                         const rem = hasBlock(body) ? body.at(-1) : body
                         const returns = isLeaf(rem) ? rem : rem[0]
                         resolveRetunType(returns, rem, TYPE_PROP)
                       }
+                    } else {
+                      const body = rightHand
+                      const rem = hasBlock(body) ? body.at(-1) : body
+                      const returns = isLeaf(rem) ? rem : rem[0]
+                      resolveRetunType(returns, rem, TYPE_PROP)
                     }
                   }
-                  // }
                   check(rightHand, env, scope)
                 }
                 Types.set(withScope(name, env), () => formatType(name, env))
@@ -511,7 +492,6 @@ export const typeCheck = (ast) => {
                               ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
                           }
                         }
-
                         break
                       default:
                         if (copy[ret[VALUE]])
@@ -599,63 +579,64 @@ export const typeCheck = (ast) => {
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
                 for (let i = 0; i < args.length; ++i) {
                   // type check
-                  const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
+                  // TODO get rof pred type
+                  // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                   const MAIN_TYPE = args[i][STATS][TYPE_PROP][0]
-                  if (PRED_TYPE != undefined && !isLeaf(rest[i])) {
-                    const current = rest[i][0]
-                    if (current[TYPE] === APPLY) {
-                      if (current[VALUE] == KEYWORDS.CALL_FUNCTION) {
-                        if (isLeaf(rest[i].at(-1))) {
-                          const fnName = rest[i].at(-1)[VALUE]
-                          const fn = env[fnName]
-                          if (fn && fn[STATS][RETURNS][0] !== MAIN_TYPE) {
+                  if (first[TYPE] === APPLY && isSpecial) {
+                    if (
+                      MAIN_TYPE === ATOM &&
+                      PREDICATES_SET.has(first[VALUE]) &&
+                      !isLeaf(rest[i]) &&
+                      rest[i][0][TYPE] === APPLY &&
+                      rest[i][0][VALUE] === KEYWORDS.CALL_FUNCTION
+                    ) {
+                      if (isLeaf(rest[i].at(-1))) {
+                        const fnName = rest[i].at(-1)[VALUE]
+                        const fn = env[fnName]
+                        if (fn && fn[STATS][RETURNS][0] !== MAIN_TYPE) {
+                          errorStack.add(
+                            `Incorrect type of argument (${i}) for (${
+                              first[VALUE]
+                            }). Expected (${toTypeNames(
+                              MAIN_TYPE
+                            )}) but got an (${toTypeNames(
+                              fn[STATS][RETURNS][0]
+                            )}) (${stringifyArgs(exp)}) (check #26)`
+                          )
+                        }
+                      } else {
+                        const body = rest[i].at(-1).at(-1)
+                        const rem = hasBlock(body) ? body.at(-1) : body
+                        const returns = isLeaf(rem) ? rem : rem[0]
+                        if (returns[TYPE] === ATOM) {
+                          if (MAIN_TYPE !== ATOM) {
                             errorStack.add(
-                              `Incorrect type of argument (${i}) for (${
+                              `Incorrect type of argument ${i} for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
                                 MAIN_TYPE
                               )}) but got an (${toTypeNames(
-                                fn[STATS][RETURNS][0]
-                              )}) (${stringifyArgs(exp)}) (check #26)`
+                                ATOM
+                              )})  (${stringifyArgs(exp)}) (check #27)`
                             )
                           }
-                        } else {
-                          const body = rest[i].at(-1).at(-1)
-                          const rem = hasBlock(body) ? body.at(-1) : body
-                          const returns = isLeaf(rem) ? rem : rem[0]
-                          if (returns[TYPE] === ATOM) {
-                            if (MAIN_TYPE !== ATOM) {
-                              errorStack.add(
-                                `Incorrect type of argument ${i} for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  MAIN_TYPE
-                                )}) but got an (${toTypeNames(
-                                  ATOM
-                                )})  (${stringifyArgs(exp)}) (check #27)`
-                              )
-                            }
-                          } else if (env[returns[VALUE]]) {
-                            if (
-                              MAIN_TYPE !==
-                              env[returns[VALUE]][STATS][RETURNS][0]
-                            ) {
-                              errorStack.add(
-                                `Incorrect type of argument ${i} for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  MAIN_TYPE
-                                )}) but got (${toTypeNames(
-                                  env[returns[VALUE]][STATS][TYPE_PROP]
-                                )})  (${stringifyArgs(exp)}) (check #29)`
-                              )
-                            }
+                        } else if (env[returns[VALUE]]) {
+                          if (
+                            MAIN_TYPE !== env[returns[VALUE]][STATS][RETURNS][0]
+                          ) {
+                            errorStack.add(
+                              `Incorrect type of argument ${i} for (${
+                                first[VALUE]
+                              }). Expected (${toTypeNames(
+                                MAIN_TYPE
+                              )}) but got (${toTypeNames(
+                                env[returns[VALUE]][STATS][TYPE_PROP]
+                              )})  (${stringifyArgs(exp)}) (check #29)`
+                            )
                           }
                         }
                       }
                     }
-                  }
-                  if (first[TYPE] === APPLY && isSpecial) {
                     const isCast = STATIC_TYPES_SET.has(first[VALUE])
                     const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
                     for (let i = 0; i < rest.length; ++i) {
@@ -706,17 +687,17 @@ export const typeCheck = (ast) => {
                                     )}) (${stringifyArgs(exp)}) (check #3)`
                                   )
                                 }
-                              } else if (env[rest[i][VALUE]]) {
+                              } else if (env[CAR]) {
                                 if (isCast) {
                                   // CAST assigment
-                                  env[rest[i][VALUE]][STATS][TYPE_PROP] =
-                                    root[first[VALUE]][STATS][RETURNS]
-                                  root[first[VALUE]][STATS][RETURNS] =
-                                    root[first[VALUE]][STATS][RETURNS]
+                                  env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
+                                    root[first[VALUE]][STATS][RETURNS][0]
+
+                                  // root[first[VALUE]][STATS][RETURNS] =
+                                  //   root[first[VALUE]][STATS][RETURNS]
                                 } else {
                                   // VALUE assigment
-                                  env[rest[i][VALUE]][STATS][TYPE_PROP][0] =
-                                    MAIN_TYPE
+                                  env[CAR][STATS][TYPE_PROP][0] = MAIN_TYPE
                                 }
                               }
                             }

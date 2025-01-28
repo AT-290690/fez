@@ -189,9 +189,9 @@
 ; :: Search
 (let Search (lambda Unknown (do Unknown)))
 ; :: truthy?
-(let truthy? (lambda Atom (do Atom)))
+(let truthy? (lambda Unknown (do Atom)))
 ; :: falsy?
-(let falsy? (lambda Atom (do Atom)))
+(let falsy? (lambda Unknown (do Atom)))
 ; :: true?
 (let true? (lambda Atom (do Atom)))
 ; :: false?
@@ -1209,7 +1209,7 @@
 ; :: string:greater? :: is
 (let is Collection)
 ; :: string:greater? :: recursive:string:greater :: current
-(let current Collection)
+(let current Unknown)
 ; :: string:greater? :: recursive:string:greater
 (let recursive:string:greater (lambda  (do Atom)))
 ; :: string:greater?
@@ -1529,11 +1529,11 @@
 ; :: var:decrement-and-get!
 (let var:decrement-and-get! (lambda Collection (do Unknown)))
 ; :: bool:def
-(let bool:def (lambda Atom (do Collection)))
+(let bool:def (lambda Unknown (do Collection)))
 ; :: bool:get
 (let bool:get (lambda Collection (do Unknown)))
 ; :: bool:set!
-(let bool:set! (lambda Collection Atom (do Collection)))
+(let bool:set! (lambda Collection Unknown (do Collection)))
 ; :: bool:toggle!
 (let bool:toggle! (lambda Collection (do Collection)))
 ; :: bool:true
@@ -2002,5 +2002,25 @@
 (let pattern Unknown)
 ; :: evaluate
 (let evaluate (lambda Collection Collection (do Unknown)))
+; :: ast:stringify :: type
+(let type Unknown)
+; :: ast:stringify :: value
+(let value Unknown)
+; :: ast:stringify
+(let ast:stringify (lambda Collection (do Unknown)))
+; :: ast:get-name
+(let ast:get-name (lambda Collection (do Unknown)))
+; :: ast:traverse expression
+(let expression Collection)
+; :: ast:traverse :: head
+(let head Collection)
+; :: ast:traverse :: tail
+(let tail Collection)
+; :: ast:traverse :: pattern
+(let pattern Unknown)
+; :: ast:traverse
+(let ast:traverse (lambda Collection Unknown (lambda Unknown (do Unknown)) (lambda Unknown (do Unknown)) (lambda Unknown Collection (do Unknown)) (do Unknown)))
+; :: lisp:parse
+(let lisp:parse (lambda Unknown (do Collection)))
 ; :: lisp:eval
 (let lisp:eval (lambda Unknown (do Unknown)))

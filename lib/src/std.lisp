@@ -98,13 +98,13 @@
 
 (let truthy? (lambda x
     (cond
-     (atom? x) (not (= (Atom x) 0))
-     (array? x) (> (length (Collection x)) 0)
+     (atom? x) (not (= (Unknown x) 0))
+     (array? x) (> (length (Unknown x)) 0)
      (*) 1)))
 (let falsy? (lambda x
     (cond
-     (atom? x) (= (Atom x) 0)
-     (array? x) (= (length (Collection x)) 0))))
+     (atom? x) (= (Unknown x) 0)
+     (array? x) (= (length (Unknown x)) 0))))
 (let true? (lambda x (and (atom? x) (= (Atom x) 1))))
 (let false? (lambda x (and (atom? x) (= (Atom x) 0))))
 (let math:e 2.718281828459045)
@@ -112,9 +112,6 @@
 (let math:min-safe-integer -9007199254740991)
 (let math:max-safe-integer 9007199254740991)
 (let math:decimal-scaling 1000000000000)
-
-
-
 
 (let tuple:apply (lambda x cb (cb (array:first x) (array:second x))))
 (let tuple:add (lambda x (+ (array:first x) (array:second x))))
@@ -1815,6 +1812,37 @@ heap)))
       (= pattern ast:atom) (get head ast:value)
       (*) [])) []))))
 
-  (let lisp:eval (lambda source (apply (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?))) { keywords } (map:get keywords "do"))))
+; Example usage
+; (ast:traverse (array:first (lisp:parse "
+;     (apply (lambda (do 
+;         (let add (lambda a b (+ (+ a b) 1)))
+;         (add 1 2))))
+; "
+; )) { keywords } 
+;     (lambda atom atom) 
+;     (lambda word word) 
+;     (lambda application args 
+;         (if (string:equal? application "let") (log [(string (ast:get-name args)) (ast:stringify (get args 1))] "*"))))
+(let ast:stringify (lambda args 
+    (if (ast:leaf? args) (do 
+            (let [type value .] args)
+            [type (if (= type ast:atom) value (string value))])
+        (array:map args ast:stringify))))
+(let ast:get-name (lambda args (array:second (array:first args))))  
+(let ast:traverse (lambda exp env atom word application (do 
+  (let expression (if (and (array? exp) (ast:leaf? exp)) (array exp) exp))
+  (if (array:not-empty? expression) (do 
+    (let head (array:head expression))
+    (let tail (array:tail expression))
+    (let pattern (get head ast:type))
+    (cond 
+      (= pattern ast:word) (word (get head ast:value))
+      (= pattern ast:apply) (application (get head ast:value) tail)
+      (= pattern ast:atom) (atom (get head ast:value))
+      (*) [])
+     (array:for tail (lambda x (ast:traverse x env atom word application)))) []))))
+
+  (let lisp:parse (lambda source (from:chars->ast (array:spaces (array:exclude (string:lines source) array:empty?)))))
+  (let lisp:eval (lambda source (apply (lisp:parse source) { keywords } (map:get keywords "do"))))
   
 )))
