@@ -1,16 +1,11 @@
 import {
   APPLY,
   ATOM,
-  DEBUG,
-  FALSE,
   KEYWORDS,
-  MUTATION_SUFFIX,
   PLACEHOLDER,
-  PREDICATE_SUFFIX,
   SPECIAL_FORMS_SET,
   STATIC_TYPES,
   STATIC_TYPES_SET,
-  TRUE,
   TYPE,
   VALUE,
   WORD
@@ -28,19 +23,13 @@ import {
   SCOPE_NAME,
   TYPE_PROP,
   SIGNATURE,
-  PREDICATE,
-  COLLECTION,
   MAX_RETRY_DEFINITION,
   MAX_ARGUMENT_RETRY,
   ORDER,
-  VARIABLE_ORDER_INDEX
+  VARIABLE_ORDER_INDEX,
+  COLLECTION
 } from './types.js'
-import {
-  getSuffix,
-  hasApplyLambdaBlock,
-  hasBlock,
-  stringifyArgs
-} from './utils.js'
+import { hasApplyLambdaBlock, hasBlock, stringifyArgs } from './utils.js'
 
 export const identity = (name) => [
   [0, 'let'],
@@ -94,18 +83,15 @@ export const formatType = (name, env) => {
                     `${
                       x[STATS][TYPE_PROP][0] === APPLY
                         ? `${formatType(i, stats[ARGUMENTS])}`
-                        : `${toTypeNames(
-                            x[STATS][TYPE_PROP][1] ?? x[STATS][TYPE_PROP][0]
-                          )}`
+                        : `${toTypeNames(x[STATS][TYPE_PROP][0])}`
                     }`
                 )
                 .join(' ')
-        } (${KEYWORDS.BLOCK} ${toTypeNames(
-          stats[RETURNS][1] ?? stats[RETURNS][0]
-        )})${isAnonymous ? '' : ')'})`
-      : `(let ${name} ${toTypeNames(
-          stats[TYPE_PROP][1] ?? stats[TYPE_PROP][0]
-        )})`
+          // TODO format returned functions when type support is added
+        } (${KEYWORDS.BLOCK} ${toTypeNames(stats[RETURNS][0])})${
+          isAnonymous ? '' : ')'
+        })`
+      : `(let ${name} ${toTypeNames(stats[TYPE_PROP][0])})`
     : name
 }
 const formatTypes = (env) => {
@@ -157,37 +143,6 @@ export const typeCheck = (ast) => {
                 errorStack.add(
                   `Trying to access undefined variable ${first[VALUE]} (check #11)`
                 )
-              } else {
-                const T = env[first[VALUE]][STATS]
-                const isKnown = T[TYPE_PROP][0] !== UNKNOWN
-                switch (first[VALUE]) {
-                  case 'xs':
-                  case 'arr':
-                  case 'matrix':
-                  case 'table':
-                    if (isKnown && T[TYPE_PROP][0] !== COLLECTION) {
-                      warningStack.add(
-                        `A variable named ${first[VALUE]} must be of type (${
-                          STATIC_TYPES.COLLECTION
-                        }) but got type (${toTypeNames(
-                          T[TYPE_PROP][0]
-                        )}) (check #32)`
-                      )
-                    }
-                    //else T[TYPE_PROP] = [COLLECTION]
-                    break
-                  default:
-                    {
-                      const isPredicate =
-                        getSuffix(first[VALUE]) === PREDICATE_SUFFIX
-                      if (isPredicate) {
-                        // PRED ASSIGMENT
-                        if (isKnown) T[TYPE_PROP][1] = PREDICATE
-                        T[RETURNS] = [ATOM, PREDICATE]
-                      }
-                    }
-                    break
-                }
               }
             })
         }
@@ -208,7 +163,7 @@ export const typeCheck = (ast) => {
                 )
               } else {
                 const name = rest[0][VALUE]
-                const resolveRetunType = (returns, rem, prop, isPredicate) => {
+                const resolveRetunType = (returns, rem, prop) => {
                   if (returns[TYPE] === ATOM) {
                     // ATOM ASSIGMENT
                     env[name][STATS][prop][0] = ATOM
@@ -222,14 +177,6 @@ export const typeCheck = (ast) => {
                             // ATOM ASSIGMENT
                             env[name][STATS][prop][0] = ATOM
                             env[name][STATS][RETURNS][0] = ATOM
-                            if (
-                              getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
-                              getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
-                            ) {
-                              // ATOM ASSIGMENT PREDICATE ASSIGMENT
-                              env[name][STATS][TYPE_PROP][1] = [PREDICATE]
-                              env[name][STATS][RETURNS] = [ATOM, PREDICATE]
-                            }
                           } else if (
                             !isLeaf(re[0]) &&
                             env[re[0][0][VALUE]] &&
@@ -296,37 +243,15 @@ export const typeCheck = (ast) => {
                               if (isLeaf(rest.at(-1).at(-1).at(-1))) {
                                 const fnName = rest.at(-1).at(-1).at(-1)[VALUE]
                                 const fn = env[fnName]
-                                if (
-                                  !isPredicate &&
-                                  fn[STATS][RETURNS][1] === PREDICATE
-                                ) {
-                                  warningStack.add(
-                                    `${name} is assigned to ${fnName} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #24)`
-                                  )
-                                } else if (
-                                  isPredicate &&
-                                  fn[STATS][RETURNS][1] !== PREDICATE
-                                ) {
-                                  warningStack.add(
-                                    `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
-                                  )
-                                }
                                 env[name][STATS][TYPE_PROP][0] =
                                   fn[STATS][RETURNS][0]
-                                env[name][STATS][RETURNS][1] =
-                                  fn[STATS][RETURNS][1]
                               } else {
                                 const [returns, rem] = drillReturnType(
                                   rest.at(-1).at(-1).at(-1),
                                   (returns) =>
                                     returns[VALUE] === KEYWORDS.CALL_FUNCTION
                                 )
-                                resolveRetunType(
-                                  returns,
-                                  rem,
-                                  TYPE_PROP,
-                                  isPredicate
-                                )
+                                resolveRetunType(returns, rem, TYPE_PROP)
                               }
                             }
                             // ALWAYS APPLY
@@ -363,27 +288,6 @@ export const typeCheck = (ast) => {
                         break
                     }
                   }
-                  if (
-                    isPredicate &&
-                    env[name][STATS][prop][0] !== UNKNOWN &&
-                    env[name][STATS][RETURNS][1] !== PREDICATE
-                  ) {
-                    warningStack.add(
-                      `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #7)`
-                    )
-                  } else if (
-                    !isPredicate &&
-                    env[name][STATS][RETURNS][1] === PREDICATE
-                  ) {
-                    warningStack.add(
-                      `${name} should end in (${PREDICATE_SUFFIX}) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)`
-                    )
-                  }
-                  if (isPredicate) {
-                    // ATOM ASSIGMENT PREDICATE ASSIGMENT
-                    env[name][STATS][prop] = [ATOM, PREDICATE]
-                    env[name][STATS][RETURNS] = [ATOM, PREDICATE]
-                  }
                 }
                 const checkReturnType = () => {
                   const last = rest.at(-1).at(-1)
@@ -392,8 +296,7 @@ export const typeCheck = (ast) => {
                     : last
                   const rem = hasBlock(body) ? body.at(-1) : body
                   const returns = isLeaf(rem) ? rem : rem[0]
-                  const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
-                  resolveRetunType(returns, rem, RETURNS, isPredicate)
+                  resolveRetunType(returns, rem, RETURNS)
                 }
                 const rightHand = rest.at(-1)
                 if (
@@ -444,30 +347,7 @@ export const typeCheck = (ast) => {
                     env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
                       ? structuredClone(env[rest[1][VALUE]])
                       : env[rest[1][VALUE]]
-
-                    if (
-                      getSuffix(rest[1][VALUE]) === PREDICATE_SUFFIX &&
-                      getSuffix(name) !== PREDICATE_SUFFIX
-                    )
-                      warningStack.add(
-                        `${name} is assigned to ${rest[1][VALUE]} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #17)`
-                      )
-                    else if (
-                      getSuffix(rest[1][VALUE]) === MUTATION_SUFFIX &&
-                      getSuffix(name) !== MUTATION_SUFFIX
-                    )
-                      warningStack.add(
-                        `${name} is assigned to ${rest[1][VALUE]} which ends in (${MUTATION_SUFFIX}) so ${name} must also end in (${MUTATION_SUFFIX}) (check #18)`
-                      )
                   } else if (isL && rightHand[TYPE] === ATOM) {
-                    const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
-                    // This never happens
-                    // if (
-                    //   isPredicate &&
-                    //   right[VALUE] !== TRUE &&
-                    //   right[VALUE] !== FALSE
-                    // ) {
-                    // }
                     // DECLARATION of ATOM
                     env[name] = {
                       [STATS]: {
@@ -479,31 +359,8 @@ export const typeCheck = (ast) => {
                         [RETURNS]: [ATOM]
                       }
                     }
-                    if (isPredicate) {
-                      if (rightHand[VALUE] !== TRUE && rightHand !== FALSE) {
-                        warningStack.add(
-                          `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but the (Atom) value is neither ${TRUE} or ${FALSE} (${stringifyArgs(
-                            exp
-                          )}) (check #14)`
-                        )
-                      } else {
-                        // PREDICATE ASSIGMENT
-                        env[name][STATS][TYPE_PROP][1] = PREDICATE
-                        env[name][STATS][RETURNS] = [ATOM, PREDICATE]
-                      }
-                    }
                   } else {
                     const right = rightHand[0]
-                    const isPredicate = getSuffix(name) === PREDICATE_SUFFIX
-                    if (
-                      right &&
-                      right[VALUE] &&
-                      getSuffix(right[VALUE]) === PREDICATE_SUFFIX &&
-                      !isPredicate
-                    )
-                      warningStack.add(
-                        `${name} is assigned to ${right[VALUE]} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #19)`
-                      )
                     //DECLARATION
                     env[name] = {
                       [STATS]: {
@@ -520,31 +377,11 @@ export const typeCheck = (ast) => {
                         [RETURNS]: [UNKNOWN]
                       }
                     }
-                    if (isPredicate) {
-                      // PREDICATE ASSIGMENT
-                      env[name][STATS][TYPE_PROP][1] = PREDICATE
-                      env[name][STATS][RETURNS] = [ATOM, PREDICATE]
-                    }
                     if (right && right[VALUE]) {
                       if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
                         if (isLeaf(rightHand.at(-1))) {
                           const fnName = rightHand.at(-1)[VALUE]
                           const fn = env[fnName]
-                          if (
-                            !isPredicate &&
-                            fn[STATS][RETURNS][1] === PREDICATE
-                          ) {
-                            warningStack.add(
-                              `${name} is assigned to ${fnName} which ends in (${PREDICATE_SUFFIX}) so ${name} must also end in (${PREDICATE_SUFFIX}) (check #24)`
-                            )
-                          } else if (
-                            isPredicate &&
-                            fn[STATS][RETURNS][1] !== PREDICATE
-                          ) {
-                            warningStack.add(
-                              `${name} ends in (${PREDICATE_SUFFIX}) and is expected to return (Predicate) but it doesn't (check #25)`
-                            )
-                          }
                           // FB assigment
                           env[name][STATS][TYPE_PROP] = fn[STATS][RETURNS]
                           env[name][STATS][RETURNS] = fn[STATS][RETURNS]
@@ -552,29 +389,13 @@ export const typeCheck = (ast) => {
                           const body = rightHand.at(-1).at(-1)
                           const rem = hasBlock(body) ? body.at(-1) : body
                           const returns = isLeaf(rem) ? rem : rem[0]
-                          resolveRetunType(returns, rem, TYPE_PROP, isPredicate)
+                          resolveRetunType(returns, rem, TYPE_PROP)
                         }
                       } else {
                         const body = rightHand
                         const rem = hasBlock(body) ? body.at(-1) : body
                         const returns = isLeaf(rem) ? rem : rem[0]
-                        resolveRetunType(returns, rem, TYPE_PROP, isPredicate)
-                      }
-                      if (env[right[VALUE]]?.[STATS]?.[RETURNS]?.[1]) {
-                        if (
-                          env[right[VALUE]][STATS][RETURNS][1] === PREDICATE &&
-                          !isPredicate
-                        ) {
-                          warningStack.add(
-                            `${name} is assigned to the result of a (${toTypeNames(
-                              PREDICATE
-                            )}) so ${name} must end in (${PREDICATE_SUFFIX}) (check #23)`
-                          )
-                        }
-
-                        // FN assigment
-                        env[name][STATS][RETURNS] =
-                          env[right[VALUE]][STATS][RETURNS]
+                        resolveRetunType(returns, rem, TYPE_PROP)
                       }
                     }
                   }
@@ -629,99 +450,83 @@ export const typeCheck = (ast) => {
                 const ref = env[copy[SCOPE_NAME]]
                 if (ref) {
                   ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
-                  if (getSuffix(param[VALUE]) === PREDICATE_SUFFIX) {
-                    // copy[param[VALUE]][STATS][TYPE_PROP][1]= PREDICATE
-                    copy[param[VALUE]][STATS][RETURNS] = [ATOM, PREDICATE]
+                  const returns = deepLambdaReturn(
+                    hasBlock(exp) ? exp.at(-1) : exp,
+                    (result) => result[VALUE] !== KEYWORDS.IF
+                  )
+                  if (isLeaf(returns)) {
+                    // TODO figure out what we do here
+                    // this here is a variable WORD
+                    // so return type of that function is that varible type
+                    if (copy[returns[VALUE]])
+                      ref[STATS][RETURNS] =
+                        copy[returns[VALUE]][STATS][TYPE_PROP]
+                    else
+                      stack.push(() => {
+                        if (copy[returns[VALUE]])
+                          ref[STATS][RETURNS] =
+                            copy[returns[VALUE]][STATS][TYPE_PROP]
+                      })
                   } else {
-                    const returns = deepLambdaReturn(
-                      hasBlock(exp) ? exp.at(-1) : exp,
-                      (result) => result[VALUE] !== KEYWORDS.IF
-                    )
-                    if (isLeaf(returns)) {
-                      // TODO figure out what we do here
-                      // this here is a variable WORD
-                      // so return type of that function is that varible type
-                      if (copy[returns[VALUE]])
-                        ref[STATS][RETURNS] =
-                          copy[returns[VALUE]][STATS][TYPE_PROP]
-                      else
-                        stack.push(() => {
-                          if (copy[returns[VALUE]])
-                            ref[STATS][RETURNS] =
-                              copy[returns[VALUE]][STATS][TYPE_PROP]
-                        })
-                    } else {
-                      const ret = returns[0]
-                      switch (ret[VALUE]) {
-                        case KEYWORDS.IF:
-                          const re = returns.slice(2)
-                          // If either is an ATOM then IF returns an ATOM
-                          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
-                            ref[STATS][RETURNS][0] = ATOM
-                            // TODO check that both brancehs are predicates if one is
-                            if (
-                              getSuffix(re[0][VALUE]) === PREDICATE_SUFFIX ||
-                              getSuffix(re[1][VALUE]) === PREDICATE_SUFFIX
-                            ) {
-                              ref[STATS][TYPE_PROP][1] = PREDICATE
-                              ref[STATS][RETURNS][1] = PREDICATE
-                            }
-                          } else {
-                            const concequent = isLeaf(re[0])
-                              ? copy[re[0][VALUE]]
-                              : copy[re[0][0][VALUE]]
-                            const alternative = isLeaf(re[1])
-                              ? copy[re[1][VALUE]]
-                              : copy[re[1][0][VALUE]]
+                    const ret = returns[0]
+                    switch (ret[VALUE]) {
+                      case KEYWORDS.IF:
+                        const re = returns.slice(2)
+                        // If either is an ATOM then IF returns an ATOM
+                        if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                          ref[STATS][RETURNS][0] = ATOM
+                          // TODO check that both brancehs are predicates if one is
+                        } else {
+                          const concequent = isLeaf(re[0])
+                            ? copy[re[0][VALUE]]
+                            : copy[re[0][0][VALUE]]
+                          const alternative = isLeaf(re[1])
+                            ? copy[re[1][VALUE]]
+                            : copy[re[1][0][VALUE]]
 
-                            // todo check if condition matches alternative
-                            // TODO make this more simple - it's so many different things just because types are functions or not
-                            // WHY not consiter making return types for everything
-                            if (
-                              concequent &&
-                              concequent[STATS][TYPE_PROP][0] !== UNKNOWN
-                            ) {
-                              if (concequent[STATS][TYPE_PROP][0] === APPLY)
-                                ref[STATS][RETURNS] = concequent[STATS][RETURNS]
-                              else
-                                ref[STATS][RETURNS] =
-                                  concequent[STATS][TYPE_PROP]
-                            } else if (
-                              alternative &&
-                              alternative[STATS][TYPE_PROP][0] !== UNKNOWN
-                            ) {
-                              if (alternative[STATS][TYPE_PROP][0] === APPLY)
-                                ref[STATS][RETURNS] =
-                                  alternative[STATS][RETURNS]
-                              else
-                                ref[STATS][RETURNS] =
-                                  alternative[STATS][TYPE_PROP]
-                            } else if (concequent) {
-                              if (concequent[STATS][TYPE_PROP][0] === APPLY)
-                                ref[STATS][RETURNS] = concequent[STATS][RETURNS]
-                              else
-                                ref[STATS][RETURNS] =
-                                  concequent[STATS][TYPE_PROP]
-                            }
+                          // todo check if condition matches alternative
+                          // TODO make this more simple - it's so many different things just because types are functions or not
+                          // WHY not consiter making return types for everything
+                          if (
+                            concequent &&
+                            concequent[STATS][TYPE_PROP][0] !== UNKNOWN
+                          ) {
+                            if (concequent[STATS][TYPE_PROP][0] === APPLY)
+                              ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                            else
+                              ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
+                          } else if (
+                            alternative &&
+                            alternative[STATS][TYPE_PROP][0] !== UNKNOWN
+                          ) {
+                            if (alternative[STATS][TYPE_PROP][0] === APPLY)
+                              ref[STATS][RETURNS] = alternative[STATS][RETURNS]
+                            else
+                              ref[STATS][RETURNS] =
+                                alternative[STATS][TYPE_PROP]
+                          } else if (concequent) {
+                            if (concequent[STATS][TYPE_PROP][0] === APPLY)
+                              ref[STATS][RETURNS] = concequent[STATS][RETURNS]
+                            else
+                              ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
                           }
+                        }
 
-                          break
-                        default:
-                          if (copy[ret[VALUE]])
-                            ref[STATS][RETURNS] =
-                              copy[ret[VALUE]][STATS][RETURNS]
-                          else
-                            stack.push(() => {
-                              if (copy[ret[VALUE]])
-                                ref[STATS][RETURNS] =
-                                  copy[ret[VALUE]][STATS][RETURNS]
-                            })
+                        break
+                      default:
+                        if (copy[ret[VALUE]])
+                          ref[STATS][RETURNS] = copy[ret[VALUE]][STATS][RETURNS]
+                        else
+                          stack.push(() => {
+                            if (copy[ret[VALUE]])
+                              ref[STATS][RETURNS] =
+                                copy[ret[VALUE]][STATS][RETURNS]
+                          })
 
-                          break
-                      }
+                        break
                     }
-                    // TODO overwrite return type check here
                   }
+                  // TODO overwrite return type check here
                 }
               }
               check(rest.at(-1), copy, copy)
@@ -814,19 +619,6 @@ export const typeCheck = (ast) => {
                               )}) (${stringifyArgs(exp)}) (check #26)`
                             )
                           }
-                          if (fn && fn[STATS][RETURNS][1] !== PRED_TYPE) {
-                            errorStack.add(
-                              `Incorrect type of argument (${i}) for (${
-                                first[VALUE]
-                              }). Expected (${toTypeNames(
-                                PRED_TYPE
-                              )}) but got an (${toTypeNames(
-                                fn[STATS][RETURNS][1] ?? fn[STATS][RETURNS][0]
-                              )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
-                                exp
-                              )}) (check #27)`
-                            )
-                          }
                         } else {
                           const body = rest[i].at(-1).at(-1)
                           const rem = hasBlock(body) ? body.at(-1) : body
@@ -841,24 +633,6 @@ export const typeCheck = (ast) => {
                                 )}) but got an (${toTypeNames(
                                   ATOM
                                 )})  (${stringifyArgs(exp)}) (check #27)`
-                              )
-                            }
-                            if (
-                              PRED_TYPE &&
-                              PRED_TYPE === PREDICATE &&
-                              returns[VALUE] !== TRUE &&
-                              returns[VALUE] !== FALSE
-                            ) {
-                              errorStack.add(
-                                `Incorrect type of argument ${i} for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  PRED_TYPE
-                                )}) but got an (${toTypeNames(
-                                  ATOM
-                                )}) which is neither ${TRUE} or ${FALSE} (${stringifyArgs(
-                                  exp
-                                )}) (check #27)`
                               )
                             }
                           } else if (env[returns[VALUE]]) {
@@ -876,41 +650,6 @@ export const typeCheck = (ast) => {
                                 )})  (${stringifyArgs(exp)}) (check #29)`
                               )
                             }
-                            // Never happens because there is only 1 sub type at the moment
-                            // if (
-                            //   PRED_TYPE &&
-                            //   PRED_TYPE !==
-                            //     env[returns[VALUE]][STATS][RETURNS][1]
-                            // ) {
-                            // }
-                          }
-                        }
-                      } else if (
-                        PRED_TYPE &&
-                        env[current[VALUE]] &&
-                        env[current[VALUE]][STATS][RETURNS][1] !== PRED_TYPE
-                      ) {
-                        if (current[VALUE] === KEYWORDS.ANONYMOUS_FUNCTION) {
-                          const body = rest[i].at(-1)
-                          const rem = hasBlock(body) ? body.at(-1) : body
-                          const returns = isLeaf(rem) ? rem : rem[0]
-                          if (
-                            env[returns[VALUE]] &&
-                            root[returns[VALUE]][STATS][RETURNS][1] ===
-                              PREDICATE
-                          ) {
-                            // TODO invert this logic
-                          } else {
-                            errorStack.add(
-                              `Incorrect type of arguments (${i}) for (${
-                                first[VALUE]
-                              }). Expected (${toTypeNames(
-                                PRED_TYPE
-                              )}) but got (${toTypeNames(
-                                env[current[VALUE]][STATS][RETURNS][1] ??
-                                  env[current[VALUE]][STATS][RETURNS][0]
-                              )}) (${stringifyArgs(exp)}) (check #21)`
-                            )
                           }
                         }
                       }
@@ -920,7 +659,6 @@ export const typeCheck = (ast) => {
                     const isCast = STATIC_TYPES_SET.has(first[VALUE])
                     const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
                     for (let i = 0; i < rest.length; ++i) {
-                      const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                       const MAIN_TYPE = expectedArgs[i][STATS][TYPE_PROP][0]
                       if (MAIN_TYPE === UNKNOWN && !isCast) continue
                       if (!isLeaf(rest[i])) {
@@ -967,21 +705,7 @@ export const typeCheck = (ast) => {
                                       env[CAR][STATS][TYPE_PROP][0]
                                     )}) (${stringifyArgs(exp)}) (check #3)`
                                   )
-                                } else if (
-                                  PRED_TYPE === PREDICATE &&
-                                  env[CAR][STATS][RETURNS][1] !== PRED_TYPE &&
-                                  !isCast
-                                )
-                                  errorStack.add(
-                                    `Incorrect type of argument (${i}) for special form (${
-                                      first[VALUE]
-                                    }). Expected (${toTypeNames(
-                                      PRED_TYPE
-                                    )}) but got (${toTypeNames(
-                                      env[CAR][STATS][RETURNS][1] ??
-                                        env[CAR][STATS][TYPE_PROP][0]
-                                    )}) (${stringifyArgs(exp)}) (check #6)`
-                                  )
+                                }
                               } else if (env[rest[i][VALUE]]) {
                                 if (isCast) {
                                   // CAST assigment
@@ -1009,22 +733,6 @@ export const typeCheck = (ast) => {
                                 )}) (${stringifyArgs(exp)}) (check #2)`
                               )
                             }
-                            if (
-                              PRED_TYPE === PREDICATE &&
-                              rest[i][VALUE] !== TRUE &&
-                              rest[i][VALUE] !== FALSE
-                            ) {
-                              errorStack.add(
-                                `Incorrect type of argument (${i}) for special form (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  PRED_TYPE
-                                )}) but got (${toTypeNames(
-                                  rest[i][VALUE]
-                                )}) (${stringifyArgs(exp)}) (check #5)`
-                              )
-                            }
-
                             break
                           }
                         }
@@ -1052,22 +760,6 @@ export const typeCheck = (ast) => {
                         )}) (check #10)`
                       )
                     } else if (
-                      T === ATOM &&
-                      args[i][STATS][RETURNS][0] === ATOM &&
-                      args[i][STATS][RETURNS][1] === PREDICATE &&
-                      rest[i][VALUE] !== TRUE &&
-                      rest[i][VALUE] !== FALSE
-                    ) {
-                      errorStack.add(
-                        `Incorrect type of arguments ${i} for (${
-                          first[VALUE]
-                        }). Expected (${toTypeNames(
-                          args[i][STATS][RETURNS][1]
-                        )}) but got (${toTypeNames(T)}) (${stringifyArgs(
-                          exp
-                        )}) (check #13)`
-                      )
-                    } else if (
                       T === APPLY &&
                       args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
                       env[rest[i][VALUE]][STATS][TYPE_PROP][0] !== UNKNOWN &&
@@ -1092,6 +784,7 @@ export const typeCheck = (ast) => {
                       }
                     }
                     if (
+                      T === COLLECTION &&
                       env[rest[i][VALUE]] &&
                       env[rest[i][VALUE]][STATS][TYPE_PROP][0] !== UNKNOWN &&
                       args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&

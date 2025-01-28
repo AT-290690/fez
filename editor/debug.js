@@ -20,6 +20,7 @@ import { enhance } from '../src/enchance.js'
 import { isLeaf, LISP } from '../src/parser.js'
 import { SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
+// const libraryTypes = new Map() ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0])[1]
 export const debug = (ast, checkTypes = true) => {
   let types = new Map()
@@ -60,18 +61,6 @@ export const debug = (ast, checkTypes = true) => {
           }) but got something else(${STATIC_TYPES.COLLECTION} ${stringifyArgs(
             args
           )})`
-        )
-      return T
-    },
-    [STATIC_TYPES.PREDICATE]: (args, env) => {
-      const T = evaluate(args[0], env)
-      if (T !== TRUE && T !== FALSE)
-        throw new TypeError(
-          `Argument of (${STATIC_TYPES.PREDICATE}) must be an (${
-            RUNTIME_TYPES.NUMBER
-          }) that is exactly (or ${TRUE} ${FALSE}) but got something else (${
-            STATIC_TYPES.PREDICATE
-          } ${stringifyArgs(args)})`
         )
       return T
     },

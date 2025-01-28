@@ -30,12 +30,12 @@ describe('Should throw errors', () => {
       ]),
       [
         '(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Unknown)))',
-        '(let math:overlap? (lambda Atom Atom Atom (do Predicate)))',
-        '(let math:prime? (lambda Atom (do Predicate)))',
+        '(let math:overlap? (lambda Atom Atom Atom (do Atom)))',
+        '(let math:prime? (lambda Atom (do Atom)))',
         '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Collection)))',
-        '(let array:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))',
-        '(let list:find (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))',
-        '(let list:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))',
+        '(let array:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))',
+        '(let list:find (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))',
+        '(let list:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))',
         '(let array:unique (lambda Collection (do Collection)))'
       ]
     )
@@ -49,19 +49,24 @@ describe('Should throw errors', () => {
 (let is12? (lambda x (= x 12)))
 (let x? 1)
 (let abb (lambda x (do (+ x 1) x)))
-(let iffx (lambda x (if (> x 1) x x)))`,
-        ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx']
+(let iffx (lambda x (if (> x 1) x x)))
+(let g (lambda x (do
+                  (or (not (length x)) 1)
+                  (let index (lambda (set! x 0 1))) 
+                  (index))))`,
+        ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx', 'g']
       ),
       [
-        '(let is12? (lambda Atom (do Predicate)))',
+        '(let is12? (lambda Atom (do Atom)))',
         '(let a Atom)',
         '(let c Atom)',
         '(let b Collection)',
         '(let box (lambda Unknown (do Collection)))',
         '(let add (lambda Atom Collection (do Atom)))',
-        '(let x? Predicate)',
+        '(let x? Atom)',
         '(let abb (lambda Atom (do Atom)))',
-        '(let iffx (lambda Atom (do Atom)))'
+        '(let iffx (lambda Atom (do Atom)))',
+        '(let g (lambda Collection (do Collection)))'
       ]
     )
     deepStrictEqual(
@@ -480,16 +485,6 @@ ZZZ=ZZZ,ZZZ")
 
   it('Should throw', () => {
     fails(
-      `(let x? (lambda 2))
-(let y? (lambda 3))
-(let z? (lambda 10))
-(let m? 10)`,
-      `x? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-y? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-z? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-m? ends in (?) and is expected to return (Predicate) but the (Atom) value is neither 1 or 0 (let m? 10) (check #14)`
-    )
-    fails(
       `(let x y)
 (let y 1)`,
       `Trying to access undefined variable y (check #22)`
@@ -515,158 +510,8 @@ Incorrect type of argument (0) for special form (set!). Expected (Collection) bu
       `Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! 1 1 10) (check #2)`
     )
     fails(
-      `(and (apply [1] math:summation) 1)`,
-      `Incorrect type of argument (0) for (and). Expected (Predicate) but got an (Atom) which is neither 1 or 0 (and (apply (array 1) math:summation) 1) (check #27)`
-    )
-    fails(
-      `(do
-(let add (lambda a (+ a 1)))
-(let fn? (lambda x (apply x add)))
-)
-(do
-(let add (lambda a (+ a 1)))
-(let fn? (lambda x (apply x (lambda x (add x))))))`,
-      `fn? ends in (?) and is expected to return (Predicate) but it doesn't (check #25)
-fn? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
-    )
-    fails(
-      `(let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply ["Hello"] array:first))))`,
-      `Incorrect type of argument (1) for (and). Expected (Atom) but got an (Unknown) (and (not (string:equal? A B)) (apply (array (array 72 101 108 108 111)) array:first)) (check #26)
-Incorrect type of argument (1) for (and). Expected (Predicate) but got an (Unknown) which is neither 1 or 0 (and (not (string:equal? A B)) (apply (array (array 72 101 108 108 111)) array:first)) (check #27)`
-    )
-    fails(
-      `(let x (apply 1 math:odd?))`,
-      `x is assigned to math:odd? which ends in (?) so x must also end in (?) (check #24)`
-    )
-    fails(
-      `(let x? (apply 1 math:increment))`,
-      `x? ends in (?) and is expected to return (Predicate) but it doesn't (check #25)`
-    )
-    fails(
       `(let x ())`,
       '(lambda) invocation with missing (Abstraction) name () Provide an (Abstraction) name as the (1) argument.'
-    )
-    fails(
-      `(let math:bit-equal (lambda a b (< (^ a b) 1)))`,
-      'math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)'
-    )
-    fails(
-      `(let list:some? (lambda xs f (cond 
-                              (list:nil? xs) 0
-                              (f (list:head xs)) 1
-                              (*) (list:some? (list:tail xs) f))))`,
-      `list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
-    )
-    fails(
-      `
-(let err 2)
-(and err (= 1 1))
-`,
-      `Incorrect type of argument (0) for special form (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #6)`
-    )
-    fails(
-      `
-(let err 1)
-(and err (= 1 1))
-`,
-      `Incorrect type of argument (0) for special form (and). Expected (Predicate) but got (Atom) (and err (= 1 1)) (check #6)`
-    )
-    fails(
-      `(let INPUT "
-#####
-.####
-.####
-.####
-.#.#.
-.#...
-.....
-
-#####
-##.##
-.#.##
-...##
-...#.
-...#.
-.....
-
-.....
-#....
-#....
-#...#
-#.#.#
-#.###
-#####
-
-.....
-.....
-#.#..
-###..
-###.#
-###.#
-#####
-
-.....
-.....
-.....
-#....
-#.#..
-#.#.#
-#####
-")
-
-(let parse (lambda input (|> input (string:trim) (string:lines) (array:append! []) (array:chunks array:empty?))))
-
-(let part1 (lambda input (do
-    (let M (- (array:length (array:first input)) 2))
-    (let handle-a (lambda a (array:slice a 1 (array:length a))))
-    (let handle-b (lambda a (array:slice a 0 (- (array:length a) 1))))
-    (let from:heights->height (lambda heights cb (do 
-        (let h (math:zeroes (array:length (array:first heights))))
-        (array:for (cb heights) (lambda x (do 
-            (array:enumerated-for x (lambda y i (do 
-                (array:set! h i (math:max (array:get h i) y)))))))) h)))
-
-    (let fit? (lambda pairs (do 
-        (|> pairs (array:map (lambda [lock key .] 
-                  (|> (array:zip lock key) 
-                    (array:map (lambda x (- M (tuple:add x)))) 
-                    (array:some? (lambda a (< a 0))) 
-                    (not)))) (math:summation)))))
-    (let A 0)
-    (let B 1)
-    
-    (let from:b->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) i -1)))))))))
-    (let from:a->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) (- (array:length y) i 1) -1)))))))))
-    
-    (let heights (|> input (array:map (lambda x
-        (if (array:some? (array:get x 0) (lambda y (= y char:dot)))
-        [B (|> x (from:a->heights) (from:heights->height handle-a))]
-        [A (|> x (from:b->heights) (from:heights->height handle-b))])))))
-
-    (let locks (|> heights (array:select (lambda x (= (array:first x) A))) (array:map array:second)))
-    (let keys (|> heights (array:select (lambda x (= (array:first x) B))) (array:map array:second)))
-
-    (|> (math:cartesian-product locks keys) (fit?)))))
-
-(let PARSED (parse INPUT))
-
-[(part1 PARSED)]
-`,
-      `fit? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
-    )
-    fails(
-      `(let fn (lambda x y? (+ x (or y? 1))))
-(fn 1 2)`,
-      `Incorrect type of arguments 1 for (fn). Expected (Predicate) but got (Atom) (fn 1 2) (check #13)`
-    )
-    fails(
-      `(let fn (lambda x y? (+ x (or y? 2))))`,
-      `Incorrect type of argument (1) for special form (or). Expected (Predicate) but got (Atom) (or y? 2) (check #5)`
-    )
-    fails(
-      `(let xs 1)
-(identity xs)`,
-      `A variable named xs must be of type (Collection) but got type (Atom) (check #32)`
     )
     fails(
       `(let fn1 (lambda 1y x (do 
@@ -818,6 +663,14 @@ Trying to call undefined (lambda) array:mapz (check #9)`
 `,
       `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1) (check #30)`
     )
+    // TODO revisit this test - array:first should set the type as it's the first one to be called
+    // There is actually a conflict of types. Maybe the error message should be different
+    fails(
+      `(let g (lambda x (do 
+                  (let index (array:second x)) 
+                  (or (not (> x 0)) 1))))`,
+      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
+    )
     fails(
       `(math:pi 10)`,
       `(math:pi) is not a (lambda) (math:pi 10) (check #12)`
@@ -894,8 +747,7 @@ Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
       (array:map array:first))))`,
       // TODO - remove Duplication
-      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)
-Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)`
+      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
     )
     fails(
       `(let INPUT
@@ -1034,17 +886,6 @@ Trying to access undefined variable xs (check #11)`
       `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #16)
 Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x y (array)) (check #16)`
     )
-
-    fails(
-      `(let e? array:every?)
-(let err e?)
-(let e (array:every? [1 2 3] math:odd?))`,
-      `err is assigned to e? which ends in (?) so err must also end in (?) (check #17)
-e is assigned to array:every? which ends in (?) so e must also end in (?) (check #19)
-e should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-e is assigned to the result of a (Predicate) so e must end in (?) (check #23)`
-    )
-
     fails(
       `(let x (if (= 1 1) (lambda x 1) (lambda x 2)))
 (x 1 2)`,
@@ -1075,47 +916,16 @@ Trying to access undefined variable m (check #11)
 Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #15)
 Incorrect type of argument (0) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
 Incorrect type of argument (1) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
-Incorrect type of arguments 0 for (bool:true?). Expected (Collection) but got (Atom) (bool:true? is?) (check #10)
-Incorrect type of arguments 0 for (bool:true?). Expected (Collection) but got (Atom) (bool:true? is?) (check #30)
-Incorrect type of arguments 0 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (> (array:first current) (array:second current))) (check #10)
-Incorrect type of arguments 0 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (> (array:first current) (array:second current))) (check #30)
-Incorrect type of arguments 0 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (< (array:first current) (array:second current))) (check #10)
-Incorrect type of arguments 0 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (< (array:first current) (array:second current))) (check #30)
-Incorrect type of arguments 0 for (var:get). Expected (Collection) but got (Atom) (var:get at-least-one?) (check #10)
-Incorrect type of arguments 0 for (var:get). Expected (Collection) but got (Atom) (var:get at-least-one?) (check #30)
-Incorrect type of arguments 0 for (var:set!). Expected (Collection) but got (Atom) (var:set! at-least-one? 1) (check #10)
-Incorrect type of arguments 0 for (var:set!). Expected (Collection) but got (Atom) (var:set! at-least-one? 1) (check #30)
+Incorrect type of argument 1 for (and). Expected (Atom) but got (undefined)  (and (= (array:length a) (array:length b)) (apply (lambda (do (array:every? (array:zip a b) (lambda x (= (array:first x) (array:second x)))))))) (check #29)
 Incorrect number of arguments for (recursive:array:enumerated-find-index). Expected (= 1) but got 2 (recursive:array:enumerated-find-index xs 0) (check #15)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)
-Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #30)
 Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
-math:bit-equal should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-is-good-enough should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-math:perfect-square? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-math:prime? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-list:some? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-list:every? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-recursive:array:every should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-recursive:array:some should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
-predicate should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-predicate is assigned to the result of a (Predicate) so predicate must end in (?) (check #23)
-recursive:array:enumerated-every should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-recursive:array:enumerated-some should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-string:lesser? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-string:greater? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-set:exists? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)
-is-negative is assigned to match:negative? which ends in (?) so is-negative must also end in (?) (check #19)
-is-negative should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-is-negative is assigned to the result of a (Predicate) so is-negative must end in (?) (check #23)
-special-form:and should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-special-form:or should end in (?) because it return (Predicate) (try adding ? at the end of the lambda name) (check #8)
-at-least-one? ends in (?) and is expected to return (Predicate) but it doesn't (check #7)`
+Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)`
     )
   })
 })

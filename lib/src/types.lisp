@@ -175,7 +175,7 @@
 ; :: char:backtick
 (let char:backtick Atom)
 ; :: char:digit?
-(let char:digit? (lambda Atom (do Predicate)))
+(let char:digit? (lambda Atom (do Atom)))
 ; :: identity
 (let identity (lambda Unknown (do Unknown)))
 ; :: Scope
@@ -189,13 +189,13 @@
 ; :: Search
 (let Search (lambda Unknown (do Unknown)))
 ; :: truthy?
-(let truthy? (lambda Atom (do Predicate)))
+(let truthy? (lambda Atom (do Atom)))
 ; :: falsy?
-(let falsy? (lambda Atom (do Predicate)))
+(let falsy? (lambda Atom (do Atom)))
 ; :: true?
-(let true? (lambda Atom (do Predicate)))
+(let true? (lambda Atom (do Atom)))
 ; :: false?
-(let false? (lambda Atom (do Predicate)))
+(let false? (lambda Atom (do Atom)))
 ; :: math:e
 (let math:e Atom)
 ; :: math:pi
@@ -253,9 +253,9 @@
 ; :: math:numbers
 (let math:numbers (lambda Atom Unknown (do Unknown)))
 ; :: math:between?
-(let math:between? (lambda Atom Atom Atom (do Predicate)))
+(let math:between? (lambda Atom Atom Atom (do Atom)))
 ; :: math:overlap?
-(let math:overlap? (lambda Atom Atom Atom (do Predicate)))
+(let math:overlap? (lambda Atom Atom Atom (do Atom)))
 ; :: math:permutations
 (let math:permutations (lambda Collection (do Collection)))
 ; :: math:combinations out
@@ -265,15 +265,15 @@
 ; :: math:combinations
 (let math:combinations (lambda Collection (do Collection)))
 ; :: math:greater?
-(let math:greater? (lambda Atom Atom (do Predicate)))
+(let math:greater? (lambda Atom Atom (do Atom)))
 ; :: math:lesser?
-(let math:lesser? (lambda Atom Atom (do Predicate)))
+(let math:lesser? (lambda Atom Atom (do Atom)))
 ; :: math:lesser-or-equal?
-(let math:lesser-or-equal? (lambda Atom Atom (do Predicate)))
+(let math:lesser-or-equal? (lambda Atom Atom (do Atom)))
 ; :: math:greater-or-equal?
-(let math:greater-or-equal? (lambda Atom Atom (do Predicate)))
+(let math:greater-or-equal? (lambda Atom Atom (do Atom)))
 ; :: math:equal?
-(let math:equal? (lambda Atom Atom (do Predicate)))
+(let math:equal? (lambda Atom Atom (do Atom)))
 ; :: math:addition
 (let math:addition (lambda Atom Atom (do Atom)))
 ; :: math:multiplication
@@ -319,7 +319,7 @@
 ; :: math:power-of-two-bits
 (let math:power-of-two-bits (lambda Atom (do Atom)))
 ; :: math:odd-bit?
-(let math:odd-bit? (lambda Atom (do Predicate)))
+(let math:odd-bit? (lambda Atom (do Atom)))
 ; :: math:average-bit
 (let math:average-bit (lambda Atom Atom (do Atom)))
 ; :: math:flag-flip
@@ -327,17 +327,17 @@
 ; :: math:toggle-bit
 (let math:toggle-bit (lambda Atom Atom Atom (do Atom)))
 ; :: math:same-sign-bit?
-(let math:same-sign-bit? (lambda Atom Atom (do Predicate)))
+(let math:same-sign-bit? (lambda Atom Atom (do Atom)))
 ; :: math:max-bit
 (let math:max-bit (lambda Atom Atom (do Atom)))
 ; :: math:min-bit
 (let math:min-bit (lambda Atom Atom (do Atom)))
 ; :: math:bit-equal?
-(let math:bit-equal? (lambda Atom Atom (do Predicate)))
+(let math:bit-equal? (lambda Atom Atom (do Atom)))
 ; :: math:modulo-bit
 (let math:modulo-bit (lambda Atom Atom (do Atom)))
 ; :: math:n-one-bit?
-(let math:n-one-bit? (lambda Atom Atom (do Predicate)))
+(let math:n-one-bit? (lambda Atom Atom (do Atom)))
 ; :: math:median len
 (let len Atom)
 ; :: math:median half
@@ -367,9 +367,9 @@
 ; :: math:least-common-divisor
 (let math:least-common-divisor (lambda Atom Atom (do Atom)))
 ; :: math:coprime?
-(let math:coprime? (lambda Atom Atom (do Predicate)))
+(let math:coprime? (lambda Atom Atom (do Atom)))
 ; :: math:sqrt good-enough?
-(let good-enough? (lambda Atom Atom (do Predicate)))
+(let good-enough? (lambda Atom Atom (do Atom)))
 ; :: math:sqrt improve-guess
 (let improve-guess (lambda Atom Atom (do Atom)))
 ; :: math:sqrt recursive:math:sqrt
@@ -377,7 +377,7 @@
 ; :: math:sqrt
 (let math:sqrt (lambda Atom (do Unknown)))
 ; :: math:perfect-square?
-(let math:perfect-square? (lambda Atom (do Predicate)))
+(let math:perfect-square? (lambda Atom (do Atom)))
 ; :: math:circumference
 (let math:circumference (lambda Atom (do Atom)))
 ; :: math:hypotenuse
@@ -405,13 +405,13 @@
 ; :: math:clamp-range
 (let math:clamp-range (lambda Atom Atom Atom (do Unknown)))
 ; :: math:odd?
-(let math:odd? (lambda Atom (do Predicate)))
+(let math:odd? (lambda Atom (do Atom)))
 ; :: math:even?
-(let math:even? (lambda Atom (do Predicate)))
+(let math:even? (lambda Atom (do Atom)))
 ; :: math:enumerated-odd?
-(let math:enumerated-odd? (lambda Unknown Atom (do Predicate)))
+(let math:enumerated-odd? (lambda Unknown Atom (do Atom)))
 ; :: math:enumerated-even?
-(let math:enumerated-even? (lambda Unknown Atom (do Predicate)))
+(let math:enumerated-even? (lambda Unknown Atom (do Atom)))
 ; :: math:sign
 (let math:sign (lambda Atom (do Atom)))
 ; :: math:radians
@@ -429,17 +429,17 @@
 ; :: math:manhattan-distance
 (let math:manhattan-distance (lambda Atom Atom Atom Atom (do Atom)))
 ; :: math:positive?
-(let math:positive? (lambda Atom (do Predicate)))
+(let math:positive? (lambda Atom (do Atom)))
 ; :: math:negative?
-(let math:negative? (lambda Atom (do Predicate)))
+(let math:negative? (lambda Atom (do Atom)))
 ; :: math:invert
 (let math:invert (lambda Atom (do Atom)))
 ; :: math:zero?
-(let math:zero? (lambda Atom (do Predicate)))
+(let math:zero? (lambda Atom (do Atom)))
 ; :: math:negative-one?
-(let math:negative-one? (lambda Atom (do Predicate)))
+(let math:negative-one? (lambda Atom (do Atom)))
 ; :: math:divisible?
-(let math:divisible? (lambda Atom Atom (do Predicate)))
+(let math:divisible? (lambda Atom Atom (do Atom)))
 ; :: math:factorial
 (let math:factorial (lambda Atom (do Atom)))
 ; :: math:sine sine
@@ -465,11 +465,11 @@
 ; :: math:prime-factors
 (let math:prime-factors (lambda Unknown (do Collection)))
 ; :: math:prime? :: recursive:math:prime prime?
-(let prime? Predicate)
+(let prime? Atom)
 ; :: math:prime? :: recursive:math:prime
 (let recursive:math:prime (lambda Atom Atom (do Unknown)))
 ; :: math:prime?
-(let math:prime? (lambda Atom (do Predicate)))
+(let math:prime? (lambda Atom (do Atom)))
 ; :: math:number-of-digits
 (let math:number-of-digits (lambda Atom (do Atom)))
 ; :: math:largest-power N1
@@ -497,7 +497,7 @@
 ; :: math:enumeration
 (let math:enumeration (lambda  (do Unknown)))
 ; :: math:palindrome?
-(let math:palindrome? (lambda Collection (do Predicate)))
+(let math:palindrome? (lambda Collection (do Atom)))
 ; :: math:max-sub-array-sum
 (let math:max-sub-array-sum (lambda Collection (do Unknown)))
 ; :: math:list-maximum
@@ -521,11 +521,11 @@
 ; :: list:tail
 (let list:tail (lambda Collection (do Unknown)))
 ; :: list:nil?
-(let list:nil? (lambda Collection (do Predicate)))
+(let list:nil? (lambda Collection (do Atom)))
 ; :: list:map
 (let list:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: list:filter
-(let list:filter (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))
+(let list:filter (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: list:fold
 (let list:fold (lambda Collection (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; :: list:zip
@@ -539,13 +539,13 @@
 ; :: list:reverse
 (let list:reverse (lambda Collection (do Unknown)))
 ; :: list:find
-(let list:find (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))
+(let list:find (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: list:find-tail
-(let list:find-tail (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))
+(let list:find-tail (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: list:some?
-(let list:some? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))
+(let list:some? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: list:every?
-(let list:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))
+(let list:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: list:remove-at remove
 (let remove (lambda Collection Atom (do Unknown)))
 ; :: list:remove-at
@@ -577,9 +577,9 @@
 ; :: list:flatten
 (let list:flatten (lambda Collection (do Collection)))
 ; :: list:equal?
-(let list:equal? (lambda Collection Collection (do Predicate)))
+(let list:equal? (lambda Collection Collection (do Atom)))
 ; :: list:count-of
-(let list:count-of (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
+(let list:count-of (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
 ; :: list:count
 (let list:count (lambda Collection Atom (do Unknown)))
 ; :: list:take
@@ -623,23 +623,23 @@
 ; :: array:select recursive:array:select
 (let recursive:array:select (lambda Atom Collection (do Unknown)))
 ; :: array:select
-(let array:select (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
+(let array:select (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
 ; :: array:exclude recursive:array:exclude
 (let recursive:array:exclude (lambda Atom Collection (do Unknown)))
 ; :: array:exclude
-(let array:exclude (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
+(let array:exclude (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
 ; :: array:fold recursive:array:fold
 (let recursive:array:fold (lambda Atom Unknown (do Unknown)))
 ; :: array:fold
 (let array:fold (lambda Collection (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; :: array:every? recursive:array:every?
-(let recursive:array:every? (lambda Atom (do Predicate)))
+(let recursive:array:every? (lambda Atom (do Atom)))
 ; :: array:every?
-(let array:every? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))
+(let array:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: array:some? recursive:array:some?
-(let recursive:array:some? (lambda Atom (do Predicate)))
+(let recursive:array:some? (lambda Atom (do Atom)))
 ; :: array:some?
-(let array:some? (lambda Collection (lambda Unknown (do Predicate)) (do Predicate)))
+(let array:some? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: array:find
 (let array:find (lambda Collection Unknown (do Unknown)))
 ; :: array:find-option index
@@ -649,7 +649,7 @@
 ; :: array:has? recursive:array:has
 (let recursive:array:has (lambda Atom (do Atom)))
 ; :: array:has?
-(let array:has? (lambda Collection (lambda Unknown (do Predicate)) (do Atom)))
+(let array:has? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: array:reverse recursive:array:reverse
 (let recursive:array:reverse (lambda Atom Collection (do Unknown)))
 ; :: array:reverse
@@ -679,9 +679,9 @@
 ; :: array:iterate
 (let array:iterate (lambda Collection Unknown (do Collection)))
 ; :: array:empty?
-(let array:empty? (lambda Collection (do Predicate)))
+(let array:empty? (lambda Collection (do Atom)))
 ; :: array:not-empty?
-(let array:not-empty? (lambda Collection (do Predicate)))
+(let array:not-empty? (lambda Collection (do Atom)))
 ; :: array:count-of
 (let array:count-of (lambda Collection Unknown (do Atom)))
 ; :: array:count
@@ -691,7 +691,7 @@
 ; :: array:empty!
 (let array:empty! (lambda Unknown (do Unknown)))
 ; :: array:in-bounds?
-(let array:in-bounds? (lambda Collection Atom (do Predicate)))
+(let array:in-bounds? (lambda Collection Atom (do Atom)))
 ; :: get-option
 (let get-option (lambda Collection Atom (do Collection)))
 ; :: array:slice bounds
@@ -731,9 +731,9 @@
 ; :: array:unzip
 (let array:unzip (lambda Unknown (do Collection)))
 ; :: array:equal?
-(let array:equal? (lambda Unknown Unknown (do Predicate)))
+(let array:equal? (lambda Unknown Unknown (do Atom)))
 ; :: array:not-equal?
-(let array:not-equal? (lambda Unknown Unknown (do Predicate)))
+(let array:not-equal? (lambda Unknown Unknown (do Atom)))
 ; :: array:join
 (let array:join (lambda Collection Unknown (do Unknown)))
 ; :: array:chars
@@ -779,11 +779,11 @@
 ; :: array:sort
 (let array:sort (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Unknown)))
 ; :: array:sorted-ascending?
-(let array:sorted-ascending? (lambda Collection (do Predicate)))
+(let array:sorted-ascending? (lambda Collection (do Atom)))
 ; :: array:sorted-descending?
-(let array:sorted-descending? (lambda Collection (do Predicate)))
+(let array:sorted-descending? (lambda Collection (do Atom)))
 ; :: array:sorted-by?
-(let array:sorted-by? (lambda Collection (lambda Unknown Unknown (do Predicate)) (do Predicate)))
+(let array:sorted-by? (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Atom)))
 ; :: array:increment!
 (let array:increment! (lambda Collection Atom Atom (do Collection)))
 ; :: array:set
@@ -805,7 +805,7 @@
 ; :: array:partition
 (let array:partition (lambda Collection Atom (do Unknown)))
 ; :: array:ranges
-(let array:ranges (lambda Collection (lambda Unknown (do Predicate)) (do Unknown)))
+(let array:ranges (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
 ; :: array:chunks :: start
 (let start Atom)
 ; :: array:chunks :: end
@@ -821,11 +821,11 @@
 ; :: array:adjacent-find :: recursive:array:adjacent-find
 (let recursive:array:adjacent-find (lambda Atom (do Unknown)))
 ; :: array:adjacent-find
-(let array:adjacent-find (lambda Collection (lambda Unknown Unknown (do Predicate)) (do Atom)))
+(let array:adjacent-find (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Atom)))
 ; :: matrix:points coords
 (let coords Collection)
 ; :: matrix:points
-(let matrix:points (lambda Collection (lambda Unknown (do Predicate)) (do Collection)))
+(let matrix:points (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: matrix:for
 (let matrix:for (lambda Collection Unknown (do Unknown)))
 ; :: matrix:shallow-copy
@@ -835,7 +835,7 @@
 ; :: matrix:find-index :: idx
 (let idx Atom)
 ; :: matrix:find-index :: predicate?
-(let predicate? Predicate)
+(let predicate? Atom)
 ; :: matrix:find-index
 (let matrix:find-index (lambda Collection Unknown (do Collection)))
 ; :: matrix:find coords
@@ -877,7 +877,7 @@
 ; :: matrix:dimensions
 (let matrix:dimensions (lambda Collection (do Collection)))
 ; :: matrix:in-bounds?
-(let matrix:in-bounds? (lambda Collection Atom Unknown (do Predicate)))
+(let matrix:in-bounds? (lambda Collection Atom Unknown (do Atom)))
 ; :: matrix:diagonal-neighborhood
 (let matrix:diagonal-neighborhood Collection)
 ; :: matrix:moore-neighborhood
@@ -939,7 +939,7 @@
 ; :: from:digits->integer
 (let from:digits->integer (lambda Collection (do Unknown)))
 ; :: from:positive-or-negative-digits->integer negative?
-(let negative? Predicate)
+(let negative? Atom)
 ; :: from:positive-or-negative-digits->integer digits
 (let digits Collection)
 ; :: from:positive-or-negative-digits->integer recursive:from:positive-or-negative-digits->integer
@@ -953,7 +953,7 @@
 ; :: from:integer->digits
 (let from:integer->digits (lambda Atom (do Unknown)))
 ; :: from:number->positive-or-negative-digits negative?
-(let negative? Predicate)
+(let negative? Atom)
 ; :: from:number->positive-or-negative-digits num
 (let num Atom)
 ; :: from:number->positive-or-negative-digits recursive:from:number->positive-or-negative-digits
@@ -979,7 +979,7 @@
 ; :: from:string->float dec
 (let dec Atom)
 ; :: from:string->float :: neg?
-(let neg? Predicate)
+(let neg? Atom)
 ; :: from:string->float :: left
 (let left Collection)
 ; :: from:string->float :: right
@@ -1087,11 +1087,11 @@
 ; :: array:enumerated-select recursive:array:enumerated-select
 (let recursive:array:enumerated-select (lambda Atom Collection (do Unknown)))
 ; :: array:enumerated-select
-(let array:enumerated-select (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
+(let array:enumerated-select (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
 ; :: array:enumerated-exclude recursive:array:enumerated-exclude
 (let recursive:array:enumerated-exclude (lambda Atom Collection (do Unknown)))
 ; :: array:enumerated-exclude
-(let array:enumerated-exclude (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
+(let array:enumerated-exclude (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
 ; :: array:enumerated-fold recursive:array:enumerated-fold
 (let recursive:array:enumerated-fold (lambda Atom Unknown (do Unknown)))
 ; :: array:enumerated-fold
@@ -1099,23 +1099,23 @@
 ; :: array:enumerated-find recursive:array:enumerated-find
 (let recursive:array:enumerated-find (lambda Atom (do Unknown)))
 ; :: array:enumerated-find
-(let array:enumerated-find (lambda Collection (lambda Unknown Atom (do Predicate)) (do Unknown)))
+(let array:enumerated-find (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
 ; :: array:enumerated-find-index recursive:array:enumerated-find-index
 (let recursive:array:enumerated-find-index (lambda Atom (do Atom)))
 ; :: array:enumerated-find-index
-(let array:enumerated-find-index (lambda Collection (lambda Unknown Atom (do Predicate)) (do Atom)))
+(let array:enumerated-find-index (lambda Collection (lambda Unknown Atom (do Unknown)) (do Atom)))
 ; :: array:enumerated-every? recursive:array:enumerated-every?
-(let recursive:array:enumerated-every? (lambda Atom (do Predicate)))
+(let recursive:array:enumerated-every? (lambda Atom (do Atom)))
 ; :: array:enumerated-every?
-(let array:enumerated-every? (lambda Collection (lambda Unknown Atom (do Predicate)) (do Predicate)))
+(let array:enumerated-every? (lambda Collection (lambda Unknown Atom (do Unknown)) (do Atom)))
 ; :: array:enumerated-some? recursive:array:enumerated-some?
-(let recursive:array:enumerated-some? (lambda Atom (do Predicate)))
+(let recursive:array:enumerated-some? (lambda Atom (do Atom)))
 ; :: array:enumerated-some?
-(let array:enumerated-some? (lambda Collection (lambda Unknown Atom (do Predicate)) (do Predicate)))
+(let array:enumerated-some? (lambda Collection (lambda Unknown Atom (do Unknown)) (do Atom)))
 ; :: array:find-index recursive:array:find-index
 (let recursive:array:find-index (lambda Atom (do Atom)))
 ; :: array:find-index
-(let array:find-index (lambda Collection (lambda Unknown (do Predicate)) (do Atom)))
+(let array:find-index (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; :: array:remove
 (let array:remove (lambda Collection Atom (do Unknown)))
 ; :: array:pad-right
@@ -1185,7 +1185,7 @@
 ; :: string:has? :: recursive:string:has
 (let recursive:string:has (lambda Collection Atom (do Atom)))
 ; :: string:has?
-(let string:has? (lambda Collection Collection (do Predicate)))
+(let string:has? (lambda Collection Collection (do Atom)))
 ; :: string:lesser? :: a
 (let a Collection)
 ; :: string:lesser? :: b
@@ -1199,7 +1199,7 @@
 ; :: string:lesser? :: recursive:string:lesser
 (let recursive:string:lesser (lambda  (do Atom)))
 ; :: string:lesser?
-(let string:lesser? (lambda Collection Collection (do Predicate)))
+(let string:lesser? (lambda Collection Collection (do Atom)))
 ; :: string:greater? :: a
 (let a Collection)
 ; :: string:greater? :: b
@@ -1213,21 +1213,21 @@
 ; :: string:greater? :: recursive:string:greater
 (let recursive:string:greater (lambda  (do Atom)))
 ; :: string:greater?
-(let string:greater? (lambda Collection Collection (do Predicate)))
+(let string:greater? (lambda Collection Collection (do Atom)))
 ; :: string:greater-or-equal?
-(let string:greater-or-equal? (lambda Collection Unknown (do Predicate)))
+(let string:greater-or-equal? (lambda Collection Unknown (do Atom)))
 ; :: string:lesser-or-equal?
-(let string:lesser-or-equal? (lambda Collection Unknown (do Predicate)))
+(let string:lesser-or-equal? (lambda Collection Unknown (do Atom)))
 ; :: string:equal?
-(let string:equal? (lambda Collection Unknown (do Predicate)))
+(let string:equal? (lambda Collection Unknown (do Atom)))
 ; :: string:not-equal?
-(let string:not-equal? (lambda Unknown Unknown (do Predicate)))
+(let string:not-equal? (lambda Unknown Unknown (do Atom)))
 ; :: string:one-equal?
-(let string:one-equal? (lambda Unknown Unknown (do Predicate)))
+(let string:one-equal? (lambda Unknown Unknown (do Atom)))
 ; :: string:two-equal?
-(let string:two-equal? (lambda Collection Collection (do Predicate)))
+(let string:two-equal? (lambda Collection Collection (do Atom)))
 ; :: string:three-equal?
-(let string:three-equal? (lambda Collection Collection (do Predicate)))
+(let string:three-equal? (lambda Collection Collection (do Atom)))
 ; :: string:min
 (let string:min (lambda Collection Collection (do Unknown)))
 ; :: string:max
@@ -1241,9 +1241,9 @@
 ; :: string:join-as-table-with
 (let string:join-as-table-with (lambda Collection Unknown Unknown (do Unknown)))
 ; :: string:starts-with?
-(let string:starts-with? (lambda Collection Collection (do Predicate)))
+(let string:starts-with? (lambda Collection Collection (do Atom)))
 ; :: string:ends-with?
-(let string:ends-with? (lambda Collection Collection (do Predicate)))
+(let string:ends-with? (lambda Collection Collection (do Atom)))
 ; :: string:join-as-table M
 (let M Atom)
 ; :: string:join-as-table
@@ -1405,11 +1405,11 @@
 ; :: set:has? current
 (let current Collection)
 ; :: set:has?
-(let set:has? (lambda Collection Unknown (do Predicate)))
+(let set:has? (lambda Collection Unknown (do Atom)))
 ; :: set:exists?
-(let set:exists? (lambda Collection Collection (do Predicate)))
+(let set:exists? (lambda Collection Collection (do Atom)))
 ; :: set:not-exists?
-(let set:not-exists? (lambda Collection Collection (do Predicate)))
+(let set:not-exists? (lambda Collection Collection (do Atom)))
 ; :: set:add-and-get!
 (let set:add-and-get! (lambda Collection Unknown (do Unknown)))
 ; :: set:remove-and-get!
@@ -1493,11 +1493,11 @@
 ; :: map:has? current
 (let current Collection)
 ; :: map:has?
-(let map:has? (lambda Collection Unknown (do Predicate)))
+(let map:has? (lambda Collection Unknown (do Atom)))
 ; :: map:exists?
-(let map:exists? (lambda Collection Collection (do Predicate)))
+(let map:exists? (lambda Collection Collection (do Atom)))
 ; :: map:not-exists?
-(let map:not-exists? (lambda Collection Collection (do Predicate)))
+(let map:not-exists? (lambda Collection Collection (do Atom)))
 ; :: map:count
 (let map:count (lambda Collection (do Unknown)))
 ; :: doubly-linked-list:prev!
@@ -1545,9 +1545,9 @@
 ; :: bool:false!
 (let bool:false! (lambda Collection (do Collection)))
 ; :: bool:true?
-(let bool:true? (lambda Collection (do Predicate)))
+(let bool:true? (lambda Collection (do Atom)))
 ; :: bool:false?
-(let bool:false? (lambda Collection (do Predicate)))
+(let bool:false? (lambda Collection (do Atom)))
 ; :: curry:ternary
 (let curry:ternary (lambda (lambda Unknown Unknown Unknown (do Unknown)) Unknown Unknown (do Abstraction)))
 ; :: curry:binary
@@ -1567,7 +1567,7 @@
 ; :: brray:length
 (let brray:length (lambda Collection (do Atom)))
 ; :: brray:empty?
-(let brray:empty? (lambda Collection (do Predicate)))
+(let brray:empty? (lambda Collection (do Atom)))
 ; :: brray:empty!
 (let brray:empty! (lambda Collection (do Collection)))
 ; :: brray:get offset-index
@@ -1613,7 +1613,7 @@
 ; :: brray:map
 (let brray:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; :: brray:balance?
-(let brray:balance? (lambda Collection (do Predicate)))
+(let brray:balance? (lambda Collection (do Atom)))
 ; :: brray:balance! :: initial
 (let initial Collection)
 ; :: brray:balance! :: half
@@ -1675,9 +1675,9 @@
 ; :: brray:slice
 (let brray:slice (lambda Collection Atom Atom (do Collection)))
 ; :: queue:empty?
-(let queue:empty? (lambda Collection (do Predicate)))
+(let queue:empty? (lambda Collection (do Atom)))
 ; :: queue:not-empty?
-(let queue:not-empty? (lambda Collection (do Predicate)))
+(let queue:not-empty? (lambda Collection (do Atom)))
 ; :: queue:empty!
 (let queue:empty! (lambda Collection (do Collection)))
 ; :: queue:enqueue!
@@ -1687,9 +1687,9 @@
 ; :: queue:peek
 (let queue:peek (lambda Collection (do Unknown)))
 ; :: stack:empty?
-(let stack:empty? (lambda Collection (do Predicate)))
+(let stack:empty? (lambda Collection (do Atom)))
 ; :: stack:not-empty?
-(let stack:not-empty? (lambda Collection (do Predicate)))
+(let stack:not-empty? (lambda Collection (do Atom)))
 ; :: stack:empty!
 (let stack:empty! (lambda Collection (do Collection)))
 ; :: stack:push!
@@ -1747,11 +1747,11 @@
 ; :: loop:some-n? recursive:loop:some-n
 (let recursive:loop:some-n (lambda Atom (do Atom)))
 ; :: loop:some-n?
-(let loop:some-n? (lambda Atom (lambda Atom (do Predicate)) (do Atom)))
+(let loop:some-n? (lambda Atom (lambda Atom (do Unknown)) (do Atom)))
 ; :: loop:some-range? recursive:loop:some-range
 (let recursive:loop:some-range (lambda Atom (do Atom)))
 ; :: loop:some-range?
-(let loop:some-range? (lambda Atom Atom (lambda Atom (do Predicate)) (do Atom)))
+(let loop:some-range? (lambda Atom Atom (lambda Atom (do Unknown)) (do Atom)))
 ; :: node:parent
 (let node:parent (lambda Atom (do Atom)))
 ; :: node:left
@@ -1761,7 +1761,7 @@
 ; :: heap:top
 (let heap:top Atom)
 ; :: heap:greater?
-(let heap:greater? (lambda Collection Atom Atom (lambda Unknown Unknown (do Predicate)) (do Predicate)))
+(let heap:greater? (lambda Collection Atom Atom (lambda Unknown Unknown (do Unknown)) (do Unknown)))
 ; :: heap:sift-up! node
 (let node Collection)
 ; :: heap:sift-up! recursive:heap:sift-up!
@@ -1787,9 +1787,9 @@
 ; :: heap:replace!
 (let heap:replace! (lambda Collection Unknown Unknown (do Unknown)))
 ; :: heap:empty?
-(let heap:empty? (lambda Collection (do Predicate)))
+(let heap:empty? (lambda Collection (do Atom)))
 ; :: heap:not-empty?
-(let heap:not-empty? (lambda Collection (do Predicate)))
+(let heap:not-empty? (lambda Collection (do Atom)))
 ; :: heap:empty!
 (let heap:empty! (lambda Unknown (do Unknown)))
 ; :: from:array->heap heap
@@ -1809,9 +1809,9 @@
 ; :: optimization:tail-calls-4
 (let optimization:tail-calls-4 (lambda (lambda Unknown Unknown Unknown Unknown (do Unknown)) (do Abstraction)))
 ; :: option:error?
-(let option:error? (lambda Collection (do Predicate)))
+(let option:error? (lambda Collection (do Atom)))
 ; :: option:value?
-(let option:value? (lambda Collection (do Predicate)))
+(let option:value? (lambda Collection (do Atom)))
 ; :: option:value
 (let option:value (lambda Collection (do Unknown)))
 ; :: option:throw-error
@@ -1831,9 +1831,9 @@
 ; :: array:del!
 (let array:del! (lambda Unknown (do Collection)))
 ; :: equal?
-(let equal? (lambda Unknown Unknown (do Predicate)))
+(let equal? (lambda Unknown Unknown (do Atom)))
 ; :: not-equal?
-(let not-equal? (lambda Unknown Unknown (do Predicate)))
+(let not-equal? (lambda Unknown Unknown (do Atom)))
 ; :: array:at
 (let array:at (lambda Collection Atom (do Unknown)))
 ; :: array:head
@@ -1855,21 +1855,21 @@
 ; :: λ
 (let λ (lambda ... Unknown (do Abstraction)))
 ; :: array?
-(let array? (lambda Unknown (do Predicate)))
+(let array? (lambda Unknown (do Atom)))
 ; :: char?
-(let char? (lambda Atom (do Predicate)))
+(let char? (lambda Atom (do Atom)))
 ; :: match:negative?
-(let match:negative? (lambda Collection (do Predicate)))
+(let match:negative? (lambda Collection (do Atom)))
 ; :: match:number? negative?
-(let negative? Predicate)
+(let negative? Atom)
 ; :: match:number? digits
 (let digits Collection)
 ; :: match:number?
-(let match:number? (lambda Collection (do Predicate)))
+(let match:number? (lambda Collection (do Atom)))
 ; :: match:digit?
-(let match:digit? (lambda Atom (do Predicate)))
+(let match:digit? (lambda Atom (do Atom)))
 ; :: match:digits?
-(let match:digits? (lambda Collection (do Predicate)))
+(let match:digits? (lambda Collection (do Atom)))
 ; :: ast:type
 (let ast:type Atom)
 ; :: ast:value
@@ -1885,7 +1885,7 @@
 ; :: ast:leaf? c
 (let c Unknown)
 ; :: ast:leaf?
-(let ast:leaf? (lambda Collection (do Predicate)))
+(let ast:leaf? (lambda Collection (do Atom)))
 ; :: from:chars->ast tree
 (let tree Collection)
 ; :: from:chars->ast stack
@@ -1935,7 +1935,7 @@
 ; :: special-form:pop!
 (let special-form:pop! (lambda Collection Unknown (do Collection)))
 ; :: special-form:equal?
-(let special-form:equal? (lambda Collection Unknown (do Predicate)))
+(let special-form:equal? (lambda Collection Unknown (do Atom)))
 ; :: special-form:add
 (let special-form:add (lambda Collection Unknown (do Atom)))
 ; :: special-form:subtract
@@ -1945,13 +1945,13 @@
 ; :: special-form:divide
 (let special-form:divide (lambda Collection Unknown (do Atom)))
 ; :: special-form:greater-than?
-(let special-form:greater-than? (lambda Collection Unknown (do Predicate)))
+(let special-form:greater-than? (lambda Collection Unknown (do Atom)))
 ; :: special-form:less-than?
-(let special-form:less-than? (lambda Collection Unknown (do Predicate)))
+(let special-form:less-than? (lambda Collection Unknown (do Atom)))
 ; :: special-form:greater-than-or-equal?
-(let special-form:greater-than-or-equal? (lambda Collection Unknown (do Predicate)))
+(let special-form:greater-than-or-equal? (lambda Collection Unknown (do Atom)))
 ; :: special-form:less-than-or-equal?
-(let special-form:less-than-or-equal? (lambda Collection Unknown (do Predicate)))
+(let special-form:less-than-or-equal? (lambda Collection Unknown (do Atom)))
 ; :: special-form:mod
 (let special-form:mod (lambda Collection Unknown (do Atom)))
 ; :: special-form:bit-wise-and
@@ -1971,17 +1971,17 @@
 ; :: special-form:if
 (let special-form:if (lambda Collection Unknown (do Unknown)))
 ; :: special-form:and?
-(let special-form:and? (lambda Collection Collection (do Predicate)))
+(let special-form:and? (lambda Collection Collection (do Atom)))
 ; :: special-form:or?
-(let special-form:or? (lambda Collection Collection (do Predicate)))
+(let special-form:or? (lambda Collection Collection (do Atom)))
 ; :: special-form:throw
 (let special-form:throw (lambda Collection Unknown (do Unknown)))
 ; :: special-form:loop
 (let special-form:loop (lambda Collection Collection (do Atom)))
 ; :: special-form:atom?
-(let special-form:atom? (lambda Collection Collection (do Predicate)))
+(let special-form:atom? (lambda Collection Collection (do Atom)))
 ; :: special-form:lambda?
-(let special-form:lambda? (lambda Collection Collection (do Predicate)))
+(let special-form:lambda? (lambda Collection Collection (do Atom)))
 ; :: keywords
 (let keywords Unknown)
 ; :: prototype:get head
