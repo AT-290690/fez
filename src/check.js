@@ -73,7 +73,7 @@ const checkPredicateName = (exp, rest, warningStack) => {
             rest[0][VALUE]
           }) to an (${
             STATIC_TYPES.ATOM
-          }) that is not (or ${TRUE} ${FALSE}) (${stringifyArgs(rest)})`
+          }) that is not (or ${TRUE} ${FALSE}) (${stringifyArgs(exp)})`
         )
       else if (
         last[TYPE] === WORD &&
@@ -223,11 +223,26 @@ export const typeCheck = (ast) => {
                     // ATOM ASSIGMENT
                     env[name][STATS][prop][0] = ATOM
                     env[name][STATS][RETURNS][0] = ATOM
+                    checkPredicateName(
+                      exp,
+                      [[WORD, name], returns],
+                      warningStack
+                    )
                   } else {
                     switch (returns[VALUE]) {
                       case KEYWORDS.IF:
                         {
                           const re = rem.slice(2)
+                          checkPredicateName(
+                            exp,
+                            [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
+                            warningStack
+                          )
+                          checkPredicateName(
+                            exp,
+                            [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
+                            warningStack
+                          )
                           if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
                             // ATOM ASSIGMENT
                             env[name][STATS][prop][0] = ATOM
@@ -291,12 +306,34 @@ export const typeCheck = (ast) => {
                         }
                         break
                       default:
+                        checkPredicateName(
+                          exp,
+                          [[WORD, name], returns],
+                          warningStack
+                        )
                         if (!env[returns[VALUE]])
                           env[name][STATS][RETURNS] = [UNKNOWN]
                         // env[name][STATS][RETURNS] = APPLY
                         else if (
                           env[returns[VALUE]][STATS][TYPE_PROP][0] === APPLY
                         ) {
+                          if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
+                            const fn = rest.at(-1).at(-1).at(-1)
+                            checkPredicateName(
+                              exp,
+                              [
+                                [WORD, name],
+                                isLeaf(fn)
+                                  ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
+                                  : drillReturnType(
+                                      fn,
+                                      (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION
+                                    ) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
+                              ],
+                              warningStack
+                            )
+                          }
+
                           // TODO This seems to be able to be deleted
                           // FOR NOT IT CAN BE
                           // if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {

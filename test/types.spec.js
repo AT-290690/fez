@@ -475,6 +475,11 @@ ZZZ=ZZZ,ZZZ")
     passes(`(let m (lambda xs (do 
     (let map (lambda xs1 cb (array:map xs cb)))
 )))`)
+    passes(`(let fn1? (lambda (apply [1] array:empty?)))
+(let fn2? (lambda x (apply x (lambda x (array:empty? [1])))))
+(let x1? (array:empty? [1]))
+(let x2? 1)
+(let x3? array:empty?)`)
     passes(`(do
       (let fn? (lambda x (apply x math:even?)))
       )
@@ -589,6 +594,17 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
 (+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
 `,
       `Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (f8) (f5 1)) (check #1)`
+    )
+    fails(
+      `(let fn1? (lambda (apply [1] array:empty!)))
+(let fn2? (lambda x (apply x (lambda x (array:empty! [1])))))
+(let x1? (array:empty! [1]))
+(let x2? 1)
+(let x3? array:empty!)`,
+      `Assigning predicate (ending in ?) variable (fn1?) to another variable which is not a predicate (also ending in ?) (let fn1? (lambda (apply (array 1) array:empty!)))
+Assigning predicate (ending in ?) variable (array:empty!) to another variable which is not a predicate (also ending in ?) (let fn2? (lambda x (apply x (lambda x (array:empty! (array 1))))))
+Assigning predicate (ending in ?) variable (array:empty!) to another variable which is not a predicate (also ending in ?) (let x1? (array:empty! (array 1)))
+Assigning predicate (ending in ?) variable (x3?) to another variable which is not a predicate (also ending in ?) (let x3? array:empty!)`
     )
     fails(
       `(let map (new:map ["name" "Anthony" "age" 34]))
