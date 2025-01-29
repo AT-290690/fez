@@ -111,6 +111,15 @@ describe('Should throw errors', () => {
     (inner [f])
 )))
 (let m (add y))`)
+    passes(`(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+(let z [])
+(let n (lambda x (do 
+    (let y 10)
+    (+ y 1))))
+(fn 1 n)
+(fn 1 (lambda x (do 
+(let y 10)
+    (length (set! z 0 1)))))`)
     passes(`(let y 8)
 (let add (lambda x (do
     (let f (+ x y))
@@ -494,7 +503,6 @@ ZZZ=ZZZ,ZZZ")
       (let fn? (lambda x (apply x (lambda x (math:even? x))))))`)
     doesNotThrow(() => type(std))
   })
-
   it('Should throw', () => {
     fails(
       `(let x y)
@@ -716,6 +724,23 @@ Trying to call undefined (lambda) array:mapz (check #9)`
       `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #16)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
+    )
+    fails(
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+(let z [])
+(let n (lambda x (do 
+    (let y 10)
+    (set! x 0 1)
+    [])))
+(fn 1 n)
+
+    
+    (fn 1 (lambda x (do 
+    (let y 10)
+        (set! x 0 1)
+    [])))`,
+      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 n) (check #781)
+Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #780)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
