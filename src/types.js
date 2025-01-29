@@ -3,15 +3,17 @@ export const ARG_COUNT = 'argumentsN'
 export const VARIADIC = Infinity
 export const STATS = '__stats__'
 export const ARGUMENTS = 'arguments'
-export const UNKNOWN = -1
 export const RETURNS = 'returns'
 export const SCOPE_NAME = '__scope__'
 export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
 export const ORDER = '__order__'
 export const VARIABLE_ORDER_INDEX = 'index'
-export const PREDICATE = 4
+export const UNKNOWN = -1
 export const COLLECTION = 3
+export const PREDICATE = 4
+export const ANY = 5
+
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 10
 export const toTypeNames = (type) => {
@@ -26,6 +28,8 @@ export const toTypeNames = (type) => {
       return 'Predicate'
     case COLLECTION:
       return 'Collection'
+    case ANY:
+      return 'Any'
     default:
       break
   }
