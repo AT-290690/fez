@@ -891,34 +891,34 @@ export const typeCheck = (ast) => {
                         // #C1
                         // TODO delete this maybe
                         // It will not be possilbe to know return type
-                        // const match1 = () => {
-                        //   const actual = env[rest[i][VALUE]]
-                        //   const expected = args[i]
-                        //   if (
-                        //     !isUnknownReturn(expected[STATS]) &&
-                        //     !isUnknownReturn(actual[STATS]) &&
-                        //     expected[STATS][RETURNS][0] !==
-                        //       actual[STATS][RETURNS][0]
-                        //   ) {
-                        //     errorStack.add(
-                        //       `Incorrect return type for (${
-                        //         expected[STATS][SIGNATURE]
-                        //       }) the (lambda) argument of (${
-                        //         first[VALUE]
-                        //       }) at position (${i}). Expected (${toTypeNames(
-                        //         expected[STATS][RETURNS][0]
-                        //       )}) but got (${toTypeNames(
-                        //         actual[STATS][RETURNS][0]
-                        //       )}) (${stringifyArgs(exp)}) (check #782)`
-                        //     )
-                        //   } else if (
-                        //     actual[STATS].retried < MAX_RETRY_DEFINITION
-                        //   ) {
-                        //     actual[STATS].retried += 1
-                        //     stack.unshift(() => match1())
-                        //   }
-                        // }
-                        // match1()
+                        const match1 = () => {
+                          const actual = env[rest[i][VALUE]]
+                          const expected = args[i]
+                          if (
+                            !isUnknownReturn(expected[STATS]) &&
+                            !isUnknownReturn(actual[STATS]) &&
+                            expected[STATS][RETURNS][0] !==
+                              actual[STATS][RETURNS][0]
+                          ) {
+                            errorStack.add(
+                              `Incorrect return type for (${
+                                expected[STATS][SIGNATURE]
+                              }) the (lambda) argument of (${
+                                first[VALUE]
+                              }) at position (${i}). Expected (${toTypeNames(
+                                expected[STATS][RETURNS][0]
+                              )}) but got (${toTypeNames(
+                                actual[STATS][RETURNS][0]
+                              )}) (${stringifyArgs(exp)}) (check #782)`
+                            )
+                          } else if (
+                            actual[STATS].retried < MAX_RETRY_DEFINITION
+                          ) {
+                            actual[STATS].retried += 1
+                            stack.unshift(() => match1())
+                          }
+                        }
+                        match1()
                         for (
                           let j = 0;
                           j < args[i][STATS][ARGUMENTS].length;
@@ -1062,38 +1062,37 @@ export const typeCheck = (ast) => {
                                     // TODO delete this maybe
                                     // #C2
                                     // It will not be possilbe to know return type
-                                    // const match1 = () => {
-                                    //   const actual = local[lambdaName]
-                                    //   const expected = args[i]
-                                    //   if (
-                                    //     expected[STATS][RETURNS][0] !==
-                                    //       UNKNOWN &&
-                                    //     actual[STATS][RETURNS][0] !== UNKNOWN &&
-                                    //     expected[STATS][RETURNS][0] !==
-                                    //       actual[STATS][RETURNS][0]
-                                    //   ) {
-                                    //     errorStack.add(
-                                    //       `Incorrect return type for (${
-                                    //         expected[STATS][SIGNATURE]
-                                    //       }) the (lambda) argument of (${
-                                    //         first[VALUE]
-                                    //       }) at position (${i}). Expected (${toTypeNames(
-                                    //         expected[STATS][RETURNS][0]
-                                    //       )}) but got (${toTypeNames(
-                                    //         actual[STATS][RETURNS][0]
-                                    //       )}) (${stringifyArgs(
-                                    //         exp
-                                    //       )}) (check #779)`
-                                    //     )
-                                    //   } else if (
-                                    //     actual[STATS].retried <
-                                    //     MAX_RETRY_DEFINITION
-                                    //   ) {
-                                    //     actual[STATS].retried += 1
-                                    //     stack.unshift(() => match1())
-                                    //   }
-                                    // }
-                                    // match1()
+                                    const match1 = () => {
+                                      const actual = local[lambdaName]
+                                      const expected = args[i]
+                                      if (
+                                        !isUnknownReturn(expected[STATS]) &&
+                                        !isUnknownReturn(actual[STATS]) &&
+                                        expected[STATS][RETURNS][0] !==
+                                          actual[STATS][RETURNS][0]
+                                      ) {
+                                        errorStack.add(
+                                          `Incorrect return type for (${
+                                            expected[STATS][SIGNATURE]
+                                          }) the (lambda) argument of (${
+                                            first[VALUE]
+                                          }) at position (${i}). Expected (${toTypeNames(
+                                            expected[STATS][RETURNS][0]
+                                          )}) but got (${toTypeNames(
+                                            actual[STATS][RETURNS][0]
+                                          )}) (${stringifyArgs(
+                                            exp
+                                          )}) (check #779)`
+                                        )
+                                      } else if (
+                                        actual[STATS].retried <
+                                        MAX_RETRY_DEFINITION
+                                      ) {
+                                        actual[STATS].retried += 1
+                                        stack.unshift(() => match1())
+                                      }
+                                    }
+                                    match1()
                                     for (
                                       let j = 0;
                                       j < args[i][STATS][ARGUMENTS].length;
