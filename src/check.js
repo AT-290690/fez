@@ -63,6 +63,12 @@ const deepLambdaReturn = (rest, condition) => {
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
+export const isUnknownType = (stats) => {
+  return stats[TYPE_PROP][0] === UNKNOWN
+}
+export const isUnknownReturn = (stats) => {
+  return stats[RETURNS][0] === UNKNOWN
+}
 const checkPredicateName = (exp, rest, warningStack) => {
   if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
     const last = rest.at(-1)
@@ -273,7 +279,7 @@ export const typeCheck = (ast) => {
                           } else if (
                             !isLeaf(re[0]) &&
                             env[re[0][0][VALUE]] &&
-                            env[re[0][0][VALUE]][STATS][RETURNS][0] !== UNKNOWN
+                            !isUnknownReturn(env[re[0][0][VALUE]][STATS])
                           ) {
                             env[name][STATS][prop] =
                               env[re[0][0][VALUE]][STATS][RETURNS]
@@ -293,7 +299,7 @@ export const typeCheck = (ast) => {
                           } else if (
                             !isLeaf(re[1]) &&
                             env[re[1][0][VALUE]] &&
-                            env[re[1][0][VALUE]][STATS][RETURNS][0] !== UNKNOWN
+                            !isUnknownReturn(env[re[1][0][VALUE]][STATS])
                           ) {
                             env[name][STATS][prop] =
                               env[re[1][0][VALUE]][STATS][prop]
@@ -344,7 +350,7 @@ export const typeCheck = (ast) => {
                           // ALWAYS APPLY
                           // rest.at(-1)[0][TYPE] === APPLY
                           // Here is upon application to store the result in the variable
-                          if (env[name][STATS][TYPE_PROP][0] === UNKNOWN)
+                          if (isUnknownType(env[name][STATS]))
                             stack.unshift(() => {
                               env[name][STATS][TYPE_PROP][0] =
                                 env[returns[VALUE]][STATS][RETURNS][0]
@@ -391,7 +397,7 @@ export const typeCheck = (ast) => {
 
                   checkReturnType()
                   if (
-                    env[name][STATS][RETURNS][0] === UNKNOWN &&
+                    isUnknownReturn(env[name][STATS]) &&
                     env[name][STATS].retried < MAX_RETRY_DEFINITION
                   ) {
                     env[name][STATS].retried += 1
@@ -654,13 +660,13 @@ export const typeCheck = (ast) => {
                         // break
                         case APPLY:
                           // passing arg asA APPLICATION
-                          if (arg[i][STATS][TYPE_PROP][0] === UNKNOWN)
+                          if (isUnknownType(arg[i][STATS]))
                             arg[i][STATS][TYPE_PROP] =
                               env[ARG[VALUE]][STATS][RETURNS]
                           break
                         case WORD:
                           // if param is a word we assosiate them by referanc
-                          if (arg[i][STATS][TYPE_PROP][0] === UNKNOWN)
+                          if (isUnknownType(arg[i][STATS]))
                             arg[i][STATS] = env[ARG[VALUE]][STATS]
                           break
                       }
@@ -741,7 +747,7 @@ export const typeCheck = (ast) => {
                     if (!isRestILeaf) {
                       const CAR = rest[i][0][VALUE]
                       const isKnown =
-                        env[CAR] && env[CAR][STATS][RETURNS][0] !== UNKNOWN
+                        env[CAR] && !isUnknownReturn(env[CAR][STATS])
                       if (isKnown && !isCast) {
                         if (env[CAR][STATS][RETURNS][0] !== EXPECTED_TYPE) {
                           errorStack.add(
@@ -763,7 +769,7 @@ export const typeCheck = (ast) => {
                       } else if (!isKnown && !isCast && env[CAR]) {
                         if (
                           env[CAR][STATS][TYPE_PROP][0] === APPLY &&
-                          env[CAR][STATS][RETURNS][0] !== UNKNOWN
+                          !isUnknownReturn(env[CAR][STATS])
                         ) {
                           switch (first[VALUE]) {
                             case KEYWORDS.IF:
@@ -774,7 +780,8 @@ export const typeCheck = (ast) => {
                               // console.log(stringifyArgs(exp))
                               // TODO fix this assigment
                               // It turns out it's not possible to determine return type of function here
-                              // what if it's a global function used elsewhere where the return type mwould be different/
+                              // what if it's a global function used elsewhere where the return type mwould be different
+                              // THIS willgive lambda return types but refactor is needed still
                               // env[CAR][STATS][RETURNS][0] =
                               //   root[first[VALUE]][STATS][RETURNS][0]
                               break
@@ -881,14 +888,15 @@ export const typeCheck = (ast) => {
                         )
                       } else {
                         // DEFINED  LAMBDAS TYPE CHECKING
+                        // #C1
                         // TODO delete this maybe
                         // It will not be possilbe to know return type
                         // const match1 = () => {
                         //   const actual = env[rest[i][VALUE]]
                         //   const expected = args[i]
                         //   if (
-                        //     expected[STATS][RETURNS][0] !== UNKNOWN &&
-                        //     actual[STATS][RETURNS][0] !== UNKNOWN &&
+                        //     !isUnknownReturn(expected[STATS]) &&
+                        //     !isUnknownReturn(actual[STATS]) &&
                         //     expected[STATS][RETURNS][0] !==
                         //       actual[STATS][RETURNS][0]
                         //   ) {
@@ -921,8 +929,8 @@ export const typeCheck = (ast) => {
                               env[rest[i][VALUE]][STATS][ARGUMENTS][j]
                             const expected = args[i][STATS][ARGUMENTS][j]
                             if (
-                              actual[STATS][TYPE_PROP][0] !== UNKNOWN &&
-                              expected[STATS][TYPE_PROP][0] !== UNKNOWN &&
+                              !isUnknownType(actual[STATS]) &&
+                              !isUnknownType(expected[STATS]) &&
                               actual[STATS][TYPE_PROP][0] !==
                                 expected[STATS][TYPE_PROP][0]
                             )
@@ -957,8 +965,8 @@ export const typeCheck = (ast) => {
                     if (
                       T === COLLECTION &&
                       env[rest[i][VALUE]] &&
-                      env[rest[i][VALUE]][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                      args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
+                      !isUnknownType(env[rest[i][VALUE]][STATS]) &&
+                      !isUnknownType(args[i][STATS]) &&
                       env[rest[i][VALUE]][STATS][TYPE_PROP][0] !==
                         args[i][STATS][TYPE_PROP][0]
                     ) {
@@ -972,7 +980,7 @@ export const typeCheck = (ast) => {
                         )}) (check #30)`
                       )
                     } else if (
-                      args[i][STATS][TYPE_PROP][0] === UNKNOWN &&
+                      isUnknownType(args[i][STATS]) &&
                       args[i][STATS].retried < MAX_RETRY_DEFINITION
                     ) {
                       args[i][STATS].retried += 1
@@ -980,8 +988,8 @@ export const typeCheck = (ast) => {
                     } else {
                       if (
                         env[rest[i][VALUE]] &&
-                        args[i][STATS][TYPE_PROP][0] !== UNKNOWN &&
-                        env[rest[i][VALUE]][STATS][TYPE_PROP][0] === UNKNOWN &&
+                        !isUnknownType(args[i][STATS]) &&
+                        isUnknownType(env[rest[i][VALUE]][STATS]) &&
                         args[i][STATS][TYPE_PROP][0] !== APPLY
                       ) {
                         // REFF ASSIGMENT
@@ -993,25 +1001,28 @@ export const typeCheck = (ast) => {
                     }
                   } else if (env[rest[i][0][VALUE]]) {
                     const match = () => {
-                      const actual = env[rest[i][0][VALUE]][STATS][RETURNS]
-                      const expected = args[i][STATS][TYPE_PROP]
+                      const actual = env[rest[i][0][VALUE]][STATS]
+                      const expected = args[i][STATS]
                       if (args[i][STATS].counter < MAX_ARGUMENT_RETRY) {
                         args[i][STATS].counter++
                         stack.unshift(() => match())
                       }
-                      if (expected[0] !== UNKNOWN && actual[0] !== UNKNOWN) {
-                        if (expected[0] !== actual[0])
+                      if (
+                        !isUnknownType(expected) &&
+                        !isUnknownReturn(actual)
+                      ) {
+                        if (expected[TYPE_PROP][0] !== actual[RETURNS][0])
                           errorStack.add(
                             `Incorrect type of arguments ${i} for (${
                               first[VALUE]
                             }). Expected (${toTypeNames(
-                              expected[0]
+                              expected[TYPE_PROP][0]
                             )}) but got (${toTypeNames(
-                              actual[0]
+                              actual[RETURNS][0]
                             )}) (${stringifyArgs(exp)}) (check #16)`
                           )
                         else {
-                          switch (expected[0]) {
+                          switch (expected[TYPE_PROP][0]) {
                             // almost exclusively for anonymous lambdas
                             case APPLY:
                               {
@@ -1049,6 +1060,7 @@ export const typeCheck = (ast) => {
                                       scope
                                     )
                                     // TODO delete this maybe
+                                    // #C2
                                     // It will not be possilbe to know return type
                                     // const match1 = () => {
                                     //   const actual = local[lambdaName]
@@ -1093,10 +1105,8 @@ export const typeCheck = (ast) => {
                                         const expected =
                                           args[i][STATS][ARGUMENTS][j]
                                         if (
-                                          actual[STATS][TYPE_PROP][0] !==
-                                            UNKNOWN &&
-                                          expected[STATS][TYPE_PROP][0] !==
-                                            UNKNOWN &&
+                                          !isUnknownType(actual[STATS]) &&
+                                          !isUnknownType(expected[STATS]) &&
                                           actual[STATS][TYPE_PROP][0] !==
                                             expected[STATS][TYPE_PROP][0]
                                         ) {
@@ -1141,7 +1151,7 @@ export const typeCheck = (ast) => {
                           }
                         }
                       } else if (
-                        expected[0] === UNKNOWN &&
+                        isUnknownType(expected) &&
                         args[i][STATS].retried < MAX_RETRY_DEFINITION
                       ) {
                         args[i][STATS].retried += 1
