@@ -92,37 +92,68 @@ const serialise = (arg) => {
     return arg.length ? `[${arg.map((a) => serialise(a)).join(' ')}]` : '[]'
   else return '(lambda)'
 }
+const inter = () => {
+  const value = editor.getValue()
+  if (value.trim()) {
+    try {
+      const compressed = LZString.compressToBase64(editor.getValue())
+      const parsed = parse(editor.getValue())
+      const { evaluated, type, error } = debug(parsed)
+      terminal.setValue(
+        error == null
+          ? type
+            ? `${type}\n${serialise(evaluated)}`
+            : serialise(evaluated)
+          : error.message
+      )
+      terminal.clearSelection()
+      const newurl =
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        window.location.pathname +
+        `?t=${THEME}&l=${encodeURIComponent(compressed)}`
+      window.history.pushState({ path: newurl }, '', newurl)
+    } catch (error) {
+      console.log(error)
+      terminal.setValue(error.message)
+      terminal.clearSelection()
+    }
+  }
+}
+const comp = () => {
+  const value = editor.getValue()
+  if (value.trim()) {
+    try {
+      terminal.setValue(
+        serialise(
+          new Function(`return ${compile(enhance(parse(editor.getValue())))}`)()
+        )
+      )
+    } catch (error) {
+      terminal.setValue(error.message)
+    }
+    terminal.clearSelection()
+  }
+}
+const cmd = () => {
+  const selection = terminal.getSelectedText()?.trim()
+  if (selection) {
+    const parsed = parse(selection)
+    const { evaluated, error } = debug(parsed)
+    terminal.setValue(`${selection
+      .split('\n')
+      .map((x) => `; ${x}`)
+      .join('\n')}
+${error == null ? serialise(evaluated) : error.message}`)
+    terminal.clearSelection()
+  }
+}
 document.addEventListener('keydown', (e) => {
   if (e.key.toLowerCase() === 's' && (e.ctrlKey || e.metaKey) && !e.shiftKey) {
     e.preventDefault()
     e.stopPropagation()
-    const value = editor.getValue()
-    if (value.trim()) {
-      try {
-        const compressed = LZString.compressToBase64(editor.getValue())
-        const parsed = parse(editor.getValue())
-        const { evaluated, type, error } = debug(parsed)
-        terminal.setValue(
-          error == null
-            ? type
-              ? `${type}\n${serialise(evaluated)}`
-              : serialise(evaluated)
-            : error.message
-        )
-        terminal.clearSelection()
-        const newurl =
-          window.location.protocol +
-          '//' +
-          window.location.host +
-          window.location.pathname +
-          `?t=${THEME}&l=${encodeURIComponent(compressed)}`
-        window.history.pushState({ path: newurl }, '', newurl)
-      } catch (error) {
-        console.log(error)
-        terminal.setValue(error.message)
-        terminal.clearSelection()
-      }
-    }
+    inter()
   } else if (
     e.key.toLowerCase() === 's' &&
     e.shiftKey &&
@@ -130,63 +161,13 @@ document.addEventListener('keydown', (e) => {
   ) {
     e.preventDefault()
     e.stopPropagation()
-    const value = editor.getValue()
-    if (value.trim()) {
-      try {
-        terminal.setValue(
-          serialise(
-            new Function(
-              `return ${compile(enhance(parse(editor.getValue())))}`
-            )()
-          )
-        )
-      } catch (error) {
-        terminal.setValue(error.message)
-      }
-      terminal.clearSelection()
-    }
+    comp()
   } else if (e.key === '§' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault()
     e.stopPropagation()
-    const selection = terminal.getSelectedText()?.trim()
-    if (selection) {
-      const parsed = parse(selection)
-      const { evaluated, error } = debug(parsed)
-      terminal.setValue(`${selection
-        .split('\n')
-        .map((x) => `; ${x}`)
-        .join('\n')}
-${error == null ? serialise(evaluated) : error.message}`)
-      terminal.clearSelection()
-    }
+    cmd()
   }
 })
 
-// // TODO DELETE THIS
-// const value = editor.getValue()
-// if (value.trim()) {
-//   try {
-//     const compressed = LZString.compressToBase64(editor.getValue())
-//     const parsed = parse(editor.getValue())
-//     const { evaluated, type, error } = debug(parsed)
-//     terminal.setValue(
-//       error == null
-//         ? type
-//           ? `${type}\n${serialise(evaluated)}`
-//           : serialise(evaluated)
-//         : error.message
-//     )
-//     terminal.clearSelection()
-//     const newurl =
-//       window.location.protocol +
-//       '//' +
-//       window.location.host +
-//       window.location.pathname +
-//       `?t=${THEME}&l=${encodeURIComponent(compressed)}`
-//     window.history.pushState({ path: newurl }, '', newurl)
-//   } catch (error) {
-//     console.log(error)
-//     terminal.setValue(error.message)
-//     terminal.clearSelection()
-//   }
-// }
+// TODDO delete this after done with debugging
+// inter()

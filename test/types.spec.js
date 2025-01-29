@@ -26,7 +26,10 @@ describe('Should throw errors', () => {
         'array:every?',
         'list:find',
         'list:every?',
-        'array:unique'
+        'array:unique',
+        'array:empty?',
+        'array:join',
+        'string:join-as-table-with'
       ]),
       [
         '(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Unknown)))',
@@ -36,7 +39,10 @@ describe('Should throw errors', () => {
         '(let array:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))',
         '(let list:find (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))',
         '(let list:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))',
-        '(let array:unique (lambda Collection (do Collection)))'
+        '(let array:unique (lambda Collection (do Collection)))',
+        '(let array:empty? (lambda Collection (do Atom)))',
+        '(let array:join (lambda Collection Collection (do Unknown)))',
+        '(let string:join-as-table-with (lambda Collection Collection Unknown (do Unknown)))'
       ]
     )
     deepStrictEqual(
@@ -905,7 +911,17 @@ Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x
       `Incorrect number of arguments for (x). Expected (= 1) but got 2 (x 1 2) (check #15)`
     )
   })
-
+  fails(
+    `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+(let z [])
+(fn 1 (lambda x (do 
+    (let y 10)
+    (set! x 0 1)
+    1
+)))
+`,
+    `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
+  )
   it('broken std errors', () => {
     fails(
       BROKEN_STD,
