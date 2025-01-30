@@ -5,61 +5,16 @@ editor.setOptions({
   fontFamily: 'Monaco9',
   fontSize: '10pt',
   copyWithEmptySelection: true
-  // keybindings: 'vscode'
 })
 editor.setKeyboardHandler('ace/keyboard/vscode')
-// pastel_on_dark
-// pastel_on_light
-// tomorrow_night_bright
-// dracula
-// terminal
 const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
 const EDITOR_THEME = THEME
 const TERMINAL_THEME = THEME
-// 'chrome' => 'Chrome',
-// 'clouds' => 'Clouds',
-// 'crimson_editor' => 'Crimson Editor',
-// 'dawn' => 'Dawn',
-// 'dreamweaver' => 'Dreamweaver',
-// 'eclipse' => 'Eclipse',
-// 'github' => 'GitHub',
-// 'iplastic' => 'IPlastic',
-// 'katzenmilch' => 'KatzenMilch',
-// 'kuroir' => 'Kuroir',
-// 'solarized_light' => 'Solarized Light',
-// 'sqlserver' => 'SQL Server',
-// 'textmate' => 'TextMate',
-// 'tomorrow' => 'Tomorrow',
-// 'xcode' => 'XCode'
-
-// 'ambiance' => 'Ambiance',
-// 'chaos' => 'Chaos',
-// 'clouds_midnight' => 'Clouds Midnight',
-// 'cobalt' => 'Cobalt',
-// 'dracula' => 'Dracula',
-// 'gob' => 'Greeon on Black',
-// 'gruvbox' => 'Gruvbox',
-// 'idle_fingers' => 'idle Fingers',
-// 'kr_theme' => 'krTheme',
-// 'merbivore' => 'Merbivore',
-// 'merbivore_soft' => 'Merbivore Soft',
-// 'mono_industrial' => 'Mono Industrial',
-// 'monokai' => 'Monokai',
-// 'pastel_on_dark' => 'Pastel on Dark',
-// 'solarized_dark' => 'Solarized Dark',
-// 'terminal' => 'Terminal',
-// 'tomorrow_night' => 'Tomorrow Night',
-// 'tomorrow_night_blue' => 'Tomorrow Night Blue',
-// 'tomorrow_night_bright' => 'Tomorrow Night Bright',
-// 'tomorrow_night_eighties' => 'Tomorrow Night 80s',
-// 'twilight' => 'Twilight',
-// 'vibrant_ink' => 'Vibrant Ink'
 editor.renderer.setShowGutter(false)
 editor.setTheme(`ace/theme/${EDITOR_THEME}`)
 editor.setShowPrintMargin(false)
 editor.session.setMode('ace/mode/lisp')
 editor.renderer.setScrollMargin(10, 10)
-// editor.setOptions({});
 editor.session.setUseWrapMode(true)
 
 const terminal = ace.edit('terminal')
