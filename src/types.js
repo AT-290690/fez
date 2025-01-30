@@ -156,6 +156,28 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [UNKNOWN]
     }
   },
+  [toTypeNames(ANY)]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: toTypeNames(ANY),
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [UNKNOWN],
+            [RETURNS]: [UNKNOWN],
+
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [ANY]
+    }
+  },
   [DEBUG.LOG]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],

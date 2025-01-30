@@ -98,15 +98,15 @@
 
 (let truthy? (lambda x
     (cond
-     (atom? x) (not (= (Atom x) 0))
-     (array? x) (> (length (Collection x)) 0)
+     (atom? x) (not (= (Any x) 0))
+     (array? x) (> (length (Any x)) 0)
      (*) 1)))
 (let falsy? (lambda x
     (cond
-     (atom? x) (= (Atom x) 0)
-     (array? x) (= (length (Collection x)) 0))))
-(let true? (lambda x (and (atom? x) (= (Atom x) 1))))
-(let false? (lambda x (and (atom? x) (= (Atom x) 0))))
+     (atom? x) (= (Any x) 0)
+     (array? x) (= (length (Any x)) 0))))
+(let true? (lambda x (and (atom? x) (= (Any x) 1))))
+(let false? (lambda x (and (atom? x) (= (Any x) 0))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
@@ -370,7 +370,7 @@
 (let list:nil? (lambda pair (= (length pair) 0)))
 (let list:map (lambda xs f (if (list:nil? xs) [] (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
 (let list:filter (lambda xs f? (if (list:nil? xs) [] (if (f? (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f?)) (list:filter (list:tail xs) f?)))))
-(let list:fold (lambda xs f out (if (list:nil? xs) (Any out) (list:fold (list:tail xs) f (f out (list:head xs))))))
+(let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
 (let list:zip (lambda a b (if (list:nil? a) [] (list:pair (list:pair (list:head a) (list:pair (list:head b) [])) (list:zip (list:tail a) (list:tail b))))))
 (let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
 (let list:length (lambda list (list:fold list (lambda a . (+ a 1)) 0)))
@@ -494,7 +494,7 @@
                   (let recursive:array:fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:fold (+ i 1) (cb out (get xs i)))
-                            (Any out))))
+                            out)))
                       (recursive:array:fold 0 initial))))
 (let array:every? (lambda xs predicate? (do
                     (let recursive:array:every? (lambda i
@@ -591,12 +591,12 @@
     (if (and (> (length a) i) (> (length b) j)) (recursive:array:zip (+ i 1) (+ j 1) (set! output (length output) (array (get a i) (get b j)))) output)))
   (recursive:array:zip 0 0 []))))
 (let array:unzip (lambda xs (array (array:map xs array:first) (array:map xs array:second))))
-(let array:equal? (lambda a b
+(let array:equal? (lambda a b (do (Collection a) (Collection b)
   (or
-  (and (atom? a) (atom? b) (= (Atom a) (Atom b)))
+  (and (atom? a) (atom? b) (= (Any a) (Any b)))
   (and (array? a)
         (= (length a) (length b))
-          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
+          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i)))))))))))
 (let array:not-equal? (lambda a b (not (array:equal? a b))))
 (let array:join (lambda xs delim (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
 (let array:chars (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
@@ -943,7 +943,7 @@
                   (let recursive:array:enumerated-fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:enumerated-fold (+ i 1) (cb out (get xs i) i))
-                            (Any out))))
+                            out)))
                       (recursive:array:enumerated-fold 0 initial))))
 (let array:enumerated-find (lambda xs predicate? (do
                     (let recursive:array:enumerated-find (lambda i
