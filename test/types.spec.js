@@ -1,5 +1,5 @@
 import { type, parse } from '../index.js'
-import { throws, doesNotThrow, deepStrictEqual } from 'assert'
+import { throws, doesNotThrow, deepStrictEqual, strictEqual } from 'assert'
 import { readFileSync } from 'fs'
 import { typeCheck } from '../src/check.js'
 import std from '../lib/baked/std.js'
@@ -14,25 +14,15 @@ const inference = (source, keys) => {
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
-// describe.only('test', () => {
-//   it('ds', () =>
-//     fails(
-//       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
-//     (let z [])
-//     (let n (lambda x (do
-//         (let y 10)
-//         [(+ x 1)])))
-//     (fn 1 n)
-//         (fn 1 (lambda x (do
-//         (let y 10)
-//         [])))
-//         (set! [] 0 1)
-//     `,
-//       `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)
-// Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)`
-//     ))
-// })
-describe('Should throw errors', () => {
+describe.only('Type checking', () => {
+  it('Std types should not change', () => {
+    const A = [...typeCheck(std[0], false)[1].entries()]
+      .filter((x) => x[0][0] === ';')
+      .map(([k, v]) => `${v()}`)
+      .join('\n')
+    const B = readFileSync('./test/types-output.lisp', 'utf-8')
+    strictEqual(A, B)
+  })
   it('Types Signatures should match expected', () => {
     deepStrictEqual(
       signatures([

@@ -91,7 +91,6 @@ export const setReturn = (stats, value) => {
 }
 export const setType = (stats, value) => {
   // if (!isAnyType(stats) && !isAnyType(value))
-
   if (isUnknownType(stats) && !isUnknownType(value))
     stats[TYPE_PROP][0] = value[TYPE_PROP][0]
 }
@@ -1161,10 +1160,7 @@ export const typeCheck = (ast, error = true) => {
                                     } else {
                                       // ANONYMOUS LAMBDAS TYPE CHECKING
                                       const local = Object.create(env)
-                                      const lambdaName = `lambda::annonymous::${i}::${performance
-                                        .now()
-                                        .toString()
-                                        .replace('.', 0)}*`
+                                      const lambdaName = `lambda::annonymous::${i}`
                                       check(
                                         [
                                           [APPLY, KEYWORDS.DEFINE_VARIABLE],
