@@ -987,6 +987,9 @@ Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x
 (array:map) is trying to access undefined variable (array:first) at argument (1) (array:map (array:select (array:zip (let sorted (array:sort xs (lambda a b (> a b)))) (math:sequence sorted)) (lambda x (do (let index (array:second x)) (or (not (> x 0)) (not (= (array:get sorted (- index 1)) (array:get sorted index))))))) array:first) (check #20)
 (array:map) is trying to access undefined variable (array:first) at argument (1) (array:map xs array:first) (check #20)
 (array:map) is trying to access undefined variable (array:second) at argument (1) (array:map xs array:second) (check #20)
+Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
+Assigning predicate (ending in ?) variable (var:def) to another variable which is not a predicate (also ending in ?) (let at-least-one? (var:def 0))
+Assigning predicate (ending in ?) variable (bool:false) to another variable which is not a predicate (also ending in ?) (let is? (bool:false))
 (-) is trying to access undefined variable (m) at argument (1) (- 1 m) (check #20)
 (brray:length) is trying to access undefined variable (entityz) at argument (0) (brray:length entityz) (check #20)
 Trying to call undefined (lambda) from:charss->ast (check #9)
@@ -1092,10 +1095,7 @@ Incorrect type of arguments 1 for (array:merge). Expected (Collection) but got (
 Incorrect type of arguments 0 for (array:sort). Expected (Collection) but got (Atom) (array:sort left cb) (check #10)
 Incorrect type of arguments 0 for (brray:balance?). Expected (Collection) but got (Atom) (brray:balance? q) (check #10)
 Incorrect type for (lambda) (f) argument at position (0) named as (x). Expected (Atom) but got (Collection) (list:map xs (lambda x (list:head (list:tail x)))) (check #780)
-Incorrect type for (lambda) (f) argument at position (0) named as (x). Expected (Atom) but got (Collection) (list:map xs (lambda x (list:head x))) (check #780)
-Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
-Assigning predicate (ending in ?) variable (var:def) to another variable which is not a predicate (also ending in ?) (let at-least-one? (var:def 0))
-Assigning predicate (ending in ?) variable (bool:false) to another variable which is not a predicate (also ending in ?) (let is? (bool:false))`
+Incorrect type for (lambda) (f) argument at position (0) named as (x). Expected (Atom) but got (Collection) (list:map xs (lambda x (list:head x))) (check #780)`
     )
   })
 })
