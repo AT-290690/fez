@@ -64,88 +64,61 @@ const deepLambdaReturn = (rest, condition) => {
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
-export const isTypeAbstraction = (stats) => {
-  return stats[TYPE_PROP] === APPLY
-}
-export const setTypeRef = (stats, value) => {
-  // if (!isAnyReturn(stats) && !isAnyReturn(value))
-  if (isUnknownType(stats)) stats[TYPE_PROP] = value[TYPE_PROP]
-}
-export const setReturnRef = (stats, value) => {
-  // if (!isAnyReturn(stats) && !isAnyReturn(value))
-  if (isUnknownReturn(stats)) stats[RETURNS] = value[RETURNS]
-}
-export const setReturnToTypeRef = (stats, value) => {
-  // if (!isAnyReturn(stats) && !isAnyReturn(value))
-  if (isUnknownReturn(stats)) stats[RETURNS] = value[TYPE_PROP]
-}
-export const setTypeToReturnRef = (stats, value) => {
-  // if (!isAnyReturn(stats) && !isAnyReturn(value))
-  if (isUnknownType(stats)) stats[TYPE_PROP] = value[RETURNS]
-}
-export const setPropRef = (stats, prop, value) => {
-  // if (stats[prop][0] !== ANY && value[prop][0] !== ANY)
-  if (stats[prop][0] === UNKNOWN) stats[prop] = value[prop]
-}
-export const setReturn = (stats, value) => {
-  // if (!isAnyReturn(stats) && !isAnyReturn(value))
-  if (isUnknownReturn(stats) && !isUnknownReturn(value))
-    stats[RETURNS][0] = value[RETURNS][0]
-}
-export const setType = (stats, value) => {
-  // if (!isAnyType(stats) && !isAnyType(value))
+export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
+export const setPropToAtom = (stats, prop) =>
+  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+  (stats[prop][0] = ATOM)
+export const setReturnToAtom = (stats) =>
+  isUnknownReturn(stats) && (stats[RETURNS] = ATOM)
+export const setTypeToAtom = (stats) =>
+  isUnknownType(stats) && (stats[TYPE_PROP] = ATOM)
+export const setTypeRef = (stats, value) =>
+  isUnknownType(stats) && (stats[TYPE_PROP] = value[TYPE_PROP])
+export const setReturnRef = (stats, value) =>
+  isUnknownReturn(stats) && (stats[RETURNS] = value[RETURNS])
+export const setReturnToTypeRef = (stats, value) =>
+  isUnknownReturn(stats) && (stats[RETURNS] = value[TYPE_PROP])
+export const setTypeToReturnRef = (stats, value) =>
+  isUnknownType(stats) && (stats[TYPE_PROP] = value[RETURNS])
+export const setPropRef = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN && (stats[prop] = value[prop])
+export const setReturn = (stats, value) =>
+  isUnknownReturn(stats) &&
+  !isUnknownReturn(value) &&
+  (stats[RETURNS][0] = value[RETURNS][0])
+export const setType = (stats, value) =>
+  isUnknownType(stats) &&
+  !isUnknownType(value) &&
+  (stats[TYPE_PROP][0] = value[TYPE_PROP][0])
+export const setTypeToReturn = (stats, value) =>
+  isUnknownType(stats) &&
+  !isUnknownReturn(value) &&
+  (stats[TYPE_PROP][0] = value[RETURNS][0])
+export const setReturnToType = (stats, value) =>
+  isUnknownReturn(stats) &&
+  !isUnknownType(value) &&
+  (stats[RETURNS][0] = value[TYPE_PROP][0])
+export const setProp = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN &&
+  value[prop][0] !== UNKNOWN &&
+  (stats[prop][0] = value[prop][0])
+export const isAnyReturn = (stats) => stats && stats[RETURNS][0] === ANY
+export const isAnyType = (stats) => stats && stats[TYPE_PROP][0] === ANY
+export const isUnknownType = (stats) => stats && stats[TYPE_PROP][0] === UNKNOWN
+export const isUnknownReturn = (stats) => stats[RETURNS][0] === UNKNOWN
+export const getType = (stats) => stats && stats[TYPE_PROP][0]
+export const getReturn = (stats) => stats && stats[RETURNS][0]
+export const isAtomType = (stats) =>
+  isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
+export const isAtomReturn = (stats) =>
+  isAnyType(stats) || stats[RETURNS][0] === ATOM
+export const compareTypes = (a, b) =>
+  isAnyType(a) || isAnyType(b) || a[TYPE_PROP][0] === b[TYPE_PROP][0]
+export const compareReturns = (a, b) =>
+  isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
+export const compareTypeWithReturn = (a, b) =>
+  isAnyType(a) || isAnyReturn(b) || a[TYPE_PROP][0] === b[RETURNS][0]
 
-  if (isUnknownType(stats) && !isUnknownType(value))
-    stats[TYPE_PROP][0] = value[TYPE_PROP][0]
-}
-export const setTypeToReturn = (stats, value) => {
-  // if (!isAnyType(stats) && !isAnyReturn(value))
-  if (isUnknownType(stats) && !isUnknownReturn(value))
-    stats[TYPE_PROP][0] = value[RETURNS][0]
-}
-export const setReturnToType = (stats, value) => {
-  // if (!isAnyType(stats) && !isAnyReturn(value))
-  if (isUnknownReturn(stats) && !isUnknownType(value))
-    stats[RETURNS][0] = value[TYPE_PROP][0]
-}
-export const setProp = (stats, prop, value) => {
-  // if (stats[prop][0] !== ANY && value[prop][0] !== ANY)
-  if (stats[prop][0] === UNKNOWN && value[prop][0] !== UNKNOWN)
-    stats[prop][0] = value[prop][0]
-}
-export const isAnyReturn = (stats) => {
-  return stats && stats[RETURNS][0] === ANY
-}
-export const isAnyType = (stats) => {
-  return stats && stats[TYPE_PROP][0] === ANY
-}
-export const isUnknownType = (stats) => {
-  return stats && stats[TYPE_PROP][0] === UNKNOWN
-}
-export const isUnknownReturn = (stats) => {
-  return stats[RETURNS][0] === UNKNOWN
-}
-export const getType = (stats) => {
-  return stats && stats[TYPE_PROP][0]
-}
-export const getReturn = (stats) => {
-  return stats && stats[RETURNS][0]
-}
-export const isAtomType = (stats) => {
-  return isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
-}
-export const isAtomReturn = (stats) => {
-  return isAnyType(stats) || stats[RETURNS][0] === ATOM
-}
-export const compareTypes = (a, b) => {
-  return isAnyType(a) || isAnyType(b) || a[TYPE_PROP][0] === b[TYPE_PROP][0]
-}
-export const compareReturns = (a, b) => {
-  return isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
-}
-export const compareTypeWithReturn = (a, b) => {
-  return isAnyType(a) || isAnyReturn(b) || a[TYPE_PROP][0] === b[RETURNS][0]
-}
 const checkPredicateName = (exp, rest, warningStack) => {
   if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
     const last = rest.at(-1)
@@ -294,8 +267,7 @@ export const typeCheck = (ast, error = true) => {
                 const resolveRetunType = (returns, rem, prop) => {
                   if (returns[TYPE] === ATOM) {
                     // ATOM ASSIGMENT
-                    env[name][STATS][prop][0] = ATOM
-                    env[name][STATS][RETURNS][0] = ATOM
+                    setPropToAtom(env[name][STATS], prop)
                     checkPredicateName(
                       exp,
                       [[WORD, name], returns],
@@ -316,12 +288,10 @@ export const typeCheck = (ast, error = true) => {
                             [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
                             warningStack
                           )
-                          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
                             // ATOM ASSIGMENT
-                            env[name][STATS][prop][0] = ATOM
-                            // TODO maybe delete this
-                            env[name][STATS][RETURNS][0] = ATOM
-                          } else if (
+                            setPropToAtom(env[name][STATS], prop)
+                          else if (
                             !isLeaf(re[0]) &&
                             env[re[0][0][VALUE]] &&
                             !isUnknownReturn(env[re[0][0][VALUE]][STATS])
@@ -583,10 +553,10 @@ export const typeCheck = (ast, error = true) => {
                     case KEYWORDS.IF:
                       const re = returns.slice(2)
                       // If either is an ATOM then IF returns an ATOM
-                      if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
-                        ref[STATS][RETURNS][0] = ATOM
-                        // TODO check that both brancehs are predicates if one is
-                      } else {
+                      if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+                        setReturnToAtom(ref[STATS])
+                      // TODO check that both brancehs are predicates if one is
+                      else {
                         const concequent = isLeaf(re[0])
                           ? copy[re[0][VALUE]]
                           : copy[re[0][0][VALUE]]
