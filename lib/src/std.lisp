@@ -90,21 +90,21 @@
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 
 (let identity (lambda x x))
-(let Scope identity)
-(let Special identity)
-(let Library identity)
-(let Type identity)
-(let Search identity)
+(let Scope 1)
+(let Special 1)
+(let Library 1)
+(let Type 1)
+(let Search 1)
 
 (let truthy? (lambda x
     (cond
-     (atom? x) (not (= (Unknown x) 0))
-     (array? x) (> (length (Unknown x)) 0)
+     (atom? x) (not (= (Atom x) 0))
+     (array? x) (> (length (Collection x)) 0)
      (*) 1)))
 (let falsy? (lambda x
     (cond
-     (atom? x) (= (Unknown x) 0)
-     (array? x) (= (length (Unknown x)) 0))))
+     (atom? x) (= (Atom x) 0)
+     (array? x) (= (length (Collection x)) 0))))
 (let true? (lambda x (and (atom? x) (= (Atom x) 1))))
 (let false? (lambda x (and (atom? x) (= (Atom x) 0))))
 (let math:e 2.718281828459045)
@@ -370,7 +370,7 @@
 (let list:nil? (lambda pair (= (length pair) 0)))
 (let list:map (lambda xs f (if (list:nil? xs) [] (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
 (let list:filter (lambda xs f? (if (list:nil? xs) [] (if (f? (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f?)) (list:filter (list:tail xs) f?)))))
-(let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
+(let list:fold (lambda xs f out (if (list:nil? xs) (Any out) (list:fold (list:tail xs) f (f out (list:head xs))))))
 (let list:zip (lambda a b (if (list:nil? a) [] (list:pair (list:pair (list:head a) (list:pair (list:head b) [])) (list:zip (list:tail a) (list:tail b))))))
 (let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
 (let list:length (lambda list (list:fold list (lambda a . (+ a 1)) 0)))
@@ -494,7 +494,7 @@
                   (let recursive:array:fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:fold (+ i 1) (cb out (get xs i)))
-                            out)))
+                            (Any out))))
                       (recursive:array:fold 0 initial))))
 (let array:every? (lambda xs predicate? (do
                     (let recursive:array:every? (lambda i
@@ -593,10 +593,10 @@
 (let array:unzip (lambda xs (array (array:map xs array:first) (array:map xs array:second))))
 (let array:equal? (lambda a b
   (or
-  (and (atom? a) (atom? b) (= (Unknown a) (Unknown b)))
+  (and (atom? a) (atom? b) (= (Atom a) (Atom b)))
   (and (array? a)
-        (= (length (Unknown a)) (length (Unknown b)))
-          (not (array:some? (math:sequence (Unknown a)) (lambda i (not (array:equal? (get (Unknown a) i) (get (Unknown b) i))))))))))
+        (= (length a) (length b))
+          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))
 (let array:not-equal? (lambda a b (not (array:equal? a b))))
 (let array:join (lambda xs delim (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
 (let array:chars (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
@@ -729,7 +729,8 @@
           (let dy (+ (array:first dir) y))
           (let dx (+ (array:second dir) x))
           (if (matrix:in-bounds? xs dy dx)
-              (cb (matrix:get xs dy dx) dir dy dx)))))))
+              (cb (matrix:get xs dy dx) dir dy dx)
+              []))))))
 (let matrix:adjacent-sum (lambda xs directions y x cb
       (array:fold directions (lambda a dir (do
           (let dy (+ (array:first dir) y))
@@ -737,8 +738,7 @@
           (if
             (and (array:in-bounds? xs dy) (array:in-bounds? (get xs dy) dx))
               (cb a (matrix:get xs dy dx)) 
-              a)
-          )) 0)))
+              a))) 0)))
 (let matrix:sliding-adjacent-sum (lambda xs directions y x N cb
       (array:fold directions (lambda a dir (do
           (let dy (+ (array:first dir)  y))
@@ -884,11 +884,11 @@
  (let half (math:floor (* (length initial) 0.5)))
  (let recursive:left:from:array->brray (lambda index (do
     (brray:add-to-left! q (get initial index))
-   (if (> index 0) (recursive:left:from:array->brray (- index 1))))))
+   (if (> index 0) (recursive:left:from:array->brray (- index 1)) []))))
  (recursive:left:from:array->brray (- half 1))
 (let recursive:right:from:array->brray (lambda index bounds (do
    (brray:add-to-right! q (get initial index))
-   (if (< index bounds) (recursive:right:from:array->brray (+ index 1) bounds)))))
+   (if (< index bounds) (recursive:right:from:array->brray (+ index 1) bounds) []))))
  (recursive:right:from:array->brray half (- (length initial) 1))
     q)))
 (let from:brray->array (lambda q (do
@@ -943,7 +943,7 @@
                   (let recursive:array:enumerated-fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:enumerated-fold (+ i 1) (cb out (get xs i) i))
-                            out)))
+                            (Any out))))
                       (recursive:array:enumerated-fold 0 initial))))
 (let array:enumerated-find (lambda xs predicate? (do
                     (let recursive:array:enumerated-find (lambda i
@@ -1098,7 +1098,7 @@
   (|> table
   (array:fold (lambda a b
       (array:merge (array:merge a (array b)) (array row-delimiter))
-  ) [])  
+  ) [])
   (array:map (lambda x (|> x 
               (array:map (lambda y 
               (string:pad-right y M (array char:space))))
@@ -1316,11 +1316,12 @@
 (let map:get (lambda table key
     (do
       (let idx (set:index table key))
-      (Unknown (if (array:in-bounds? table idx)
+      (if (array:in-bounds? table idx)
         (apply (lambda (do
           (let current (get table idx))
           (let found-index (array:find-index current (lambda x (string:equal? key (get x 0)))))
-          (unless (= found-index -1) (get (get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"])))))))))))
+          (unless (= found-index -1) (get (get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))
+          []))))
 (let map:get-option (lambda table key (do
       (let idx (set:index table key))
       (if (array:in-bounds? table idx) (do
@@ -1341,7 +1342,7 @@
 (let map:count (lambda arr 
     (|> arr (array:fold (lambda table key (do 
         (if (map:has? table key) 
-            (map:set! table key (+ (map:get table key) 1))
+            (map:set! table key (+ (Atom (map:get table key)) 1))
             (map:set! table key 1)))) (new:map64)))))
 
 (let doubly-linked-list:prev! (lambda list node (set! list 0 (set! node 2 list))))
@@ -1438,7 +1439,7 @@
       (let recursive:left:brray:balance! (lambda index (do
         (brray:add-to-left! q (get initial index))
         (if (> index 0) (recursive:left:brray:balance! (- index 1))))))
-    (let recursive:right:brray:balance! (lambda index bounds (do
+      (let recursive:right:brray:balance! (lambda index bounds (do
         (brray:add-to-right! q (get initial index))
         (if (< index bounds) (recursive:right:brray:balance! (+ index 1) bounds)))))
       (recursive:right:brray:balance! half (- (length initial) 1))
@@ -1723,20 +1724,20 @@ heap)))
     (array:push! acc cursor))))))
     tree)))
 
-(let special-form:let (lambda args env (do (let name (get (get args 0) ast:value)) (let val (Unknown (evaluate (get args 1) env))) (map:set! (list:head env) name val) val)))
+(let special-form:let (lambda args env (do (let name (get (get args 0) ast:value)) (let val (Any (evaluate (get args 1) env))) (map:set! (list:head env) name val) val)))
 (let special-form:lambda (lambda args env (do 
     (let params (array:slice args 0 (- (length args) 1))) 
     (let body (array:at args -1)) 
     (lambda props scope (do 
         (let local (prototype:create! env)) 
         (loop:for-n (length props) (lambda i 
-        (map:set! (list:head local) (get (get params i) ast:value) (Unknown (evaluate (get props i) scope))))) 
+        (map:set! (list:head local) (get (get params i) ast:value) (Any (evaluate (get props i) scope))))) 
         (evaluate body local))))))
-(let special-form:apply (lambda args env (do (let application (Unknown (evaluate (array:head args) env))) (application (array:tail args) env))))
-(let special-form:array (lambda args env (array:map args (lambda arg (Unknown (evaluate arg env))))))
+(let special-form:apply (lambda args env (do (let application (Any (evaluate (array:head args) env))) (application (array:tail args) env))))
+(let special-form:array (lambda args env (array:map args (lambda arg (Any (evaluate arg env))))))
 (let special-form:length (lambda args env (length (Collection (evaluate (get args 0) env)))))
 (let special-form:get (lambda args env (get (Collection (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
-(let special-form:set! (lambda args env (set! (Collection (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)) (Unknown (evaluate (get args 2) env)))))
+(let special-form:set! (lambda args env (set! (Collection (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)) (Any (evaluate (get args 2) env)))))
 (let special-form:pop! (lambda args env (array:del! (Collection (evaluate (get args 0) env)))))
 (let special-form:equal? (lambda args env (= (Atom (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
 (let special-form:add (lambda args env (+ (Atom (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
@@ -1754,7 +1755,7 @@ heap)))
 (let special-form:bit-wise-right-shift (lambda args env (>> (Atom (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
 (let special-form:bit-wise-left-shift (lambda args env (<< (Atom (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
 (let special-form:bit-wise-not (lambda args env (~ (Atom (evaluate (get args 0) env)))))
-(let special-form:do (lambda args env (array:first (array:fold args (lambda a arg (set! a 0 (Unknown (evaluate arg env)))) []))))
+(let special-form:do (lambda args env (array:first (array:fold args (lambda a arg (set! a 0 (Any (evaluate arg env)))) []))))
 (let special-form:if (lambda args env (if (Predicate (evaluate (get args 0) env)) (evaluate (get args 1) env) (evaluate (get args 2) env))))
 (let special-form:and? (lambda args env (and (Predicate (evaluate (get args 0) env)) (Predicate (evaluate (get args 1) env)))))
 (let special-form:or? (lambda args env (or (Predicate (evaluate (get args 0) env)) (Predicate (evaluate (get args 1) env)))))

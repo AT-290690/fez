@@ -21,7 +21,7 @@ import { isLeaf, LISP } from '../src/parser.js'
 import { SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]
-const libraryTypes = typeCheck(std[0])[1]
+const libraryTypes = typeCheck(std[0], false)[1]
 export const debug = (ast, checkTypes = true) => {
   let types = new Map()
   const debugEnv = {

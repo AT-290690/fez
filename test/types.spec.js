@@ -14,7 +14,24 @@ const inference = (source, keys) => {
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
-
+// describe.only('test', () => {
+//   it('ds', () =>
+//     fails(
+//       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+//     (let z [])
+//     (let n (lambda x (do
+//         (let y 10)
+//         [(+ x 1)])))
+//     (fn 1 n)
+//         (fn 1 (lambda x (do
+//         (let y 10)
+//         [])))
+//         (set! [] 0 1)
+//     `,
+//       `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)
+// Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)`
+//     ))
+// })
 describe('Should throw errors', () => {
   it('Types Signatures should match expected', () => {
     deepStrictEqual(
@@ -32,13 +49,13 @@ describe('Should throw errors', () => {
         'string:join-as-table-with'
       ]),
       [
-        '(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Unknown)))',
+        '(let matrix:enumerated-for (lambda Collection (lambda Any Atom Atom (do Unknown)) (do Unknown)))',
         '(let math:overlap? (lambda Atom Atom Atom (do Atom)))',
         '(let math:prime? (lambda Atom (do Atom)))',
-        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Collection)))',
-        '(let array:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))',
-        '(let list:find (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))',
-        '(let list:every? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))',
+        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Any Collection Atom Atom (do Unknown)) (do Collection)))',
+        '(let array:every? (lambda Collection (lambda Any (do Atom)) (do Atom)))',
+        '(let list:find (lambda Collection (lambda Any (do Unknown)) (do Collection)))',
+        '(let list:every? (lambda Collection (lambda Any (do Atom)) (do Atom)))',
         '(let array:unique (lambda Collection (do Collection)))',
         '(let array:empty? (lambda Collection (do Atom)))',
         '(let array:join (lambda Collection Collection (do Unknown)))',
@@ -505,33 +522,33 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     // TODO uncomment this and make it work
-    //   fails(
-    //     `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
-    // (let z [])
-    // (fn 1 (lambda x (do
-    //     (let y 10)
-    //     (set! x 0 1)
-    //     1
-    // )))
-    // `,
-    //     `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
-    //   )
+    fails(
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+    (let z [])
+    (fn 1 (lambda x (do
+        (let y 10)
+        (set! x 0 1)
+        1
+    )))
+    `,
+      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
+    )
     // TODO unbcomment that and makeit work
-    //   fails(
-    //     `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
-    //   (let z [])
-    //   (let n (lambda x (do
-    //       (let y 10)
-    //       [(+ x 1)])))
-    //   (fn 1 n)
-    //       (fn 1 (lambda x (do
-    //       (let y 10)
-    //       [])))
-    //       (set! [] 0 1)
-    //   `,
-    //     `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)
-    // Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)`
-    //   )
+    fails(
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+      (let z [])
+      (let n (lambda x (do
+          (let y 10)
+          [(+ x 1)])))
+      (fn 1 n)
+          (fn 1 (lambda x (do
+          (let y 10)
+          [])))
+          (set! [] 0 1)
+      `,
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)
+Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)`
+    )
     fails(
       `(let x y)
 (let y 1)`,
@@ -749,9 +766,9 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)
+      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)
 Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #16)
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)`
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
@@ -767,7 +784,9 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
     (let y 10)
         (set! x 0 1)
     [])))`,
-      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 n) (check #781)
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #779)
+Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)
+Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 n) (check #781)
 Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #780)`
     )
     fails(
@@ -964,7 +983,6 @@ Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x
       `Incorrect number of arguments for (x). Expected (= 1) but got 2 (x 1 2) (check #15)`
     )
   })
-
   it('broken std errors', () => {
     fails(
       BROKEN_STD,
@@ -979,23 +997,109 @@ Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x
 (-) is trying to access undefined variable (m) at argument (1) (- 1 m) (check #20)
 (brray:length) is trying to access undefined variable (entityz) at argument (0) (brray:length entityz) (check #20)
 Trying to call undefined (lambda) from:charss->ast (check #9)
+Incorrect type of argument (0) for special form (loop). Expected (Atom) but got (Collection) (loop (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (or). Expected (Atom) but got (Collection) (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (or). Expected (Atom) but got (Collection) (or (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (and). Expected (Atom) but got (Collection) (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (and). Expected (Atom) but got (Collection) (and (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (if). Expected (Atom) but got (Collection) (if (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (if (= (array:length args) 3) (evaluate (array:get args 2) env) 0)) (check #1)
+Incorrect type of argument (0) for special form (~). Expected (Atom) but got (Collection) (~ (evaluate (array:get args 0) env)) (check #1)
+Incorrect type of argument (0) for special form (<<). Expected (Atom) but got (Collection) (<< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (<<). Expected (Atom) but got (Collection) (<< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (>>). Expected (Atom) but got (Collection) (>> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (>>). Expected (Atom) but got (Collection) (>> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (^). Expected (Atom) but got (Collection) (^ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (^). Expected (Atom) but got (Collection) (^ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (|). Expected (Atom) but got (Collection) (| (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (|). Expected (Atom) but got (Collection) (| (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (&). Expected (Atom) but got (Collection) (& (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (&). Expected (Atom) but got (Collection) (& (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (mod). Expected (Atom) but got (Collection) (mod (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (mod). Expected (Atom) but got (Collection) (mod (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (<=). Expected (Atom) but got (Collection) (<= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (<=). Expected (Atom) but got (Collection) (<= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (>=). Expected (Atom) but got (Collection) (>= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (>=). Expected (Atom) but got (Collection) (>= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (<). Expected (Atom) but got (Collection) (< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (<). Expected (Atom) but got (Collection) (< (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (>). Expected (Atom) but got (Collection) (> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (>). Expected (Atom) but got (Collection) (> (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (/). Expected (Atom) but got (Collection) (/ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (/). Expected (Atom) but got (Collection) (/ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (*). Expected (Atom) but got (Collection) (* (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (*). Expected (Atom) but got (Collection) (* (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Collection) (- (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (-). Expected (Atom) but got (Collection) (- (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (*). Expected (Atom) but got (Collection) (* (evaluate (array:get args 0) env) -1) (check #1)
+Incorrect type of argument (0) for special form (+). Expected (Atom) but got (Collection) (+ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
+Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #1)
 Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! (evaluate (array:get args 0) env)) (check #15)
+Incorrect type of arguments 1 for (array:set!). Expected (Atom) but got (Collection) (array:set! (evaluate (array:get args 0) env) (evaluate (array:get args 1) env) (evaluate (array:get args 2) env)) (check #16)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (evaluate (array:get args 0) env) (evaluate (array:get args 1) env)) (check #16)
 Incorrect number of arguments for (array:first). Expected (= 1) but got 2 (array:first string 1) (check #15)
 Incorrect number of arguments for (array:set!). Expected (= 3) but got 1 (array:set! xs) (check #15)
+Incorrect type of arguments 0 for (array:length). Expected (Collection) but got (Atom) (array:length (array:first x)) (check #16)
+Incorrect type of argument (1) for special form (/). Expected (Atom) but got (Collection) (/ (array:first x) (array:second x)) (check #1)
+Incorrect type of argument (1) for special form (*). Expected (Atom) but got (Collection) (* (array:first x) (array:second x)) (check #1)
+Incorrect type of argument (1) for special form (-). Expected (Atom) but got (Collection) (- (array:first x) (array:second x)) (check #1)
+Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ (array:first x) (array:second x)) (check #1)
 Incorrect number of arguments for (<). Expected (= 2) but got 3 (< index bounds 12) (check #15)
 Trying to access undefined variable entityz (check #11)
 Trying to access undefined variable m (check #11)
 Incorrect number of arguments for (>). Expected (= 2) but got 3 (> (array:length key) 0 4) (check #15)
 Incorrect type of argument (0) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
 Incorrect type of argument (1) for special form (and). Expected (Atom) but got (Collection) (and (array:set! current index (array:at current -1)) (del! current)) (check #1)
+Incorrect type of arguments 0 for (array:length). Expected (Collection) but got (Atom) (array:length (array:first table)) (check #16)
+Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= (array:second a) (array:second b)) (check #1)
+Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= (array:second a) (array:second b)) (check #1)
+Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= (array:first x) (array:second x)) (check #1)
+Incorrect type of argument (1) for special form (>). Expected (Atom) but got (Collection) (> (array:first current) (array:second current)) (check #1)
+Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= (array:first current) (array:second current)) (check #1)
+Incorrect type of argument (1) for special form (<). Expected (Atom) but got (Collection) (< (array:first current) (array:second current)) (check #1)
+Incorrect type of argument (0) for special form (+). Expected (Atom) but got (Collection) (+ (array:second b) (- (array:length xs) n)) (check #1)
+Incorrect type of argument (0) for special form (+). Expected (Atom) but got (Collection) (+ (array:second b) n) (check #1)
 Incorrect number of arguments for (recursive:array:enumerated-find-index). Expected (= 1) but got 2 (recursive:array:enumerated-find-index xs 0) (check #15)
+Incorrect type of argument (0) for special form (+). Expected (Atom) but got (Collection) (+ (array:second dir) x) (check #1)
+Incorrect type of arguments 0 for (array:length). Expected (Collection) but got (Atom) (array:length (array:first matrix)) (check #16)
+Incorrect type of arguments 2 for (matrix:get). Expected (Atom) but got (Collection) (matrix:get matrix (array:first coords) (array:second coords)) (check #16)
+Incorrect type of argument (0) for special form (>). Expected (Atom) but got (Collection) (> (array:second b) 0) (check #1)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
 Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)
 Incorrect number of arguments for (=). Expected (= 2) but got 3 (= index -1 2) (check #15)
+Incorrect type of arguments 2 for (list:fold). Expected (Atom) but got (Collection) (list:fold list (lambda a b (list:pair b a)) (array)) (check #16)
 Trying to access undefined variable y3 (check #11)
 Trying to access undefined variable xs (check #11)
 Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= x 0) (check #3)
+Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get sorted index) (check #30)
+Incorrect type of argument (0) for special form (-). Expected (Atom) but got (Collection) (- index 1) (check #3)
+Incorrect type of argument (0) for special form (mod). Expected (Atom) but got (Collection) (mod i n) (check #3)
+Incorrect type of arguments 0 for (from:digit->char). Expected (Atom) but got (Collection) (from:digit->char (array:second x)) (check #16)
+Incorrect type of arguments 1 for (string:pad-right). Expected (Atom) but got (Collection) (string:pad-right y M (array char:space)) (check #30)
+Incorrect type of arguments 0 for (math:zeroes). Expected (Atom) but got (Collection) (math:zeroes M) (check #30)
+Incorrect type of arguments 0 for (string:equal?). Expected (Collection) but got (Atom) (string:equal? (array:first x) key) (check #16)
+Incorrect type of arguments 0 for (array:zip). Expected (Collection) but got (Atom) (array:zip (array:first xs) (array:second xs)) (check #16)
+Incorrect type of arguments 0 for (array:first). Expected (Collection) but got (Atom) (array:first (array:first x)) (check #16)
+Incorrect type of arguments 0 for (array:push!). Expected (Collection) but got (Atom) (array:push! h (ast:leaf ast:word token)) (check #10)
+Incorrect type of arguments 0 for (array:push!). Expected (Collection) but got (Atom) (array:push! h (ast:leaf ast:atom (from:digits->integer (from:chars->digits token)))) (check #10)
+Incorrect type of arguments 0 for (array:push!). Expected (Collection) but got (Atom) (array:push! h (ast:leaf ast:apply token)) (check #10)
+Incorrect type of arguments 0 for (array:empty?). Expected (Collection) but got (Atom) (array:empty? h) (check #10)
+Incorrect type of arguments 0 for (array:push!). Expected (Collection) but got (Atom) (array:push! h temp) (check #10)
+Incorrect type of arguments 0 for (brray:add-to-right!). Expected (Collection) but got (Atom) (brray:add-to-right! q (array:get initial index)) (check #10)
+Incorrect type of arguments 0 for (brray:add-to-left!). Expected (Collection) but got (Atom) (brray:add-to-left! q (array:get initial index)) (check #10)
+Incorrect type of arguments 0 for (brray:empty!). Expected (Collection) but got (Atom) (brray:empty! q) (check #10)
+Incorrect type of arguments 0 for (from:brray->array). Expected (Collection) but got (Atom) (from:brray->array q) (check #10)
+Incorrect type of arguments 1 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (> (array:first current) (array:second current))) (check #16)
+Incorrect type of arguments 1 for (bool:set!). Expected (Collection) but got (Atom) (bool:set! is? (< (array:first current) (array:second current))) (check #16)
+Incorrect type of arguments 0 for (list:flatten). Expected (Collection) but got (Atom) (list:flatten (list:head xs)) (check #16)
+Incorrect type for (lambda) (f) argument at position (0) named as (x). Expected (Atom) but got (Collection) (list:find list (lambda x (= (list:head (list:tail x)) i))) (check #780)
+Incorrect type of arguments 1 for (array:merge). Expected (Collection) but got (Atom) (array:merge (array:merge a delim) (array:first b)) (check #16)
+Incorrect type of arguments 0 for (array:sort). Expected (Collection) but got (Atom) (array:sort left cb) (check #10)
+Incorrect type of arguments 0 for (brray:balance?). Expected (Collection) but got (Atom) (brray:balance? q) (check #10)
+Incorrect type for (lambda) (f) argument at position (0) named as (x). Expected (Atom) but got (Collection) (list:map xs (lambda x (list:head (list:tail x)))) (check #780)
+Incorrect type for (lambda) (f) argument at position (0) named as (x). Expected (Atom) but got (Collection) (list:map xs (lambda x (list:head x))) (check #780)
 Invalid body for (lambda) if it takes more than one expression it must be wrapped in a (do) (lambda matrix cb (array:for matrix (lambda row (array:for row cb))) matrix) (check #666)
 Assigning predicate (ending in ?) variable (var:def) to another variable which is not a predicate (also ending in ?) (let at-least-one? (var:def 0))
 Assigning predicate (ending in ?) variable (bool:false) to another variable which is not a predicate (also ending in ?) (let is? (bool:false))`

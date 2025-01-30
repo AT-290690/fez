@@ -268,6 +268,7 @@ const comp = (tree, Drill) => {
       case STATIC_TYPES.UNKNOWN:
       case STATIC_TYPES.ATOM:
       case STATIC_TYPES.PREDICATE:
+      case STATIC_TYPES.ANY:
         return compile(tail[0], Drill)
 
       default: {

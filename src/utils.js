@@ -19,6 +19,11 @@ import { OPTIMIZATIONS } from './enchance.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
+export const wrapInBracesString = (exp) => `(${stringifyArgs(exp)})`
+export const logExp = function (exp, marker = ':D') {
+  console.log(marker, wrapInBracesString(exp), ...[...arguments].slice(2))
+  return exp
+}
 export const formatCallstack = (callstack) =>
   callstack
     .reverse()
@@ -326,6 +331,7 @@ export const addTypeIdentities = (ast) => {
     identity(STATIC_TYPES.ATOM),
     identity(STATIC_TYPES.COLLECTION),
     identity(STATIC_TYPES.PREDICATE),
+    identity(STATIC_TYPES.ANY),
     identity(STATIC_TYPES.UNKNOWN)
   )
 }

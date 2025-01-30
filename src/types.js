@@ -23,6 +23,7 @@ export const toTypeNames = (type) => {
     case ATOM:
       return 'Atom'
     case UNKNOWN:
+      // case ANY:
       return 'Unknown'
     case PREDICATE:
       return 'Predicate'
@@ -36,7 +37,7 @@ export const toTypeNames = (type) => {
 }
 export const SPECIAL_FORM_TYPES = {
   [SCOPE_NAME]: ';',
-  [ORDER]: 0,
+  // [ORDER]: 0,
   [toTypeNames(APPLY)]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
@@ -305,8 +306,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [UNKNOWN],
-            [RETURNS]: [UNKNOWN],
+            [TYPE_PROP]: [ANY],
+            [RETURNS]: [ANY],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -697,7 +698,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [UNKNOWN]
+      [RETURNS]: [ANY]
     }
   },
   [KEYWORDS.SET_ARRAY]: {
@@ -732,8 +733,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [UNKNOWN],
-            [RETURNS]: [UNKNOWN],
+            [TYPE_PROP]: [ANY],
+            [RETURNS]: [ANY],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -809,8 +810,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [UNKNOWN],
-            [RETURNS]: [UNKNOWN],
+            [TYPE_PROP]: [ANY],
+            [RETURNS]: [ANY],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -820,15 +821,15 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [UNKNOWN],
-            [RETURNS]: [UNKNOWN],
+            [TYPE_PROP]: [ANY],
+            [RETURNS]: [ANY],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [UNKNOWN]
+      [RETURNS]: [ANY]
     }
   },
   [KEYWORDS.NOT]: {
@@ -1095,8 +1096,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [UNKNOWN],
-            [RETURNS]: [UNKNOWN],
+            [TYPE_PROP]: [ANY],
+            [RETURNS]: [ANY],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -1117,8 +1118,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [UNKNOWN],
-            [RETURNS]: [UNKNOWN],
+            [TYPE_PROP]: [ANY],
+            [RETURNS]: [ANY],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -1147,7 +1148,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [UNKNOWN]
+      [RETURNS]: [ANY]
     }
   }
 }
