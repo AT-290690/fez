@@ -461,7 +461,7 @@
 ; 1 math:prime-factors f
 (let f Collection)
 ; 1 math:prime-factors recursive:math:prime-factors
-(let recursive:math:prime-factors (lambda  (do Atom)))
+(let recursive:math:prime-factors (lambda (do Atom)))
 ; 1 math:prime-factors
 (let math:prime-factors (lambda Unknown (do Collection)))
 ; 1 math:prime? 15 recursive:math:prime prime?
@@ -493,9 +493,9 @@
 ; 1 math:enumeration enumeration i
 (let i Atom)
 ; 1 math:enumeration enumeration
-(let enumeration (lambda  (do Unknown)))
+(let enumeration (lambda (do Unknown)))
 ; 1 math:enumeration
-(let math:enumeration (lambda  (do Unknown)))
+(let math:enumeration (lambda (do Unknown)))
 ; 1 math:palindrome?
 (let math:palindrome? (lambda Collection (do Atom)))
 ; 1 math:max-sub-array-sum
@@ -611,7 +611,7 @@
 ; 1 array:fill recursive:array:fill
 (let recursive:array:fill (lambda Collection Atom (do Unknown)))
 ; 1 array:fill
-(let array:fill (lambda Atom (lambda  (do Unknown)) (do Unknown)))
+(let array:fill (lambda Atom (lambda (do Unknown)) (do Unknown)))
 ; 1 array:of recursive:array:of
 (let recursive:array:of (lambda Collection Atom (do Unknown)))
 ; 1 array:of
@@ -687,7 +687,7 @@
 ; 1 array:count
 (let array:count (lambda Collection Atom (do Atom)))
 ; 1 array:empty! recursive:array:empty!
-(let recursive:array:empty! (lambda  (do Atom)))
+(let recursive:array:empty! (lambda (do Atom)))
 ; 1 array:empty!
 (let array:empty! (lambda Collection (do Atom)))
 ; 1 array:in-bounds?
@@ -1197,7 +1197,7 @@
 ; 1 string:lesser? 110 recursive:string:lesser 111 current
 (let current Any)
 ; 1 string:lesser? 110 recursive:string:lesser
-(let recursive:string:lesser (lambda  (do Atom)))
+(let recursive:string:lesser (lambda (do Atom)))
 ; 1 string:lesser?
 (let string:lesser? (lambda Collection Collection (do Atom)))
 ; 1 string:greater? 112 a
@@ -1211,7 +1211,7 @@
 ; 1 string:greater? 112 recursive:string:greater 113 current
 (let current Any)
 ; 1 string:greater? 112 recursive:string:greater
-(let recursive:string:greater (lambda  (do Atom)))
+(let recursive:string:greater (lambda (do Atom)))
 ; 1 string:greater?
 (let string:greater? (lambda Collection Collection (do Atom)))
 ; 1 string:greater-or-equal?
@@ -1317,25 +1317,25 @@
 ; 1 new:set
 (let new:set (lambda Collection (do Collection)))
 ; 1 new:set4
-(let new:set4 (lambda  (do Collection)))
+(let new:set4 (lambda (do Collection)))
 ; 1 new:set8
-(let new:set8 (lambda  (do Collection)))
+(let new:set8 (lambda (do Collection)))
 ; 1 new:set16
-(let new:set16 (lambda  (do Collection)))
+(let new:set16 (lambda (do Collection)))
 ; 1 new:set32
-(let new:set32 (lambda  (do Collection)))
+(let new:set32 (lambda (do Collection)))
 ; 1 new:set64
-(let new:set64 (lambda  (do Collection)))
+(let new:set64 (lambda (do Collection)))
 ; 1 new:map4
-(let new:map4 (lambda  (do Collection)))
+(let new:map4 (lambda (do Collection)))
 ; 1 new:map8
-(let new:map8 (lambda  (do Collection)))
+(let new:map8 (lambda (do Collection)))
 ; 1 new:map16
-(let new:map16 (lambda  (do Collection)))
+(let new:map16 (lambda (do Collection)))
 ; 1 new:map32
-(let new:map32 (lambda  (do Collection)))
+(let new:map32 (lambda (do Collection)))
 ; 1 new:map64
-(let new:map64 (lambda  (do Collection)))
+(let new:map64 (lambda (do Collection)))
 ; 1 new:array
 (let new:array (lambda Collection (do Collection)))
 ; 1 new:list
@@ -1347,11 +1347,11 @@
 ; 1 new:heap
 (let new:heap Collection)
 ; 1 new:brray
-(let new:brray (lambda  (do Collection)))
+(let new:brray (lambda (do Collection)))
 ; 1 new:queue
-(let new:queue (lambda  (do Collection)))
+(let new:queue (lambda (do Collection)))
 ; 1 new:stack
-(let new:stack (lambda  (do Collection)))
+(let new:stack (lambda (do Collection)))
 ; 1 new:binary-tree xs
 (let xs Collection)
 ; 1 new:binary-tree
@@ -1537,9 +1537,9 @@
 ; 1 bool:toggle!
 (let bool:toggle! (lambda Collection (do Collection)))
 ; 1 bool:true
-(let bool:true (lambda  (do Collection)))
+(let bool:true (lambda (do Collection)))
 ; 1 bool:false
-(let bool:false (lambda  (do Collection)))
+(let bool:false (lambda (do Collection)))
 ; 1 bool:true!
 (let bool:true! (lambda Collection (do Collection)))
 ; 1 bool:false!
@@ -1743,7 +1743,7 @@
 ; 1 loop:repeat recursive:loop:repeat
 (let recursive:loop:repeat (lambda Atom (do Atom)))
 ; 1 loop:repeat
-(let loop:repeat (lambda Atom (lambda  (do Unknown)) (do Atom)))
+(let loop:repeat (lambda Atom (lambda (do Unknown)) (do Atom)))
 ; 1 loop:some-n? recursive:loop:some-n
 (let recursive:loop:some-n (lambda Atom (do Atom)))
 ; 1 loop:some-n?
@@ -1765,7 +1765,7 @@
 ; 1 heap:sift-up! node
 (let node Collection)
 ; 1 heap:sift-up! recursive:heap:sift-up!
-(let recursive:heap:sift-up! (lambda  (do Atom)))
+(let recursive:heap:sift-up! (lambda (do Atom)))
 ; 1 heap:sift-up!
 (let heap:sift-up! (lambda Collection Unknown (do Atom)))
 ; 1 heap:sift-down! node
@@ -1773,7 +1773,7 @@
 ; 1 heap:sift-down! recursive:heap:sift-down! 167 max-child
 (let max-child Atom)
 ; 1 heap:sift-down! recursive:heap:sift-down!
-(let recursive:heap:sift-down! (lambda  (do Atom)))
+(let recursive:heap:sift-down! (lambda (do Atom)))
 ; 1 heap:sift-down!
 (let heap:sift-down! (lambda Collection Unknown (do Atom)))
 ; 1 heap:peek
@@ -1799,7 +1799,7 @@
 ; 1 optimization:tail-call-loop
 (let optimization:tail-call-loop (lambda Collection (do Any)))
 ; 1 optimization:tail-calls-0
-(let optimization:tail-calls-0 (lambda (lambda  (do Unknown)) (do Abstraction)))
+(let optimization:tail-calls-0 (lambda (lambda (do Unknown)) (do Abstraction)))
 ; 1 optimization:tail-calls-1
 (let optimization:tail-calls-1 (lambda (lambda Unknown (do Unknown)) (do Abstraction)))
 ; 1 optimization:tail-calls-2
@@ -1853,7 +1853,7 @@
 ; 1 π
 (let π Atom)
 ; 1 λ
-(let λ (lambda ... Unknown (do Abstraction)))
+(let λ (lambda ... Unknown(do Abstraction)))
 ; 1 array?
 (let array? (lambda Unknown (do Atom)))
 ; 1 char?

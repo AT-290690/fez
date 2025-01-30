@@ -90,9 +90,11 @@ export const setPropToTypeRef = (stats, prop, value) =>
   value[TYPE_PROP][0] !== UNKNOWN &&
   (stats[prop] = value[TYPE_PROP])
 export const setReturnToAtom = (stats) =>
-  isUnknownReturn(stats) && (stats[RETURNS] = ATOM)
+  isUnknownReturn(stats) && (stats[RETURNS][0] = ATOM)
 export const setTypeToAtom = (stats) =>
-  isUnknownType(stats) && (stats[TYPE_PROP] = ATOM)
+  isUnknownType(stats) && (stats[TYPE_PROP][0] = ATOM)
+export const setReturnToAbbstraction = (stats) =>
+  isUnknownReturn(stats) && (stats[RETURNS][0] = APPLY)
 export const setTypeRef = (stats, value) =>
   isUnknownType(stats) && (stats[TYPE_PROP] = value[TYPE_PROP])
 export const setReturnRef = (stats, value) =>
@@ -368,26 +370,30 @@ export const typeCheck = (ast, error = true) => {
                       )
                       if (!env[returns[VALUE]]) return false
                       else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
-                        // ALWAYS APPLY
-                        // rest.at(-1)[0][TYPE] === APPLY
-                        // Here is upon application to store the result in the variable
-                        if (isUnknownType(env[name][STATS]))
-                          stack.unshift(() => {
-                            setTypeToReturn(
+                        if (returns[TYPE] === WORD)
+                          setReturnToAbbstraction(env[name][STATS])
+                        else {
+                          // ALWAYS APPLY
+                          // rest.at(-1)[0][TYPE] === APPLY
+                          // Here is upon application to store the result in the variable
+                          if (isUnknownType(env[name][STATS]))
+                            stack.unshift(() => {
+                              setTypeToReturn(
+                                env[name][STATS],
+                                env[returns[VALUE]][STATS]
+                              )
+                              // env[name][STATS][TYPE_PROP][0] =
+                              //   env[returns[VALUE]][STATS][RETURNS][0]
+                              // this seems to be able to be deleted
+                              // env[name][STATS][TYPE_PROP][1] =
+                              //   env[returns[VALUE]][STATS][RETURNS][1]
+                            })
+                          else
+                            setReturnRef(
                               env[name][STATS],
                               env[returns[VALUE]][STATS]
                             )
-                            // env[name][STATS][TYPE_PROP][0] =
-                            //   env[returns[VALUE]][STATS][RETURNS][0]
-                            // this seems to be able to be deleted
-                            // env[name][STATS][TYPE_PROP][1] =
-                            //   env[returns[VALUE]][STATS][RETURNS][1]
-                          })
-                        else
-                          setReturnRef(
-                            env[name][STATS],
-                            env[returns[VALUE]][STATS]
-                          )
+                        }
                       }
                       break
                   }

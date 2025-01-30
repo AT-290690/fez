@@ -1167,18 +1167,18 @@ export const formatType = (name, env) => {
       ? `${isAnonymous ? '' : `(let ${name} `}(lambda ${
           stats[ARG_COUNT] === VARIADIC
             ? '... ' + STATIC_TYPES.UNKNOWN
-            : (stats[ARGUMENTS] ?? [])
-                .map(
-                  (x, i) =>
-                    `${
-                      getType(x[STATS]) === APPLY
-                        ? `${formatType(i, stats[ARGUMENTS])}`
-                        : `${toTypeNames(getType(x[STATS]))}`
-                    }`
-                )
-                .join(' ')
+            : stats[ARGUMENTS]?.length
+            ? stats[ARGUMENTS].map(
+                (x, i) =>
+                  `${
+                    getType(x[STATS]) === APPLY
+                      ? `${formatType(i, stats[ARGUMENTS])}`
+                      : `${toTypeNames(getType(x[STATS]))}`
+                  }`
+              ).join(' ') + ' '
+            : ''
           // TODO format returned functions when type support is added
-        } (${KEYWORDS.BLOCK} ${toTypeNames(getReturn(stats))})${
+        }(${KEYWORDS.BLOCK} ${toTypeNames(getReturn(stats))})${
           isAnonymous ? '' : ')'
         })`
       : `(let ${name} ${toTypeNames(getType(stats))})`
