@@ -238,6 +238,123 @@ const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
+const resolveRetunType = ({
+  returns,
+  rem,
+  stack,
+  prop,
+  exp,
+  name,
+  errors,
+  env
+}) => {
+  if (returns[TYPE] === ATOM) {
+    // ATOM ASSIGMENT
+    setPropToAtom(env[name][STATS], prop)
+    checkPredicateName(exp, [[WORD, name], returns], errors)
+  } else {
+    switch (returns[VALUE]) {
+      case KEYWORDS.IF:
+        {
+          const re = rem.slice(2)
+          checkPredicateName(
+            exp,
+            [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
+            errors
+          )
+          checkPredicateName(
+            exp,
+            [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
+            errors
+          )
+          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+            // ATOM ASSIGMENT
+            setPropToAtom(env[name][STATS], prop)
+          else if (
+            !isLeaf(re[0]) &&
+            env[re[0][0][VALUE]] &&
+            !isUnknownReturn(env[re[0][0][VALUE]][STATS])
+          ) {
+            env[name][STATS][prop] = env[re[0][0][VALUE]][STATS][RETURNS]
+            if (re[0][0][TYPE] === APPLY) {
+              switch (re[0][0][VALUE]) {
+                case KEYWORDS.ANONYMOUS_FUNCTION:
+                  // FN UKNONW ASSIGMENT
+                  env[name][STATS][TYPE_PROP] = [APPLY]
+                  env[name][STATS][RETURNS] = [UNKNOWN]
+                  env[name][STATS][ARG_COUNT] = re[0].length - 2
+                  env[name][STATS][ARGUMENTS] = fillUknownArgs(re[0].length - 2)
+                  break
+              }
+            }
+            // env[name][STATS] = env[re[0][0][VALUE]][STATS]
+          } else if (
+            !isLeaf(re[1]) &&
+            env[re[1][0][VALUE]] &&
+            !isUnknownReturn(env[re[1][0][VALUE]][STATS])
+          ) {
+            setProp(env[name][STATS], prop, env[re[1][0][VALUE]][STATS])
+            if (re[1][0][TYPE] === APPLY) {
+              switch (re[1][0][VALUE]) {
+                case KEYWORDS.ANONYMOUS_FUNCTION:
+                  // FN ASSIGMENT
+                  env[name][STATS][TYPE_PROP] = [APPLY]
+                  env[name][STATS][RETURNS] = [UNKNOWN]
+                  env[name][STATS][ARG_COUNT] = re[1].length - 2
+                  env[name][STATS][ARGUMENTS] = fillUknownArgs(re[1].length - 2)
+                  break
+              }
+            }
+          } else if (env[re[0][VALUE]])
+            // ASSIGMENT
+            setPropRef(env[name][STATS], prop, env[re[0][VALUE]][STATS])
+          else if (env[re[1][VALUE]])
+            // ASSIGMENT
+            setPropRef(env[name][STATS], prop, env[re[1][VALUE]][STATS])
+        }
+        break
+      default:
+        checkPredicateNameDeep(name, exp, exp.slice(1), returns, errors)
+        if (!env[returns[VALUE]]) return false
+        else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
+          if (returns[TYPE] === WORD) setReturnToAbbstraction(env[name][STATS])
+          else {
+            // ALWAYS APPLY
+            // rest.at(-1)[0][TYPE] === APPLY
+            // Here is upon application to store the result in the variable
+            if (isUnknownType(env[name][STATS]))
+              stack.unshift(() => {
+                setTypeToReturn(env[name][STATS], env[returns[VALUE]][STATS])
+                // env[name][STATS][TYPE_PROP][0] =
+                //   env[returns[VALUE]][STATS][RETURNS][0]
+                // this seems to be able to be deleted
+                // env[name][STATS][TYPE_PROP][1] =
+                //   env[returns[VALUE]][STATS][RETURNS][1]
+              })
+            else setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
+          }
+        }
+        break
+    }
+  }
+  return true
+}
+const checkReturnType = ({ exp, stack, name, errors, env }) => {
+  const last = exp.at(-1).at(-1)
+  const body = hasApplyLambdaBlock(last) ? last.at(-1).at(-1) : last
+  const rem = hasBlock(body) ? body.at(-1) : body
+  const returns = isLeaf(rem) ? rem : rem[0]
+  return resolveRetunType({
+    returns,
+    rem,
+    prop: RETURNS,
+    exp,
+    name,
+    errors,
+    env,
+    stack
+  })
+}
 export const typeCheck = (ast, error = true) => {
   let scopeIndex = 0
   const root = structuredClone(SPECIAL_FORM_TYPES)
@@ -280,132 +397,6 @@ export const typeCheck = (ast, error = true) => {
             else {
               const name = rest[0][VALUE]
               //  Predicate name consistency
-              const resolveRetunType = (returns, rem, prop) => {
-                if (returns[TYPE] === ATOM) {
-                  // ATOM ASSIGMENT
-                  setPropToAtom(env[name][STATS], prop)
-                  checkPredicateName(exp, [[WORD, name], returns], errors)
-                } else {
-                  switch (returns[VALUE]) {
-                    case KEYWORDS.IF:
-                      {
-                        const re = rem.slice(2)
-                        checkPredicateName(
-                          exp,
-                          [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
-                          errors
-                        )
-                        checkPredicateName(
-                          exp,
-                          [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
-                          errors
-                        )
-                        if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
-                          // ATOM ASSIGMENT
-                          setPropToAtom(env[name][STATS], prop)
-                        else if (
-                          !isLeaf(re[0]) &&
-                          env[re[0][0][VALUE]] &&
-                          !isUnknownReturn(env[re[0][0][VALUE]][STATS])
-                        ) {
-                          env[name][STATS][prop] =
-                            env[re[0][0][VALUE]][STATS][RETURNS]
-                          if (re[0][0][TYPE] === APPLY) {
-                            switch (re[0][0][VALUE]) {
-                              case KEYWORDS.ANONYMOUS_FUNCTION:
-                                // FN UKNONW ASSIGMENT
-                                env[name][STATS][TYPE_PROP] = [APPLY]
-                                env[name][STATS][RETURNS] = [UNKNOWN]
-                                env[name][STATS][ARG_COUNT] = re[0].length - 2
-                                env[name][STATS][ARGUMENTS] = fillUknownArgs(
-                                  re[0].length - 2
-                                )
-                                break
-                            }
-                          }
-                          // env[name][STATS] = env[re[0][0][VALUE]][STATS]
-                        } else if (
-                          !isLeaf(re[1]) &&
-                          env[re[1][0][VALUE]] &&
-                          !isUnknownReturn(env[re[1][0][VALUE]][STATS])
-                        ) {
-                          setProp(
-                            env[name][STATS],
-                            prop,
-                            env[re[1][0][VALUE]][STATS]
-                          )
-                          if (re[1][0][TYPE] === APPLY) {
-                            switch (re[1][0][VALUE]) {
-                              case KEYWORDS.ANONYMOUS_FUNCTION:
-                                // FN ASSIGMENT
-                                env[name][STATS][TYPE_PROP] = [APPLY]
-                                env[name][STATS][RETURNS] = [UNKNOWN]
-                                env[name][STATS][ARG_COUNT] = re[1].length - 2
-                                env[name][STATS][ARGUMENTS] = fillUknownArgs(
-                                  re[1].length - 2
-                                )
-                                break
-                            }
-                          }
-                        } else if (env[re[0][VALUE]])
-                          // ASSIGMENT
-                          setPropRef(
-                            env[name][STATS],
-                            prop,
-                            env[re[0][VALUE]][STATS]
-                          )
-                        else if (env[re[1][VALUE]])
-                          // ASSIGMENT
-                          setPropRef(
-                            env[name][STATS],
-                            prop,
-                            env[re[1][VALUE]][STATS]
-                          )
-                      }
-                      break
-                    default:
-                      checkPredicateNameDeep(name, exp, rest, returns, errors)
-                      if (!env[returns[VALUE]]) return false
-                      else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
-                        if (returns[TYPE] === WORD)
-                          setReturnToAbbstraction(env[name][STATS])
-                        else {
-                          // ALWAYS APPLY
-                          // rest.at(-1)[0][TYPE] === APPLY
-                          // Here is upon application to store the result in the variable
-                          if (isUnknownType(env[name][STATS]))
-                            stack.unshift(() => {
-                              setTypeToReturn(
-                                env[name][STATS],
-                                env[returns[VALUE]][STATS]
-                              )
-                              // env[name][STATS][TYPE_PROP][0] =
-                              //   env[returns[VALUE]][STATS][RETURNS][0]
-                              // this seems to be able to be deleted
-                              // env[name][STATS][TYPE_PROP][1] =
-                              //   env[returns[VALUE]][STATS][RETURNS][1]
-                            })
-                          else
-                            setReturnRef(
-                              env[name][STATS],
-                              env[returns[VALUE]][STATS]
-                            )
-                        }
-                      }
-                      break
-                  }
-                }
-                return true
-              }
-              const checkReturnType = () => {
-                const last = rest.at(-1).at(-1)
-                const body = hasApplyLambdaBlock(last)
-                  ? last.at(-1).at(-1)
-                  : last
-                const rem = hasBlock(body) ? body.at(-1) : body
-                const returns = isLeaf(rem) ? rem : rem[0]
-                return resolveRetunType(returns, rem, RETURNS)
-              }
               const rightHand = rest.at(-1)
               if (
                 rightHand &&
@@ -427,13 +418,25 @@ export const typeCheck = (ast, error = true) => {
                   }
                 }
                 if (
-                  !checkReturnType() ||
+                  !checkReturnType({
+                    stack,
+                    exp,
+                    env,
+                    name,
+                    errors
+                  }) ||
                   (isUnknownReturn(env[name][STATS]) &&
                     env[name][STATS].retried < MAX_RETRY_DEFINITION)
                 ) {
                   env[name][STATS].retried += 1
                   stack.unshift(() => {
-                    checkReturnType()
+                    checkReturnType({
+                      stack,
+                      exp,
+                      env,
+                      name,
+                      errors
+                    })
                     check(rightHand, env, exp)
                   })
                   check(rightHand, env, exp)
@@ -487,7 +490,16 @@ export const typeCheck = (ast, error = true) => {
                   const body = rightHand
                   const rem = hasBlock(body) ? body.at(-1) : body
                   const returns = isLeaf(rem) ? rem : rem[0]
-                  resolveRetunType(returns, rem, TYPE_PROP)
+                  resolveRetunType({
+                    stack,
+                    returns,
+                    rem,
+                    prop: TYPE_PROP,
+                    exp,
+                    env,
+                    name,
+                    errors
+                  })
                 }
                 check(rightHand, env, scope)
               }
