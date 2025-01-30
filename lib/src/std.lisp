@@ -640,8 +640,8 @@
     (apply (lambda (do
       (array (array:first xs))
       (let recursive:array:adjacent-difference (lambda i result (if (< i len) (apply (lambda (do
-      (recursive:array:adjacent-difference (+ i 1) (set! result i (cb (get xs (- i 1)) (get xs i))))))) result)))
-      (recursive:array:adjacent-difference 1 xs))))))))
+        (recursive:array:adjacent-difference (+ i 1) (set! result i (cb (get xs (- i 1)) (get xs i))))))) result)))
+        (recursive:array:adjacent-difference 1 xs))))))))
 (let array:partition (lambda xs n (array:fold (array:zip xs (math:sequence xs)) (lambda a b (do
       (let x (array:first b))
       (let i (array:second b))

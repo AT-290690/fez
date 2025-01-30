@@ -777,7 +777,7 @@
 ; :: array:sort :: right
 (let right Any)
 ; :: array:sort
-(let array:sort (lambda Collection (lambda Any Any (do Unknown)) (do Atom)))
+(let array:sort (lambda Collection (lambda Any Any (do Unknown)) (do Collection)))
 ; :: array:sorted-ascending?
 (let array:sorted-ascending? (lambda Collection (do Atom)))
 ; :: array:sorted-descending?
@@ -797,7 +797,7 @@
 ; :: array:adjacent-difference :: recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Atom Collection (do Atom)))
 ; :: array:adjacent-difference
-(let array:adjacent-difference (lambda Collection (lambda Any Any (do Unknown)) (do Atom)))
+(let array:adjacent-difference (lambda Collection (lambda Any Any (do Unknown)) (do Collection)))
 ; :: array:partition :: x
 (let x Any)
 ; :: array:partition :: i

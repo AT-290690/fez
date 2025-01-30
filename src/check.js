@@ -68,6 +68,26 @@ export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) =>
   (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
   (stats[prop][0] = ATOM)
+export const setProp = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN &&
+  value[prop][0] !== UNKNOWN &&
+  (stats[prop][0] = value[prop][0])
+export const setPropToReturn = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN &&
+  value[RETURNS][0] !== UNKNOWN &&
+  (stats[prop][0] = value[RETURNS][0])
+export const setPropToReturnRef = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN &&
+  value[RETURNS][0] !== UNKNOWN &&
+  (stats[prop] = value[RETURNS])
+export const setPropToType = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN &&
+  value[UNKNOWN][0] !== UNKNOWN &&
+  (stats[prop][0] = value[UNKNOWN][0])
+export const setPropToTypeRef = (stats, prop, value) =>
+  stats[prop][0] === UNKNOWN &&
+  value[TYPE_PROP][0] !== UNKNOWN &&
+  (stats[prop] = value[TYPE_PROP])
 export const setReturnToAtom = (stats) =>
   isUnknownReturn(stats) && (stats[RETURNS] = ATOM)
 export const setTypeToAtom = (stats) =>
@@ -98,10 +118,6 @@ export const setReturnToType = (stats, value) =>
   isUnknownReturn(stats) &&
   !isUnknownType(value) &&
   (stats[RETURNS][0] = value[TYPE_PROP][0])
-export const setProp = (stats, prop, value) =>
-  stats[prop][0] === UNKNOWN &&
-  value[prop][0] !== UNKNOWN &&
-  (stats[prop][0] = value[prop][0])
 export const isAnyReturn = (stats) => stats && stats[RETURNS][0] === ANY
 export const isAnyType = (stats) => stats && stats[TYPE_PROP][0] === ANY
 export const isUnknownType = (stats) => stats && stats[TYPE_PROP][0] === UNKNOWN
@@ -227,385 +243,360 @@ export const typeCheck = (ast, error = true) => {
   const stack = []
   const check = (exp, env, scope) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
-    if (first === undefined) {
+    if (first === undefined)
       throw new TypeError(
         `(lambda) invocation with missing (Abstraction) name () Provide an (Abstraction) name as the (1) argument.`
       )
-    }
     const isSpecial = SPECIAL_FORMS_SET.has(first[VALUE])
     switch (first[TYPE]) {
       case WORD:
-        {
-          if (!isSpecial)
-            stack.push(() => {
+        if (!isSpecial)
+          stack.push(
+            () =>
               // Figure out how to determine if varible is define after it's used
-              if (env[first[VALUE]] === undefined) {
-                errorStack.add(
-                  `Trying to access undefined variable ${first[VALUE]} (check #11)`
-                )
-              }
-            })
-        }
+              env[first[VALUE]] === undefined &&
+              errorStack.add(
+                `Trying to access undefined variable ${first[VALUE]} (check #11)`
+              )
+          )
         break
       case ATOM:
         break
       case APPLY: {
         switch (first[VALUE]) {
           case KEYWORDS.DEFINE_VARIABLE:
-            {
-              if (rest.length !== 2) {
-                throw new TypeError(
-                  `Incorrect number of arguments for (${
-                    first[VALUE]
-                  }). Expected (= 2) but got ${rest.length} (${stringifyArgs(
-                    exp
-                  )})`
-                )
-              } else {
-                const name = rest[0][VALUE]
-                //  Predicate name consistency
-                const resolveRetunType = (returns, rem, prop) => {
-                  if (returns[TYPE] === ATOM) {
-                    // ATOM ASSIGMENT
-                    setPropToAtom(env[name][STATS], prop)
-                    checkPredicateName(
-                      exp,
-                      [[WORD, name], returns],
-                      warningStack
-                    )
-                  } else {
-                    switch (returns[VALUE]) {
-                      case KEYWORDS.IF:
-                        {
-                          const re = rem.slice(2)
-                          checkPredicateName(
-                            exp,
-                            [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
-                            warningStack
-                          )
-                          checkPredicateName(
-                            exp,
-                            [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
-                            warningStack
-                          )
-                          if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
-                            // ATOM ASSIGMENT
-                            setPropToAtom(env[name][STATS], prop)
-                          else if (
-                            !isLeaf(re[0]) &&
-                            env[re[0][0][VALUE]] &&
-                            !isUnknownReturn(env[re[0][0][VALUE]][STATS])
-                          ) {
-                            env[name][STATS][prop] =
-                              env[re[0][0][VALUE]][STATS][RETURNS]
-                            if (re[0][0][TYPE] === APPLY) {
-                              switch (re[0][0][VALUE]) {
-                                case KEYWORDS.ANONYMOUS_FUNCTION:
-                                  // FN UKNONW ASSIGMENT
-                                  env[name][STATS][RETURNS] = [UNKNOWN]
-                                  env[name][STATS][ARG_COUNT] = re[0].length - 2
-                                  env[name][STATS][ARGUMENTS] = fillUknownArgs(
-                                    re[0].length - 2
-                                  )
-                                  break
-                              }
-                            }
-                            // env[name][STATS] = env[re[0][0][VALUE]][STATS]
-                          } else if (
-                            !isLeaf(re[1]) &&
-                            env[re[1][0][VALUE]] &&
-                            !isUnknownReturn(env[re[1][0][VALUE]][STATS])
-                          ) {
-                            setProp(
-                              env[name][STATS],
-                              prop,
-                              env[re[1][0][VALUE]][STATS]
-                            )
-                            env[name][STATS][prop] =
-                              env[re[1][0][VALUE]][STATS][RETURNS]
-                            if (re[1][0][TYPE] === APPLY) {
-                              switch (re[1][0][VALUE]) {
-                                case KEYWORDS.ANONYMOUS_FUNCTION:
-                                  // FN ASSIGMENT
-                                  env[name][STATS][TYPE_PROP] = [APPLY]
-                                  env[name][STATS][RETURNS] = [UNKNOWN]
-                                  env[name][STATS][ARG_COUNT] = re[1].length - 2
-                                  env[name][STATS][ARGUMENTS] = fillUknownArgs(
-                                    re[1].length - 2
-                                  )
-                                  break
-                              }
-                            }
-                          } else if (env[re[0][VALUE]]) {
-                            // ASSIGMENT
-                            env[name][STATS][prop] =
-                              env[re[0][VALUE]][STATS][prop]
-                            env[name][STATS][RETURNS] =
-                              env[re[0][VALUE]][STATS][RETURNS]
-                          } else if (env[re[1][VALUE]]) {
-                            // ASSIGMENT
-                            setProp(
-                              env[name][STATS],
-                              prop,
-                              env[re[1][VALUE]][STATS]
-                            )
-                            // env[name][STATS][prop] =
-                            //   env[re[1][VALUE]][STATS][prop]
-                            setReturnRef(
-                              env[name][STATS],
-                              env[re[1][VALUE]][STATS]
-                            )
-                          }
-                        }
-                        break
-                      default:
-                        checkPredicateNameDeep(
-                          name,
+            if (rest.length !== 2)
+              throw new TypeError(
+                `Incorrect number of arguments for (${
+                  first[VALUE]
+                }). Expected (= 2) but got ${rest.length} (${stringifyArgs(
+                  exp
+                )})`
+              )
+            else {
+              const name = rest[0][VALUE]
+              //  Predicate name consistency
+              const resolveRetunType = (returns, rem, prop) => {
+                if (returns[TYPE] === ATOM) {
+                  // ATOM ASSIGMENT
+                  setPropToAtom(env[name][STATS], prop)
+                  checkPredicateName(exp, [[WORD, name], returns], warningStack)
+                } else {
+                  switch (returns[VALUE]) {
+                    case KEYWORDS.IF:
+                      {
+                        const re = rem.slice(2)
+                        checkPredicateName(
                           exp,
-                          rest,
-                          returns,
+                          [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
                           warningStack
                         )
-                        if (!env[returns[VALUE]]) {
-                          return false
-                          // env[name][STATS][RETURNS] = [ANY]
-                        }
-                        // env[name][STATS][RETURNS] = APPLY
+                        checkPredicateName(
+                          exp,
+                          [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
+                          warningStack
+                        )
+                        if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+                          // ATOM ASSIGMENT
+                          setPropToAtom(env[name][STATS], prop)
                         else if (
-                          getType(env[returns[VALUE]][STATS]) === APPLY
+                          !isLeaf(re[0]) &&
+                          env[re[0][0][VALUE]] &&
+                          !isUnknownReturn(env[re[0][0][VALUE]][STATS])
                         ) {
-                          // ALWAYS APPLY
-                          // rest.at(-1)[0][TYPE] === APPLY
-                          // Here is upon application to store the result in the variable
-                          if (isUnknownType(env[name][STATS]))
-                            stack.unshift(() => {
-                              setTypeToReturn(
-                                env[name][STATS],
-                                env[returns[VALUE]][STATS]
-                              )
-                              // env[name][STATS][TYPE_PROP][0] =
-                              //   env[returns[VALUE]][STATS][RETURNS][0]
-                              // this seems to be able to be deleted
-                              // env[name][STATS][TYPE_PROP][1] =
-                              //   env[returns[VALUE]][STATS][RETURNS][1]
-                            })
-                          setReturnRef(
-                            env[name][STATS],
-                            env[returns[VALUE]][STATS]
-                          )
-                        }
-                        break
-                    }
-                  }
-                  return true
-                }
-                const checkReturnType = () => {
-                  const last = rest.at(-1).at(-1)
-                  const body = hasApplyLambdaBlock(last)
-                    ? last.at(-1).at(-1)
-                    : last
-                  const rem = hasBlock(body) ? body.at(-1) : body
-                  const returns = isLeaf(rem) ? rem : rem[0]
-                  return resolveRetunType(returns, rem, RETURNS)
-                }
-                const rightHand = rest.at(-1)
-                if (
-                  rightHand &&
-                  rightHand[0] &&
-                  rightHand[0][TYPE] === APPLY &&
-                  rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-                ) {
-                  const n = rightHand.length
-                  env[name] = {
-                    [STATS]: {
-                      [TYPE_PROP]: [APPLY],
-                      [SIGNATURE]: name,
-                      retried: 0,
-                      counter: 0,
-                      [ARG_COUNT]: n - 2,
-                      [ARGUMENTS]: fillUknownArgs(n - 2),
-                      [RETURNS]: [UNKNOWN]
-                    }
-                  }
-                  if (
-                    !checkReturnType() ||
-                    (isUnknownReturn(env[name][STATS]) &&
-                      env[name][STATS].retried < MAX_RETRY_DEFINITION)
-                  ) {
-                    env[name][STATS].retried += 1
-                    stack.unshift(() => {
-                      checkReturnType()
-                      check(rightHand, env, exp)
-                    })
-                    check(rightHand, env, exp)
-                  } else check(rightHand, env, exp)
-                } else {
-                  checkPredicateName(exp, rest, warningStack)
-                  const isLeafNode = isLeaf(rightHand)
-                  if (isLeafNode && rightHand[TYPE] === WORD) {
-                    // TODO make sure this prevents the assigment all together
-                    if (env[rest[1][VALUE]] === undefined)
-                      errorStack.add(
-                        `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
-                      )
-
-                    // Used to be checkin if it's an assigment to a special form
-                    // but this should not cause problems
-                    // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
-                    //   ? structuredClone(env[rest[1][VALUE]])
-                    //   : env[rest[1][VALUE]]
-                    // FULL REFF ASSIGMENT
-                    env[name] = env[rest[1][VALUE]]
-                  } else if (isLeafNode && rightHand[TYPE] === ATOM) {
-                    // DECLARATION of ATOM
-                    env[name] = {
-                      [STATS]: {
-                        [SIGNATURE]: name,
-                        retried: 0,
-                        counter: 0,
-                        [TYPE_PROP]: [ATOM],
-                        [RETURNS]: [ATOM]
-                      }
-                    }
-                  } else if (rightHand[0]) {
-                    const right = rightHand[0]
-                    //DECLARATION
-                    env[name] = {
-                      [STATS]: {
-                        retried: 0,
-                        counter: 0,
-                        [SIGNATURE]: name,
-                        [TYPE_PROP]: [
-                          isLeafNode
-                            ? right[TYPE]
-                            : env[right[VALUE]] == undefined
-                            ? UNKNOWN
-                            : env[right[VALUE]][STATS][RETURNS][0]
-                        ],
-                        [RETURNS]: [UNKNOWN]
-                      }
-                    }
-                    const body = rightHand
-                    const rem = hasBlock(body) ? body.at(-1) : body
-                    const returns = isLeaf(rem) ? rem : rem[0]
-                    resolveRetunType(returns, rem, TYPE_PROP)
-                  }
-                  check(rightHand, env, scope)
-                }
-                Types.set(withScope(name, env), () => formatType(name, env))
-              }
-            }
-            break
-          case KEYWORDS.ANONYMOUS_FUNCTION:
-            {
-              if (exp.length === 1)
-                throw new TypeError(
-                  `Incorrect number of arguments for (${
-                    first[VALUE]
-                  }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
-                    exp
-                  )})`
-                )
-              const params = exp.slice(1, -1)
-              const copy = Object.create(env)
-              if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD)
-                copy[SCOPE_NAME] = scope[1][VALUE]
-              else copy[SCOPE_NAME] = ++scopeIndex
-              for (let i = 0; i < params.length; ++i) {
-                const param = params[i]
-                // TODO move this somewhere else
-                if (!isLeaf(param))
-                  warningStack.add(
-                    `Invalid body for (${
-                      first[VALUE]
-                    }) if it takes more than one expression it must be wrapped in a (${
-                      KEYWORDS.BLOCK
-                    }) (${stringifyArgs(exp)}) (check #666)`
-                  )
-                copy[param[VALUE]] = {
-                  [STATS]: {
-                    [SIGNATURE]: param[VALUE],
-                    [TYPE_PROP]: [UNKNOWN],
-                    [RETURNS]: [UNKNOWN],
-                    [ARGUMENTS]: [],
-                    retried: 0,
-                    counter: 0
-                  }
-                }
-                const ref = env[copy[SCOPE_NAME]]
-                if (!ref) continue
-                ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
-                const returns = deepLambdaReturn(
-                  hasBlock(exp) ? exp.at(-1) : exp,
-                  (result) => result[VALUE] !== KEYWORDS.IF
-                )
-                if (isLeaf(returns)) {
-                  // TODO figure out what we do here
-                  // this here is a variable WORD
-                  // so return type of that function is that varible type
-                  stack.push(() => {
-                    if (copy[returns[VALUE]])
-                      setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
-                  })
-                } else {
-                  const ret = returns[0]
-                  switch (ret[VALUE]) {
-                    case KEYWORDS.IF:
-                      const re = returns.slice(2)
-                      // If either is an ATOM then IF returns an ATOM
-                      if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
-                        setReturnToAtom(ref[STATS])
-                      // TODO check that both brancehs are predicates if one is
-                      else {
-                        const concequent = isLeaf(re[0])
-                          ? copy[re[0][VALUE]]
-                          : copy[re[0][0][VALUE]]
-                        const alternative = isLeaf(re[1])
-                          ? copy[re[1][VALUE]]
-                          : copy[re[1][0][VALUE]]
-
-                        // todo check if condition matches alternative
-                        // TODO make this more simple - it's so many different things just because types are functions or not
-                        // WHY not consiter making return types for everything
-                        if (
-                          concequent &&
-                          getType(concequent[STATS]) !== UNKNOWN
-                        ) {
-                          if (getType(concequent[STATS]) === APPLY)
-                            setReturnRef(ref[STATS], concequent[STATS])
-                          else
-                            ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
+                          env[name][STATS][prop] =
+                            env[re[0][0][VALUE]][STATS][RETURNS]
+                          if (re[0][0][TYPE] === APPLY) {
+                            switch (re[0][0][VALUE]) {
+                              case KEYWORDS.ANONYMOUS_FUNCTION:
+                                // FN UKNONW ASSIGMENT
+                                env[name][STATS][TYPE_PROP] = [APPLY]
+                                env[name][STATS][RETURNS] = [UNKNOWN]
+                                env[name][STATS][ARG_COUNT] = re[0].length - 2
+                                env[name][STATS][ARGUMENTS] = fillUknownArgs(
+                                  re[0].length - 2
+                                )
+                                break
+                            }
+                          }
+                          // env[name][STATS] = env[re[0][0][VALUE]][STATS]
                         } else if (
-                          alternative &&
-                          isUnknownType(alternative[STATS])
+                          !isLeaf(re[1]) &&
+                          env[re[1][0][VALUE]] &&
+                          !isUnknownReturn(env[re[1][0][VALUE]][STATS])
                         ) {
-                          if (getType(alternative[STATS]) === APPLY)
-                            setReturnRef(ref[STATS], alternative[STATS])
-                          else
-                            setReturnToTypeRef(ref[STATS], alternative[STATS])
-                        } else if (concequent) {
-                          if (getType(concequent[STATS]) === APPLY)
-                            setReturnRef(ref[STATS], concequent[STATS])
-                          else setReturnToTypeRef(ref[STATS], concequent[STATS])
-                        }
+                          setProp(
+                            env[name][STATS],
+                            prop,
+                            env[re[1][0][VALUE]][STATS]
+                          )
+                          if (re[1][0][TYPE] === APPLY) {
+                            switch (re[1][0][VALUE]) {
+                              case KEYWORDS.ANONYMOUS_FUNCTION:
+                                // FN ASSIGMENT
+                                env[name][STATS][TYPE_PROP] = [APPLY]
+                                env[name][STATS][RETURNS] = [UNKNOWN]
+                                env[name][STATS][ARG_COUNT] = re[1].length - 2
+                                env[name][STATS][ARGUMENTS] = fillUknownArgs(
+                                  re[1].length - 2
+                                )
+                                break
+                            }
+                          }
+                        } else if (env[re[0][VALUE]])
+                          // ASSIGMENT
+                          setPropRef(
+                            env[name][STATS],
+                            prop,
+                            env[re[0][VALUE]][STATS]
+                          )
+                        else if (env[re[1][VALUE]])
+                          // ASSIGMENT
+                          setPropRef(
+                            env[name][STATS],
+                            prop,
+                            env[re[1][VALUE]][STATS]
+                          )
                       }
                       break
                     default:
-                      if (copy[ret[VALUE]])
-                        setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                      else
-                        stack.push(() => {
-                          if (copy[ret[VALUE]])
-                            setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                        })
-
+                      checkPredicateNameDeep(
+                        name,
+                        exp,
+                        rest,
+                        returns,
+                        warningStack
+                      )
+                      if (!env[returns[VALUE]]) return false
+                      else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
+                        // ALWAYS APPLY
+                        // rest.at(-1)[0][TYPE] === APPLY
+                        // Here is upon application to store the result in the variable
+                        if (isUnknownType(env[name][STATS]))
+                          stack.unshift(() => {
+                            setTypeToReturn(
+                              env[name][STATS],
+                              env[returns[VALUE]][STATS]
+                            )
+                            // env[name][STATS][TYPE_PROP][0] =
+                            //   env[returns[VALUE]][STATS][RETURNS][0]
+                            // this seems to be able to be deleted
+                            // env[name][STATS][TYPE_PROP][1] =
+                            //   env[returns[VALUE]][STATS][RETURNS][1]
+                          })
+                        setReturnRef(
+                          env[name][STATS],
+                          env[returns[VALUE]][STATS]
+                        )
+                      }
                       break
                   }
                 }
-                // TODO overwrite return type check here
+                return true
               }
-              check(rest.at(-1), copy, copy)
+              const checkReturnType = () => {
+                const last = rest.at(-1).at(-1)
+                const body = hasApplyLambdaBlock(last)
+                  ? last.at(-1).at(-1)
+                  : last
+                const rem = hasBlock(body) ? body.at(-1) : body
+                const returns = isLeaf(rem) ? rem : rem[0]
+                return resolveRetunType(returns, rem, RETURNS)
+              }
+              const rightHand = rest.at(-1)
+              if (
+                rightHand &&
+                rightHand[0] &&
+                rightHand[0][TYPE] === APPLY &&
+                rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+              ) {
+                const n = rightHand.length
+                env[name] = {
+                  [STATS]: {
+                    [TYPE_PROP]: [APPLY],
+                    [SIGNATURE]: name,
+                    retried: 0,
+                    counter: 0,
+                    [ARG_COUNT]: n - 2,
+                    [ARGUMENTS]: fillUknownArgs(n - 2),
+                    [RETURNS]: [UNKNOWN]
+                  }
+                }
+                if (
+                  !checkReturnType() ||
+                  (isUnknownReturn(env[name][STATS]) &&
+                    env[name][STATS].retried < MAX_RETRY_DEFINITION)
+                ) {
+                  env[name][STATS].retried += 1
+                  stack.unshift(() => {
+                    checkReturnType()
+                    check(rightHand, env, exp)
+                  })
+                  check(rightHand, env, exp)
+                } else check(rightHand, env, exp)
+              } else {
+                checkPredicateName(exp, rest, warningStack)
+                const isLeafNode = isLeaf(rightHand)
+                if (isLeafNode && rightHand[TYPE] === WORD) {
+                  // TODO make sure this prevents the assigment all together
+                  if (env[rest[1][VALUE]] === undefined)
+                    errorStack.add(
+                      `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
+                    )
+
+                  // Used to be checkin if it's an assigment to a special form
+                  // but this should not cause problems
+                  // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
+                  //   ? structuredClone(env[rest[1][VALUE]])
+                  //   : env[rest[1][VALUE]]
+                  // FULL REFF ASSIGMENT
+                  env[name] = env[rest[1][VALUE]]
+                } else if (isLeafNode && rightHand[TYPE] === ATOM) {
+                  // DECLARATION of ATOM
+                  env[name] = {
+                    [STATS]: {
+                      [SIGNATURE]: name,
+                      retried: 0,
+                      counter: 0,
+                      [TYPE_PROP]: [ATOM],
+                      [RETURNS]: [ATOM]
+                    }
+                  }
+                } else if (rightHand[0]) {
+                  const right = rightHand[0]
+                  //DECLARATION
+                  env[name] = {
+                    [STATS]: {
+                      retried: 0,
+                      counter: 0,
+                      [SIGNATURE]: name,
+                      [TYPE_PROP]: [
+                        isLeafNode
+                          ? right[TYPE]
+                          : env[right[VALUE]] == undefined
+                          ? UNKNOWN
+                          : env[right[VALUE]][STATS][RETURNS][0]
+                      ],
+                      [RETURNS]: [UNKNOWN]
+                    }
+                  }
+                  const body = rightHand
+                  const rem = hasBlock(body) ? body.at(-1) : body
+                  const returns = isLeaf(rem) ? rem : rem[0]
+                  resolveRetunType(returns, rem, TYPE_PROP)
+                }
+                check(rightHand, env, scope)
+              }
+              Types.set(withScope(name, env), () => formatType(name, env))
             }
+            break
+          case KEYWORDS.ANONYMOUS_FUNCTION:
+            if (exp.length === 1)
+              throw new TypeError(
+                `Incorrect number of arguments for (${
+                  first[VALUE]
+                }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
+                  exp
+                )})`
+              )
+            const params = exp.slice(1, -1)
+            const copy = Object.create(env)
+            if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD)
+              copy[SCOPE_NAME] = scope[1][VALUE]
+            else copy[SCOPE_NAME] = ++scopeIndex
+            for (let i = 0; i < params.length; ++i) {
+              const param = params[i]
+              // TODO move this somewhere else
+              if (!isLeaf(param))
+                warningStack.add(
+                  `Invalid body for (${
+                    first[VALUE]
+                  }) if it takes more than one expression it must be wrapped in a (${
+                    KEYWORDS.BLOCK
+                  }) (${stringifyArgs(exp)}) (check #666)`
+                )
+              copy[param[VALUE]] = {
+                [STATS]: {
+                  [SIGNATURE]: param[VALUE],
+                  [TYPE_PROP]: [UNKNOWN],
+                  [RETURNS]: [UNKNOWN],
+                  [ARGUMENTS]: [],
+                  retried: 0,
+                  counter: 0
+                }
+              }
+              const ref = env[copy[SCOPE_NAME]]
+              if (!ref) continue
+              ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
+              const returns = deepLambdaReturn(
+                hasBlock(exp) ? exp.at(-1) : exp,
+                (result) => result[VALUE] !== KEYWORDS.IF
+              )
+              if (isLeaf(returns))
+                // TODO figure out what we do here
+                // this here is a variable WORD
+                // so return type of that function is that varible type
+                stack.push(
+                  () =>
+                    copy[returns[VALUE]] &&
+                    setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
+                )
+              else {
+                const ret = returns[0]
+                switch (ret[VALUE]) {
+                  case KEYWORDS.IF:
+                    const re = returns.slice(2)
+                    // If either is an ATOM then IF returns an ATOM
+                    if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+                      setReturnToAtom(ref[STATS])
+                    // TODO check that both brancehs are predicates if one is
+                    else {
+                      const concequent = isLeaf(re[0])
+                        ? copy[re[0][VALUE]]
+                        : copy[re[0][0][VALUE]]
+                      const alternative = isLeaf(re[1])
+                        ? copy[re[1][VALUE]]
+                        : copy[re[1][0][VALUE]]
+
+                      // todo check if condition matches alternative
+                      // TODO make this more simple - it's so many different things just because types are functions or not
+                      // WHY not consiter making return types for everything
+                      if (
+                        concequent &&
+                        getType(concequent[STATS]) !== UNKNOWN
+                      ) {
+                        if (getType(concequent[STATS]) === APPLY)
+                          setReturnRef(ref[STATS], concequent[STATS])
+                        else ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
+                      } else if (
+                        alternative &&
+                        isUnknownType(alternative[STATS])
+                      ) {
+                        if (getType(alternative[STATS]) === APPLY)
+                          setReturnRef(ref[STATS], alternative[STATS])
+                        else setReturnToTypeRef(ref[STATS], alternative[STATS])
+                      } else if (concequent) {
+                        if (getType(concequent[STATS]) === APPLY)
+                          setReturnRef(ref[STATS], concequent[STATS])
+                        else setReturnToTypeRef(ref[STATS], concequent[STATS])
+                      }
+                    }
+                    break
+                  default:
+                    if (copy[ret[VALUE]])
+                      setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                    else
+                      stack.push(() => {
+                        if (copy[ret[VALUE]])
+                          setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                      })
+
+                    break
+                }
+              }
+              // TODO overwrite return type check here
+            }
+            check(rest.at(-1), copy, copy)
             break
           default:
             if (!STATIC_TYPES_SET.has(first[VALUE]))
@@ -638,11 +629,7 @@ export const typeCheck = (ast, error = true) => {
                       )
                     else if (!env[first[VALUE]][STATS][ARG_COUNT]) {
                       // TODO recursively take return type of applicaion
-                      // if (env[first[VALUE]][STATS][RETURNS][0] === APPLY) {
-                      //   env[first[VALUE]][STATS][RETURNS] = [UNKNOWN]
-                      // }
                       // FN ASSIGMENT
-
                       // ASSIGMENT of paramaters of lambda that are a lambda
                       // minus one to remove the body
                       env[first[VALUE]][STATS][TYPE_PROP] = [APPLY]
@@ -664,7 +651,6 @@ export const typeCheck = (ast, error = true) => {
                         }
                         const ARG = isLeaf(rest[i]) ? rest[i] : rest[i][0]
                         if (!env[ARG[VALUE]]) continue
-                        //  console.log(stringifyArgs(exp), ARG)
                         switch (ARG[TYPE]) {
                           // THERE ARE NO ATOM ARGUMENTS
                           // case ATOM:
@@ -721,7 +707,7 @@ export const typeCheck = (ast, error = true) => {
                             const rem = hasBlock(body) ? body.at(-1) : body
                             const returns = isLeaf(rem) ? rem : rem[0]
                             if (returns[TYPE] === ATOM) {
-                              if (MAIN_TYPE !== ATOM) {
+                              if (MAIN_TYPE !== ATOM)
                                 errorStack.add(
                                   `Incorrect type of argument ${i} for (${
                                     first[VALUE]
@@ -731,7 +717,6 @@ export const typeCheck = (ast, error = true) => {
                                     ATOM
                                   )})  (${stringifyArgs(exp)}) (check #27)`
                                 )
-                              }
                             } else if (
                               env[returns[VALUE]] &&
                               !isUnknownReturn(env[returns[VALUE]][STATS]) &&
@@ -777,7 +762,6 @@ export const typeCheck = (ast, error = true) => {
                               case KEYWORDS.IF:
                                 break
                               default:
-                                // console.log(stringifyArgs(exp))
                                 // TODO fix this assigment
                                 // It turns out it's not possible to determine return type of function here
                                 // what if it's a global function used elsewhere where the return type mwould be different
@@ -1015,7 +999,7 @@ export const typeCheck = (ast, error = true) => {
                         if (
                           !isUnknownType(expected) &&
                           !isUnknownReturn(actual)
-                        ) {
+                        )
                           if (!compareTypeWithReturn(expected, actual))
                             errorStack.add(
                               `Incorrect type of arguments ${i} for (${
@@ -1153,7 +1137,7 @@ export const typeCheck = (ast, error = true) => {
                               //   break
                             }
                           }
-                        } else if (
+                        else if (
                           isUnknownType(expected) &&
                           args[i][STATS].retried < MAX_RETRY_DEFINITION
                         ) {
