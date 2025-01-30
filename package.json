@@ -2,7 +2,7 @@
   "name": "fez-lisp",
   "description": "Lisp interpreted & compiled to JavaScript",
   "author": "AT290690",
-  "version": "1.5.92",
+  "version": "1.5.93",
   "type": "module",
   "main": "index.js",
   "keywords": [
@@ -24,7 +24,8 @@
   "scripts": {
     "build": "node ./lib/builder.js",
     "fez": "node main.js",
-    "test": "mocha"
+    "test": "mocha",
+    "examples": "node ./examples/2015/test.spec.js && node ./examples/2019/test.spec.js && node ./examples/2020/test.spec.js && node ./examples/2023/test.spec.js && node ./examples/2024/test.spec.js"
   },
   "license": "MIT",
   "devDependencies": {

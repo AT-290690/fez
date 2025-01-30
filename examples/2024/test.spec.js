@@ -1,0 +1,23 @@
+import { test } from "../utils.js";
+test("2024", [
+  { file: "day1.lisp", result: [11, 31] },
+  { file: "day2.lisp", result: [2, 4] },
+  { file: "day3.lisp", result: [161, 48] },
+  { file: "day4.lisp", result: [18, 9] },
+  { file: "day5.lisp", result: [143, 123] },
+  { file: "day6.lisp", result: [41, 6] },
+  { file: "day7.lisp", result: [3749, 11387] },
+  { file: "day8.lisp", result: [14, 34] },
+  { file: "day9.lisp", result: [1928] },
+  { file: "day10.lisp", result: [36, 81] },
+  { file: "day11.lisp", result: [13, 55312] },
+  { file: "day13.lisp", result: [480, 875318608908] },
+  { file: "day14.lisp", result: [12] },
+  { file: "day16.lisp", result: [7036] },
+  { file: "day17.lisp", result: [[4, 6, 3, 5, 6, 3, 5, 2, 1, 0]] },
+  { file: "day18.lisp", result: [22] },
+  { file: "day19.lisp", result: [6, 16] },
+  { file: "day22.lisp", result: [37327623] },
+  { file: "day23.lisp", result: [7] },
+  { file: "day25.lisp", result: [3] },
+]);

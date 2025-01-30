@@ -30,8 +30,6 @@ import {
   SIGNATURE,
   MAX_RETRY_DEFINITION,
   MAX_ARGUMENT_RETRY,
-  ORDER,
-  VARIABLE_ORDER_INDEX,
   COLLECTION,
   ANY
 } from './types.js'
@@ -277,12 +275,12 @@ const withScope = (name, scope) => {
     .join(' ')} ${name}`
 }
 export const typeCheck = (ast, error = true) => {
+  let scopeIndex = 0
   const root = structuredClone(SPECIAL_FORM_TYPES)
-  // root[ORDER] = 0
   const errorStack = new Set()
   const warningStack = new Set()
   // TODO delete this
-  const tempStack = new Set()
+  // const tempStack = new Set()
   const Types = new Map()
   const stack = []
   const check = (exp, env, scope) => {
@@ -491,7 +489,6 @@ export const typeCheck = (ast, error = true) => {
                       [SIGNATURE]: name,
                       retried: 0,
                       counter: 0,
-                      // [VARIABLE_ORDER_INDEX]: env[ORDER],
                       [ARG_COUNT]: n - 2,
                       [ARGUMENTS]: fillUknownArgs(n - 2),
                       [RETURNS]: [UNKNOWN]
@@ -508,31 +505,31 @@ export const typeCheck = (ast, error = true) => {
                       check(rightHand, env, exp)
                     })
                     check(rightHand, env, exp)
-                  } else {
-                    check(rightHand, env, exp)
-                  }
+                  } else check(rightHand, env, exp)
                 } else {
                   checkPredicateName(exp, rest, warningStack)
-                  const isL = isLeaf(rightHand)
-                  if (isL && rightHand[TYPE] === WORD) {
+                  const isLeafNode = isLeaf(rightHand)
+                  if (isLeafNode && rightHand[TYPE] === WORD) {
                     // TODO make sure this prevents the assigment all together
-                    if (env[rest[1][VALUE]] === undefined) {
+                    if (env[rest[1][VALUE]] === undefined)
                       errorStack.add(
                         `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
                       )
-                    }
+
+                    // Used to be checkin if it's an assigment to a special form
+                    // but this should not cause problems
+                    // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
+                    //   ? structuredClone(env[rest[1][VALUE]])
+                    //   : env[rest[1][VALUE]]
                     // FULL REFF ASSIGMENT
-                    env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
-                      ? structuredClone(env[rest[1][VALUE]])
-                      : env[rest[1][VALUE]]
-                  } else if (isL && rightHand[TYPE] === ATOM) {
+                    env[name] = env[rest[1][VALUE]]
+                  } else if (isLeafNode && rightHand[TYPE] === ATOM) {
                     // DECLARATION of ATOM
                     env[name] = {
                       [STATS]: {
                         [SIGNATURE]: name,
                         retried: 0,
                         counter: 0,
-                        // [VARIABLE_ORDER_INDEX]: env[ORDER],
                         [TYPE_PROP]: [ATOM],
                         [RETURNS]: [ATOM]
                       }
@@ -545,9 +542,8 @@ export const typeCheck = (ast, error = true) => {
                         retried: 0,
                         counter: 0,
                         [SIGNATURE]: name,
-                        // [VARIABLE_ORDER_INDEX]: env[ORDER],
                         [TYPE_PROP]: [
-                          isL
+                          isLeafNode
                             ? right[TYPE]
                             : env[right[VALUE]] == undefined
                             ? UNKNOWN
@@ -556,30 +552,20 @@ export const typeCheck = (ast, error = true) => {
                         [RETURNS]: [UNKNOWN]
                       }
                     }
-                    if (right[VALUE] === KEYWORDS.CALL_FUNCTION) {
-                      if (!isLeaf(rightHand.at(-1))) {
-                        const body = rightHand.at(-1).at(-1)
-                        const rem = hasBlock(body) ? body.at(-1) : body
-                        const returns = isLeaf(rem) ? rem : rem[0]
-                        resolveRetunType(returns, rem, TYPE_PROP)
-                      }
-                    } else {
-                      const body = rightHand
-                      const rem = hasBlock(body) ? body.at(-1) : body
-                      const returns = isLeaf(rem) ? rem : rem[0]
-                      resolveRetunType(returns, rem, TYPE_PROP)
-                    }
+                    const body = rightHand
+                    const rem = hasBlock(body) ? body.at(-1) : body
+                    const returns = isLeaf(rem) ? rem : rem[0]
+                    resolveRetunType(returns, rem, TYPE_PROP)
                   }
                   check(rightHand, env, scope)
                 }
                 Types.set(withScope(name, env), () => formatType(name, env))
               }
-              // root[ORDER]++
             }
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
             {
-              if (exp.length === 1) {
+              if (exp.length === 1)
                 throw new TypeError(
                   `Incorrect number of arguments for (${
                     first[VALUE]
@@ -587,18 +573,15 @@ export const typeCheck = (ast, error = true) => {
                     exp
                   )})`
                 )
-              }
               const params = exp.slice(1, -1)
               const copy = Object.create(env)
-              if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD) {
+              if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD)
                 copy[SCOPE_NAME] = scope[1][VALUE]
-              } else {
-                copy[SCOPE_NAME] = performance.now().toString().replace('.', 0)
-              }
+              else copy[SCOPE_NAME] = ++scopeIndex
               for (let i = 0; i < params.length; ++i) {
                 const param = params[i]
                 // TODO move this somewhere else
-                if (!isLeaf(param)) {
+                if (!isLeaf(param))
                   warningStack.add(
                     `Invalid body for (${
                       first[VALUE]
@@ -606,7 +589,6 @@ export const typeCheck = (ast, error = true) => {
                       KEYWORDS.BLOCK
                     }) (${stringifyArgs(exp)}) (check #666)`
                   )
-                }
                 copy[param[VALUE]] = {
                   [STATS]: {
                     [SIGNATURE]: param[VALUE],
@@ -618,78 +600,76 @@ export const typeCheck = (ast, error = true) => {
                   }
                 }
                 const ref = env[copy[SCOPE_NAME]]
-                if (ref) {
-                  ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
-                  const returns = deepLambdaReturn(
-                    hasBlock(exp) ? exp.at(-1) : exp,
-                    (result) => result[VALUE] !== KEYWORDS.IF
-                  )
-                  if (isLeaf(returns)) {
-                    // TODO figure out what we do here
-                    // this here is a variable WORD
-                    // so return type of that function is that varible type
-                    stack.push(() => {
-                      if (copy[returns[VALUE]])
-                        setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
-                    })
-                  } else {
-                    const ret = returns[0]
-                    switch (ret[VALUE]) {
-                      case KEYWORDS.IF:
-                        const re = returns.slice(2)
-                        // If either is an ATOM then IF returns an ATOM
-                        if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
-                          ref[STATS][RETURNS][0] = ATOM
-                          // TODO check that both brancehs are predicates if one is
-                        } else {
-                          const concequent = isLeaf(re[0])
-                            ? copy[re[0][VALUE]]
-                            : copy[re[0][0][VALUE]]
-                          const alternative = isLeaf(re[1])
-                            ? copy[re[1][VALUE]]
-                            : copy[re[1][0][VALUE]]
+                if (!ref) continue
+                ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
+                const returns = deepLambdaReturn(
+                  hasBlock(exp) ? exp.at(-1) : exp,
+                  (result) => result[VALUE] !== KEYWORDS.IF
+                )
+                if (isLeaf(returns)) {
+                  // TODO figure out what we do here
+                  // this here is a variable WORD
+                  // so return type of that function is that varible type
+                  stack.push(() => {
+                    if (copy[returns[VALUE]])
+                      setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
+                  })
+                } else {
+                  const ret = returns[0]
+                  switch (ret[VALUE]) {
+                    case KEYWORDS.IF:
+                      const re = returns.slice(2)
+                      // If either is an ATOM then IF returns an ATOM
+                      if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
+                        ref[STATS][RETURNS][0] = ATOM
+                        // TODO check that both brancehs are predicates if one is
+                      } else {
+                        const concequent = isLeaf(re[0])
+                          ? copy[re[0][VALUE]]
+                          : copy[re[0][0][VALUE]]
+                        const alternative = isLeaf(re[1])
+                          ? copy[re[1][VALUE]]
+                          : copy[re[1][0][VALUE]]
 
-                          // todo check if condition matches alternative
-                          // TODO make this more simple - it's so many different things just because types are functions or not
-                          // WHY not consiter making return types for everything
-                          if (
-                            concequent &&
-                            getType(concequent[STATS]) !== UNKNOWN
-                          ) {
-                            if (getType(concequent[STATS]) === APPLY)
-                              setReturnRef(ref[STATS], concequent[STATS])
-                            else
-                              ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
-                          } else if (
-                            alternative &&
-                            isUnknownType(alternative[STATS])
-                          ) {
-                            if (getType(alternative[STATS]) === APPLY)
-                              setReturnRef(ref[STATS], alternative[STATS])
-                            else
-                              setReturnToTypeRef(ref[STATS], alternative[STATS])
-                          } else if (concequent) {
-                            if (getType(concequent[STATS]) === APPLY)
-                              setReturnRef(ref[STATS], concequent[STATS])
-                            else
-                              setReturnToTypeRef(ref[STATS], concequent[STATS])
-                          }
+                        // todo check if condition matches alternative
+                        // TODO make this more simple - it's so many different things just because types are functions or not
+                        // WHY not consiter making return types for everything
+                        if (
+                          concequent &&
+                          getType(concequent[STATS]) !== UNKNOWN
+                        ) {
+                          if (getType(concequent[STATS]) === APPLY)
+                            setReturnRef(ref[STATS], concequent[STATS])
+                          else
+                            ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
+                        } else if (
+                          alternative &&
+                          isUnknownType(alternative[STATS])
+                        ) {
+                          if (getType(alternative[STATS]) === APPLY)
+                            setReturnRef(ref[STATS], alternative[STATS])
+                          else
+                            setReturnToTypeRef(ref[STATS], alternative[STATS])
+                        } else if (concequent) {
+                          if (getType(concequent[STATS]) === APPLY)
+                            setReturnRef(ref[STATS], concequent[STATS])
+                          else setReturnToTypeRef(ref[STATS], concequent[STATS])
                         }
-                        break
-                      default:
-                        if (copy[ret[VALUE]])
-                          setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                        else
-                          stack.push(() => {
-                            if (copy[ret[VALUE]])
-                              setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                          })
+                      }
+                      break
+                    default:
+                      if (copy[ret[VALUE]])
+                        setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                      else
+                        stack.push(() => {
+                          if (copy[ret[VALUE]])
+                            setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                        })
 
-                        break
-                    }
+                      break
                   }
-                  // TODO overwrite return type check here
                 }
+                // TODO overwrite return type check here
               }
               check(rest.at(-1), copy, copy)
             }
@@ -705,7 +685,7 @@ export const typeCheck = (ast, error = true) => {
                   env[first[VALUE]][STATS][TYPE_PROP][0] === APPLY &&
                   env[first[VALUE]][STATS][ARG_COUNT] !== VARIADIC &&
                   env[first[VALUE]][STATS][ARG_COUNT] !== rest.length
-                ) {
+                )
                   errorStack.add(
                     `Incorrect number of arguments for (${
                       first[VALUE]
@@ -715,15 +695,15 @@ export const typeCheck = (ast, error = true) => {
                       exp
                     )}) (check #15)`
                   )
-                } else {
+                else {
                   if (first[TYPE] === APPLY && !isSpecial) {
-                    if (getType(env[first[VALUE]][STATS]) === ATOM) {
+                    if (getType(env[first[VALUE]][STATS]) === ATOM)
                       errorStack.add(
                         `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
                           exp
                         )}) (check #12)`
                       )
-                    } else if (!env[first[VALUE]][STATS][ARG_COUNT]) {
+                    else if (!env[first[VALUE]][STATS][ARG_COUNT]) {
                       // TODO recursively take return type of applicaion
                       // if (env[first[VALUE]][STATS][RETURNS][0] === APPLY) {
                       //   env[first[VALUE]][STATS][RETURNS] = [UNKNOWN]
@@ -793,7 +773,7 @@ export const typeCheck = (ast, error = true) => {
                           if (isLeaf(rest[i].at(-1))) {
                             const fnName = rest[i].at(-1)[VALUE]
                             const fn = env[fnName]
-                            if (fn && getReturn(fn[STATS]) !== ATOM) {
+                            if (fn && getReturn(fn[STATS]) !== ATOM)
                               errorStack.add(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
@@ -803,7 +783,6 @@ export const typeCheck = (ast, error = true) => {
                                   getReturn(fn[STATS])
                                 )}) (${stringifyArgs(exp)}) (check #26)`
                               )
-                            }
                           } else {
                             const body = rest[i].at(-1).at(-1)
                             const rem = hasBlock(body) ? body.at(-1) : body
@@ -824,7 +803,7 @@ export const typeCheck = (ast, error = true) => {
                               env[returns[VALUE]] &&
                               !isUnknownReturn(env[returns[VALUE]][STATS]) &&
                               getReturn(env[returns[VALUE]][STATS]) !== ATOM
-                            ) {
+                            )
                               errorStack.add(
                                 `Incorrect type of argument ${i} for (${
                                   first[VALUE]
@@ -834,15 +813,11 @@ export const typeCheck = (ast, error = true) => {
                                   getReturn(env[returns[VALUE]][STATS])
                                 )})  (${stringifyArgs(exp)}) (check #29)`
                               )
-                            }
                           }
                         }
                       }
                       const isCast = STATIC_TYPES_SET.has(first[VALUE])
                       const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
-                      // IF UKNOWN andnot csted -we have nothing much to do
-                      if (isUnknownType(expectedArgs[i][STATS]) && !isCast)
-                        continue
                       if (!isRestILeaf) {
                         const CAR = rest[i][0][VALUE]
                         if (!env[CAR]) continue
@@ -853,7 +828,7 @@ export const typeCheck = (ast, error = true) => {
                               expectedArgs[i][STATS],
                               env[CAR][STATS]
                             )
-                          ) {
+                          )
                             errorStack.add(
                               `Incorrect type of argument (${i}) for special form (${
                                 first[VALUE]
@@ -863,19 +838,10 @@ export const typeCheck = (ast, error = true) => {
                                 getReturn(env[CAR][STATS])
                               )}) (${stringifyArgs(exp)}) (check #1)`
                             )
-                          }
-                          // never reached because there is only 1 subtype at the moment
-                          // else if (
-                          //   PRED_TYPE &&
-                          //   env[CAR][STATS][RETURNS][1] !== PRED_TYPE
-                          // ) {
-                          // }
                         } else if (!isKnown && !isCast) {
-                          if (env[CAR] && getType(env[CAR][STATS]) === APPLY) {
+                          if (env[CAR] && getType(env[CAR][STATS]) === APPLY)
                             switch (first[VALUE]) {
                               case KEYWORDS.IF:
-                                break
-                              case KEYWORDS.CALL_FUNCTION:
                                 break
                               default:
                                 // console.log(stringifyArgs(exp))
@@ -889,8 +855,6 @@ export const typeCheck = (ast, error = true) => {
                                 )
                                 break
                             }
-                          }
-
                           // TODO also handle casting
                         }
                       } else {
@@ -906,7 +870,7 @@ export const typeCheck = (ast, error = true) => {
                                     expectedArgs[i][STATS],
                                     env[CAR][STATS]
                                   )
-                                ) {
+                                )
                                   errorStack.add(
                                     `Incorrect type of argument (${i}) for special form (${
                                       first[VALUE]
@@ -916,7 +880,6 @@ export const typeCheck = (ast, error = true) => {
                                       getType(env[CAR][STATS])
                                     )}) (${stringifyArgs(exp)}) (check #3)`
                                   )
-                                }
                               } else if (env[CAR]) {
                                 if (isCast) {
                                   // CAST assigment
@@ -942,7 +905,7 @@ export const typeCheck = (ast, error = true) => {
                             if (
                               rest[i][TYPE] !==
                               expectedArgs[i][STATS][TYPE_PROP][0]
-                            ) {
+                            )
                               errorStack.add(
                                 `Incorrect type of argument (${i}) for special form (${
                                   first[VALUE]
@@ -952,7 +915,6 @@ export const typeCheck = (ast, error = true) => {
                                   rest[i][TYPE]
                                 )}) (${stringifyArgs(exp)}) (check #2)`
                               )
-                            }
                             break
                           }
                         }
@@ -1121,7 +1083,7 @@ export const typeCheck = (ast, error = true) => {
                           !isUnknownType(expected) &&
                           !isUnknownReturn(actual)
                         ) {
-                          if (!compareTypeWithReturn(expected, actual)) {
+                          if (!compareTypeWithReturn(expected, actual))
                             errorStack.add(
                               `Incorrect type of arguments ${i} for (${
                                 first[VALUE]
@@ -1131,7 +1093,7 @@ export const typeCheck = (ast, error = true) => {
                                 getReturn(actual)
                               )}) (${stringifyArgs(exp)}) (check #16)`
                             )
-                          } else {
+                          else {
                             switch (getType(expected)) {
                               // almost exclusively for anonymous lambdas
                               case APPLY:
@@ -1141,7 +1103,7 @@ export const typeCheck = (ast, error = true) => {
                                     env[rest[i][0][VALUE]][STATS][SIGNATURE] ===
                                     KEYWORDS.ANONYMOUS_FUNCTION
                                   ) {
-                                    if (argsN !== args[i][STATS][ARG_COUNT]) {
+                                    if (argsN !== args[i][STATS][ARG_COUNT])
                                       errorStack.add(
                                         `Incorrect number of arguments for (${
                                           args[i][STATS][SIGNATURE]
@@ -1153,7 +1115,7 @@ export const typeCheck = (ast, error = true) => {
                                           exp
                                         )}) (check #777)`
                                       )
-                                    } else {
+                                    else {
                                       // ANONYMOUS LAMBDAS TYPE CHECKING
                                       const local = Object.create(env)
                                       const lambdaName = `lambda::annonymous::${i}`
@@ -1179,7 +1141,7 @@ export const typeCheck = (ast, error = true) => {
                                             expected[STATS],
                                             actual[STATS]
                                           )
-                                        ) {
+                                        )
                                           errorStack.add(
                                             `Incorrect return type for (${
                                               expected[STATS][SIGNATURE]
@@ -1193,7 +1155,7 @@ export const typeCheck = (ast, error = true) => {
                                               exp
                                             )}) (check #779)`
                                           )
-                                        } else if (
+                                        else if (
                                           actual[STATS].retried <
                                           MAX_RETRY_DEFINITION
                                         ) {
@@ -1221,7 +1183,7 @@ export const typeCheck = (ast, error = true) => {
                                               actual[STATS],
                                               expected[STATS]
                                             )
-                                          ) {
+                                          )
                                             errorStack.add(
                                               `Incorrect type for (lambda) (${
                                                 args[i][STATS][SIGNATURE]
@@ -1237,7 +1199,7 @@ export const typeCheck = (ast, error = true) => {
                                                 exp
                                               )}) (check #780)`
                                             )
-                                          } else if (
+                                          else if (
                                             actual[STATS].retried <
                                             MAX_RETRY_DEFINITION
                                           ) {
