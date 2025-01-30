@@ -1,4 +1,12 @@
-import { APPLY, ATOM, DEBUG, KEYWORDS, PLACEHOLDER } from './keywords.js'
+import { getReturn, getType } from './check.js'
+import {
+  APPLY,
+  ATOM,
+  DEBUG,
+  KEYWORDS,
+  PLACEHOLDER,
+  STATIC_TYPES
+} from './keywords.js'
 export const ARG_COUNT = 'argumentsN'
 export const VARIADIC = Infinity
 export const STATS = '__stats__'
@@ -1149,4 +1157,30 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ANY]
     }
   }
+}
+
+export const formatType = (name, env) => {
+  const stats = env[name][STATS]
+  const isAnonymous = typeof name === 'number'
+  return stats
+    ? getType(stats) === APPLY
+      ? `${isAnonymous ? '' : `(let ${name} `}(lambda ${
+          stats[ARG_COUNT] === VARIADIC
+            ? '... ' + STATIC_TYPES.UNKNOWN
+            : (stats[ARGUMENTS] ?? [])
+                .map(
+                  (x, i) =>
+                    `${
+                      getType(x[STATS]) === APPLY
+                        ? `${formatType(i, stats[ARGUMENTS])}`
+                        : `${toTypeNames(getType(x[STATS]))}`
+                    }`
+                )
+                .join(' ')
+          // TODO format returned functions when type support is added
+        } (${KEYWORDS.BLOCK} ${toTypeNames(getReturn(stats))})${
+          isAnonymous ? '' : ')'
+        })`
+      : `(let ${name} ${toTypeNames(getType(stats))})`
+    : name
 }

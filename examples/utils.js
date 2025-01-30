@@ -34,9 +34,7 @@ export const test = (year, arr) => {
         }
       })
   )
-    logSuccess(
-      `AOC for year ${year} type checked succesfully, compiled to JavaScript and produced the correct results!`
-    )
+    logSuccess(`AOC for year ${year} passed!`)
   // console.log(
   //   readdirSync("./")
   //     .filter((x) => x.endsWith(".lisp"))

@@ -31,7 +31,8 @@ import {
   MAX_RETRY_DEFINITION,
   MAX_ARGUMENT_RETRY,
   COLLECTION,
-  ANY
+  ANY,
+  formatType
 } from './types.js'
 import {
   getSuffix,
@@ -225,38 +226,6 @@ const fillUknownArgs = (n) =>
         [ARG_COUNT]: 0
       }
     }))
-export const formatType = (name, env) => {
-  const stats = env[name][STATS]
-  const isAnonymous = typeof name === 'number'
-  return stats
-    ? getType(stats) === APPLY
-      ? `${isAnonymous ? '' : `(let ${name} `}(lambda ${
-          stats[ARG_COUNT] === VARIADIC
-            ? '... ' + STATIC_TYPES.UNKNOWN
-            : (stats[ARGUMENTS] ?? [])
-                .map(
-                  (x, i) =>
-                    `${
-                      getType(x[STATS]) === APPLY
-                        ? `${formatType(i, stats[ARGUMENTS])}`
-                        : `${toTypeNames(getType(x[STATS]))}`
-                    }`
-                )
-                .join(' ')
-          // TODO format returned functions when type support is added
-        } (${KEYWORDS.BLOCK} ${toTypeNames(getReturn(stats))})${
-          isAnonymous ? '' : ')'
-        })`
-      : `(let ${name} ${toTypeNames(getType(stats))})`
-    : name
-}
-const formatTypes = (env) => {
-  const out = []
-  for (let x in env) {
-    if (x !== SCOPE_NAME) out.push(formatType(x, env))
-  }
-  return out
-}
 const getScopeNames = (scope) => {
   const scopeNames = []
   let current = scope
@@ -417,12 +386,6 @@ export const typeCheck = (ast, error = true) => {
                               env[re[1][VALUE]][STATS]
                             )
                           }
-                          //  else {
-                          //   // setProp(env[name][STATS], prop, {
-                          //   //   [prop]: [UNKNOWN]
-                          //   // })
-                          //   // env[name][STATS][prop] = [UNKNOWN]
-                          // }
                         }
                         break
                       default:
@@ -1235,8 +1198,8 @@ export const typeCheck = (ast, error = true) => {
               })
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
-              if (isLeaf(r) && r[TYPE] !== ATOM) {
-                if (env[r[VALUE]] == undefined) {
+              if (isLeaf(r) && r[TYPE] !== ATOM)
+                if (env[r[VALUE]] == undefined)
                   errorStack.add(
                     `(${
                       first[VALUE]
@@ -1244,8 +1207,6 @@ export const typeCheck = (ast, error = true) => {
                       r[VALUE]
                     }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
                   )
-                }
-              }
               check(r, env, scope)
             }
             break

@@ -1,5 +1,5 @@
 import std from '../lib/baked/std.js'
-import { formatType, identity, typeCheck } from '../src/check.js'
+import { identity, typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
 import {
@@ -18,7 +18,7 @@ import {
 } from '../src/keywords.js'
 import { enhance } from '../src/enchance.js'
 import { isLeaf, LISP } from '../src/parser.js'
-import { SPECIAL_FORM_TYPES } from '../src/types.js'
+import { formatType, SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0], false)[1]
