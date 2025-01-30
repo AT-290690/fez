@@ -32,7 +32,8 @@ import {
   MAX_ARGUMENT_RETRY,
   COLLECTION,
   ANY,
-  formatType
+  formatType,
+  ANONYMOUS_FUNCTION_TYPE_PREFIX
 } from './types.js'
 import {
   getSuffix,
@@ -228,9 +229,7 @@ const getScopeNames = (scope) => {
 }
 const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
-  return `${chain.length === 1 ? '; ' : ''}${chain
-    .map((x) => (Number.isInteger(+x) ? '::' : x))
-    .join(' ')} ${name}`
+  return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
 export const typeCheck = (ast, error = true) => {
   let scopeIndex = 0
@@ -384,10 +383,11 @@ export const typeCheck = (ast, error = true) => {
                             // env[name][STATS][TYPE_PROP][1] =
                             //   env[returns[VALUE]][STATS][RETURNS][1]
                           })
-                        setReturnRef(
-                          env[name][STATS],
-                          env[returns[VALUE]][STATS]
-                        )
+                        else
+                          setReturnRef(
+                            env[name][STATS],
+                            env[returns[VALUE]][STATS]
+                          )
                       }
                       break
                   }
@@ -1035,7 +1035,7 @@ export const typeCheck = (ast, error = true) => {
                                     else {
                                       // ANONYMOUS LAMBDAS TYPE CHECKING
                                       const local = Object.create(env)
-                                      const lambdaName = `lambda::annonymous::${i}`
+                                      const lambdaName = `${ANONYMOUS_FUNCTION_TYPE_PREFIX}${i}::${++scopeIndex}`
                                       check(
                                         [
                                           [APPLY, KEYWORDS.DEFINE_VARIABLE],

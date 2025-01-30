@@ -1,8 +1,7 @@
-test
-examples
+test/
 .gitignore
 main.js
-playground
+playground/
 lib/src/
 lib/debug/
 lib/builder.js
@@ -11,4 +10,4 @@ index.html
 assets/
 miscs/
 .vscode
-examples
+examples/

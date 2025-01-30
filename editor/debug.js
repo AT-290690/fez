@@ -88,7 +88,7 @@ export const debug = (ast, checkTypes = true) => {
             .map(([k, v]) => `${k}\n${v()}`)
             .join('\n\n')
         }
-        const t = types.get(`; :: ${name}`)
+        const t = types.get(`; 1 ${name}`)
         return t ? t() : ''
       } else if (option === 'Search') {
         return [...types.entries()]

@@ -10,7 +10,7 @@ const fails = (source, message, name = 'TypeError') =>
   throws(() => type(parse(source)), { name, message })
 const inference = (source, keys) => {
   const map = typeCheck(parse(source))[1]
-  return keys.map((key) => map.get(`; :: ${key}`)())
+  return keys.map((key) => map.get(`; 1 ${key}`)())
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
@@ -18,7 +18,7 @@ describe('Type checking', () => {
   it('Std types should not change', () => {
     const A = readFileSync('./lib/src/types.lisp', 'utf-8')
       .split('\n')
-      .filter((x) => !x.startsWith('; ::'))
+      .filter((x) => !x.startsWith('; '))
     const B = [...typeCheck(std[0], false)[1].entries()]
       .filter((x) => x[0][0] === ';')
       .map(([k, v]) => `${v()}`)
