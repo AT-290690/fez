@@ -80,6 +80,10 @@ export const setReturnToTypeRef = (stats, value) => {
   // if (!isAnyReturn(stats) && !isAnyReturn(value))
   if (isUnknownReturn(stats)) stats[RETURNS] = value[TYPE_PROP]
 }
+export const setTypeToReturnRef = (stats, value) => {
+  // if (!isAnyReturn(stats) && !isAnyReturn(value))
+  if (isUnknownType(stats)) stats[TYPE_PROP] = value[RETURNS]
+}
 export const setPropRef = (stats, prop, value) => {
   // if (stats[prop][0] !== ANY && value[prop][0] !== ANY)
   if (stats[prop][0] === UNKNOWN) stats[prop] = value[prop]
@@ -91,6 +95,7 @@ export const setReturn = (stats, value) => {
 }
 export const setType = (stats, value) => {
   // if (!isAnyType(stats) && !isAnyType(value))
+
   if (isUnknownType(stats) && !isUnknownType(value))
     stats[TYPE_PROP][0] = value[TYPE_PROP][0]
 }
@@ -623,19 +628,10 @@ export const typeCheck = (ast, error = true) => {
                     // TODO figure out what we do here
                     // this here is a variable WORD
                     // so return type of that function is that varible type
-                    if (copy[returns[VALUE]])
-                      setReturnToTypeRef(
-                        ref[STATS],
-                        copy[returns[VALUE]][STATS]
-                      )
-                    else
-                      stack.push(() => {
-                        if (copy[returns[VALUE]])
-                          setReturnToTypeRef(
-                            ref[STATS],
-                            copy[returns[VALUE]][STATS]
-                          )
-                      })
+                    stack.push(() => {
+                      if (copy[returns[VALUE]])
+                        setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
+                    })
                   } else {
                     const ret = returns[0]
                     switch (ret[VALUE]) {

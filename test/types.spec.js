@@ -14,14 +14,13 @@ const inference = (source, keys) => {
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
-describe.only('Type checking', () => {
+describe('Type checking', () => {
   it('Std types should not change', () => {
-    const A = [...typeCheck(std[0], false)[1].entries()]
+    const A = readFileSync('./test/types-output.lisp', 'utf-8').split('\n')
+    const B = [...typeCheck(std[0], false)[1].entries()]
       .filter((x) => x[0][0] === ';')
       .map(([k, v]) => `${v()}`)
-      .join('\n')
-    const B = readFileSync('./test/types-output.lisp', 'utf-8')
-    strictEqual(A, B)
+    deepStrictEqual(A, B)
   })
   it('Types Signatures should match expected', () => {
     deepStrictEqual(
@@ -36,10 +35,11 @@ describe.only('Type checking', () => {
         'array:unique',
         'array:empty?',
         'array:join',
-        'string:join-as-table-with'
+        'string:join-as-table-with',
+        'list:zip'
       ]),
       [
-        '(let matrix:enumerated-for (lambda Collection (lambda Any Atom Atom (do Unknown)) (do Unknown)))',
+        '(let matrix:enumerated-for (lambda Collection (lambda Any Atom Atom (do Unknown)) (do Collection)))',
         '(let math:overlap? (lambda Atom Atom Atom (do Atom)))',
         '(let math:prime? (lambda Atom (do Atom)))',
         '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Any Collection Atom Atom (do Unknown)) (do Collection)))',
@@ -49,7 +49,8 @@ describe.only('Type checking', () => {
         '(let array:unique (lambda Collection (do Collection)))',
         '(let array:empty? (lambda Collection (do Atom)))',
         '(let array:join (lambda Collection Collection (do Unknown)))',
-        '(let string:join-as-table-with (lambda Collection Collection Unknown (do Unknown)))'
+        '(let string:join-as-table-with (lambda Collection Collection Unknown (do Unknown)))',
+        '(let list:zip (lambda Collection Collection (do Collection)))'
       ]
     )
     deepStrictEqual(
