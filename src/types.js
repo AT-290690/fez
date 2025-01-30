@@ -31,7 +31,6 @@ export const toTypeNames = (type) => {
     case ATOM:
       return 'Atom'
     case UNKNOWN:
-      // case ANY:
       return 'Unknown'
     case PREDICATE:
       return 'Predicate'
@@ -46,10 +45,10 @@ export const toTypeNames = (type) => {
 export const SPECIAL_FORM_TYPES = {
   [SCOPE_NAME]: ';',
   // [ORDER]: 0,
-  [toTypeNames(APPLY)]: {
+  [STATIC_TYPES.ABSTRACTION]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: toTypeNames(APPLY),
+      [SIGNATURE]: STATIC_TYPES.ABSTRACTION,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [
@@ -68,10 +67,10 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [APPLY]
     }
   },
-  [toTypeNames(ATOM)]: {
+  [STATIC_TYPES.ATOM]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: toTypeNames(ATOM),
+      [SIGNATURE]: STATIC_TYPES.ATOM,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [
@@ -90,10 +89,10 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ATOM]
     }
   },
-  [toTypeNames(PREDICATE)]: {
+  [STATIC_TYPES.PREDICATE]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY, PREDICATE],
-      [SIGNATURE]: toTypeNames(PREDICATE),
+      [SIGNATURE]: STATIC_TYPES.PREDICATE,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [
@@ -112,10 +111,10 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ATOM, PREDICATE]
     }
   },
-  [toTypeNames(COLLECTION)]: {
+  [STATIC_TYPES.COLLECTION]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: toTypeNames(COLLECTION),
+      [SIGNATURE]: STATIC_TYPES.COLLECTION,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [
@@ -134,10 +133,10 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [COLLECTION]
     }
   },
-  [toTypeNames(UNKNOWN)]: {
+  [STATIC_TYPES.UNKNOWN]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: toTypeNames(UNKNOWN),
+      [SIGNATURE]: STATIC_TYPES.UNKNOWN,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [
@@ -156,10 +155,10 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [UNKNOWN]
     }
   },
-  [toTypeNames(ANY)]: {
+  [STATIC_TYPES.ANY]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: toTypeNames(ANY),
+      [SIGNATURE]: STATIC_TYPES.ANY,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [
