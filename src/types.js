@@ -5,8 +5,10 @@ import {
   DEBUG,
   KEYWORDS,
   PLACEHOLDER,
-  STATIC_TYPES
+  STATIC_TYPES,
+  VALUE
 } from './keywords.js'
+import { stringifyArgs } from './utils.js'
 export const ARG_COUNT = 'argumentsN'
 export const VARIADIC = Infinity
 export const STATS = '__stats__'
@@ -1183,4 +1185,25 @@ export const formatType = (name, env) => {
         })`
       : `(let ${name} ${toTypeNames(getType(stats))})`
     : name
+}
+
+export const validateLambda = (exp, name) => {
+  if (exp.length === 1)
+    throw new TypeError(
+      `Incorrect number of arguments for (${
+        KEYWORDS.ANONYMOUS_FUNCTION
+      }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
+        exp
+      )})`
+    )
+  if (name)
+    for (let i = 0; i < exp.length - 1; ++i)
+      if (exp[i][VALUE] === name)
+        throw new TypeError(
+          `Arguments of (${
+            KEYWORDS.ANONYMOUS_FUNCTION
+          }) Should not have the same name as they were declared (${stringifyArgs(
+            exp
+          )})`
+        )
 }

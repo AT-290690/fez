@@ -33,7 +33,8 @@ import {
   COLLECTION,
   ANY,
   formatType,
-  ANONYMOUS_FUNCTION_TYPE_PREFIX
+  ANONYMOUS_FUNCTION_TYPE_PREFIX,
+  validateLambda
 } from './types.js'
 import {
   getSuffix,
@@ -407,6 +408,7 @@ export const typeCheck = (ast, error = true) => {
                 rightHand[0][TYPE] === APPLY &&
                 rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
               ) {
+                validateLambda(rightHand, name)
                 const n = rightHand.length
                 env[name] = {
                   [STATS]: {
@@ -488,14 +490,7 @@ export const typeCheck = (ast, error = true) => {
             }
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
-            if (exp.length === 1)
-              throw new TypeError(
-                `Incorrect number of arguments for (${
-                  first[VALUE]
-                }). Expected at least 1 (the lambda body) but got 1 (${stringifyArgs(
-                  exp
-                )})`
-              )
+            validateLambda(exp)
             const params = exp.slice(1, -1)
             const copy = Object.create(env)
             if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD)

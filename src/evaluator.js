@@ -13,10 +13,8 @@ export const evaluate = (exp, env = keywords) => {
   switch (head[TYPE]) {
     case WORD: {
       const word = env[value]
-      if (word == undefined) {
+      if (word == undefined)
         throw new ReferenceError(`Accessing undefined variable ${value}`)
-      }
-
       return word
     }
     case APPLY: {
