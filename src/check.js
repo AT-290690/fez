@@ -636,10 +636,14 @@ export const typeCheck = (ast, error = true) => {
           case STATIC_TYPES.PREDICATE:
           case STATIC_TYPES.ANY:
             {
-              const ref =
-                env[isLeaf(rest[0]) ? rest[0][VALUE] : rest[0][0][VALUE]]
-              if (ref && (isUnknownType(ref[STATS]) || isAnyType(ref[STATS])))
-                castType(ref[STATS], root[first[VALUE]][STATS])
+              const ret = isLeaf(rest[0]) ? rest[0] : rest[0][0]
+              const ref = env[ret[VALUE]]
+              if (!ref) break
+              const caster = root[first[VALUE]]
+              if (ret[TYPE] === APPLY && isUnknownReturn(ref[STATS]))
+                castReturn(ref[STATS], caster[STATS])
+              else if (isUnknownType(ref[STATS]))
+                castType(ref[STATS], caster[STATS])
               check(rest[0], env, env)
             }
             break
