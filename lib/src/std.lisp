@@ -114,11 +114,13 @@
 (let math:decimal-scaling 1000000000000)
 
 (let pair:apply (lambda x cb (cb (array:first x) (array:second x))))
+(let pair:fork-apply (lambda pair cb1 cb2 [(cb1 (array:first pair)) (cb2 (array:second pair))]))
 (let pair:add (lambda x (+ (array:first x) (array:second x))))
 (let pair:subtract (lambda x (- (array:first x) (array:second x))))
 (let pair:multiply (lambda x (* (array:first x) (array:second x))))
 (let pair:divide (lambda x (/ (array:first x) (array:second x))))
 (let pair:swap (lambda x (array (array:second x) (array:first x))))
+(let pair:duplicate (lambda x (array:fold [x] (lambda a b (array:merge a (array:append! a b))) [])))
 (let pair:swap! (lambda x (do
  (let temp (array:first x))
  (set! x 0 (array:second x))
