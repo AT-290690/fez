@@ -234,6 +234,31 @@ const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
+
+const ifExpression = ({ re, env, ref }) => {
+  if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) setReturnToAtom(ref[STATS])
+  // TODO check that both brancehs are predicates if one is
+  else {
+    const concequent = isLeaf(re[0]) ? env[re[0][VALUE]] : env[re[0][0][VALUE]]
+    const alternative = isLeaf(re[1]) ? env[re[1][VALUE]] : env[re[1][0][VALUE]]
+    // todo check if condition matches alternative
+    // TODO make this more simple - it's so many different things just because types are functions or not
+    // WHY not consiter making return types for everything
+    if (concequent && getType(concequent[STATS]) !== UNKNOWN) {
+      if (getType(concequent[STATS]) === APPLY)
+        setReturnRef(ref[STATS], concequent[STATS])
+      else ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
+    } else if (alternative && isUnknownType(alternative[STATS])) {
+      if (getType(alternative[STATS]) === APPLY)
+        setReturnRef(ref[STATS], alternative[STATS])
+      else setReturnToTypeRef(ref[STATS], alternative[STATS])
+    } else if (concequent) {
+      if (getType(concequent[STATS]) === APPLY)
+        setReturnRef(ref[STATS], concequent[STATS])
+      else setReturnToTypeRef(ref[STATS], concequent[STATS])
+    }
+  }
+}
 const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
   const re = rem.slice(2)
   checkPredicateName(
@@ -307,34 +332,7 @@ const resolveCondition = ({ rem, name, env, exp, errors }) => {
   )
   switch (ret[VALUE]) {
     case KEYWORDS.IF:
-      // If either is an ATOM then IF returns an ATOM
-      if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
-        setReturnToAtom(ref[STATS])
-      // TODO check that both brancehs are predicates if one is
-      else {
-        const concequent = isLeaf(re[0])
-          ? env[re[0][VALUE]]
-          : env[re[0][0][VALUE]]
-        const alternative = isLeaf(re[1])
-          ? env[re[1][VALUE]]
-          : env[re[1][0][VALUE]]
-        // todo check if condition matches alternative
-        // TODO make this more simple - it's so many different things just because types are functions or not
-        // WHY not consiter making return types for everything
-        if (concequent && getType(concequent[STATS]) !== UNKNOWN) {
-          if (getType(concequent[STATS]) === APPLY)
-            setReturnRef(ref[STATS], concequent[STATS])
-          else ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
-        } else if (alternative && isUnknownType(alternative[STATS])) {
-          if (getType(alternative[STATS]) === APPLY)
-            setReturnRef(ref[STATS], alternative[STATS])
-          else setReturnToTypeRef(ref[STATS], alternative[STATS])
-        } else if (concequent) {
-          if (getType(concequent[STATS]) === APPLY)
-            setReturnRef(ref[STATS], concequent[STATS])
-          else setReturnToTypeRef(ref[STATS], concequent[STATS])
-        }
-      }
+      ifExpression({ re, env, ref })
       break
     default:
       if (env[ret[VALUE]]) setReturnRef(ref[STATS], env[ret[VALUE]][STATS])
