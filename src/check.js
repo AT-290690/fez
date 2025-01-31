@@ -519,7 +519,7 @@ export const typeCheck = (ast, error = true) => {
                 }
               } else if (rightHand[0]) {
                 const right = rightHand[0]
-                //DECLARATION
+                // DECLARATION
                 env[name] = {
                   [STATS]: {
                     retried: 0,

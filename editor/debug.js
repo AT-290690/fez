@@ -58,12 +58,13 @@ export const debug = (ast, checkTypes = true) => {
         throw new TypeError(
           `Argument of (${STATIC_TYPES.COLLECTION}) must be an (${
             RUNTIME_TYPES.ARRAY
-          }) but got something else(${STATIC_TYPES.COLLECTION} ${stringifyArgs(
+          }) but got something else (${STATIC_TYPES.COLLECTION} ${stringifyArgs(
             args
           )})`
         )
       return T
     },
+    [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env),
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
       if (args.length !== 2)

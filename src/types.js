@@ -42,6 +42,14 @@ export const toTypeNames = (type) => {
       break
   }
 }
+export const toTypeNamesAnyToUknown = (type) => {
+  switch (type) {
+    case ANY:
+      return toTypeNames(UNKNOWN)
+    default:
+      return toTypeNames(type)
+  }
+}
 export const SPECIAL_FORM_TYPES = {
   [SCOPE_NAME]: ';',
   // [ORDER]: 0,
@@ -1196,15 +1204,15 @@ export const formatType = (name, env) => {
                   `${
                     getType(x[STATS]) === APPLY
                       ? `${formatType(i, stats[ARGUMENTS])}`
-                      : `${toTypeNames(getType(x[STATS]))}`
+                      : `${toTypeNamesAnyToUknown(getType(x[STATS]))}`
                   }`
               ).join(' ') + ' '
             : ''
           // TODO format returned functions when type support is added
-        }(${KEYWORDS.BLOCK} ${toTypeNames(getReturn(stats))})${
+        }(${KEYWORDS.BLOCK} ${toTypeNamesAnyToUknown(getReturn(stats))})${
           isAnonymous ? '' : ')'
         })`
-      : `(let ${name} ${toTypeNames(getType(stats))})`
+      : `(let ${name} ${toTypeNamesAnyToUknown(getType(stats))})`
     : name
 }
 
