@@ -811,7 +811,7 @@
                 (do  
                     (array:push! a (* (var:get current-sign) (from:char->digit ch))) 
                     (var:set! current-sign 1)))
-                a)) []) (Collection)))))
+                a)) [])))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 (let from:digits->integer (lambda digits (do
     (let recursive:from:digits->integer (lambda i num base (if (> (length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
