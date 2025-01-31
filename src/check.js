@@ -443,117 +443,115 @@ export const typeCheck = (ast, error = true) => {
                   exp
                 )})`
               )
-            else {
-              const name = rest[0][VALUE]
-              //  Predicate name consistency
-              const rightHand = rest.at(-1)
+            const name = rest[0][VALUE]
+            //  Predicate name consistency
+            const rightHand = rest.at(-1)
+            if (
+              rightHand &&
+              rightHand[0] &&
+              rightHand[0][TYPE] === APPLY &&
+              rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+            ) {
+              validateLambda(rightHand, name)
+              const n = rightHand.length
+              env[name] = {
+                [STATS]: {
+                  [TYPE_PROP]: [APPLY],
+                  [SIGNATURE]: name,
+                  retried: 0,
+                  counter: 0,
+                  [ARG_COUNT]: n - 2,
+                  [ARGUMENTS]: fillUknownArgs(n - 2),
+                  [RETURNS]: [UNKNOWN]
+                }
+              }
               if (
-                rightHand &&
-                rightHand[0] &&
-                rightHand[0][TYPE] === APPLY &&
-                rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+                !checkReturnType({
+                  stack,
+                  exp,
+                  env,
+                  name,
+                  errors
+                }) ||
+                (isUnknownReturn(env[name][STATS]) &&
+                  env[name][STATS].retried < MAX_RETRY_DEFINITION)
               ) {
-                validateLambda(rightHand, name)
-                const n = rightHand.length
+                env[name][STATS].retried += 1
+                stack.unshift(() => {
+                  checkReturnType({
+                    stack,
+                    exp,
+                    env,
+                    name,
+                    errors
+                  })
+                  check(rightHand, env, exp)
+                })
+                check(rightHand, env, exp)
+              } else check(rightHand, env, exp)
+            } else {
+              checkPredicateName(exp, rest, errors)
+              const isLeafNode = isLeaf(rightHand)
+              if (isLeafNode && rightHand[TYPE] === WORD) {
+                // TODO make sure this prevents the assigment all together
+                if (env[rest[1][VALUE]] === undefined)
+                  errors.add(
+                    `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
+                  )
+
+                // Used to be checkin if it's an assigment to a special form
+                // but this should not cause problems
+                // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
+                //   ? structuredClone(env[rest[1][VALUE]])
+                //   : env[rest[1][VALUE]]
+                // FULL REFF ASSIGMENT
+                env[name] = env[rest[1][VALUE]]
+              } else if (isLeafNode && rightHand[TYPE] === ATOM) {
+                // DECLARATION of ATOM
                 env[name] = {
                   [STATS]: {
-                    [TYPE_PROP]: [APPLY],
                     [SIGNATURE]: name,
                     retried: 0,
                     counter: 0,
-                    [ARG_COUNT]: n - 2,
-                    [ARGUMENTS]: fillUknownArgs(n - 2),
+                    [TYPE_PROP]: [ATOM],
+                    [RETURNS]: [ATOM]
+                  }
+                }
+              } else if (rightHand[0]) {
+                const right = rightHand[0]
+                //DECLARATION
+                env[name] = {
+                  [STATS]: {
+                    retried: 0,
+                    counter: 0,
+                    [SIGNATURE]: name,
+                    [TYPE_PROP]: [
+                      isLeafNode
+                        ? right[TYPE]
+                        : env[right[VALUE]] == undefined
+                        ? UNKNOWN
+                        : env[right[VALUE]][STATS][RETURNS][0]
+                    ],
                     [RETURNS]: [UNKNOWN]
                   }
                 }
-                if (
-                  !checkReturnType({
-                    stack,
-                    exp,
-                    env,
-                    name,
-                    errors
-                  }) ||
-                  (isUnknownReturn(env[name][STATS]) &&
-                    env[name][STATS].retried < MAX_RETRY_DEFINITION)
-                ) {
-                  env[name][STATS].retried += 1
-                  stack.unshift(() => {
-                    checkReturnType({
-                      stack,
-                      exp,
-                      env,
-                      name,
-                      errors
-                    })
-                    check(rightHand, env, exp)
-                  })
-                  check(rightHand, env, exp)
-                } else check(rightHand, env, exp)
-              } else {
-                checkPredicateName(exp, rest, errors)
-                const isLeafNode = isLeaf(rightHand)
-                if (isLeafNode && rightHand[TYPE] === WORD) {
-                  // TODO make sure this prevents the assigment all together
-                  if (env[rest[1][VALUE]] === undefined)
-                    errors.add(
-                      `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
-                    )
-
-                  // Used to be checkin if it's an assigment to a special form
-                  // but this should not cause problems
-                  // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
-                  //   ? structuredClone(env[rest[1][VALUE]])
-                  //   : env[rest[1][VALUE]]
-                  // FULL REFF ASSIGMENT
-                  env[name] = env[rest[1][VALUE]]
-                } else if (isLeafNode && rightHand[TYPE] === ATOM) {
-                  // DECLARATION of ATOM
-                  env[name] = {
-                    [STATS]: {
-                      [SIGNATURE]: name,
-                      retried: 0,
-                      counter: 0,
-                      [TYPE_PROP]: [ATOM],
-                      [RETURNS]: [ATOM]
-                    }
-                  }
-                } else if (rightHand[0]) {
-                  const right = rightHand[0]
-                  //DECLARATION
-                  env[name] = {
-                    [STATS]: {
-                      retried: 0,
-                      counter: 0,
-                      [SIGNATURE]: name,
-                      [TYPE_PROP]: [
-                        isLeafNode
-                          ? right[TYPE]
-                          : env[right[VALUE]] == undefined
-                          ? UNKNOWN
-                          : env[right[VALUE]][STATS][RETURNS][0]
-                      ],
-                      [RETURNS]: [UNKNOWN]
-                    }
-                  }
-                  const body = rightHand
-                  const rem = hasBlock(body) ? body.at(-1) : body
-                  const returns = isLeaf(rem) ? rem : rem[0]
-                  resolveRetunType({
-                    stack,
-                    returns,
-                    rem,
-                    prop: TYPE_PROP,
-                    exp,
-                    env,
-                    name,
-                    errors
-                  })
-                }
-                check(rightHand, env, scope)
+                const body = rightHand
+                const rem = hasBlock(body) ? body.at(-1) : body
+                const returns = isLeaf(rem) ? rem : rem[0]
+                resolveRetunType({
+                  stack,
+                  returns,
+                  rem,
+                  prop: TYPE_PROP,
+                  exp,
+                  env,
+                  name,
+                  errors
+                })
               }
-              Types.set(withScope(name, env), () => formatType(name, env))
+              check(rightHand, env, scope)
             }
+            Types.set(withScope(name, env), () => formatType(name, env))
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
             validateLambda(exp)
