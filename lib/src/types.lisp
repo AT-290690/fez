@@ -1861,7 +1861,7 @@
 ; 1 π
 (let π Atom)
 ; 1 λ
-(let λ (lambda ... Unknown(do Abstraction)))
+(let λ (lambda ... (do Abstraction)))
 ; 1 array?
 (let array? (lambda Unknown (do Atom)))
 ; 1 char?

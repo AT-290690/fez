@@ -1189,7 +1189,7 @@ export const formatType = (name, env) => {
     ? getType(stats) === APPLY
       ? `${isAnonymous ? '' : `(let ${name} `}(lambda ${
           stats[ARG_COUNT] === VARIADIC
-            ? '... ' + STATIC_TYPES.UNKNOWN
+            ? '... '
             : stats[ARGUMENTS]?.length
             ? stats[ARGUMENTS].map(
                 (x, i) =>
