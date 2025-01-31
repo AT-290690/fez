@@ -41,13 +41,13 @@ describe('Type checking', () => {
         'list:zip'
       ]),
       [
-        '(let matrix:enumerated-for (lambda Collection (lambda Any Atom Atom (do Unknown)) (do Collection)))',
+        '(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Collection)))',
         '(let math:overlap? (lambda Atom Atom Atom (do Atom)))',
         '(let math:prime? (lambda Atom (do Atom)))',
-        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Any Collection Atom Atom (do Unknown)) (do Collection)))',
-        '(let array:every? (lambda Collection (lambda Any (do Atom)) (do Atom)))',
-        '(let list:find (lambda Collection (lambda Any (do Unknown)) (do Collection)))',
-        '(let list:every? (lambda Collection (lambda Any (do Atom)) (do Atom)))',
+        '(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Collection)))',
+        '(let array:every? (lambda Collection (lambda Unknown (do Atom)) (do Atom)))',
+        '(let list:find (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))',
+        '(let list:every? (lambda Collection (lambda Unknown (do Atom)) (do Atom)))',
         '(let array:unique (lambda Collection (do Collection)))',
         '(let array:empty? (lambda Collection (do Atom)))',
         '(let array:join (lambda Collection Collection (do Unknown)))',
