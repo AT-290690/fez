@@ -498,7 +498,6 @@ export const typeCheck = (ast, error = true) => {
                   errors.add(
                     `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
                   )
-
                 // Used to be checkin if it's an assigment to a special form
                 // but this should not cause problems
                 // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
@@ -619,7 +618,6 @@ export const typeCheck = (ast, error = true) => {
                         if (copy[ret[VALUE]])
                           setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
                       })
-
                     break
                 }
               }

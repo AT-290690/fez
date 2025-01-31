@@ -189,13 +189,13 @@
 ; 1 Search
 (let Search Atom)
 ; 1 truthy?
-(let truthy? (lambda Any (do Atom)))
+(let truthy? (lambda Unknown (do Atom)))
 ; 1 falsy?
-(let falsy? (lambda Any (do Atom)))
+(let falsy? (lambda Unknown (do Atom)))
 ; 1 true?
-(let true? (lambda Any (do Atom)))
+(let true? (lambda Unknown (do Atom)))
 ; 1 false?
-(let false? (lambda Any (do Atom)))
+(let false? (lambda Unknown (do Atom)))
 ; 1 math:e
 (let math:e Atom)
 ; 1 math:pi
@@ -207,7 +207,7 @@
 ; 1 math:decimal-scaling
 (let math:decimal-scaling Atom)
 ; 1 pair:apply
-(let pair:apply (lambda Collection (lambda Any Any (do Unknown)) (do Unknown)))
+(let pair:apply (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Unknown)))
 ; 1 pair:add
 (let pair:add (lambda Collection (do Atom)))
 ; 1 pair:subtract
@@ -307,9 +307,9 @@
 ; 1 math:minimum
 (let math:minimum (lambda Collection (do Atom)))
 ; 1 math:maximum-index
-(let math:maximum-index (lambda Collection (do Any)))
+(let math:maximum-index (lambda Collection (do Unknown)))
 ; 1 math:minimum-index
-(let math:minimum-index (lambda Collection (do Any)))
+(let math:minimum-index (lambda Collection (do Unknown)))
 ; 1 math:max-length
 (let math:max-length (lambda Collection (do Collection)))
 ; 1 math:min-length
@@ -355,7 +355,7 @@
 ; 1 math:median half
 (let half Atom)
 ; 1 math:median
-(let math:median (lambda Collection (do Any)))
+(let math:median (lambda Collection (do Unknown)))
 ; 1 math:mean
 (let math:mean (lambda Collection (do Atom)))
 ; 1 math:bit-count32 n1
@@ -371,7 +371,7 @@
 ; 1 math:square
 (let math:square (lambda Atom (do Atom)))
 ; 1 math:power
-(let math:power (lambda Atom Atom (do Any)))
+(let math:power (lambda Atom Atom (do Unknown)))
 ; 1 math:greatest-common-divisor recursive:math:greatest-common-divisor
 (let recursive:math:greatest-common-divisor (lambda Atom Atom (do Atom)))
 ; 1 math:greatest-common-divisor
@@ -415,7 +415,7 @@
 ; 1 math:clamp
 (let math:clamp (lambda Atom Atom (do Atom)))
 ; 1 math:clamp-range
-(let math:clamp-range (lambda Atom Atom Atom (do Any)))
+(let math:clamp-range (lambda Atom Atom Atom (do Unknown)))
 ; 1 math:odd?
 (let math:odd? (lambda Atom (do Atom)))
 ; 1 math:even?
@@ -457,15 +457,15 @@
 ; 1 math:sine sine
 (let sine Collection)
 ; 1 math:sine recursive:math:sine
-(let recursive:math:sine (lambda Atom (do Any)))
+(let recursive:math:sine (lambda Atom (do Unknown)))
 ; 1 math:sine
-(let math:sine (lambda Atom Atom (do Any)))
+(let math:sine (lambda Atom Atom (do Unknown)))
 ; 1 math:cosine cosine
 (let cosine Collection)
 ; 1 math:cosine recursive:math:cosine
-(let recursive:math:cosine (lambda Atom (do Any)))
+(let recursive:math:cosine (lambda Atom (do Unknown)))
 ; 1 math:cosine
-(let math:cosine (lambda Atom Atom (do Any)))
+(let math:cosine (lambda Atom Atom (do Unknown)))
 ; 1 math:prime-factors a
 (let a Collection)
 ; 1 math:prime-factors n
@@ -511,7 +511,7 @@
 ; 1 math:palindrome?
 (let math:palindrome? (lambda Collection (do Atom)))
 ; 1 math:max-sub-array-sum
-(let math:max-sub-array-sum (lambda Collection (do Any)))
+(let math:max-sub-array-sum (lambda Collection (do Unknown)))
 ; 1 math:list-maximum
 (let math:list-maximum (lambda Collection (do Atom)))
 ; 1 math:list-minimum
@@ -525,21 +525,21 @@
 ; 1 list:pair
 (let list:pair (lambda Unknown Unknown (do Collection)))
 ; 1 list:car
-(let list:car (lambda Collection (do Any)))
+(let list:car (lambda Collection (do Unknown)))
 ; 1 list:cdr
-(let list:cdr (lambda Collection (do Any)))
+(let list:cdr (lambda Collection (do Unknown)))
 ; 1 list:head
-(let list:head (lambda Collection (do Any)))
+(let list:head (lambda Collection (do Unknown)))
 ; 1 list:tail
-(let list:tail (lambda Collection (do Any)))
+(let list:tail (lambda Collection (do Unknown)))
 ; 1 list:nil?
 (let list:nil? (lambda Collection (do Atom)))
 ; 1 list:map
-(let list:map (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let list:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 list:filter
-(let list:filter (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let list:filter (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 list:fold
-(let list:fold (lambda Collection (lambda Unknown Any (do Unknown)) Unknown (do Atom)))
+(let list:fold (lambda Collection (lambda Unknown Unknown (do Unknown)) Unknown (do Atom)))
 ; 1 list:zip
 (let list:zip (lambda Unknown Unknown (do Collection)))
 ; 1 list:unzip
@@ -551,35 +551,35 @@
 ; 1 list:reverse
 (let list:reverse (lambda Collection (do Atom)))
 ; 1 list:find
-(let list:find (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let list:find (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 list:find-tail
-(let list:find-tail (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let list:find-tail (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 list:some?
-(let list:some? (lambda Collection (lambda Any (do Unknown)) (do Atom)))
+(let list:some? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; 1 list:every?
-(let list:every? (lambda Collection (lambda Any (do Atom)) (do Atom)))
+(let list:every? (lambda Collection (lambda Unknown (do Atom)) (do Atom)))
 ; 1 list:remove-at remove
-(let remove (lambda Collection Atom (do Any)))
+(let remove (lambda Collection Atom (do Unknown)))
 ; 1 list:remove-at
-(let list:remove-at (lambda Collection Atom (do Any)))
+(let list:remove-at (lambda Collection Atom (do Unknown)))
 ; 1 list:insert-at
 (let list:insert-at (lambda Collection Atom Unknown (do Collection)))
 ; 1 list:get l
 (let l Collection)
 ; 1 list:get
-(let list:get (lambda Collection Atom (do Any)))
+(let list:get (lambda Collection Atom (do Unknown)))
 ; 1 list:end
-(let list:end (lambda Collection (do Any)))
+(let list:end (lambda Collection (do Unknown)))
 ; 1 list:rotate-left fst
-(let fst Any)
+(let fst Unknown)
 ; 1 list:rotate-left xss
-(let xss Any)
+(let xss Unknown)
 ; 1 list:rotate-left
 (let list:rotate-left (lambda Collection (do Collection)))
 ; 1 list:rotate-right lst
-(let lst Any)
+(let lst Unknown)
 ; 1 list:rotate-right xss
-(let xss Any)
+(let xss Unknown)
 ; 1 list:rotate-right
 (let list:rotate-right (lambda Collection (do Collection)))
 ; 1 list:concat!
@@ -597,29 +597,29 @@
 ; 1 list:take
 (let list:take (lambda Collection Atom (do Collection)))
 ; 1 list:after
-(let list:after (lambda Collection Atom (do Any)))
+(let list:after (lambda Collection Atom (do Unknown)))
 ; 1 list:slice
 (let list:slice (lambda Collection Atom Atom (do Collection)))
 ; 1 list:for
-(let list:for (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let list:for (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 array:first
-(let array:first (lambda Collection (do Any)))
+(let array:first (lambda Collection (do Unknown)))
 ; 1 array:second
-(let array:second (lambda Collection (do Any)))
+(let array:second (lambda Collection (do Unknown)))
 ; 1 array:third
-(let array:third (lambda Collection (do Any)))
+(let array:third (lambda Collection (do Unknown)))
 ; 1 array:last
-(let array:last (lambda Collection (do Any)))
+(let array:last (lambda Collection (do Unknown)))
 ; 1 array:for recursive:array:for
 (let recursive:array:for (lambda Atom (do Atom)))
 ; 1 array:for
-(let array:for (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let array:for (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 array:buckets out
 (let out Collection)
 ; 1 array:buckets
 (let array:buckets (lambda Atom (do Collection)))
 ; 1 array:enumerated-for
-(let array:enumerated-for (lambda Collection (lambda Any Atom (do Unknown)) (do Collection)))
+(let array:enumerated-for (lambda Collection (lambda Unknown Atom (do Unknown)) (do Collection)))
 ; 1 array:fill recursive:array:fill
 (let recursive:array:fill (lambda Collection Atom (do Unknown)))
 ; 1 array:fill
@@ -631,29 +631,29 @@
 ; 1 array:map recursive:array:map
 (let recursive:array:map (lambda Atom Collection (do Collection)))
 ; 1 array:map
-(let array:map (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let array:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 array:select recursive:array:select
 (let recursive:array:select (lambda Atom Collection (do Unknown)))
 ; 1 array:select
-(let array:select (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let array:select (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 array:exclude recursive:array:exclude
 (let recursive:array:exclude (lambda Atom Collection (do Unknown)))
 ; 1 array:exclude
-(let array:exclude (lambda Collection (lambda Any (do Atom)) (do Unknown)))
+(let array:exclude (lambda Collection (lambda Unknown (do Atom)) (do Unknown)))
 ; 1 array:fold recursive:array:fold
 (let recursive:array:fold (lambda Atom Unknown (do Unknown)))
 ; 1 array:fold
-(let array:fold (lambda Collection (lambda Unknown Any (do Unknown)) Unknown (do Collection)))
+(let array:fold (lambda Collection (lambda Unknown Unknown (do Unknown)) Unknown (do Collection)))
 ; 1 array:every? recursive:array:every?
 (let recursive:array:every? (lambda Atom (do Atom)))
 ; 1 array:every?
-(let array:every? (lambda Collection (lambda Any (do Atom)) (do Atom)))
+(let array:every? (lambda Collection (lambda Unknown (do Atom)) (do Atom)))
 ; 1 array:some? recursive:array:some?
 (let recursive:array:some? (lambda Atom (do Atom)))
 ; 1 array:some?
-(let array:some? (lambda Collection (lambda Any (do Atom)) (do Atom)))
+(let array:some? (lambda Collection (lambda Unknown (do Atom)) (do Atom)))
 ; 1 array:find
-(let array:find (lambda Collection Unknown (do Any)))
+(let array:find (lambda Collection Unknown (do Unknown)))
 ; 1 array:find-option index
 (let index Atom)
 ; 1 array:find-option
@@ -661,7 +661,7 @@
 ; 1 array:has? recursive:array:has
 (let recursive:array:has (lambda Atom (do Atom)))
 ; 1 array:has?
-(let array:has? (lambda Collection (lambda Any (do Unknown)) (do Atom)))
+(let array:has? (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; 1 array:reverse recursive:array:reverse
 (let recursive:array:reverse (lambda Atom Collection (do Unknown)))
 ; 1 array:reverse
@@ -675,9 +675,9 @@
 ; 1 array:push!
 (let array:push! (lambda Collection Unknown (do Unknown)))
 ; 1 array:pop! l
-(let l Any)
+(let l Unknown)
 ; 1 array:pop!
-(let array:pop! (lambda Collection (do Any)))
+(let array:pop! (lambda Collection (do Unknown)))
 ; 1 array:even-indexed
 (let array:even-indexed (lambda Collection (do Unknown)))
 ; 1 array:odd-indexed
@@ -685,7 +685,7 @@
 ; 1 array:unique sorted
 (let sorted Collection)
 ; 1 array:unique 34 index
-(let index Any)
+(let index Unknown)
 ; 1 array:unique
 (let array:unique (lambda Collection (do Collection)))
 ; 1 array:iterate
@@ -713,7 +713,7 @@
 ; 1 array:slice
 (let array:slice (lambda Collection Atom Atom (do Collection)))
 ; 1 car
-(let car (lambda Collection (do Any)))
+(let car (lambda Collection (do Unknown)))
 ; 1 cdr bounds
 (let bounds Atom)
 ; 1 cdr recursive:cdr
@@ -731,7 +731,7 @@
 ; 1 array:binary-search recursive:array:binary-search 39 index
 (let index Atom)
 ; 1 array:binary-search recursive:array:binary-search 39 current
-(let current Any)
+(let current Unknown)
 ; 1 array:binary-search recursive:array:binary-search
 (let recursive:array:binary-search (lambda Collection Atom Atom Atom (do Atom)))
 ; 1 array:binary-search
@@ -773,29 +773,29 @@
 ; 1 array:sort 52 pivot
 (let pivot Unknown)
 ; 1 array:sort 52 recursive:array:sort current
-(let current Any)
+(let current Unknown)
 ; 1 array:sort 52 recursive:array:sort predicate
 (let predicate Atom)
 ; 1 array:sort 52 recursive:array:sort left
-(let left Any)
+(let left Unknown)
 ; 1 array:sort 52 recursive:array:sort right
-(let right Any)
+(let right Unknown)
 ; 1 array:sort 52 recursive:array:sort
 (let recursive:array:sort (lambda Atom Atom Unknown Unknown (do Collection)))
 ; 1 array:sort 52 sorted
 (let sorted Collection)
 ; 1 array:sort 52 left
-(let left Any)
+(let left Unknown)
 ; 1 array:sort 52 right
-(let right Any)
+(let right Unknown)
 ; 1 array:sort
-(let array:sort (lambda Collection (lambda Any Any (do Unknown)) (do Collection)))
+(let array:sort (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Collection)))
 ; 1 array:sorted-ascending?
 (let array:sorted-ascending? (lambda Collection (do Atom)))
 ; 1 array:sorted-descending?
 (let array:sorted-descending? (lambda Collection (do Atom)))
 ; 1 array:sorted-by?
-(let array:sorted-by? (lambda Collection (lambda Unknown Any (do Atom)) (do Atom)))
+(let array:sorted-by? (lambda Collection (lambda Unknown Unknown (do Atom)) (do Atom)))
 ; 1 array:increment!
 (let array:increment! (lambda Collection Atom Atom (do Collection)))
 ; 1 array:set
@@ -809,29 +809,29 @@
 ; 1 array:adjacent-difference 57 recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Atom Collection (do Atom)))
 ; 1 array:adjacent-difference
-(let array:adjacent-difference (lambda Collection (lambda Any Any (do Unknown)) (do Collection)))
+(let array:adjacent-difference (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Collection)))
 ; 1 array:partition 59 x
-(let x Any)
+(let x Unknown)
 ; 1 array:partition 59 i
-(let i Any)
+(let i Unknown)
 ; 1 array:partition
 (let array:partition (lambda Collection Atom (do Collection)))
 ; 1 array:ranges
 (let array:ranges (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
 ; 1 array:chunks 61 start
-(let start Any)
+(let start Unknown)
 ; 1 array:chunks 61 end
-(let end Any)
+(let end Unknown)
 ; 1 array:chunks
 (let array:chunks (lambda Collection Unknown (do Collection)))
 ; 1 array:adjacent-find len
 (let len Atom)
 ; 1 array:adjacent-find 62 recursive:array:adjacent-find prev
-(let prev Any)
+(let prev Unknown)
 ; 1 array:adjacent-find 62 recursive:array:adjacent-find current
-(let current Any)
+(let current Unknown)
 ; 1 array:adjacent-find 62 recursive:array:adjacent-find
-(let recursive:array:adjacent-find (lambda Atom (do Any)))
+(let recursive:array:adjacent-find (lambda Atom (do Unknown)))
 ; 1 array:adjacent-find
 (let array:adjacent-find (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Atom)))
 ; 1 matrix:points coords
@@ -853,13 +853,13 @@
 ; 1 matrix:find coords
 (let coords Collection)
 ; 1 matrix:find
-(let matrix:find (lambda Collection Unknown (do Any)))
+(let matrix:find (lambda Collection Unknown (do Unknown)))
 ; 1 matrix:enumerated-for width
 (let width Atom)
 ; 1 matrix:enumerated-for height
 (let height Atom)
 ; 1 matrix:enumerated-for
-(let matrix:enumerated-for (lambda Collection (lambda Any Atom Atom (do Unknown)) (do Collection)))
+(let matrix:enumerated-for (lambda Collection (lambda Unknown Atom Atom (do Unknown)) (do Collection)))
 ; 1 matrix:of width
 (let width Atom)
 ; 1 matrix:of height
@@ -901,23 +901,23 @@
 ; 1 matrix:adjacent 75 dx
 (let dx Atom)
 ; 1 matrix:adjacent
-(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Any Collection Atom Atom (do Unknown)) (do Collection)))
+(let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Collection)))
 ; 1 matrix:adjacent-sum 76 dy
 (let dy Atom)
 ; 1 matrix:adjacent-sum 76 dx
 (let dx Atom)
 ; 1 matrix:adjacent-sum
-(let matrix:adjacent-sum (lambda Collection Collection Atom Atom (lambda Unknown Any (do Unknown)) (do Collection)))
+(let matrix:adjacent-sum (lambda Collection Collection Atom Atom (lambda Unknown Unknown (do Unknown)) (do Collection)))
 ; 1 matrix:sliding-adjacent-sum 77 dy
 (let dy Atom)
 ; 1 matrix:sliding-adjacent-sum 77 dx
 (let dx Atom)
 ; 1 matrix:sliding-adjacent-sum
-(let matrix:sliding-adjacent-sum (lambda Collection Collection Atom Atom Atom (lambda Unknown Any (do Unknown)) (do Collection)))
+(let matrix:sliding-adjacent-sum (lambda Collection Collection Atom Atom Atom (lambda Unknown Unknown (do Unknown)) (do Collection)))
 ; 1 matrix:set!
 (let matrix:set! (lambda Collection Atom Atom Unknown (do Collection)))
 ; 1 matrix:get
-(let matrix:get (lambda Collection Atom Atom (do Any)))
+(let matrix:get (lambda Collection Atom Atom (do Unknown)))
 ; 1 matrix:set-and-get!
 (let matrix:set-and-get! (lambda Collection Atom Atom Unknown (do Unknown)))
 ; 1 matrix:get-option
@@ -961,7 +961,7 @@
 ; 1 from:positive-or-negative-digits->chars
 (let from:positive-or-negative-digits->chars (lambda Collection (do Collection)))
 ; 1 from:integer->digits recursive:from:integer->digits
-(let recursive:from:integer->digits (lambda Atom Collection (do Any)))
+(let recursive:from:integer->digits (lambda Atom Collection (do Unknown)))
 ; 1 from:integer->digits
 (let from:integer->digits (lambda Atom (do Collection)))
 ; 1 from:number->positive-or-negative-digits negative?
@@ -969,13 +969,13 @@
 ; 1 from:number->positive-or-negative-digits num
 (let num Atom)
 ; 1 from:number->positive-or-negative-digits recursive:from:number->positive-or-negative-digits
-(let recursive:from:number->positive-or-negative-digits (lambda Atom Collection (do Any)))
+(let recursive:from:number->positive-or-negative-digits (lambda Atom Collection (do Unknown)))
 ; 1 from:number->positive-or-negative-digits out
 (let out Collection)
 ; 1 from:number->positive-or-negative-digits
 (let from:number->positive-or-negative-digits (lambda Atom (do Collection)))
 ; 1 from:number->bits recursive:from:number->bits
-(let recursive:from:number->bits (lambda Atom Collection (do Any)))
+(let recursive:from:number->bits (lambda Atom Collection (do Unknown)))
 ; 1 from:number->bits
 (let from:number->bits (lambda Atom (do Collection)))
 ; 1 from:numbers->chars
@@ -997,7 +997,7 @@
 ; 1 from:string->float 88 right
 (let right Collection)
 ; 1 from:string->float 88 n
-(let n Any)
+(let n Unknown)
 ; 1 from:string->float 88 sign
 (let sign Atom)
 ; 1 from:string->float 88 exponent
@@ -1083,7 +1083,7 @@
 ; 1 array:swap-remove!
 (let array:swap-remove! (lambda Collection Atom (do Collection)))
 ; 1 array:swap! temp
-(let temp Any)
+(let temp Unknown)
 ; 1 array:swap!
 (let array:swap! (lambda Collection Atom Atom (do Collection)))
 ; 1 array:index-of recursive:array:index-of
@@ -1095,39 +1095,39 @@
 ; 1 array:enumerated-map recursive:array:enumerated-map
 (let recursive:array:enumerated-map (lambda Atom Collection (do Unknown)))
 ; 1 array:enumerated-map
-(let array:enumerated-map (lambda Collection (lambda Any Atom (do Unknown)) (do Unknown)))
+(let array:enumerated-map (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
 ; 1 array:enumerated-select recursive:array:enumerated-select
 (let recursive:array:enumerated-select (lambda Atom Collection (do Unknown)))
 ; 1 array:enumerated-select
-(let array:enumerated-select (lambda Collection (lambda Any Atom (do Unknown)) (do Unknown)))
+(let array:enumerated-select (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
 ; 1 array:enumerated-exclude recursive:array:enumerated-exclude
 (let recursive:array:enumerated-exclude (lambda Atom Collection (do Unknown)))
 ; 1 array:enumerated-exclude
-(let array:enumerated-exclude (lambda Collection (lambda Any Atom (do Atom)) (do Unknown)))
+(let array:enumerated-exclude (lambda Collection (lambda Unknown Atom (do Atom)) (do Unknown)))
 ; 1 array:enumerated-fold recursive:array:enumerated-fold
 (let recursive:array:enumerated-fold (lambda Atom Unknown (do Unknown)))
 ; 1 array:enumerated-fold
-(let array:enumerated-fold (lambda Collection (lambda Unknown Any Atom (do Unknown)) Unknown (do Unknown)))
+(let array:enumerated-fold (lambda Collection (lambda Unknown Unknown Atom (do Unknown)) Unknown (do Unknown)))
 ; 1 array:enumerated-find recursive:array:enumerated-find
-(let recursive:array:enumerated-find (lambda Atom (do Any)))
+(let recursive:array:enumerated-find (lambda Atom (do Unknown)))
 ; 1 array:enumerated-find
-(let array:enumerated-find (lambda Collection (lambda Any Atom (do Unknown)) (do Any)))
+(let array:enumerated-find (lambda Collection (lambda Unknown Atom (do Unknown)) (do Unknown)))
 ; 1 array:enumerated-find-index recursive:array:enumerated-find-index
 (let recursive:array:enumerated-find-index (lambda Atom (do Atom)))
 ; 1 array:enumerated-find-index
-(let array:enumerated-find-index (lambda Collection (lambda Any Atom (do Unknown)) (do Atom)))
+(let array:enumerated-find-index (lambda Collection (lambda Unknown Atom (do Unknown)) (do Atom)))
 ; 1 array:enumerated-every? recursive:array:enumerated-every?
 (let recursive:array:enumerated-every? (lambda Atom (do Atom)))
 ; 1 array:enumerated-every?
-(let array:enumerated-every? (lambda Collection (lambda Any Atom (do Atom)) (do Atom)))
+(let array:enumerated-every? (lambda Collection (lambda Unknown Atom (do Atom)) (do Atom)))
 ; 1 array:enumerated-some? recursive:array:enumerated-some?
 (let recursive:array:enumerated-some? (lambda Atom (do Atom)))
 ; 1 array:enumerated-some?
-(let array:enumerated-some? (lambda Collection (lambda Any Atom (do Atom)) (do Atom)))
+(let array:enumerated-some? (lambda Collection (lambda Unknown Atom (do Atom)) (do Atom)))
 ; 1 array:find-index recursive:array:find-index
 (let recursive:array:find-index (lambda Atom (do Atom)))
 ; 1 array:find-index
-(let array:find-index (lambda Collection (lambda Any (do Unknown)) (do Atom)))
+(let array:find-index (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; 1 array:remove
 (let array:remove (lambda Collection Atom (do Collection)))
 ; 1 array:pad-right
@@ -1153,7 +1153,7 @@
 ; 1 string:character-occurances at-least-one
 (let at-least-one Collection)
 ; 1 string:character-occurances recursive:string:character-occurances ch
-(let ch Any)
+(let ch Unknown)
 ; 1 string:character-occurances recursive:string:character-occurances code
 (let code Atom)
 ; 1 string:character-occurances recursive:string:character-occurances mask
@@ -1199,29 +1199,29 @@
 ; 1 string:has?
 (let string:has? (lambda Collection Collection (do Atom)))
 ; 1 string:lesser? 110 a
-(let a Any)
+(let a Unknown)
 ; 1 string:lesser? 110 b
-(let b Any)
+(let b Unknown)
 ; 1 string:lesser? 110 pairs
 (let pairs Collection)
 ; 1 string:lesser? 110 is
 (let is Collection)
 ; 1 string:lesser? 110 recursive:string:lesser 111 current
-(let current Any)
+(let current Unknown)
 ; 1 string:lesser? 110 recursive:string:lesser
 (let recursive:string:lesser (lambda (do Atom)))
 ; 1 string:lesser?
 (let string:lesser? (lambda Collection Collection (do Atom)))
 ; 1 string:greater? 112 a
-(let a Any)
+(let a Unknown)
 ; 1 string:greater? 112 b
-(let b Any)
+(let b Unknown)
 ; 1 string:greater? 112 pairs
 (let pairs Collection)
 ; 1 string:greater? 112 is
 (let is Collection)
 ; 1 string:greater? 112 recursive:string:greater 113 current
-(let current Any)
+(let current Unknown)
 ; 1 string:greater? 112 recursive:string:greater
 (let recursive:string:greater (lambda (do Atom)))
 ; 1 string:greater?
@@ -1309,7 +1309,7 @@
 ; 1 string:upper n
 (let n Atom)
 ; 1 string:upper recursive:string:upper 129 current-char
-(let current-char Any)
+(let current-char Unknown)
 ; 1 string:upper recursive:string:upper
 (let recursive:string:upper (lambda Atom (do Atom)))
 ; 1 string:upper
@@ -1319,7 +1319,7 @@
 ; 1 string:lower n
 (let n Atom)
 ; 1 string:lower recursive:string:lower 130 current-char
-(let current-char Any)
+(let current-char Unknown)
 ; 1 string:lower recursive:string:lower
 (let recursive:string:lower (lambda Atom (do Atom)))
 ; 1 string:lower
@@ -1369,29 +1369,29 @@
 ; 1 new:binary-tree
 (let new:binary-tree (lambda Unknown (do Collection)))
 ; 1 binary-tree:left
-(let binary-tree:left (lambda Collection (do Any)))
+(let binary-tree:left (lambda Collection (do Unknown)))
 ; 1 binary-tree:right
-(let binary-tree:right (lambda Collection (do Any)))
+(let binary-tree:right (lambda Collection (do Unknown)))
 ; 1 binary-tree:left!
 (let binary-tree:left! (lambda Collection Unknown (do Collection)))
 ; 1 binary-tree:right!
 (let binary-tree:right! (lambda Collection Unknown (do Collection)))
 ; 1 binary-tree:value
-(let binary-tree:value (lambda Collection (do Any)))
+(let binary-tree:value (lambda Collection (do Unknown)))
 ; 1 set:index prime-num
 (let prime-num Atom)
 ; 1 set:index total
 (let total Collection)
 ; 1 set:index recursive:set:index letter
-(let letter Any)
+(let letter Unknown)
 ; 1 set:index recursive:set:index
-(let recursive:set:index (lambda Atom Atom (do Any)))
+(let recursive:set:index (lambda Atom Atom (do Unknown)))
 ; 1 set:index
-(let set:index (lambda Collection Collection (do Any)))
+(let set:index (lambda Collection Collection (do Unknown)))
 ; 1 set:add! idx
-(let idx Any)
+(let idx Unknown)
 ; 1 set:add! current
-(let current Any)
+(let current Unknown)
 ; 1 set:add! len
 (let len Atom)
 ; 1 set:add! index
@@ -1401,9 +1401,9 @@
 ; 1 set:add!
 (let set:add! (lambda Collection Collection (do Collection)))
 ; 1 set:remove! idx
-(let idx Any)
+(let idx Unknown)
 ; 1 set:remove! current
-(let current Any)
+(let current Unknown)
 ; 1 set:remove! len
 (let len Atom)
 ; 1 set:remove! index
@@ -1415,7 +1415,7 @@
 ; 1 set:has? idx
 (let idx Atom)
 ; 1 set:has? current
-(let current Any)
+(let current Unknown)
 ; 1 set:has?
 (let set:has? (lambda Collection Collection (do Atom)))
 ; 1 set:exists?
@@ -1457,9 +1457,9 @@
 ; 1 map:values
 (let map:values (lambda Collection (do Collection)))
 ; 1 map:set! idx
-(let idx Any)
+(let idx Unknown)
 ; 1 map:set! current
-(let current Any)
+(let current Unknown)
 ; 1 map:set! len
 (let len Atom)
 ; 1 map:set! index
@@ -1469,9 +1469,9 @@
 ; 1 map:set!
 (let map:set! (lambda Collection Collection Unknown (do Collection)))
 ; 1 map:remove! idx
-(let idx Any)
+(let idx Unknown)
 ; 1 map:remove! current
-(let current Any)
+(let current Unknown)
 ; 1 map:remove! len
 (let len Atom)
 ; 1 map:remove! index
@@ -1487,7 +1487,7 @@
 ; 1 map:get idx
 (let idx Atom)
 ; 1 map:get 149 current
-(let current Any)
+(let current Unknown)
 ; 1 map:get 149 found-index
 (let found-index Atom)
 ; 1 map:get
@@ -1495,7 +1495,7 @@
 ; 1 map:get-option idx
 (let idx Atom)
 ; 1 map:get-option 151 current
-(let current Any)
+(let current Unknown)
 ; 1 map:get-option 151 index
 (let index Atom)
 ; 1 map:get-option
@@ -1517,15 +1517,15 @@
 ; 1 doubly-linked-list:next!
 (let doubly-linked-list:next! (lambda Collection Collection (do Collection)))
 ; 1 doubly-linked-list:prev
-(let doubly-linked-list:prev (lambda Collection (do Any)))
+(let doubly-linked-list:prev (lambda Collection (do Unknown)))
 ; 1 doubly-linked-list:next
-(let doubly-linked-list:next (lambda Collection (do Any)))
+(let doubly-linked-list:next (lambda Collection (do Unknown)))
 ; 1 doubly-linked-list:value
-(let doubly-linked-list:value (lambda Collection (do Any)))
+(let doubly-linked-list:value (lambda Collection (do Unknown)))
 ; 1 var:def
 (let var:def (lambda Unknown (do Collection)))
 ; 1 var:get
-(let var:get (lambda Collection (do Any)))
+(let var:get (lambda Collection (do Unknown)))
 ; 1 var:set!
 (let var:set! (lambda Collection Unknown (do Collection)))
 ; 1 var:del!
@@ -1537,13 +1537,13 @@
 ; 1 var:decrement!
 (let var:decrement! (lambda Collection (do Collection)))
 ; 1 var:increment-and-get!
-(let var:increment-and-get! (lambda Collection (do Any)))
+(let var:increment-and-get! (lambda Collection (do Unknown)))
 ; 1 var:decrement-and-get!
-(let var:decrement-and-get! (lambda Collection (do Any)))
+(let var:decrement-and-get! (lambda Collection (do Unknown)))
 ; 1 bool:def
 (let bool:def (lambda Unknown (do Collection)))
 ; 1 bool:get
-(let bool:get (lambda Collection (do Any)))
+(let bool:get (lambda Collection (do Unknown)))
 ; 1 bool:set!
 (let bool:set! (lambda Collection Unknown (do Collection)))
 ; 1 bool:toggle!
@@ -1587,17 +1587,17 @@
 ; 1 brray:get index
 (let index Atom)
 ; 1 brray:get
-(let brray:get (lambda Collection Atom (do Any)))
+(let brray:get (lambda Collection Atom (do Unknown)))
 ; 1 brray:set! offset
 (let offset Atom)
 ; 1 brray:set!
 (let brray:set! (lambda Collection Atom Unknown (do Collection)))
 ; 1 brray:add-to-left! c
-(let c Any)
+(let c Unknown)
 ; 1 brray:add-to-left!
 (let brray:add-to-left! (lambda Collection Unknown (do Collection)))
 ; 1 brray:add-to-right! c
-(let c Any)
+(let c Unknown)
 ; 1 brray:add-to-right!
 (let brray:add-to-right! (lambda Collection Unknown (do Collection)))
 ; 1 brray:remove-from-left! len
@@ -1611,7 +1611,7 @@
 ; 1 brray:iter recursive:brray:iter
 (let recursive:brray:iter (lambda Atom Atom (do Atom)))
 ; 1 brray:iter
-(let brray:iter (lambda Collection (lambda Any (do Unknown)) (do Atom)))
+(let brray:iter (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; 1 brray:map result
 (let result Collection)
 ; 1 brray:map len
@@ -1623,7 +1623,7 @@
 ; 1 brray:map recursive:right:brray:map
 (let recursive:right:brray:map (lambda Atom Atom (do Atom)))
 ; 1 brray:map
-(let brray:map (lambda Collection (lambda Any (do Unknown)) (do Collection)))
+(let brray:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 brray:balance?
 (let brray:balance? (lambda Collection (do Atom)))
 ; 1 brray:balance! 162 initial
@@ -1645,17 +1645,17 @@
 ; 1 brray:tail!
 (let brray:tail! (lambda Collection (do Collection)))
 ; 1 brray:first
-(let brray:first (lambda Collection (do Any)))
+(let brray:first (lambda Collection (do Unknown)))
 ; 1 brray:last
-(let brray:last (lambda Collection (do Any)))
+(let brray:last (lambda Collection (do Unknown)))
 ; 1 brray:pop-right! last
-(let last Any)
+(let last Unknown)
 ; 1 brray:pop-right!
-(let brray:pop-right! (lambda Collection (do Any)))
+(let brray:pop-right! (lambda Collection (do Unknown)))
 ; 1 brray:pop-left! first
-(let first Any)
+(let first Unknown)
 ; 1 brray:pop-left!
-(let brray:pop-left! (lambda Collection (do Any)))
+(let brray:pop-left! (lambda Collection (do Unknown)))
 ; 1 brray:rotate-left! N
 (let N Atom)
 ; 1 brray:rotate-left! recursive:brray:rotate-left!
@@ -1697,7 +1697,7 @@
 ; 1 queue:dequeue!
 (let queue:dequeue! (lambda Collection (do Collection)))
 ; 1 queue:peek
-(let queue:peek (lambda Collection (do Any)))
+(let queue:peek (lambda Collection (do Unknown)))
 ; 1 stack:empty?
 (let stack:empty? (lambda Collection (do Atom)))
 ; 1 stack:not-empty?
@@ -1709,7 +1709,7 @@
 ; 1 stack:pop!
 (let stack:pop! (lambda Collection (do Collection)))
 ; 1 stack:peek
-(let stack:peek (lambda Collection (do Any)))
+(let stack:peek (lambda Collection (do Unknown)))
 ; 1 time:add-seconds
 (let time:add-seconds (lambda Atom Atom (do Atom)))
 ; 1 time:add-minutes
@@ -1735,11 +1735,11 @@
 ; 1 time:sub-years
 (let time:sub-years (lambda Atom Atom (do Atom)))
 ; 1 date:year
-(let date:year (lambda Collection (do Any)))
+(let date:year (lambda Collection (do Unknown)))
 ; 1 date:month
-(let date:month (lambda Collection (do Any)))
+(let date:month (lambda Collection (do Unknown)))
 ; 1 date:day
-(let date:day (lambda Collection (do Any)))
+(let date:day (lambda Collection (do Unknown)))
 ; 1 date:month-day
 (let date:month-day (lambda Collection (do Unknown)))
 ; 1 date:year-month
@@ -1773,7 +1773,7 @@
 ; 1 heap:top
 (let heap:top Atom)
 ; 1 heap:greater?
-(let heap:greater? (lambda Collection Atom Atom (lambda Any Any (do Unknown)) (do Atom)))
+(let heap:greater? (lambda Collection Atom Atom (lambda Unknown Unknown (do Unknown)) (do Atom)))
 ; 1 heap:sift-up! node
 (let node Collection)
 ; 1 heap:sift-up! recursive:heap:sift-up!
@@ -1789,7 +1789,7 @@
 ; 1 heap:sift-down!
 (let heap:sift-down! (lambda Collection Unknown (do Atom)))
 ; 1 heap:peek
-(let heap:peek (lambda Collection (do Any)))
+(let heap:peek (lambda Collection (do Unknown)))
 ; 1 heap:push!
 (let heap:push! (lambda Collection Unknown Unknown (do Collection)))
 ; 1 heap:pop! bottom
@@ -1809,7 +1809,7 @@
 ; 1 from:array->heap
 (let from:array->heap (lambda Collection Unknown (do Collection)))
 ; 1 optimization:tail-call-loop
-(let optimization:tail-call-loop (lambda Collection (do Any)))
+(let optimization:tail-call-loop (lambda Collection (do Unknown)))
 ; 1 optimization:tail-calls-0
 (let optimization:tail-calls-0 (lambda (lambda (do Unknown)) (do Abstraction)))
 ; 1 optimization:tail-calls-1
@@ -1825,17 +1825,17 @@
 ; 1 option:value?
 (let option:value? (lambda Collection (do Atom)))
 ; 1 option:value
-(let option:value (lambda Collection (do Any)))
+(let option:value (lambda Collection (do Unknown)))
 ; 1 option:throw-error
-(let option:throw-error (lambda Collection (do Any)))
+(let option:throw-error (lambda Collection (do Unknown)))
 ; 1 option:error
-(let option:error (lambda Collection (do Any)))
+(let option:error (lambda Collection (do Unknown)))
 ; 1 array:get
-(let array:get (lambda Collection Atom (do Any)))
+(let array:get (lambda Collection Atom (do Unknown)))
 ; 1 array:length
 (let array:length (lambda Collection (do Atom)))
 ; 1 array:set!
-(let array:set! (lambda Collection Atom Any (do Collection)))
+(let array:set! (lambda Collection Atom Unknown (do Collection)))
 ; 1 array:remove-last!
 (let array:remove-last! (lambda Collection (do Collection)))
 ; 1 del!
@@ -1847,9 +1847,9 @@
 ; 1 not-equal?
 (let not-equal? (lambda Collection Collection (do Atom)))
 ; 1 array:at
-(let array:at (lambda Collection Atom (do Any)))
+(let array:at (lambda Collection Atom (do Unknown)))
 ; 1 array:head
-(let array:head (lambda Collection (do Any)))
+(let array:head (lambda Collection (do Unknown)))
 ; 1 array:tail bounds
 (let bounds Atom)
 ; 1 array:tail recursive:array:tail
@@ -1857,7 +1857,7 @@
 ; 1 array:tail
 (let array:tail (lambda Collection (do Unknown)))
 ; 1 array:car
-(let array:car (lambda Collection (do Any)))
+(let array:car (lambda Collection (do Unknown)))
 ; 1 array:cdr
 (let array:cdr (lambda Collection (do Unknown)))
 ; 1 array:for-range
@@ -1875,7 +1875,7 @@
 ; 1 match:number? negative?
 (let negative? Atom)
 ; 1 match:number? digits
-(let digits Any)
+(let digits Unknown)
 ; 1 match:number?
 (let match:number? (lambda Collection (do Atom)))
 ; 1 match:digit?
@@ -1895,7 +1895,7 @@
 ; 1 ast:leaf
 (let ast:leaf (lambda Unknown Unknown (do Collection)))
 ; 1 ast:leaf? c
-(let c Any)
+(let c Unknown)
 ; 1 ast:leaf?
 (let ast:leaf? (lambda Collection (do Atom)))
 ; 1 from:chars->ast tree
@@ -1907,41 +1907,41 @@
 ; 1 from:chars->ast acc
 (let acc Collection)
 ; 1 from:chars->ast 175 cursor
-(let cursor Any)
+(let cursor Unknown)
 ; 1 from:chars->ast 175 176 temp
 (let temp Collection)
 ; 1 from:chars->ast 175 176 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast 175 177 token
 (let token Collection)
 ; 1 from:chars->ast 175 177 178 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast
 (let from:chars->ast (lambda Collection (do Collection)))
 ; 1 special-form:let name
-(let name Any)
+(let name Unknown)
 ; 1 special-form:let val
-(let val Any)
+(let val Unknown)
 ; 1 special-form:let
-(let special-form:let (lambda Collection Collection (do Any)))
+(let special-form:let (lambda Collection Collection (do Unknown)))
 ; 1 special-form:lambda params
 (let params Collection)
 ; 1 special-form:lambda body
-(let body Any)
+(let body Unknown)
 ; 1 special-form:lambda 179 local
 (let local Collection)
 ; 1 special-form:lambda
 (let special-form:lambda (lambda Collection Unknown (do Abstraction)))
 ; 1 special-form:apply application
-(let application (lambda Unknown Collection (do Any)))
+(let application (lambda Unknown Collection (do Unknown)))
 ; 1 special-form:apply
-(let special-form:apply (lambda Collection Collection (do Any)))
+(let special-form:apply (lambda Collection Collection (do Unknown)))
 ; 1 special-form:array
 (let special-form:array (lambda Collection Collection (do Collection)))
 ; 1 special-form:length
 (let special-form:length (lambda Unknown Unknown (do Atom)))
 ; 1 special-form:get
-(let special-form:get (lambda Unknown Unknown (do Any)))
+(let special-form:get (lambda Unknown Unknown (do Unknown)))
 ; 1 special-form:set!
 (let special-form:set! (lambda Unknown Unknown (do Collection)))
 ; 1 special-form:pop!
@@ -1979,7 +1979,7 @@
 ; 1 special-form:bit-wise-not
 (let special-form:bit-wise-not (lambda Unknown Unknown (do Atom)))
 ; 1 special-form:do
-(let special-form:do (lambda Collection Collection (do Any)))
+(let special-form:do (lambda Collection Collection (do Unknown)))
 ; 1 special-form:if
 (let special-form:if (lambda Collection Collection (do Collection)))
 ; 1 special-form:and?
@@ -1987,7 +1987,7 @@
 ; 1 special-form:or?
 (let special-form:or? (lambda Unknown Unknown (do Atom)))
 ; 1 special-form:throw
-(let special-form:throw (lambda Unknown Unknown (do Any)))
+(let special-form:throw (lambda Unknown Unknown (do Unknown)))
 ; 1 special-form:loop
 (let special-form:loop (lambda Collection Collection (do Atom)))
 ; 1 special-form:atom?
@@ -1997,9 +1997,9 @@
 ; 1 keywords
 (let keywords Collection)
 ; 1 prototype:get head
-(let head Any)
+(let head Unknown)
 ; 1 prototype:get tail
-(let tail Any)
+(let tail Unknown)
 ; 1 prototype:get
 (let prototype:get (lambda Collection Collection (do Collection)))
 ; 1 prototype:create!
@@ -2007,31 +2007,31 @@
 ; 1 evaluate expression
 (let expression Collection)
 ; 1 evaluate 183 head
-(let head Any)
+(let head Unknown)
 ; 1 evaluate 183 tail
 (let tail Unknown)
 ; 1 evaluate 183 pattern
-(let pattern Any)
+(let pattern Unknown)
 ; 1 evaluate
 (let evaluate (lambda Collection Collection (do Collection)))
 ; 1 ast:stringify 184 type
-(let type Any)
+(let type Unknown)
 ; 1 ast:stringify 184 value
-(let value Any)
+(let value Unknown)
 ; 1 ast:stringify
 (let ast:stringify (lambda Collection (do Collection)))
 ; 1 ast:get-name
-(let ast:get-name (lambda Collection (do Any)))
+(let ast:get-name (lambda Collection (do Unknown)))
 ; 1 ast:traverse expression
 (let expression Collection)
 ; 1 ast:traverse 185 head
-(let head Any)
+(let head Unknown)
 ; 1 ast:traverse 185 tail
 (let tail Collection)
 ; 1 ast:traverse 185 pattern
-(let pattern Any)
+(let pattern Unknown)
 ; 1 ast:traverse
-(let ast:traverse (lambda Collection Unknown (lambda Any (do Unknown)) (lambda Any (do Unknown)) (lambda Any Collection (do Unknown)) (do Collection)))
+(let ast:traverse (lambda Collection Unknown (lambda Unknown (do Unknown)) (lambda Unknown (do Unknown)) (lambda Unknown Collection (do Unknown)) (do Collection)))
 ; 1 lisp:parse
 (let lisp:parse (lambda Unknown (do Collection)))
 ; 1 lisp:eval
@@ -2101,7 +2101,7 @@
 ; 1 math:combinations math:combinations lambda::annonymous::2::219
 (let lambda::annonymous::2::219 (lambda Atom (do Atom)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::220
-(let lambda::annonymous::2::220 (lambda Atom (do Any)))
+(let lambda::annonymous::2::220 (lambda Atom (do Unknown)))
 ; 1 math:permutations 2 2 lambda::annonymous::1::221
 (let lambda::annonymous::1::221 (lambda Unknown Atom (do Atom)))
 ; 1 math:permutations 2 2 lambda::annonymous::1::222
@@ -2115,9 +2115,9 @@
 ; 1 math:combinations math:combinations lambda::annonymous::2::230
 (let lambda::annonymous::2::230 (lambda Atom (do Atom)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::231
-(let lambda::annonymous::2::231 (lambda Atom (do Any)))
+(let lambda::annonymous::2::231 (lambda Atom (do Unknown)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::233
-(let lambda::annonymous::2::233 (lambda Atom (do Any)))
+(let lambda::annonymous::2::233 (lambda Atom (do Unknown)))
 ; 1 math:summation math:summation lambda::annonymous::1::235
 (let lambda::annonymous::1::235 (lambda Atom Atom (do Atom)))
 ; 1 math:product math:product lambda::annonymous::1::237
@@ -2161,7 +2161,7 @@
 ; 1 array:binary-search recursive:array:binary-search 279 index
 (let index Atom)
 ; 1 array:binary-search recursive:array:binary-search 279 current
-(let current Any)
+(let current Unknown)
 ; 1 array:join array:join lambda::annonymous::1::281
 (let lambda::annonymous::1::281 (lambda Unknown Collection (do Collection)))
 ; 1 array:chars array:chars lambda::annonymous::1::283
@@ -2185,9 +2185,9 @@
 ; 1 array:flat flatten flatten lambda::annonymous::1::301
 (let lambda::annonymous::1::301 (lambda Collection Collection (do Collection)))
 ; 1 array:sort 302 pivot
-(let pivot Any)
+(let pivot Unknown)
 ; 1 array:sort 302 recursive:array:sort current
-(let current Any)
+(let current Unknown)
 ; 1 array:sort 302 recursive:array:sort predicate
 (let predicate Atom)
 ; 1 array:sort 302 recursive:array:sort left
@@ -2199,9 +2199,9 @@
 ; 1 array:sort 302 sorted
 (let sorted Collection)
 ; 1 array:sort 302 left
-(let left Any)
+(let left Unknown)
 ; 1 array:sort 302 right
-(let right Any)
+(let right Unknown)
 ; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::304
 (let lambda::annonymous::1::304 (lambda Atom Atom (do Atom)))
 ; 1 array:sorted-descending? array:sorted-descending? lambda::annonymous::1::306
@@ -2213,13 +2213,13 @@
 ; 1 array:adjacent-difference 311 recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Atom Collection (do Atom)))
 ; 1 array:partition 314 x
-(let x Any)
+(let x Unknown)
 ; 1 array:partition 314 i
-(let i Any)
+(let i Unknown)
 ; 1 array:partition array:partition lambda::annonymous::1::315 x
-(let x Any)
+(let x Unknown)
 ; 1 array:partition array:partition lambda::annonymous::1::315 i
-(let i Any)
+(let i Unknown)
 ; 1 array:partition array:partition lambda::annonymous::1::315
 (let lambda::annonymous::1::315 (lambda Collection Collection (do Collection)))
 ; 1 array:ranges array:ranges lambda::annonymous::1::317
@@ -2355,9 +2355,9 @@
 ; 1 string:trim-right string:trim-right lambda::annonymous::1::416
 (let lambda::annonymous::1::416 (lambda Collection Atom (do Atom)))
 ; 1 string:upper recursive:string:upper 418 current-char
-(let current-char Any)
+(let current-char Unknown)
 ; 1 string:lower recursive:string:lower 419 current-char
-(let current-char Any)
+(let current-char Unknown)
 ; 1 new:map new:map lambda::annonymous::1::421
 (let lambda::annonymous::1::421 (lambda Collection Unknown Atom (do Collection)))
 ; 1 new:set new:set lambda::annonymous::1::423
@@ -2401,25 +2401,25 @@
 ; 1 from:array->heap from:array->heap lambda::annonymous::1::459
 (let lambda::annonymous::1::459 (lambda Unknown (do Collection)))
 ; 1 from:chars->ast 460 cursor
-(let cursor Any)
+(let cursor Unknown)
 ; 1 from:chars->ast 460 461 temp
 (let temp Collection)
 ; 1 from:chars->ast 460 461 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast 460 462 token
 (let token Collection)
 ; 1 from:chars->ast 460 462 463 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::464 cursor
-(let cursor Any)
+(let cursor Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::464 465 temp
 (let temp Collection)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::464 465 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::464 466 token
 (let token Collection)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::464 466 467 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::464
 (let lambda::annonymous::1::464 (lambda Atom (do Atom)))
 ; 1 ast:traverse 185 185 lambda::annonymous::1::469
@@ -2435,25 +2435,25 @@
 ; 1 special-form:do special-form:do lambda::annonymous::1::475
 (let lambda::annonymous::1::475 (lambda Collection Unknown (do Collection)))
 ; 1 special-form:array special-form:array lambda::annonymous::1::477
-(let lambda::annonymous::1::477 (lambda Unknown (do Any)))
+(let lambda::annonymous::1::477 (lambda Unknown (do Unknown)))
 ; 1 special-form:array special-form:array lambda::annonymous::1::478
-(let lambda::annonymous::1::478 (lambda Unknown (do Any)))
+(let lambda::annonymous::1::478 (lambda Unknown (do Unknown)))
 ; 1 special-form:array special-form:array lambda::annonymous::1::479
-(let lambda::annonymous::1::479 (lambda Unknown (do Any)))
+(let lambda::annonymous::1::479 (lambda Unknown (do Unknown)))
 ; 1 special-form:lambda 179 179 lambda::annonymous::1::480
 (let lambda::annonymous::1::480 (lambda Atom (do Collection)))
 ; 1 special-form:lambda 179 179 lambda::annonymous::1::481
 (let lambda::annonymous::1::481 (lambda Atom (do Collection)))
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::482 cursor
-(let cursor Any)
+(let cursor Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::482 483 temp
 (let temp Collection)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::482 483 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::482 484 token
 (let token Collection)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::482 484 485 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::482
 (let lambda::annonymous::1::482 (lambda Atom (do Atom)))
 ; 1 match:number? match:number? lambda::annonymous::1::487
@@ -2477,7 +2477,7 @@
 ; 1 map:has? map:has? lambda::annonymous::1::499
 (let lambda::annonymous::1::499 (lambda Collection (do Atom)))
 ; 1 map:has? map:has? lambda::annonymous::1::500
-(let lambda::annonymous::1::500 (lambda Collection (do Any)))
+(let lambda::annonymous::1::500 (lambda Collection (do Unknown)))
 ; 1 map:get-option 151 151 lambda::annonymous::1::502
 (let lambda::annonymous::1::502 (lambda Collection (do Atom)))
 ; 1 map:get-option 151 151 lambda::annonymous::1::503
@@ -2565,13 +2565,13 @@
 ; 1 string:equal? string:equal? lambda::annonymous::1::565
 (let lambda::annonymous::1::565 (lambda Collection (do Atom)))
 ; 1 string:split 566 prev
-(let prev Any)
+(let prev Unknown)
 ; 1 string:split string:split lambda::annonymous::1::567 prev
-(let prev Any)
+(let prev Unknown)
 ; 1 string:split string:split lambda::annonymous::1::567
 (let lambda::annonymous::1::567 (lambda Collection Unknown (do Collection)))
 ; 1 string:split string:split lambda::annonymous::1::568 prev
-(let prev Any)
+(let prev Unknown)
 ; 1 string:split string:split lambda::annonymous::1::568
 (let lambda::annonymous::1::568 (lambda Collection Unknown (do Collection)))
 ; 1 array:merge array:merge lambda::annonymous::1::570
@@ -2603,11 +2603,11 @@
 ; 1 array:equal? array:equal? lambda::annonymous::1::588
 (let lambda::annonymous::1::588 (lambda Atom (do Atom)))
 ; 1 array:unique array:unique lambda::annonymous::1::590 index
-(let index Any)
+(let index Unknown)
 ; 1 array:unique array:unique lambda::annonymous::1::590
 (let lambda::annonymous::1::590 (lambda Collection (do Atom)))
 ; 1 array:unique array:unique lambda::annonymous::1::591 index
-(let index Any)
+(let index Unknown)
 ; 1 array:unique array:unique lambda::annonymous::1::591
 (let lambda::annonymous::1::591 (lambda Collection (do Atom)))
 ; 1 array:unique array:unique lambda::annonymous::1::592
@@ -2643,15 +2643,15 @@
 ; 1 list:length list:length lambda::annonymous::1::613
 (let lambda::annonymous::1::613 (lambda Atom Unknown (do Atom)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::615
-(let lambda::annonymous::1::615 (lambda Collection (do Any)))
+(let lambda::annonymous::1::615 (lambda Collection (do Unknown)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::616
-(let lambda::annonymous::1::616 (lambda Collection (do Any)))
+(let lambda::annonymous::1::616 (lambda Collection (do Unknown)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::617
-(let lambda::annonymous::1::617 (lambda Collection (do Any)))
+(let lambda::annonymous::1::617 (lambda Collection (do Unknown)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::619
-(let lambda::annonymous::1::619 (lambda Collection (do Any)))
+(let lambda::annonymous::1::619 (lambda Collection (do Unknown)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::620
-(let lambda::annonymous::1::620 (lambda Collection (do Any)))
+(let lambda::annonymous::1::620 (lambda Collection (do Unknown)))
 ; 1 math:product math:product lambda::annonymous::1::621
 (let lambda::annonymous::1::621 (lambda Atom Atom (do Atom)))
 ; 1 math:product math:product lambda::annonymous::1::622
@@ -2663,7 +2663,7 @@
 ; 1 math:combinations math:combinations lambda::annonymous::2::626
 (let lambda::annonymous::2::626 (lambda Atom (do Atom)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::628
-(let lambda::annonymous::2::628 (lambda Atom (do Any)))
+(let lambda::annonymous::2::628 (lambda Atom (do Unknown)))
 ; 1 math:permutations 2 2 lambda::annonymous::1::629
 (let lambda::annonymous::1::629 (lambda Unknown Atom (do Atom)))
 ; 1 math:permutations math:permutations lambda::annonymous::1::630
@@ -2675,9 +2675,9 @@
 ; 1 math:combinations math:combinations lambda::annonymous::2::636
 (let lambda::annonymous::2::636 (lambda Atom (do Atom)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::638
-(let lambda::annonymous::2::638 (lambda Atom (do Any)))
+(let lambda::annonymous::2::638 (lambda Atom (do Unknown)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::640
-(let lambda::annonymous::2::640 (lambda Atom (do Any)))
+(let lambda::annonymous::2::640 (lambda Atom (do Unknown)))
 ; 1 math:summation math:summation lambda::annonymous::1::641
 (let lambda::annonymous::1::641 (lambda Atom Atom (do Atom)))
 ; 1 list:length list:length lambda::annonymous::1::642
@@ -2705,15 +2705,15 @@
 ; 1 map:with! map:with! lambda::annonymous::1::660
 (let lambda::annonymous::1::660 (lambda Collection Unknown Atom (do Collection)))
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::661 cursor
-(let cursor Any)
+(let cursor Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::661 662 temp
 (let temp Collection)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::661 662 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::661 663 token
 (let token Collection)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::661 663 664 h
-(let h Any)
+(let h Unknown)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::661
 (let lambda::annonymous::1::661 (lambda Atom (do Atom)))
 ; 1 map:with! map:with! lambda::annonymous::1::666
@@ -2729,7 +2729,7 @@
 ; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::674
 (let lambda::annonymous::1::674 (lambda Unknown Atom (do Atom)))
 ; 1 array:unique array:unique lambda::annonymous::1::676 index
-(let index Any)
+(let index Unknown)
 ; 1 array:unique array:unique lambda::annonymous::1::676
 (let lambda::annonymous::1::676 (lambda Collection (do Atom)))
 ; 1 array:unique array:unique lambda::annonymous::1::677
@@ -2741,15 +2741,15 @@
 ; 1 list:get list:get lambda::annonymous::1::683
 (let lambda::annonymous::1::683 (lambda Collection (do Atom)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::685
-(let lambda::annonymous::1::685 (lambda Collection (do Any)))
+(let lambda::annonymous::1::685 (lambda Collection (do Unknown)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::687
-(let lambda::annonymous::1::687 (lambda Collection (do Any)))
+(let lambda::annonymous::1::687 (lambda Collection (do Unknown)))
 ; 1 math:combinations math:combinations lambda::annonymous::2::689
 (let lambda::annonymous::2::689 (lambda Atom (do Atom)))
 ; 1 math:combinations math:combinations lambda::annonymous::2::690
 (let lambda::annonymous::2::690 (lambda Atom (do Atom)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::692
-(let lambda::annonymous::2::692 (lambda Atom (do Any)))
+(let lambda::annonymous::2::692 (lambda Atom (do Unknown)))
 ; 1 math:permutations 2 2 lambda::annonymous::1::693
 (let lambda::annonymous::1::693 (lambda Unknown Atom (do Atom)))
 ; 1 math:permutations math:permutations lambda::annonymous::1::694
@@ -2761,9 +2761,9 @@
 ; 1 math:combinations math:combinations lambda::annonymous::2::700
 (let lambda::annonymous::2::700 (lambda Atom (do Atom)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::702
-(let lambda::annonymous::2::702 (lambda Atom (do Any)))
+(let lambda::annonymous::2::702 (lambda Atom (do Unknown)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::704
-(let lambda::annonymous::2::704 (lambda Atom (do Any)))
+(let lambda::annonymous::2::704 (lambda Atom (do Unknown)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::706
 (let lambda::annonymous::1::706 (lambda Atom (do Collection)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::708
