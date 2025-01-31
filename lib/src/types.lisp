@@ -222,10 +222,14 @@
 (let temp Unknown)
 ; 1 pair:swap!
 (let pair:swap! (lambda Collection (do Collection)))
+; 1 pair:unzip
+(let pair:unzip (lambda Unknown (do Collection)))
 ; 1 pair:zip
 (let pair:zip (lambda Collection (do Unknown)))
 ; 1 pair:list-zip
 (let pair:list-zip (lambda Collection (do Collection)))
+; 1 pair:list-unzip
+(let pair:list-unzip (lambda Collection (do Collection)))
 ; 1 math:range recursive:math:range
 (let recursive:math:range (lambda Collection Atom (do Unknown)))
 ; 1 math:range

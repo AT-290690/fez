@@ -123,8 +123,10 @@
  (let temp (array:first x))
  (set! x 0 (array:second x))
  (set! x 1 temp))))
+(let pair:unzip (lambda xs (array:unzip xs)))
 (let pair:zip (lambda xs (array:zip (array:first xs) (array:second xs))))
 (let pair:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
+(let pair:list-unzip (lambda xs (list:unzip xs)))
 
 (let math:range (lambda start end (do
                           (let recursive:math:range (lambda out count
