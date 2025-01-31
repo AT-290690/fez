@@ -55,7 +55,7 @@
     (let fit-sum (lambda pairs (do 
         (|> pairs (array:map (lambda [lock key .] 
                   (|> (array:zip lock key) 
-                    (array:map (lambda x (- M (tuple:add x)))) 
+                    (array:map (lambda x (- M (pair:add x)))) 
                     (array:some? (lambda a (< a 0))) 
                     (not)))) (math:summation)))))
     (let A 0)

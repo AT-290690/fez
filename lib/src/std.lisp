@@ -113,18 +113,18 @@
 (let math:max-safe-integer 9007199254740991)
 (let math:decimal-scaling 1000000000000)
 
-(let tuple:apply (lambda x cb (cb (array:first x) (array:second x))))
-(let tuple:add (lambda x (+ (array:first x) (array:second x))))
-(let tuple:subtract (lambda x (- (array:first x) (array:second x))))
-(let tuple:multiply (lambda x (* (array:first x) (array:second x))))
-(let tuple:divide (lambda x (/ (array:first x) (array:second x))))
-(let tuple:swap (lambda x (array (array:second x) (array:first x))))
-(let tuple:swap! (lambda x (do
+(let pair:apply (lambda x cb (cb (array:first x) (array:second x))))
+(let pair:add (lambda x (+ (array:first x) (array:second x))))
+(let pair:subtract (lambda x (- (array:first x) (array:second x))))
+(let pair:multiply (lambda x (* (array:first x) (array:second x))))
+(let pair:divide (lambda x (/ (array:first x) (array:second x))))
+(let pair:swap (lambda x (array (array:second x) (array:first x))))
+(let pair:swap! (lambda x (do
  (let temp (array:first x))
  (set! x 0 (array:second x))
  (set! x 1 temp))))
-(let tuple:zip (lambda xs (array:zip (array:first xs) (array:second xs))))
-(let tuple:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
+(let pair:zip (lambda xs (array:zip (array:first xs) (array:second xs))))
+(let pair:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
 
 (let math:range (lambda start end (do
                           (let recursive:math:range (lambda out count
@@ -363,7 +363,7 @@
   (let enumeration (lambda (do (let i (+ (var:get I) 1)) (var:set! I i) i))))))
 (let math:palindrome? (lambda xs (|> xs
   (array:zip (array:reverse xs))
-  (array:map tuple:subtract)
+  (array:map pair:subtract)
   (array:every? math:zero?))))
 (let math:max-sub-array-sum (lambda xs (|> xs
         (array:fold (lambda a b (do
@@ -811,7 +811,7 @@
                 (do  
                     (array:push! a (* (var:get current-sign) (from:char->digit ch))) 
                     (var:set! current-sign 1)))
-                a)) [])))))
+                a)) []) (Collection)))))
 (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 (let from:digits->integer (lambda digits (do
     (let recursive:from:digits->integer (lambda i num base (if (> (length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))

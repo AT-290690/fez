@@ -478,8 +478,8 @@ ZZZ=ZZZ,ZZZ")
                           input
                           (array:unzip)
                           (array:map (curry:two array:sort >))
-                          (tuple:zip)
-                          (array:map tuple:subtract)
+                          (pair:zip)
+                          (array:map pair:subtract)
                           (array:map math:abs)
                           (math:summation))))
                         
@@ -689,8 +689,8 @@ Assigning predicate (ending in ?) variable (x3?) to another variable which is no
                                 input
                                 (array:unzip)
                                 (array:map (curry:two array:sort > 1))
-                                (tuple:zip)
-                                (array:map tuple:subtract)
+                                (pair:zip)
+                                (array:map pair:subtract)
                                 (array:map math:abs)
                                 (math:summation))))
                               
@@ -983,7 +983,7 @@ Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x
 (array:get) is trying to access undefined variable (xs) at argument (0) (array:get xs half) (check #20)
 (array:get) is trying to access undefined variable (xs) at argument (0) (array:get xs (- half 1)) (check #20)
 (-) is trying to access undefined variable (y3) at argument (1) (- y2 y3) (check #20)
-(array:map) is trying to access undefined variable (tuple:subtract) at argument (1) (array:map (array:zip xs (array:reverse xs)) tuple:subtract) (check #20)
+(array:map) is trying to access undefined variable (pair:subtract) at argument (1) (array:map (array:zip xs (array:reverse xs)) pair:subtract) (check #20)
 (array:map) is trying to access undefined variable (array:first) at argument (1) (array:map (array:select (array:zip (let sorted (array:sort xs (lambda a b (> a b)))) (math:sequence sorted)) (lambda x (do (let index (array:second x)) (or (not (> x 0)) (not (= (array:get sorted (- index 1)) (array:get sorted index))))))) array:first) (check #20)
 (array:map) is trying to access undefined variable (array:first) at argument (1) (array:map xs array:first) (check #20)
 (array:map) is trying to access undefined variable (array:second) at argument (1) (array:map xs array:second) (check #20)

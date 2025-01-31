@@ -2051,8 +2051,8 @@ matrix
                           input
                           (array:unzip)
                           (array:map (curry:binary array:sort >))
-                          (tuple:zip)
-                          (array:map tuple:subtract)
+                          (pair:zip)
+                          (array:map pair:subtract)
                           (array:map math:abs)
                           (math:summation))))
                         
@@ -2096,7 +2096,7 @@ matrix
 (let part1 (lambda input (|> input 
 (array:select (lambda line (and 
   (or (array:sorted-by? line (lambda a b (> a b))) (array:sorted-by? line (lambda a b (< a b)))) 
-  (array:every? (|> line (array:sliding-window 2) (array:map (lambda x (tuple:subtract x)))) (lambda x (or (= (math:abs x) 1) (= (math:abs x) 2) (= (math:abs x) 3)))))))
+  (array:every? (|> line (array:sliding-window 2) (array:map (lambda x (pair:subtract x)))) (lambda x (or (= (math:abs x) 1) (= (math:abs x) 2) (= (math:abs x) 3)))))))
 (length))))
 
 (let part2 (lambda input (|> input 
@@ -2124,7 +2124,7 @@ matrix
 (let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (array:map (lambda w (|> w (from:chars->digits) (from:digits->integer))))))))))
 
 (let part1 (lambda input (|> input (array:select (lambda line (do 
-  (let slice (|> line (array:zip (array:slice line 1 (length line))) (array:map (lambda x (tuple:subtract x)))))
+  (let slice (|> line (array:zip (array:slice line 1 (length line))) (array:map (lambda x (pair:subtract x)))))
   (or (array:every? slice (lambda x (and (>= x 1) (<= x 3)))) (array:every? slice (lambda x (and (<= x -1) (>= x -3))))))))
 (length))))
 
@@ -2217,7 +2217,7 @@ matrix
 (|> 
   zipped
   (list:unzip)
-  (tuple:list-zip)
+  (pair:list-zip)
   (list:map from:list->array)
   (from:list->array))`
       ),

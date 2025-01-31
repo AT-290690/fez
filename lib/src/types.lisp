@@ -206,26 +206,26 @@
 (let math:max-safe-integer Atom)
 ; 1 math:decimal-scaling
 (let math:decimal-scaling Atom)
-; 1 tuple:apply
-(let tuple:apply (lambda Collection (lambda Any Any (do Unknown)) (do Unknown)))
-; 1 tuple:add
-(let tuple:add (lambda Collection (do Atom)))
-; 1 tuple:subtract
-(let tuple:subtract (lambda Collection (do Atom)))
-; 1 tuple:multiply
-(let tuple:multiply (lambda Collection (do Atom)))
-; 1 tuple:divide
-(let tuple:divide (lambda Collection (do Atom)))
-; 1 tuple:swap
-(let tuple:swap (lambda Collection (do Collection)))
-; 1 tuple:swap! temp
+; 1 pair:apply
+(let pair:apply (lambda Collection (lambda Any Any (do Unknown)) (do Unknown)))
+; 1 pair:add
+(let pair:add (lambda Collection (do Atom)))
+; 1 pair:subtract
+(let pair:subtract (lambda Collection (do Atom)))
+; 1 pair:multiply
+(let pair:multiply (lambda Collection (do Atom)))
+; 1 pair:divide
+(let pair:divide (lambda Collection (do Atom)))
+; 1 pair:swap
+(let pair:swap (lambda Collection (do Collection)))
+; 1 pair:swap! temp
 (let temp Unknown)
-; 1 tuple:swap!
-(let tuple:swap! (lambda Collection (do Collection)))
-; 1 tuple:zip
-(let tuple:zip (lambda Collection (do Unknown)))
-; 1 tuple:list-zip
-(let tuple:list-zip (lambda Collection (do Collection)))
+; 1 pair:swap!
+(let pair:swap! (lambda Collection (do Collection)))
+; 1 pair:zip
+(let pair:zip (lambda Collection (do Unknown)))
+; 1 pair:list-zip
+(let pair:list-zip (lambda Collection (do Collection)))
 ; 1 math:range recursive:math:range
 (let recursive:math:range (lambda Collection Atom (do Unknown)))
 ; 1 math:range

@@ -9,7 +9,7 @@
 (let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (from:strings->integers)))))))
 
 (let part1 (lambda input (|> input (array:select (lambda line (do
-  (let slice (|> line (array:zip (array:slice line 1 (array:length line))) (array:map (lambda x (tuple:subtract x)))))
+  (let slice (|> line (array:zip (array:slice line 1 (array:length line))) (array:map (lambda x (pair:subtract x)))))
   (or (array:every? slice (lambda x (and (>= x 1) (<= x 3)))) (array:every? slice (lambda x (and (<= x -1) (>= x -3))))))))
 (length))))
 

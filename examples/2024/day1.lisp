@@ -19,8 +19,8 @@
                           input
                           (array:unzip)
                           (array:map (curry:two array:sort >))
-                          (tuple:zip)
-                          (array:map tuple:subtract)
+                          (pair:zip)
+                          (array:map pair:subtract)
                           (array:map math:abs)
                           (math:summation))))
                         
