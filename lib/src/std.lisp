@@ -213,8 +213,8 @@
 (let math:minimum (lambda xs (math:fold xs math:min (array:first xs))))
 (let math:maximum-index (lambda xs (array:second (array:enumerated-fold xs (lambda a x i (if (> x (array:first a)) (array x i) a)) (array (array:first xs) math:min-safe-integer)))))
 (let math:minimum-index (lambda xs (array:second (array:enumerated-fold xs (lambda a x i (if (< x (array:first a)) (array x i) a)) (array (array:first xs) math:max-safe-integer)))))
-(let math:max-length (lambda xs (array:fold xs (lambda a b (if (> (length b) a) (length b) a)) math:min-safe-integer)))
-(let math:min-length (lambda xs (array:fold xs (lambda a b (if (< (length b) a) (length b) a)) math:max-safe-integer)))
+(let math:max-length (lambda xs (array:reduce xs (lambda a b (if (> (length b) a) (length b) a)) math:min-safe-integer)))
+(let math:min-length (lambda xs (array:reduce xs (lambda a b (if (< (length b) a) (length b) a)) math:max-safe-integer)))
 (let math:increment (lambda i (+ i 1)))
 (let math:decrement (lambda i (- i 1)))
 (let math:floor (lambda n (| n 0)))
@@ -365,7 +365,7 @@
   ; where x is required answer,
   ; so adding 1 and dividing it by
   (>> (+ N4 1) 1))))
-(let math:cartesian-product (lambda a b (array:fold a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) [])))
+(let math:cartesian-product (lambda a b (array:transform a (lambda p x (array:merge! p (array:map b (lambda y (array x y))))) [])))
 (let math:fibonacci (lambda n (do 
     (let memoized:math:fibonacci (lambda n (if (< n 2) n (+ (memoized:math:fibonacci (- n 1)) (memoized:math:fibonacci (- n 2))))))
     (memoized:math:fibonacci n))))
@@ -377,7 +377,7 @@
   (array:map pair:subtract)
   (array:every? math:zero?))))
 (let math:max-sub-array-sum (lambda xs (|> xs
-        (array:fold (lambda a b (do
+        (array:transform (lambda a b (do
             (set! a 1 (math:max (+ (get a 1) b) b))
             (set! a 0 (math:max (get a 0) (get a 1)))
             a)) (array 0 (get xs 0)))
