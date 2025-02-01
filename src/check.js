@@ -238,8 +238,9 @@ const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
-const retry = (stats, stack, cb) => {
+const retry = (stats, stack, errors, cb) => {
   if (
+    errors.size === 0 &&
     (isUnknownNotAnyType(stats) || isUnknownNotAnyReturn(stats)) &&
     stats.retried < MAX_RETRY_DEFINITION
   ) {
@@ -247,8 +248,8 @@ const retry = (stats, stack, cb) => {
     stack.unshift(() => cb())
   }
 }
-const retryArgs = (stats, stack, cb) => {
-  if (stats.counter < MAX_ARGUMENT_RETRY) {
+const retryArgs = (stats, stack, errors, cb) => {
+  if (errors.size === 0 && stats.counter < MAX_ARGUMENT_RETRY) {
     stats.counter++
     stack.unshift(cb)
   }
@@ -487,7 +488,7 @@ export const typeCheck = (ast, error = true) => {
                 }) ||
                 isUnknownReturn(env[name][STATS])
               ) {
-                retry(env[name][STATS], stack, () => {
+                retry(env[name][STATS], stack, errors, () => {
                   checkReturnType({
                     stack,
                     exp,
@@ -937,7 +938,8 @@ export const typeCheck = (ast, error = true) => {
                                 getReturn(actual[STATS])
                               )}) (${stringifyArgs(exp)}) (check #782)`
                             )
-                          } else retry(actual[STATS], stack, () => match1())
+                          } else
+                            retry(actual[STATS], stack, errors, () => match1())
                         }
                         match1()
                         for (
@@ -965,7 +967,14 @@ export const typeCheck = (ast, error = true) => {
                                   getType(actual[STATS])
                                 )}) (${stringifyArgs(exp)}) (check #781)`
                               )
-                            else retry(actual[STATS], stack, () => match2())
+                            else
+                              retry(
+                                actual[STATS],
+                                stack,
+                                errors,
+
+                                () => match2()
+                              )
                           }
                           match2()
                         }
@@ -988,7 +997,9 @@ export const typeCheck = (ast, error = true) => {
                         )}) (check #30)`
                       )
                     } else if (isUnknownType(args[i][STATS]))
-                      retry(args[i][STATS], stack, () => check(exp, env, scope))
+                      retry(args[i][STATS], stack, errors, () =>
+                        check(exp, env, scope)
+                      )
                     else if (
                       env[rest[i][VALUE]] &&
                       !isUnknownType(args[i][STATS]) &&
@@ -1005,7 +1016,7 @@ export const typeCheck = (ast, error = true) => {
                     const match = () => {
                       const actual = env[rest[i][0][VALUE]][STATS]
                       const expected = args[i][STATS]
-                      retryArgs(args[i][STATS], stack, () => match())
+                      retryArgs(args[i][STATS], stack, errors, () => match())
                       if (!isUnknownType(expected) && !isUnknownReturn(actual))
                         if (!compareTypeWithReturn(expected, actual))
                           errors.add(
@@ -1080,8 +1091,12 @@ export const typeCheck = (ast, error = true) => {
                                           )}) (check #779)`
                                         )
                                       else
-                                        retry(actual[STATS], stack, () =>
-                                          match1()
+                                        retry(
+                                          actual[STATS],
+                                          stack,
+                                          errors,
+
+                                          () => match1()
                                         )
                                     }
                                     match1()
@@ -1119,8 +1134,12 @@ export const typeCheck = (ast, error = true) => {
                                             )}) (check #780)`
                                           )
                                         else
-                                          retry(actual[STATS], stack, () =>
-                                            match2()
+                                          retry(
+                                            actual[STATS],
+                                            stack,
+                                            errors,
+
+                                            () => match2()
                                           )
                                       }
                                       match2()
@@ -1137,13 +1156,14 @@ export const typeCheck = (ast, error = true) => {
                           }
                         }
                       else if (isUnknownType(expected))
-                        retry(args[i][STATS], stack, () => match())
+                        retry(args[i][STATS], stack, errors, () => match())
                     }
                     match()
                   }
                 }
               }
             })
+
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
               if (isLeaf(r) && r[TYPE] !== ATOM)

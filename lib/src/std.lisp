@@ -375,10 +375,11 @@
             (set! a 0 (math:max (get a 0) (get a 1)))
             a)) (array 0 (get xs 0)))
         (get 0))))
-(let math:list-maximum (lambda xs (list:fold xs math:max math:min-safe-integer)))
-(let math:list-minimum (lambda xs (list:fold xs math:min math:max-safe-integer)))
-(let math:list-summation (lambda xs (list:fold xs + 0)))
-(let math:list-product (lambda xs (list:fold xs * 1)))
+(let math:list-fold (lambda xs f out (if (list:nil? xs) (Atom out) (math:list-fold (list:tail xs) f (f out (list:head xs))))))
+(let math:list-maximum (lambda xs (math:list-fold xs math:max math:min-safe-integer)))
+(let math:list-minimum (lambda xs (math:list-fold xs math:min math:max-safe-integer)))
+(let math:list-summation (lambda xs (math:list-fold xs + 0)))
+(let math:list-product (lambda xs (math:list-fold xs * 1)))
 (let math:list-range (lambda low high (if (> low high) [] (list:pair low (math:list-range (+ low 1) high)))))
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (get pair 0)))
@@ -388,12 +389,13 @@
 (let list:nil? (lambda pair (= (length pair) 0)))
 (let list:map (lambda xs f (if (list:nil? xs) [] (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
 (let list:filter (lambda xs f? (if (list:nil? xs) [] (if (f? (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f?)) (list:filter (list:tail xs) f?)))))
-(let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
+(let list:fold (lambda xs f out (if (list:nil? xs) (Any out) (list:fold (list:tail xs) f (f out (list:head xs))))))
+(let list:transform (lambda xs f out (if (list:nil? xs) (Collection out) (list:transform (list:tail xs) f (f out (list:head xs))))))
 (let list:zip (lambda a b (if (list:nil? a) [] (list:pair (list:pair (list:head a) (list:pair (list:head b) [])) (list:zip (list:tail a) (list:tail b))))))
 (let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
-(let list:length (lambda list (list:fold list (lambda a . (+ a 1)) 0)))
+(let list:length (lambda list (math:list-fold list (lambda a . (+ a 1)) 0)))
 (let list:enumerate (lambda list (list:zip list (math:list-range 0 (list:length list)))))
-(let list:reverse (lambda list (list:fold list (lambda a b (list:pair b a)) [])))
+(let list:reverse (lambda list (list:transform list (lambda a b (list:pair b a)) [])))
 (let list:find (lambda xs f? (cond 
                               (list:nil? xs) [] 
                               (f? (list:head xs)) (list:head xs)
@@ -434,7 +436,7 @@
 (let lst (list:head (list:end xs)))
 (let xss (list:remove-at xs (- (list:length xs) 1)))
 (list:insert-at xss 0 lst))))
-(let list:concat! (lambda lists (list:fold (list:tail lists) (lambda a b (list:merge! a b)) (list:head lists))))
+(let list:concat! (lambda lists (list:transform (list:tail lists) (lambda a b (list:merge! a b)) (list:head lists))))
 (let list:merge! (lambda a b (do (set! (list:end a) 1 b) a)))
 (let list:flatten (lambda xs 
   (if (list:nil? xs) []
@@ -442,7 +444,7 @@
     (list:merge! (list:pair (list:head xs) []) (list:flatten (list:tail xs)))
     (list:merge! (list:flatten (list:head xs)) (list:flatten (list:tail xs)))))))
 (let list:equal? (lambda a b (array:equal? (from:list->array a) (from:list->array b))))
-(let list:count-of (lambda xs cb? (list:fold xs (lambda a b (if (cb? b) (+ a 1) a)) 0)))
+(let list:count-of (lambda xs cb? (math:list-fold xs (lambda a b (if (cb? b) (+ a 1) a)) 0)))
 (let list:count (lambda input item (list:count-of input (lambda x (= x item)))))
 (let list:take (lambda lista pos
     (cond
