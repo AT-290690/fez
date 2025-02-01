@@ -994,10 +994,10 @@
 (let out Collection)
 ; 1 from:number->positive-or-negative-digits
 (let from:number->positive-or-negative-digits (lambda Atom (do Collection)))
-; 1 from:number->bits recursive:from:number->bits
-(let recursive:from:number->bits (lambda Atom Collection (do Unknown)))
-; 1 from:number->bits
-(let from:number->bits (lambda Atom (do Collection)))
+; 1 from:integer->bits recursive:from:integer->bits
+(let recursive:from:integer->bits (lambda Atom Collection (do Unknown)))
+; 1 from:integer->bits
+(let from:integer->bits (lambda Atom (do Collection)))
 ; 1 from:numbers->chars
 (let from:numbers->chars (lambda Collection (do Collection)))
 ; 1 from:chars->integer

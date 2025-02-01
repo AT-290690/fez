@@ -865,12 +865,12 @@
   (let out (array:reverse (recursive:from:number->positive-or-negative-digits num [])))
   (if negative? (set! out 0 (* (get out 0) -1)))
   out)))
-(let from:number->bits (lambda num (do
-  (let recursive:from:number->bits (lambda num res (cond
-                              (>= num 1) (recursive:from:number->bits (/ num 2) (set! res (length res) (| (mod num 2) 0)))
+(let from:integer->bits (lambda num (do
+  (let recursive:from:integer->bits (lambda num res (cond
+                              (>= num 1) (recursive:from:integer->bits (/ num 2) (set! res (length res) (| (mod num 2) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (array:reverse (recursive:from:number->bits num [])))))
+  (array:reverse (recursive:from:integer->bits num [])))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:integer->digits x))))))
 (let from:chars->integer (lambda n (|> n (from:chars->digits) (from:digits->integer))))
 (let from:positive-or-negative-chars->integer (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->integer))))
