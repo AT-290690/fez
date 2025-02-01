@@ -849,7 +849,7 @@ export const typeCheck = (ast, error = true) => {
                       getType(args[i][STATS]) !== ATOM
                     ) {
                       throw new TypeError(
-                        `Incorrect type of arguments ${i} for (${
+                        `Incorrect type of argument (${i}) for (${
                           first[VALUE]
                         }). Expected (${toTypeNames(
                           getType(args[i][STATS])
@@ -863,8 +863,18 @@ export const typeCheck = (ast, error = true) => {
                       !isUnknownType(env[rest[i][VALUE]][STATS]) &&
                       env[rest[i][VALUE]][STATS][ARG_COUNT] !== VARIADIC
                     ) {
+                      if (getType(args[i][STATS]) !== APPLY)
+                        throw new TypeError(
+                          `Incorrect type for argument of (${
+                            first[VALUE]
+                          }) at position (${i}). Expected (${
+                            STATIC_TYPES.ABSTRACTION
+                          }) but got (${toTypeNames(
+                            getType(args[i][STATS])
+                          )}) (${stringifyArgs(exp)}) (check #111)`
+                        )
                       // Handles words that are Lambdas
-                      if (
+                      else if (
                         env[rest[i][VALUE]][STATS][ARG_COUNT] !==
                         args[i][STATS][ARG_COUNT]
                       ) {
@@ -937,6 +947,7 @@ export const typeCheck = (ast, error = true) => {
                         }
                       }
                     }
+
                     if (
                       T === COLLECTION &&
                       env[rest[i][VALUE]] &&
@@ -945,7 +956,7 @@ export const typeCheck = (ast, error = true) => {
                       !compareTypes(env[rest[i][VALUE]][STATS], args[i][STATS])
                     ) {
                       throw new TypeError(
-                        `Incorrect type of arguments ${i} for (${
+                        `Incorrect type of argument (${i}) for (${
                           first[VALUE]
                         }). Expected (${toTypeNames(
                           getType(args[i][STATS])
@@ -953,9 +964,9 @@ export const typeCheck = (ast, error = true) => {
                           exp
                         )}) (check #30)`
                       )
-                    } else if (isUnknownType(args[i][STATS]))
+                    } else if (isUnknownType(args[i][STATS])) {
                       retry(args[i][STATS], stack, () => check(exp, env, scope))
-                    else if (
+                    } else if (
                       env[rest[i][VALUE]] &&
                       !isUnknownType(args[i][STATS]) &&
                       isUnknownType(env[rest[i][VALUE]][STATS]) &&
@@ -975,7 +986,7 @@ export const typeCheck = (ast, error = true) => {
                       if (!isUnknownType(expected) && !isUnknownReturn(actual))
                         if (!compareTypeWithReturn(expected, actual))
                           throw new TypeError(
-                            `Incorrect type of arguments ${i} for (${
+                            `Incorrect type of argument (${i}) for (${
                               first[VALUE]
                             }). Expected (${toTypeNames(
                               getType(expected)

@@ -709,7 +709,7 @@ ZZZ=ZZZ,ZZZ")
 (let add (lambda a b (+ a b)))
 (add idx 1))))
 `,
-      `Incorrect type of arguments 0 for (add). Expected (Atom) but got (Collection) (add idx 1) (check #30)`
+      `Incorrect type of argument (0) for (add). Expected (Atom) but got (Collection) (add idx 1) (check #30)`
     )
     // TODO revisit this test - array:first should set the type as it's the first one to be called
     // There is actually a conflict of types. Maybe the error message should be different
@@ -717,7 +717,7 @@ ZZZ=ZZZ,ZZZ")
       `(let g (lambda x (do 
                   (let index (array:second x)) 
                   (or (not (> x 0)) 1))))`,
-      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
+      `Incorrect type of argument (0) for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
     )
     fails(
       `(math:pi 10)`,
@@ -738,7 +738,7 @@ ZZZ=ZZZ,ZZZ")
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
+      `Incorrect type of argument (1) for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
@@ -778,7 +778,7 @@ ZZZ=ZZZ,ZZZ")
 (let y 23)
 (fn [])
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
+      `Incorrect type of argument (0) for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -786,7 +786,7 @@ ZZZ=ZZZ,ZZZ")
 (let y 23)
 (fn [])
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
+      `Incorrect type of argument (0) for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -795,7 +795,7 @@ ZZZ=ZZZ,ZZZ")
 (fn [])
 (fn (lambda 1))
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)`
+      `Incorrect type of argument (0) for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)`
     )
     fails(
       `(let array:unique (lambda xs (|>
@@ -805,7 +805,16 @@ ZZZ=ZZZ,ZZZ")
                   (let index (array:second x)) (or (not (> x 0))
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
       (array:map array:first))))`,
-      `Incorrect type of arguments 0 for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
+      `Incorrect type of argument (0) for (array:second). Expected (Collection) but got (Atom) (array:second x) (check #10)`
+    )
+    fails(
+      `(math:list-summation (lambda []))`,
+      `Incorrect type of argument (0) for (math:list-summation). Expected (Collection) but got (Abstraction) (math:list-summation (lambda (array))) (check #16)`
+    )
+    fails(
+      `(let x (lambda []))
+(math:list-summation x)`,
+      `Incorrect type for argument of (math:list-summation) at position (0). Expected (Abstraction) but got (Collection) (math:list-summation x) (check #111)`
     )
     fails(
       `(let INPUT
@@ -935,7 +944,7 @@ ZZZ=ZZZ,ZZZ")
 )))
 (add 1 2 [])
 `,
-      `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #16)`
+      `Incorrect type of argument (2) for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #16)`
     )
     fails(
       `(let x (if (= 1 1) (lambda x 1) (lambda x 2)))

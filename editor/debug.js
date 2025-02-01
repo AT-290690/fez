@@ -375,7 +375,7 @@ export const debug = (ast, checkTypes = true) => {
       error: null
     }
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     return {
       type: null,
       evaluated: null,
