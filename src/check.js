@@ -864,6 +864,7 @@ export const typeCheck = (ast, error = true) => {
                       env[rest[i][VALUE]][STATS][ARG_COUNT] !== VARIADIC
                     ) {
                       if (getType(args[i][STATS]) !== APPLY)
+                        // TODO this should really happen in 10 or 16
                         throw new TypeError(
                           `Incorrect type for argument of (${
                             first[VALUE]
