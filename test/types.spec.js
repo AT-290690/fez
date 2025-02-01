@@ -529,17 +529,21 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
       (let z [])
-      (let n (lambda x (do
-          (let y 10)
-          [(+ x 1)])))
-      (fn 1 n)
           (fn 1 (lambda x (do
           (let y 10)
           [])))
           (set! [] 0 1)
       `,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)
-Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)`
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+    )
+    fails(
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+      (let z [])
+      (let n (lambda x (do
+          (let y 10)
+          [(+ x 1)])))
+      (fn 1 n)`,
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)`
     )
     fails(
       `(let x y)
@@ -549,18 +553,14 @@ Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Ex
     fails(
       `(let x 1)
 (let y 2)
-(set! x 1 10)
-(set! y 1 10)
-(set! 1 1 1)
-(set! 1 1 2)
-(set! 1 1 3)
+(set! x 1 10)`,
+      `Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! x 1 10) (check #3)`
+    )
+    fails(
+      `(let x 1)
+(let y 2)
 (set! 1 1 4)`,
-      `Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! 1 1 4) (check #2)
-Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! 1 1 3) (check #2)
-Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! 1 1 2) (check #2)
-Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! 1 1 1) (check #2)
-Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! y 1 10) (check #3)
-Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! x 1 10) (check #3)`
+      `Incorrect type of argument (0) for special form (set!). Expected (Collection) but got (Atom) (set! 1 1 4) (check #2)`
     )
     fails(
       `(set! 1 1 10)`,
@@ -576,15 +576,11 @@ Incorrect type of argument (0) for special form (set!). Expected (Collection) bu
         (+ x y)
     )))
 )))`,
-      `(+) is trying to access undefined variable (y) at argument (1) (+ x y) (check #20)
-Trying to access undefined variable y (check #11)`
+      `(+) is trying to access undefined variable (y) at argument (1) (+ x y) (check #20)`
     )
     fails(
       `(let parse (la1mbda input (|> input (string:lines))))`,
-      `(la1mbda) is trying to access undefined variable (input) at argument (0) (la1mbda input (string:lines input)) (check #20)
-(string:lines) is trying to access undefined variable (input) at argument (0) (string:lines input) (check #20)
-Trying to access undefined variable input (check #11)
-Trying to call undefined (lambda) la1mbda (check #9)`
+      `(la1mbda) is trying to access undefined variable (input) at argument (0) (la1mbda input (string:lines input)) (check #20)`
     )
     fails(
       `(let arr [1 2 3 4])
@@ -610,16 +606,7 @@ Trying to call undefined (lambda) la1mbda (check #9)`
     )))
     
 )))`,
-      `(+) is trying to access undefined variable (y) at argument (1) (+ x y) (check #20)
-(*) is trying to access undefined variable (zz) at argument (0) (* zz fff) (check #20)
-(*) is trying to access undefined variable (fff) at argument (1) (* zz fff) (check #20)
-(do) is trying to access undefined variable (z) at argument (0) (do z) (check #20)
-Trying to access undefined variable z (check #11)
-Incorrect type of argument (1) for special form (+). Expected (Atom) but got (Collection) (+ z (array)) (check #1)
-Trying to access undefined variable fff (check #11)
-Trying to access undefined variable zz (check #11)
-Trying to access undefined variable y (check #11)
-Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array:first) (check #15)`
+      `(+) is trying to access undefined variable (y) at argument (1) (+ x y) (check #20)`
     )
     fails(
       `(let array:enumerated-find-index (lambda xs predicate? (do
@@ -653,10 +640,7 @@ Incorrect number of arguments for (array:first). Expected (= 1) but got 0 (array
 (let x1? (array:empty! [1]))
 (let x2? 1)
 (let x3? array:empty!)`,
-      `Assigning predicate (ending in ?) variable (fn1?) to another variable which is not a predicate (also ending in ?) (let fn1? (lambda (apply (array 1) array:empty!)))
-Assigning predicate (ending in ?) variable (array:empty!) to another variable which is not a predicate (also ending in ?) (let fn2? (lambda x (apply x (lambda x (array:empty! (array 1))))))
-Assigning predicate (ending in ?) variable (array:empty!) to another variable which is not a predicate (also ending in ?) (let x1? (array:empty! (array 1)))
-Assigning predicate (ending in ?) variable (x3?) to another variable which is not a predicate (also ending in ?) (let x3? array:empty!)`
+      `Assigning predicate (ending in ?) variable (fn1?) to another variable which is not a predicate (also ending in ?) (let fn1? (lambda (apply (array 1) array:empty!)))`
     )
     fails(
       `(let map (new:map ["name" "Anthony" "age" 34]))
@@ -701,11 +685,7 @@ Assigning predicate (ending in ?) variable (x3?) to another variable which is no
           (array:map (lambda l (* l (array:count-of right (lambda r (= l r 4))))))
           (math:summation)))))
     `,
-      `(array:select) is trying to access undefined variable (array:nah-empty?) at argument (1) (array:select (string:words word) array:nah-empty?) (check #20)
-Incorrect number of arguments for (=). Expected (= 2) but got 3 (= l r 4) (check #15)
-Incorrect number of arguments for (curry:two). Expected (= 2) but got 3 (curry:two array:sort > 1) (check #15)
-Trying to access undefined variable array:nah-empty? (check #11)
-Trying to call undefined (lambda) array:mapz (check #9)`
+      `(array:select) is trying to access undefined variable (array:nah-empty?) at argument (1) (array:select (string:words word) array:nah-empty?) (check #20)`
     )
 
     fails(
@@ -758,9 +738,7 @@ Trying to call undefined (lambda) array:mapz (check #9)`
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #16)
-Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) idx) (check #30)`
+      `Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collection) (array:get (array 1 2 3) (array)) (check #16)`
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
@@ -776,9 +754,7 @@ Incorrect type of arguments 1 for (array:get). Expected (Atom) but got (Collecti
     (let y 10)
         (set! x 0 1)
     [])))`,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #779)
-Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 n) (check #782)
-Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 n) (check #781)`
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #779)`
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
@@ -794,8 +770,7 @@ Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected
     (let y 10)
         (set! x 0 1)
     1)))`,
-      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 n) (check #781)
-Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
+      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Collection) (fn 1 n) (check #781)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -810,25 +785,8 @@ Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected
 (let x 10)
 (let y 23)
 (fn [])
-(fn [1])
-(fn [2])
-(fn [1])
-(fn [3])
-(fn [4])
-(fn [5])
-(fn [6])
-(fn [7])
-(fn [8])
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 8)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 7)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 6)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 5)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 4)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 3)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 1)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array 2)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -837,8 +795,7 @@ Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn
 (fn [])
 (fn (lambda 1))
 `,
-      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)
-Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn (array)) (check #16)`
+      `Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)`
     )
     fails(
       `(let array:unique (lambda xs (|>
@@ -961,16 +918,12 @@ Incorrect type of arguments 0 for (fn). Expected (Atom) but got (Collection) (fn
   (and (array? a)
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))`,
-      `Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)
-Incorrect type of argument (1) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)`
+      `Incorrect type of argument (0) for special form (=). Expected (Atom) but got (Collection) (= a b) (check #3)`
     )
     fails(
       `(let map (lambda xs1 cb (array:map xs cb)))
 (let fold (lambda xs cb x (array:fold xs1 cb x)))`,
-      `(array:map) is trying to access undefined variable (xs) at argument (0) (array:map xs cb) (check #20)
-(array:fold) is trying to access undefined variable (xs1) at argument (0) (array:fold xs1 cb x) (check #20)
-Trying to access undefined variable xs1 (check #11)
-Trying to access undefined variable xs (check #11)`
+      `(array:map) is trying to access undefined variable (xs) at argument (0) (array:map xs cb) (check #20)`
     )
 
     fails(
@@ -982,8 +935,7 @@ Trying to access undefined variable xs (check #11)`
 )))
 (add 1 2 [])
 `,
-      `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #16)
-Incorrect type of arguments 2 for (f). Expected (Atom) but got (Collection) (f x y (array)) (check #16)`
+      `Incorrect type of arguments 2 for (add). Expected (Atom) but got (Collection) (add 1 2 (array)) (check #16)`
     )
     fails(
       `(let x (if (= 1 1) (lambda x 1) (lambda x 2)))

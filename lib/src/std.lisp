@@ -185,19 +185,17 @@
 (let math:division (lambda a b (/ a b)))
 (let math:subtraction (lambda a b (- a b)))
 (let math:fold (lambda xs cb initial (do
-                  (Collection xs) (Atom initial)
                   (let recursive:math:fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:math:fold (+ i 1) (Atom (cb out (Atom (get xs i)))))
                             (Atom out))))
-                      (recursive:math:fold 0 initial))))
+                      (recursive:math:fold 0 (Atom initial)))))
 (let math:enumerated-fold (lambda xs cb initial (do
-                  (Collection xs) (Atom initial)
                   (let recursive:enumerated-fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:enumerated-fold (+ i 1) (Atom (cb out (Atom (get xs i)) i)))
                             (Atom out))))
-                      (recursive:enumerated-fold 0 initial))))
+                      (recursive:enumerated-fold 0 (Atom initial)))))
 (let math:map (lambda xs cb (do
                   (let recursive:math:map (lambda i out
                         (if (> (length xs) i)
@@ -268,7 +266,7 @@
       (if (good-enough? g x) g
           (recursive:math:sqrt (improve-guess g x) x))))
   (recursive:math:sqrt 1.0 x))))
-(let math:perfect-square? (lambda n (true? (- (math:floor (math:sqrt n)) (math:floor (math:sqrt (- n 1)))))))
+(let math:perfect-square? (lambda n (- (math:floor (math:sqrt n)) (math:floor (math:sqrt (- n 1))))))
 (let math:circumference (lambda radius (* math:pi (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (lambda n (- (^ n (>> n 31)) (>> n 31))))
@@ -341,7 +339,7 @@
       (var:set! f (+ (var:get f) 1)))
     (recursive:math:prime-factors)))) a)))
     (recursive:math:prime-factors))))
-(let math:prime? (lambda n (true? 
+(let math:prime? (lambda n
       (cond
         (= n 1) 0
         (< n 0) 0
@@ -349,7 +347,7 @@
         (let recursive:math:prime (lambda i end (do
             (let prime? (not (= (mod n i) 0)))
             (if (and (<= i end) prime?) (recursive:math:prime (+ i 1) end) prime?))))
-            (or (= n 2) (true? (recursive:math:prime 2 (math:sqrt n)))))))))))
+            (or (= n 2) (recursive:math:prime 2 (math:sqrt n)))))))))
 (let math:number-of-digits (lambda n
   (cond
     (= n 0) 1
@@ -411,16 +409,14 @@
                               (list:nil? xs) [] 
                               (f? (list:head xs)) xs
                               (*) (list:find-tail (list:tail xs) f?))))
-(let list:some? (lambda xs f? (true? 
-                              (cond 
+(let list:some? (lambda xs f? (cond 
                                 (list:nil? xs) 0
                                 (f? (list:head xs)) 1
-                                (*) (list:some? (list:tail xs) f?)))))
-(let list:every? (lambda xs f? (true? 
-                                (cond 
+                                (*) (list:some? (list:tail xs) f?))))
+(let list:every? (lambda xs f? (cond 
                                   (list:nil? xs) 1
                                   (not (> (f? (list:head xs)) 0)) 0
-                                  (*) (list:every? (list:tail xs) f?)))))
+                                  (*) (list:every? (list:tail xs) f?))))
 (let list:remove-at (lambda xs pos (do 
   (let remove (lambda xs ini (if (= pos (- ini 1)) (list:tail xs) (list:pair (list:head xs) (remove (list:tail xs) (+ ini 1))))))
   (remove xs 1))))
@@ -540,13 +536,13 @@
                           (if (and (> (length xs) i) (predicate? (get xs i)))
                               (recursive:array:every? (+ i 1))
                               (not (> (length xs) i)))))
-                        (true? (recursive:array:every? 0)))))
+                        (recursive:array:every? 0))))
 (let array:some? (lambda xs predicate? (do
                     (let recursive:array:some? (lambda i
                           (if (and (> (length xs) i)  (not (predicate? (get xs i))))
                               (recursive:array:some? (+ i 1))
                               (not (= (> (length xs) i) 0)))))
-                        (true? (recursive:array:some? 0)))))
+                              (recursive:array:some? 0))))
 
 (let array:find (lambda xs predicate? (get xs (array:find-index xs predicate?))))
 
@@ -850,7 +846,7 @@
   xs
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
   (array:transform (lambda a x
-  (if (true? (array:first x))
+  (if (array:first x)
       (set! a (length a) (from:digit->char (array:second x)))
       (set! (set! a (length a) char:dash) (length a) (from:digit->char (array:second x))))) []))))
 (let from:integer->digits (lambda num (do
@@ -1044,7 +1040,7 @@
       (let ch (get xs i))
       (let code (- ch zero))
       (let mask (<< 1 code))
-      (if (and (true? (if (= ch letter) (bool:true? (bool:true! at-least-one))))
+      (if (and (if (= ch letter) (bool:true? (bool:true! at-least-one)))
           (not (= (& (var:get bitmask) mask) 0))) 
           (var:set! count (+ (var:get count) 1))
           (var:set! bitmask (| (var:get bitmask) mask)))
@@ -1086,8 +1082,7 @@
                                                         word) i (recursive:string:match (array:tail xs) (+ i 1)))
                                                     -1)))
                                               (recursive:string:match str 0)))))))
-(let string:has? (lambda str word (true? 
-                                    (cond
+(let string:has? (lambda str word  (cond
                                         (< (length str) (length word)) 0
                                         (string:equal? str word) 1
                                         (*) (apply (lambda (do
@@ -1095,10 +1090,10 @@
                                                     (if (and (> (length xs) 0) (>= (length xs) (length word)))
                                                           (if (string:equal?
                                                             (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
-                                                            word) 
+                                                            word)
                                                             1 
                                                             (recursive:string:has (array:tail xs) (+ i 1))))))
-                                                  (recursive:string:has str 0))))))))
+                                                  (recursive:string:has str 0)))))))
 (let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))

@@ -146,12 +146,12 @@ export const compareReturns = (a, b) =>
   isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
 export const compareTypeWithReturn = (a, b) =>
   isAnyType(a) || isAnyReturn(b) || a[TYPE_PROP][0] === b[RETURNS][0]
-const checkPredicateName = (exp, rest, errors) => {
+const checkPredicateName = (exp, rest) => {
   if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
     const last = rest.at(-1)
     if (isLeaf(last)) {
       if (last[TYPE] === ATOM && last[VALUE] !== TRUE && last[VALUE] !== FALSE)
-        errors.add(
+        throw new TypeError(
           `Assigning predicate (ending in ?) variable (${
             rest[0][VALUE]
           }) to an (${
@@ -163,7 +163,7 @@ const checkPredicateName = (exp, rest, errors) => {
         getSuffix(last[VALUE]) !== PREDICATE_SUFFIX &&
         !PREDICATES_OUTPUT_SET.has(last[VALUE])
       )
-        errors.add(
+        throw new TypeError(
           `Assigning predicate (ending in ?) variable (${
             rest[0][VALUE]
           }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
@@ -181,7 +181,7 @@ const checkPredicateName = (exp, rest, errors) => {
             getSuffix(application[VALUE]) !== PREDICATE_SUFFIX &&
             !PREDICATES_OUTPUT_SET.has(application[VALUE])
           )
-            errors.add(
+            throw new TypeError(
               `Assigning predicate (ending in ?) variable (${
                 application[VALUE]
               }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
@@ -193,21 +193,17 @@ const checkPredicateName = (exp, rest, errors) => {
     }
   }
 }
-const checkPredicateNameDeep = (name, exp, rest, returns, errors) => {
+const checkPredicateNameDeep = (name, exp, rest, returns) => {
   if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
     const fn = rest.at(-1).at(-1).at(-1)
-    checkPredicateName(
-      exp,
-      [
-        [WORD, name],
-        isLeaf(fn)
-          ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
-          : drillReturnType(fn, (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
-      ],
-      errors
-    )
+    checkPredicateName(exp, [
+      [WORD, name],
+      isLeaf(fn)
+        ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
+        : drillReturnType(fn, (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
+    ])
   } else {
-    checkPredicateName(exp, [[WORD, name], returns], errors)
+    checkPredicateName(exp, [[WORD, name], returns])
   }
 }
 const fillUknownArgs = (n) =>
@@ -238,9 +234,8 @@ const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
-const retry = (stats, stack, errors, cb) => {
+const retry = (stats, stack, cb) => {
   if (
-    errors.size === 0 &&
     (isUnknownNotAnyType(stats) || isUnknownNotAnyReturn(stats)) &&
     stats.retried < MAX_RETRY_DEFINITION
   ) {
@@ -248,8 +243,8 @@ const retry = (stats, stack, errors, cb) => {
     stack.unshift(() => cb())
   }
 }
-const retryArgs = (stats, stack, errors, cb) => {
-  if (errors.size === 0 && stats.counter < MAX_ARGUMENT_RETRY) {
+const retryArgs = (stats, stack, cb) => {
+  if (stats.counter < MAX_ARGUMENT_RETRY) {
     stats.counter++
     stack.unshift(cb)
   }
@@ -291,18 +286,10 @@ const resolveApplyAssigment = (re, name, env) => {
     }
   }
 }
-const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
+const resolveIfAssigment = ({ rem, name, env, exp, prop }) => {
   const re = rem.slice(2)
-  checkPredicateName(
-    exp,
-    [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
-    errors
-  )
-  checkPredicateName(
-    exp,
-    [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
-    errors
-  )
+  checkPredicateName(exp, [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]])
+  checkPredicateName(exp, [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]])
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
     // ATOM ASSIGMENT
     setPropToAtom(env[name][STATS], prop)
@@ -328,21 +315,13 @@ const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
     // ASSIGMENT
     setPropRef(env[name][STATS], prop, env[re[1][VALUE]][STATS])
 }
-const resolveCondition = ({ rem, name, env, exp, errors }) => {
+const resolveCondition = ({ rem, name, env, exp }) => {
   const ret = rem[0]
   const re = rem.slice(2)
   resolveApplyAssigment(re, name, env)
   const ref = env[name]
-  checkPredicateName(
-    exp,
-    [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]],
-    errors
-  )
-  checkPredicateName(
-    exp,
-    [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]],
-    errors
-  )
+  checkPredicateName(exp, [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]])
+  checkPredicateName(exp, [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]])
   switch (ret[VALUE]) {
     case KEYWORDS.IF:
       ifExpression({ re, env, ref })
@@ -356,27 +335,18 @@ const resolveCondition = ({ rem, name, env, exp, errors }) => {
       break
   }
 }
-const resolveRetunType = ({
-  returns,
-  rem,
-  stack,
-  prop,
-  exp,
-  name,
-  errors,
-  env
-}) => {
+const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
   if (returns[TYPE] === ATOM) {
     // ATOM ASSIGMENT
     setPropToAtom(env[name][STATS], prop)
-    checkPredicateName(exp, [[WORD, name], returns], errors)
+    checkPredicateName(exp, [[WORD, name], returns])
   } else {
     switch (returns[VALUE]) {
       case KEYWORDS.IF:
-        resolveIfAssigment({ rem, name, env, exp, errors, prop })
+        resolveIfAssigment({ rem, name, env, exp, prop })
         break
       default:
-        checkPredicateNameDeep(name, exp, exp.slice(1), returns, errors)
+        checkPredicateNameDeep(name, exp, exp.slice(1), returns)
         if (!env[returns[VALUE]]) return false
         else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
           if (returns[TYPE] === WORD) setReturnToAbbstraction(env[name][STATS])
@@ -401,7 +371,7 @@ const resolveRetunType = ({
   }
   return true
 }
-const checkReturnType = ({ exp, stack, name, errors, env }) => {
+const checkReturnType = ({ exp, stack, name, env }) => {
   const last = exp.at(-1).at(-1)
   const body = hasApplyLambdaBlock(last) ? last.at(-1).at(-1) : last
   const rem = hasBlock(body) ? body.at(-1) : body
@@ -412,7 +382,6 @@ const checkReturnType = ({ exp, stack, name, errors, env }) => {
     prop: RETURNS,
     exp,
     name,
-    errors,
     env,
     stack
   })
@@ -420,7 +389,6 @@ const checkReturnType = ({ exp, stack, name, errors, env }) => {
 export const typeCheck = (ast, error = true) => {
   let scopeIndex = 0
   const root = structuredClone(SPECIAL_FORM_TYPES)
-  const errors = new Set()
   const Types = new Map()
   const stack = []
   const check = (exp, env, scope) => {
@@ -434,14 +402,14 @@ export const typeCheck = (ast, error = true) => {
     switch (first[TYPE]) {
       case WORD:
         if (!isSpecial)
-          stack.push(
-            () =>
-              // Figure out how to determine if varible is define after it's used
-              env[first[VALUE]] === undefined &&
-              errors.add(
+          stack.push(() => {
+            // Figure out how to determine if varible is define after it's used
+            if (env[first[VALUE]] === undefined) {
+              throw new TypeError(
                 `Trying to access undefined variable ${first[VALUE]} (check #11)`
               )
-          )
+            }
+          })
         break
       case ATOM:
         break
@@ -483,30 +451,28 @@ export const typeCheck = (ast, error = true) => {
                   stack,
                   exp,
                   env,
-                  name,
-                  errors
+                  name
                 }) ||
                 isUnknownReturn(env[name][STATS])
               ) {
-                retry(env[name][STATS], stack, errors, () => {
+                retry(env[name][STATS], stack, () => {
                   checkReturnType({
                     stack,
                     exp,
                     env,
-                    name,
-                    errors
+                    name
                   })
                   check(rightHand, env, exp)
                 })
                 check(rightHand, env, exp)
               } else check(rightHand, env, exp)
             } else {
-              checkPredicateName(exp, rest, errors)
+              checkPredicateName(exp, rest)
               const isLeafNode = isLeaf(rightHand)
               if (isLeafNode && rightHand[TYPE] === WORD) {
                 // TODO make sure this prevents the assigment all together
                 if (env[rest[1][VALUE]] === undefined)
-                  errors.add(
+                  throw new TypeError(
                     `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
                   )
                 // Used to be checkin if it's an assigment to a special form
@@ -555,8 +521,7 @@ export const typeCheck = (ast, error = true) => {
                   prop: TYPE_PROP,
                   exp,
                   env,
-                  name,
-                  errors
+                  name
                 })
               }
               check(rightHand, env, scope)
@@ -574,7 +539,7 @@ export const typeCheck = (ast, error = true) => {
               const param = params[i]
               // TODO move this somewhere else
               if (!isLeaf(param))
-                errors.add(
+                throw new TypeError(
                   `Invalid body for (${
                     first[VALUE]
                   }) if it takes more than one expression it must be wrapped in a (${
@@ -617,7 +582,6 @@ export const typeCheck = (ast, error = true) => {
                       name: ref[STATS][SIGNATURE],
                       env: copy,
                       exp,
-                      errors,
                       stack
                     })
                     break
@@ -657,7 +621,7 @@ export const typeCheck = (ast, error = true) => {
           default:
             stack.push(() => {
               if (!isSpecial && env[first[VALUE]] === undefined)
-                errors.add(
+                throw new TypeError(
                   `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
                 )
               else if (
@@ -665,7 +629,7 @@ export const typeCheck = (ast, error = true) => {
                 env[first[VALUE]][STATS][ARG_COUNT] !== VARIADIC &&
                 env[first[VALUE]][STATS][ARG_COUNT] !== rest.length
               )
-                errors.add(
+                throw new TypeError(
                   `Incorrect number of arguments for (${
                     first[VALUE]
                   }). Expected (= ${
@@ -675,7 +639,7 @@ export const typeCheck = (ast, error = true) => {
               else {
                 if (first[TYPE] === APPLY && !isSpecial) {
                   if (getType(env[first[VALUE]][STATS]) === ATOM)
-                    errors.add(
+                    throw new TypeError(
                       `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
                         exp
                       )}) (check #12)`
@@ -746,7 +710,7 @@ export const typeCheck = (ast, error = true) => {
                           const fnName = rest[i].at(-1)[VALUE]
                           const fn = env[fnName]
                           if (fn && getReturn(fn[STATS]) !== ATOM)
-                            errors.add(
+                            throw new TypeError(
                               `Incorrect type of argument (${i}) for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
@@ -761,7 +725,7 @@ export const typeCheck = (ast, error = true) => {
                           const returns = isLeaf(rem) ? rem : rem[0]
                           if (returns[TYPE] === ATOM) {
                             if (MAIN_TYPE !== ATOM)
-                              errors.add(
+                              throw new TypeError(
                                 `Incorrect type of argument ${i} for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
@@ -775,7 +739,7 @@ export const typeCheck = (ast, error = true) => {
                             !isUnknownReturn(env[returns[VALUE]][STATS]) &&
                             getReturn(env[returns[VALUE]][STATS]) !== ATOM
                           )
-                            errors.add(
+                            throw new TypeError(
                               `Incorrect type of argument ${i} for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
@@ -798,7 +762,7 @@ export const typeCheck = (ast, error = true) => {
                           env[name][STATS]
                         )
                       )
-                        errors.add(
+                        throw new TypeError(
                           `Incorrect type of argument (${i}) for special form (${
                             first[VALUE]
                           }). Expected (${toTypeNames(
@@ -838,7 +802,7 @@ export const typeCheck = (ast, error = true) => {
                                 env[name][STATS]
                               )
                             )
-                              errors.add(
+                              throw new TypeError(
                                 `Incorrect type of argument (${i}) for special form (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
@@ -856,7 +820,7 @@ export const typeCheck = (ast, error = true) => {
                             rest[i][TYPE] !==
                             expectedArgs[i][STATS][TYPE_PROP][0]
                           )
-                            errors.add(
+                            throw new TypeError(
                               `Incorrect type of argument (${i}) for special form (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
@@ -883,7 +847,7 @@ export const typeCheck = (ast, error = true) => {
                       !isUnknownType(args[i][STATS]) &&
                       getType(args[i][STATS]) !== ATOM
                     ) {
-                      errors.add(
+                      throw new TypeError(
                         `Incorrect type of arguments ${i} for (${
                           first[VALUE]
                         }). Expected (${toTypeNames(
@@ -903,7 +867,7 @@ export const typeCheck = (ast, error = true) => {
                         env[rest[i][VALUE]][STATS][ARG_COUNT] !==
                         args[i][STATS][ARG_COUNT]
                       ) {
-                        errors.add(
+                        throw new TypeError(
                           `Incorrect number of arguments for (${
                             args[i][STATS][SIGNATURE]
                           }) the (lambda) argument of (${
@@ -927,7 +891,7 @@ export const typeCheck = (ast, error = true) => {
                             !isUnknownReturn(actual[STATS]) &&
                             !compareReturns(expected[STATS], actual[STATS])
                           ) {
-                            errors.add(
+                            throw new TypeError(
                               `Incorrect return type for (${
                                 expected[STATS][SIGNATURE]
                               }) the (lambda) argument of (${
@@ -938,8 +902,7 @@ export const typeCheck = (ast, error = true) => {
                                 getReturn(actual[STATS])
                               )}) (${stringifyArgs(exp)}) (check #782)`
                             )
-                          } else
-                            retry(actual[STATS], stack, errors, () => match1())
+                          } else retry(actual[STATS], stack, () => match1())
                         }
                         match1()
                         for (
@@ -956,7 +919,7 @@ export const typeCheck = (ast, error = true) => {
                               !isUnknownType(expected[STATS]) &&
                               !compareTypes(actual[STATS], expected[STATS])
                             )
-                              errors.add(
+                              throw new TypeError(
                                 `Incorrect type for (lambda) (${
                                   args[i][STATS][SIGNATURE]
                                 }) argument at position (${j}) named as (${
@@ -967,14 +930,7 @@ export const typeCheck = (ast, error = true) => {
                                   getType(actual[STATS])
                                 )}) (${stringifyArgs(exp)}) (check #781)`
                               )
-                            else
-                              retry(
-                                actual[STATS],
-                                stack,
-                                errors,
-
-                                () => match2()
-                              )
+                            else retry(actual[STATS], stack, () => match2())
                           }
                           match2()
                         }
@@ -987,7 +943,7 @@ export const typeCheck = (ast, error = true) => {
                       !isUnknownType(args[i][STATS]) &&
                       !compareTypes(env[rest[i][VALUE]][STATS], args[i][STATS])
                     ) {
-                      errors.add(
+                      throw new TypeError(
                         `Incorrect type of arguments ${i} for (${
                           first[VALUE]
                         }). Expected (${toTypeNames(
@@ -997,9 +953,7 @@ export const typeCheck = (ast, error = true) => {
                         )}) (check #30)`
                       )
                     } else if (isUnknownType(args[i][STATS]))
-                      retry(args[i][STATS], stack, errors, () =>
-                        check(exp, env, scope)
-                      )
+                      retry(args[i][STATS], stack, () => check(exp, env, scope))
                     else if (
                       env[rest[i][VALUE]] &&
                       !isUnknownType(args[i][STATS]) &&
@@ -1016,10 +970,10 @@ export const typeCheck = (ast, error = true) => {
                     const match = () => {
                       const actual = env[rest[i][0][VALUE]][STATS]
                       const expected = args[i][STATS]
-                      retryArgs(args[i][STATS], stack, errors, () => match())
+                      retryArgs(args[i][STATS], stack, () => match())
                       if (!isUnknownType(expected) && !isUnknownReturn(actual))
                         if (!compareTypeWithReturn(expected, actual))
-                          errors.add(
+                          throw new TypeError(
                             `Incorrect type of arguments ${i} for (${
                               first[VALUE]
                             }). Expected (${toTypeNames(
@@ -1039,7 +993,7 @@ export const typeCheck = (ast, error = true) => {
                                   KEYWORDS.ANONYMOUS_FUNCTION
                                 ) {
                                   if (argsN !== args[i][STATS][ARG_COUNT])
-                                    errors.add(
+                                    throw new TypeError(
                                       `Incorrect number of arguments for (${
                                         args[i][STATS][SIGNATURE]
                                       }) the (lambda) argument of (${
@@ -1077,7 +1031,7 @@ export const typeCheck = (ast, error = true) => {
                                           actual[STATS]
                                         )
                                       )
-                                        errors.add(
+                                        throw new TypeError(
                                           `Incorrect return type for (${
                                             expected[STATS][SIGNATURE]
                                           }) the (lambda) argument of (${
@@ -1091,12 +1045,8 @@ export const typeCheck = (ast, error = true) => {
                                           )}) (check #779)`
                                         )
                                       else
-                                        retry(
-                                          actual[STATS],
-                                          stack,
-                                          errors,
-
-                                          () => match1()
+                                        retry(actual[STATS], stack, () =>
+                                          match1()
                                         )
                                     }
                                     match1()
@@ -1118,7 +1068,7 @@ export const typeCheck = (ast, error = true) => {
                                             expected[STATS]
                                           )
                                         )
-                                          errors.add(
+                                          throw new TypeError(
                                             `Incorrect type for (lambda) (${
                                               args[i][STATS][SIGNATURE]
                                             }) argument at position (${j}) named as (${
@@ -1134,12 +1084,8 @@ export const typeCheck = (ast, error = true) => {
                                             )}) (check #780)`
                                           )
                                         else
-                                          retry(
-                                            actual[STATS],
-                                            stack,
-                                            errors,
-
-                                            () => match2()
+                                          retry(actual[STATS], stack, () =>
+                                            match2()
                                           )
                                       }
                                       match2()
@@ -1156,7 +1102,7 @@ export const typeCheck = (ast, error = true) => {
                           }
                         }
                       else if (isUnknownType(expected))
-                        retry(args[i][STATS], stack, errors, () => match())
+                        retry(args[i][STATS], stack, () => match())
                     }
                     match()
                   }
@@ -1168,7 +1114,7 @@ export const typeCheck = (ast, error = true) => {
               const r = rest[i]
               if (isLeaf(r) && r[TYPE] !== ATOM)
                 if (env[r[VALUE]] == undefined)
-                  errors.add(
+                  throw new TypeError(
                     `(${
                       first[VALUE]
                     }) is trying to access undefined variable (${
@@ -1185,7 +1131,6 @@ export const typeCheck = (ast, error = true) => {
   const copy = JSON.parse(JSON.stringify(ast))
   check(copy, root, copy)
   while (stack.length) stack.pop()()
-  if (error && errors.size) throw new TypeError([...errors.values()].join('\n'))
   return [ast, Types]
 }
 export const type = (ast) => typeCheck(ast)[0]
