@@ -49,8 +49,8 @@ describe('Type checking', () => {
         '(let list:every? (lambda Collection (lambda Unknown (do Atom)) (do Atom)))',
         '(let array:unique (lambda Collection (do Collection)))',
         '(let array:empty? (lambda Collection (do Atom)))',
-        '(let array:join (lambda Collection Collection (do Unknown)))',
-        '(let string:join-as-table-with (lambda Collection Collection Unknown (do Unknown)))',
+        '(let array:join (lambda Collection Collection (do Collection)))',
+        '(let string:join-as-table-with (lambda Collection Collection Unknown (do Collection)))',
         '(let list:zip (lambda Collection Collection (do Collection)))'
       ]
     )

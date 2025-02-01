@@ -120,7 +120,7 @@
 (let pair:multiply (lambda x (* (array:first x) (array:second x))))
 (let pair:divide (lambda x (/ (array:first x) (array:second x))))
 (let pair:swap (lambda x (array (array:second x) (array:first x))))
-(let pair:duplicate (lambda x (array:fold [x] (lambda a b (array:merge a (array:append! a b))) [])))
+(let pair:duplicate (lambda x (array:transform [x] (lambda a b (array:merge a (array:append! a b))) [])))
 (let pair:swap! (lambda x (do
  (let temp (array:first x))
  (set! x 0 (array:second x))
@@ -514,7 +514,13 @@
                   (let recursive:array:fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:fold (+ i 1) (cb out (get xs i)))
-                            out)))
+                            (Any out))))
+                      (recursive:array:fold 0 initial))))
+(let array:transform (lambda xs cb initial (do
+                  (let recursive:array:fold (lambda i out
+                        (if (> (length xs) i)
+                            (recursive:array:fold (+ i 1) (cb out (get xs i)))
+                            (Collection out))))
                       (recursive:array:fold 0 initial))))
 (let array:every? (lambda xs predicate? (do
                     (let recursive:array:every? (lambda i
@@ -618,20 +624,20 @@
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i)))))))))))
 (let array:not-equal? (lambda a b (not (array:equal? a b))))
-(let array:join (lambda xs delim (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
-(let array:chars (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
-(let array:lines (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b)) (array:first b))) [])))
-(let array:commas (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:comma)) (array:first b)) (array:first b))) [])))
-(let array:spaces (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:space)) (array:first b)) (array:first b))) [])))
-(let array:dots (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dot)) (array:first b)) (array:first b))) [])))
-(let array:colons (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:colon)) (array:first b)) (array:first b))) [])))
-(let array:semi-colons (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:semi-colon)) (array:first b)) (array:first b))) [])))
-(let array:dashes (lambda xs (array:fold (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dash)) (array:first b)) (array:first b))) [])))
-(let array:flat-one (lambda xs (array:fold xs (lambda a b (array:merge! a (if (array? b) b (array b)))) [])))
+(let array:join (lambda xs delim (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
+(let array:chars (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
+(let array:lines (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b)) (array:first b))) [])))
+(let array:commas (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:comma)) (array:first b)) (array:first b))) [])))
+(let array:spaces (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:space)) (array:first b)) (array:first b))) [])))
+(let array:dots (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dot)) (array:first b)) (array:first b))) [])))
+(let array:colons (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:colon)) (array:first b)) (array:first b))) [])))
+(let array:semi-colons (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:semi-colon)) (array:first b)) (array:first b))) [])))
+(let array:dashes (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:dash)) (array:first b)) (array:first b))) [])))
+(let array:flat-one (lambda xs (array:transform xs (lambda a b (array:merge! a (if (array? b) b (array b)))) [])))
 (let array:flat (lambda xs (do
   (let flatten (lambda item
     (if (array? item)
-        (array:fold item (lambda a b (array:merge! a (flatten b))) [])
+        (array:transform item (lambda a b (array:merge! a (flatten b))) [])
         (array item))))
   (flatten xs))))
 (let array:sort (lambda xs cb (do
@@ -662,7 +668,7 @@
       (let recursive:array:adjacent-difference (lambda i result (if (< i len) (apply (lambda (do
         (recursive:array:adjacent-difference (+ i 1) (set! result i (cb (get xs (- i 1)) (get xs i))))))) result)))
         (recursive:array:adjacent-difference 1 xs))))))))
-(let array:partition (lambda xs n (array:fold (array:zip xs (math:sequence xs)) (lambda a b (do
+(let array:partition (lambda xs n (array:transform (array:zip xs (math:sequence xs)) (lambda a b (do
       (let x (array:first b))
       (let i (array:second b))
       (if (> (mod i n) 0)
@@ -811,7 +817,7 @@
 (let from:chars->positive-or-negative-digits (lambda chars (do
     (let current-sign (var:def 1))
     (|> chars 
-        (array:fold (lambda a ch (do 
+        (array:transform (lambda a ch (do 
             (if (= ch char:minus) 
                 (var:set! current-sign -1) 
                 (do  
@@ -830,7 +836,7 @@
 (let from:positive-or-negative-digits->chars (lambda xs (|>
   xs
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
-  (array:fold (lambda a x
+  (array:transform (lambda a x
   (if (true? (array:first x))
       (set! a (length a) (from:digit->char (array:second x)))
       (set! (set! a (length a) char:dash) (length a) (from:digit->char (array:second x))))) []))))
@@ -919,11 +925,11 @@
     (recursive:from:brray->array 0 (- (brray:length q) 1))
     out)))
 (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:spaces m))))))
-(let array:shallow-copy (lambda xs (array:fold xs (lambda a b (set! a (length a) b)) [])))
-(let array:deep-copy (lambda xs (array:fold xs (lambda a b (set! a (length a) (if (array? b) (array:deep-copy b) b))) [])))
+(let array:shallow-copy (lambda xs (array:transform xs (lambda a b (set! a (length a) b)) [])))
+(let array:deep-copy (lambda xs (array:transform xs (lambda a b (set! a (length a) (if (array? b) (array:deep-copy b) b))) [])))
 (let array:merge! (lambda a b (do (array:for b (lambda x (set! a (length a) x))) a)))
 (let array:merge (lambda a b (do (let out []) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
-(let array:concat (lambda xs (array:fold xs array:merge [])))
+(let array:concat (lambda xs (array:transform xs array:merge [])))
 (let array:concat-with (lambda xs ch (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) [])))
 (let string:concat-with-lines (lambda xs (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
 (let array:swap-remove! (lambda xs i (do (set! xs i (get xs (- (length xs) 1))) (del! xs))))
@@ -994,7 +1000,7 @@
                               (if (cb? (get xs i)) i (recursive:array:find-index (+ i 1))) -1)))
                         (recursive:array:find-index 0))))
 (let array:remove (lambda xs i
-      (array:fold xs (lambda a x (do (if (= x i) a (set! a (length a) x)))) [])))
+      (array:transform xs (lambda a x (do (if (= x i) a (set! a (length a) x)))) [])))
 (let array:pad-right (lambda a b (if (> (length a) (length b))
      (array:merge b (math:zeroes (- (length a) (length b))))
      (array:merge a (math:zeroes (- (length b) (length a)))))))
@@ -1007,8 +1013,8 @@
 (let array:pad-left! (lambda a b (if (> (length a) (length b))
      (array:merge! (math:zeroes (- (length a) (length b))) b)
      (array:merge! (math:zeroes (- (length b) (length a))) a))))
-(let array:rotate-right (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  n) (length xs)) (array:first b))) (math:zeroes (length xs))))))
-(let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:fold (lambda a b (set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
+(let array:rotate-right (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (set! a (mod (+ (array:second b)  n) (length xs)) (array:first b))) (math:zeroes (length xs))))))
+(let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
 (let string:character-occurances (lambda str letter (do
   (let xs str)
   (let bitmask (var:def 0))
@@ -1043,7 +1049,7 @@
   (let index (|> a (string:match b)))
   (|> a (array:slice (+ index (length b)) (+ index (- (length a) index))) (array:reverse)))))
 (let string:split (lambda str char (|> str
-              (array:fold (lambda a b (do
+              (array:transform (lambda a b (do
               (let prev (array:at a -1))
                 (if (string:equal? (array b) (array char))
                     (set! a (length a) [])
@@ -1116,7 +1122,7 @@
       (array:map (math:zeroes M) (lambda . row))
       ))))
   (|> table
-  (array:fold (lambda a b
+  (array:transform (lambda a b
       (array:merge (array:merge a (array b)) (array row-delimiter))
   ) [])
   (array:map (lambda x (|> x 
@@ -1129,23 +1135,23 @@
 (let string:ends-with? (lambda str pattern (and (<= (length pattern) (length str)) (string:equal? (array:slice (array:reverse str) 0 (length pattern)) (array:reverse pattern)))))
 (let string:join-as-table (lambda table (do 
 (let M (math:maximum (array:map table math:max-length)))
-(|> 
- table
- (array:map (lambda x (|> x 
-             (array:map (lambda y 
-             (string:pad-right y M (array char:space))))
-             (array:join (array char:space)))))
- (array:join (array char:new-line))))))
+  (|> 
+  table
+  (array:map (lambda x (|> x 
+              (array:map (lambda y 
+              (string:pad-right y M (array char:space))))
+              (array:join (array char:space)))))
+  (array:join (array char:new-line))))))
 (let string:trim-left (lambda str (do
   (let tr (bool:true))
-  (|> str (array:fold (lambda a b (if
+  (|> str (array:transform (lambda a b (if
   (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
       (if (bool:true? tr) (bool:false! tr))
       (array:merge a (array b))))))) [])))))
 (let string:trim-right (lambda str (do
   (let tr (bool:true))
-  (|> str (array:reverse) (array:fold (lambda a b (if
+  (|> str (array:reverse) (array:transform (lambda a b (if
   (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
       (if (bool:true? tr) (bool:false! tr))
@@ -1200,7 +1206,7 @@
         a)) 
         (array [] [] [] []))))
 (let new:set (lambda args 
-  (array:fold args (lambda a b (set:add! a b)) (array [] [] [] []))))
+  (array:transform args (lambda a b (set:add! a b)) (array [] [] [] []))))
 (let new:set4 (lambda (array [] [] [] [])))
 (let new:set8 (lambda (array:merge (new:set4) (new:set4))))
 (let new:set16 (lambda (array:merge (new:set8) (new:set8))))
@@ -1273,20 +1279,20 @@
 (let set:add-and-get! (lambda table key (do (set:add! table key) key)))
 (let set:remove-and-get! (lambda table key (do (set:remove! table key) key)))
 (let set:with! (lambda initial args
-  (array:fold args (lambda a b (set:add! a b)) initial)))
+  (array:transform args (lambda a b (set:add! a b)) initial)))
 (let set:max-capacity (lambda a b (array:buckets (math:max (length a) (length b)))))
 (let set:min-capacity (lambda a b (array:buckets (math:min (length a) (length b)))))
 (let set:values (lambda table (array:select (array:flat-one table) array:not-empty?)))
 (let set:intersection (lambda a b
         (|> b
           (from:set->array)
-          (array:fold (lambda out element
+          (array:transform (lambda out element
           (do (if (set:has? a element)
                     (set:add! out element)) out)) (set:max-capacity a b)))))
 (let set:difference (lambda a b
       (|> a
         (from:set->array)
-        (array:fold (lambda out element
+        (array:transform (lambda out element
                         (do (if (not (set:has? b element))
                                         (set:add! out element)) out)) (set:max-capacity a b)))))
 (let set:xor (lambda a b (do
@@ -1360,7 +1366,7 @@
 (let map:exists? (lambda table key (and (> (length key) 0) (map:has? table key))))
 (let map:not-exists? (lambda table key (not (map:exists? table key))))
 (let map:count (lambda arr 
-    (|> arr (array:fold (lambda table key (do 
+    (|> arr (array:transform (lambda table key (do 
         (if (map:has? table key) 
             (map:set! table key (+ (Atom (map:get table key)) 1))
             (map:set! table key 1)))) (new:map64)))))
@@ -1775,7 +1781,7 @@ heap)))
 (let special-form:bit-wise-right-shift (lambda args env (>> (Atom (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
 (let special-form:bit-wise-left-shift (lambda args env (<< (Atom (evaluate (get args 0) env)) (Atom (evaluate (get args 1) env)))))
 (let special-form:bit-wise-not (lambda args env (~ (Atom (evaluate (get args 0) env)))))
-(let special-form:do (lambda args env (array:first (array:fold args (lambda a arg (set! a 0 (Any (evaluate arg env)))) []))))
+(let special-form:do (lambda args env (array:first (array:transform args (lambda a arg (set! a 0 (Any (evaluate arg env)))) []))))
 (let special-form:if (lambda args env (if (Predicate (evaluate (get args 0) env)) (evaluate (get args 1) env) (evaluate (get args 2) env))))
 (let special-form:and? (lambda args env (and (Predicate (evaluate (get args 0) env)) (Predicate (evaluate (get args 1) env)))))
 (let special-form:or? (lambda args env (or (Predicate (evaluate (get args 0) env)) (Predicate (evaluate (get args 1) env)))))
