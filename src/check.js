@@ -173,24 +173,18 @@ const checkPredicateName = (exp, rest) => {
         )
     } else if (last[0][0] === APPLY) {
       const application = last[0]
-      switch (application[VALUE]) {
-        case KEYWORDS.IF:
-          // TODO finishthis #1
-          break
-        default:
-          if (
-            getSuffix(application[VALUE]) !== PREDICATE_SUFFIX &&
-            !PREDICATES_OUTPUT_SET.has(application[VALUE])
-          )
-            throw new TypeError(
-              `Assigning predicate (ending in ?) variable (${
-                application[VALUE]
-              }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
-                exp
-              )})`
-            )
-          break
-      }
+      if (
+        application[VALUE] !== KEYWORDS.IF &&
+        getSuffix(application[VALUE]) !== PREDICATE_SUFFIX &&
+        !PREDICATES_OUTPUT_SET.has(application[VALUE])
+      )
+        throw new TypeError(
+          `Assigning predicate (ending in ?) variable (${
+            application[VALUE]
+          }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
+            exp
+          )})`
+        )
     }
   }
 }
@@ -1122,7 +1116,6 @@ export const typeCheck = (ast, error = true) => {
                 }
               }
             })
-
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
               if (isLeaf(r) && r[TYPE] !== ATOM)
