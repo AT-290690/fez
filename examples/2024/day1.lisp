@@ -9,7 +9,7 @@
 (let parse (lambda input (|>
                             input
                             (string:lines)
-                            (array:map (lambda word (|>
+                            (mapping:array->array (lambda word (|>
                                                       word
                                                       (string:words)
                                                       (array:select array:not-empty?)
@@ -18,10 +18,10 @@
 (let part1 (lambda input (|>
                           input
                           (array:unzip)
-                          (array:map (curry:two array:sort >))
+                          (mapping:array->array (curry:two array:sort >))
                           (pair:zip)
-                          (array:map pair:subtract)
-                          (array:map math:abs)
+                          (mapping:array->number pair:subtract)
+                          (mapping:number->number math:abs)
                           (math:summation))))
                         
 (let part2 (lambda input (do
@@ -29,7 +29,7 @@
   (let [left right .] unzipped)
   (|>
     left
-    (array:map (lambda l (* l (array:count-of right (lambda r (= l r))))))
+    (mapping:number->number (lambda l (* l (array:count-of right (lambda r (= l r))))))
     (math:summation)))))
 
 (let PARSED (parse INPUT))

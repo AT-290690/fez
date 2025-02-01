@@ -58,8 +58,8 @@
         inp
         (array:exclude array:empty?) 
         (array:select (lambda x (= (array:length x) 2)))
-        (array:map (lambda x (|> x
-                        (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer))))
+        (mapping:array->number (lambda x (|> x
+                        (mapping:array->number (lambda x (|> x (from:chars->digits) (from:digits->integer))))
                         (math:product))))
         (math:summation))))
 

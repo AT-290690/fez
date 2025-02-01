@@ -15,8 +15,8 @@ p=9,5 v=-3,-3")
 (let parse (lambda input
     (|> input
         (string:lines)
-        (array:map (lambda x
-            (|> x (string:words) (array:map (lambda x (|> x (array:drop 2)  (string:commas) (from:strings->integers))))))))))
+        (mapping:array->array (lambda x
+            (|> x (string:words) (mapping:array->array (lambda x (|> x (array:drop 2)  (string:commas) (from:strings->integers))))))))))
 
 (let part1 (lambda input (do
     (let WIDTH 11)
@@ -38,7 +38,7 @@ p=9,5 v=-3,-3")
     (let Q4 (array (array (+ QWIDTH 1) (+ QHEIGHT 1)) (array (- WIDTH 1) (- HEIGHT 1))))
 
     (|> input
-        (array:map (lambda robot (do
+        (mapping:array->array (lambda robot (do
             (let pos (array:first robot))
             (let vel (array:second robot))
             (let x (array:first pos))
@@ -48,7 +48,7 @@ p=9,5 v=-3,-3")
 
             (array (math:euclidean-mod (+ x (* dx 100)) WIDTH) 
                    (math:euclidean-mod (+ y (* dy 100)) HEIGHT)))))
-        (array:fold (lambda a b (do
+        (reducing:array->array (lambda a b (do
             (let x (array:first b))
             (let y (array:second b))
         (cond

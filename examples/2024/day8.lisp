@@ -31,7 +31,7 @@
         (if (matrix:in-bounds? copy Y1 X1) (matrix:set! copy Y1 X1 char:hash))
         (if (matrix:in-bounds? copy Y2 X2) (matrix:set! copy Y2 X2 char:hash)))))
     
-     (let map (array:fold coords (lambda a b 
+     (let map (reducing:array->array coords (lambda a b 
         (if (map:has? a (array (array:first b))) 
             (map:set! a (array (array:first b)) (array:merge (map:get a (array (array:first b))) (array (array:tail b)))) 
             (map:set! a (array (array:first b)) (array (array:tail b))))) (new:set8)))
@@ -70,7 +70,7 @@
 
         (recursive:iter 1))))
     
-     (let map (array:fold coords (lambda a b 
+     (let map (reducing:array->array coords (lambda a b 
         (if (map:has? a (array (array:first b))) 
             (map:set! a (array (array:first b)) (array:merge (map:get a (array (array:first b))) (array (array:tail b)))) 
             (map:set! a (array (array:first b)) (array (array:tail b))))) (new:set8)))
