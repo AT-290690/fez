@@ -66,6 +66,10 @@ const deepLambdaReturn = (rest, condition) => {
   const rem = hasBlock(body) ? body.at(-1) : body
   return condition(rem) ? rem : deepLambdaReturn(rem, condition)
 }
+export const isUnknownNotAnyType = (stats) =>
+  stats && !isAnyType(stats) && isUnknownType(stats)
+export const isUnknownNotAnyReturn = (stats) =>
+  stats && !isAnyReturn(stats) && isUnknownReturn(stats)
 export const castType = (stats, type) =>
   (stats[TYPE_PROP][0] = type[RETURNS][0])
 export const castReturn = (stats, type) =>
@@ -234,7 +238,21 @@ const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
-
+const retry = (stats, stack, cb) => {
+  if (
+    (isUnknownNotAnyType(stats) || isUnknownNotAnyReturn(stats)) &&
+    stats.retried < MAX_RETRY_DEFINITION
+  ) {
+    stats.retried += 1
+    stack.unshift(() => cb())
+  }
+}
+const retryArgs = (stats, stack, cb) => {
+  if (stats.counter < MAX_ARGUMENT_RETRY) {
+    stats.counter++
+    stack.unshift(cb)
+  }
+}
 const ifExpression = ({ re, env, ref }) => {
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) setReturnToAtom(ref[STATS])
   // TODO check that both brancehs are predicates if one is
@@ -259,6 +277,19 @@ const ifExpression = ({ re, env, ref }) => {
     }
   }
 }
+const resolveApplyAssigment = (re, name, env) => {
+  if (re[0][TYPE] === APPLY) {
+    switch (re[0][VALUE]) {
+      case KEYWORDS.ANONYMOUS_FUNCTION:
+        // FN ASSIGMENT
+        env[name][STATS][TYPE_PROP] = [APPLY]
+        env[name][STATS][RETURNS] = [UNKNOWN]
+        env[name][STATS][ARG_COUNT] = re.length - 2
+        env[name][STATS][ARGUMENTS] = fillUknownArgs(re.length - 2)
+        break
+    }
+  }
+}
 const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
   const re = rem.slice(2)
   checkPredicateName(
@@ -280,17 +311,7 @@ const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
     !isUnknownReturn(env[re[0][0][VALUE]][STATS])
   ) {
     setPropToReturnRef(env[name][STATS], prop, env[re[0][0][VALUE]][STATS])
-    if (re[0][0][TYPE] === APPLY) {
-      switch (re[0][0][VALUE]) {
-        case KEYWORDS.ANONYMOUS_FUNCTION:
-          // FN UKNONW ASSIGMENT
-          env[name][STATS][TYPE_PROP] = [APPLY]
-          env[name][STATS][RETURNS] = [UNKNOWN]
-          env[name][STATS][ARG_COUNT] = re[0].length - 2
-          env[name][STATS][ARGUMENTS] = fillUknownArgs(re[0].length - 2)
-          break
-      }
-    }
+    resolveApplyAssigment(re[0], name, env)
     // env[name][STATS] = env[re[0][0][VALUE]][STATS]
   } else if (
     !isLeaf(re[1]) &&
@@ -298,17 +319,7 @@ const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
     !isUnknownReturn(env[re[1][0][VALUE]][STATS])
   ) {
     setPropToReturnRef(env[name][STATS], prop, env[re[1][0][VALUE]][STATS])
-    if (re[1][0][TYPE] === APPLY) {
-      switch (re[1][0][VALUE]) {
-        case KEYWORDS.ANONYMOUS_FUNCTION:
-          // FN ASSIGMENT
-          env[name][STATS][TYPE_PROP] = [APPLY]
-          env[name][STATS][RETURNS] = [UNKNOWN]
-          env[name][STATS][ARG_COUNT] = re[1].length - 2
-          env[name][STATS][ARGUMENTS] = fillUknownArgs(re[1].length - 2)
-          break
-      }
-    }
+    resolveApplyAssigment(re[1], name, env)
   } else if (env[re[0][VALUE]])
     // ASSIGMENT
     setPropRef(env[name][STATS], prop, env[re[0][VALUE]][STATS])
@@ -319,6 +330,7 @@ const resolveIfAssigment = ({ rem, name, env, exp, errors, prop }) => {
 const resolveCondition = ({ rem, name, env, exp, errors }) => {
   const ret = rem[0]
   const re = rem.slice(2)
+  resolveApplyAssigment(re, name, env)
   const ref = env[name]
   checkPredicateName(
     exp,
@@ -473,11 +485,9 @@ export const typeCheck = (ast, error = true) => {
                   name,
                   errors
                 }) ||
-                (isUnknownReturn(env[name][STATS]) &&
-                  env[name][STATS].retried < MAX_RETRY_DEFINITION)
+                isUnknownReturn(env[name][STATS])
               ) {
-                env[name][STATS].retried += 1
-                stack.unshift(() => {
+                retry(env[name][STATS], stack, () => {
                   checkReturnType({
                     stack,
                     exp,
@@ -927,12 +937,7 @@ export const typeCheck = (ast, error = true) => {
                                 getReturn(actual[STATS])
                               )}) (${stringifyArgs(exp)}) (check #782)`
                             )
-                          } else if (
-                            actual[STATS].retried < MAX_RETRY_DEFINITION
-                          ) {
-                            actual[STATS].retried += 1
-                            stack.unshift(() => match1())
-                          }
+                          } else retry(actual[STATS], stack, () => match1())
                         }
                         match1()
                         for (
@@ -960,12 +965,7 @@ export const typeCheck = (ast, error = true) => {
                                   getType(actual[STATS])
                                 )}) (${stringifyArgs(exp)}) (check #781)`
                               )
-                            else if (
-                              actual[STATS].retried < MAX_RETRY_DEFINITION
-                            ) {
-                              actual[STATS].retried += 1
-                              stack.unshift(() => match2())
-                            }
+                            else retry(actual[STATS], stack, () => match2())
                           }
                           match2()
                         }
@@ -987,34 +987,25 @@ export const typeCheck = (ast, error = true) => {
                           exp
                         )}) (check #30)`
                       )
-                    } else if (
-                      isUnknownType(args[i][STATS]) &&
-                      args[i][STATS].retried < MAX_RETRY_DEFINITION
+                    } else if (isUnknownType(args[i][STATS]))
+                      retry(args[i][STATS], stack, () => check(exp, env, scope))
+                    else if (
+                      env[rest[i][VALUE]] &&
+                      !isUnknownType(args[i][STATS]) &&
+                      isUnknownType(env[rest[i][VALUE]][STATS]) &&
+                      getType(args[i][STATS]) !== APPLY
                     ) {
-                      args[i][STATS].retried += 1
-                      stack.unshift(() => check(exp, env, scope))
-                    } else {
-                      if (
-                        env[rest[i][VALUE]] &&
-                        !isUnknownType(args[i][STATS]) &&
-                        isUnknownType(env[rest[i][VALUE]][STATS]) &&
-                        getType(args[i][STATS]) !== APPLY
-                      ) {
-                        // REFF ASSIGMENT
-                        env[rest[i][VALUE]][STATS][TYPE_PROP] =
-                          args[i][STATS][TYPE_PROP]
-                        env[rest[i][VALUE]][STATS][RETURNS] =
-                          args[i][STATS][RETURNS]
-                      }
+                      // REFF ASSIGMENT
+                      env[rest[i][VALUE]][STATS][TYPE_PROP] =
+                        args[i][STATS][TYPE_PROP]
+                      env[rest[i][VALUE]][STATS][RETURNS] =
+                        args[i][STATS][RETURNS]
                     }
                   } else if (env[rest[i][0][VALUE]]) {
                     const match = () => {
                       const actual = env[rest[i][0][VALUE]][STATS]
                       const expected = args[i][STATS]
-                      if (args[i][STATS].counter < MAX_ARGUMENT_RETRY) {
-                        args[i][STATS].counter++
-                        stack.unshift(() => match())
-                      }
+                      retryArgs(args[i][STATS], stack, () => match())
                       if (!isUnknownType(expected) && !isUnknownReturn(actual))
                         if (!compareTypeWithReturn(expected, actual))
                           errors.add(
@@ -1088,13 +1079,10 @@ export const typeCheck = (ast, error = true) => {
                                             exp
                                           )}) (check #779)`
                                         )
-                                      else if (
-                                        actual[STATS].retried <
-                                        MAX_RETRY_DEFINITION
-                                      ) {
-                                        actual[STATS].retried += 1
-                                        stack.unshift(() => match1())
-                                      }
+                                      else
+                                        retry(actual[STATS], stack, () =>
+                                          match1()
+                                        )
                                     }
                                     match1()
                                     for (
@@ -1130,13 +1118,10 @@ export const typeCheck = (ast, error = true) => {
                                               exp
                                             )}) (check #780)`
                                           )
-                                        else if (
-                                          actual[STATS].retried <
-                                          MAX_RETRY_DEFINITION
-                                        ) {
-                                          actual[STATS].retried += 1
-                                          stack.unshift(() => match2())
-                                        }
+                                        else
+                                          retry(actual[STATS], stack, () =>
+                                            match2()
+                                          )
                                       }
                                       match2()
                                     }
@@ -1151,13 +1136,8 @@ export const typeCheck = (ast, error = true) => {
                             //   break
                           }
                         }
-                      else if (
-                        isUnknownType(expected) &&
-                        args[i][STATS].retried < MAX_RETRY_DEFINITION
-                      ) {
-                        args[i][STATS].retried += 1
-                        stack.unshift(() => match())
-                      }
+                      else if (isUnknownType(expected))
+                        retry(args[i][STATS], stack, () => match())
                     }
                     match()
                   }
