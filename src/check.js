@@ -37,6 +37,7 @@ import {
   validateLambda
 } from './types.js'
 import {
+  Brr,
   getSuffix,
   hasApplyLambdaBlock,
   hasBlock,
@@ -240,13 +241,13 @@ const retry = (stats, stack, cb) => {
     stats.retried < MAX_RETRY_DEFINITION
   ) {
     stats.retried += 1
-    stack.unshift(() => cb())
+    stack.prepend(() => cb())
   }
 }
 const retryArgs = (stats, stack, cb) => {
   if (stats.counter < MAX_ARGUMENT_RETRY) {
     stats.counter++
-    stack.unshift(cb)
+    stack.prepend(cb)
   }
 }
 const ifExpression = ({ re, env, ref }) => {
@@ -329,7 +330,7 @@ const resolveCondition = ({ rem, name, env, exp }) => {
     default:
       if (env[ret[VALUE]]) setReturnRef(ref[STATS], env[ret[VALUE]][STATS])
       else
-        stack.push(() => {
+        stack.append(() => {
           if (env[ret[VALUE]]) setReturnRef(ref[STATS], env[ret[VALUE]][STATS])
         })
       break
@@ -355,7 +356,7 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
             // rest.at(-1)[0][TYPE] === APPLY
             // Here is upon application to store the result in the variable
             if (isUnknownType(env[name][STATS]))
-              stack.unshift(() => {
+              stack.prepend(() => {
                 setTypeToReturn(env[name][STATS], env[returns[VALUE]][STATS])
                 // env[name][STATS][TYPE_PROP][0] =
                 //   env[returns[VALUE]][STATS][RETURNS][0]
@@ -390,7 +391,7 @@ export const typeCheck = (ast, error = true) => {
   let scopeIndex = 0
   const root = structuredClone(SPECIAL_FORM_TYPES)
   const Types = new Map()
-  const stack = []
+  const stack = new Brr()
   const check = (exp, env, scope) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first === undefined)
@@ -402,7 +403,7 @@ export const typeCheck = (ast, error = true) => {
     switch (first[TYPE]) {
       case WORD:
         if (!isSpecial)
-          stack.push(() => {
+          stack.append(() => {
             // Figure out how to determine if varible is define after it's used
             if (env[first[VALUE]] === undefined) {
               throw new TypeError(
@@ -567,7 +568,7 @@ export const typeCheck = (ast, error = true) => {
                 // TODO figure out what we do here
                 // this here is a variable WORD
                 // so return type of that function is that varible type
-                stack.push(
+                stack.append(
                   () =>
                     copy[returns[VALUE]] &&
                     setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
@@ -589,7 +590,7 @@ export const typeCheck = (ast, error = true) => {
                     if (copy[ret[VALUE]])
                       setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
                     else
-                      stack.push(() => {
+                      stack.append(() => {
                         if (copy[ret[VALUE]])
                           setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
                       })
@@ -619,7 +620,7 @@ export const typeCheck = (ast, error = true) => {
             }
             break
           default:
-            stack.push(() => {
+            stack.append(() => {
               if (!isSpecial && env[first[VALUE]] === undefined)
                 throw new TypeError(
                   `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
@@ -1130,7 +1131,7 @@ export const typeCheck = (ast, error = true) => {
   }
   const copy = JSON.parse(JSON.stringify(ast))
   check(copy, root, copy)
-  while (stack.length) stack.pop()()
+  while (stack.length) stack.cut()()
   return [ast, Types]
 }
 export const type = (ast) => typeCheck(ast)[0]

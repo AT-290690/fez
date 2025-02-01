@@ -347,3 +347,116 @@ export const UTILS = {
   stringifyArgs,
   shake
 }
+export class Brr {
+  constructor(...items) {
+    this._left = [Brr._negativeZeroSymbol]
+    this._right = []
+    if (items.length === 0) return this
+    const half = (items.length / 2) | 0.5
+    for (let i = half - 1; i >= 0; --i) this._left.push(items[i])
+    for (let i = half; i < items.length; ++i) this._right.push(items[i])
+    return this
+  }
+  _addToLeft(item) {
+    this._left.push(item)
+  }
+  _addToRight(item) {
+    this._right.push(item)
+  }
+  _removeFromLeft() {
+    const len = this.length
+    if (len) {
+      if (len === 1) this.clear()
+      else if (this._left.length > 0) this._left.pop()
+    }
+  }
+  _removeFromRight() {
+    const len = this.length
+    if (len) {
+      if (len === 1) this.clear()
+      else if (this._right.length > 0) this._right.pop()
+    }
+  }
+  static _negativeZeroSymbol = Symbol('-0')
+  static isBrr(entity) {
+    return entity instanceof Brr
+  }
+  _offsetLeft() {
+    return (this._left.length - 1) * -1
+  }
+  _offsetRight() {
+    return this._right.length
+  }
+  get length() {
+    return this._left.length + this._right.length - 1
+  }
+  get first() {
+    return this.get(0)
+  }
+  get last() {
+    return this.get(-1)
+  }
+  get(offset) {
+    if (offset < 0) offset = this.length + offset
+    const offsetIndex = offset + this._offsetLeft()
+    const index = offsetIndex < 0 ? offsetIndex * -1 : offsetIndex
+    return offsetIndex >= 0 ? this._right[index] : this._left[index]
+  }
+  set(index, value) {
+    index = index < 0 ? this.length + index : index
+    const offset = index + this._offsetLeft()
+    if (offset >= 0) this._right[offset] = value
+    else this._left[offset * -1] = value
+    return this
+  }
+  append(item) {
+    this._addToRight(item)
+    return this
+  }
+  prepend(item) {
+    this._addToLeft(item)
+    return this
+  }
+  cut() {
+    if (this._offsetRight() === 0) this.balance()
+    const last = this.last
+    this._removeFromRight()
+    return last
+  }
+  chop() {
+    if (this._offsetLeft() === 0) this.balance()
+    const first = this.first
+    this._removeFromLeft()
+    return first
+  }
+  head() {
+    if (this._offsetRight() === 0) this.balance()
+    this._removeFromRight()
+    return this
+  }
+  tail() {
+    if (this._offsetLeft() === 0) this.balance()
+    this._removeFromLeft()
+    return this
+  }
+  clear() {
+    this._left.length = 1
+    this._right.length = 0
+    return this
+  }
+  isBalanced() {
+    return this._offsetRight() + this._offsetLeft() === 0
+  }
+  balance() {
+    if (this.isBalanced()) return this
+    const initial = [...this]
+    this.clear()
+    const half = (initial.length / 2) | 0.5
+    for (let i = half - 1; i >= 0; --i) this._addToLeft(initial[i])
+    for (let i = half; i < initial.length; ++i) this._addToRight(initial[i])
+    return this
+  }
+  *[Symbol.iterator]() {
+    for (let i = 0, len = this.length; i < len; ++i) yield this.get(i)
+  }
+}
