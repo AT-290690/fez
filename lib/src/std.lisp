@@ -198,6 +198,13 @@
                             (recursive:enumerated-fold (+ i 1) (Atom (cb out (Atom (get xs i)) i)))
                             (Atom out))))
                       (recursive:enumerated-fold 0 initial))))
+(let math:map (lambda xs cb (do
+                  (let recursive:math:map (lambda i out
+                        (if (> (length xs) i)
+                              (recursive:math:map (+ i 1)
+                                (set! out (length out) (Atom (cb (Atom (get xs i))))))
+                              out)))
+                      (Collection (recursive:math:map 0 [])))))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
 (let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) (+))))
@@ -522,6 +529,12 @@
                             (recursive:array:fold (+ i 1) (cb out (get xs i)))
                             (Collection out))))
                       (recursive:array:fold 0 initial))))
+(let array:reduce (lambda xs cb initial (do
+                  (let recursive:array:reduce (lambda i out
+                        (if (> (length xs) i)
+                            (recursive:array:reduce (+ i 1) (Atom (cb out (get xs i))))
+                            (Atom out))))
+                      (recursive:array:reduce 0 initial))))
 (let array:every? (lambda xs predicate? (do
                     (let recursive:array:every? (lambda i
                           (if (and (> (length xs) i) (predicate? (get xs i)))
@@ -558,8 +571,8 @@
 (let array:tail! (lambda q (del! q)))
 (let array:push! (lambda q item (do (set! q (length q) item) item)))
 (let array:pop! (lambda q (do (let l (array:at q -1)) (del! q) l)))
-(let array:even-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:even? i) (array:append! a b) a)) [])))
-(let array:odd-indexed (lambda x (array:enumerated-fold x (lambda a b i (if (math:odd? i) (array:append! a b) a)) [])))
+(let array:even-indexed (lambda x (array:enumerated-transform x (lambda a b i (if (math:even? i) (array:append! a b) a)) [])))
+(let array:odd-indexed (lambda x (array:enumerated-transform x (lambda a b i (if (math:odd? i) (array:append! a b) a)) [])))
 (let array:unique (lambda xs (do 
     (let sorted (array:sort xs (lambda a b (> a b))))
     (|> 
@@ -659,7 +672,7 @@
 (let array:increment! (lambda xs idx value (set! xs idx (+ (get xs idx) value))))
 (let array:set (lambda xs index item (set! (array:shallow-copy xs) index item)))
 (let set (lambda xs index item (set! (array:shallow-copy xs) index item)))
-(let array:sliding-window (lambda xs size (array:enumerated-fold xs (lambda a b i (if (> (+ i size) (length xs)) a (array:merge a (array (array:slice xs i (+ i size)))))) [])))
+(let array:sliding-window (lambda xs size (array:enumerated-transform xs (lambda a b i (if (> (+ i size) (length xs)) a (array:merge a (array (array:slice xs i (+ i size)))))) [])))
 (let array:adjacent-difference (lambda xs cb (do
   (let len (length xs))
   (if (= len 1) xs
@@ -675,7 +688,7 @@
         (array:push! (array:at a -1) x)
         (array:push! a (array x))) a))
       [])))
-(let array:ranges (lambda xs predicate? (array:sliding-window (array:enumerated-fold xs (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
+(let array:ranges (lambda xs predicate? (array:sliding-window (array:enumerated-transform xs (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
 (let array:chunks (lambda xs predicate? (|> xs (array:ranges predicate?) (array:map (lambda [start end .] (array:exclude (array:slice xs start end) predicate?))))))
 (let array:adjacent-find (lambda xs cb? (do
   (let len (length xs))
@@ -758,7 +771,7 @@
               (cb (matrix:get xs dy dx) dir dy dx)
               []))))))
 (let matrix:adjacent-sum (lambda xs directions y x cb
-      (array:fold directions (lambda a dir (do
+      (array:reduce directions (lambda a dir (do
           (let dy (+ (array:first dir) y))
           (let dx (+ (array:second dir) x))
           (if
@@ -766,7 +779,7 @@
               (cb a (matrix:get xs dy dx)) 
               a))) 0)))
 (let matrix:sliding-adjacent-sum (lambda xs directions y x N cb
-      (array:fold directions (lambda a dir (do
+      (array:reduce directions (lambda a dir (do
           (let dy (+ (array:first dir)  y))
           (let dx (+ (array:second dir)  x))
           (cb a (get (get xs (math:euclidean-mod dy N)) (math:euclidean-mod dx N))) 
@@ -930,8 +943,8 @@
 (let array:merge! (lambda a b (do (array:for b (lambda x (set! a (length a) x))) a)))
 (let array:merge (lambda a b (do (let out []) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
 (let array:concat (lambda xs (array:transform xs array:merge [])))
-(let array:concat-with (lambda xs ch (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) [])))
-(let string:concat-with-lines (lambda xs (array:enumerated-fold xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
+(let array:concat-with (lambda xs ch (array:enumerated-transform xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) [])))
+(let string:concat-with-lines (lambda xs (array:enumerated-transform xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
 (let array:swap-remove! (lambda xs i (do (set! xs i (get xs (- (length xs) 1))) (del! xs))))
 (let array:swap! (lambda xs i j (do (let temp (get xs i)) (set! xs i (get xs j)) (set! xs j temp))))
 (let array:index-of (lambda xs item (do
@@ -971,6 +984,12 @@
                             (recursive:array:enumerated-fold (+ i 1) (cb out (get xs i) i))
                             out)))
                       (recursive:array:enumerated-fold 0 initial))))
+(let array:enumerated-transform (lambda xs cb initial (do
+                  (let recursive:array:enumerated-transform (lambda i out
+                        (if (> (length xs) i)
+                            (recursive:array:enumerated-transform (+ i 1) (cb out (get xs i) i))
+                            (Collection out))))
+                      (recursive:array:enumerated-transform 0 initial))))
 (let array:enumerated-find (lambda xs predicate? (do
                     (let recursive:array:enumerated-find (lambda i
                           (if (> (length xs) i)
@@ -1200,7 +1219,7 @@
       xs))) (recursive:string:lower 0))))
 
 (let new:map (lambda args 
-  (array:enumerated-fold args (lambda a . i 
+  (array:enumerated-transform args (lambda a . i 
     (if (math:even? i) 
         (map:set! a (get args i) (get args (+ i 1))) 
         a)) 
@@ -1308,7 +1327,7 @@
 (let set:empty! (lambda table (array:map table array:empty!)))
 
 (let map:with! (lambda initial args  
-  (array:enumerated-fold args (lambda a . i 
+  (array:enumerated-transform args (lambda a . i 
     (if (math:even? i) 
         (map:set! a (get args i) (get args (+ i 1))) 
         a)) 
@@ -1539,6 +1558,34 @@ q)))
 (let stack:peek (lambda stack (brray:last stack)))
 
 
+(let mapping:number->number (lambda xs cb (do
+                  (let recursive:mapping:number->number (lambda i out
+                        (if (> (length xs) i)
+                              (recursive:mapping:number->number (+ i 1)
+                                (set! out (length out) (Atom (cb (Atom (get xs i))))))
+                              (Collection out))))
+                      (recursive:mapping:number->number 0 []))))
+(let mapping:number->array (lambda xs cb (do
+                  (let recursive:mapping:number->array (lambda i out
+                        (if (> (length xs) i)
+                              (recursive:mapping:number->array (+ i 1)
+                                (set! out (length out) (Collection (cb (Atom (get xs i))))))
+                              (Collection out))))
+                      (recursive:mapping:number->array 0 []))))
+(let mapping:array->array (lambda xs cb (do
+                  (let recursive:mapping:array->array (lambda i out
+                        (if (> (length xs) i)
+                              (recursive:mapping:array->array (+ i 1)
+                                (set! out (length out) (Collection (cb (Collection (get xs i))))))
+                              (Collection out))))
+                      (recursive:mapping:array->array 0 []))))
+(let mapping:array->number (lambda xs cb (do
+                  (let recursive:mapping:array->number (lambda i out
+                        (if (> (length xs) i)
+                              (recursive:mapping:array->number (+ i 1)
+                                (set! out (length out) (Atom (cb (Collection (get xs i))))))
+                              (Collection out))))
+                      (recursive:mapping:array->number 0 []))))
 
 (let time:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))
 (let time:add-minutes (lambda date-time minutes (+ date-time (* minutes 1000 60))))
