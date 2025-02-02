@@ -54,6 +54,11 @@ export const identity = (name) => [
     [1, 'x']
   ]
 ]
+const returnType = (rest) => {
+  const body = rest.at(-1)
+  const rem = hasBlock(body) ? body.at(-1) : body
+  return isLeaf(rem) ? rem : rem[0]
+}
 const drillReturnType = (rest, condition) => {
   const body = rest.at(-1)
   const rem = hasBlock(body) ? body.at(-1) : body
@@ -71,67 +76,111 @@ export const isUnknownNotAnyType = (stats) =>
   stats && !isAnyType(stats) && isUnknownType(stats)
 export const isUnknownNotAnyReturn = (stats) =>
   stats && !isAnyReturn(stats) && isUnknownReturn(stats)
-export const castType = (stats, type) =>
-  (stats[TYPE_PROP][0] = type[RETURNS][0])
-export const castReturn = (stats, type) =>
-  (stats[RETURNS][0] = type[RETURNS][0])
+export const castType = (stats, type) => {
+  return (stats[TYPE_PROP][0] = type[RETURNS][0])
+}
+export const castReturn = (stats, type) => {
+  return (stats[RETURNS][0] = type[RETURNS][0])
+}
 export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
-export const setPropToAtom = (stats, prop) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  (stats[prop][0] = ATOM)
-export const setProp = (stats, prop, value) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  value[prop][0] !== UNKNOWN &&
-  (stats[prop][0] = value[prop][0])
-export const setPropToReturn = (stats, prop, value) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  value[RETURNS][0] !== UNKNOWN &&
-  (stats[prop][0] = value[RETURNS][0])
-export const setPropToReturnRef = (stats, prop, value) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  value[RETURNS][0] !== UNKNOWN &&
-  (stats[prop] = value[RETURNS])
-export const setPropToType = (stats, prop, value) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  value[UNKNOWN][0] !== UNKNOWN &&
-  (stats[prop][0] = value[UNKNOWN][0])
-export const setPropToTypeRef = (stats, prop, value) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  value[TYPE_PROP][0] !== UNKNOWN &&
-  (stats[prop] = value[TYPE_PROP])
-export const setReturnToAtom = (stats) =>
-  isUnknownReturn(stats) && (stats[RETURNS][0] = ATOM)
+export const setPropToAtom = (stats, prop) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    (stats[prop][0] = ATOM)
+  )
+}
+export const setPropToAbstraction = (stats, prop) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    (stats[prop][0] = APPLY)
+  )
+}
+export const setProp = (stats, prop, value) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    value[prop][0] !== UNKNOWN &&
+    (stats[prop][0] = value[prop][0])
+  )
+}
+export const setPropToReturn = (stats, prop, value) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    value[RETURNS][0] !== UNKNOWN &&
+    (stats[prop][0] = value[RETURNS][0])
+  )
+}
+export const setPropToReturnRef = (stats, prop, value) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    value[RETURNS][0] !== UNKNOWN &&
+    (stats[prop] = value[RETURNS])
+  )
+}
+export const setPropToType = (stats, prop, value) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    (stats[prop][0] = value[TYPE_PROP][0])
+  )
+}
+export const setPropToTypeRef = (stats, prop, value) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    (stats[prop] = value[TYPE_PROP])
+  )
+}
+export const setReturnToAtom = (stats) => {
+  return (
+    (isUnknownReturn(stats) || isAnyReturn(stats)) && (stats[RETURNS][0] = ATOM)
+  )
+}
 export const setTypeToAtom = (stats) =>
-  isUnknownType(stats) && (stats[TYPE_PROP][0] = ATOM)
+  (isUnknownType(stats) || isAnyType(stats)) && (stats[TYPE_PROP][0] = ATOM)
 export const setReturnToAbbstraction = (stats) =>
-  isUnknownReturn(stats) && (stats[RETURNS][0] = APPLY)
+  (isUnknownReturn(stats) || isAnyReturn(stats)) && (stats[RETURNS][0] = APPLY)
 export const setTypeRef = (stats, value) =>
-  isUnknownType(stats) && (stats[TYPE_PROP] = value[TYPE_PROP])
-export const setReturnRef = (stats, value) =>
-  isUnknownReturn(stats) && (stats[RETURNS] = value[RETURNS])
-export const setReturnToTypeRef = (stats, value) =>
-  (isUnknownReturn(stats) || isAnyReturn(stats)) &&
-  (stats[RETURNS] = value[TYPE_PROP])
-export const setTypeToReturnRef = (stats, value) =>
-  (isUnknownType(stats) || isAnyTyisUnknownType(stats)) &&
-  (stats[TYPE_PROP] = value[RETURNS])
-export const setPropRef = (stats, prop, value) =>
-  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-  (stats[prop] = value[prop])
-export const setReturn = (stats, value) =>
-  isUnknownReturn(stats) &&
-  !isUnknownReturn(value) &&
-  (stats[RETURNS][0] = value[RETURNS][0])
+  (isUnknownType(stats) || isAnyType(stats)) &&
+  (stats[TYPE_PROP] = value[TYPE_PROP])
+export const setReturnRef = (stats, value) => {
+  return (
+    (isUnknownReturn(stats) || isAnyReturn(stats)) &&
+    (stats[RETURNS] = value[RETURNS])
+  )
+}
+export const setReturnToTypeRef = (stats, value) => {
+  return (
+    (isUnknownReturn(stats) || isAnyReturn(stats)) &&
+    (stats[RETURNS] = value[TYPE_PROP])
+  )
+}
+export const setTypeToReturnRef = (stats, value) => {
+  return (
+    (isUnknownType(stats) || isAnyType(stats)) &&
+    (stats[TYPE_PROP] = value[RETURNS])
+  )
+}
+export const setPropRef = (stats, prop, value) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    (stats[prop] = value[prop])
+  )
+}
+export const setReturn = (stats, value) => {
+  return (
+    isUnknownReturn(stats) &&
+    !isUnknownReturn(value) &&
+    (stats[RETURNS][0] = value[RETURNS][0])
+  )
+}
 export const setType = (stats, value) =>
-  isUnknownType(stats) &&
+  (isUnknownType(stats) || isAnyType(stats)) &&
   !isUnknownType(value) &&
   (stats[TYPE_PROP][0] = value[TYPE_PROP][0])
 export const setTypeToReturn = (stats, value) =>
-  isUnknownType(stats) &&
+  (isUnknownType(stats) || isAnyType(stats)) &&
   !isUnknownReturn(value) &&
   (stats[TYPE_PROP][0] = value[RETURNS][0])
 export const setReturnToType = (stats, value) =>
-  isUnknownReturn(stats) &&
+  (isUnknownReturn(stats) || isAnyReturn(stats)) &&
   !isUnknownType(value) &&
   (stats[RETURNS][0] = value[TYPE_PROP][0])
 export const isAnyReturn = (stats) => stats && stats[RETURNS][0] === ANY
@@ -247,8 +296,46 @@ const retryArgs = (stats, stack, cb) => {
     stack.prepend(cb)
   }
 }
-const ifExpression = ({ re, env, ref }) => {
-  if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) setReturnToAtom(ref[STATS])
+const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
+  switch (leaf[VALUE]) {
+    case KEYWORDS.IF:
+      return ifExpression({
+        re: re.slice(2),
+        env,
+        ref,
+        prop
+      })
+    case KEYWORDS.ANONYMOUS_FUNCTION:
+      setPropToAbstraction(ref[STATS], prop)
+      ref[STATS][RETURNS] = [UNKNOWN]
+      ref[STATS][ARG_COUNT] = re.length - 2
+      ref[STATS][ARGUMENTS] = fillUknownArgs(re.length - 2)
+      break
+    case KEYWORDS.CALL_FUNCTION:
+      if (re.at(-1)[TYPE] === WORD) {
+        if (env[re.at(-1)[VALUE]])
+          setPropToReturnRef(ref[STATS], prop, env[re.at(-1)[VALUE]][STATS])
+      } else {
+        const returns = returnType(re.at(-1))
+        if (env[returns[VALUE]])
+          IfApplyBranch({
+            branch: env[returns[VALUE]],
+            ref,
+            env,
+            prop,
+            leaf: re.at(-1),
+            re: re.at(-1).slice(2)
+          })
+      }
+      break
+    default:
+      return setPropToReturnRef(ref[STATS], prop, branch[STATS])
+  }
+}
+const ifExpression = ({ re, env, ref, prop }) => {
+  // console.log(ref, JSON.stringify(env[KEYWORDS.IF][STATS][RETURNS]))
+  if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+    return setPropToAtom(ref[STATS], prop)
   // TODO check that both brancehs are predicates if one is
   else {
     const conc = isLeaf(re[0]) ? re[0] : re[0][0]
@@ -259,78 +346,59 @@ const ifExpression = ({ re, env, ref }) => {
     // WHY not consiter making return types for everything
     if (concequent)
       if (conc[TYPE] === WORD) {
-        return setReturnToTypeRef(ref[STATS], concequent[STATS])
-      } else if (conc[TYPE] === APPLY && getType(concequent[STATS]) === APPLY) {
-        return setReturnRef(ref[STATS], concequent[STATS])
+        return setPropToTypeRef(ref[STATS], prop, concequent[STATS])
+      } else if (
+        conc[TYPE] === APPLY &&
+        getType(concequent[STATS]) === APPLY &&
+        // Making sure the recursive function don't look for their own return type
+        concequent[STATS][SIGNATURE] !== ref[STATS][SIGNATURE]
+      ) {
+        return IfApplyBranch({
+          leaf: conc,
+          branch: concequent,
+          re: re[0],
+          prop,
+          env,
+          ref
+        })
       }
-
     if (alternative) {
       if (alt[TYPE] === WORD) {
-        return setReturnToTypeRef(ref[STATS], alternative[STATS])
-      } else if (alt[TYPE] === APPLY && getType(alternative[STATS]) === APPLY) {
-        return setReturnRef(ref[STATS], alternative[STATS])
+        return setPropToTypeRef(ref[STATS], prop, alternative[STATS])
+      } else if (
+        alt[TYPE] === APPLY &&
+        getType(alternative[STATS]) === APPLY &&
+        // Making sure the recursive function don't look for their own return type
+        alternative[STATS][SIGNATURE] !== ref[STATS][SIGNATURE]
+      ) {
+        return IfApplyBranch({
+          leaf: alt,
+          branch: alternative,
+          re: re[1],
+          prop,
+          env,
+          ref
+        })
       }
     }
   }
 }
-const resolveApplyAssigment = (re, name, env) => {
-  if (re[0][TYPE] === APPLY) {
-    switch (re[0][VALUE]) {
-      case KEYWORDS.ANONYMOUS_FUNCTION:
-        // FN ASSIGMENT
-        env[name][STATS][TYPE_PROP] = [APPLY]
-        env[name][STATS][RETURNS] = [UNKNOWN]
-        env[name][STATS][ARG_COUNT] = re.length - 2
-        env[name][STATS][ARGUMENTS] = fillUknownArgs(re.length - 2)
-        break
-    }
-  }
-}
-const resolveIfAssigment = ({ rem, name, env, exp, prop }) => {
-  const re = rem.slice(2)
-  checkPredicateName(exp, [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]])
-  checkPredicateName(exp, [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]])
-  if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
-    // ATOM ASSIGMENT
-    setPropToAtom(env[name][STATS], prop)
-  else if (
-    !isLeaf(re[0]) &&
-    env[re[0][0][VALUE]] &&
-    !isUnknownReturn(env[re[0][0][VALUE]][STATS])
-  ) {
-    setPropToReturnRef(env[name][STATS], prop, env[re[0][0][VALUE]][STATS])
-    resolveApplyAssigment(re[0], name, env)
-    // env[name][STATS] = env[re[0][0][VALUE]][STATS]
-  } else if (
-    !isLeaf(re[1]) &&
-    env[re[1][0][VALUE]] &&
-    !isUnknownReturn(env[re[1][0][VALUE]][STATS])
-  ) {
-    setPropToReturnRef(env[name][STATS], prop, env[re[1][0][VALUE]][STATS])
-    resolveApplyAssigment(re[1], name, env)
-  } else if (env[re[0][VALUE]])
-    // ASSIGMENT
-    setPropRef(env[name][STATS], prop, env[re[0][VALUE]][STATS])
-  else if (env[re[1][VALUE]])
-    // ASSIGMENT
-    setPropRef(env[name][STATS], prop, env[re[1][VALUE]][STATS])
-}
-const resolveCondition = ({ rem, name, env, exp }) => {
+const resolveCondition = ({ rem, name, env, exp, prop }) => {
   const ret = rem[0]
   const re = rem.slice(2)
-  resolveApplyAssigment(re, name, env)
   const ref = env[name]
   checkPredicateName(exp, [[WORD, name], isLeaf(re[0]) ? re[0] : re[0][0]])
   checkPredicateName(exp, [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]])
   switch (ret[VALUE]) {
     case KEYWORDS.IF:
-      ifExpression({ re, env, ref })
+      ifExpression({ re, env, ref, prop })
       break
     default:
-      if (env[ret[VALUE]]) setReturnRef(ref[STATS], env[ret[VALUE]][STATS])
+      if (env[ret[VALUE]]) setPropRef(ref[STATS], prop, env[ret[VALUE]][STATS])
       else
         stack.append(() => {
-          if (env[ret[VALUE]]) setReturnRef(ref[STATS], env[ret[VALUE]][STATS])
+          if (env[ret[VALUE]])
+            setPropRef(ref[STATS], prop, env[ret[VALUE]][STATS])
         })
       break
   }
@@ -343,7 +411,7 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
   } else {
     switch (returns[VALUE]) {
       case KEYWORDS.IF:
-        resolveIfAssigment({ rem, name, env, exp, prop })
+        resolveCondition({ rem, name, env, exp, prop })
         break
       default:
         checkPredicateNameDeep(name, exp, exp.slice(1), returns)
@@ -573,28 +641,30 @@ export const typeCheck = (ast, error = true) => {
                     setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
                 )
               else {
-                const ret = returns[0]
-
-                switch (ret[VALUE]) {
-                  case KEYWORDS.IF:
-                    resolveCondition({
-                      rem: returns,
-                      name: ref[STATS][SIGNATURE],
-                      env: copy,
-                      exp,
-                      stack
-                    })
-                    break
-                  default:
-                    if (copy[ret[VALUE]])
-                      setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                    else
-                      stack.append(() => {
-                        if (copy[ret[VALUE]])
-                          setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                stack.append(() => {
+                  const ret = returns[0]
+                  switch (ret[VALUE]) {
+                    case KEYWORDS.IF:
+                      resolveCondition({
+                        rem: returns,
+                        name: ref[STATS][SIGNATURE],
+                        env: copy,
+                        exp,
+                        stack,
+                        prop: RETURNS
                       })
-                    break
-                }
+                      break
+                    default:
+                      if (copy[ret[VALUE]])
+                        setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                      else
+                        stack.append(() => {
+                          if (copy[ret[VALUE]])
+                            setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                        })
+                      break
+                  }
+                })
               }
               // TODO overwrite return type check here
             }
@@ -781,10 +851,11 @@ export const typeCheck = (ast, error = true) => {
                               // It turns out it's not possible to determine return type of function here
                               // what if it's a global function used elsewhere where the return type mwould be different
                               // THIS willgive lambda return types but refactor is needed still
-                              setReturn(
-                                env[name][STATS],
-                                expectedArgs[i][STATS]
-                              )
+                              if (!SPECIAL_FORMS_SET.has(name))
+                                setReturn(
+                                  env[name][STATS],
+                                  expectedArgs[i][STATS]
+                                )
                               break
                           }
                         // TODO also handle casting
@@ -862,33 +933,50 @@ export const typeCheck = (ast, error = true) => {
                       !isUnknownType(env[rest[i][VALUE]][STATS]) &&
                       env[rest[i][VALUE]][STATS][ARG_COUNT] !== VARIADIC
                     ) {
-                      if (getType(args[i][STATS]) !== APPLY)
-                        // TODO this should really happen in 10 or 16
-                        throw new TypeError(
-                          `Incorrect type for argument of (${
-                            first[VALUE]
-                          }) at position (${i}). Expected (${
-                            STATIC_TYPES.ABSTRACTION
-                          }) but got (${toTypeNames(
-                            getType(args[i][STATS])
-                          )}) (${stringifyArgs(exp)}) (check #111)`
-                        )
-                      // Handles words that are Lambdas
-                      else if (
+                      // if (
+                      //   getType(args[i][STATS]) !==
+                      //   getType(env[rest[i][VALUE]][STATS][ARGUMENTS][i][STATS])
+                      // )
+                      //   // TODO this should really happen in 10 or 16
+                      //   throw new TypeError(
+                      //     `Incorrect type for argument of (${
+                      //       first[VALUE]
+                      //     }) at position (${i}). Expected (${
+                      //       STATIC_TYPES.ABSTRACTION
+                      //     }) but got (${toTypeNames(
+                      //       getType(
+                      //         env[rest[i][VALUE]][STATS][ARGUMENTS][i][STATS]
+                      //       )
+                      //     )}) (${stringifyArgs(exp)}) (check #111)`
+                      //   )
+                      // // Handles words that are Lambdas
+                      // else
+                      if (
                         env[rest[i][VALUE]][STATS][ARG_COUNT] !==
                         args[i][STATS][ARG_COUNT]
                       ) {
-                        throw new TypeError(
-                          `Incorrect number of arguments for (${
-                            args[i][STATS][SIGNATURE]
-                          }) the (lambda) argument of (${
-                            first[VALUE]
-                          }) at position (${i}). Expected (= ${
-                            args[i][STATS][ARG_COUNT]
-                          }) but got ${
-                            env[rest[i][VALUE]][STATS][ARG_COUNT]
-                          } (${stringifyArgs(exp)}) (check #778)`
-                        )
+                        if (args[i][STATS][ARG_COUNT] === undefined)
+                          throw new TypeError(
+                            `Incorrect type for argument of (${
+                              first[VALUE]
+                            }) at position (${i}). Expected (${
+                              STATIC_TYPES.ABSTRACTION
+                            }) but got (${toTypeNames(
+                              getType(args[i][STATS])
+                            )}) (${stringifyArgs(exp)}) (check #111)`
+                          )
+                        else if (getType(args[i][STATS]) === APPLY)
+                          throw new TypeError(
+                            `Incorrect number of arguments for (${
+                              args[i][STATS][SIGNATURE]
+                            }) the (lambda) argument of (${
+                              first[VALUE]
+                            }) at position (${i}). Expected (= ${
+                              args[i][STATS][ARG_COUNT]
+                            }) but got ${
+                              env[rest[i][VALUE]][STATS][ARG_COUNT]
+                            } (${stringifyArgs(exp)}) (check #778)`
+                          )
                       } else {
                         // DEFINED  LAMBDAS TYPE CHECKING
                         // #C1

@@ -428,9 +428,7 @@
   (let l (list:find list (lambda x (= (list:head (list:tail x)) i))))
   (if (list:nil? l) l (list:head l))
 )))
-(let list:end (lambda xs (cond
-                              (list:nil? (list:tail xs)) xs
-                              (*) (list:end (list:tail xs)))))
+(let list:end (lambda xs (if (list:nil? (list:tail xs)) xs (list:end (list:tail xs)))))
 (let list:rotate-left (lambda xs (do
 (let fst (list:head xs))
 (let xss (list:remove-at xs 0))

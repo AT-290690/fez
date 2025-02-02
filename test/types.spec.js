@@ -15,10 +15,10 @@ const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
 describe('Type checking', () => {
   it('Std types should not change', () => {
-    const A = readFileSync('./lib/src/types.lisp', 'utf-8')
+    const B = readFileSync('./lib/src/types.lisp', 'utf-8')
       .split('\n')
       .filter((x) => !x.startsWith('; '))
-    const B = [...typeCheck(std[0], false)[1].entries()]
+    const A = [...typeCheck(std[0])[1].entries()]
       .filter((x) => x[0][0] === ';')
       .map(([k, v]) => `${v()}`)
     deepStrictEqual(A, B)
