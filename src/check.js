@@ -110,11 +110,14 @@ export const setTypeRef = (stats, value) =>
 export const setReturnRef = (stats, value) =>
   isUnknownReturn(stats) && (stats[RETURNS] = value[RETURNS])
 export const setReturnToTypeRef = (stats, value) =>
-  isUnknownReturn(stats) && (stats[RETURNS] = value[TYPE_PROP])
+  (isUnknownReturn(stats) || isAnyReturn(stats)) &&
+  (stats[RETURNS] = value[TYPE_PROP])
 export const setTypeToReturnRef = (stats, value) =>
-  isUnknownType(stats) && (stats[TYPE_PROP] = value[RETURNS])
+  (isUnknownType(stats) || isAnyTyisUnknownType(stats)) &&
+  (stats[TYPE_PROP] = value[RETURNS])
 export const setPropRef = (stats, prop, value) =>
-  stats[prop][0] === UNKNOWN && (stats[prop] = value[prop])
+  (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+  (stats[prop] = value[prop])
 export const setReturn = (stats, value) =>
   isUnknownReturn(stats) &&
   !isUnknownReturn(value) &&
@@ -248,23 +251,25 @@ const ifExpression = ({ re, env, ref }) => {
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) setReturnToAtom(ref[STATS])
   // TODO check that both brancehs are predicates if one is
   else {
-    const concequent = isLeaf(re[0]) ? env[re[0][VALUE]] : env[re[0][0][VALUE]]
-    const alternative = isLeaf(re[1]) ? env[re[1][VALUE]] : env[re[1][0][VALUE]]
-    // todo check if condition matches alternative
+    const conc = isLeaf(re[0]) ? re[0] : re[0][0]
+    const alt = isLeaf(re[1]) ? re[1] : re[1][0]
+    const concequent = env[conc[VALUE]]
+    const alternative = env[alt[VALUE]]
     // TODO make this more simple - it's so many different things just because types are functions or not
     // WHY not consiter making return types for everything
-    if (concequent && getType(concequent[STATS]) !== UNKNOWN) {
-      if (getType(concequent[STATS]) === APPLY)
-        setReturnRef(ref[STATS], concequent[STATS])
-      else ref[STATS][RETURNS] = concequent[STATS][TYPE_PROP]
-    } else if (alternative && isUnknownType(alternative[STATS])) {
-      if (getType(alternative[STATS]) === APPLY)
-        setReturnRef(ref[STATS], alternative[STATS])
-      else setReturnToTypeRef(ref[STATS], alternative[STATS])
-    } else if (concequent) {
-      if (getType(concequent[STATS]) === APPLY)
-        setReturnRef(ref[STATS], concequent[STATS])
-      else setReturnToTypeRef(ref[STATS], concequent[STATS])
+    if (concequent)
+      if (conc[TYPE] === WORD) {
+        return setReturnToTypeRef(ref[STATS], concequent[STATS])
+      } else if (conc[TYPE] === APPLY && getType(concequent[STATS]) === APPLY) {
+        return setReturnRef(ref[STATS], concequent[STATS])
+      }
+
+    if (alternative) {
+      if (alt[TYPE] === WORD) {
+        return setReturnToTypeRef(ref[STATS], alternative[STATS])
+      } else if (alt[TYPE] === APPLY && getType(alternative[STATS]) === APPLY) {
+        return setReturnRef(ref[STATS], alternative[STATS])
+      }
     }
   }
 }

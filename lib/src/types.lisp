@@ -423,7 +423,7 @@
 ; 1 math:clamp
 (let math:clamp (lambda Atom Atom (do Atom)))
 ; 1 math:clamp-range
-(let math:clamp-range (lambda Atom Atom Atom (do Unknown)))
+(let math:clamp-range (lambda Atom Atom Atom (do Atom)))
 ; 1 math:odd?
 (let math:odd? (lambda Atom (do Atom)))
 ; 1 math:even?
@@ -581,7 +581,7 @@
 ; 1 list:get
 (let list:get (lambda Collection Atom (do Unknown)))
 ; 1 list:end
-(let list:end (lambda Collection (do Unknown)))
+(let list:end (lambda Collection (do Collection)))
 ; 1 list:rotate-left fst
 (let fst Unknown)
 ; 1 list:rotate-left xss
@@ -597,7 +597,7 @@
 ; 1 list:concat!
 (let list:concat! (lambda Collection (do Collection)))
 ; 1 list:merge!
-(let list:merge! (lambda Collection Unknown (do Unknown)))
+(let list:merge! (lambda Collection Unknown (do Collection)))
 ; 1 list:flatten
 (let list:flatten (lambda Collection (do Collection)))
 ; 1 list:equal?
@@ -797,9 +797,9 @@
 ; 1 array:sort 53 recursive:array:sort predicate
 (let predicate Atom)
 ; 1 array:sort 53 recursive:array:sort left
-(let left Unknown)
+(let left Collection)
 ; 1 array:sort 53 recursive:array:sort right
-(let right Unknown)
+(let right Collection)
 ; 1 array:sort 53 recursive:array:sort
 (let recursive:array:sort (lambda Atom Atom Collection Collection (do Collection)))
 ; 1 array:sort 53 sorted
@@ -1043,7 +1043,7 @@
 ; 1 from:float->string 90 recursive:while
 (let recursive:while (lambda Atom (do Atom)))
 ; 1 from:float->string
-(let from:float->string (lambda Atom (do Collection)))
+(let from:float->string (lambda Atom (do Atom)))
 ; 1 from:floats->strings
 (let from:floats->strings (lambda Collection (do Collection)))
 ; 1 from:string->date
@@ -1223,9 +1223,9 @@
 ; 1 string:has?
 (let string:has? (lambda Collection Collection (do Atom)))
 ; 1 string:lesser? 111 a
-(let a Unknown)
+(let a Collection)
 ; 1 string:lesser? 111 b
-(let b Unknown)
+(let b Collection)
 ; 1 string:lesser? 111 pairs
 (let pairs Collection)
 ; 1 string:lesser? 111 is
@@ -1237,9 +1237,9 @@
 ; 1 string:lesser?
 (let string:lesser? (lambda Collection Collection (do Atom)))
 ; 1 string:greater? 113 a
-(let a Unknown)
+(let a Collection)
 ; 1 string:greater? 113 b
-(let b Unknown)
+(let b Collection)
 ; 1 string:greater? 113 pairs
 (let pairs Collection)
 ; 1 string:greater? 113 is
@@ -1963,7 +1963,7 @@
 ; 1 match:number? negative?
 (let negative? Atom)
 ; 1 match:number? digits
-(let digits Unknown)
+(let digits Collection)
 ; 1 match:number?
 (let match:number? (lambda Collection (do Atom)))
 ; 1 match:digit?
@@ -2091,7 +2091,7 @@
 ; 1 prototype:get
 (let prototype:get (lambda Collection Collection (do Collection)))
 ; 1 prototype:create!
-(let prototype:create! (lambda Unknown (do Unknown)))
+(let prototype:create! (lambda Unknown (do Collection)))
 ; 1 evaluate expression
 (let expression Collection)
 ; 1 evaluate 184 head
@@ -2933,9 +2933,9 @@
 ; 1 list:count-of list:count-of lambda::annonymous::1::709
 (let lambda::annonymous::1::709 (lambda Atom Unknown (do Atom)))
 ; 1 list:concat! list:concat! lambda::annonymous::1::710
-(let lambda::annonymous::1::710 (lambda Collection Unknown (do Unknown)))
+(let lambda::annonymous::1::710 (lambda Collection Unknown (do Collection)))
 ; 1 list:concat! list:concat! lambda::annonymous::1::711
-(let lambda::annonymous::1::711 (lambda Collection Unknown (do Unknown)))
+(let lambda::annonymous::1::711 (lambda Collection Unknown (do Collection)))
 ; 1 list:get list:get lambda::annonymous::1::713
 (let lambda::annonymous::1::713 (lambda Collection (do Atom)))
 ; 1 list:get list:get lambda::annonymous::1::714
