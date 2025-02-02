@@ -90,7 +90,6 @@
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 (let nil 0)
 (let identity (lambda x x))
-(let else (lambda x x))
 (let Scope 1)
 (let Special 1)
 (let Library 1)

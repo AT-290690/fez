@@ -180,8 +180,6 @@
 (let nil Atom)
 ; 1 identity
 (let identity (lambda Unknown (do Unknown)))
-; 1 else
-(let else (lambda Unknown (do Unknown)))
 ; 1 Scope
 (let Scope Atom)
 ; 1 Special
