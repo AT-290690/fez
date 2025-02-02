@@ -3,6 +3,9 @@ import {
   ATOM,
   FALSE,
   KEYWORDS,
+  MULTI_DIMENTIONAL_SETTERS,
+  MUTATION_SUFFIX,
+  MUTATORS_SET,
   PLACEHOLDER,
   PREDICATE_SUFFIX,
   PREDICATES_INPUT_SET,
@@ -100,14 +103,16 @@ export const setProp = (stats, prop, value) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[prop][0] !== UNKNOWN &&
-    (stats[prop][0] = value[prop][0])
+    ((stats[prop][0] = value[prop][0]),
+    value[prop][1] && (stats[prop][1] = value[prop][1]))
   )
 }
 export const setPropToReturn = (stats, prop, value) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[RETURNS][0] !== UNKNOWN &&
-    (stats[prop][0] = value[RETURNS][0])
+    ((stats[prop][0] = value[RETURNS][0]),
+    value[RETURNS][1] && (stats[prop][1] = value[RETURNS][1]))
   )
 }
 export const setPropToReturnRef = (stats, prop, value) => {
@@ -120,7 +125,8 @@ export const setPropToReturnRef = (stats, prop, value) => {
 export const setPropToType = (stats, prop, value) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-    (stats[prop][0] = value[TYPE_PROP][0])
+    ((stats[prop][0] = value[TYPE_PROP][0]),
+    value[TYPE_PROP][1] && (stats[prop][1] = value[TYPE_PROP][1]))
   )
 }
 export const setPropToTypeRef = (stats, prop, value) => {
@@ -169,27 +175,33 @@ export const setReturn = (stats, value) => {
   return (
     isUnknownReturn(stats) &&
     !isUnknownReturn(value) &&
-    (stats[RETURNS][0] = value[RETURNS][0])
+    ((stats[RETURNS][0] = value[RETURNS][0]),
+    value[RETURNS][1] && (stats[RETURNS][1] = value[RETURNS][1]))
   )
 }
 export const setType = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   !isUnknownType(value) &&
-  (stats[TYPE_PROP][0] = value[TYPE_PROP][0])
+  ((stats[TYPE_PROP][0] = value[TYPE_PROP][0]),
+  value[TYPE_PROP][1] && (stats[TYPE_PROP][1] = value[TYPE_PROP][1]))
 export const setTypeToReturn = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   !isUnknownReturn(value) &&
-  (stats[TYPE_PROP][0] = value[RETURNS][0])
+  ((stats[TYPE_PROP][0] = value[RETURNS][0]),
+  value[RETURNS][1] && (stats[TYPE_PROP][1] = value[RETURNS][1]))
 export const setReturnToType = (stats, value) =>
   (isUnknownReturn(stats) || isAnyReturn(stats)) &&
   !isUnknownType(value) &&
-  (stats[RETURNS][0] = value[TYPE_PROP][0])
+  ((stats[RETURNS][0] = value[TYPE_PROP][0]),
+  value[TYPE_PROP][1] && (stats[RETURNS][1] = value[TYPE_PROP][1]))
 export const isAnyReturn = (stats) => stats && stats[RETURNS][0] === ANY
 export const isAnyType = (stats) => stats && stats[TYPE_PROP][0] === ANY
 export const isUnknownType = (stats) => stats && stats[TYPE_PROP][0] === UNKNOWN
 export const isUnknownReturn = (stats) => stats[RETURNS][0] === UNKNOWN
 export const getType = (stats) => stats && stats[TYPE_PROP][0]
+export const getTypes = (stats) => stats && stats[TYPE_PROP]
 export const getReturn = (stats) => stats && stats[RETURNS][0]
+export const getReturns = (stats) => stats && stats[RETURNS]
 export const isAtomType = (stats) =>
   isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
 export const isAtomReturn = (stats) =>
@@ -628,10 +640,15 @@ export const typeCheck = (ast, error = true) => {
               const ref = env[copy[SCOPE_NAME]]
               if (!ref) continue
               ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
-              const returns = deepLambdaReturn(
-                hasBlock(exp) ? exp.at(-1) : exp,
-                (result) => result[VALUE] !== KEYWORDS.IF
-              )
+
+              // TODO overwrite return type check here
+            }
+            const returns = deepLambdaReturn(
+              hasBlock(exp) ? exp.at(-1) : exp,
+              (result) => result[VALUE] !== KEYWORDS.IF
+            )
+            const ref = env[copy[SCOPE_NAME]]
+            if (ref)
               if (isLeaf(returns))
                 // TODO figure out what we do here
                 // this here is a variable WORD
@@ -667,8 +684,6 @@ export const typeCheck = (ast, error = true) => {
                   }
                 })
               }
-              // TODO overwrite return type check here
-            }
             check(rest.at(-1), copy, copy)
             break
           case STATIC_TYPES.ABSTRACTION:
@@ -1207,6 +1222,48 @@ export const typeCheck = (ast, error = true) => {
                     }
                     match()
                   }
+
+                  // handly typehints for arrays
+                  if (
+                    first[TYPE] === APPLY &&
+                    MUTATORS_SET.has(first[VALUE]) &&
+                    env[first[VALUE]]
+                  ) {
+                    const current = env[rest[i][VALUE]]
+                    if (current) {
+                      if (rest[i][TYPE] === WORD) {
+                        if (!current[STATS][TYPE_PROP][1]) {
+                          current[STATS][TYPE_PROP][1] = new Set()
+                        }
+                        if (MULTI_DIMENTIONAL_SETTERS.has(first[VALUE])) {
+                          current[STATS][TYPE_PROP][1].add(COLLECTION)
+                        } else {
+                          const right = isLeaf(rest.at(-1))
+                            ? rest.at(-1)
+                            : rest.at(-1)[0]
+                          switch (right[TYPE]) {
+                            case ATOM:
+                              current[STATS][TYPE_PROP][1].add(ATOM)
+                              break
+                            case WORD:
+                              if (env[right[VALUE]]) {
+                                current[STATS][TYPE_PROP][1].add(
+                                  ...env[right[VALUE]][STATS][TYPE_PROP]
+                                )
+                              }
+                              break
+                            case APPLY:
+                              if (env[right[VALUE]])
+                                current[STATS][TYPE_PROP][1].add(
+                                  ...env[right[VALUE]][STATS][RETURNS]
+                                )
+                              break
+                          }
+                        }
+                      }
+                    }
+                  }
+                  // handly typehints for arrays
                 }
               }
             })

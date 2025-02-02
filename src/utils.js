@@ -33,6 +33,7 @@ export const formatErrorWithCallstack = (error, callstack) =>
   `${error.message}\n${formatCallstack(callstack)}`
 // TODO figure out why name is sometimes undefined
 export const getSuffix = (str) => (str ? str[str.length - 1] : '')
+export const getPrefix = (str) => str?.split(':')[0]
 export const removeNoCode = (source) =>
   source
     .replace(/(;.+|;)/g, '')

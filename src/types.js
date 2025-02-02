@@ -1,4 +1,4 @@
-import { getReturn, getType } from './check.js'
+import { getReturn, getReturns, getType, getTypes } from './check.js'
 import {
   APPLY,
   ATOM,
@@ -19,8 +19,8 @@ export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
 export const UNKNOWN = -1
 export const COLLECTION = 3
-export const PREDICATE = 4
-export const ANY = 5
+export const PREDICATE = 5
+export const ANY = 4
 export const ANONYMOUS_FUNCTION_TYPE_PREFIX = 'lambda::annonymous::'
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 100
@@ -29,14 +29,13 @@ export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
       return 'Abstraction'
+    case PREDICATE:
     case ATOM:
       return 'Atom'
     case UNKNOWN:
       return 'Unknown'
-    case PREDICATE:
-      return 'Predicate'
     case COLLECTION:
-      return 'Collection'
+      return '[]'
     case ANY:
       return 'Any'
     default:
@@ -100,7 +99,7 @@ export const SPECIAL_FORM_TYPES = {
   },
   [STATIC_TYPES.PREDICATE]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: STATIC_TYPES.PREDICATE,
       retried: Infinity,
       [ARG_COUNT]: 1,
@@ -117,7 +116,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [STATIC_TYPES.COLLECTION]: {
@@ -333,8 +332,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -837,8 +836,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -872,7 +871,7 @@ export const SPECIAL_FORM_TYPES = {
   },
   [KEYWORDS.NOT]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.NOT,
       retried: Infinity,
       [ARG_COUNT]: 1,
@@ -881,20 +880,20 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.EQUAL]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.EQUAL,
       retried: Infinity,
       [ARG_COUNT]: 2,
@@ -922,12 +921,12 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.LESS_THAN]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       retried: Infinity,
       [SIGNATURE]: KEYWORDS.LESS_THAN,
       [ARG_COUNT]: 2,
@@ -955,12 +954,12 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.GREATHER_THAN]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.GREATHER_THAN,
       retried: Infinity,
       [ARG_COUNT]: 2,
@@ -988,12 +987,12 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.GREATHER_THAN_OR_EQUAL,
       retried: Infinity,
       [ARG_COUNT]: 2,
@@ -1021,12 +1020,12 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.LESS_THAN_OR_EQUAL]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.LESS_THAN_OR_EQUAL,
       retried: Infinity,
       [ARG_COUNT]: 2,
@@ -1054,12 +1053,12 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.AND]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.AND,
       retried: Infinity,
       [ARG_COUNT]: 2,
@@ -1068,8 +1067,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -1079,20 +1078,20 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.OR]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.OR,
       retried: Infinity,
       [ARG_COUNT]: 2,
@@ -1101,8 +1100,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -1112,20 +1111,20 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, PREDICATE],
-            [RETURNS]: [ATOM, PREDICATE],
+            [TYPE_PROP]: [ATOM],
+            [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.IS_ATOM]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.IS_ATOM,
       retried: Infinity,
       [ARG_COUNT]: 1,
@@ -1142,12 +1141,12 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.IS_LAMBDA]: {
     [STATS]: {
-      [TYPE_PROP]: [APPLY, PREDICATE],
+      [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.IS_LAMBDA,
       retried: Infinity,
       [ARG_COUNT]: 1,
@@ -1164,7 +1163,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, PREDICATE]
+      [RETURNS]: [ATOM]
     }
   },
   [KEYWORDS.ERROR]: {
@@ -1191,6 +1190,22 @@ export const SPECIAL_FORM_TYPES = {
   }
 }
 
+const formatSubType = (T) => {
+  switch (T[0]) {
+    case COLLECTION:
+      return `[${
+        T[1] instanceof Set
+          ? [...T[1]]
+              .map((x) =>
+                x === COLLECTION ? formatSubType([x]) : toTypeNames(x)
+              )
+              .join(' ')
+          : toTypeNames(ANY)
+      }]`
+    default:
+      return toTypeNames(T[0])
+  }
+}
 export const formatType = (name, env) => {
   const stats = env[name][STATS]
   const isAnonymous = typeof name === 'number'
@@ -1205,15 +1220,15 @@ export const formatType = (name, env) => {
                   `${
                     getType(x[STATS]) === APPLY
                       ? `${formatType(i, stats[ARGUMENTS])}`
-                      : `${toTypeNamesAnyToUknown(getType(x[STATS]))}`
+                      : `${formatSubType(getTypes(x[STATS]))}`
                   }`
               ).join(' ') + ' '
             : ''
           // TODO format returned functions when type support is added
-        }(${KEYWORDS.BLOCK} ${toTypeNamesAnyToUknown(getReturn(stats))})${
+        }(${KEYWORDS.BLOCK} ${formatSubType(getReturns(stats))})${
           isAnonymous ? '' : ')'
         })`
-      : `(let ${name} ${toTypeNamesAnyToUknown(getType(stats))})`
+      : `(let ${name} ${formatSubType(getTypes(stats))})`
     : name
 }
 

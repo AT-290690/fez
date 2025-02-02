@@ -10,6 +10,7 @@ import {
   FALSE,
   KEYWORDS,
   PLACEHOLDER,
+  STATIC_TYPES,
   TRUE,
   TYPE,
   VALUE,
@@ -77,6 +78,14 @@ export const deSuggarAst = (ast, scope) => {
               //       break
               case KEYWORDS.BLOCK:
                 {
+                  if (rest.length === 0)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        KEYWORDS.BLOCK
+                      }), expected (>= 1) but got (0) (${
+                        KEYWORDS.BLOCK
+                      } ${stringifyArgs(rest)})`
+                    )
                   if (
                     prev &&
                     prev[TYPE] === APPLY &&
@@ -151,12 +160,10 @@ export const deSuggarAst = (ast, scope) => {
                   let temp = exp
                   for (let i = 0; i < rest.length; i += 2) {
                     if (i === rest.length - 2) {
-                      temp.push(
-                        [APPLY, KEYWORDS.IF],
-                        rest[i],
-                        rest.at(-1),
-                        rest.at(-1)
-                      )
+                      temp.push([APPLY, KEYWORDS.IF], rest[i], rest.at(-1), [
+                        [APPLY, STATIC_TYPES.ANY],
+                        [WORD, NIL]
+                      ])
                     } else {
                       temp.push([APPLY, KEYWORDS.IF], rest[i], rest[i + 1], [])
                       temp = temp.at(-1)

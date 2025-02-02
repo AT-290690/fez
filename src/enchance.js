@@ -8,7 +8,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { getSuffix, shake, wrapInBlock } from './utils.js'
+import { getPrefix, getSuffix, shake, wrapInBlock } from './utils.js'
 import std from '../lib/baked/std.js'
 export const OPTIMIZATIONS = {
   RECURSION: 'recursive',
@@ -47,7 +47,7 @@ export const enhance = (ast) => {
                     last[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
                   ) {
                     const name = exp[1][VALUE]
-                    const prefix = name.split(':')[0]
+                    const prefix = getPrefix(name)
                     if (prefix === OPTIMIZATIONS.RECURSION) {
                       const args = last.slice(1, -1)
                       const newName = `${OPTIMIZED_PREFIX}${name}::*${performance
