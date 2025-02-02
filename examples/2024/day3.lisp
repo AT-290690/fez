@@ -39,7 +39,8 @@
                 (let not-do? (match? source NOT-DO i))
                 (cond 
                     do? (bool:false! disabled)
-                    not-do? (bool:true! disabled))
+                    not-do? (bool:true! disabled)
+                    (*) [])
                 (var:set! head tree)
                 (bool:false! inside-parens)) 
                 (bool:true! valid-separator)))

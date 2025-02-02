@@ -90,6 +90,7 @@
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
 (let nil 0)
 (let identity (lambda x x))
+(let else (lambda x x))
 (let Scope 1)
 (let Special 1)
 (let Library 1)
@@ -104,7 +105,8 @@
 (let falsy? (lambda x
     (cond
      (atom? x) (= (Any x) 0)
-     (array? x) (= (length (Any x)) 0))))
+     (array? x) (= (length (Any x)) 0)
+     (*) 0)))
 (let true? (lambda x (and (atom? x) (= (Any x) 1))))
 (let false? (lambda x (and (atom? x) (= (Any x) 0))))
 (let math:e 2.718281828459045)
@@ -473,7 +475,7 @@
 (let array:last (lambda xs (array:at xs -1)))
 (let array:for (lambda xs cb (do 
                     (let recursive:array:for (lambda i 
-                      (if (> (length xs) i) (apply (lambda (do (cb (get xs i)) (recursive:array:for (+ i 1))))))))
+                      (if (> (length xs) i) (apply (lambda (do (cb (get xs i)) (recursive:array:for (+ i 1))))) 0)))
                     (recursive:array:for 0)
                 xs)))
 (let array:buckets (lambda n (do (let out []) (loop:for-n n (lambda . (set! out (length out) []))) out)))
@@ -551,7 +553,7 @@
 (let array:has? (lambda xs predicate? (do
                     (let recursive:array:has (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i)) 1 (recursive:array:has (+ i 1))))))
+                              (if (predicate? (get xs i)) 1 (recursive:array:has (+ i 1))) 0)))
                         (recursive:array:has 0))))
 (let array:reverse (lambda xs (do
                     (let recursive:array:reverse (lambda i out
@@ -617,7 +619,7 @@
         (if (= target current) target
           (if (> current target)
             (recursive:array:binary-search xs target start (- index 1))
-            (recursive:array:binary-search xs target (+ index 1) end))))))))))
+            (recursive:array:binary-search xs target (+ index 1) end)))))) 0))))
    (recursive:array:binary-search xs target 0 (length xs)))))
 (let array:zip (lambda a b (do
   (let recursive:array:zip (lambda i j output
@@ -692,11 +694,11 @@
       ; todo: get rid of this inlined variable declaration
       (if (cb? (let prev (get xs (- i 1))) (let current (get xs i)))
       prev
-      (recursive:array:adjacent-find (+ i 1))) [])))
-      (recursive:array:adjacent-find 1))))))))
+      (recursive:array:adjacent-find (+ i 1))) nil)))
+      (recursive:array:adjacent-find 1)))) nil))))
 (let matrix:points (lambda matrix cb? (do 
    (let coords [])
-   (matrix:enumerated-for matrix (lambda cell y x (if (cb? cell) (array:push! coords (array y x))))) 
+   (matrix:enumerated-for matrix (lambda cell y x (if (cb? cell) (array:push! coords (array y x)) nil))) 
     coords)))
 (let matrix:for (lambda matrix cb (do (array:for matrix (lambda row (array:for row cb)))
    matrix)))
@@ -706,7 +708,7 @@
   (set! coords 0 (array:find-index matrix (lambda row (do
     (let idx (array:find-index row cb))
     (let predicate? (> idx -1))
-    (if predicate? (set! coords 1 idx))
+    (if predicate? (set! coords 1 idx) nil)
     predicate?)))))))
 (let matrix:find (lambda matrix cb (do 
   (let coords (matrix:find-index matrix cb))
@@ -735,9 +737,9 @@
             (let recursive:inner:matrix:rotate-square (lambda col 
         (if (< col len) (do 
             (set! (get out row) col (get (get matrix col) (- (- len 1) row)))
-            (recursive:inner:matrix:rotate-square (+ col 1))))))
+            (recursive:inner:matrix:rotate-square (+ col 1))) nil)))
             (recursive:inner:matrix:rotate-square 0)
-        (recursive:outer:matrix:rotate-square (+ row 1))))))
+        (recursive:outer:matrix:rotate-square (+ row 1))) nil)))
     (recursive:outer:matrix:rotate-square 0) out)))
 (let matrix:flip-square (lambda matrix (do 
     (let len (length matrix))
@@ -748,9 +750,9 @@
             (let recursive:inner:matrix:flip-square (lambda col 
         (if (< col len) (do 
             (set! (get out row) col (get (get matrix row) (- (- len 1) col)))
-            (recursive:inner:matrix:flip-square (+ col 1))))))
+            (recursive:inner:matrix:flip-square (+ col 1))) [])))
             (recursive:inner:matrix:flip-square 0)
-        (recursive:outer:matrix:flip-square (+ row 1))))))
+        (recursive:outer:matrix:flip-square (+ row 1))) [])))
     (recursive:outer:matrix:flip-square 0) out)))
 (let matrix:dimensions (lambda matrix (array (length matrix) (length (get matrix 0)))))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
@@ -861,7 +863,7 @@
                               (= num 0) (array 0)
                               (*) res)))
   (let out (array:reverse (recursive:from:number->positive-or-negative-digits num [])))
-  (if negative? (set! out 0 (* (get out 0) -1)))
+  (if negative? (set! out 0 (* (get out 0) -1)) nil)
   out)))
 (let from:integer->bits (lambda num (do
   (let recursive:from:integer->bits (lambda num res (cond
@@ -898,7 +900,8 @@
     (let recursive:while (lambda i 
         (if (= (get right (- len i)) char:0) (do 
             (array:pop! right)
-            (recursive:while (+ i 1))))))
+            (recursive:while (+ i 1)) 0) 
+        nil)))
     (recursive:while 1)    
     (array:concat [left [char:dot] right])))))
 (let from:floats->strings (lambda xs (array:map xs from:float->string)))
@@ -928,7 +931,7 @@
   (let out [])
   (let recursive:from:brray->array (lambda index bounds (do
       (set! out (length out) (brray:get q index))
-      (if (< index bounds) (recursive:from:brray->array (+ index 1) bounds)))))
+      (if (< index bounds) (recursive:from:brray->array (+ index 1) bounds) nil))))
     (recursive:from:brray->array 0 (- (brray:length q) 1))
     out)))
 (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:spaces m))))))
@@ -1038,7 +1041,7 @@
       (let ch (get xs i))
       (let code (- ch zero))
       (let mask (<< 1 code))
-      (if (and (if (= ch letter) (bool:true? (bool:true! at-least-one)))
+      (if (and (if (= ch letter) (bool:true? (bool:true! at-least-one)) 0)
           (not (= (& (var:get bitmask) mask) 0))) 
           (var:set! count (+ (var:get count) 1))
           (var:set! bitmask (| (var:get bitmask) mask)))
@@ -1090,7 +1093,7 @@
                                                             (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                             word)
                                                             1 
-                                                            (recursive:string:has (array:tail xs) (+ i 1))))))
+                                                            (recursive:string:has (array:tail xs) (+ i 1))) nil)))
                                                   (recursive:string:has str 0)))))))
 (let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
@@ -1099,7 +1102,8 @@
    (let is (bool:false))
    (let recursive:string:lesser (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (recursive:string:lesser) (bool:set! is (< (array:first current) (array:second current))))))))
+    (if (= (array:first current) (array:second current)) (recursive:string:lesser) (bool:set! is (< (array:first current) (array:second current)))))
+    is)))
    (recursive:string:lesser)
    (bool:true? is)))))))
 (let string:greater? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
@@ -1109,7 +1113,8 @@
    (let is (bool:false))
    (let recursive:string:greater (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (recursive:string:greater) (bool:set! is (> (array:first current) (array:second current))))))))
+    (if (= (array:first current) (array:second current)) (recursive:string:greater) (bool:set! is (> (array:first current) (array:second current)))))
+    is)))
    (recursive:string:greater)
    (bool:true? is)))))))
 (let string:greater-or-equal? (lambda A B (or (string:equal? A B) (string:greater? A B))))
@@ -1159,14 +1164,14 @@
   (|> str (array:transform (lambda a b (if
   (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
-      (if (bool:true? tr) (bool:false! tr))
+      (if (bool:true? tr) (bool:false! tr) nil)
       (array:merge a (array b))))))) [])))))
 (let string:trim-right (lambda str (do
   (let tr (bool:true))
   (|> str (array:reverse) (array:transform (lambda a b (if
   (and (bool:true? tr) (or (= b char:space) (= b char:new-line))) a
     (apply (lambda (do
-      (if (bool:true? tr) (bool:false! tr))
+      (if (bool:true? tr) (bool:false! tr) nil)
       (array:merge (array b) a)))))) [])))))
 (let string:trim (lambda str (|> str (string:trim-left) (string:trim-right))))
 (let string:lines (lambda str (string:split str char:new-line)))
@@ -1260,7 +1265,7 @@
       (lambda table key
         (do
           (let idx (set:index table key))
-          (if (not (array:in-bounds? table idx)) (set! table idx (array)))
+          (if (not (array:in-bounds? table idx)) (set! table idx (array)) nil)
           (let current (get table idx))
           (let len (length current))
           (let index (if (> len 0) (array:find-index current (lambda x (string:equal? x key))) -1))
@@ -1272,12 +1277,12 @@
   (lambda table key
     (do
       (let idx (set:index table key))
-      (if (not (array:in-bounds? table idx)) (set! table idx (array)))
+      (if (not (array:in-bounds? table idx)) (set! table idx (array)) nil)
       (let current (get table idx))
       (let len (length current))
       (let index (if (> len 0) (array:find-index current (lambda x (string:equal? x key))) -1))
       (let entry key)
-      (if (not (= index -1)) (apply (lambda (do (set! current index (array:at current -1)) (del! current)))))
+      (if (not (= index -1)) (apply (lambda (do (set! current index (array:at current -1)) (del! current)))) nil)
       table)))
 (let set:has? (lambda table key (do 
       (let idx (set:index table key))
@@ -1300,17 +1305,17 @@
           (from:set->array)
           (array:transform (lambda out element
           (do (if (set:has? a element)
-                    (set:add! out element)) out)) (set:max-capacity a b)))))
+                    (set:add! out element) nil) out)) (set:max-capacity a b)))))
 (let set:difference (lambda a b
       (|> a
         (from:set->array)
         (array:transform (lambda out element
                         (do (if (not (set:has? b element))
-                                        (set:add! out element)) out)) (set:max-capacity a b)))))
+                                        (set:add! out element) nil) out)) (set:max-capacity a b)))))
 (let set:xor (lambda a b (do
         (let out (set:max-capacity a b))
-        (|> a (from:set->array) (array:for (lambda element (if (not (set:has? b element)) (set:add! out element)))))
-        (|> b (from:set->array) (array:for (lambda element (if (not (set:has? a element)) (set:add! out element)))))
+        (|> a (from:set->array) (array:for (lambda element (if (not (set:has? b element)) (set:add! out element) nil))))
+        (|> b (from:set->array) (array:for (lambda element (if (not (set:has? a element)) (set:add! out element) nil))))
         out)))
 (let set:union (lambda a b (do
         (let out (set:max-capacity a b))
@@ -1331,7 +1336,7 @@
 (let map:set! (lambda table key value
         (do
           (let idx (set:index table key))
-          (if (not (array:in-bounds? table idx)) (set! table idx []))
+          (if (not (array:in-bounds? table idx)) (set! table idx []) nil)
           (let current (get table idx))
           (let len (length current))
           (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
@@ -1343,11 +1348,11 @@
 (let map:remove! (lambda table key
       (do
         (let idx (set:index table key))
-        (if (not (array:in-bounds? table idx)) (set! table idx []))
+        (if (not (array:in-bounds? table idx)) (set! table idx []) nil)
         (let current (get table idx))
         (let len (length current))
         (let index (if (> len 0) (array:find-index current (lambda x (string:equal? (array:first x) key))) -1))
-        (if (not (= index -1)) (do (set! current index (array:at current -1)) (del! current)))
+        (if (not (= index -1)) (do (set! current index (array:at current -1)) (del! current)) nil)
         table)))
 (let map:set-and-get! (lambda table key value (do (map:set! table key value) value)))
 (let map:remove-and-get! (lambda table key (do (let value (map:get table key)) (map:remove! table key) value)))
@@ -1443,17 +1448,19 @@
   (if (> len 0)
      (cond
         (= len 1) (brray:empty! q)
-        (> (length (get q 0)) 0) (del! (get q 0)))))))
+        (> (length (get q 0)) 0) (del! (get q 0))
+        (*) q) q))))
 (let brray:remove-from-right! (lambda q (do
     (let len (brray:length q))
     (if (> len 0)
      (cond
         (= len 1) (brray:empty! q)
-        (> (length (get q 1)) 0) (del! (get q 1)))))))
+        (> (length (get q 1)) 0) (del! (get q 1))
+        (*) q) q))))
 (let brray:iter (lambda q cb (do
   (let recursive:brray:iter (lambda index bounds (do
       (cb (brray:get q index))
-      (if (< index bounds) (recursive:brray:iter (+ index 1) bounds)))))
+      (if (< index bounds) (recursive:brray:iter (+ index 1) bounds) nil))))
     (recursive:brray:iter 0 (brray:length q)))))
 (let brray:map (lambda q cb (do
   (let result (new:brray))
@@ -1461,11 +1468,11 @@
   (let half (math:floor (* len 0.5)))
   (let recursive:left:brray:map (lambda index (do
     (brray:add-to-left! result (cb (brray:get q index)))
-   (if (> index 0) (recursive:left:brray:map (- index 1))))))
+   (if (> index 0) (recursive:left:brray:map (- index 1)) q))))
  (recursive:left:brray:map (- half 1))
 (let recursive:right:brray:map (lambda index bounds (do
    (brray:add-to-right! result (cb (brray:get q index)))
-   (if (< index bounds) (recursive:right:brray:map (+ index 1) bounds)))))
+   (if (< index bounds) (recursive:right:brray:map (+ index 1) bounds) nil))))
  (recursive:right:brray:map half (- len 1))
  result)))
 (let brray:balance? (lambda q (= (+ (brray:offset-right q) (brray:offset-left q)) 0)))
@@ -1476,21 +1483,21 @@
       (let half (math:floor (* (length initial) 0.5)))
       (let recursive:left:brray:balance! (lambda index (do
         (brray:add-to-left! q (get initial index))
-        (if (> index 0) (recursive:left:brray:balance! (- index 1))))))
+        (if (> index 0) (recursive:left:brray:balance! (- index 1)) nil))))
       (let recursive:right:brray:balance! (lambda index bounds (do
         (brray:add-to-right! q (get initial index))
-        (if (< index bounds) (recursive:right:brray:balance! (+ index 1) bounds)))))
+        (if (< index bounds) (recursive:right:brray:balance! (+ index 1) bounds) nil))))
       (recursive:right:brray:balance! half (- (length initial) 1))
-      (if (> (length initial) 1) (recursive:left:brray:balance! (- half 1)))
+      (if (> (length initial) 1) (recursive:left:brray:balance! (- half 1)) nil)
     q))))))
 (let brray:append! (lambda q item (do (brray:add-to-right! q item) q)))
 (let brray:prepend! (lambda q item (do (brray:add-to-left! q item) q)))
 (let brray:head! (lambda q (do
-    (if (= (brray:offset-right q) 0) (brray:balance! q))
+    (if (= (brray:offset-right q) 0) (brray:balance! q) nil)
     (brray:remove-from-right! q)
     q)))
 (let brray:tail! (lambda q (do
-    (if (= (brray:offset-left q) 0) (brray:balance! q))
+    (if (= (brray:offset-left q) 0) (brray:balance! q) nil)
     (brray:remove-from-left! q)
 q)))
 (let brray:first (lambda q (brray:get q 0)))
@@ -1506,18 +1513,18 @@ q)))
 (let brray:rotate-left! (lambda q n (do
   (let N (mod n (brray:length q)))
   (let recursive:brray:rotate-left! (lambda index bounds (do
-      (if (= (brray:offset-left q) 0) (brray:balance! q))
+      (if (= (brray:offset-left q) 0) (brray:balance! q) nil)
       (brray:add-to-right! q (brray:first q))
       (brray:remove-from-left! q)
-      (if (< index bounds) (recursive:brray:rotate-left! (+ index 1) bounds)))))
+      (if (< index bounds) (recursive:brray:rotate-left! (+ index 1) bounds) nil))))
     (recursive:brray:rotate-left! 0 N) q)))
 (let brray:rotate-right! (lambda q n (do
   (let N (mod n (brray:length q)))
   (let recursive:brray:rotate-left! (lambda index bounds (do
-      (if (= (brray:offset-right q) 0) (brray:balance! q))
+      (if (= (brray:offset-right q) 0) (brray:balance! q) nil)
       (brray:add-to-left! q (brray:last q))
       (brray:remove-from-right! q)
-      (if (< index bounds) (recursive:brray:rotate-left! (+ index 1) bounds)))))
+      (if (< index bounds) (recursive:brray:rotate-left! (+ index 1) bounds) nil))))
     (recursive:brray:rotate-left! 0 N) q)))
 (let brray:slice (lambda entity s e (do
   (let len (brray:length entity))
@@ -1528,11 +1535,11 @@ q)))
   (let half (math:floor (* slice-len 0.5)))
   (let recursive:left:brray:slice (lambda index (do
       (brray:add-to-left! slice (brray:get entity (+ start index)))
-      (if (> index 0) (recursive:left:brray:slice (- index 1))))))
+      (if (> index 0) (recursive:left:brray:slice (- index 1)) nil))))
   (recursive:left:brray:slice (- half 1))
   (let recursive:right:brray:slice (lambda index bounds (do
       (brray:add-to-right! slice (brray:get entity (+ start index)))
-      (if (< index bounds) (recursive:right:brray:slice (+ index 1) bounds)))))
+      (if (< index bounds) (recursive:right:brray:slice (+ index 1) bounds) nil))))
   (recursive:right:brray:slice half (- slice-len 1))
   slice)))
 
@@ -1683,7 +1690,7 @@ q)))
                           (if (< i end)
                                 (apply (lambda (do
                                   (cb i)
-                                  (recursive:loop:for-range (+ i 1))))))))
+                                  (recursive:loop:for-range (+ i 1))))) nil)))
                           (recursive:loop:for-range start))))
 
 (let loop:for-n (lambda n cb (do
@@ -1691,7 +1698,7 @@ q)))
                           (if (< i n)
                                 (apply (lambda (do
                                   (cb i)
-                                  (recursive:loop:for-n (+ i 1))))))))
+                                  (recursive:loop:for-n (+ i 1))))) nil)))
                           (recursive:loop:for-n 0))))
 
 (let loop:repeat (lambda n cb (do
@@ -1699,19 +1706,22 @@ q)))
                           (if (< i n)
                                 (apply (lambda (do
                                   (cb)
-                                  (recursive:loop:repeat (+ i 1))))))))
+                                  (recursive:loop:repeat (+ i 1))))) nil)))
                           (recursive:loop:repeat 0))))
 
 (let loop:some-n? (lambda n predicate? (do
                           (let recursive:loop:some-n (lambda i
                           (if (< i n)
-                                (if (predicate? i) 1 (recursive:loop:some-n (+ i 1))))))
+                                (if (predicate? i) 1 (recursive:loop:some-n (+ i 1))) nil)))
                           (recursive:loop:some-n n))))
 
 (let loop:some-range? (lambda start end predicate? (do
                           (let recursive:loop:some-range (lambda i
                           (if (< i end)
-                                (if (predicate? i) 1 (recursive:loop:some-range (+ i 1))))))
+                                (if (predicate? i) 
+                                    1 
+                                    (recursive:loop:some-range (+ i 1))) 
+                            nil)))
                           (recursive:loop:some-range start))))
 
 (let node:parent (lambda i (- (>> (+ i 1) 1) 1)))
@@ -1727,7 +1737,7 @@ q)))
       (do 
         (array:swap! heap (var:get node) (node:parent (var:get node)))
         (var:set! node (node:parent (var:get node)))
-        (recursive:heap:sift-up!)))))
+        (recursive:heap:sift-up!)) nil)))
   (recursive:heap:sift-up!))))
 
 (let heap:sift-down! (lambda heap cb (do
@@ -1748,7 +1758,7 @@ q)))
                             (node:left (var:get node))))
         (array:swap! heap (var:get node) max-child)
         (var:set! node max-child)
-        (recursive:heap:sift-down!)))))
+        (recursive:heap:sift-down!)) nil)))
   (recursive:heap:sift-down!))))
 
 (let heap:peek (lambda heap (get heap heap:top)))
@@ -1760,7 +1770,7 @@ q)))
 
 (let heap:pop! (lambda heap cb (do 
   (let bottom (- (length heap) 1))
-  (if (> bottom heap:top) (array:swap! heap heap:top bottom))
+  (if (> bottom heap:top) (array:swap! heap heap:top bottom) nil)
   (array:pop! heap)
   (heap:sift-down! heap cb)
   heap)))
@@ -1864,8 +1874,8 @@ heap)))
             (if (array:empty? h) (array:push! h (ast:leaf ast:apply token))
                 (if (match:number? token) 
                     (array:push! h (ast:leaf ast:atom (from:string->float token))) 
-                    (array:push! h (ast:leaf ast:word token))))))))
-        (if (= cursor char:right-brace) (var:set! head (array:pop! stack))))))
+                    (array:push! h (ast:leaf ast:word token))))))) nil)
+        (if (= cursor char:right-brace) (var:set! head (array:pop! stack)) nil))))
     (array:push! acc cursor))))))
     tree)))
 

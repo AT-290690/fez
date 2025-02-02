@@ -122,11 +122,11 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case SUGGAR.CONDITION:
                 {
-                  if (rest.length < 2)
+                  if (rest.length < 4)
                     throw new RangeError(
                       `Invalid number of arguments for (${
                         SUGGAR.CONDITION
-                      }), expected (> 2 required) but got ${rest.length} (${
+                      }), expected (> 3 required) but got ${rest.length} (${
                         SUGGAR.CONDITION
                       } ${stringifyArgs(rest)})`
                     )
@@ -138,11 +138,25 @@ export const deSuggarAst = (ast, scope) => {
                         rest.length
                       } (${SUGGAR.CONDITION} ${stringifyArgs(rest)})`
                     )
+                  if (rest.at(-2)[0][VALUE] !== KEYWORDS.MULTIPLICATION) {
+                    throw new ReferenceError(
+                      `Last condition of (${
+                        SUGGAR.CONDITION
+                      }), has to be a wildcard (${KEYWORDS.MULTIPLICATION}) (${
+                        SUGGAR.CONDITION
+                      }) followed by a default result (${stringifyArgs(exp)}))`
+                    )
+                  }
                   exp.length = 0
                   let temp = exp
                   for (let i = 0; i < rest.length; i += 2) {
                     if (i === rest.length - 2) {
-                      temp.push([APPLY, KEYWORDS.IF], rest[i], rest.at(-1))
+                      temp.push(
+                        [APPLY, KEYWORDS.IF],
+                        rest[i],
+                        rest.at(-1),
+                        rest.at(-1)
+                      )
                     } else {
                       temp.push([APPLY, KEYWORDS.IF], rest[i], rest[i + 1], [])
                       temp = temp.at(-1)

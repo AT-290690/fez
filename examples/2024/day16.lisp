@@ -47,7 +47,7 @@
                                     (not (= (matrix:get matrix nr nc) char:hash)) 
                                     (not (set:has? seen (from:stats->key [nr nc ndr ndc]))))
                                 (heap:push! pq [new-cost nr nc ndr ndc] lower?))))
-            (recursive:while)))))))
+            (recursive:while)))) 0)))
     (recursive:while))))
 
 (let PARSED (parse INPUT))

@@ -28,7 +28,8 @@
                  (if (and (= (- cell (matrix:get matrix y x)) 1) (not (set:has? visited key))) (do
                     (if (= cell 9) (var:set! score (math:increment (var:get score))) (queue:enqueue! queue (array dy dx)))
                     (set:add! visited key))))))
-        (recursive:while)))))
+        (recursive:while)) 
+        0)))
         (recursive:while)
         (+ a (var:get score)))) 0))))
 
@@ -52,7 +53,8 @@
                  (if (= (- cell (matrix:get matrix y x)) 1) (do
                     (queue:enqueue! queue (array dy dx))
                     (if (map:has? visited key) (map:set! visited key (+ (Atom (map:get visited root-key)) (Atom (map:get visited key)))) (map:set! visited key (map:get visited root-key))))))))
-        (recursive:while)))))
+        (recursive:while))
+        0)))
         (recursive:while)
         (+ a (var:get score)))) 0))))
 

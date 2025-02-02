@@ -36,7 +36,8 @@
               (if (and (= cell char:dot) (not (set:has? visited key))) (do 
                 (queue:enqueue! queue (array dy dx (- step 1)))
                 (set:add! visited key))))))
-          (recursive:while)))))
+          (recursive:while))
+          0)))
         (recursive:while)
         (var:set! output (length (array:flat-one steps)))))))
   (var:get output))))

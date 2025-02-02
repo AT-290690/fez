@@ -59,7 +59,7 @@
                                     (do 
                                     (queue:enqueue! q (array (+ steps 1) nr nc))
                                     (set:add! seen (from:stats->key (array nr nc)))))))))
-            (recursive:while)))))
+            (recursive:while)) 0)))
     (recursive:while)
     (var:get solution))))
     

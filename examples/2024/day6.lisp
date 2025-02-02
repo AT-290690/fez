@@ -30,7 +30,8 @@
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
       (cond
           (= current char:hash) (recursive:step start (+ angle 1))
-          (or (= current char:dot) (= current char:X)) (recursive:step start-copy angle)))))))
+          (or (= current char:dot) (= current char:X)) (recursive:step start-copy angle) 
+          (*) 0))))))
   (recursive:step starting 0)
   (|> matrix (array:flat-one) (array:count char:X)))))
 
@@ -57,7 +58,8 @@
           (if (= c 4) 
           (var:set! loops (+ (var:get loops) 1))
           (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
-          (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)))))))
+          (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)
+          (*) 0))))))
   (recursive:step matrix starting 0 (new:set64))
   (let path [])
   (let [Y X .] starting)

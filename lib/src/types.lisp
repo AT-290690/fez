@@ -180,6 +180,8 @@
 (let nil Atom)
 ; 1 identity
 (let identity (lambda Unknown (do Unknown)))
+; 1 else
+(let else (lambda Unknown (do Unknown)))
 ; 1 Scope
 (let Scope Atom)
 ; 1 Special
@@ -490,6 +492,10 @@
 (let prime? Atom)
 ; 1 math:prime? 16 recursive:math:prime
 (let recursive:math:prime (lambda Atom Atom (do Atom)))
+; 1 math:prime? 17 recursive:math:prime prime?
+(let prime? Atom)
+; 1 math:prime? 17 recursive:math:prime
+(let recursive:math:prime (lambda Atom Atom (do Atom)))
 ; 1 math:prime?
 (let math:prime? (lambda Atom (do Atom)))
 ; 1 math:number-of-digits
@@ -625,7 +631,7 @@
 ; 1 array:last
 (let array:last (lambda Collection (do Unknown)))
 ; 1 array:for recursive:array:for
-(let recursive:array:for (lambda Atom (do Unknown)))
+(let recursive:array:for (lambda Atom (do Atom)))
 ; 1 array:for
 (let array:for (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 array:buckets out
@@ -706,7 +712,7 @@
 (let array:odd-indexed (lambda Collection (do Collection)))
 ; 1 array:unique sorted
 (let sorted Collection)
-; 1 array:unique 35 index
+; 1 array:unique 36 index
 (let index Atom)
 ; 1 array:unique
 (let array:unique (lambda Collection (do Collection)))
@@ -750,14 +756,14 @@
 (let array:take (lambda Collection Atom (do Collection)))
 ; 1 array:drop
 (let array:drop (lambda Collection Atom (do Collection)))
-; 1 array:binary-search recursive:array:binary-search 40 index
+; 1 array:binary-search recursive:array:binary-search 41 index
 (let index Atom)
-; 1 array:binary-search recursive:array:binary-search 40 current
+; 1 array:binary-search recursive:array:binary-search 41 current
 (let current Atom)
 ; 1 array:binary-search recursive:array:binary-search
-(let recursive:array:binary-search (lambda Collection Atom Atom Atom (do Unknown)))
+(let recursive:array:binary-search (lambda Collection Atom Atom Atom (do Atom)))
 ; 1 array:binary-search
-(let array:binary-search (lambda Collection Atom (do Unknown)))
+(let array:binary-search (lambda Collection Atom (do Atom)))
 ; 1 array:zip recursive:array:zip
 (let recursive:array:zip (lambda Atom Atom Collection (do Collection)))
 ; 1 array:zip
@@ -792,23 +798,23 @@
 (let flatten (lambda Collection (do Collection)))
 ; 1 array:flat
 (let array:flat (lambda Collection (do Collection)))
-; 1 array:sort 53 pivot
+; 1 array:sort 54 pivot
 (let pivot Unknown)
-; 1 array:sort 53 recursive:array:sort current
+; 1 array:sort 54 recursive:array:sort current
 (let current Unknown)
-; 1 array:sort 53 recursive:array:sort predicate
+; 1 array:sort 54 recursive:array:sort predicate
 (let predicate Atom)
-; 1 array:sort 53 recursive:array:sort left
+; 1 array:sort 54 recursive:array:sort left
 (let left Collection)
-; 1 array:sort 53 recursive:array:sort right
+; 1 array:sort 54 recursive:array:sort right
 (let right Collection)
-; 1 array:sort 53 recursive:array:sort
+; 1 array:sort 54 recursive:array:sort
 (let recursive:array:sort (lambda Atom Atom Collection Collection (do Collection)))
-; 1 array:sort 53 sorted
+; 1 array:sort 54 sorted
 (let sorted Collection)
-; 1 array:sort 53 left
+; 1 array:sort 54 left
 (let left Unknown)
-; 1 array:sort 53 right
+; 1 array:sort 54 right
 (let right Unknown)
 ; 1 array:sort
 (let array:sort (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Collection)))
@@ -828,31 +834,31 @@
 (let array:sliding-window (lambda Collection Atom (do Collection)))
 ; 1 array:adjacent-difference len
 (let len Atom)
-; 1 array:adjacent-difference 58 recursive:array:adjacent-difference
+; 1 array:adjacent-difference 59 recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Atom Collection (do Unknown)))
 ; 1 array:adjacent-difference
 (let array:adjacent-difference (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Collection)))
-; 1 array:partition 60 x
+; 1 array:partition 61 x
 (let x Unknown)
-; 1 array:partition 60 i
+; 1 array:partition 61 i
 (let i Atom)
 ; 1 array:partition
 (let array:partition (lambda Collection Atom (do Collection)))
 ; 1 array:ranges
 (let array:ranges (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
-; 1 array:chunks 62 start
+; 1 array:chunks 63 start
 (let start Unknown)
-; 1 array:chunks 62 end
+; 1 array:chunks 63 end
 (let end Unknown)
 ; 1 array:chunks
 (let array:chunks (lambda Collection Unknown (do Collection)))
 ; 1 array:adjacent-find len
 (let len Atom)
-; 1 array:adjacent-find 63 recursive:array:adjacent-find prev
+; 1 array:adjacent-find 64 recursive:array:adjacent-find prev
 (let prev Unknown)
-; 1 array:adjacent-find 63 recursive:array:adjacent-find current
+; 1 array:adjacent-find 64 recursive:array:adjacent-find current
 (let current Unknown)
-; 1 array:adjacent-find 63 recursive:array:adjacent-find
+; 1 array:adjacent-find 64 recursive:array:adjacent-find
 (let recursive:array:adjacent-find (lambda Atom (do Unknown)))
 ; 1 array:adjacent-find
 (let array:adjacent-find (lambda Collection (lambda Unknown Unknown (do Unknown)) (do Unknown)))
@@ -866,9 +872,9 @@
 (let matrix:shallow-copy (lambda Collection (do Collection)))
 ; 1 matrix:find-index coords
 (let coords Collection)
-; 1 matrix:find-index 67 idx
+; 1 matrix:find-index 68 idx
 (let idx Atom)
-; 1 matrix:find-index 67 predicate?
+; 1 matrix:find-index 68 predicate?
 (let predicate? Atom)
 ; 1 matrix:find-index
 (let matrix:find-index (lambda Collection Unknown (do Collection)))
@@ -892,7 +898,7 @@
 (let len Atom)
 ; 1 matrix:rotate-square out
 (let out Collection)
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 72 recursive:inner:matrix:rotate-square
+; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 73 recursive:inner:matrix:rotate-square
 (let recursive:inner:matrix:rotate-square (lambda Atom (do Unknown)))
 ; 1 matrix:rotate-square recursive:outer:matrix:rotate-square
 (let recursive:outer:matrix:rotate-square (lambda Atom (do Unknown)))
@@ -902,7 +908,7 @@
 (let len Atom)
 ; 1 matrix:flip-square out
 (let out Collection)
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 74 recursive:inner:matrix:flip-square
+; 1 matrix:flip-square recursive:outer:matrix:flip-square 75 recursive:inner:matrix:flip-square
 (let recursive:inner:matrix:flip-square (lambda Atom (do Unknown)))
 ; 1 matrix:flip-square recursive:outer:matrix:flip-square
 (let recursive:outer:matrix:flip-square (lambda Atom (do Unknown)))
@@ -918,21 +924,21 @@
 (let matrix:moore-neighborhood Collection)
 ; 1 matrix:von-neumann-neighborhood
 (let matrix:von-neumann-neighborhood Collection)
-; 1 matrix:adjacent 76 dy
+; 1 matrix:adjacent 77 dy
 (let dy Atom)
-; 1 matrix:adjacent 76 dx
+; 1 matrix:adjacent 77 dx
 (let dx Atom)
 ; 1 matrix:adjacent
 (let matrix:adjacent (lambda Collection Collection Atom Atom (lambda Unknown Collection Atom Atom (do Unknown)) (do Collection)))
-; 1 matrix:adjacent-sum 77 dy
+; 1 matrix:adjacent-sum 78 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum 77 dx
+; 1 matrix:adjacent-sum 78 dx
 (let dx Atom)
 ; 1 matrix:adjacent-sum
 (let matrix:adjacent-sum (lambda Collection Collection Atom Atom (lambda Unknown Unknown (do Unknown)) (do Atom)))
-; 1 matrix:sliding-adjacent-sum 78 dy
+; 1 matrix:sliding-adjacent-sum 79 dy
 (let dy Atom)
-; 1 matrix:sliding-adjacent-sum 78 dx
+; 1 matrix:sliding-adjacent-sum 79 dx
 (let dx Atom)
 ; 1 matrix:sliding-adjacent-sum
 (let matrix:sliding-adjacent-sum (lambda Collection Collection Atom Atom Atom (lambda Unknown Unknown (do Unknown)) (do Atom)))
@@ -1012,37 +1018,37 @@
 (let from:strings->integers (lambda Collection (do Collection)))
 ; 1 from:string->float dec
 (let dec Atom)
-; 1 from:string->float 89 neg?
+; 1 from:string->float 90 neg?
 (let neg? Atom)
-; 1 from:string->float 89 left
+; 1 from:string->float 90 left
 (let left Collection)
-; 1 from:string->float 89 right
+; 1 from:string->float 90 right
 (let right Collection)
-; 1 from:string->float 89 n
+; 1 from:string->float 90 n
 (let n Atom)
-; 1 from:string->float 89 sign
+; 1 from:string->float 90 sign
 (let sign Atom)
-; 1 from:string->float 89 exponent
+; 1 from:string->float 90 exponent
 (let exponent Atom)
-; 1 from:string->float 89 mantissa
+; 1 from:string->float 90 mantissa
 (let mantissa Atom)
 ; 1 from:string->float
 (let from:string->float (lambda Collection (do Atom)))
 ; 1 from:strings->floats
 (let from:strings->floats (lambda Collection (do Collection)))
-; 1 from:float->string 90 flip
+; 1 from:float->string 91 flip
 (let flip Atom)
-; 1 from:float->string 90 exponent
+; 1 from:float->string 91 exponent
 (let exponent Atom)
-; 1 from:float->string 90 mantisa
+; 1 from:float->string 91 mantisa
 (let mantisa Atom)
-; 1 from:float->string 90 left
+; 1 from:float->string 91 left
 (let left Unknown)
-; 1 from:float->string 90 right
+; 1 from:float->string 91 right
 (let right Collection)
-; 1 from:float->string 90 len
+; 1 from:float->string 91 len
 (let len Atom)
-; 1 from:float->string 90 recursive:while
+; 1 from:float->string 91 recursive:while
 (let recursive:while (lambda Atom (do Unknown)))
 ; 1 from:float->string
 (let from:float->string (lambda Atom (do Collection)))
@@ -1081,7 +1087,7 @@
 ; 1 from:brray->array out
 (let out Collection)
 ; 1 from:brray->array recursive:from:brray->array
-(let recursive:from:brray->array (lambda Atom Atom (do Unknown)))
+(let recursive:from:brray->array (lambda Atom Atom (do Atom)))
 ; 1 from:brray->array
 (let from:brray->array (lambda Collection (do Collection)))
 ; 1 from:matrix->string
@@ -1212,44 +1218,48 @@
 (let index Atom)
 ; 1 string:slice-before
 (let string:slice-before (lambda Collection Collection (do Collection)))
-; 1 string:split 107 prev
+; 1 string:split 108 prev
 (let prev Collection)
 ; 1 string:split
 (let string:split (lambda Collection Unknown (do Collection)))
-; 1 string:match 109 recursive:string:match
+; 1 string:match 110 recursive:string:match
+(let recursive:string:match (lambda Collection Atom (do Atom)))
+; 1 string:match 111 recursive:string:match
 (let recursive:string:match (lambda Collection Atom (do Atom)))
 ; 1 string:match
 (let string:match (lambda Collection Collection (do Atom)))
-; 1 string:has? 110 recursive:string:has
+; 1 string:has? 112 recursive:string:has
+(let recursive:string:has (lambda Collection Atom (do Atom)))
+; 1 string:has? 113 recursive:string:has
 (let recursive:string:has (lambda Collection Atom (do Atom)))
 ; 1 string:has?
 (let string:has? (lambda Collection Collection (do Atom)))
-; 1 string:lesser? 111 a
+; 1 string:lesser? 114 a
 (let a Unknown)
-; 1 string:lesser? 111 b
+; 1 string:lesser? 114 b
 (let b Unknown)
-; 1 string:lesser? 111 pairs
+; 1 string:lesser? 114 pairs
 (let pairs Collection)
-; 1 string:lesser? 111 is
+; 1 string:lesser? 114 is
 (let is Collection)
-; 1 string:lesser? 111 recursive:string:lesser 112 current
+; 1 string:lesser? 114 recursive:string:lesser 115 current
 (let current Unknown)
-; 1 string:lesser? 111 recursive:string:lesser
-(let recursive:string:lesser (lambda (do Unknown)))
+; 1 string:lesser? 114 recursive:string:lesser
+(let recursive:string:lesser (lambda (do Collection)))
 ; 1 string:lesser?
 (let string:lesser? (lambda Collection Collection (do Atom)))
-; 1 string:greater? 113 a
+; 1 string:greater? 116 a
 (let a Unknown)
-; 1 string:greater? 113 b
+; 1 string:greater? 116 b
 (let b Unknown)
-; 1 string:greater? 113 pairs
+; 1 string:greater? 116 pairs
 (let pairs Collection)
-; 1 string:greater? 113 is
+; 1 string:greater? 116 is
 (let is Collection)
-; 1 string:greater? 113 recursive:string:greater 114 current
+; 1 string:greater? 116 recursive:string:greater 117 current
 (let current Unknown)
-; 1 string:greater? 113 recursive:string:greater
-(let recursive:string:greater (lambda (do Unknown)))
+; 1 string:greater? 116 recursive:string:greater
+(let recursive:string:greater (lambda (do Collection)))
 ; 1 string:greater?
 (let string:greater? (lambda Collection Collection (do Atom)))
 ; 1 string:greater-or-equal?
@@ -1334,7 +1344,7 @@
 (let xs Collection)
 ; 1 string:upper n
 (let n Atom)
-; 1 string:upper recursive:string:upper 130 current-char
+; 1 string:upper recursive:string:upper 133 current-char
 (let current-char Atom)
 ; 1 string:upper recursive:string:upper
 (let recursive:string:upper (lambda Atom (do Unknown)))
@@ -1344,7 +1354,7 @@
 (let xs Collection)
 ; 1 string:lower n
 (let n Atom)
-; 1 string:lower recursive:string:lower 131 current-char
+; 1 string:lower recursive:string:lower 134 current-char
 (let current-char Atom)
 ; 1 string:lower recursive:string:lower
 (let recursive:string:lower (lambda Atom (do Unknown)))
@@ -1512,17 +1522,17 @@
 (let map:remove-and-get! (lambda Collection Collection (do Unknown)))
 ; 1 map:get idx
 (let idx Atom)
-; 1 map:get 150 current
+; 1 map:get 153 current
 (let current Collection)
-; 1 map:get 150 found-index
+; 1 map:get 153 found-index
 (let found-index Atom)
 ; 1 map:get
 (let map:get (lambda Collection Collection (do Unknown)))
 ; 1 map:get-option idx
 (let idx Atom)
-; 1 map:get-option 152 current
+; 1 map:get-option 155 current
 (let current Collection)
-; 1 map:get-option 152 index
+; 1 map:get-option 155 index
 (let index Atom)
 ; 1 map:get-option
 (let map:get-option (lambda Collection Collection (do Unknown)))
@@ -1635,9 +1645,9 @@
 ; 1 brray:remove-from-right!
 (let brray:remove-from-right! (lambda Collection (do Collection)))
 ; 1 brray:iter recursive:brray:iter
-(let recursive:brray:iter (lambda Atom Atom (do Unknown)))
+(let recursive:brray:iter (lambda Atom Atom (do Atom)))
 ; 1 brray:iter
-(let brray:iter (lambda Collection (lambda Unknown (do Unknown)) (do Unknown)))
+(let brray:iter (lambda Collection (lambda Unknown (do Unknown)) (do Atom)))
 ; 1 brray:map result
 (let result Collection)
 ; 1 brray:map len
@@ -1645,21 +1655,21 @@
 ; 1 brray:map half
 (let half Atom)
 ; 1 brray:map recursive:left:brray:map
-(let recursive:left:brray:map (lambda Atom (do Unknown)))
+(let recursive:left:brray:map (lambda Atom (do Collection)))
 ; 1 brray:map recursive:right:brray:map
-(let recursive:right:brray:map (lambda Atom Atom (do Unknown)))
+(let recursive:right:brray:map (lambda Atom Atom (do Atom)))
 ; 1 brray:map
 (let brray:map (lambda Collection (lambda Unknown (do Unknown)) (do Collection)))
 ; 1 brray:balance?
 (let brray:balance? (lambda Collection (do Atom)))
-; 1 brray:balance! 163 initial
+; 1 brray:balance! 166 initial
 (let initial Collection)
-; 1 brray:balance! 163 half
+; 1 brray:balance! 166 half
 (let half Atom)
-; 1 brray:balance! 163 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Atom (do Unknown)))
-; 1 brray:balance! 163 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Atom Atom (do Unknown)))
+; 1 brray:balance! 166 recursive:left:brray:balance!
+(let recursive:left:brray:balance! (lambda Atom (do Atom)))
+; 1 brray:balance! 166 recursive:right:brray:balance!
+(let recursive:right:brray:balance! (lambda Atom Atom (do Atom)))
 ; 1 brray:balance!
 (let brray:balance! (lambda Collection (do Collection)))
 ; 1 brray:append!
@@ -1685,13 +1695,13 @@
 ; 1 brray:rotate-left! N
 (let N Atom)
 ; 1 brray:rotate-left! recursive:brray:rotate-left!
-(let recursive:brray:rotate-left! (lambda Atom Atom (do Unknown)))
+(let recursive:brray:rotate-left! (lambda Atom Atom (do Atom)))
 ; 1 brray:rotate-left!
 (let brray:rotate-left! (lambda Collection Atom (do Collection)))
 ; 1 brray:rotate-right! N
 (let N Atom)
 ; 1 brray:rotate-right! recursive:brray:rotate-left!
-(let recursive:brray:rotate-left! (lambda Atom Atom (do Unknown)))
+(let recursive:brray:rotate-left! (lambda Atom Atom (do Atom)))
 ; 1 brray:rotate-right!
 (let brray:rotate-right! (lambda Collection Atom (do Collection)))
 ; 1 brray:slice len
@@ -1707,9 +1717,9 @@
 ; 1 brray:slice half
 (let half Atom)
 ; 1 brray:slice recursive:left:brray:slice
-(let recursive:left:brray:slice (lambda Atom (do Unknown)))
+(let recursive:left:brray:slice (lambda Atom (do Atom)))
 ; 1 brray:slice recursive:right:brray:slice
-(let recursive:right:brray:slice (lambda Atom Atom (do Unknown)))
+(let recursive:right:brray:slice (lambda Atom Atom (do Atom)))
 ; 1 brray:slice
 (let brray:slice (lambda Collection Atom Atom (do Collection)))
 ; 1 queue:empty?
@@ -1872,7 +1882,7 @@
 (let heap:sift-up! (lambda Collection Unknown (do Unknown)))
 ; 1 heap:sift-down! node
 (let node Collection)
-; 1 heap:sift-down! recursive:heap:sift-down! 168 max-child
+; 1 heap:sift-down! recursive:heap:sift-down! 171 max-child
 (let max-child Atom)
 ; 1 heap:sift-down! recursive:heap:sift-down!
 (let recursive:heap:sift-down! (lambda (do Unknown)))
@@ -1996,15 +2006,15 @@
 (let head Collection)
 ; 1 from:chars->ast acc
 (let acc Collection)
-; 1 from:chars->ast 176 cursor
+; 1 from:chars->ast 179 cursor
 (let cursor Atom)
-; 1 from:chars->ast 176 177 temp
+; 1 from:chars->ast 179 180 temp
 (let temp Collection)
-; 1 from:chars->ast 176 177 h
+; 1 from:chars->ast 179 180 h
 (let h Unknown)
-; 1 from:chars->ast 176 178 token
+; 1 from:chars->ast 179 181 token
 (let token Collection)
-; 1 from:chars->ast 176 178 179 h
+; 1 from:chars->ast 179 181 182 h
 (let h Unknown)
 ; 1 from:chars->ast
 (let from:chars->ast (lambda Collection (do Collection)))
@@ -2018,7 +2028,7 @@
 (let params Collection)
 ; 1 special-form:lambda body
 (let body Unknown)
-; 1 special-form:lambda 180 local
+; 1 special-form:lambda 183 local
 (let local Collection)
 ; 1 special-form:lambda
 (let special-form:lambda (lambda Collection Unknown (do Abstraction)))
@@ -2096,17 +2106,17 @@
 (let prototype:create! (lambda Unknown (do Collection)))
 ; 1 evaluate expression
 (let expression Collection)
-; 1 evaluate 184 head
+; 1 evaluate 187 head
 (let head Collection)
-; 1 evaluate 184 tail
+; 1 evaluate 187 tail
 (let tail Collection)
-; 1 evaluate 184 pattern
+; 1 evaluate 187 pattern
 (let pattern Atom)
 ; 1 evaluate
 (let evaluate (lambda Collection Collection (do Unknown)))
-; 1 ast:stringify 185 type
+; 1 ast:stringify 188 type
 (let type Atom)
-; 1 ast:stringify 185 value
+; 1 ast:stringify 188 value
 (let value Unknown)
 ; 1 ast:stringify
 (let ast:stringify (lambda Collection (do Collection)))
@@ -2114,11 +2124,11 @@
 (let ast:get-name (lambda Collection (do Unknown)))
 ; 1 ast:traverse expression
 (let expression Collection)
-; 1 ast:traverse 186 head
+; 1 ast:traverse 189 head
 (let head Collection)
-; 1 ast:traverse 186 tail
+; 1 ast:traverse 189 tail
 (let tail Collection)
-; 1 ast:traverse 186 pattern
+; 1 ast:traverse 189 pattern
 (let pattern Atom)
 ; 1 ast:traverse
 (let ast:traverse (lambda Collection Unknown (lambda Unknown (do Unknown)) (lambda Unknown (do Unknown)) (lambda Unknown Collection (do Unknown)) (do Collection)))
@@ -2126,702 +2136,684 @@
 (let lisp:parse (lambda Collection (do Collection)))
 ; 1 lisp:eval
 (let lisp:eval (lambda Collection (do Unknown)))
-; 1 string:concat-with-lines string:concat-with-lines lambda::annonymous::1::188
-(let lambda::annonymous::1::188 (lambda Collection Collection Atom (do Collection)))
-; 1 array:concat-with array:concat-with lambda::annonymous::1::189
-(let lambda::annonymous::1::189 (lambda Collection Collection Atom (do Collection)))
-; 1 from:string->float from:string->float lambda::annonymous::1::190
-(let lambda::annonymous::1::190 (lambda Atom (do Atom)))
-; 1 matrix:of 70 70 lambda::annonymous::1::191
-(let lambda::annonymous::1::191 (lambda Unknown (do Unknown)))
-; 1 matrix:of matrix:of lambda::annonymous::1::192
-(let lambda::annonymous::1::192 (lambda Unknown (do Unknown)))
-; 1 matrix:of matrix:of lambda::annonymous::1::192 lambda::annonymous::1::192 lambda::annonymous::1::194
+; 1 string:concat-with-lines string:concat-with-lines lambda::annonymous::1::191
+(let lambda::annonymous::1::191 (lambda Collection Collection Atom (do Collection)))
+; 1 array:concat-with array:concat-with lambda::annonymous::1::192
+(let lambda::annonymous::1::192 (lambda Collection Collection Atom (do Collection)))
+; 1 from:string->float from:string->float lambda::annonymous::1::193
+(let lambda::annonymous::1::193 (lambda Atom (do Atom)))
+; 1 matrix:of 71 71 lambda::annonymous::1::194
 (let lambda::annonymous::1::194 (lambda Unknown (do Unknown)))
-; 1 matrix:enumerated-for 68 68 lambda::annonymous::1::195
-(let lambda::annonymous::1::195 (lambda Atom (do Unknown)))
-; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::196
-(let lambda::annonymous::1::196 (lambda Atom (do Unknown)))
-; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::196 lambda::annonymous::1::196 lambda::annonymous::1::198
+; 1 matrix:of matrix:of lambda::annonymous::1::195
+(let lambda::annonymous::1::195 (lambda Unknown (do Unknown)))
+; 1 matrix:of matrix:of lambda::annonymous::1::195 lambda::annonymous::1::195 lambda::annonymous::1::197
+(let lambda::annonymous::1::197 (lambda Unknown (do Unknown)))
+; 1 matrix:enumerated-for 69 69 lambda::annonymous::1::198
 (let lambda::annonymous::1::198 (lambda Atom (do Unknown)))
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::199 idx
+; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::199
+(let lambda::annonymous::1::199 (lambda Atom (do Unknown)))
+; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::199 lambda::annonymous::1::199 lambda::annonymous::1::201
+(let lambda::annonymous::1::201 (lambda Atom (do Unknown)))
+; 1 matrix:find-index matrix:find-index lambda::annonymous::1::202 idx
 (let idx Atom)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::199 predicate?
+; 1 matrix:find-index matrix:find-index lambda::annonymous::1::202 predicate?
 (let predicate? Atom)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::199
-(let lambda::annonymous::1::199 (lambda Collection (do Atom)))
-; 1 matrix:points matrix:points lambda::annonymous::1::200
-(let lambda::annonymous::1::200 (lambda Unknown Unknown Unknown (do Unknown)))
-; 1 array:ranges array:ranges lambda::annonymous::1::201
-(let lambda::annonymous::1::201 (lambda Collection Unknown Unknown (do Collection)))
-; 1 array:sliding-window array:sliding-window lambda::annonymous::1::202
-(let lambda::annonymous::1::202 (lambda Collection Unknown Atom (do Collection)))
-; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::203
-(let lambda::annonymous::1::203 (lambda Unknown Atom (do Atom)))
-; 1 array:sorted-descending? array:sorted-descending? lambda::annonymous::1::204
-(let lambda::annonymous::1::204 (lambda Atom Atom (do Atom)))
-; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::205
-(let lambda::annonymous::1::205 (lambda Atom Atom (do Atom)))
-; 1 array:unique array:unique lambda::annonymous::1::206
-(let lambda::annonymous::1::206 (lambda Atom Atom (do Atom)))
-; 1 array:odd-indexed array:odd-indexed lambda::annonymous::1::207
-(let lambda::annonymous::1::207 (lambda Collection Unknown Atom (do Collection)))
-; 1 array:even-indexed array:even-indexed lambda::annonymous::1::208
-(let lambda::annonymous::1::208 (lambda Collection Unknown Atom (do Collection)))
-; 1 array:enumerated-for array:enumerated-for lambda::annonymous::1::209
-(let lambda::annonymous::1::209 (lambda Atom (do Unknown)))
-; 1 array:buckets array:buckets lambda::annonymous::1::210
-(let lambda::annonymous::1::210 (lambda Unknown (do Collection)))
-; 1 math:max-sub-array-sum math:max-sub-array-sum lambda::annonymous::1::211
-(let lambda::annonymous::1::211 (lambda Collection Atom (do Collection)))
-; 1 math:cartesian-product 17 17 lambda::annonymous::1::212
-(let lambda::annonymous::1::212 (lambda Unknown (do Collection)))
-; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::213
-(let lambda::annonymous::1::213 (lambda Collection Unknown (do Collection)))
-; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::213 lambda::annonymous::1::213 lambda::annonymous::1::215
+; 1 matrix:find-index matrix:find-index lambda::annonymous::1::202
+(let lambda::annonymous::1::202 (lambda Collection (do Atom)))
+; 1 matrix:points matrix:points lambda::annonymous::1::203
+(let lambda::annonymous::1::203 (lambda Unknown Unknown Unknown (do Unknown)))
+; 1 array:ranges array:ranges lambda::annonymous::1::204
+(let lambda::annonymous::1::204 (lambda Collection Unknown Unknown (do Collection)))
+; 1 array:sliding-window array:sliding-window lambda::annonymous::1::205
+(let lambda::annonymous::1::205 (lambda Collection Unknown Atom (do Collection)))
+; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::206
+(let lambda::annonymous::1::206 (lambda Unknown Atom (do Atom)))
+; 1 array:sorted-descending? array:sorted-descending? lambda::annonymous::1::207
+(let lambda::annonymous::1::207 (lambda Atom Atom (do Atom)))
+; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::208
+(let lambda::annonymous::1::208 (lambda Atom Atom (do Atom)))
+; 1 array:unique array:unique lambda::annonymous::1::209
+(let lambda::annonymous::1::209 (lambda Atom Atom (do Atom)))
+; 1 array:odd-indexed array:odd-indexed lambda::annonymous::1::210
+(let lambda::annonymous::1::210 (lambda Collection Unknown Atom (do Collection)))
+; 1 array:even-indexed array:even-indexed lambda::annonymous::1::211
+(let lambda::annonymous::1::211 (lambda Collection Unknown Atom (do Collection)))
+; 1 array:enumerated-for array:enumerated-for lambda::annonymous::1::212
+(let lambda::annonymous::1::212 (lambda Atom (do Unknown)))
+; 1 array:buckets array:buckets lambda::annonymous::1::213
+(let lambda::annonymous::1::213 (lambda Unknown (do Collection)))
+; 1 math:max-sub-array-sum math:max-sub-array-sum lambda::annonymous::1::214
+(let lambda::annonymous::1::214 (lambda Collection Atom (do Collection)))
+; 1 math:cartesian-product 18 18 lambda::annonymous::1::215
 (let lambda::annonymous::1::215 (lambda Unknown (do Collection)))
-; 1 math:min-length math:min-length lambda::annonymous::1::216
-(let lambda::annonymous::1::216 (lambda Atom Collection (do Atom)))
-; 1 math:max-length math:max-length lambda::annonymous::1::217
-(let lambda::annonymous::1::217 (lambda Atom Collection (do Atom)))
-; 1 math:minimum-index math:minimum-index lambda::annonymous::1::218
-(let lambda::annonymous::1::218 (lambda Collection Atom Unknown (do Collection)))
-; 1 math:maximum-index math:maximum-index lambda::annonymous::1::219
-(let lambda::annonymous::1::219 (lambda Collection Atom Unknown (do Collection)))
-; 1 math:combinations math:combinations lambda::annonymous::2::220
-(let lambda::annonymous::2::220 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::221
-(let lambda::annonymous::2::221 (lambda Atom (do Unknown)))
-; 1 math:permutations 3 3 lambda::annonymous::1::222
-(let lambda::annonymous::1::222 (lambda Unknown Atom (do Atom)))
-; 1 math:permutations 3 3 lambda::annonymous::1::223
-(let lambda::annonymous::1::223 (lambda Collection (do Collection)))
-; 1 math:permutations math:permutations lambda::annonymous::1::224
-(let lambda::annonymous::1::224 (lambda Unknown Atom (do Collection)))
-; 1 math:permutations math:permutations lambda::annonymous::1::224 lambda::annonymous::1::224 lambda::annonymous::1::227
-(let lambda::annonymous::1::227 (lambda Unknown Atom (do Atom)))
-; 1 math:permutations math:permutations lambda::annonymous::1::224 lambda::annonymous::1::224 lambda::annonymous::1::228
-(let lambda::annonymous::1::228 (lambda Collection (do Collection)))
-; 1 pair:duplicate pair:duplicate lambda::annonymous::1::229
-(let lambda::annonymous::1::229 (lambda Collection Unknown (do Collection)))
-; 1 pair:duplicate pair:duplicate lambda::annonymous::1::231
-(let lambda::annonymous::1::231 (lambda Collection Unknown (do Collection)))
-; 1 math:combinations math:combinations lambda::annonymous::2::234
-(let lambda::annonymous::2::234 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::235
-(let lambda::annonymous::2::235 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::237
+; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::216
+(let lambda::annonymous::1::216 (lambda Collection Unknown (do Collection)))
+; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::216 lambda::annonymous::1::216 lambda::annonymous::1::218
+(let lambda::annonymous::1::218 (lambda Unknown (do Collection)))
+; 1 math:min-length math:min-length lambda::annonymous::1::219
+(let lambda::annonymous::1::219 (lambda Atom Collection (do Atom)))
+; 1 math:max-length math:max-length lambda::annonymous::1::220
+(let lambda::annonymous::1::220 (lambda Atom Collection (do Atom)))
+; 1 math:minimum-index math:minimum-index lambda::annonymous::1::221
+(let lambda::annonymous::1::221 (lambda Collection Atom Unknown (do Collection)))
+; 1 math:maximum-index math:maximum-index lambda::annonymous::1::222
+(let lambda::annonymous::1::222 (lambda Collection Atom Unknown (do Collection)))
+; 1 math:combinations math:combinations lambda::annonymous::2::223
+(let lambda::annonymous::2::223 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::224
+(let lambda::annonymous::2::224 (lambda Atom (do Unknown)))
+; 1 math:permutations 3 3 lambda::annonymous::1::225
+(let lambda::annonymous::1::225 (lambda Unknown Atom (do Atom)))
+; 1 math:permutations 3 3 lambda::annonymous::1::226
+(let lambda::annonymous::1::226 (lambda Collection (do Collection)))
+; 1 math:permutations math:permutations lambda::annonymous::1::227
+(let lambda::annonymous::1::227 (lambda Unknown Atom (do Collection)))
+; 1 math:permutations math:permutations lambda::annonymous::1::227 lambda::annonymous::1::227 lambda::annonymous::1::230
+(let lambda::annonymous::1::230 (lambda Unknown Atom (do Atom)))
+; 1 math:permutations math:permutations lambda::annonymous::1::227 lambda::annonymous::1::227 lambda::annonymous::1::231
+(let lambda::annonymous::1::231 (lambda Collection (do Collection)))
+; 1 pair:duplicate pair:duplicate lambda::annonymous::1::232
+(let lambda::annonymous::1::232 (lambda Collection Unknown (do Collection)))
+; 1 pair:duplicate pair:duplicate lambda::annonymous::1::234
+(let lambda::annonymous::1::234 (lambda Collection Unknown (do Collection)))
+; 1 math:combinations math:combinations lambda::annonymous::2::237
 (let lambda::annonymous::2::237 (lambda Atom (do Unknown)))
-; 1 math:summation math:summation lambda::annonymous::1::239
-(let lambda::annonymous::1::239 (lambda Atom Atom (do Atom)))
-; 1 math:product math:product lambda::annonymous::1::241
-(let lambda::annonymous::1::241 (lambda Atom Atom (do Atom)))
-; 1 math:maximum-index math:maximum-index lambda::annonymous::1::243
-(let lambda::annonymous::1::243 (lambda Collection Atom Unknown (do Collection)))
-; 1 math:minimum-index math:minimum-index lambda::annonymous::1::245
-(let lambda::annonymous::1::245 (lambda Collection Atom Unknown (do Collection)))
-; 1 math:max-length math:max-length lambda::annonymous::1::247
-(let lambda::annonymous::1::247 (lambda Atom Collection (do Atom)))
-; 1 math:min-length math:min-length lambda::annonymous::1::249
-(let lambda::annonymous::1::249 (lambda Atom Collection (do Atom)))
-; 1 math:cartesian-product 254 254 lambda::annonymous::1::256
-(let lambda::annonymous::1::256 (lambda Unknown (do Collection)))
-; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::257
-(let lambda::annonymous::1::257 (lambda Collection Unknown (do Collection)))
-; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::257 lambda::annonymous::1::257 lambda::annonymous::1::259
+; 1 math:combinations combinations combinations lambda::annonymous::2::238
+(let lambda::annonymous::2::238 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::240
+(let lambda::annonymous::2::240 (lambda Atom (do Unknown)))
+; 1 math:summation math:summation lambda::annonymous::1::242
+(let lambda::annonymous::1::242 (lambda Atom Atom (do Atom)))
+; 1 math:product math:product lambda::annonymous::1::244
+(let lambda::annonymous::1::244 (lambda Atom Atom (do Atom)))
+; 1 math:maximum-index math:maximum-index lambda::annonymous::1::246
+(let lambda::annonymous::1::246 (lambda Collection Atom Unknown (do Collection)))
+; 1 math:minimum-index math:minimum-index lambda::annonymous::1::248
+(let lambda::annonymous::1::248 (lambda Collection Atom Unknown (do Collection)))
+; 1 math:max-length math:max-length lambda::annonymous::1::250
+(let lambda::annonymous::1::250 (lambda Atom Collection (do Atom)))
+; 1 math:min-length math:min-length lambda::annonymous::1::252
+(let lambda::annonymous::1::252 (lambda Atom Collection (do Atom)))
+; 1 math:cartesian-product 257 257 lambda::annonymous::1::259
 (let lambda::annonymous::1::259 (lambda Unknown (do Collection)))
-; 1 array:buckets array:buckets lambda::annonymous::1::263
-(let lambda::annonymous::1::263 (lambda Unknown (do Collection)))
-; 1 array:enumerated-for array:enumerated-for lambda::annonymous::1::265
-(let lambda::annonymous::1::265 (lambda Atom (do Unknown)))
-; 1 array:even-indexed array:even-indexed lambda::annonymous::1::267
-(let lambda::annonymous::1::267 (lambda Collection Unknown Atom (do Collection)))
-; 1 array:odd-indexed array:odd-indexed lambda::annonymous::1::269
+; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::260
+(let lambda::annonymous::1::260 (lambda Collection Unknown (do Collection)))
+; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::260 lambda::annonymous::1::260 lambda::annonymous::1::262
+(let lambda::annonymous::1::262 (lambda Unknown (do Collection)))
+; 1 array:buckets array:buckets lambda::annonymous::1::265
+(let lambda::annonymous::1::265 (lambda Unknown (do Collection)))
+; 1 array:enumerated-for array:enumerated-for lambda::annonymous::1::267
+(let lambda::annonymous::1::267 (lambda Atom (do Unknown)))
+; 1 array:even-indexed array:even-indexed lambda::annonymous::1::269
 (let lambda::annonymous::1::269 (lambda Collection Unknown Atom (do Collection)))
-; 1 array:unique 271 index
+; 1 array:odd-indexed array:odd-indexed lambda::annonymous::1::271
+(let lambda::annonymous::1::271 (lambda Collection Unknown Atom (do Collection)))
+; 1 array:unique 273 index
 (let index Atom)
-; 1 array:unique array:unique lambda::annonymous::1::272 index
+; 1 array:unique array:unique lambda::annonymous::1::274 index
 (let index Atom)
-; 1 array:unique array:unique lambda::annonymous::1::272
-(let lambda::annonymous::1::272 (lambda Collection (do Atom)))
-; 1 array:unique array:unique lambda::annonymous::1::273
-(let lambda::annonymous::1::273 (lambda Atom Atom (do Atom)))
-; 1 cons cons lambda::annonymous::1::278
-(let lambda::annonymous::1::278 (lambda Unknown (do Collection)))
-; 1 cons cons lambda::annonymous::1::279
-(let lambda::annonymous::1::279 (lambda Unknown (do Collection)))
-; 1 array:binary-search recursive:array:binary-search 280 index
+; 1 array:unique array:unique lambda::annonymous::1::274
+(let lambda::annonymous::1::274 (lambda Collection (do Atom)))
+; 1 array:unique array:unique lambda::annonymous::1::275
+(let lambda::annonymous::1::275 (lambda Atom Atom (do Atom)))
+; 1 cons cons lambda::annonymous::1::280
+(let lambda::annonymous::1::280 (lambda Unknown (do Collection)))
+; 1 cons cons lambda::annonymous::1::281
+(let lambda::annonymous::1::281 (lambda Unknown (do Collection)))
+; 1 array:binary-search recursive:array:binary-search 282 index
 (let index Atom)
-; 1 array:binary-search recursive:array:binary-search 280 current
+; 1 array:binary-search recursive:array:binary-search 282 current
 (let current Atom)
-; 1 array:join array:join lambda::annonymous::1::282
-(let lambda::annonymous::1::282 (lambda Collection Collection (do Collection)))
-; 1 array:chars array:chars lambda::annonymous::1::284
+; 1 array:join array:join lambda::annonymous::1::284
 (let lambda::annonymous::1::284 (lambda Collection Collection (do Collection)))
-; 1 array:lines array:lines lambda::annonymous::1::286
+; 1 array:chars array:chars lambda::annonymous::1::286
 (let lambda::annonymous::1::286 (lambda Collection Collection (do Collection)))
-; 1 array:commas array:commas lambda::annonymous::1::288
+; 1 array:lines array:lines lambda::annonymous::1::288
 (let lambda::annonymous::1::288 (lambda Collection Collection (do Collection)))
-; 1 array:spaces array:spaces lambda::annonymous::1::290
+; 1 array:commas array:commas lambda::annonymous::1::290
 (let lambda::annonymous::1::290 (lambda Collection Collection (do Collection)))
-; 1 array:dots array:dots lambda::annonymous::1::292
+; 1 array:spaces array:spaces lambda::annonymous::1::292
 (let lambda::annonymous::1::292 (lambda Collection Collection (do Collection)))
-; 1 array:colons array:colons lambda::annonymous::1::294
+; 1 array:dots array:dots lambda::annonymous::1::294
 (let lambda::annonymous::1::294 (lambda Collection Collection (do Collection)))
-; 1 array:semi-colons array:semi-colons lambda::annonymous::1::296
+; 1 array:colons array:colons lambda::annonymous::1::296
 (let lambda::annonymous::1::296 (lambda Collection Collection (do Collection)))
-; 1 array:dashes array:dashes lambda::annonymous::1::298
+; 1 array:semi-colons array:semi-colons lambda::annonymous::1::298
 (let lambda::annonymous::1::298 (lambda Collection Collection (do Collection)))
-; 1 array:flat-one array:flat-one lambda::annonymous::1::300
-(let lambda::annonymous::1::300 (lambda Collection Unknown (do Collection)))
-; 1 array:flat flatten flatten lambda::annonymous::1::302
-(let lambda::annonymous::1::302 (lambda Collection Collection (do Collection)))
+; 1 array:dashes array:dashes lambda::annonymous::1::300
+(let lambda::annonymous::1::300 (lambda Collection Collection (do Collection)))
+; 1 array:flat-one array:flat-one lambda::annonymous::1::302
+(let lambda::annonymous::1::302 (lambda Collection Unknown (do Collection)))
 ; 1 array:flat flatten flatten lambda::annonymous::1::304
 (let lambda::annonymous::1::304 (lambda Collection Collection (do Collection)))
-; 1 array:sort 305 pivot
+; 1 array:flat flatten flatten lambda::annonymous::1::306
+(let lambda::annonymous::1::306 (lambda Collection Collection (do Collection)))
+; 1 array:sort 307 pivot
 (let pivot Unknown)
-; 1 array:sort 305 recursive:array:sort current
+; 1 array:sort 307 recursive:array:sort current
 (let current Unknown)
-; 1 array:sort 305 recursive:array:sort predicate
+; 1 array:sort 307 recursive:array:sort predicate
 (let predicate Atom)
-; 1 array:sort 305 recursive:array:sort left
+; 1 array:sort 307 recursive:array:sort left
 (let left Collection)
-; 1 array:sort 305 recursive:array:sort right
+; 1 array:sort 307 recursive:array:sort right
 (let right Collection)
-; 1 array:sort 305 recursive:array:sort
+; 1 array:sort 307 recursive:array:sort
 (let recursive:array:sort (lambda Atom Atom Collection Collection (do Collection)))
-; 1 array:sort 305 sorted
+; 1 array:sort 307 sorted
 (let sorted Collection)
-; 1 array:sort 305 left
+; 1 array:sort 307 left
 (let left Unknown)
-; 1 array:sort 305 right
+; 1 array:sort 307 right
 (let right Unknown)
-; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::307
-(let lambda::annonymous::1::307 (lambda Atom Atom (do Atom)))
-; 1 array:sorted-descending? array:sorted-descending? lambda::annonymous::1::309
+; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::309
 (let lambda::annonymous::1::309 (lambda Atom Atom (do Atom)))
-; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::311
-(let lambda::annonymous::1::311 (lambda Unknown Atom (do Atom)))
-; 1 array:sliding-window array:sliding-window lambda::annonymous::1::313
-(let lambda::annonymous::1::313 (lambda Collection Unknown Atom (do Collection)))
-; 1 array:adjacent-difference 314 recursive:array:adjacent-difference
+; 1 array:sorted-descending? array:sorted-descending? lambda::annonymous::1::311
+(let lambda::annonymous::1::311 (lambda Atom Atom (do Atom)))
+; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::313
+(let lambda::annonymous::1::313 (lambda Unknown Atom (do Atom)))
+; 1 array:sliding-window array:sliding-window lambda::annonymous::1::315
+(let lambda::annonymous::1::315 (lambda Collection Unknown Atom (do Collection)))
+; 1 array:adjacent-difference 316 recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Atom Collection (do Unknown)))
-; 1 array:partition 317 x
+; 1 array:partition 319 x
 (let x Unknown)
-; 1 array:partition 317 i
+; 1 array:partition 319 i
 (let i Atom)
-; 1 array:partition array:partition lambda::annonymous::1::318 x
+; 1 array:partition array:partition lambda::annonymous::1::320 x
 (let x Unknown)
-; 1 array:partition array:partition lambda::annonymous::1::318 i
+; 1 array:partition array:partition lambda::annonymous::1::320 i
 (let i Atom)
-; 1 array:partition array:partition lambda::annonymous::1::318
-(let lambda::annonymous::1::318 (lambda Collection Collection (do Collection)))
-; 1 array:ranges array:ranges lambda::annonymous::1::320
-(let lambda::annonymous::1::320 (lambda Collection Unknown Unknown (do Collection)))
-; 1 array:adjacent-find 321 recursive:array:adjacent-find prev
+; 1 array:partition array:partition lambda::annonymous::1::320
+(let lambda::annonymous::1::320 (lambda Collection Collection (do Collection)))
+; 1 array:ranges array:ranges lambda::annonymous::1::322
+(let lambda::annonymous::1::322 (lambda Collection Unknown Unknown (do Collection)))
+; 1 array:adjacent-find 323 recursive:array:adjacent-find prev
 (let prev Unknown)
-; 1 array:adjacent-find 321 recursive:array:adjacent-find current
+; 1 array:adjacent-find 323 recursive:array:adjacent-find current
 (let current Unknown)
-; 1 array:adjacent-find 321 recursive:array:adjacent-find
+; 1 array:adjacent-find 323 recursive:array:adjacent-find
 (let recursive:array:adjacent-find (lambda Atom (do Unknown)))
-; 1 matrix:points matrix:points lambda::annonymous::1::323
-(let lambda::annonymous::1::323 (lambda Unknown Unknown Unknown (do Unknown)))
-; 1 matrix:for matrix:for lambda::annonymous::1::325
-(let lambda::annonymous::1::325 (lambda Collection (do Collection)))
-; 1 matrix:enumerated-for 326 326 lambda::annonymous::1::328
-(let lambda::annonymous::1::328 (lambda Atom (do Unknown)))
-; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::329
-(let lambda::annonymous::1::329 (lambda Atom (do Unknown)))
-; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::329 lambda::annonymous::1::329 lambda::annonymous::1::331
+; 1 matrix:points matrix:points lambda::annonymous::1::325
+(let lambda::annonymous::1::325 (lambda Unknown Unknown Unknown (do Unknown)))
+; 1 matrix:for matrix:for lambda::annonymous::1::327
+(let lambda::annonymous::1::327 (lambda Collection (do Collection)))
+; 1 matrix:enumerated-for 328 328 lambda::annonymous::1::330
+(let lambda::annonymous::1::330 (lambda Atom (do Unknown)))
+; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::331
 (let lambda::annonymous::1::331 (lambda Atom (do Unknown)))
-; 1 matrix:of 332 332 lambda::annonymous::1::334
-(let lambda::annonymous::1::334 (lambda Unknown (do Unknown)))
-; 1 matrix:of matrix:of lambda::annonymous::1::335
-(let lambda::annonymous::1::335 (lambda Unknown (do Unknown)))
-; 1 matrix:of matrix:of lambda::annonymous::1::335 lambda::annonymous::1::335 lambda::annonymous::1::337
+; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::331 lambda::annonymous::1::331 lambda::annonymous::1::333
+(let lambda::annonymous::1::333 (lambda Atom (do Unknown)))
+; 1 matrix:of 334 334 lambda::annonymous::1::336
+(let lambda::annonymous::1::336 (lambda Unknown (do Unknown)))
+; 1 matrix:of matrix:of lambda::annonymous::1::337
 (let lambda::annonymous::1::337 (lambda Unknown (do Unknown)))
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 338 recursive:inner:matrix:rotate-square
-(let recursive:inner:matrix:rotate-square (lambda Atom (do Unknown)))
+; 1 matrix:of matrix:of lambda::annonymous::1::337 lambda::annonymous::1::337 lambda::annonymous::1::339
+(let lambda::annonymous::1::339 (lambda Unknown (do Unknown)))
 ; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 340 recursive:inner:matrix:rotate-square
 (let recursive:inner:matrix:rotate-square (lambda Atom (do Unknown)))
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 343 recursive:inner:matrix:flip-square
-(let recursive:inner:matrix:flip-square (lambda Atom (do Unknown)))
+; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 342 recursive:inner:matrix:rotate-square
+(let recursive:inner:matrix:rotate-square (lambda Atom (do Unknown)))
 ; 1 matrix:flip-square recursive:outer:matrix:flip-square 345 recursive:inner:matrix:flip-square
 (let recursive:inner:matrix:flip-square (lambda Atom (do Unknown)))
-; 1 matrix:adjacent 348 dy
+; 1 matrix:flip-square recursive:outer:matrix:flip-square 347 recursive:inner:matrix:flip-square
+(let recursive:inner:matrix:flip-square (lambda Atom (do Unknown)))
+; 1 matrix:adjacent 350 dy
 (let dy Atom)
-; 1 matrix:adjacent 348 dx
+; 1 matrix:adjacent 350 dx
 (let dx Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::349 dy
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::351 dy
 (let dy Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::349 dx
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::351 dx
 (let dx Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::349
-(let lambda::annonymous::1::349 (lambda Collection (do Unknown)))
-; 1 matrix:adjacent-sum 350 dy
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::351
+(let lambda::annonymous::1::351 (lambda Collection (do Unknown)))
+; 1 matrix:adjacent-sum 352 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum 350 dx
+; 1 matrix:adjacent-sum 352 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::351 dy
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::353 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::351 dx
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::353 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::351
-(let lambda::annonymous::1::351 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:sliding-adjacent-sum 352 dy
-(let dy Atom)
-; 1 matrix:sliding-adjacent-sum 352 dx
-(let dx Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::353 dy
-(let dy Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::353 dx
-(let dx Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::353
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::353
 (let lambda::annonymous::1::353 (lambda Unknown Collection (do Unknown)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::355
-(let lambda::annonymous::1::355 (lambda Atom (do Collection)))
-; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::357
-(let lambda::annonymous::1::357 (lambda Collection (do Collection)))
-; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::360
-(let lambda::annonymous::1::360 (lambda Collection Atom (do Collection)))
-; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::364
-(let lambda::annonymous::1::364 (lambda Atom (do Collection)))
-; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::365
-(let lambda::annonymous::1::365 (lambda Collection Collection (do Collection)))
-; 1 from:float->string 366 flip
+; 1 matrix:sliding-adjacent-sum 354 dy
+(let dy Atom)
+; 1 matrix:sliding-adjacent-sum 354 dx
+(let dx Atom)
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::355 dy
+(let dy Atom)
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::355 dx
+(let dx Atom)
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::355
+(let lambda::annonymous::1::355 (lambda Unknown Collection (do Unknown)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::357
+(let lambda::annonymous::1::357 (lambda Atom (do Collection)))
+; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::359
+(let lambda::annonymous::1::359 (lambda Collection (do Collection)))
+; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::362
+(let lambda::annonymous::1::362 (lambda Collection Atom (do Collection)))
+; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::366
+(let lambda::annonymous::1::366 (lambda Atom (do Collection)))
+; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::367
+(let lambda::annonymous::1::367 (lambda Collection Collection (do Collection)))
+; 1 from:float->string 368 flip
 (let flip Atom)
-; 1 from:float->string 366 exponent
+; 1 from:float->string 368 exponent
 (let exponent Atom)
-; 1 from:float->string 366 mantisa
+; 1 from:float->string 368 mantisa
 (let mantisa Atom)
-; 1 from:float->string 366 left
+; 1 from:float->string 368 left
 (let left Collection)
-; 1 from:float->string 366 right
+; 1 from:float->string 368 right
 (let right Collection)
-; 1 from:float->string 366 len
+; 1 from:float->string 368 len
 (let len Atom)
-; 1 from:float->string 366 recursive:while
+; 1 from:float->string 368 recursive:while
 (let recursive:while (lambda Atom (do Unknown)))
-; 1 from:array->set from:array->set lambda::annonymous::1::370
-(let lambda::annonymous::1::370 (lambda Collection (do Collection)))
-; 1 from:array->table from:array->table lambda::annonymous::1::372
+; 1 from:array->set from:array->set lambda::annonymous::1::372
 (let lambda::annonymous::1::372 (lambda Collection (do Collection)))
-; 1 from:matrix->string from:matrix->string lambda::annonymous::1::374
+; 1 from:array->table from:array->table lambda::annonymous::1::374
 (let lambda::annonymous::1::374 (lambda Collection (do Collection)))
-; 1 array:shallow-copy array:shallow-copy lambda::annonymous::1::376
-(let lambda::annonymous::1::376 (lambda Collection Unknown (do Collection)))
-; 1 array:deep-copy array:deep-copy lambda::annonymous::1::378
-(let lambda::annonymous::1::378 (lambda Collection Collection (do Collection)))
-; 1 array:merge! array:merge! lambda::annonymous::1::380
-(let lambda::annonymous::1::380 (lambda Unknown (do Collection)))
-; 1 array:merge array:merge lambda::annonymous::1::383
-(let lambda::annonymous::1::383 (lambda Unknown (do Collection)))
-; 1 array:merge array:merge lambda::annonymous::1::384
-(let lambda::annonymous::1::384 (lambda Unknown (do Collection)))
-; 1 array:concat-with array:concat-with lambda::annonymous::1::386
-(let lambda::annonymous::1::386 (lambda Collection Collection Atom (do Collection)))
-; 1 string:concat-with-lines string:concat-with-lines lambda::annonymous::1::388
+; 1 from:matrix->string from:matrix->string lambda::annonymous::1::376
+(let lambda::annonymous::1::376 (lambda Collection (do Collection)))
+; 1 array:shallow-copy array:shallow-copy lambda::annonymous::1::378
+(let lambda::annonymous::1::378 (lambda Collection Unknown (do Collection)))
+; 1 array:deep-copy array:deep-copy lambda::annonymous::1::380
+(let lambda::annonymous::1::380 (lambda Collection Collection (do Collection)))
+; 1 array:merge! array:merge! lambda::annonymous::1::382
+(let lambda::annonymous::1::382 (lambda Unknown (do Collection)))
+; 1 array:merge array:merge lambda::annonymous::1::385
+(let lambda::annonymous::1::385 (lambda Unknown (do Collection)))
+; 1 array:merge array:merge lambda::annonymous::1::386
+(let lambda::annonymous::1::386 (lambda Unknown (do Collection)))
+; 1 array:concat-with array:concat-with lambda::annonymous::1::388
 (let lambda::annonymous::1::388 (lambda Collection Collection Atom (do Collection)))
-; 1 array:remove array:remove lambda::annonymous::1::390
-(let lambda::annonymous::1::390 (lambda Collection Atom (do Collection)))
-; 1 array:rotate-right array:rotate-right lambda::annonymous::1::392
-(let lambda::annonymous::1::392 (lambda Collection Collection (do Collection)))
-; 1 array:rotate-left array:rotate-left lambda::annonymous::1::394
+; 1 string:concat-with-lines string:concat-with-lines lambda::annonymous::1::390
+(let lambda::annonymous::1::390 (lambda Collection Collection Atom (do Collection)))
+; 1 array:remove array:remove lambda::annonymous::1::392
+(let lambda::annonymous::1::392 (lambda Collection Atom (do Collection)))
+; 1 array:rotate-right array:rotate-right lambda::annonymous::1::394
 (let lambda::annonymous::1::394 (lambda Collection Collection (do Collection)))
-; 1 string:join-as-table-with 400 400 lambda::annonymous::1::402
-(let lambda::annonymous::1::402 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::403
-(let lambda::annonymous::1::403 (lambda Collection Unknown (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::404
-(let lambda::annonymous::1::404 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::404 lambda::annonymous::1::404 lambda::annonymous::1::406
+; 1 array:rotate-left array:rotate-left lambda::annonymous::1::396
+(let lambda::annonymous::1::396 (lambda Collection Collection (do Collection)))
+; 1 string:lesser? 114 recursive:string:lesser 397 current
+(let current Unknown)
+; 1 string:greater? 116 recursive:string:greater 398 current
+(let current Unknown)
+; 1 string:join-as-table-with 404 404 lambda::annonymous::1::406
 (let lambda::annonymous::1::406 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with 397 397 lambda::annonymous::1::407
-(let lambda::annonymous::1::407 (lambda Unknown (do Unknown)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::407
+(let lambda::annonymous::1::407 (lambda Collection Unknown (do Collection)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::408
-(let lambda::annonymous::1::408 (lambda Unknown (do Collection)))
+(let lambda::annonymous::1::408 (lambda Collection (do Collection)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::408 lambda::annonymous::1::408 lambda::annonymous::1::410
-(let lambda::annonymous::1::410 (lambda Unknown (do Unknown)))
-; 1 string:join-as-table-with 395 395 lambda::annonymous::1::411
+(let lambda::annonymous::1::410 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with 401 401 lambda::annonymous::1::411
 (let lambda::annonymous::1::411 (lambda Unknown (do Unknown)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::412
 (let lambda::annonymous::1::412 (lambda Unknown (do Collection)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::412 lambda::annonymous::1::412 lambda::annonymous::1::414
 (let lambda::annonymous::1::414 (lambda Unknown (do Unknown)))
-; 1 string:join-as-table 415 415 lambda::annonymous::1::417
-(let lambda::annonymous::1::417 (lambda Collection (do Collection)))
-; 1 string:join-as-table string:join-as-table lambda::annonymous::1::418
-(let lambda::annonymous::1::418 (lambda Collection (do Collection)))
-; 1 string:join-as-table string:join-as-table lambda::annonymous::1::418 lambda::annonymous::1::418 lambda::annonymous::1::420
-(let lambda::annonymous::1::420 (lambda Collection (do Collection)))
-; 1 string:trim-left string:trim-left lambda::annonymous::1::423
-(let lambda::annonymous::1::423 (lambda Collection Atom (do Collection)))
-; 1 string:trim-right string:trim-right lambda::annonymous::1::427
+; 1 string:join-as-table-with 399 399 lambda::annonymous::1::415
+(let lambda::annonymous::1::415 (lambda Unknown (do Unknown)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::416
+(let lambda::annonymous::1::416 (lambda Unknown (do Collection)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::416 lambda::annonymous::1::416 lambda::annonymous::1::418
+(let lambda::annonymous::1::418 (lambda Unknown (do Unknown)))
+; 1 string:join-as-table 419 419 lambda::annonymous::1::421
+(let lambda::annonymous::1::421 (lambda Collection (do Collection)))
+; 1 string:join-as-table string:join-as-table lambda::annonymous::1::422
+(let lambda::annonymous::1::422 (lambda Collection (do Collection)))
+; 1 string:join-as-table string:join-as-table lambda::annonymous::1::422 lambda::annonymous::1::422 lambda::annonymous::1::424
+(let lambda::annonymous::1::424 (lambda Collection (do Collection)))
+; 1 string:trim-left string:trim-left lambda::annonymous::1::427
 (let lambda::annonymous::1::427 (lambda Collection Atom (do Collection)))
-; 1 string:upper recursive:string:upper 429 current-char
+; 1 string:trim-right string:trim-right lambda::annonymous::1::431
+(let lambda::annonymous::1::431 (lambda Collection Atom (do Collection)))
+; 1 string:upper recursive:string:upper 433 current-char
 (let current-char Atom)
-; 1 string:upper recursive:string:upper 430 current-char
+; 1 string:upper recursive:string:upper 434 current-char
 (let current-char Atom)
-; 1 string:lower recursive:string:lower 431 current-char
+; 1 string:lower recursive:string:lower 435 current-char
 (let current-char Atom)
-; 1 string:lower recursive:string:lower 432 current-char
+; 1 string:lower recursive:string:lower 436 current-char
 (let current-char Atom)
-; 1 new:map new:map lambda::annonymous::1::434
-(let lambda::annonymous::1::434 (lambda Collection Unknown Atom (do Collection)))
-; 1 new:set new:set lambda::annonymous::1::436
-(let lambda::annonymous::1::436 (lambda Collection Collection (do Collection)))
-; 1 set:add! set:add! lambda::annonymous::1::438
-(let lambda::annonymous::1::438 (lambda Collection (do Atom)))
-; 1 set:remove! set:remove! lambda::annonymous::1::441
-(let lambda::annonymous::1::441 (lambda Collection (do Atom)))
-; 1 set:with! set:with! lambda::annonymous::1::443
-(let lambda::annonymous::1::443 (lambda Collection Collection (do Collection)))
-; 1 set:intersection set:intersection lambda::annonymous::1::445
-(let lambda::annonymous::1::445 (lambda Collection Collection (do Collection)))
-; 1 set:difference set:difference lambda::annonymous::1::447
+; 1 new:map new:map lambda::annonymous::1::438
+(let lambda::annonymous::1::438 (lambda Collection Unknown Atom (do Collection)))
+; 1 new:set new:set lambda::annonymous::1::440
+(let lambda::annonymous::1::440 (lambda Collection Collection (do Collection)))
+; 1 set:add! set:add! lambda::annonymous::1::442
+(let lambda::annonymous::1::442 (lambda Collection (do Atom)))
+; 1 set:remove! set:remove! lambda::annonymous::1::445
+(let lambda::annonymous::1::445 (lambda Collection (do Atom)))
+; 1 set:with! set:with! lambda::annonymous::1::447
 (let lambda::annonymous::1::447 (lambda Collection Collection (do Collection)))
-; 1 set:xor set:xor lambda::annonymous::1::450
-(let lambda::annonymous::1::450 (lambda Collection (do Collection)))
-; 1 set:xor set:xor lambda::annonymous::1::451
-(let lambda::annonymous::1::451 (lambda Collection (do Collection)))
-; 1 set:union set:union lambda::annonymous::1::454
+; 1 set:intersection set:intersection lambda::annonymous::1::449
+(let lambda::annonymous::1::449 (lambda Collection Collection (do Collection)))
+; 1 set:difference set:difference lambda::annonymous::1::451
+(let lambda::annonymous::1::451 (lambda Collection Collection (do Collection)))
+; 1 set:xor set:xor lambda::annonymous::1::454
 (let lambda::annonymous::1::454 (lambda Collection (do Collection)))
-; 1 set:union set:union lambda::annonymous::1::455
+; 1 set:xor set:xor lambda::annonymous::1::455
 (let lambda::annonymous::1::455 (lambda Collection (do Collection)))
-; 1 map:with! map:with! lambda::annonymous::1::457
-(let lambda::annonymous::1::457 (lambda Collection Unknown Atom (do Collection)))
-; 1 map:set! map:set! lambda::annonymous::1::459
-(let lambda::annonymous::1::459 (lambda Collection (do Atom)))
-; 1 map:remove! map:remove! lambda::annonymous::1::462
-(let lambda::annonymous::1::462 (lambda Collection (do Atom)))
-; 1 map:count map:count lambda::annonymous::1::464
-(let lambda::annonymous::1::464 (lambda Collection Collection (do Collection)))
-; 1 brray:balance! 465 initial
+; 1 set:union set:union lambda::annonymous::1::458
+(let lambda::annonymous::1::458 (lambda Collection (do Collection)))
+; 1 set:union set:union lambda::annonymous::1::459
+(let lambda::annonymous::1::459 (lambda Collection (do Collection)))
+; 1 map:with! map:with! lambda::annonymous::1::461
+(let lambda::annonymous::1::461 (lambda Collection Unknown Atom (do Collection)))
+; 1 map:set! map:set! lambda::annonymous::1::463
+(let lambda::annonymous::1::463 (lambda Collection (do Atom)))
+; 1 map:remove! map:remove! lambda::annonymous::1::466
+(let lambda::annonymous::1::466 (lambda Collection (do Atom)))
+; 1 map:count map:count lambda::annonymous::1::468
+(let lambda::annonymous::1::468 (lambda Collection Collection (do Collection)))
+; 1 brray:balance! 469 initial
 (let initial Collection)
-; 1 brray:balance! 465 half
+; 1 brray:balance! 469 half
 (let half Atom)
-; 1 brray:balance! 465 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Atom (do Unknown)))
-; 1 brray:balance! 465 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Atom Atom (do Unknown)))
-; 1 heap:sift-down! recursive:heap:sift-down! 474 max-child
+; 1 brray:balance! 469 recursive:left:brray:balance!
+(let recursive:left:brray:balance! (lambda Atom (do Atom)))
+; 1 brray:balance! 469 recursive:right:brray:balance!
+(let recursive:right:brray:balance! (lambda Atom Atom (do Atom)))
+; 1 heap:sift-down! recursive:heap:sift-down! 478 max-child
 (let max-child Atom)
-; 1 heap:sift-down! recursive:heap:sift-down! 475 max-child
+; 1 heap:sift-down! recursive:heap:sift-down! 479 max-child
 (let max-child Atom)
-; 1 from:array->heap from:array->heap lambda::annonymous::1::477
-(let lambda::annonymous::1::477 (lambda Unknown (do Collection)))
-; 1 match:number? match:number? lambda::annonymous::1::479
-(let lambda::annonymous::1::479 (lambda Atom (do Atom)))
-; 1 from:chars->ast 480 cursor
+; 1 from:array->heap from:array->heap lambda::annonymous::1::481
+(let lambda::annonymous::1::481 (lambda Unknown (do Collection)))
+; 1 match:number? match:number? lambda::annonymous::1::483
+(let lambda::annonymous::1::483 (lambda Atom (do Atom)))
+; 1 from:chars->ast 484 cursor
 (let cursor Atom)
-; 1 from:chars->ast 480 481 temp
+; 1 from:chars->ast 484 485 temp
 (let temp Collection)
-; 1 from:chars->ast 480 481 h
+; 1 from:chars->ast 484 485 h
 (let h Unknown)
-; 1 from:chars->ast 480 482 token
+; 1 from:chars->ast 484 486 token
 (let token Collection)
-; 1 from:chars->ast 480 482 483 h
+; 1 from:chars->ast 484 486 487 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::484 cursor
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 cursor
 (let cursor Atom)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::484 485 temp
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 489 temp
 (let temp Collection)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::484 485 h
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 489 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::484 486 token
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 490 token
 (let token Collection)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::484 486 487 h
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 490 491 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::484
-(let lambda::annonymous::1::484 (lambda Atom (do Collection)))
-; 1 ast:traverse 488 head
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488
+(let lambda::annonymous::1::488 (lambda Atom (do Collection)))
+; 1 ast:traverse 492 head
 (let head Collection)
-; 1 ast:traverse 488 tail
+; 1 ast:traverse 492 tail
 (let tail Collection)
-; 1 ast:traverse 488 pattern
+; 1 ast:traverse 492 pattern
 (let pattern Atom)
-; 1 ast:traverse 488 488 lambda::annonymous::1::490
-(let lambda::annonymous::1::490 (lambda Collection (do Collection)))
-; 1 ast:traverse 186 186 lambda::annonymous::1::492
-(let lambda::annonymous::1::492 (lambda Collection (do Collection)))
-; 1 ast:traverse 186 186 lambda::annonymous::1::493
-(let lambda::annonymous::1::493 (lambda Collection (do Collection)))
-; 1 ast:traverse 186 186 lambda::annonymous::1::494
+; 1 ast:traverse 492 492 lambda::annonymous::1::494
 (let lambda::annonymous::1::494 (lambda Collection (do Collection)))
-; 1 special-form:do special-form:do lambda::annonymous::1::496
-(let lambda::annonymous::1::496 (lambda Collection Collection (do Collection)))
-; 1 special-form:do special-form:do lambda::annonymous::1::497
-(let lambda::annonymous::1::497 (lambda Collection Collection (do Collection)))
-; 1 special-form:do special-form:do lambda::annonymous::1::498
-(let lambda::annonymous::1::498 (lambda Collection Collection (do Collection)))
-; 1 special-form:array special-form:array lambda::annonymous::1::500
-(let lambda::annonymous::1::500 (lambda Collection (do Unknown)))
-; 1 special-form:array special-form:array lambda::annonymous::1::501
-(let lambda::annonymous::1::501 (lambda Collection (do Unknown)))
-; 1 special-form:array special-form:array lambda::annonymous::1::502
-(let lambda::annonymous::1::502 (lambda Collection (do Unknown)))
-; 1 special-form:lambda 180 180 lambda::annonymous::1::503
-(let lambda::annonymous::1::503 (lambda Atom (do Collection)))
-; 1 special-form:lambda 180 180 lambda::annonymous::1::504
-(let lambda::annonymous::1::504 (lambda Atom (do Collection)))
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::505 cursor
+; 1 ast:traverse 189 189 lambda::annonymous::1::496
+(let lambda::annonymous::1::496 (lambda Collection (do Collection)))
+; 1 ast:traverse 189 189 lambda::annonymous::1::497
+(let lambda::annonymous::1::497 (lambda Collection (do Collection)))
+; 1 ast:traverse 189 189 lambda::annonymous::1::498
+(let lambda::annonymous::1::498 (lambda Collection (do Collection)))
+; 1 special-form:do special-form:do lambda::annonymous::1::500
+(let lambda::annonymous::1::500 (lambda Collection Collection (do Collection)))
+; 1 special-form:do special-form:do lambda::annonymous::1::501
+(let lambda::annonymous::1::501 (lambda Collection Collection (do Collection)))
+; 1 special-form:do special-form:do lambda::annonymous::1::502
+(let lambda::annonymous::1::502 (lambda Collection Collection (do Collection)))
+; 1 special-form:array special-form:array lambda::annonymous::1::504
+(let lambda::annonymous::1::504 (lambda Collection (do Unknown)))
+; 1 special-form:array special-form:array lambda::annonymous::1::505
+(let lambda::annonymous::1::505 (lambda Collection (do Unknown)))
+; 1 special-form:array special-form:array lambda::annonymous::1::506
+(let lambda::annonymous::1::506 (lambda Collection (do Unknown)))
+; 1 special-form:lambda 183 183 lambda::annonymous::1::507
+(let lambda::annonymous::1::507 (lambda Atom (do Collection)))
+; 1 special-form:lambda 183 183 lambda::annonymous::1::508
+(let lambda::annonymous::1::508 (lambda Atom (do Collection)))
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::509 cursor
 (let cursor Atom)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::505 506 temp
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::509 510 temp
 (let temp Collection)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::505 506 h
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::509 510 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::505 507 token
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::509 511 token
 (let token Collection)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::505 507 508 h
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::509 511 512 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::505
-(let lambda::annonymous::1::505 (lambda Atom (do Collection)))
-; 1 match:number? match:number? lambda::annonymous::1::510
-(let lambda::annonymous::1::510 (lambda Atom (do Atom)))
-; 1 match:number? match:number? lambda::annonymous::1::511
-(let lambda::annonymous::1::511 (lambda Atom (do Atom)))
-; 1 match:number? match:number? lambda::annonymous::1::512
-(let lambda::annonymous::1::512 (lambda Atom (do Atom)))
-; 1 from:array->heap from:array->heap lambda::annonymous::1::514
-(let lambda::annonymous::1::514 (lambda Unknown (do Collection)))
-; 1 from:array->heap from:array->heap lambda::annonymous::1::515
-(let lambda::annonymous::1::515 (lambda Unknown (do Collection)))
-; 1 map:count map:count lambda::annonymous::1::517
-(let lambda::annonymous::1::517 (lambda Collection Collection (do Collection)))
-; 1 map:count map:count lambda::annonymous::1::518
-(let lambda::annonymous::1::518 (lambda Collection Collection (do Collection)))
-; 1 map:has? map:has? lambda::annonymous::1::520
-(let lambda::annonymous::1::520 (lambda Collection (do Atom)))
-; 1 map:has? map:has? lambda::annonymous::1::521
-(let lambda::annonymous::1::521 (lambda Collection (do Atom)))
-; 1 map:has? map:has? lambda::annonymous::1::522
-(let lambda::annonymous::1::522 (lambda Collection (do Atom)))
-; 1 map:has? map:has? lambda::annonymous::1::523
-(let lambda::annonymous::1::523 (lambda Collection (do Unknown)))
-; 1 map:get-option 152 152 lambda::annonymous::1::525
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::509
+(let lambda::annonymous::1::509 (lambda Atom (do Collection)))
+; 1 match:number? match:number? lambda::annonymous::1::514
+(let lambda::annonymous::1::514 (lambda Atom (do Atom)))
+; 1 match:number? match:number? lambda::annonymous::1::515
+(let lambda::annonymous::1::515 (lambda Atom (do Atom)))
+; 1 match:number? match:number? lambda::annonymous::1::516
+(let lambda::annonymous::1::516 (lambda Atom (do Atom)))
+; 1 from:array->heap from:array->heap lambda::annonymous::1::518
+(let lambda::annonymous::1::518 (lambda Unknown (do Collection)))
+; 1 from:array->heap from:array->heap lambda::annonymous::1::519
+(let lambda::annonymous::1::519 (lambda Unknown (do Collection)))
+; 1 map:count map:count lambda::annonymous::1::521
+(let lambda::annonymous::1::521 (lambda Collection Collection (do Collection)))
+; 1 map:count map:count lambda::annonymous::1::522
+(let lambda::annonymous::1::522 (lambda Collection Collection (do Collection)))
+; 1 map:has? map:has? lambda::annonymous::1::524
+(let lambda::annonymous::1::524 (lambda Collection (do Atom)))
+; 1 map:has? map:has? lambda::annonymous::1::525
 (let lambda::annonymous::1::525 (lambda Collection (do Atom)))
-; 1 map:get-option 152 152 lambda::annonymous::1::526
+; 1 map:has? map:has? lambda::annonymous::1::526
 (let lambda::annonymous::1::526 (lambda Collection (do Atom)))
-; 1 map:get 150 150 lambda::annonymous::1::528
-(let lambda::annonymous::1::528 (lambda Collection (do Atom)))
-; 1 map:get 150 150 lambda::annonymous::1::529
+; 1 map:has? map:has? lambda::annonymous::1::527
+(let lambda::annonymous::1::527 (lambda Collection (do Unknown)))
+; 1 map:get-option 155 155 lambda::annonymous::1::529
 (let lambda::annonymous::1::529 (lambda Collection (do Atom)))
-; 1 map:remove! map:remove! lambda::annonymous::1::531
-(let lambda::annonymous::1::531 (lambda Collection (do Atom)))
-; 1 map:remove! map:remove! lambda::annonymous::1::532
+; 1 map:get-option 155 155 lambda::annonymous::1::530
+(let lambda::annonymous::1::530 (lambda Collection (do Atom)))
+; 1 map:get 153 153 lambda::annonymous::1::532
 (let lambda::annonymous::1::532 (lambda Collection (do Atom)))
-; 1 map:set! map:set! lambda::annonymous::1::534
-(let lambda::annonymous::1::534 (lambda Collection (do Atom)))
-; 1 map:set! map:set! lambda::annonymous::1::535
+; 1 map:get 153 153 lambda::annonymous::1::533
+(let lambda::annonymous::1::533 (lambda Collection (do Atom)))
+; 1 map:remove! map:remove! lambda::annonymous::1::535
 (let lambda::annonymous::1::535 (lambda Collection (do Atom)))
-; 1 map:with! map:with! lambda::annonymous::1::537
-(let lambda::annonymous::1::537 (lambda Collection Unknown Atom (do Collection)))
-; 1 map:with! map:with! lambda::annonymous::1::538
-(let lambda::annonymous::1::538 (lambda Collection Unknown Atom (do Collection)))
-; 1 map:with! map:with! lambda::annonymous::1::539
-(let lambda::annonymous::1::539 (lambda Collection Unknown Atom (do Collection)))
+; 1 map:remove! map:remove! lambda::annonymous::1::536
+(let lambda::annonymous::1::536 (lambda Collection (do Atom)))
+; 1 map:set! map:set! lambda::annonymous::1::538
+(let lambda::annonymous::1::538 (lambda Collection (do Atom)))
+; 1 map:set! map:set! lambda::annonymous::1::539
+(let lambda::annonymous::1::539 (lambda Collection (do Atom)))
 ; 1 map:with! map:with! lambda::annonymous::1::541
 (let lambda::annonymous::1::541 (lambda Collection Unknown Atom (do Collection)))
-; 1 set:union set:union lambda::annonymous::1::542
-(let lambda::annonymous::1::542 (lambda Collection (do Collection)))
-; 1 set:union set:union lambda::annonymous::1::543
-(let lambda::annonymous::1::543 (lambda Collection (do Collection)))
-; 1 set:xor set:xor lambda::annonymous::1::544
-(let lambda::annonymous::1::544 (lambda Collection (do Collection)))
-; 1 set:xor set:xor lambda::annonymous::1::545
-(let lambda::annonymous::1::545 (lambda Collection (do Collection)))
-; 1 set:difference set:difference lambda::annonymous::1::546
-(let lambda::annonymous::1::546 (lambda Collection Collection (do Collection)))
-; 1 set:intersection set:intersection lambda::annonymous::1::547
-(let lambda::annonymous::1::547 (lambda Collection Collection (do Collection)))
-; 1 set:with! set:with! lambda::annonymous::1::549
-(let lambda::annonymous::1::549 (lambda Collection Collection (do Collection)))
-; 1 set:with! set:with! lambda::annonymous::1::550
+; 1 map:with! map:with! lambda::annonymous::1::542
+(let lambda::annonymous::1::542 (lambda Collection Unknown Atom (do Collection)))
+; 1 map:with! map:with! lambda::annonymous::1::543
+(let lambda::annonymous::1::543 (lambda Collection Unknown Atom (do Collection)))
+; 1 map:with! map:with! lambda::annonymous::1::545
+(let lambda::annonymous::1::545 (lambda Collection Unknown Atom (do Collection)))
+; 1 set:union set:union lambda::annonymous::1::546
+(let lambda::annonymous::1::546 (lambda Collection (do Collection)))
+; 1 set:union set:union lambda::annonymous::1::547
+(let lambda::annonymous::1::547 (lambda Collection (do Collection)))
+; 1 set:xor set:xor lambda::annonymous::1::548
+(let lambda::annonymous::1::548 (lambda Collection (do Collection)))
+; 1 set:xor set:xor lambda::annonymous::1::549
+(let lambda::annonymous::1::549 (lambda Collection (do Collection)))
+; 1 set:difference set:difference lambda::annonymous::1::550
 (let lambda::annonymous::1::550 (lambda Collection Collection (do Collection)))
-; 1 set:with! set:with! lambda::annonymous::1::552
-(let lambda::annonymous::1::552 (lambda Collection Collection (do Collection)))
-; 1 set:has? set:has? lambda::annonymous::1::554
-(let lambda::annonymous::1::554 (lambda Collection (do Atom)))
-; 1 set:has? set:has? lambda::annonymous::1::555
-(let lambda::annonymous::1::555 (lambda Collection (do Atom)))
-; 1 set:remove! set:remove! lambda::annonymous::1::557
-(let lambda::annonymous::1::557 (lambda Collection (do Atom)))
-; 1 set:remove! set:remove! lambda::annonymous::1::558
+; 1 set:intersection set:intersection lambda::annonymous::1::551
+(let lambda::annonymous::1::551 (lambda Collection Collection (do Collection)))
+; 1 set:with! set:with! lambda::annonymous::1::553
+(let lambda::annonymous::1::553 (lambda Collection Collection (do Collection)))
+; 1 set:with! set:with! lambda::annonymous::1::554
+(let lambda::annonymous::1::554 (lambda Collection Collection (do Collection)))
+; 1 set:with! set:with! lambda::annonymous::1::556
+(let lambda::annonymous::1::556 (lambda Collection Collection (do Collection)))
+; 1 set:has? set:has? lambda::annonymous::1::558
 (let lambda::annonymous::1::558 (lambda Collection (do Atom)))
-; 1 set:add! set:add! lambda::annonymous::1::560
-(let lambda::annonymous::1::560 (lambda Collection (do Atom)))
-; 1 set:add! set:add! lambda::annonymous::1::561
+; 1 set:has? set:has? lambda::annonymous::1::559
+(let lambda::annonymous::1::559 (lambda Collection (do Atom)))
+; 1 set:remove! set:remove! lambda::annonymous::1::561
 (let lambda::annonymous::1::561 (lambda Collection (do Atom)))
-; 1 new:set-n new:set-n lambda::annonymous::1::562
-(let lambda::annonymous::1::562 (lambda Unknown (do Collection)))
-; 1 new:set new:set lambda::annonymous::1::564
-(let lambda::annonymous::1::564 (lambda Collection Collection (do Collection)))
-; 1 new:set new:set lambda::annonymous::1::565
-(let lambda::annonymous::1::565 (lambda Collection Collection (do Collection)))
-; 1 new:map new:map lambda::annonymous::1::567
-(let lambda::annonymous::1::567 (lambda Collection Unknown Atom (do Collection)))
-; 1 new:map new:map lambda::annonymous::1::568
-(let lambda::annonymous::1::568 (lambda Collection Unknown Atom (do Collection)))
-; 1 string:chars string:chars lambda::annonymous::1::570
-(let lambda::annonymous::1::570 (lambda Unknown (do Collection)))
-; 1 string:chars string:chars lambda::annonymous::1::571
-(let lambda::annonymous::1::571 (lambda Unknown (do Collection)))
-; 1 string:trim-right string:trim-right lambda::annonymous::1::572
-(let lambda::annonymous::1::572 (lambda Collection Atom (do Collection)))
-; 1 string:trim-left string:trim-left lambda::annonymous::1::576
+; 1 set:remove! set:remove! lambda::annonymous::1::562
+(let lambda::annonymous::1::562 (lambda Collection (do Atom)))
+; 1 set:add! set:add! lambda::annonymous::1::564
+(let lambda::annonymous::1::564 (lambda Collection (do Atom)))
+; 1 set:add! set:add! lambda::annonymous::1::565
+(let lambda::annonymous::1::565 (lambda Collection (do Atom)))
+; 1 new:set-n new:set-n lambda::annonymous::1::566
+(let lambda::annonymous::1::566 (lambda Unknown (do Collection)))
+; 1 new:set new:set lambda::annonymous::1::568
+(let lambda::annonymous::1::568 (lambda Collection Collection (do Collection)))
+; 1 new:set new:set lambda::annonymous::1::569
+(let lambda::annonymous::1::569 (lambda Collection Collection (do Collection)))
+; 1 new:map new:map lambda::annonymous::1::571
+(let lambda::annonymous::1::571 (lambda Collection Unknown Atom (do Collection)))
+; 1 new:map new:map lambda::annonymous::1::572
+(let lambda::annonymous::1::572 (lambda Collection Unknown Atom (do Collection)))
+; 1 string:chars string:chars lambda::annonymous::1::574
+(let lambda::annonymous::1::574 (lambda Unknown (do Collection)))
+; 1 string:chars string:chars lambda::annonymous::1::575
+(let lambda::annonymous::1::575 (lambda Unknown (do Collection)))
+; 1 string:trim-right string:trim-right lambda::annonymous::1::576
 (let lambda::annonymous::1::576 (lambda Collection Atom (do Collection)))
-; 1 string:trim-left string:trim-left lambda::annonymous::1::578
-(let lambda::annonymous::1::578 (lambda Collection Atom (do Collection)))
-; 1 string:join-as-table 123 123 lambda::annonymous::1::581
-(let lambda::annonymous::1::581 (lambda Collection (do Collection)))
-; 1 string:join-as-table 123 123 lambda::annonymous::1::582
-(let lambda::annonymous::1::582 (lambda Collection (do Collection)))
-; 1 string:join-as-table 583 583 lambda::annonymous::1::585
+; 1 string:trim-left string:trim-left lambda::annonymous::1::580
+(let lambda::annonymous::1::580 (lambda Collection Atom (do Collection)))
+; 1 string:trim-left string:trim-left lambda::annonymous::1::582
+(let lambda::annonymous::1::582 (lambda Collection Atom (do Collection)))
+; 1 string:join-as-table 126 126 lambda::annonymous::1::585
 (let lambda::annonymous::1::585 (lambda Collection (do Collection)))
-; 1 string:join-as-table string:join-as-table lambda::annonymous::1::586
+; 1 string:join-as-table 126 126 lambda::annonymous::1::586
 (let lambda::annonymous::1::586 (lambda Collection (do Collection)))
-; 1 string:join-as-table string:join-as-table lambda::annonymous::1::586 lambda::annonymous::1::586 lambda::annonymous::1::588
-(let lambda::annonymous::1::588 (lambda Collection (do Collection)))
-; 1 string:join-as-table string:join-as-table lambda::annonymous::1::589
+; 1 string:join-as-table 587 587 lambda::annonymous::1::589
 (let lambda::annonymous::1::589 (lambda Collection (do Collection)))
-; 1 string:join-as-table string:join-as-table lambda::annonymous::1::589 lambda::annonymous::1::589 lambda::annonymous::1::591
-(let lambda::annonymous::1::591 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with 121 121 lambda::annonymous::1::593
+; 1 string:join-as-table string:join-as-table lambda::annonymous::1::590
+(let lambda::annonymous::1::590 (lambda Collection (do Collection)))
+; 1 string:join-as-table string:join-as-table lambda::annonymous::1::590 lambda::annonymous::1::590 lambda::annonymous::1::592
+(let lambda::annonymous::1::592 (lambda Collection (do Collection)))
+; 1 string:join-as-table string:join-as-table lambda::annonymous::1::593
 (let lambda::annonymous::1::593 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with 121 121 lambda::annonymous::1::594
-(let lambda::annonymous::1::594 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with 121 121 lambda::annonymous::1::596
-(let lambda::annonymous::1::596 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::598
-(let lambda::annonymous::1::598 (lambda Collection Unknown (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::599
-(let lambda::annonymous::1::599 (lambda Collection Unknown (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::600
+; 1 string:join-as-table string:join-as-table lambda::annonymous::1::593 lambda::annonymous::1::593 lambda::annonymous::1::595
+(let lambda::annonymous::1::595 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with 124 124 lambda::annonymous::1::597
+(let lambda::annonymous::1::597 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with 124 124 lambda::annonymous::1::598
+(let lambda::annonymous::1::598 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with 124 124 lambda::annonymous::1::600
 (let lambda::annonymous::1::600 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::600 lambda::annonymous::1::600 lambda::annonymous::1::602
-(let lambda::annonymous::1::602 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with 118 118 lambda::annonymous::1::603
-(let lambda::annonymous::1::603 (lambda Unknown (do Unknown)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::602
+(let lambda::annonymous::1::602 (lambda Collection Unknown (do Collection)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::603
+(let lambda::annonymous::1::603 (lambda Collection Unknown (do Collection)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::604
-(let lambda::annonymous::1::604 (lambda Unknown (do Collection)))
+(let lambda::annonymous::1::604 (lambda Collection (do Collection)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::604 lambda::annonymous::1::604 lambda::annonymous::1::606
-(let lambda::annonymous::1::606 (lambda Unknown (do Unknown)))
-; 1 string:join-as-table-with 116 116 lambda::annonymous::1::607
+(let lambda::annonymous::1::606 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with 121 121 lambda::annonymous::1::607
 (let lambda::annonymous::1::607 (lambda Unknown (do Unknown)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::608
 (let lambda::annonymous::1::608 (lambda Unknown (do Collection)))
 ; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::608 lambda::annonymous::1::608 lambda::annonymous::1::610
 (let lambda::annonymous::1::610 (lambda Unknown (do Unknown)))
-; 1 string:equal? string:equal? lambda::annonymous::1::611
-(let lambda::annonymous::1::611 (lambda Collection (do Atom)))
-; 1 string:split 612 prev
+; 1 string:join-as-table-with 119 119 lambda::annonymous::1::611
+(let lambda::annonymous::1::611 (lambda Unknown (do Unknown)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::612
+(let lambda::annonymous::1::612 (lambda Unknown (do Collection)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::612 lambda::annonymous::1::612 lambda::annonymous::1::614
+(let lambda::annonymous::1::614 (lambda Unknown (do Unknown)))
+; 1 string:equal? string:equal? lambda::annonymous::1::615
+(let lambda::annonymous::1::615 (lambda Collection (do Atom)))
+; 1 string:split 616 prev
 (let prev Collection)
-; 1 string:split string:split lambda::annonymous::1::613 prev
+; 1 string:split string:split lambda::annonymous::1::617 prev
 (let prev Collection)
-; 1 string:split string:split lambda::annonymous::1::613
-(let lambda::annonymous::1::613 (lambda Collection Unknown (do Collection)))
-; 1 string:split string:split lambda::annonymous::1::614 prev
+; 1 string:split string:split lambda::annonymous::1::617
+(let lambda::annonymous::1::617 (lambda Collection Unknown (do Collection)))
+; 1 string:split string:split lambda::annonymous::1::618 prev
 (let prev Collection)
-; 1 string:split string:split lambda::annonymous::1::614
-(let lambda::annonymous::1::614 (lambda Collection Unknown (do Collection)))
-; 1 string:split string:split lambda::annonymous::1::615
-(let lambda::annonymous::1::615 (lambda Unknown (do Collection)))
-; 1 array:rotate-left array:rotate-left lambda::annonymous::1::616
-(let lambda::annonymous::1::616 (lambda Collection Collection (do Collection)))
-; 1 array:rotate-right array:rotate-right lambda::annonymous::1::617
-(let lambda::annonymous::1::617 (lambda Collection Collection (do Collection)))
-; 1 array:remove array:remove lambda::annonymous::1::619
-(let lambda::annonymous::1::619 (lambda Collection Atom (do Collection)))
-; 1 array:remove array:remove lambda::annonymous::1::620
-(let lambda::annonymous::1::620 (lambda Collection Atom (do Collection)))
-; 1 array:merge array:merge lambda::annonymous::1::622
-(let lambda::annonymous::1::622 (lambda Unknown (do Collection)))
-; 1 array:merge array:merge lambda::annonymous::1::623
-(let lambda::annonymous::1::623 (lambda Unknown (do Collection)))
-; 1 array:merge array:merge lambda::annonymous::1::625
-(let lambda::annonymous::1::625 (lambda Unknown (do Collection)))
+; 1 string:split string:split lambda::annonymous::1::618
+(let lambda::annonymous::1::618 (lambda Collection Unknown (do Collection)))
+; 1 string:split string:split lambda::annonymous::1::619
+(let lambda::annonymous::1::619 (lambda Unknown (do Collection)))
+; 1 array:rotate-left array:rotate-left lambda::annonymous::1::620
+(let lambda::annonymous::1::620 (lambda Collection Collection (do Collection)))
+; 1 array:rotate-right array:rotate-right lambda::annonymous::1::621
+(let lambda::annonymous::1::621 (lambda Collection Collection (do Collection)))
+; 1 array:remove array:remove lambda::annonymous::1::623
+(let lambda::annonymous::1::623 (lambda Collection Atom (do Collection)))
+; 1 array:remove array:remove lambda::annonymous::1::624
+(let lambda::annonymous::1::624 (lambda Collection Atom (do Collection)))
 ; 1 array:merge array:merge lambda::annonymous::1::626
 (let lambda::annonymous::1::626 (lambda Unknown (do Collection)))
-; 1 array:merge! array:merge! lambda::annonymous::1::628
-(let lambda::annonymous::1::628 (lambda Unknown (do Collection)))
-; 1 array:merge! array:merge! lambda::annonymous::1::629
+; 1 array:merge array:merge lambda::annonymous::1::627
+(let lambda::annonymous::1::627 (lambda Unknown (do Collection)))
+; 1 array:merge array:merge lambda::annonymous::1::629
 (let lambda::annonymous::1::629 (lambda Unknown (do Collection)))
-; 1 array:deep-copy array:deep-copy lambda::annonymous::1::631
-(let lambda::annonymous::1::631 (lambda Collection Collection (do Collection)))
-; 1 array:deep-copy array:deep-copy lambda::annonymous::1::632
-(let lambda::annonymous::1::632 (lambda Collection Collection (do Collection)))
-; 1 array:shallow-copy array:shallow-copy lambda::annonymous::1::634
-(let lambda::annonymous::1::634 (lambda Collection Unknown (do Collection)))
-; 1 array:shallow-copy array:shallow-copy lambda::annonymous::1::635
-(let lambda::annonymous::1::635 (lambda Collection Unknown (do Collection)))
-; 1 from:matrix->string from:matrix->string lambda::annonymous::1::637
-(let lambda::annonymous::1::637 (lambda Collection (do Collection)))
-; 1 from:matrix->string from:matrix->string lambda::annonymous::1::638
-(let lambda::annonymous::1::638 (lambda Collection (do Collection)))
-; 1 from:set->integers from:set->integers lambda::annonymous::1::639
-(let lambda::annonymous::1::639 (lambda Collection (do Atom)))
-; 1 from:array->table from:array->table lambda::annonymous::1::641
+; 1 array:merge array:merge lambda::annonymous::1::630
+(let lambda::annonymous::1::630 (lambda Unknown (do Collection)))
+; 1 array:merge! array:merge! lambda::annonymous::1::632
+(let lambda::annonymous::1::632 (lambda Unknown (do Collection)))
+; 1 array:merge! array:merge! lambda::annonymous::1::633
+(let lambda::annonymous::1::633 (lambda Unknown (do Collection)))
+; 1 array:deep-copy array:deep-copy lambda::annonymous::1::635
+(let lambda::annonymous::1::635 (lambda Collection Collection (do Collection)))
+; 1 array:deep-copy array:deep-copy lambda::annonymous::1::636
+(let lambda::annonymous::1::636 (lambda Collection Collection (do Collection)))
+; 1 array:shallow-copy array:shallow-copy lambda::annonymous::1::638
+(let lambda::annonymous::1::638 (lambda Collection Unknown (do Collection)))
+; 1 array:shallow-copy array:shallow-copy lambda::annonymous::1::639
+(let lambda::annonymous::1::639 (lambda Collection Unknown (do Collection)))
+; 1 from:matrix->string from:matrix->string lambda::annonymous::1::641
 (let lambda::annonymous::1::641 (lambda Collection (do Collection)))
-; 1 from:array->table from:array->table lambda::annonymous::1::642
+; 1 from:matrix->string from:matrix->string lambda::annonymous::1::642
 (let lambda::annonymous::1::642 (lambda Collection (do Collection)))
-; 1 from:array->set from:array->set lambda::annonymous::1::644
-(let lambda::annonymous::1::644 (lambda Collection (do Collection)))
-; 1 from:array->set from:array->set lambda::annonymous::1::645
+; 1 from:set->integers from:set->integers lambda::annonymous::1::643
+(let lambda::annonymous::1::643 (lambda Collection (do Atom)))
+; 1 from:array->table from:array->table lambda::annonymous::1::645
 (let lambda::annonymous::1::645 (lambda Collection (do Collection)))
-; 1 from:string->date from:string->date lambda::annonymous::1::646
-(let lambda::annonymous::1::646 (lambda Collection (do Atom)))
-; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::648
-(let lambda::annonymous::1::648 (lambda Atom (do Collection)))
-; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::649
-(let lambda::annonymous::1::649 (lambda Atom (do Collection)))
-; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::651
-(let lambda::annonymous::1::651 (lambda Atom (do Collection)))
-; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::652
+; 1 from:array->table from:array->table lambda::annonymous::1::646
+(let lambda::annonymous::1::646 (lambda Collection (do Collection)))
+; 1 from:array->set from:array->set lambda::annonymous::1::648
+(let lambda::annonymous::1::648 (lambda Collection (do Collection)))
+; 1 from:array->set from:array->set lambda::annonymous::1::649
+(let lambda::annonymous::1::649 (lambda Collection (do Collection)))
+; 1 from:string->date from:string->date lambda::annonymous::1::650
+(let lambda::annonymous::1::650 (lambda Collection (do Atom)))
+; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::652
 (let lambda::annonymous::1::652 (lambda Atom (do Collection)))
-; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::653
-(let lambda::annonymous::1::653 (lambda Collection Collection (do Collection)))
-; 1 from:digits->chars from:digits->chars lambda::annonymous::1::655
-(let lambda::annonymous::1::655 (lambda Atom (do Atom)))
-; 1 from:digits->chars from:digits->chars lambda::annonymous::1::656
-(let lambda::annonymous::1::656 (lambda Atom (do Atom)))
-; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::659
-(let lambda::annonymous::1::659 (lambda Collection Atom (do Collection)))
-; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::661
-(let lambda::annonymous::1::661 (lambda Collection Atom (do Collection)))
-; 1 from:chars->digits from:chars->digits lambda::annonymous::1::664
-(let lambda::annonymous::1::664 (lambda Atom (do Atom)))
-; 1 from:chars->digits from:chars->digits lambda::annonymous::1::665
-(let lambda::annonymous::1::665 (lambda Atom (do Atom)))
-; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::667
-(let lambda::annonymous::1::667 (lambda Collection (do Collection)))
-; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::668
-(let lambda::annonymous::1::668 (lambda Collection (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::669
-(let lambda::annonymous::1::669 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::671
-(let lambda::annonymous::1::671 (lambda Atom (do Collection)))
-; 1 matrix:sliding-adjacent-sum 672 dy
-(let dy Atom)
-; 1 matrix:sliding-adjacent-sum 672 dx
-(let dx Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::673 dy
-(let dy Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::673 dx
-(let dx Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::673
-(let lambda::annonymous::1::673 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::674 dy
-(let dy Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::674 dx
-(let dx Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::674
-(let lambda::annonymous::1::674 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::675 dy
-(let dy Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::675 dx
-(let dx Atom)
-; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::675
-(let lambda::annonymous::1::675 (lambda Unknown Collection (do Unknown)))
+; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::653
+(let lambda::annonymous::1::653 (lambda Atom (do Collection)))
+; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::655
+(let lambda::annonymous::1::655 (lambda Atom (do Collection)))
+; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::656
+(let lambda::annonymous::1::656 (lambda Atom (do Collection)))
+; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::657
+(let lambda::annonymous::1::657 (lambda Collection Collection (do Collection)))
+; 1 from:digits->chars from:digits->chars lambda::annonymous::1::659
+(let lambda::annonymous::1::659 (lambda Atom (do Atom)))
+; 1 from:digits->chars from:digits->chars lambda::annonymous::1::660
+(let lambda::annonymous::1::660 (lambda Atom (do Atom)))
+; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::663
+(let lambda::annonymous::1::663 (lambda Collection Atom (do Collection)))
+; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::665
+(let lambda::annonymous::1::665 (lambda Collection Atom (do Collection)))
+; 1 from:chars->digits from:chars->digits lambda::annonymous::1::668
+(let lambda::annonymous::1::668 (lambda Atom (do Atom)))
+; 1 from:chars->digits from:chars->digits lambda::annonymous::1::669
+(let lambda::annonymous::1::669 (lambda Atom (do Atom)))
+; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::671
+(let lambda::annonymous::1::671 (lambda Collection (do Collection)))
+; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::672
+(let lambda::annonymous::1::672 (lambda Collection (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::673
+(let lambda::annonymous::1::673 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::675
+(let lambda::annonymous::1::675 (lambda Atom (do Collection)))
 ; 1 matrix:sliding-adjacent-sum 676 dy
 (let dy Atom)
 ; 1 matrix:sliding-adjacent-sum 676 dx
@@ -2832,497 +2824,519 @@
 (let dx Atom)
 ; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::677
 (let lambda::annonymous::1::677 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:adjacent-sum 678 dy
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::678 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum 678 dx
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::678 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::679 dy
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::678
+(let lambda::annonymous::1::678 (lambda Unknown Collection (do Unknown)))
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::679 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::679 dx
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::679 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::679
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::679
 (let lambda::annonymous::1::679 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::680 dy
+; 1 matrix:sliding-adjacent-sum 680 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::680 dx
+; 1 matrix:sliding-adjacent-sum 680 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::680
-(let lambda::annonymous::1::680 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:adjacent-sum 681 dy
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::681 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum 681 dx
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::681 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::682 dy
+; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::681
+(let lambda::annonymous::1::681 (lambda Unknown Collection (do Unknown)))
+; 1 matrix:adjacent-sum 682 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::682 dx
+; 1 matrix:adjacent-sum 682 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::682
-(let lambda::annonymous::1::682 (lambda Unknown Collection (do Unknown)))
-; 1 matrix:adjacent 683 dy
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::683 dy
 (let dy Atom)
-; 1 matrix:adjacent 683 dx
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::683 dx
 (let dx Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::684 dy
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::683
+(let lambda::annonymous::1::683 (lambda Unknown Collection (do Unknown)))
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::684 dy
 (let dy Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::684 dx
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::684 dx
 (let dx Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::684
-(let lambda::annonymous::1::684 (lambda Collection (do Unknown)))
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::685 dy
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::684
+(let lambda::annonymous::1::684 (lambda Unknown Collection (do Unknown)))
+; 1 matrix:adjacent-sum 685 dy
 (let dy Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::685 dx
+; 1 matrix:adjacent-sum 685 dx
 (let dx Atom)
-; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::685
-(let lambda::annonymous::1::685 (lambda Collection (do Unknown)))
-; 1 matrix:of matrix:of lambda::annonymous::1::192 lambda::annonymous::1::192 lambda::annonymous::1::687
-(let lambda::annonymous::1::687 (lambda Unknown (do Unknown)))
-; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::196 lambda::annonymous::1::196 lambda::annonymous::1::689
-(let lambda::annonymous::1::689 (lambda Atom (do Unknown)))
-; 1 matrix:shallow-copy matrix:shallow-copy lambda::annonymous::1::691
-(let lambda::annonymous::1::691 (lambda Collection (do Collection)))
-; 1 matrix:shallow-copy matrix:shallow-copy lambda::annonymous::1::692
-(let lambda::annonymous::1::692 (lambda Collection (do Collection)))
-; 1 matrix:for matrix:for lambda::annonymous::1::694
-(let lambda::annonymous::1::694 (lambda Collection (do Collection)))
-; 1 matrix:for matrix:for lambda::annonymous::1::695
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::686 dy
+(let dy Atom)
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::686 dx
+(let dx Atom)
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::686
+(let lambda::annonymous::1::686 (lambda Unknown Collection (do Unknown)))
+; 1 matrix:adjacent 687 dy
+(let dy Atom)
+; 1 matrix:adjacent 687 dx
+(let dx Atom)
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::688 dy
+(let dy Atom)
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::688 dx
+(let dx Atom)
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::688
+(let lambda::annonymous::1::688 (lambda Collection (do Unknown)))
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::689 dy
+(let dy Atom)
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::689 dx
+(let dx Atom)
+; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::689
+(let lambda::annonymous::1::689 (lambda Collection (do Unknown)))
+; 1 matrix:of matrix:of lambda::annonymous::1::195 lambda::annonymous::1::195 lambda::annonymous::1::691
+(let lambda::annonymous::1::691 (lambda Unknown (do Unknown)))
+; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::199 lambda::annonymous::1::199 lambda::annonymous::1::693
+(let lambda::annonymous::1::693 (lambda Atom (do Unknown)))
+; 1 matrix:shallow-copy matrix:shallow-copy lambda::annonymous::1::695
 (let lambda::annonymous::1::695 (lambda Collection (do Collection)))
-; 1 matrix:points matrix:points lambda::annonymous::1::696
-(let lambda::annonymous::1::696 (lambda Unknown Unknown Unknown (do Unknown)))
-; 1 array:chunks array:chunks lambda::annonymous::1::697 start
+; 1 matrix:shallow-copy matrix:shallow-copy lambda::annonymous::1::696
+(let lambda::annonymous::1::696 (lambda Collection (do Collection)))
+; 1 matrix:for matrix:for lambda::annonymous::1::698
+(let lambda::annonymous::1::698 (lambda Collection (do Collection)))
+; 1 matrix:for matrix:for lambda::annonymous::1::699
+(let lambda::annonymous::1::699 (lambda Collection (do Collection)))
+; 1 matrix:points matrix:points lambda::annonymous::1::700
+(let lambda::annonymous::1::700 (lambda Unknown Unknown Unknown (do Unknown)))
+; 1 array:chunks array:chunks lambda::annonymous::1::701 start
 (let start Unknown)
-; 1 array:chunks array:chunks lambda::annonymous::1::697 end
+; 1 array:chunks array:chunks lambda::annonymous::1::701 end
 (let end Unknown)
-; 1 array:chunks array:chunks lambda::annonymous::1::697
-(let lambda::annonymous::1::697 (lambda Collection (do Collection)))
-; 1 array:ranges array:ranges lambda::annonymous::1::699
-(let lambda::annonymous::1::699 (lambda Collection Unknown Unknown (do Collection)))
-; 1 array:partition array:partition lambda::annonymous::1::700 x
+; 1 array:chunks array:chunks lambda::annonymous::1::701
+(let lambda::annonymous::1::701 (lambda Collection (do Collection)))
+; 1 array:ranges array:ranges lambda::annonymous::1::703
+(let lambda::annonymous::1::703 (lambda Collection Unknown Unknown (do Collection)))
+; 1 array:partition array:partition lambda::annonymous::1::704 x
 (let x Unknown)
-; 1 array:partition array:partition lambda::annonymous::1::700 i
+; 1 array:partition array:partition lambda::annonymous::1::704 i
 (let i Atom)
-; 1 array:partition array:partition lambda::annonymous::1::700
-(let lambda::annonymous::1::700 (lambda Collection Collection (do Collection)))
-; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::701
-(let lambda::annonymous::1::701 (lambda Unknown Atom (do Atom)))
-; 1 array:flat flatten flatten lambda::annonymous::1::703
-(let lambda::annonymous::1::703 (lambda Collection Collection (do Collection)))
-; 1 array:flat flatten flatten lambda::annonymous::1::704
+; 1 array:partition array:partition lambda::annonymous::1::704
 (let lambda::annonymous::1::704 (lambda Collection Collection (do Collection)))
-; 1 array:flat-one array:flat-one lambda::annonymous::1::706
-(let lambda::annonymous::1::706 (lambda Collection Unknown (do Collection)))
-; 1 array:flat-one array:flat-one lambda::annonymous::1::707
-(let lambda::annonymous::1::707 (lambda Collection Unknown (do Collection)))
-; 1 array:dashes array:dashes lambda::annonymous::1::708
+; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::705
+(let lambda::annonymous::1::705 (lambda Unknown Atom (do Atom)))
+; 1 array:flat flatten flatten lambda::annonymous::1::707
+(let lambda::annonymous::1::707 (lambda Collection Collection (do Collection)))
+; 1 array:flat flatten flatten lambda::annonymous::1::708
 (let lambda::annonymous::1::708 (lambda Collection Collection (do Collection)))
-; 1 array:semi-colons array:semi-colons lambda::annonymous::1::709
-(let lambda::annonymous::1::709 (lambda Collection Collection (do Collection)))
-; 1 array:colons array:colons lambda::annonymous::1::710
-(let lambda::annonymous::1::710 (lambda Collection Collection (do Collection)))
-; 1 array:dots array:dots lambda::annonymous::1::711
-(let lambda::annonymous::1::711 (lambda Collection Collection (do Collection)))
-; 1 array:spaces array:spaces lambda::annonymous::1::712
+; 1 array:flat-one array:flat-one lambda::annonymous::1::710
+(let lambda::annonymous::1::710 (lambda Collection Unknown (do Collection)))
+; 1 array:flat-one array:flat-one lambda::annonymous::1::711
+(let lambda::annonymous::1::711 (lambda Collection Unknown (do Collection)))
+; 1 array:dashes array:dashes lambda::annonymous::1::712
 (let lambda::annonymous::1::712 (lambda Collection Collection (do Collection)))
-; 1 array:commas array:commas lambda::annonymous::1::713
+; 1 array:semi-colons array:semi-colons lambda::annonymous::1::713
 (let lambda::annonymous::1::713 (lambda Collection Collection (do Collection)))
-; 1 array:lines array:lines lambda::annonymous::1::714
+; 1 array:colons array:colons lambda::annonymous::1::714
 (let lambda::annonymous::1::714 (lambda Collection Collection (do Collection)))
-; 1 array:chars array:chars lambda::annonymous::1::715
+; 1 array:dots array:dots lambda::annonymous::1::715
 (let lambda::annonymous::1::715 (lambda Collection Collection (do Collection)))
-; 1 array:join array:join lambda::annonymous::1::716
+; 1 array:spaces array:spaces lambda::annonymous::1::716
 (let lambda::annonymous::1::716 (lambda Collection Collection (do Collection)))
-; 1 array:equal? array:equal? lambda::annonymous::1::717
-(let lambda::annonymous::1::717 (lambda Atom (do Atom)))
-; 1 array:equal? array:equal? lambda::annonymous::1::718
-(let lambda::annonymous::1::718 (lambda Atom (do Atom)))
-; 1 cons cons lambda::annonymous::1::720
-(let lambda::annonymous::1::720 (lambda Unknown (do Collection)))
-; 1 cons cons lambda::annonymous::1::721
-(let lambda::annonymous::1::721 (lambda Unknown (do Collection)))
-; 1 cons cons lambda::annonymous::1::723
-(let lambda::annonymous::1::723 (lambda Unknown (do Collection)))
+; 1 array:commas array:commas lambda::annonymous::1::717
+(let lambda::annonymous::1::717 (lambda Collection Collection (do Collection)))
+; 1 array:lines array:lines lambda::annonymous::1::718
+(let lambda::annonymous::1::718 (lambda Collection Collection (do Collection)))
+; 1 array:chars array:chars lambda::annonymous::1::719
+(let lambda::annonymous::1::719 (lambda Collection Collection (do Collection)))
+; 1 array:join array:join lambda::annonymous::1::720
+(let lambda::annonymous::1::720 (lambda Collection Collection (do Collection)))
+; 1 array:equal? array:equal? lambda::annonymous::1::721
+(let lambda::annonymous::1::721 (lambda Atom (do Atom)))
+; 1 array:equal? array:equal? lambda::annonymous::1::722
+(let lambda::annonymous::1::722 (lambda Atom (do Atom)))
 ; 1 cons cons lambda::annonymous::1::724
 (let lambda::annonymous::1::724 (lambda Unknown (do Collection)))
-; 1 array:unique array:unique lambda::annonymous::1::726 index
+; 1 cons cons lambda::annonymous::1::725
+(let lambda::annonymous::1::725 (lambda Unknown (do Collection)))
+; 1 cons cons lambda::annonymous::1::727
+(let lambda::annonymous::1::727 (lambda Unknown (do Collection)))
+; 1 cons cons lambda::annonymous::1::728
+(let lambda::annonymous::1::728 (lambda Unknown (do Collection)))
+; 1 array:unique array:unique lambda::annonymous::1::730 index
 (let index Atom)
-; 1 array:unique array:unique lambda::annonymous::1::726
-(let lambda::annonymous::1::726 (lambda Collection (do Atom)))
-; 1 array:unique array:unique lambda::annonymous::1::727 index
+; 1 array:unique array:unique lambda::annonymous::1::730
+(let lambda::annonymous::1::730 (lambda Collection (do Atom)))
+; 1 array:unique array:unique lambda::annonymous::1::731 index
 (let index Atom)
-; 1 array:unique array:unique lambda::annonymous::1::727
-(let lambda::annonymous::1::727 (lambda Collection (do Atom)))
-; 1 array:unique array:unique lambda::annonymous::1::728
-(let lambda::annonymous::1::728 (lambda Atom Atom (do Atom)))
-; 1 list:count list:count lambda::annonymous::1::730
-(let lambda::annonymous::1::730 (lambda Atom (do Atom)))
-; 1 list:count list:count lambda::annonymous::1::731
-(let lambda::annonymous::1::731 (lambda Atom (do Atom)))
-; 1 list:count list:count lambda::annonymous::1::732
-(let lambda::annonymous::1::732 (lambda Atom (do Atom)))
-; 1 list:count-of list:count-of lambda::annonymous::1::734
-(let lambda::annonymous::1::734 (lambda Atom Unknown (do Atom)))
-; 1 list:count-of list:count-of lambda::annonymous::1::735
-(let lambda::annonymous::1::735 (lambda Atom Unknown (do Atom)))
-; 1 list:count-of list:count-of lambda::annonymous::1::736
-(let lambda::annonymous::1::736 (lambda Atom Unknown (do Atom)))
-; 1 list:concat! list:concat! lambda::annonymous::1::737
-(let lambda::annonymous::1::737 (lambda Collection Unknown (do Collection)))
-; 1 list:concat! list:concat! lambda::annonymous::1::738
-(let lambda::annonymous::1::738 (lambda Collection Unknown (do Collection)))
-; 1 list:get list:get lambda::annonymous::1::740
-(let lambda::annonymous::1::740 (lambda Collection (do Atom)))
-; 1 list:get list:get lambda::annonymous::1::741
-(let lambda::annonymous::1::741 (lambda Collection (do Atom)))
-; 1 list:get list:get lambda::annonymous::1::742
-(let lambda::annonymous::1::742 (lambda Collection (do Atom)))
-; 1 list:reverse list:reverse lambda::annonymous::1::744
-(let lambda::annonymous::1::744 (lambda Unknown Unknown (do Collection)))
-; 1 list:reverse list:reverse lambda::annonymous::1::745
-(let lambda::annonymous::1::745 (lambda Unknown Unknown (do Collection)))
-; 1 list:length list:length lambda::annonymous::1::747
-(let lambda::annonymous::1::747 (lambda Atom Unknown (do Atom)))
-; 1 list:length list:length lambda::annonymous::1::748
-(let lambda::annonymous::1::748 (lambda Atom Unknown (do Atom)))
-; 1 list:unzip list:unzip lambda::annonymous::1::750
-(let lambda::annonymous::1::750 (lambda Collection (do Unknown)))
-; 1 list:unzip list:unzip lambda::annonymous::1::751
-(let lambda::annonymous::1::751 (lambda Collection (do Unknown)))
-; 1 list:unzip list:unzip lambda::annonymous::1::752
-(let lambda::annonymous::1::752 (lambda Collection (do Unknown)))
+; 1 array:unique array:unique lambda::annonymous::1::731
+(let lambda::annonymous::1::731 (lambda Collection (do Atom)))
+; 1 array:unique array:unique lambda::annonymous::1::732
+(let lambda::annonymous::1::732 (lambda Atom Atom (do Atom)))
+; 1 list:count list:count lambda::annonymous::1::734
+(let lambda::annonymous::1::734 (lambda Atom (do Atom)))
+; 1 list:count list:count lambda::annonymous::1::735
+(let lambda::annonymous::1::735 (lambda Atom (do Atom)))
+; 1 list:count list:count lambda::annonymous::1::736
+(let lambda::annonymous::1::736 (lambda Atom (do Atom)))
+; 1 list:count-of list:count-of lambda::annonymous::1::738
+(let lambda::annonymous::1::738 (lambda Atom Unknown (do Atom)))
+; 1 list:count-of list:count-of lambda::annonymous::1::739
+(let lambda::annonymous::1::739 (lambda Atom Unknown (do Atom)))
+; 1 list:count-of list:count-of lambda::annonymous::1::740
+(let lambda::annonymous::1::740 (lambda Atom Unknown (do Atom)))
+; 1 list:concat! list:concat! lambda::annonymous::1::741
+(let lambda::annonymous::1::741 (lambda Collection Unknown (do Collection)))
+; 1 list:concat! list:concat! lambda::annonymous::1::742
+(let lambda::annonymous::1::742 (lambda Collection Unknown (do Collection)))
+; 1 list:get list:get lambda::annonymous::1::744
+(let lambda::annonymous::1::744 (lambda Collection (do Atom)))
+; 1 list:get list:get lambda::annonymous::1::745
+(let lambda::annonymous::1::745 (lambda Collection (do Atom)))
+; 1 list:get list:get lambda::annonymous::1::746
+(let lambda::annonymous::1::746 (lambda Collection (do Atom)))
+; 1 list:reverse list:reverse lambda::annonymous::1::748
+(let lambda::annonymous::1::748 (lambda Unknown Unknown (do Collection)))
+; 1 list:reverse list:reverse lambda::annonymous::1::749
+(let lambda::annonymous::1::749 (lambda Unknown Unknown (do Collection)))
+; 1 list:length list:length lambda::annonymous::1::751
+(let lambda::annonymous::1::751 (lambda Atom Unknown (do Atom)))
+; 1 list:length list:length lambda::annonymous::1::752
+(let lambda::annonymous::1::752 (lambda Atom Unknown (do Atom)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::754
 (let lambda::annonymous::1::754 (lambda Collection (do Unknown)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::755
 (let lambda::annonymous::1::755 (lambda Collection (do Unknown)))
-; 1 math:minimum-index math:minimum-index lambda::annonymous::1::756
-(let lambda::annonymous::1::756 (lambda Collection Atom Unknown (do Collection)))
-; 1 math:product math:product lambda::annonymous::1::758
-(let lambda::annonymous::1::758 (lambda Atom Atom (do Atom)))
-; 1 math:product math:product lambda::annonymous::1::759
-(let lambda::annonymous::1::759 (lambda Atom Atom (do Atom)))
-; 1 math:product math:product lambda::annonymous::1::760
-(let lambda::annonymous::1::760 (lambda Atom Atom (do Atom)))
-; 1 math:summation math:summation lambda::annonymous::1::762
+; 1 list:unzip list:unzip lambda::annonymous::1::756
+(let lambda::annonymous::1::756 (lambda Collection (do Unknown)))
+; 1 list:unzip list:unzip lambda::annonymous::1::758
+(let lambda::annonymous::1::758 (lambda Collection (do Unknown)))
+; 1 list:unzip list:unzip lambda::annonymous::1::759
+(let lambda::annonymous::1::759 (lambda Collection (do Unknown)))
+; 1 math:minimum-index math:minimum-index lambda::annonymous::1::760
+(let lambda::annonymous::1::760 (lambda Collection Atom Unknown (do Collection)))
+; 1 math:product math:product lambda::annonymous::1::762
 (let lambda::annonymous::1::762 (lambda Atom Atom (do Atom)))
-; 1 math:summation math:summation lambda::annonymous::1::763
+; 1 math:product math:product lambda::annonymous::1::763
 (let lambda::annonymous::1::763 (lambda Atom Atom (do Atom)))
-; 1 math:combinations math:combinations lambda::annonymous::2::765
-(let lambda::annonymous::2::765 (lambda Atom (do Unknown)))
-; 1 math:combinations math:combinations lambda::annonymous::2::766
-(let lambda::annonymous::2::766 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::768
-(let lambda::annonymous::2::768 (lambda Atom (do Unknown)))
-; 1 math:permutations 3 3 lambda::annonymous::1::769
-(let lambda::annonymous::1::769 (lambda Unknown Atom (do Atom)))
-; 1 math:permutations math:permutations lambda::annonymous::1::770
-(let lambda::annonymous::1::770 (lambda Unknown Atom (do Collection)))
-; 1 math:permutations math:permutations lambda::annonymous::1::770 lambda::annonymous::1::770 lambda::annonymous::1::773
+; 1 math:product math:product lambda::annonymous::1::764
+(let lambda::annonymous::1::764 (lambda Atom Atom (do Atom)))
+; 1 math:summation math:summation lambda::annonymous::1::766
+(let lambda::annonymous::1::766 (lambda Atom Atom (do Atom)))
+; 1 math:summation math:summation lambda::annonymous::1::767
+(let lambda::annonymous::1::767 (lambda Atom Atom (do Atom)))
+; 1 math:combinations math:combinations lambda::annonymous::2::769
+(let lambda::annonymous::2::769 (lambda Atom (do Unknown)))
+; 1 math:combinations math:combinations lambda::annonymous::2::770
+(let lambda::annonymous::2::770 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::772
+(let lambda::annonymous::2::772 (lambda Atom (do Unknown)))
+; 1 math:permutations 3 3 lambda::annonymous::1::773
 (let lambda::annonymous::1::773 (lambda Unknown Atom (do Atom)))
-; 1 math:permutations math:permutations lambda::annonymous::1::770 lambda::annonymous::1::770 lambda::annonymous::1::774
-(let lambda::annonymous::1::774 (lambda Collection (do Collection)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::776
-(let lambda::annonymous::2::776 (lambda Atom (do Unknown)))
-; 1 math:combinations math:combinations lambda::annonymous::2::778
-(let lambda::annonymous::2::778 (lambda Atom (do Unknown)))
+; 1 math:permutations math:permutations lambda::annonymous::1::774
+(let lambda::annonymous::1::774 (lambda Unknown Atom (do Collection)))
+; 1 math:permutations math:permutations lambda::annonymous::1::774 lambda::annonymous::1::774 lambda::annonymous::1::777
+(let lambda::annonymous::1::777 (lambda Unknown Atom (do Atom)))
+; 1 math:permutations math:permutations lambda::annonymous::1::774 lambda::annonymous::1::774 lambda::annonymous::1::778
+(let lambda::annonymous::1::778 (lambda Collection (do Collection)))
 ; 1 math:combinations combinations combinations lambda::annonymous::2::780
 (let lambda::annonymous::2::780 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::782
+; 1 math:combinations math:combinations lambda::annonymous::2::782
 (let lambda::annonymous::2::782 (lambda Atom (do Unknown)))
-; 1 math:summation math:summation lambda::annonymous::1::783
-(let lambda::annonymous::1::783 (lambda Atom Atom (do Atom)))
-; 1 array:unique array:unique lambda::annonymous::1::787 index
+; 1 math:combinations combinations combinations lambda::annonymous::2::784
+(let lambda::annonymous::2::784 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::786
+(let lambda::annonymous::2::786 (lambda Atom (do Unknown)))
+; 1 math:summation math:summation lambda::annonymous::1::787
+(let lambda::annonymous::1::787 (lambda Atom Atom (do Atom)))
+; 1 array:unique array:unique lambda::annonymous::1::790 index
 (let index Atom)
-; 1 array:unique array:unique lambda::annonymous::1::787
-(let lambda::annonymous::1::787 (lambda Collection (do Atom)))
-; 1 cons cons lambda::annonymous::1::789
-(let lambda::annonymous::1::789 (lambda Unknown (do Collection)))
-; 1 array:join array:join lambda::annonymous::1::790
-(let lambda::annonymous::1::790 (lambda Collection Collection (do Collection)))
-; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::329 lambda::annonymous::1::329 lambda::annonymous::1::793
-(let lambda::annonymous::1::793 (lambda Atom (do Unknown)))
-; 1 matrix:of matrix:of lambda::annonymous::1::335 lambda::annonymous::1::335 lambda::annonymous::1::795
-(let lambda::annonymous::1::795 (lambda Unknown (do Unknown)))
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 796 recursive:inner:matrix:rotate-square
+; 1 array:unique array:unique lambda::annonymous::1::790
+(let lambda::annonymous::1::790 (lambda Collection (do Atom)))
+; 1 cons cons lambda::annonymous::1::792
+(let lambda::annonymous::1::792 (lambda Unknown (do Collection)))
+; 1 array:join array:join lambda::annonymous::1::793
+(let lambda::annonymous::1::793 (lambda Collection Collection (do Collection)))
+; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::331 lambda::annonymous::1::331 lambda::annonymous::1::796
+(let lambda::annonymous::1::796 (lambda Atom (do Unknown)))
+; 1 matrix:of matrix:of lambda::annonymous::1::337 lambda::annonymous::1::337 lambda::annonymous::1::798
+(let lambda::annonymous::1::798 (lambda Unknown (do Unknown)))
+; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 799 recursive:inner:matrix:rotate-square
 (let recursive:inner:matrix:rotate-square (lambda Atom (do Unknown)))
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 800 recursive:inner:matrix:flip-square
+; 1 matrix:flip-square recursive:outer:matrix:flip-square 803 recursive:inner:matrix:flip-square
 (let recursive:inner:matrix:flip-square (lambda Atom (do Unknown)))
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::804 dy
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::807 dy
 (let dy Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::804 dx
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::807 dx
 (let dx Atom)
-; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::804
-(let lambda::annonymous::1::804 (lambda Unknown Collection (do Unknown)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::806
-(let lambda::annonymous::1::806 (lambda Atom (do Collection)))
-; 1 string:join-as-table-with 400 400 lambda::annonymous::1::810
-(let lambda::annonymous::1::810 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::404 lambda::annonymous::1::404 lambda::annonymous::1::812
-(let lambda::annonymous::1::812 (lambda Collection (do Collection)))
-; 1 string:upper recursive:string:upper 813 current-char
+; 1 matrix:adjacent-sum matrix:adjacent-sum lambda::annonymous::1::807
+(let lambda::annonymous::1::807 (lambda Unknown Collection (do Unknown)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::809
+(let lambda::annonymous::1::809 (lambda Atom (do Collection)))
+; 1 string:join-as-table-with 404 404 lambda::annonymous::1::813
+(let lambda::annonymous::1::813 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::408 lambda::annonymous::1::408 lambda::annonymous::1::815
+(let lambda::annonymous::1::815 (lambda Collection (do Collection)))
+; 1 string:upper recursive:string:upper 816 current-char
 (let current-char Atom)
-; 1 string:lower recursive:string:lower 814 current-char
+; 1 string:lower recursive:string:lower 817 current-char
 (let current-char Atom)
-; 1 new:map new:map lambda::annonymous::1::815
-(let lambda::annonymous::1::815 (lambda Collection Unknown Atom (do Collection)))
-; 1 set:add! set:add! lambda::annonymous::1::816
-(let lambda::annonymous::1::816 (lambda Collection (do Atom)))
-; 1 heap:sift-down! recursive:heap:sift-down! 821 max-child
+; 1 new:map new:map lambda::annonymous::1::818
+(let lambda::annonymous::1::818 (lambda Collection Unknown Atom (do Collection)))
+; 1 set:add! set:add! lambda::annonymous::1::819
+(let lambda::annonymous::1::819 (lambda Collection (do Atom)))
+; 1 heap:sift-down! recursive:heap:sift-down! 824 max-child
 (let max-child Atom)
-; 1 match:number? match:number? lambda::annonymous::1::822
-(let lambda::annonymous::1::822 (lambda Atom (do Atom)))
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::823 cursor
+; 1 match:number? match:number? lambda::annonymous::1::825
+(let lambda::annonymous::1::825 (lambda Atom (do Atom)))
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::826 cursor
 (let cursor Atom)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::823 824 temp
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::826 827 temp
 (let temp Collection)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::823 824 h
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::826 827 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::823 825 token
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::826 828 token
 (let token Collection)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::823 825 826 h
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::826 828 829 h
 (let h Unknown)
-; 1 from:chars->ast from:chars->ast lambda::annonymous::1::823
-(let lambda::annonymous::1::823 (lambda Atom (do Collection)))
-; 1 string:join-as-table-with 121 121 lambda::annonymous::1::828
-(let lambda::annonymous::1::828 (lambda Collection (do Collection)))
-; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::600 lambda::annonymous::1::600 lambda::annonymous::1::830
-(let lambda::annonymous::1::830 (lambda Collection (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::834
-(let lambda::annonymous::1::834 (lambda Atom (do Collection)))
-; 1 matrix:points matrix:points lambda::annonymous::1::835
-(let lambda::annonymous::1::835 (lambda Unknown Unknown Unknown (do Unknown)))
-; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::836
-(let lambda::annonymous::1::836 (lambda Unknown Atom (do Atom)))
-; 1 array:equal? array:equal? lambda::annonymous::1::837
-(let lambda::annonymous::1::837 (lambda Atom (do Atom)))
-; 1 array:unique array:unique lambda::annonymous::1::839
-(let lambda::annonymous::1::839 (lambda Atom Atom (do Atom)))
-; 1 list:count list:count lambda::annonymous::1::841
-(let lambda::annonymous::1::841 (lambda Atom (do Atom)))
-; 1 list:get list:get lambda::annonymous::1::843
-(let lambda::annonymous::1::843 (lambda Collection (do Atom)))
-; 1 list:reverse list:reverse lambda::annonymous::1::845
-(let lambda::annonymous::1::845 (lambda Unknown Unknown (do Collection)))
-; 1 list:unzip list:unzip lambda::annonymous::1::847
-(let lambda::annonymous::1::847 (lambda Collection (do Unknown)))
-; 1 list:unzip list:unzip lambda::annonymous::1::849
-(let lambda::annonymous::1::849 (lambda Collection (do Unknown)))
-; 1 math:minimum-index math:minimum-index lambda::annonymous::1::850
-(let lambda::annonymous::1::850 (lambda Collection Atom Unknown (do Collection)))
-; 1 math:combinations math:combinations lambda::annonymous::2::852
-(let lambda::annonymous::2::852 (lambda Atom (do Unknown)))
-; 1 math:combinations math:combinations lambda::annonymous::2::853
-(let lambda::annonymous::2::853 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::855
+; 1 from:chars->ast from:chars->ast lambda::annonymous::1::826
+(let lambda::annonymous::1::826 (lambda Atom (do Collection)))
+; 1 string:join-as-table-with 124 124 lambda::annonymous::1::831
+(let lambda::annonymous::1::831 (lambda Collection (do Collection)))
+; 1 string:join-as-table-with string:join-as-table-with lambda::annonymous::1::604 lambda::annonymous::1::604 lambda::annonymous::1::833
+(let lambda::annonymous::1::833 (lambda Collection (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::837
+(let lambda::annonymous::1::837 (lambda Atom (do Collection)))
+; 1 matrix:points matrix:points lambda::annonymous::1::838
+(let lambda::annonymous::1::838 (lambda Unknown Unknown Unknown (do Unknown)))
+; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::839
+(let lambda::annonymous::1::839 (lambda Unknown Atom (do Atom)))
+; 1 array:equal? array:equal? lambda::annonymous::1::840
+(let lambda::annonymous::1::840 (lambda Atom (do Atom)))
+; 1 array:unique array:unique lambda::annonymous::1::842
+(let lambda::annonymous::1::842 (lambda Atom Atom (do Atom)))
+; 1 list:count list:count lambda::annonymous::1::844
+(let lambda::annonymous::1::844 (lambda Atom (do Atom)))
+; 1 list:get list:get lambda::annonymous::1::846
+(let lambda::annonymous::1::846 (lambda Collection (do Atom)))
+; 1 list:reverse list:reverse lambda::annonymous::1::848
+(let lambda::annonymous::1::848 (lambda Unknown Unknown (do Collection)))
+; 1 list:unzip list:unzip lambda::annonymous::1::850
+(let lambda::annonymous::1::850 (lambda Collection (do Unknown)))
+; 1 list:unzip list:unzip lambda::annonymous::1::852
+(let lambda::annonymous::1::852 (lambda Collection (do Unknown)))
+; 1 math:minimum-index math:minimum-index lambda::annonymous::1::853
+(let lambda::annonymous::1::853 (lambda Collection Atom Unknown (do Collection)))
+; 1 math:combinations math:combinations lambda::annonymous::2::855
 (let lambda::annonymous::2::855 (lambda Atom (do Unknown)))
-; 1 math:permutations 3 3 lambda::annonymous::1::856
-(let lambda::annonymous::1::856 (lambda Unknown Atom (do Atom)))
-; 1 math:permutations math:permutations lambda::annonymous::1::857
-(let lambda::annonymous::1::857 (lambda Unknown Atom (do Collection)))
-; 1 math:permutations math:permutations lambda::annonymous::1::857 lambda::annonymous::1::857 lambda::annonymous::1::860
-(let lambda::annonymous::1::860 (lambda Unknown Atom (do Atom)))
-; 1 math:permutations math:permutations lambda::annonymous::1::857 lambda::annonymous::1::857 lambda::annonymous::1::861
-(let lambda::annonymous::1::861 (lambda Collection (do Collection)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::863
-(let lambda::annonymous::2::863 (lambda Atom (do Unknown)))
-; 1 math:combinations math:combinations lambda::annonymous::2::865
-(let lambda::annonymous::2::865 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::867
-(let lambda::annonymous::2::867 (lambda Atom (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::869
-(let lambda::annonymous::2::869 (lambda Atom (do Unknown)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::873
-(let lambda::annonymous::1::873 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::875
-(let lambda::annonymous::1::875 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::877
-(let lambda::annonymous::1::877 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::879
-(let lambda::annonymous::1::879 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::881
-(let lambda::annonymous::1::881 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::883
-(let lambda::annonymous::1::883 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::885
-(let lambda::annonymous::1::885 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::887
-(let lambda::annonymous::1::887 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::889
-(let lambda::annonymous::1::889 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::891
-(let lambda::annonymous::1::891 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::893
-(let lambda::annonymous::1::893 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::895
-(let lambda::annonymous::1::895 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::897
-(let lambda::annonymous::1::897 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::899
-(let lambda::annonymous::1::899 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::901
-(let lambda::annonymous::1::901 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::903
-(let lambda::annonymous::1::903 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::905
-(let lambda::annonymous::1::905 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::907
-(let lambda::annonymous::1::907 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::909
-(let lambda::annonymous::1::909 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::911
-(let lambda::annonymous::1::911 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::913
-(let lambda::annonymous::1::913 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::915
-(let lambda::annonymous::1::915 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::917
-(let lambda::annonymous::1::917 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::919
-(let lambda::annonymous::1::919 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::921
-(let lambda::annonymous::1::921 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::923
-(let lambda::annonymous::1::923 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::925
-(let lambda::annonymous::1::925 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::927
-(let lambda::annonymous::1::927 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::929
-(let lambda::annonymous::1::929 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::931
-(let lambda::annonymous::1::931 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::933
-(let lambda::annonymous::1::933 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::935
-(let lambda::annonymous::1::935 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::937
-(let lambda::annonymous::1::937 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::939
-(let lambda::annonymous::1::939 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::941
-(let lambda::annonymous::1::941 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::943
-(let lambda::annonymous::1::943 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::945
-(let lambda::annonymous::1::945 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::947
-(let lambda::annonymous::1::947 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::949
-(let lambda::annonymous::1::949 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::951
-(let lambda::annonymous::1::951 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::953
-(let lambda::annonymous::1::953 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::955
-(let lambda::annonymous::1::955 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::957
-(let lambda::annonymous::1::957 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::959
-(let lambda::annonymous::1::959 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::961
-(let lambda::annonymous::1::961 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::963
-(let lambda::annonymous::1::963 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::965
-(let lambda::annonymous::1::965 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::967
-(let lambda::annonymous::1::967 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::969
-(let lambda::annonymous::1::969 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::971
-(let lambda::annonymous::1::971 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::973
-(let lambda::annonymous::1::973 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::975
-(let lambda::annonymous::1::975 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::977
-(let lambda::annonymous::1::977 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::979
-(let lambda::annonymous::1::979 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::981
-(let lambda::annonymous::1::981 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::983
-(let lambda::annonymous::1::983 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::985
-(let lambda::annonymous::1::985 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::987
-(let lambda::annonymous::1::987 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::989
-(let lambda::annonymous::1::989 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::991
-(let lambda::annonymous::1::991 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::993
-(let lambda::annonymous::1::993 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::995
-(let lambda::annonymous::1::995 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::997
-(let lambda::annonymous::1::997 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::999
-(let lambda::annonymous::1::999 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1001
-(let lambda::annonymous::1::1001 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1003
-(let lambda::annonymous::1::1003 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1005
-(let lambda::annonymous::1::1005 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1007
-(let lambda::annonymous::1::1007 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1009
-(let lambda::annonymous::1::1009 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1011
-(let lambda::annonymous::1::1011 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1013
-(let lambda::annonymous::1::1013 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1015
-(let lambda::annonymous::1::1015 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1017
-(let lambda::annonymous::1::1017 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1019
-(let lambda::annonymous::1::1019 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1021
-(let lambda::annonymous::1::1021 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1023
-(let lambda::annonymous::1::1023 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1025
-(let lambda::annonymous::1::1025 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1027
-(let lambda::annonymous::1::1027 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1029
-(let lambda::annonymous::1::1029 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1031
-(let lambda::annonymous::1::1031 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1033
-(let lambda::annonymous::1::1033 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1035
-(let lambda::annonymous::1::1035 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1037
-(let lambda::annonymous::1::1037 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1039
-(let lambda::annonymous::1::1039 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1041
-(let lambda::annonymous::1::1041 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1043
-(let lambda::annonymous::1::1043 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1045
-(let lambda::annonymous::1::1045 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1047
-(let lambda::annonymous::1::1047 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1049
-(let lambda::annonymous::1::1049 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1051
-(let lambda::annonymous::1::1051 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1053
-(let lambda::annonymous::1::1053 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1055
-(let lambda::annonymous::1::1055 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1057
-(let lambda::annonymous::1::1057 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1059
-(let lambda::annonymous::1::1059 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1061
-(let lambda::annonymous::1::1061 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1063
-(let lambda::annonymous::1::1063 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1065
-(let lambda::annonymous::1::1065 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1067
-(let lambda::annonymous::1::1067 (lambda Atom (do Collection)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::1069
-(let lambda::annonymous::1::1069 (lambda Atom (do Collection)))
+; 1 math:combinations math:combinations lambda::annonymous::2::856
+(let lambda::annonymous::2::856 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::858
+(let lambda::annonymous::2::858 (lambda Atom (do Unknown)))
+; 1 math:permutations 3 3 lambda::annonymous::1::859
+(let lambda::annonymous::1::859 (lambda Unknown Atom (do Atom)))
+; 1 math:permutations math:permutations lambda::annonymous::1::860
+(let lambda::annonymous::1::860 (lambda Unknown Atom (do Collection)))
+; 1 math:permutations math:permutations lambda::annonymous::1::860 lambda::annonymous::1::860 lambda::annonymous::1::863
+(let lambda::annonymous::1::863 (lambda Unknown Atom (do Atom)))
+; 1 math:permutations math:permutations lambda::annonymous::1::860 lambda::annonymous::1::860 lambda::annonymous::1::864
+(let lambda::annonymous::1::864 (lambda Collection (do Collection)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::866
+(let lambda::annonymous::2::866 (lambda Atom (do Unknown)))
+; 1 math:combinations math:combinations lambda::annonymous::2::868
+(let lambda::annonymous::2::868 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::870
+(let lambda::annonymous::2::870 (lambda Atom (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::872
+(let lambda::annonymous::2::872 (lambda Atom (do Unknown)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::876
+(let lambda::annonymous::1::876 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::878
+(let lambda::annonymous::1::878 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::880
+(let lambda::annonymous::1::880 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::882
+(let lambda::annonymous::1::882 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::884
+(let lambda::annonymous::1::884 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::886
+(let lambda::annonymous::1::886 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::888
+(let lambda::annonymous::1::888 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::890
+(let lambda::annonymous::1::890 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::892
+(let lambda::annonymous::1::892 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::894
+(let lambda::annonymous::1::894 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::896
+(let lambda::annonymous::1::896 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::898
+(let lambda::annonymous::1::898 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::900
+(let lambda::annonymous::1::900 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::902
+(let lambda::annonymous::1::902 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::904
+(let lambda::annonymous::1::904 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::906
+(let lambda::annonymous::1::906 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::908
+(let lambda::annonymous::1::908 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::910
+(let lambda::annonymous::1::910 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::912
+(let lambda::annonymous::1::912 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::914
+(let lambda::annonymous::1::914 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::916
+(let lambda::annonymous::1::916 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::918
+(let lambda::annonymous::1::918 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::920
+(let lambda::annonymous::1::920 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::922
+(let lambda::annonymous::1::922 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::924
+(let lambda::annonymous::1::924 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::926
+(let lambda::annonymous::1::926 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::928
+(let lambda::annonymous::1::928 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::930
+(let lambda::annonymous::1::930 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::932
+(let lambda::annonymous::1::932 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::934
+(let lambda::annonymous::1::934 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::936
+(let lambda::annonymous::1::936 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::938
+(let lambda::annonymous::1::938 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::940
+(let lambda::annonymous::1::940 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::942
+(let lambda::annonymous::1::942 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::944
+(let lambda::annonymous::1::944 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::946
+(let lambda::annonymous::1::946 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::948
+(let lambda::annonymous::1::948 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::950
+(let lambda::annonymous::1::950 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::952
+(let lambda::annonymous::1::952 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::954
+(let lambda::annonymous::1::954 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::956
+(let lambda::annonymous::1::956 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::958
+(let lambda::annonymous::1::958 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::960
+(let lambda::annonymous::1::960 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::962
+(let lambda::annonymous::1::962 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::964
+(let lambda::annonymous::1::964 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::966
+(let lambda::annonymous::1::966 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::968
+(let lambda::annonymous::1::968 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::970
+(let lambda::annonymous::1::970 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::972
+(let lambda::annonymous::1::972 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::974
+(let lambda::annonymous::1::974 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::976
+(let lambda::annonymous::1::976 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::978
+(let lambda::annonymous::1::978 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::980
+(let lambda::annonymous::1::980 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::982
+(let lambda::annonymous::1::982 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::984
+(let lambda::annonymous::1::984 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::986
+(let lambda::annonymous::1::986 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::988
+(let lambda::annonymous::1::988 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::990
+(let lambda::annonymous::1::990 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::992
+(let lambda::annonymous::1::992 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::994
+(let lambda::annonymous::1::994 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::996
+(let lambda::annonymous::1::996 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::998
+(let lambda::annonymous::1::998 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1000
+(let lambda::annonymous::1::1000 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1002
+(let lambda::annonymous::1::1002 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1004
+(let lambda::annonymous::1::1004 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1006
+(let lambda::annonymous::1::1006 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1008
+(let lambda::annonymous::1::1008 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1010
+(let lambda::annonymous::1::1010 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1012
+(let lambda::annonymous::1::1012 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1014
+(let lambda::annonymous::1::1014 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1016
+(let lambda::annonymous::1::1016 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1018
+(let lambda::annonymous::1::1018 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1020
+(let lambda::annonymous::1::1020 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1022
+(let lambda::annonymous::1::1022 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1024
+(let lambda::annonymous::1::1024 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1026
+(let lambda::annonymous::1::1026 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1028
+(let lambda::annonymous::1::1028 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1030
+(let lambda::annonymous::1::1030 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1032
+(let lambda::annonymous::1::1032 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1034
+(let lambda::annonymous::1::1034 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1036
+(let lambda::annonymous::1::1036 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1038
+(let lambda::annonymous::1::1038 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1040
+(let lambda::annonymous::1::1040 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1042
+(let lambda::annonymous::1::1042 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1044
+(let lambda::annonymous::1::1044 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1046
+(let lambda::annonymous::1::1046 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1048
+(let lambda::annonymous::1::1048 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1050
+(let lambda::annonymous::1::1050 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1052
+(let lambda::annonymous::1::1052 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1054
+(let lambda::annonymous::1::1054 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1056
+(let lambda::annonymous::1::1056 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1058
+(let lambda::annonymous::1::1058 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1060
+(let lambda::annonymous::1::1060 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1062
+(let lambda::annonymous::1::1062 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1064
+(let lambda::annonymous::1::1064 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1066
+(let lambda::annonymous::1::1066 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1068
+(let lambda::annonymous::1::1068 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1070
+(let lambda::annonymous::1::1070 (lambda Atom (do Collection)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1072
+(let lambda::annonymous::1::1072 (lambda Atom (do Collection)))
