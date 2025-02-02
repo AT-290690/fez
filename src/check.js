@@ -34,7 +34,8 @@ import {
   ANY,
   formatType,
   ANONYMOUS_FUNCTION_TYPE_PREFIX,
-  validateLambda
+  validateLambda,
+  NIL
 } from './types.js'
 import {
   Brr,
@@ -345,7 +346,7 @@ const ifExpression = ({ re, env, ref, prop }) => {
     // TODO make this more simple - it's so many different things just because types are functions or not
     // WHY not consiter making return types for everything
     if (concequent)
-      if (conc[TYPE] === WORD) {
+      if (conc[TYPE] === WORD && conc[VALUE] !== NIL) {
         return setPropToTypeRef(ref[STATS], prop, concequent[STATS])
       } else if (
         conc[TYPE] === APPLY &&
@@ -363,7 +364,7 @@ const ifExpression = ({ re, env, ref, prop }) => {
         })
       }
     if (alternative) {
-      if (alt[TYPE] === WORD) {
+      if (alt[TYPE] === WORD && alt[VALUE] !== NIL) {
         return setPropToTypeRef(ref[STATS], prop, alternative[STATS])
       } else if (
         alt[TYPE] === APPLY &&

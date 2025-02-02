@@ -16,6 +16,7 @@ import {
   WORD
 } from './keywords.js'
 import { hasBlock, stringifyArgs } from './utils.js'
+import { NIL } from './types.js'
 export const SUGGAR = {
   // Syntactic suggars
   PIPE: '|>',
@@ -357,7 +358,7 @@ export const deSuggarAst = (ast, scope) => {
                     )
                   exp[0][VALUE] = KEYWORDS.IF
                   const temp = exp[2]
-                  exp[2] = exp[3] ?? [ATOM, FALSE]
+                  exp[2] = exp[3] ?? [WORD, NIL]
                   exp[3] = temp
                 }
                 deSuggarAst(exp, scope)
@@ -372,7 +373,7 @@ export const deSuggarAst = (ast, scope) => {
                         KEYWORDS.IF
                       } ${stringifyArgs(rest)})`
                     )
-                  if (rest.length === 2) exp.push([ATOM, FALSE])
+                  if (rest.length === 2) exp.push([WORD, NIL])
                 }
                 deSuggarAst(exp[1], scope)
                 break

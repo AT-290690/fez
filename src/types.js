@@ -24,6 +24,7 @@ export const ANY = 5
 export const ANONYMOUS_FUNCTION_TYPE_PREFIX = 'lambda::annonymous::'
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 100
+export const NIL = 'nil'
 export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:

@@ -88,7 +88,7 @@
 (let char:at 64)
 (let char:backtick 96)
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
-
+(let nil 0)
 (let identity (lambda x x))
 (let Scope 1)
 (let Special 1)
