@@ -29,6 +29,7 @@ export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
 export const BOOLEAN_SUBTYPE = () => new Set([PREDICATE])
+
 export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -1180,7 +1181,7 @@ export const SPECIAL_FORM_TYPES = {
   }
 }
 
-const formatSubType = (T) => {
+export const formatSubType = (T) => {
   switch (T[0]) {
     case COLLECTION:
       return `[${

@@ -66,7 +66,7 @@ describe('Type checking', () => {
 (let abb (lambda x (do (+ x 1) x)))
 (let iffx (lambda x (if (> x 1) x x)))
 (let g (lambda x (do
-                  (or (not (length x)) 1)
+                  (or (not (> (length x) 0)) 1)
                   (let index (lambda (set! x 0 1))) 
                   (index))))`,
         ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx', 'g']
@@ -107,6 +107,12 @@ describe('Type checking', () => {
     )
   })
   it('Does not throw', () => {
+    passes(`(let x (not 0))
+(if x 1 1)
+(let f (lambda true))
+(if (f) 1 1)
+(if (< 1 0) 1)
+(and (array:empty? [1 2 3]) false)`)
     passes(
       `(let x? (lambda 0))
     (let y? (lambda 1))
@@ -691,7 +697,23 @@ ZZZ=ZZZ,ZZZ")
     `,
       `(array:select) is trying to access undefined variable (array:nah-empty?) at argument (1) (array:select (string:words word) array:nah-empty?) (check #20)`
     )
-
+    fails(
+      `(let f (lambda 10))
+(if (f) 1 1)`,
+      `Incorrect type of argument (0) for special form (if). Expected (Boolean) but got (Number) (if (f) 1 1) (check #201)`
+    )
+    fails(
+      `(let x 2) (or 1 x)`,
+      `Incorrect type of argument (1) for special form (or). Expected (Boolean) but got (Number) (or 1 x) (check #202)`
+    )
+    fails(
+      `(and (array:map [1 2 3] math:square) false)`,
+      `Incorrect type of argument (0) for special form (and). Expected (Atom) but got ([]) (and (array:map (array 1 2 3) math:square) false) (check #1)`
+    )
+    fails(
+      `(not (length []))`,
+      `Incorrect type of argument (0) for special form (not). Expected (Boolean) but got (Number) (not (length (array))) (check #201)`
+    )
     fails(
       `(let p (lambda (do
 

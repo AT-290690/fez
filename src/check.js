@@ -41,7 +41,9 @@ import {
   NIL,
   TRUE_WORD,
   FALSE_WORD,
-  BOOLEAN_SUBTYPE
+  BOOLEAN_SUBTYPE,
+  formatSubType,
+  PREDICATE
 } from './types.js'
 import {
   Brr,
@@ -51,7 +53,35 @@ import {
   logExp,
   stringifyArgs
 } from './utils.js'
+Set.prototype.union = function (B) {
+  const A = this
+  const out = new Set()
+  A.forEach((element) => out.add(element))
+  B.forEach((element) => out.add(element))
+  return out
+}
 
+Set.prototype.xor = function (B) {
+  const A = this
+  const out = new Set()
+  B.forEach((element) => !A.has(element) && out.add(element))
+  A.forEach((element) => !B.has(element) && out.add(element))
+  return out
+}
+
+Set.prototype.intersection = function (B) {
+  const A = this
+  const out = new Set()
+  B.forEach((element) => A.has(element) && out.add(element))
+  return out
+}
+
+Set.prototype.difference = function (B) {
+  const A = this
+  const out = new Set()
+  A.forEach((element) => !B.has(element) && out.add(element))
+  return out
+}
 export const identity = (name) => [
   [0, 'let'],
   [1, name],
@@ -214,6 +244,10 @@ export const getType = (stats) => stats && stats[TYPE_PROP][0]
 export const getTypes = (stats) => stats && stats[TYPE_PROP]
 export const getReturn = (stats) => stats && stats[RETURNS][0]
 export const getReturns = (stats) => stats && stats[RETURNS]
+export const getSubType = (stats) => stats && stats[TYPE_PROP][1]
+export const hasSubType = (stats) => stats && stats[TYPE_PROP][1] instanceof Set
+export const getSubReturn = (stats) => stats && stats[RETURNS][1]
+export const hasSubReturn = (stats) => stats && stats[RETURNS][1] instanceof Set
 export const isAtomType = (stats) =>
   isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
 export const isAtomReturn = (stats) =>
@@ -234,6 +268,20 @@ const IsPredicate = (leaf) =>
   (leaf[TYPE] === APPLY &&
     (PREDICATES_OUTPUT_SET.has(leaf[VALUE]) ||
       getSuffix(leaf[VALUE]) === PREDICATE_SUFFIX))
+
+const notABooleanType = (a, b) =>
+  hasSubType(a) &&
+  getSubType(a).has(PREDICATE) &&
+  !isUnknownType(b) &&
+  !isAnyType(b) &&
+  (!hasSubType(b) || getSubType(a).difference(getSubType(b)).size !== 0)
+const notABooleanReturn = (a, b) =>
+  hasSubType(a) &&
+  getSubType(a).has(PREDICATE) &&
+  !isUnknownReturn(b) &&
+  !isAnyReturn(b) &&
+  (!hasSubReturn(b) || getSubType(a).difference(getSubReturn(b)).size !== 0)
+const isAtomABoolean = (atom) => atom === TRUE || atom === FALSE
 const checkPredicateName = (exp, rest) => {
   if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
     const last = rest.at(-1)
@@ -789,34 +837,42 @@ export const typeCheck = (ast, error = true) => {
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
                 for (let i = 0; i < args.length; ++i) {
-                  const isRestILeaf = isLeaf(rest[i])
+                  const isResLeaf = isLeaf(rest[i])
                   // type check
                   // TODO get rof pred type
                   // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                   const MAIN_TYPE = getType(args[i][STATS])
                   if (MAIN_TYPE === ANY) continue
                   if (first[TYPE] === APPLY && isSpecial) {
-                    const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
-                    if (!isRestILeaf) {
+                    if (!isResLeaf) {
                       const name = rest[i][0][VALUE]
                       if (!env[name]) continue
                       if (
                         !isUnknownReturn(env[name][STATS]) &&
-                        !compareTypeWithReturn(
-                          expectedArgs[i][STATS],
-                          env[name][STATS]
-                        )
+                        !compareTypeWithReturn(args[i][STATS], env[name][STATS])
                       )
                         throw new TypeError(
                           `Incorrect type of argument (${i}) for special form (${
                             first[VALUE]
                           }). Expected (${toTypeNames(
-                            getType(expectedArgs[i][STATS])
+                            getType(args[i][STATS])
                           )}) but got (${toTypeNames(
                             getReturn(env[name][STATS])
                           )}) (${stringifyArgs(exp)}) (check #1)`
                         )
-                      else {
+                      else if (
+                        notABooleanReturn(args[i][STATS], env[name][STATS])
+                      ) {
+                        throw new TypeError(
+                          `Incorrect type of argument (${i}) for special form (${
+                            first[VALUE]
+                          }). Expected (${formatSubType(
+                            getTypes(args[i][STATS])
+                          )}) but got (${formatSubType(
+                            getReturns(env[name][STATS])
+                          )}) (${stringifyArgs(exp)}) (check #201)`
+                        )
+                      } else {
                         if (env[name] && getType(env[name][STATS]) === APPLY)
                           switch (first[VALUE]) {
                             case KEYWORDS.IF:
@@ -827,10 +883,7 @@ export const typeCheck = (ast, error = true) => {
                               // what if it's a global function used elsewhere where the return type mwould be different
                               // THIS willgive lambda return types but refactor is needed still
                               if (!SPECIAL_FORMS_SET.has(name))
-                                setReturn(
-                                  env[name][STATS],
-                                  expectedArgs[i][STATS]
-                                )
+                                setReturn(env[name][STATS], args[i][STATS])
                               break
                           }
                         // TODO also handle casting
@@ -843,37 +896,56 @@ export const typeCheck = (ast, error = true) => {
                             if (!env[name]) continue
                             if (
                               !isUnknownType(env[name][STATS]) &&
-                              !compareTypes(
-                                expectedArgs[i][STATS],
-                                env[name][STATS]
-                              )
+                              !compareTypes(args[i][STATS], env[name][STATS])
                             )
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for special form (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
-                                  getType(expectedArgs[i][STATS])
+                                  getType(args[i][STATS])
                                 )}) but got (${toTypeNames(
                                   getType(env[name][STATS])
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
-                            else
-                              setType(env[name][STATS], expectedArgs[i][STATS])
+                            else if (
+                              notABooleanType(args[i][STATS], env[name][STATS])
+                            )
+                              throw new TypeError(
+                                `Incorrect type of argument (${i}) for special form (${
+                                  first[VALUE]
+                                }). Expected (${formatSubType(
+                                  getTypes(args[i][STATS])
+                                )}) but got (${formatSubType(
+                                  getTypes(env[name][STATS])
+                                )}) (${stringifyArgs(exp)}) (check #202)`
+                              )
+                            else setType(env[name][STATS], args[i][STATS])
                           }
                           break
                         case ATOM: {
-                          if (
-                            rest[i][TYPE] !==
-                            expectedArgs[i][STATS][TYPE_PROP][0]
-                          )
+                          if (rest[i][TYPE] !== args[i][STATS][TYPE_PROP][0])
                             throw new TypeError(
                               `Incorrect type of argument (${i}) for special form (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
-                                expectedArgs[i][STATS][TYPE_PROP][0]
+                                args[i][STATS][TYPE_PROP][0]
                               )}) but got (${toTypeNames(
                                 rest[i][TYPE]
                               )}) (${stringifyArgs(exp)}) (check #2)`
+                            )
+                          else if (
+                            hasSubType(args[i][STATS]) &&
+                            getSubType(args[i][STATS]).has(PREDICATE) &&
+                            !isAtomABoolean(rest[i][VALUE])
+                          )
+                            throw new TypeError(
+                              `Incorrect type of argument (${i}) for special form (${
+                                first[VALUE]
+                              }). Expected (${formatSubType(
+                                getTypes(args[i][STATS])
+                              )}) but got (${rest[i][VALUE]}) (${stringifyArgs(
+                                exp
+                              )}) (check #203)`
                             )
                           break
                         }
@@ -881,7 +953,7 @@ export const typeCheck = (ast, error = true) => {
                     }
                   }
                   // type checking
-                  else if (isRestILeaf) {
+                  else if (isResLeaf) {
                     const T =
                       rest[i][TYPE] === WORD
                         ? env[rest[i][VALUE]]
