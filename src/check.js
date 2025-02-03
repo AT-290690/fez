@@ -847,7 +847,14 @@ export const typeCheck = (ast, error = true) => {
                     if (!isResLeaf) {
                       const name = rest[i][0][VALUE]
                       if (!env[name]) continue
-                      if (
+                      if (name === KEYWORDS.IF) {
+                        const concequent = [...rest]
+                        const alternative = [...rest]
+                        concequent[i] = rest[i][1]
+                        alternative[i] = rest[i][2]
+                        check([first, ...concequent], env, scope)
+                        check([first, ...alternative], env, scope)
+                      } else if (
                         !isUnknownReturn(env[name][STATS]) &&
                         !compareTypeWithReturn(args[i][STATS], env[name][STATS])
                       )
