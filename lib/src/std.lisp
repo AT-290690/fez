@@ -108,6 +108,8 @@
      (*) 0)))
 (let true? (lambda x (and (atom? x) (= (Any x) 1))))
 (let false? (lambda x (and (atom? x) (= (Any x) 0))))
+(let true (not 0))
+(let false (not 1))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
@@ -342,13 +344,13 @@
     (recursive:math:prime-factors))))
 (let math:prime? (lambda n
       (cond
-        (= n 1) 0
-        (< n 0) 0
+        (= n 1) false
+        (< n 0) false
         (*) (apply (lambda (do
-        (let recursive:math:prime (lambda i end (do
+        (let recursive:math:prime? (lambda i end (do
             (let prime? (not (= (mod n i) 0)))
-            (if (and (<= i end) prime?) (recursive:math:prime (+ i 1) end) prime?))))
-            (or (= n 2) (recursive:math:prime 2 (math:sqrt n)))))))))
+            (if (and (<= i end) prime?) (recursive:math:prime? (+ i 1) end) prime?))))
+        (or (= n 2) (recursive:math:prime? 2 (math:sqrt n)))))))))
 (let math:number-of-digits (lambda n
   (cond
     (= n 0) 1
@@ -1083,16 +1085,16 @@
                                                     -1)))
                                               (recursive:string:match str 0)))))))
 (let string:has? (lambda str word  (cond
-                                        (< (length str) (length word)) 0
-                                        (string:equal? str word) 1
+                                        (< (length str) (length word)) false
+                                        (string:equal? str word) true
                                         (*) (apply (lambda (do
                                               (let recursive:string:has (lambda xs i
                                                     (if (and (> (length xs) 0) (>= (length xs) (length word)))
                                                           (if (string:equal?
                                                             (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                             word)
-                                                            1 
-                                                            (recursive:string:has (array:tail xs) (+ i 1))) nil)))
+                                                            true 
+                                                            (recursive:string:has (array:tail xs) (+ i 1))) false)))
                                                   (recursive:string:has str 0)))))))
 (let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
@@ -1407,12 +1409,12 @@
 (let bool:get (lambda variable (get variable 0)))
 (let bool:set! (lambda variable value (set! variable 0 (truthy? value))))
 (let bool:toggle! (lambda variable (set! variable 0 (not (truthy? (var:get variable))))))
-(let bool:true (lambda (array 1)))
-(let bool:false (lambda (array 0)))
-(let bool:true! (lambda variable (set! variable 0 1)))
-(let bool:false! (lambda variable (set! variable 0 0)))
-(let bool:true? (lambda variable (= (get variable 0) 1)))
-(let bool:false? (lambda variable (= (get variable 0) 0)))
+(let bool:true (lambda [true]))
+(let bool:false (lambda [false]))
+(let bool:true! (lambda variable (set! variable 0 true)))
+(let bool:false! (lambda variable (set! variable 0 false)))
+(let bool:true? (lambda variable (= (get variable 0) true)))
+(let bool:false? (lambda variable (= (get variable 0) false)))
 (let curry:ternary (lambda f b c (lambda a (f a b c))))
 (let curry:binary (lambda f b (lambda a (f a b))))
 (let curry:unary (lambda f (lambda a (f a))))

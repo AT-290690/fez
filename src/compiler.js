@@ -9,6 +9,7 @@ import {
   STATIC_TYPES
 } from './keywords.js'
 import { leaf, isLeaf, AST } from './parser.js'
+import { FALSE_WORD, TRUE_WORD } from './types.js'
 const deepRename = (name, newName, tree) => {
   if (!isLeaf(tree))
     for (const leaf of tree) {
@@ -40,6 +41,10 @@ const toCamelCase = (name) => {
 const dashToLodashes = (name) => name.replace(new RegExp(/-/g), '_')
 const keywordToHelper = (name) => {
   switch (name) {
+    case TRUE_WORD:
+      return '__true'
+    case FALSE_WORD:
+      return '__false'
     case KEYWORDS.ADDITION:
       return '__add'
     case KEYWORDS.MULTIPLICATION:

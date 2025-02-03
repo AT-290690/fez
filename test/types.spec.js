@@ -40,15 +40,15 @@ describe('Type checking', () => {
         'list:zip'
       ]),
       [
-        '(let matrix:enumerated-for (lambda [Any] (lambda Any Atom Atom (do Unknown)) (do [Any])))',
-        '(let math:overlap? (lambda Atom Atom Atom (do Atom)))',
-        '(let math:prime? (lambda Atom (do Atom)))',
-        '(let matrix:adjacent (lambda [Any] [Any] Atom Atom (lambda Any [Any] Atom Atom (do Unknown)) (do [Any])))',
-        '(let array:every? (lambda [Any] (lambda Any (do Atom)) (do Atom)))',
+        '(let matrix:enumerated-for (lambda [Any] (lambda Any Number Number (do Unknown)) (do [Any])))',
+        '(let math:overlap? (lambda Number Number Number (do Boolean)))',
+        '(let math:prime? (lambda Number (do Boolean)))',
+        '(let matrix:adjacent (lambda [Any] [Any] Number Number (lambda Any [Any] Number Number (do Unknown)) (do [Any])))',
+        '(let array:every? (lambda [Any] (lambda Any (do Boolean)) (do Boolean)))',
         '(let list:find (lambda [Any] (lambda Any (do Unknown)) (do [Any])))',
-        '(let list:every? (lambda [Any] (lambda Any (do Atom)) (do Atom)))',
+        '(let list:every? (lambda [Any] (lambda Any (do Number)) (do Number)))',
         '(let array:unique (lambda [Any] (do [Any])))',
-        '(let array:empty? (lambda [Any] (do Atom)))',
+        '(let array:empty? (lambda [Any] (do Boolean)))',
         '(let array:join (lambda [Any] [Any] (do [Any])))',
         '(let string:join-as-table-with (lambda [Any] [Any] Unknown (do [Any])))',
         '(let list:zip (lambda [Any] [Any] (do [Any])))'
@@ -72,15 +72,15 @@ describe('Type checking', () => {
         ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx', 'g']
       ),
       [
-        '(let is12? (lambda Atom (do Atom)))',
-        '(let a Atom)',
-        '(let c Atom)',
+        '(let is12? (lambda Number (do Boolean)))',
+        '(let a Number)',
+        '(let c Number)',
         '(let b [Any])',
         '(let box (lambda Unknown (do [Any])))',
-        '(let add (lambda Atom [Any] (do Atom)))',
-        '(let x? Atom)',
-        '(let abb (lambda Atom (do Atom)))',
-        '(let iffx (lambda Atom (do Atom)))',
+        '(let add (lambda Number [Any] (do Number)))',
+        '(let x? Number)',
+        '(let abb (lambda Number (do Number)))',
+        '(let iffx (lambda Number (do Number)))',
         '(let g (lambda [Atom] (do [Any])))'
       ]
     )
@@ -99,7 +99,11 @@ describe('Type checking', () => {
 (let m (add y))`,
         ['m', 'y', 'add']
       ),
-      ['(let m Atom)', '(let y Atom)', '(let add (lambda Atom (do Atom)))']
+      [
+        '(let m Number)',
+        '(let y Number)',
+        '(let add (lambda Number (do Number)))'
+      ]
     )
   })
   it('Does not throw', () => {
@@ -640,7 +644,7 @@ ZZZ=ZZZ,ZZZ")
 (let x1? (array:empty! [1]))
 (let x2? 1)
 (let x3? array:empty!)`,
-      `Assigning predicate (ending in ?) variable (fn1?) to another variable which is not a predicate (also ending in ?) (let fn1? (lambda (apply (array 1) array:empty!)))`
+      `Assigning predicate (ending in ?) variable  (fn1?) to an (Atom) that is not (or 1 0) or to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil) (let fn1? (lambda (apply (array 1) array:empty!))) (check #100)`
     )
     //     fails(
     //       `(let map (new:map ["name" "Anthony" "age" 34]))

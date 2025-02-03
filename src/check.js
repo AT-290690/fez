@@ -38,7 +38,10 @@ import {
   formatType,
   ANONYMOUS_FUNCTION_TYPE_PREFIX,
   validateLambda,
-  NIL
+  NIL,
+  TRUE_WORD,
+  FALSE_WORD,
+  BOOLEAN_SUBTYPE
 } from './types.js'
 import {
   Brr,
@@ -92,6 +95,15 @@ export const setPropToAtom = (stats, prop) => {
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     (stats[prop][0] = ATOM)
   )
+}
+export const setPropToPredicate = (stats, prop) => {
+  return (stats[prop][1] = BOOLEAN_SUBTYPE())
+}
+export const setReturnToPredicate = (stats) => {
+  return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
+}
+export const setTypeToPredicate = (stats) => {
+  return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
 }
 export const setPropToAbstraction = (stats, prop) => {
   return (
@@ -212,59 +224,56 @@ export const compareReturns = (a, b) =>
   isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
 export const compareTypeWithReturn = (a, b) =>
   isAnyType(a) || isAnyReturn(b) || a[TYPE_PROP][0] === b[RETURNS][0]
+const IsPredicate = (leaf) =>
+  (leaf[TYPE] === ATOM && (leaf[VALUE] === TRUE || leaf[VALUE] === FALSE)) ||
+  (leaf[TYPE] === WORD &&
+    (leaf[VALUE] === TRUE_WORD ||
+      leaf[VALUE] === FALSE_WORD ||
+      leaf[VALUE] === NIL ||
+      getSuffix(leaf[VALUE]) === PREDICATE_SUFFIX)) ||
+  (leaf[TYPE] === APPLY &&
+    (PREDICATES_OUTPUT_SET.has(leaf[VALUE]) ||
+      getSuffix(leaf[VALUE]) === PREDICATE_SUFFIX))
 const checkPredicateName = (exp, rest) => {
   if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
     const last = rest.at(-1)
-    if (isLeaf(last)) {
-      if (last[TYPE] === ATOM && last[VALUE] !== TRUE && last[VALUE] !== FALSE)
+    if (last[TYPE] !== APPLY && isLeaf(last) && !IsPredicate(last)) {
+      if (!IsPredicate(last))
         throw new TypeError(
-          `Assigning predicate (ending in ?) variable (${
+          `Assigning predicate (ending in ?) variable  (${
             rest[0][VALUE]
           }) to an (${
             STATIC_TYPES.ATOM
-          }) that is not (or ${TRUE} ${FALSE}) (${stringifyArgs(exp)})`
-        )
-      else if (
-        last[TYPE] === WORD &&
-        getSuffix(last[VALUE]) !== PREDICATE_SUFFIX &&
-        !PREDICATES_OUTPUT_SET.has(last[VALUE])
-      )
-        throw new TypeError(
-          `Assigning predicate (ending in ?) variable (${
-            rest[0][VALUE]
-          }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
+          }) that is not (or ${TRUE} ${FALSE}) or to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil) (${stringifyArgs(
             exp
-          )})`
+          )}) (check #100)`
         )
     } else if (last[0][0] === APPLY) {
       const application = last[0]
-      if (
-        application[VALUE] !== KEYWORDS.IF &&
-        getSuffix(application[VALUE]) !== PREDICATE_SUFFIX &&
-        !PREDICATES_OUTPUT_SET.has(application[VALUE])
-      )
+      if (application[VALUE] !== KEYWORDS.IF && !IsPredicate(application))
         throw new TypeError(
           `Assigning predicate (ending in ?) variable (${
             application[VALUE]
-          }) to another variable which is not a predicate (also ending in ?) (${stringifyArgs(
+          })  to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil)  (${stringifyArgs(
             exp
-          )})`
+          )}) (check #101)`
         )
     }
+    return true
   }
+  return false
 }
 const checkPredicateNameDeep = (name, exp, rest, returns) => {
   if (returns[VALUE] === KEYWORDS.CALL_FUNCTION) {
     const fn = rest.at(-1).at(-1).at(-1)
-    checkPredicateName(exp, [
+    return checkPredicateName(exp, [
       [WORD, name],
       isLeaf(fn)
         ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
         : drillReturnType(fn, (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
     ])
-  } else {
-    checkPredicateName(exp, [[WORD, name], returns])
   }
+  return checkPredicateName(exp, [[WORD, name], returns])
 }
 const fillUknownArgs = (n) =>
   Array.from({ length: n })
@@ -420,31 +429,33 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
   if (returns[TYPE] === ATOM) {
     // ATOM ASSIGMENT
     setPropToAtom(env[name][STATS], prop)
-    checkPredicateName(exp, [[WORD, name], returns])
   } else {
     switch (returns[VALUE]) {
       case KEYWORDS.IF:
         resolveCondition({ rem, name, env, exp, prop })
         break
       default:
-        checkPredicateNameDeep(name, exp, exp.slice(1), returns)
-        if (!env[returns[VALUE]]) return false
-        else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
-          if (returns[TYPE] === WORD) setReturnToAbbstraction(env[name][STATS])
-          else {
-            // ALWAYS APPLY
-            // rest.at(-1)[0][TYPE] === APPLY
-            // Here is upon application to store the result in the variable
-            if (isUnknownType(env[name][STATS]))
-              stack.prepend(() => {
-                setTypeToReturn(env[name][STATS], env[returns[VALUE]][STATS])
-                // env[name][STATS][TYPE_PROP][0] =
-                //   env[returns[VALUE]][STATS][RETURNS][0]
-                // this seems to be able to be deleted
-                // env[name][STATS][TYPE_PROP][1] =
-                //   env[returns[VALUE]][STATS][RETURNS][1]
-              })
-            else setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
+        {
+          checkPredicateNameDeep(name, exp, exp.slice(1), returns)
+          if (!env[returns[VALUE]]) return false
+          else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
+            if (returns[TYPE] === WORD)
+              setReturnToAbbstraction(env[name][STATS])
+            else {
+              // ALWAYS APPLY
+              // rest.at(-1)[0][TYPE] === APPLY
+              // Here is upon application to store the result in the variable
+              if (isUnknownType(env[name][STATS]))
+                stack.prepend(() => {
+                  setTypeToReturn(env[name][STATS], env[returns[VALUE]][STATS])
+                  // env[name][STATS][TYPE_PROP][0] =
+                  //   env[returns[VALUE]][STATS][RETURNS][0]
+                  // this seems to be able to be deleted
+                  // env[name][STATS][TYPE_PROP][1] =
+                  //   env[returns[VALUE]][STATS][RETURNS][1]
+                })
+              else setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
+            }
           }
         }
         break
@@ -582,16 +593,18 @@ export const typeCheck = (ast, error = true) => {
                     retried: 0,
                     counter: 0,
                     [SIGNATURE]: name,
-                    [TYPE_PROP]: [
-                      isLeafNode
-                        ? right[TYPE]
-                        : env[right[VALUE]] == undefined
-                        ? UNKNOWN
-                        : env[right[VALUE]][STATS][RETURNS][0]
-                    ],
+                    [TYPE_PROP]: [UNKNOWN],
                     [RETURNS]: [UNKNOWN]
                   }
                 }
+                const type = isLeafNode
+                  ? right[TYPE]
+                  : env[right[VALUE]] == undefined
+                  ? UNKNOWN
+                  : env[right[VALUE]][STATS][RETURNS][0]
+                if (type !== UNKNOWN)
+                  setTypeToReturn(env[name][STATS], env[right[VALUE]][STATS])
+
                 const body = rightHand
                 const rem = hasBlock(body) ? body.at(-1) : body
                 const returns = isLeaf(rem) ? rem : rem[0]
@@ -783,60 +796,6 @@ export const typeCheck = (ast, error = true) => {
                   const MAIN_TYPE = getType(args[i][STATS])
                   if (MAIN_TYPE === ANY) continue
                   if (first[TYPE] === APPLY && isSpecial) {
-                    if (
-                      MAIN_TYPE === ATOM &&
-                      PREDICATES_INPUT_SET.has(first[VALUE])
-                    ) {
-                      if (
-                        !isRestILeaf &&
-                        rest[i][0][TYPE] === APPLY &&
-                        rest[i][0][VALUE] === KEYWORDS.CALL_FUNCTION
-                      ) {
-                        if (isLeaf(rest[i].at(-1))) {
-                          const fnName = rest[i].at(-1)[VALUE]
-                          const fn = env[fnName]
-                          if (fn && getReturn(fn[STATS]) !== ATOM)
-                            throw new TypeError(
-                              `Incorrect type of argument (${i}) for (${
-                                first[VALUE]
-                              }). Expected (${toTypeNames(
-                                ATOM
-                              )}) but got an (${toTypeNames(
-                                getReturn(fn[STATS])
-                              )}) (${stringifyArgs(exp)}) (check #26)`
-                            )
-                        } else {
-                          const body = rest[i].at(-1).at(-1)
-                          const rem = hasBlock(body) ? body.at(-1) : body
-                          const returns = isLeaf(rem) ? rem : rem[0]
-                          if (returns[TYPE] === ATOM) {
-                            if (MAIN_TYPE !== ATOM)
-                              throw new TypeError(
-                                `Incorrect type of argument ${i} for (${
-                                  first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  MAIN_TYPE
-                                )}) but got an (${toTypeNames(
-                                  ATOM
-                                )})  (${stringifyArgs(exp)}) (check #27)`
-                              )
-                          } else if (
-                            env[returns[VALUE]] &&
-                            !isUnknownReturn(env[returns[VALUE]][STATS]) &&
-                            getReturn(env[returns[VALUE]][STATS]) !== ATOM
-                          )
-                            throw new TypeError(
-                              `Incorrect type of argument ${i} for (${
-                                first[VALUE]
-                              }). Expected (${toTypeNames(
-                                ATOM
-                              )}) but got (${toTypeNames(
-                                getReturn(env[returns[VALUE]][STATS])
-                              )})  (${stringifyArgs(exp)}) (check #29)`
-                            )
-                        }
-                      }
-                    }
                     const expectedArgs = env[first[VALUE]][STATS][ARGUMENTS]
                     if (!isRestILeaf) {
                       const name = rest[i][0][VALUE]

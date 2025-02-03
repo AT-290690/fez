@@ -20,16 +20,23 @@ export const SIGNATURE = 'name'
 export const UNKNOWN = -1
 export const COLLECTION = 3
 export const PREDICATE = 5
+export const NUMBER = 6
 export const ANY = 4
 export const ANONYMOUS_FUNCTION_TYPE_PREFIX = 'lambda::annonymous::'
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 100
 export const NIL = 'nil'
+export const TRUE_WORD = 'true'
+export const FALSE_WORD = 'false'
+export const BOOLEAN_SUBTYPE = () => new Set([PREDICATE])
 export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
       return 'Abstraction'
     case PREDICATE:
+      return 'Boolean'
+    case NUMBER:
+      return 'Number'
     case ATOM:
       return 'Atom'
     case UNKNOWN:
@@ -110,13 +117,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [STATIC_TYPES.COLLECTION]: {
@@ -836,7 +842,7 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
+            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
             [RETURNS]: [ATOM],
 
             [ARGUMENTS]: [],
@@ -849,7 +855,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ANY],
             [RETURNS]: [ANY],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -860,7 +865,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ANY],
             [RETURNS]: [ANY],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -880,15 +884,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
+            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.EQUAL]: {
@@ -904,7 +907,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -915,13 +917,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.LESS_THAN]: {
@@ -937,7 +938,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -948,13 +948,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.GREATHER_THAN]: {
@@ -981,13 +980,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
@@ -1003,7 +1001,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1014,13 +1011,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.LESS_THAN_OR_EQUAL]: {
@@ -1036,7 +1032,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1047,13 +1042,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ATOM],
             [RETURNS]: [ATOM],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.AND]: {
@@ -1067,9 +1061,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
+            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1078,15 +1071,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
+            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.OR]: {
@@ -1100,9 +1092,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
+            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1111,15 +1102,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
+            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.IS_ATOM]: {
@@ -1141,7 +1131,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.IS_LAMBDA]: {
@@ -1163,7 +1153,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
   [KEYWORDS.ERROR]: {
@@ -1202,6 +1192,12 @@ const formatSubType = (T) => {
               .join(' ')
           : toTypeNames(ANY)
       }]`
+    case ATOM:
+      return `${
+        T[1] instanceof Set
+          ? [...T[1]].map((x) => toTypeNames(x)).join(' ')
+          : toTypeNames(NUMBER)
+      }`
     default:
       return toTypeNames(T[0])
   }

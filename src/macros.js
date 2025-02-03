@@ -246,8 +246,9 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case KEYWORDS.MULTIPLICATION:
                 if (!rest.length) {
-                  exp[0][TYPE] = ATOM
-                  exp[0][VALUE] = TRUE
+                  // exp[0][TYPE] = ATOM
+                  exp[0][VALUE] = KEYWORDS.NOT
+                  exp[1] = [ATOM, FALSE]
                 } else if (rest.length > 2) {
                   exp.length = 0
                   let temp = exp
