@@ -149,6 +149,9 @@ describe('Type checking', () => {
     )))
     (inner [f])
 )))`)
+    passes(
+      `(or (if (and (or 1 false) (or true (array:empty? []))) false true) 1)`
+    )
     passes(`(let a 10)
 (let b [])
 (let box (lambda x [x]))
@@ -220,14 +223,14 @@ describe('Type checking', () => {
 (let consecative-pair? (lambda str (do 
     (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 1)) 
-            out 
+             (true? out)  
             (recursive:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
     (recursive:iterate 0 str)
 )))
 (let non-consecative-non-overlapping-pair? (lambda str (do 
     (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
-            out 
+            (true? out) 
             (apply (lambda (do
             (let match? (and 
                          (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
@@ -241,7 +244,7 @@ describe('Type checking', () => {
 (let consecative-between-pair? (lambda str (do 
     (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
-            out 
+             (true? out)  
             (recursive:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
     (recursive:iterate 0 str)
 )))
@@ -547,6 +550,10 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Atom) but got ([]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
     )
     fails(
+      `(and (array:empty! [1 2 3]) 1)`,
+      `Incorrect type of argument (0) for special form (and). Expected (Atom) but got ([]) (and (array:empty! (array 1 2 3)) 1) (check #1)`
+    )
+    fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
       (let z [])
       (let n (lambda x (do
@@ -822,6 +829,10 @@ ZZZ=ZZZ,ZZZ")
 (fn (lambda 1))
 `,
       `Incorrect type of argument (0) for (fn). Expected (Atom) but got (Abstraction) (fn (lambda 1)) (check #16)`
+    )
+    fails(
+      `(or (if (and (or 1 false) (or true (array:empty? []))) 10 2) 1)`,
+      `Incorrect type of argument (0) for special form (or). Expected (Boolean) but got (10) (or 10 1) (check #203)`
     )
     fails(
       `(let array:unique (lambda xs (|>

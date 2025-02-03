@@ -26,14 +26,14 @@
 (let consecative-pair? (lambda str (do 
     (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 1)) 
-            out 
+             (true? out)  
             (recursive:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
     (recursive:iterate 0 str)
 )))
 (let non-consecative-non-overlapping-pair? (lambda str (do 
     (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
-            out 
+             (true? out)  
             (apply (lambda (do
             (let match? (and 
                          (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
@@ -47,7 +47,7 @@
 (let consecative-between-pair? (lambda str (do 
     (let recursive:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
-            out 
+             (true? out)  
             (recursive:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
     (recursive:iterate 0 str)
 )))

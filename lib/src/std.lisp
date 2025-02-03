@@ -554,7 +554,7 @@
 (let array:has? (lambda xs predicate? (do
                     (let recursive:array:has (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i)) 1 (recursive:array:has (+ i 1))) 0)))
+                              (if (predicate? (get xs i)) true (recursive:array:has (+ i 1))) false)))
                         (recursive:array:has 0))))
 (let array:reverse (lambda xs (do
                     (let recursive:array:reverse (lambda i out

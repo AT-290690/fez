@@ -25,6 +25,7 @@ export const ANY = 4
 export const ANONYMOUS_FUNCTION_TYPE_PREFIX = 'lambda::annonymous::'
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 100
+export const IS_ARGUMENT = 'is_arg'
 export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'

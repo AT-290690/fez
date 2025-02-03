@@ -43,7 +43,8 @@ import {
   FALSE_WORD,
   BOOLEAN_SUBTYPE,
   formatSubType,
-  PREDICATE
+  PREDICATE,
+  IS_ARGUMENT
 } from './types.js'
 import {
   Brr,
@@ -269,18 +270,28 @@ const IsPredicate = (leaf) =>
     (PREDICATES_OUTPUT_SET.has(leaf[VALUE]) ||
       getSuffix(leaf[VALUE]) === PREDICATE_SUFFIX))
 
-const notABooleanType = (a, b) =>
-  hasSubType(a) &&
-  getSubType(a).has(PREDICATE) &&
-  !isUnknownType(b) &&
-  !isAnyType(b) &&
-  (!hasSubType(b) || getSubType(a).difference(getSubType(b)).size !== 0)
-const notABooleanReturn = (a, b) =>
-  hasSubType(a) &&
-  getSubType(a).has(PREDICATE) &&
-  !isUnknownReturn(b) &&
-  !isAnyReturn(b) &&
-  (!hasSubReturn(b) || getSubType(a).difference(getSubReturn(b)).size !== 0)
+const notABooleanType = (a, b) => {
+  return (
+    hasSubType(a) &&
+    getSubType(a).has(PREDICATE) &&
+    !isUnknownType(b) &&
+    !isAnyType(b) &&
+    (!isAtomType(b) ||
+      !hasSubType(b) ||
+      getSubType(a).difference(getSubType(b)).size !== 0)
+  )
+}
+const notABooleanReturn = (a, b) => {
+  return (
+    hasSubType(a) &&
+    getSubType(a).has(PREDICATE) &&
+    !isUnknownReturn(b) &&
+    !isAnyReturn(b) &&
+    (!isAtomReturn(b) ||
+      !hasSubReturn(b) ||
+      getSubType(a).difference(getSubReturn(b)).size !== 0)
+  )
+}
 const isAtomABoolean = (atom) => atom === TRUE || atom === FALSE
 const checkPredicateName = (exp, rest) => {
   if (getSuffix(rest[0][VALUE]) === PREDICATE_SUFFIX) {
@@ -383,11 +394,11 @@ const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
       break
     case KEYWORDS.CALL_FUNCTION:
       if (re.at(-1)[TYPE] === WORD) {
-        if (env[re.at(-1)[VALUE]])
+        if (env[re.at(-1)[VALUE]] && re.at(-1)[VALUE] !== ref[STATS][SIGNATURE])
           setPropToReturnRef(ref[STATS], prop, env[re.at(-1)[VALUE]][STATS])
       } else {
         const returns = returnType(re.at(-1))
-        if (env[returns[VALUE]])
+        if (env[returns[VALUE]] && returns[VALUE] !== ref[STATS][SIGNATURE])
           IfApplyBranch({
             branch: env[returns[VALUE]],
             ref,
@@ -423,7 +434,7 @@ const ifExpression = ({ re, env, ref, prop }) => {
         // Making sure the recursive function don't look for their own return type
         concequent[STATS][SIGNATURE] !== ref[STATS][SIGNATURE]
       ) {
-        return IfApplyBranch({
+        IfApplyBranch({
           leaf: conc,
           branch: concequent,
           re: re[0],
@@ -441,7 +452,7 @@ const ifExpression = ({ re, env, ref, prop }) => {
         // Making sure the recursive function don't look for their own return type
         alternative[STATS][SIGNATURE] !== ref[STATS][SIGNATURE]
       ) {
-        return IfApplyBranch({
+        IfApplyBranch({
           leaf: alt,
           branch: alternative,
           re: re[1],
@@ -690,6 +701,7 @@ export const typeCheck = (ast, error = true) => {
                 )
               copy[param[VALUE]] = {
                 [STATS]: {
+                  [IS_ARGUMENT]: true,
                   [SIGNATURE]: param[VALUE],
                   [TYPE_PROP]: [UNKNOWN],
                   [RETURNS]: [UNKNOWN],
@@ -855,6 +867,13 @@ export const typeCheck = (ast, error = true) => {
                         check([first, ...concequent], env, scope)
                         check([first, ...alternative], env, scope)
                       } else if (
+                        isUnknownReturn(env[name][STATS]) &&
+                        !env[name][STATS][IS_ARGUMENT]
+                      ) {
+                        return retry(env[name][STATS], stack, () =>
+                          check(exp, env, scope)
+                        )
+                      } else if (
                         !isUnknownReturn(env[name][STATS]) &&
                         !compareTypeWithReturn(args[i][STATS], env[name][STATS])
                       )
@@ -868,8 +887,9 @@ export const typeCheck = (ast, error = true) => {
                           )}) (${stringifyArgs(exp)}) (check #1)`
                         )
                       else if (
+                        !isUnknownReturn(env[name][STATS]) &&
                         notABooleanReturn(args[i][STATS], env[name][STATS])
-                      ) {
+                      )
                         throw new TypeError(
                           `Incorrect type of argument (${i}) for special form (${
                             first[VALUE]
@@ -879,7 +899,7 @@ export const typeCheck = (ast, error = true) => {
                             getReturns(env[name][STATS])
                           )}) (${stringifyArgs(exp)}) (check #201)`
                         )
-                      } else {
+                      else {
                         if (env[name] && getType(env[name][STATS]) === APPLY)
                           switch (first[VALUE]) {
                             case KEYWORDS.IF:
@@ -893,6 +913,7 @@ export const typeCheck = (ast, error = true) => {
                                 setReturn(env[name][STATS], args[i][STATS])
                               break
                           }
+
                         // TODO also handle casting
                       }
                     } else {
@@ -915,6 +936,7 @@ export const typeCheck = (ast, error = true) => {
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
                             else if (
+                              !isUnknownType(env[name][STATS]) &&
                               notABooleanType(args[i][STATS], env[name][STATS])
                             )
                               throw new TypeError(
