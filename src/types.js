@@ -44,7 +44,8 @@ export const toTypeNames = (type) => {
     case UNKNOWN:
       return 'Unknown'
     case COLLECTION:
-      return '[]'
+      return 'Array'
+    // return '[]'
     case ANY:
       return 'Any'
     default:
@@ -1184,18 +1185,18 @@ export const SPECIAL_FORM_TYPES = {
 
 export const formatSubType = (T) => {
   switch (T[0]) {
-    case COLLECTION:
-      return `[${
-        T[1] instanceof Set
-          ? [...T[1]]
-              .map((x) =>
-                x === COLLECTION
-                  ? formatSubType([x])
-                  : toTypeNamesAnyToUknown(x)
-              )
-              .join(' ')
-          : toTypeNamesAnyToUknown(ANY)
-      }]`
+    // case COLLECTION:
+    //   return `[${
+    //     T[1] instanceof Set
+    //       ? [...T[1]]
+    //           .map((x) =>
+    //             x === COLLECTION
+    //               ? formatSubType([x])
+    //               : toTypeNamesAnyToUknown(x)
+    //           )
+    //           .join(' ')
+    //       : toTypeNamesAnyToUknown(ANY)
+    //   }]`
     case ATOM:
       return `${
         T[1] instanceof Set
