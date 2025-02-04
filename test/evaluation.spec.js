@@ -6,6 +6,20 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(let sum-n (lambda arr n (do 
+    (let empty [])
+    (|>
+     (math:range 0 n)
+     (array:map (lambda i (get-or-default arr i empty)))
+     (array:exclude array?)
+     (math:summation)))))
+     
+[
+    (sum-n [] 10)
+    (sum-n [1 2 3 4] 10)
+    (sum-n [1 2 3 4 5 6 7 8] 10)
+    (sum-n [1 2 3 4 5 6 7 8 9 10 11 12] 10)
+]`,
       `(lisp:eval "
 (let char:0 48)
 (let char:1 49)

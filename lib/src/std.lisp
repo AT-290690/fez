@@ -590,7 +590,7 @@
 (let array:empty! (lambda xs (do (let recursive:array:empty! (lambda (if (> (length xs) 0) (apply (lambda (do (del! xs) (recursive:array:empty!)))) xs))) (recursive:array:empty!))))
 (let array:in-bounds? (lambda xs index (and (< index (length xs)) (>= index 0))))
 (let get-option (lambda xs i (if (array:in-bounds? xs i) [[(get xs i)] []] [[] "Index is outside of array bounds (get-option)"])))
-(let get-or-default (lambda xs i default (if (array:in-bounds? xs i) (get xs i) default)))
+(let get-or-default (lambda xs i def (if (array:in-bounds? xs i) (get xs i) def)))
 (let array:get-option get-option)
 (let array:get-or-default get-or-default)
 (let array:slice (lambda xs start end (do
@@ -788,7 +788,7 @@
 (let matrix:get (lambda matrix y x (get (get matrix y) x)))
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
 (let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] "Coordinates are outside of matrix bounds (matrix:get-option)"])))
-(let matrix:get-or-default (lambda xs y x default (if (matrix:in-bounds? xs y x) (matrix:get xs y x) default)))
+(let matrix:get-or-default (lambda xs y x def (if (matrix:in-bounds? xs y x) (matrix:get xs y x) def)))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
 (let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x 
       (cond 

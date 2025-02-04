@@ -3580,4 +3580,21 @@ Program: 0,1,5,4,3,0"
     ),
     [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
   )
+  deepStrictEqual(
+    evalJS(`(let sum-n (lambda arr n (do 
+    (let empty [])
+    (|>
+     (math:range 0 n)
+     (array:map (lambda i (get-or-default arr i empty)))
+     (array:exclude array?)
+     (math:summation)))))
+     
+[
+    (sum-n [] 10)
+    (sum-n [1 2 3 4] 10)
+    (sum-n [1 2 3 4 5 6 7 8] 10)
+    (sum-n [1 2 3 4 5 6 7 8 9 10 11 12] 10)
+]`),
+    [0, 10, 36, 66]
+  )
 })
