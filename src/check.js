@@ -299,7 +299,9 @@ const checkPredicateName = (exp, rest) => {
         )
     } else if (last[0][0] === APPLY) {
       const application = last[0]
-      if (application[VALUE] !== KEYWORDS.IF && !IsPredicate(application))
+      if (application[VALUE] === KEYWORDS.CALL_FUNCTION)
+        return checkPredicateName(exp, [rest[0], last.at(-1)])
+      else if (application[VALUE] !== KEYWORDS.IF && !IsPredicate(application))
         throw new TypeError(
           `Assigning predicate (ending in ?) variable (${
             application[VALUE]
@@ -307,6 +309,12 @@ const checkPredicateName = (exp, rest) => {
             exp
           )}) (check #101)`
         )
+      else if (application[VALUE] === KEYWORDS.IF) {
+        return (
+          checkPredicateName(exp, [rest[0], last[2]]) &&
+          checkPredicateName(exp, [rest[0], last[3]])
+        )
+      }
     }
     return true
   }

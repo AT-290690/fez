@@ -550,6 +550,10 @@ ZZZ=ZZZ,ZZZ")
     `,
       `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Atom) but got (Array) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
     )
+    fails(
+      `(let y? (if (= 1 1) (apply [1] array:empty!)  (apply 1 math:odd?)))`,
+      `Assigning predicate (ending in ?) variable  (y?) to an (Atom) that is not (or 1 0) or to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil) (let y? (if (= 1 1) (apply (array 1) array:empty!) (apply 1 math:odd?))) (check #100)`
+    )
     // TODO unbcomment that and makeit work
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
