@@ -1314,45 +1314,45 @@ export const typeCheck = (ast, error = true) => {
                   }
 
                   // handly typehints for arrays
-                  if (
-                    first[TYPE] === APPLY &&
-                    MUTATORS_SET.has(first[VALUE]) &&
-                    env[first[VALUE]]
-                  ) {
-                    const current = env[rest[i][VALUE]]
-                    if (current) {
-                      if (rest[i][TYPE] === WORD) {
-                        if (!current[STATS][TYPE_PROP][1]) {
-                          current[STATS][TYPE_PROP][1] = new Set()
-                        }
-                        if (MULTI_DIMENTIONAL_SETTERS.has(first[VALUE])) {
-                          current[STATS][TYPE_PROP][1].add(COLLECTION)
-                        } else {
-                          const right = isLeaf(rest.at(-1))
-                            ? rest.at(-1)
-                            : rest.at(-1)[0]
-                          switch (right[TYPE]) {
-                            case ATOM:
-                              current[STATS][TYPE_PROP][1].add(ATOM)
-                              break
-                            case WORD:
-                              if (env[right[VALUE]]) {
-                                current[STATS][TYPE_PROP][1].add(
-                                  ...env[right[VALUE]][STATS][TYPE_PROP]
-                                )
-                              }
-                              break
-                            case APPLY:
-                              if (env[right[VALUE]])
-                                current[STATS][TYPE_PROP][1].add(
-                                  ...env[right[VALUE]][STATS][RETURNS]
-                                )
-                              break
-                          }
-                        }
-                      }
-                    }
-                  }
+                  // if (
+                  //   first[TYPE] === APPLY &&
+                  //   MUTATORS_SET.has(first[VALUE]) &&
+                  //   env[first[VALUE]]
+                  // ) {
+                  //   const current = env[rest[i][VALUE]]
+                  //   if (current) {
+                  //     if (rest[i][TYPE] === WORD) {
+                  //       if (!current[STATS][TYPE_PROP][1]) {
+                  //         current[STATS][TYPE_PROP][1] = new Set()
+                  //       }
+                  //       if (MULTI_DIMENTIONAL_SETTERS.has(first[VALUE])) {
+                  //         current[STATS][TYPE_PROP][1].add(COLLECTION)
+                  //       } else {
+                  //         const right = isLeaf(rest.at(-1))
+                  //           ? rest.at(-1)
+                  //           : rest.at(-1)[0]
+                  //         switch (right[TYPE]) {
+                  //           case ATOM:
+                  //             current[STATS][TYPE_PROP][1].add(ATOM)
+                  //             break
+                  //           case WORD:
+                  //             if (env[right[VALUE]]) {
+                  //               current[STATS][TYPE_PROP][1].add(
+                  //                 ...env[right[VALUE]][STATS][TYPE_PROP]
+                  //               )
+                  //             }
+                  //             break
+                  //           case APPLY:
+                  //             if (env[right[VALUE]])
+                  //               current[STATS][TYPE_PROP][1].add(
+                  //                 ...env[right[VALUE]][STATS][RETURNS]
+                  //               )
+                  //             break
+                  //         }
+                  //       }
+                  //     }
+                  //   }
+                  // }
                   // handly typehints for arrays
                 }
               }

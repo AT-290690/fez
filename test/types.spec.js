@@ -81,7 +81,7 @@ describe('Type checking', () => {
         '(let x? Number)',
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda [Atom] (do [Any])))'
+        '(let g (lambda [Any] (do [Any])))'
       ]
     )
     deepStrictEqual(
