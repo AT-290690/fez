@@ -1189,19 +1189,21 @@ export const formatSubType = (T) => {
         T[1] instanceof Set
           ? [...T[1]]
               .map((x) =>
-                x === COLLECTION ? formatSubType([x]) : toTypeNames(x)
+                x === COLLECTION
+                  ? formatSubType([x])
+                  : toTypeNamesAnyToUknown(x)
               )
               .join(' ')
-          : toTypeNames(ANY)
+          : toTypeNamesAnyToUknown(ANY)
       }]`
     case ATOM:
       return `${
         T[1] instanceof Set
-          ? [...T[1]].map((x) => toTypeNames(x)).join(' ')
-          : toTypeNames(NUMBER)
+          ? [...T[1]].map((x) => toTypeNamesAnyToUknown(x)).join(' ')
+          : toTypeNamesAnyToUknown(NUMBER)
       }`
     default:
-      return toTypeNames(T[0])
+      return toTypeNamesAnyToUknown(T[0])
   }
 }
 export const formatType = (name, env) => {

@@ -40,18 +40,18 @@ describe('Type checking', () => {
         'list:zip'
       ]),
       [
-        '(let matrix:enumerated-for (lambda [Any] (lambda Any Number Number (do Unknown)) (do [Any])))',
+        '(let matrix:enumerated-for (lambda [Unknown] (lambda Unknown Number Number (do Unknown)) (do [Unknown])))',
         '(let math:overlap? (lambda Number Number Number (do Boolean)))',
         '(let math:prime? (lambda Number (do Boolean)))',
-        '(let matrix:adjacent (lambda [Any] [Any] Number Number (lambda Any [Any] Number Number (do Unknown)) (do [Any])))',
-        '(let array:every? (lambda [Any] (lambda Any (do Boolean)) (do Boolean)))',
-        '(let list:find (lambda [Any] (lambda Any (do Unknown)) (do [Any])))',
-        '(let list:every? (lambda [Any] (lambda Any (do Number)) (do Number)))',
-        '(let array:unique (lambda [Any] (do [Any])))',
-        '(let array:empty? (lambda [Any] (do Boolean)))',
-        '(let array:join (lambda [Any] [Any] (do [Any])))',
-        '(let string:join-as-table-with (lambda [Any] [Any] Unknown (do [Any])))',
-        '(let list:zip (lambda [Any] [Any] (do [Any])))'
+        '(let matrix:adjacent (lambda [Unknown] [Unknown] Number Number (lambda Unknown [Unknown] Number Number (do Unknown)) (do [Unknown])))',
+        '(let array:every? (lambda [Unknown] (lambda Unknown (do Boolean)) (do Boolean)))',
+        '(let list:find (lambda [Unknown] (lambda Unknown (do Unknown)) (do [Unknown])))',
+        '(let list:every? (lambda [Unknown] (lambda Unknown (do Number)) (do Number)))',
+        '(let array:unique (lambda [Unknown] (do [Unknown])))',
+        '(let array:empty? (lambda [Unknown] (do Boolean)))',
+        '(let array:join (lambda [Unknown] [Unknown] (do [Unknown])))',
+        '(let string:join-as-table-with (lambda [Unknown] [Unknown] Unknown (do [Unknown])))',
+        '(let list:zip (lambda [Unknown] [Unknown] (do [Unknown])))'
       ]
     )
     deepStrictEqual(
@@ -75,13 +75,13 @@ describe('Type checking', () => {
         '(let is12? (lambda Number (do Boolean)))',
         '(let a Number)',
         '(let c Number)',
-        '(let b [Any])',
-        '(let box (lambda Unknown (do [Any])))',
-        '(let add (lambda Number [Any] (do Number)))',
+        '(let b [Unknown])',
+        '(let box (lambda Unknown (do [Unknown])))',
+        '(let add (lambda Number [Unknown] (do Number)))',
         '(let x? Number)',
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda [Any] (do [Any])))'
+        '(let g (lambda [Unknown] (do [Unknown])))'
       ]
     )
     deepStrictEqual(
