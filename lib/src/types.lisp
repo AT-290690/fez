@@ -874,6 +874,12 @@
 (let matrix:for (lambda Array (lambda Unknown (do Unknown)) (do Array)))
 ; 1 matrix:shallow-copy
 (let matrix:shallow-copy (lambda Array (do Array)))
+; 1 matrix:flat-one head
+(let head Unknown)
+; 1 matrix:flat-one tail
+(let tail Array)
+; 1 matrix:flat-one
+(let matrix:flat-one (lambda Array (do Array)))
 ; 1 matrix:find-index coords
 (let coords Array)
 ; 1 matrix:find-index 67 idx
@@ -2315,7 +2321,7 @@
 ; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::306
 (let lambda::annonymous::1::306 (lambda Unknown Number (do Boolean)))
 ; 1 array:sliding-window array:sliding-window lambda::annonymous::1::308
-(let lambda::annonymous::1::308 (lambda Array Unknown Number (do Array)))
+(let lambda::annonymous::1::308 (lambda Unknown Unknown Number (do Array)))
 ; 1 array:adjacent-difference 309 recursive:array:adjacent-difference
 (let recursive:array:adjacent-difference (lambda Number Array (do Array)))
 ; 1 array:partition 312 x

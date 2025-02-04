@@ -16,7 +16,7 @@ const deepTransform = (predicate, transform, tree) => {
       else deepTransform(predicate, transform, leaf)
     }
 }
-export const enhance = (ast) => {
+const opt = (ast) => {
   const evaluate = (exp) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first != undefined) {
@@ -213,11 +213,12 @@ export const enhance = (ast) => {
         default:
           break
       }
-
       for (const r of rest) evaluate(r)
     }
   }
-  evaluate(AST.parse(AST.stringify(ast)))
+  evaluate(ast)
   const shaked = shake(ast[1][1].slice(1), std)
   return wrapInBlock(shaked)
 }
+
+export const enhance = (ast) => opt(AST.parse(AST.stringify(ast))[0])

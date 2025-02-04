@@ -1,4 +1,4 @@
-import { parse, compile, enhance } from '../index.js'
+import { parse, compile, enhance, AST } from '../index.js'
 import { debug } from './debug.js'
 const editor = ace.edit('editor')
 editor.setOptions({

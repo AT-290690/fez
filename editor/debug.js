@@ -16,8 +16,8 @@ import {
   VALUE,
   WORD
 } from '../src/keywords.js'
-import { enhance } from '../src/enchance.js'
-import { isLeaf, LISP } from '../src/parser.js'
+import { enhance } from '../src/enhance.js'
+import { AST, isLeaf, LISP } from '../src/parser.js'
 import { formatType, SPECIAL_FORM_TYPES } from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]

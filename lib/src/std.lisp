@@ -707,6 +707,7 @@
 (let matrix:for (lambda matrix cb (do (array:for matrix (lambda row (array:for row cb)))
    matrix)))
 (let matrix:shallow-copy (lambda matrix (|> matrix (array:map (lambda x (|> x (array:map identity)))))))
+(let matrix:flat-one (lambda [head tail] (array:merge [] (if (array:empty? tail) head (array:merge head (matrix:flat-one tail))))))
 (let matrix:find-index (lambda matrix cb (do 
   (let coords (array -1 -1))
   (set! coords 0 (array:find-index matrix (lambda row (do
