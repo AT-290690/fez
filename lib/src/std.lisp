@@ -1842,6 +1842,7 @@ heap)))
 
 (let array? (lambda x (and (not (atom? x)) (not (lambda? x)))))
 (let char? (lambda cc (and (atom? cc) (>= cc 0) (< cc 65535))))
+(let bool? (lambda x (and (atom? x) (or (= (Any x) 0) (= (Any x) 1)))))
 
 (let match:negative? (lambda str (= (array:first str) char:minus)))
 (let match:number? (lambda str (do 

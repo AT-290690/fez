@@ -1972,6 +1972,8 @@
 (let array? (lambda Unknown (do Boolean)))
 ; 1 char?
 (let char? (lambda Number (do Boolean)))
+; 1 bool?
+(let bool? (lambda Any (do Boolean)))
 ; 1 match:negative?
 (let match:negative? (lambda [Any] (do Boolean)))
 ; 1 match:number? negative?
