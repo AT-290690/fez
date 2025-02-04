@@ -1,14 +1,6 @@
 import { AST, isLeaf } from './parser.js'
-import {
-  APPLY,
-  ATOM,
-  KEYWORDS,
-  PREDICATE_SUFFIX,
-  TYPE,
-  VALUE,
-  WORD
-} from './keywords.js'
-import { getPrefix, getSuffix, shake, wrapInBlock } from './utils.js'
+import { APPLY, ATOM, KEYWORDS, TYPE, VALUE, WORD } from './keywords.js'
+import { getPrefix, shake, wrapInBlock } from './utils.js'
 import std from '../lib/baked/std.js'
 export const OPTIMIZATIONS = {
   RECURSION: 'recursive',

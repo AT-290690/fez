@@ -1,5 +1,5 @@
 import std from '../lib/baked/std.js'
-import { identity, typeCheck } from '../src/check.js'
+import { typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
 import {
@@ -333,9 +333,6 @@ export const debug = (ast, checkTypes = true) => {
   try {
     types = checkTypes ? typeCheck(ast)[1] : new Map()
     const evaluated = evaluate(enhance(ast), debugEnv)
-    const block = ast[1][1]
-    const temp = block.shift()
-    block.unshift(temp, identity(DEBUG.LOG), identity(DEBUG.ASSERT))
     const exp = ast.at(-1).at(-1).at(-1)
     const [head, ...rest] = isLeaf(exp) ? [exp] : exp
     let type = ''

@@ -6,7 +6,8 @@ import {
   TYPE,
   VALUE,
   WORD,
-  STATIC_TYPES
+  STATIC_TYPES,
+  DEBUG
 } from './keywords.js'
 import { leaf, isLeaf, AST } from './parser.js'
 import { FALSE_WORD, TRUE_WORD } from './types.js'
@@ -274,6 +275,9 @@ const comp = (tree, Drill) => {
       case STATIC_TYPES.ATOM:
       case STATIC_TYPES.PREDICATE:
       case STATIC_TYPES.ANY:
+      case DEBUG.ASSERT:
+      case DEBUG.LOG:
+      case DEBUG.STRING:
         return compile(tail[0], Drill)
 
       default: {

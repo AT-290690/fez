@@ -734,6 +734,10 @@
    matrix)))
 (let matrix:rotate-square (lambda matrix (do 
     (let len (length matrix))
+    (cond
+        (= len 0) (throw "matrix is empty at (matrix:rotate-square)")
+        (not (= len (length (get matrix 0)))) (throw "matrix should have the same number of rows as columns at (matrix:rotate-square)")
+        (*) nil)
     (let out (math:zeroes len))
     (let recursive:outer:matrix:rotate-square (lambda row 
         (if (< row len) (do 
@@ -747,6 +751,10 @@
     (recursive:outer:matrix:rotate-square 0) out)))
 (let matrix:flip-square (lambda matrix (do 
     (let len (length matrix))
+    (cond
+        (= len 0) (throw "matrix is empty at (matrix:flip-square)")
+        (not (= len (length (get matrix 0)))) (throw "matrix should have the same number of rows as columns at (matrix:flip-square)")
+        (*) nil)
     (let out (math:zeroes len))
     (let recursive:outer:matrix:flip-square (lambda row 
         (if (< row len) (do 
