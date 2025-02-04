@@ -679,11 +679,11 @@
 ; 1 array:some?
 (let array:some? (lambda Array (lambda Unknown (do Boolean)) (do Boolean)))
 ; 1 array:find
-(let array:find (lambda Array Unknown (do Unknown)))
+(let array:find (lambda Array (lambda Unknown (do Unknown)) (do Unknown)))
 ; 1 array:find-option index
 (let index Number)
 ; 1 array:find-option
-(let array:find-option (lambda Array Unknown (do Array)))
+(let array:find-option (lambda Array (lambda Unknown (do Unknown)) (do Array)))
 ; 1 array:has? recursive:array:has
 (let recursive:array:has (lambda Number (do Boolean)))
 ; 1 array:has?
@@ -715,13 +715,13 @@
 ; 1 array:unique
 (let array:unique (lambda Array (do Array)))
 ; 1 array:iterate
-(let array:iterate (lambda Array Unknown (do Array)))
+(let array:iterate (lambda Array (lambda Number (do Unknown)) (do Array)))
 ; 1 array:empty?
 (let array:empty? (lambda Array (do Boolean)))
 ; 1 array:not-empty?
 (let array:not-empty? (lambda Array (do Boolean)))
 ; 1 array:count-of
-(let array:count-of (lambda Array Unknown (do Number)))
+(let array:count-of (lambda Array (lambda Unknown (do Unknown)) (do Number)))
 ; 1 array:count
 (let array:count (lambda Array Number (do Number)))
 ; 1 array:empty! recursive:array:empty!
@@ -855,7 +855,7 @@
 ; 1 array:chunks 62 end
 (let end Unknown)
 ; 1 array:chunks
-(let array:chunks (lambda Array Unknown (do Array)))
+(let array:chunks (lambda Array (lambda Unknown (do Boolean)) (do Array)))
 ; 1 array:adjacent-find len
 (let len Number)
 ; 1 array:adjacent-find 63 recursive:array:adjacent-find prev
@@ -871,7 +871,7 @@
 ; 1 matrix:points
 (let matrix:points (lambda Array (lambda Unknown (do Unknown)) (do Array)))
 ; 1 matrix:for
-(let matrix:for (lambda Array Unknown (do Array)))
+(let matrix:for (lambda Array (lambda Unknown (do Unknown)) (do Array)))
 ; 1 matrix:shallow-copy
 (let matrix:shallow-copy (lambda Array (do Array)))
 ; 1 matrix:find-index coords
@@ -881,11 +881,11 @@
 ; 1 matrix:find-index 67 predicate?
 (let predicate? Boolean)
 ; 1 matrix:find-index
-(let matrix:find-index (lambda Array Unknown (do Array)))
+(let matrix:find-index (lambda Array (lambda Unknown (do Unknown)) (do Array)))
 ; 1 matrix:find coords
 (let coords Array)
 ; 1 matrix:find
-(let matrix:find (lambda Array Unknown (do Unknown)))
+(let matrix:find (lambda Array (lambda Unknown (do Unknown)) (do Unknown)))
 ; 1 matrix:enumerated-for width
 (let width Number)
 ; 1 matrix:enumerated-for height
@@ -1881,7 +1881,7 @@
 ; 1 heap:sift-up! recursive:heap:sift-up!
 (let recursive:heap:sift-up! (lambda (do Number)))
 ; 1 heap:sift-up!
-(let heap:sift-up! (lambda Array Unknown (do Number)))
+(let heap:sift-up! (lambda Array (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:sift-down! node
 (let node Array)
 ; 1 heap:sift-down! recursive:heap:sift-down! 168 max-child
@@ -1889,17 +1889,17 @@
 ; 1 heap:sift-down! recursive:heap:sift-down!
 (let recursive:heap:sift-down! (lambda (do Number)))
 ; 1 heap:sift-down!
-(let heap:sift-down! (lambda Array Unknown (do Number)))
+(let heap:sift-down! (lambda Array (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:peek
 (let heap:peek (lambda Array (do Unknown)))
 ; 1 heap:push!
-(let heap:push! (lambda Array Unknown Unknown (do Array)))
+(let heap:push! (lambda Array Unknown (lambda Unknown Unknown (do Unknown)) (do Array)))
 ; 1 heap:pop! bottom
 (let bottom Number)
 ; 1 heap:pop!
-(let heap:pop! (lambda Array Unknown (do Array)))
+(let heap:pop! (lambda Array (lambda Unknown Unknown (do Unknown)) (do Array)))
 ; 1 heap:replace!
-(let heap:replace! (lambda Array Unknown Unknown (do Array)))
+(let heap:replace! (lambda Array Unknown (lambda Unknown Unknown (do Unknown)) (do Array)))
 ; 1 heap:empty?
 (let heap:empty? (lambda Array (do Boolean)))
 ; 1 heap:not-empty?
@@ -1909,7 +1909,7 @@
 ; 1 from:array->heap heap
 (let heap Array)
 ; 1 from:array->heap
-(let from:array->heap (lambda Array Unknown (do Array)))
+(let from:array->heap (lambda Array (lambda Unknown Unknown (do Unknown)) (do Array)))
 ; 1 optimization:tail-call-loop
 (let optimization:tail-call-loop (lambda Array (do Unknown)))
 ; 1 optimization:tail-calls-0
@@ -3072,44 +3072,48 @@
 (let lambda::annonymous::1::794 (lambda Unknown Number (do Boolean)))
 ; 1 array:equal? array:equal? lambda::annonymous::1::795
 (let lambda::annonymous::1::795 (lambda Number (do Boolean)))
-; 1 array:unique array:unique lambda::annonymous::1::797
-(let lambda::annonymous::1::797 (lambda Number Number (do Boolean)))
-; 1 list:count list:count lambda::annonymous::1::799
+; 1 array:count array:count lambda::annonymous::1::797
+(let lambda::annonymous::1::797 (lambda Number (do Boolean)))
+; 1 array:count array:count lambda::annonymous::1::798
+(let lambda::annonymous::1::798 (lambda Number (do Boolean)))
+; 1 array:count array:count lambda::annonymous::1::799
 (let lambda::annonymous::1::799 (lambda Number (do Boolean)))
-; 1 list:get list:get lambda::annonymous::1::801
-(let lambda::annonymous::1::801 (lambda Array (do Boolean)))
-; 1 list:reverse list:reverse lambda::annonymous::1::803
-(let lambda::annonymous::1::803 (lambda Unknown Unknown (do Array)))
-; 1 list:unzip list:unzip lambda::annonymous::1::805
-(let lambda::annonymous::1::805 (lambda Array (do Unknown)))
-; 1 list:unzip list:unzip lambda::annonymous::1::807
-(let lambda::annonymous::1::807 (lambda Array (do Unknown)))
-; 1 math:minimum-index math:minimum-index lambda::annonymous::1::808
-(let lambda::annonymous::1::808 (lambda Array Number Unknown (do Array)))
-; 1 math:combinations math:combinations lambda::annonymous::2::810
-(let lambda::annonymous::2::810 (lambda Number (do Number)))
-; 1 math:combinations math:combinations lambda::annonymous::2::811
-(let lambda::annonymous::2::811 (lambda Number (do Number)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::813
-(let lambda::annonymous::2::813 (lambda Number (do Unknown)))
-; 1 math:permutations 3 3 lambda::annonymous::1::814
-(let lambda::annonymous::1::814 (lambda Unknown Number (do Boolean)))
-; 1 math:permutations math:permutations lambda::annonymous::1::815
-(let lambda::annonymous::1::815 (lambda Unknown Number (do Array)))
-; 1 math:permutations math:permutations lambda::annonymous::1::815 lambda::annonymous::1::815 lambda::annonymous::1::818
+; 1 array:count array:count lambda::annonymous::1::800
+(let lambda::annonymous::1::800 (lambda Number (do Boolean)))
+; 1 array:unique array:unique lambda::annonymous::1::801
+(let lambda::annonymous::1::801 (lambda Number Number (do Boolean)))
+; 1 list:count list:count lambda::annonymous::1::803
+(let lambda::annonymous::1::803 (lambda Number (do Boolean)))
+; 1 list:get list:get lambda::annonymous::1::805
+(let lambda::annonymous::1::805 (lambda Array (do Boolean)))
+; 1 list:reverse list:reverse lambda::annonymous::1::807
+(let lambda::annonymous::1::807 (lambda Unknown Unknown (do Array)))
+; 1 list:unzip list:unzip lambda::annonymous::1::809
+(let lambda::annonymous::1::809 (lambda Array (do Unknown)))
+; 1 list:unzip list:unzip lambda::annonymous::1::811
+(let lambda::annonymous::1::811 (lambda Array (do Unknown)))
+; 1 math:minimum-index math:minimum-index lambda::annonymous::1::812
+(let lambda::annonymous::1::812 (lambda Array Number Unknown (do Array)))
+; 1 math:combinations math:combinations lambda::annonymous::2::814
+(let lambda::annonymous::2::814 (lambda Number (do Number)))
+; 1 math:combinations math:combinations lambda::annonymous::2::815
+(let lambda::annonymous::2::815 (lambda Number (do Number)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::817
+(let lambda::annonymous::2::817 (lambda Number (do Unknown)))
+; 1 math:permutations 3 3 lambda::annonymous::1::818
 (let lambda::annonymous::1::818 (lambda Unknown Number (do Boolean)))
-; 1 math:permutations math:permutations lambda::annonymous::1::815 lambda::annonymous::1::815 lambda::annonymous::1::819
-(let lambda::annonymous::1::819 (lambda Array (do Array)))
-; 1 math:combinations math:combinations lambda::annonymous::2::821
-(let lambda::annonymous::2::821 (lambda Number (do Number)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::823
-(let lambda::annonymous::2::823 (lambda Number (do Unknown)))
-; 1 math:combinations combinations combinations lambda::annonymous::2::825
-(let lambda::annonymous::2::825 (lambda Number (do Unknown)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::827
-(let lambda::annonymous::1::827 (lambda Number (do Array)))
-; 1 from:yx->key from:yx->key lambda::annonymous::1::829
-(let lambda::annonymous::1::829 (lambda Number (do Array)))
+; 1 math:permutations math:permutations lambda::annonymous::1::819
+(let lambda::annonymous::1::819 (lambda Unknown Number (do Array)))
+; 1 math:permutations math:permutations lambda::annonymous::1::819 lambda::annonymous::1::819 lambda::annonymous::1::822
+(let lambda::annonymous::1::822 (lambda Unknown Number (do Boolean)))
+; 1 math:permutations math:permutations lambda::annonymous::1::819 lambda::annonymous::1::819 lambda::annonymous::1::823
+(let lambda::annonymous::1::823 (lambda Array (do Array)))
+; 1 math:combinations math:combinations lambda::annonymous::2::825
+(let lambda::annonymous::2::825 (lambda Number (do Number)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::827
+(let lambda::annonymous::2::827 (lambda Number (do Unknown)))
+; 1 math:combinations combinations combinations lambda::annonymous::2::829
+(let lambda::annonymous::2::829 (lambda Number (do Unknown)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::831
 (let lambda::annonymous::1::831 (lambda Number (do Array)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::833
@@ -3304,3 +3308,7 @@
 (let lambda::annonymous::1::1021 (lambda Number (do Array)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1023
 (let lambda::annonymous::1::1023 (lambda Number (do Array)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1025
+(let lambda::annonymous::1::1025 (lambda Number (do Array)))
+; 1 from:yx->key from:yx->key lambda::annonymous::1::1027
+(let lambda::annonymous::1::1027 (lambda Number (do Array)))

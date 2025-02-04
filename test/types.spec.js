@@ -612,6 +612,14 @@ ZZZ=ZZZ,ZZZ")
       `(la1mbda) is trying to access undefined variable (input) at argument (0) (la1mbda input (string:lines input)) (check #20)`
     )
     fails(
+      `(let array:iterate (lambda xs cb (do 
+  (loop:for-n (length xs) cb)
+  xs)))
+
+(array:iterate [1 2 3] (lambda x i (+ x i)))`,
+      `Incorrect number of arguments for (cb) the (lambda) argument of (array:iterate) at position (1). Expected (= 1) but got 2 (array:iterate (array 1 2 3) (lambda x i (+ x i))) (check #777)`
+    )
+    fails(
       `(let arr [1 2 3 4])
 (let fn1 (lambda 1y x (do 
     (let fn2 (lambda 1x (do

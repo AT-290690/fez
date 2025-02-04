@@ -178,15 +178,12 @@ export const setReturnToAtom = (stats) => {
 export const setTypeToAtom = (stats) =>
   (isUnknownType(stats) || isAnyType(stats)) && (stats[TYPE_PROP][0] = ATOM)
 export const setReturnToAbbstraction = (stats) =>
-  (isUnknownReturn(stats) || isAnyReturn(stats)) && (stats[RETURNS][0] = APPLY)
+  isUnknownReturn(stats) && (stats[RETURNS][0] = APPLY)
 export const setTypeRef = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   (stats[TYPE_PROP] = value[TYPE_PROP])
 export const setReturnRef = (stats, value) => {
-  return (
-    (isUnknownReturn(stats) || isAnyReturn(stats)) &&
-    (stats[RETURNS] = value[RETURNS])
-  )
+  return isUnknownReturn(stats) && (stats[RETURNS] = value[RETURNS])
 }
 export const setReturnToTypeRef = (stats, value) => {
   return (
@@ -194,6 +191,7 @@ export const setReturnToTypeRef = (stats, value) => {
     (stats[RETURNS] = value[TYPE_PROP])
   )
 }
+export const setStatsRef = (a, b) => (a[STATS] = b[STATS])
 export const setTypeToReturnRef = (stats, value) => {
   return (
     (isUnknownType(stats) || isAnyType(stats)) &&
@@ -498,7 +496,10 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
               // Here is upon application to store the result in the variable
               if (isUnknownType(env[name][STATS]))
                 stack.prepend(() => {
-                  setTypeToReturn(env[name][STATS], env[returns[VALUE]][STATS])
+                  setTypeToReturnRef(
+                    env[name][STATS],
+                    env[returns[VALUE]][STATS]
+                  )
                   // env[name][STATS][TYPE_PROP][0] =
                   //   env[returns[VALUE]][STATS][RETURNS][0]
                   // this seems to be able to be deleted
@@ -701,6 +702,7 @@ export const typeCheck = (ast) => {
                   counter: 0
                 }
               }
+
               const ref = env[copy[SCOPE_NAME]]
               if (!ref) continue
               ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
@@ -824,13 +826,15 @@ export const typeCheck = (ast) => {
                         case APPLY:
                           // passing arg asA APPLICATION
                           if (isUnknownType(arg[i][STATS]))
-                            arg[i][STATS][TYPE_PROP] =
-                              env[ARG[VALUE]][STATS][RETURNS]
+                            setTypeToReturnRef(
+                              arg[i][STATS],
+                              env[ARG[VALUE]][STATS]
+                            )
                           break
                         case WORD:
                           // if param is a word we assosiate them by referanc
-                          if (isUnknownType(arg[i][STATS]))
-                            arg[i][STATS] = env[ARG[VALUE]][STATS]
+                          // if (isUnknownType(arg[i][STATS]))
+                          setStatsRef(arg[i], env[ARG[VALUE]])
                           break
                       }
                     }
@@ -900,7 +904,7 @@ export const typeCheck = (ast) => {
                               // what if it's a global function used elsewhere where the return type mwould be different
                               // THIS willgive lambda return types but refactor is needed still
                               if (!SPECIAL_FORMS_SET.has(name))
-                                setReturn(env[name][STATS], args[i][STATS])
+                                setReturnRef(env[name][STATS], args[i][STATS])
                               break
                           }
 
@@ -979,6 +983,7 @@ export const typeCheck = (ast) => {
                           ? getType(env[rest[i][VALUE]][STATS])
                           : UNKNOWN
                         : rest[i][TYPE]
+
                     if (T === ATOM && !isUnknownType(args[i][STATS])) {
                       if (getType(args[i][STATS]) !== ATOM)
                         throw new TypeError(
@@ -1127,7 +1132,6 @@ export const typeCheck = (ast) => {
                         }
                       }
                     }
-
                     if (
                       T === COLLECTION &&
                       env[rest[i][VALUE]] &&
@@ -1146,17 +1150,23 @@ export const typeCheck = (ast) => {
                       )
                     } else if (isUnknownType(args[i][STATS])) {
                       retry(args[i][STATS], stack, () => check(exp, env, scope))
-                    } else if (
+                    }
+                    // TOODO maybe we don't need this
+                    else if (
                       env[rest[i][VALUE]] &&
                       !isUnknownType(args[i][STATS]) &&
                       isUnknownType(env[rest[i][VALUE]][STATS]) &&
                       getType(args[i][STATS]) !== APPLY
                     ) {
                       // REFF ASSIGMENT
-                      env[rest[i][VALUE]][STATS][TYPE_PROP] =
-                        args[i][STATS][TYPE_PROP]
-                      env[rest[i][VALUE]][STATS][RETURNS] =
-                        args[i][STATS][RETURNS]
+                      setTypeRef(env[rest[i][VALUE]][STATS], args[i][STATS])
+                      setReturnRef(env[rest[i][VALUE]][STATS], args[i][STATS])
+                    } else if (
+                      env[rest[i][VALUE]] &&
+                      !isUnknownType(args[i][STATS]) &&
+                      isUnknownType(env[rest[i][VALUE]][STATS])
+                    ) {
+                      setStatsRef(env[rest[i][VALUE]], args[i])
                     }
                   } else if (env[rest[i][0][VALUE]]) {
                     const match = () => {

@@ -995,7 +995,7 @@
 (let array:enumerated-find (lambda xs predicate? (do
                     (let recursive:array:enumerated-find (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i) i) (get xs i) (recursive:array:enumerated-find (+ i 1)))
+                              (if (predicate? (get xs i) i) [(get xs i)] (recursive:array:enumerated-find (+ i 1)))
                               [])))
                         (recursive:array:enumerated-find 0))))
 (let array:enumerated-find-index (lambda xs predicate? (do
