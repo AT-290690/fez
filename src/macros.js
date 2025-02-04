@@ -70,6 +70,19 @@ export const deSuggarAst = (ast, scope) => {
         case APPLY:
           {
             switch (first[VALUE]) {
+              // ; Idea for pattern matching
+              // ; (let f (lambda xs
+              // ;     (|= xs
+              // ;         [] 10
+              // ;         [1] (array:tail xs)
+              // ;         (*) -1)))
+
+              // (let f (lambda xs
+              //     (apply xs (lambda xs (cond
+              //         (= (length xs) 0) 10
+              //         (= (get xs 0) 1) (array:tail xs)
+              //         (*) -1)))))
+
               // case KEYWORDS.CALL_FUNCTION: {
               //     if (prev === undefined && scope[0][VALUE] === KEYWORDS.CALL_FUNCTION) {
               //         exp[0][VALUE] = KEYWORDS.BLOCK
@@ -274,9 +287,7 @@ export const deSuggarAst = (ast, scope) => {
                     if (i < rest.length - 1) {
                       temp.push([APPLY, KEYWORDS.ADDITION], rest[i], [])
                       temp = temp.at(-1)
-                    } else {
-                      temp.push(...rest[i])
-                    }
+                    } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)
                 }
@@ -289,9 +300,7 @@ export const deSuggarAst = (ast, scope) => {
                     if (i < rest.length - 1) {
                       temp.push([APPLY, KEYWORDS.SUBTRACTION], rest[i], [])
                       temp = temp.at(-1)
-                    } else {
-                      temp.push(...rest[i])
-                    }
+                    } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)
                 } else {
@@ -325,9 +334,7 @@ export const deSuggarAst = (ast, scope) => {
                     if (i < rest.length - 1) {
                       temp.push([APPLY, KEYWORDS.DIVISION], rest[i], [])
                       temp = temp.at(-1)
-                    } else {
-                      temp.push(...rest[i])
-                    }
+                    } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)
                 }
@@ -343,9 +350,7 @@ export const deSuggarAst = (ast, scope) => {
                     if (i < rest.length - 1) {
                       temp.push([APPLY, KEYWORDS.AND], rest[i], [])
                       temp = temp.at(-1)
-                    } else {
-                      temp.push(...rest[i])
-                    }
+                    } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)
                 }
@@ -361,9 +366,7 @@ export const deSuggarAst = (ast, scope) => {
                     if (i < rest.length - 1) {
                       temp.push([APPLY, KEYWORDS.OR], rest[i], [])
                       temp = temp.at(-1)
-                    } else {
-                      temp.push(...rest[i])
-                    }
+                    } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)
                 }

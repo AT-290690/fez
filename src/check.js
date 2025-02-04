@@ -3,12 +3,8 @@ import {
   ATOM,
   FALSE,
   KEYWORDS,
-  MULTI_DIMENTIONAL_SETTERS,
-  MUTATION_SUFFIX,
-  MUTATORS_SET,
   PLACEHOLDER,
   PREDICATE_SUFFIX,
-  PREDICATES_INPUT_SET,
   PREDICATES_OUTPUT_SET,
   SPECIAL_FORMS_SET,
   STATIC_TYPES,
@@ -51,7 +47,6 @@ import {
   getSuffix,
   hasApplyLambdaBlock,
   hasBlock,
-  logExp,
   stringifyArgs
 } from './utils.js'
 Set.prototype.union = function (B) {
@@ -61,7 +56,6 @@ Set.prototype.union = function (B) {
   B.forEach((element) => out.add(element))
   return out
 }
-
 Set.prototype.xor = function (B) {
   const A = this
   const out = new Set()
@@ -69,14 +63,12 @@ Set.prototype.xor = function (B) {
   A.forEach((element) => !B.has(element) && out.add(element))
   return out
 }
-
 Set.prototype.intersection = function (B) {
   const A = this
   const out = new Set()
   B.forEach((element) => A.has(element) && out.add(element))
   return out
 }
-
 Set.prototype.difference = function (B) {
   const A = this
   const out = new Set()
@@ -537,7 +529,7 @@ const checkReturnType = ({ exp, stack, name, env }) => {
     stack
   })
 }
-export const typeCheck = (ast, error = true) => {
+export const typeCheck = (ast) => {
   let scopeIndex = 0
   const root = structuredClone(SPECIAL_FORM_TYPES)
   const Types = new Map()
@@ -546,7 +538,7 @@ export const typeCheck = (ast, error = true) => {
     const [first, ...rest] = isLeaf(exp) ? [exp] : exp
     if (first === undefined)
       throw new TypeError(
-        `(lambda) invocation with missing (Abstraction) name () Provide an (Abstraction) name as the (1) argument.`
+        `(${KEYWORDS.ANONYMOUS_FUNCTION}) invocation with missing (Abstraction) name () Provide an (Abstraction) name as the (1) argument.`
       )
     const isSpecial =
       SPECIAL_FORMS_SET.has(first[VALUE]) || STATIC_TYPES_SET.has(first[VALUE])
@@ -663,7 +655,6 @@ export const typeCheck = (ast, error = true) => {
                   : env[right[VALUE]][STATS][RETURNS][0]
                 if (type !== UNKNOWN)
                   setTypeToReturn(env[name][STATS], env[right[VALUE]][STATS])
-
                 const body = rightHand
                 const rem = hasBlock(body) ? body.at(-1) : body
                 const returns = isLeaf(rem) ? rem : rem[0]
@@ -713,7 +704,6 @@ export const typeCheck = (ast, error = true) => {
               const ref = env[copy[SCOPE_NAME]]
               if (!ref) continue
               ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
-
               // TODO overwrite return type check here
             }
             const returns = deepLambdaReturn(
@@ -781,7 +771,7 @@ export const typeCheck = (ast, error = true) => {
             stack.append(() => {
               if (!isSpecial && env[first[VALUE]] === undefined)
                 throw new TypeError(
-                  `Trying to call undefined (lambda) ${first[VALUE]} (check #9)`
+                  `Trying to call undefined (${KEYWORDS.ANONYMOUS_FUNCTION}) ${first[VALUE]} (check #9)`
                 )
               else if (
                 env[first[VALUE]][STATS][TYPE_PROP][0] === APPLY &&
@@ -799,9 +789,9 @@ export const typeCheck = (ast, error = true) => {
                 if (first[TYPE] === APPLY && !isSpecial) {
                   if (getType(env[first[VALUE]][STATS]) === ATOM)
                     throw new TypeError(
-                      `(${first[VALUE]}) is not a (lambda) (${stringifyArgs(
-                        exp
-                      )}) (check #12)`
+                      `(${first[VALUE]}) is not a (${
+                        KEYWORDS.ANONYMOUS_FUNCTION
+                      }) (${stringifyArgs(exp)}) (check #12)`
                     )
                   else if (!env[first[VALUE]][STATS][ARG_COUNT]) {
                     // TODO recursively take return type of applicaion
@@ -1065,7 +1055,9 @@ export const typeCheck = (ast, error = true) => {
                           throw new TypeError(
                             `Incorrect number of arguments for (${
                               args[i][STATS][SIGNATURE]
-                            }) the (lambda) argument of (${
+                            }) the (${
+                              KEYWORDS.ANONYMOUS_FUNCTION
+                            }) argument of (${
                               first[VALUE]
                             }) at position (${i}). Expected (= ${
                               args[i][STATS][ARG_COUNT]
@@ -1089,7 +1081,9 @@ export const typeCheck = (ast, error = true) => {
                             throw new TypeError(
                               `Incorrect return type for (${
                                 expected[STATS][SIGNATURE]
-                              }) the (lambda) argument of (${
+                              }) the (${
+                                KEYWORDS.ANONYMOUS_FUNCTION
+                              }) argument of (${
                                 first[VALUE]
                               }) at position (${i}). Expected (${toTypeNames(
                                 getReturn(expected[STATS])
@@ -1115,7 +1109,9 @@ export const typeCheck = (ast, error = true) => {
                               !compareTypes(actual[STATS], expected[STATS])
                             )
                               throw new TypeError(
-                                `Incorrect type for (lambda) (${
+                                `Incorrect type for (${
+                                  KEYWORDS.ANONYMOUS_FUNCTION
+                                }) (${
                                   args[i][STATS][SIGNATURE]
                                 }) argument at position (${j}) named as (${
                                   actual[STATS][SIGNATURE]
@@ -1202,7 +1198,9 @@ export const typeCheck = (ast, error = true) => {
                                     throw new TypeError(
                                       `Incorrect number of arguments for (${
                                         args[i][STATS][SIGNATURE]
-                                      }) the (lambda) argument of (${
+                                      }) the (${
+                                        KEYWORDS.ANONYMOUS_FUNCTION
+                                      }) argument of (${
                                         first[VALUE]
                                       }) at position (${i}). Expected (= ${
                                         args[i][STATS][ARG_COUNT]
@@ -1240,7 +1238,9 @@ export const typeCheck = (ast, error = true) => {
                                         throw new TypeError(
                                           `Incorrect return type for (${
                                             expected[STATS][SIGNATURE]
-                                          }) the (lambda) argument of (${
+                                          }) the (${
+                                            KEYWORDS.ANONYMOUS_FUNCTION
+                                          }) argument of (${
                                             first[VALUE]
                                           }) at position (${i}). Expected (${toTypeNames(
                                             getReturn(expected[STATS])
@@ -1275,7 +1275,9 @@ export const typeCheck = (ast, error = true) => {
                                           )
                                         )
                                           throw new TypeError(
-                                            `Incorrect type for (lambda) (${
+                                            `Incorrect type for (${
+                                              KEYWORDS.ANONYMOUS_FUNCTION
+                                            }) (${
                                               args[i][STATS][SIGNATURE]
                                             }) argument at position (${j}) named as (${
                                               local[lambdaName][STATS][
@@ -1312,7 +1314,6 @@ export const typeCheck = (ast, error = true) => {
                     }
                     match()
                   }
-
                   // handly typehints for arrays
                   // if (
                   //   first[TYPE] === APPLY &&
