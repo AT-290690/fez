@@ -107,6 +107,18 @@ describe('Type checking', () => {
     )
   })
   it('Does not throw', () => {
+    passes(`(let arr [0])
+(let item (get-or-default arr 0 -1))
+(cond 
+    (bool? item) (do
+                    (let item-bool (not (not item))))
+    (atom? item) (do 
+                    (let item-number (Atom item)))
+    (array? item) (do 
+                    (let item-array (Collection item)))
+    (lambda? item) (do 
+                    (let item-lambda (Abstraction item)))
+    (*) nil)`)
     passes(`(let x (not 0))
 (if x 1 1)
 (let f (lambda true))
