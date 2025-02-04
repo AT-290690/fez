@@ -1160,7 +1160,6 @@ export const typeCheck = (ast) => {
                     ) {
                       // REFF ASSIGMENT
                       setTypeRef(env[rest[i][VALUE]][STATS], args[i][STATS])
-                      setReturnRef(env[rest[i][VALUE]][STATS], args[i][STATS])
                     } else if (
                       env[rest[i][VALUE]] &&
                       !isUnknownType(args[i][STATS]) &&
