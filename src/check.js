@@ -989,20 +989,40 @@ export const typeCheck = (ast, error = true) => {
                           ? getType(env[rest[i][VALUE]][STATS])
                           : UNKNOWN
                         : rest[i][TYPE]
-                    if (
-                      T === ATOM &&
-                      !isUnknownType(args[i][STATS]) &&
-                      getType(args[i][STATS]) !== ATOM
-                    ) {
-                      throw new TypeError(
-                        `Incorrect type of argument (${i}) for (${
-                          first[VALUE]
-                        }). Expected (${toTypeNames(
-                          getType(args[i][STATS])
-                        )}) but got (${toTypeNames(T)}) (${stringifyArgs(
-                          exp
-                        )}) (check #10)`
+                    if (T === ATOM && !isUnknownType(args[i][STATS])) {
+                      if (getType(args[i][STATS]) !== ATOM)
+                        throw new TypeError(
+                          `Incorrect type of argument (${i}) for (${
+                            first[VALUE]
+                          }). Expected (${toTypeNames(
+                            getType(args[i][STATS])
+                          )}) but got (${toTypeNames(T)}) (${stringifyArgs(
+                            exp
+                          )}) (check #10)`
+                        )
+                      else if (
+                        rest[i][TYPE] === ATOM
+                          ? hasSubType(args[i][STATS]) &&
+                            getSubType(args[i][STATS]).has(PREDICATE) &&
+                            !isAtomABoolean(rest[i][VALUE])
+                          : notABooleanType(
+                              args[i][STATS],
+                              env[rest[i][VALUE]][STATS]
+                            )
                       )
+                        throw new TypeError(
+                          `Incorrect type of argument (${i}) for special form (${
+                            first[VALUE]
+                          }). Expected (${formatSubType(
+                            getTypes(args[i][STATS])
+                          )}) but got (${
+                            rest[i][TYPE] === ATOM
+                              ? toTypeNames(rest[i][TYPE])
+                              : formatSubType(
+                                  getTypes(env[rest[i][VALUE]][STATS])
+                                )
+                          }) (${stringifyArgs(exp)}) (check #205)`
+                        )
                     } else if (
                       T === APPLY &&
                       !isUnknownType(args[i][STATS]) &&
@@ -1158,7 +1178,17 @@ export const typeCheck = (ast, error = true) => {
                               getReturn(actual)
                             )}) (${stringifyArgs(exp)}) (check #16)`
                           )
-                        else {
+                        else if (notABooleanReturn(expected, actual)) {
+                          throw new TypeError(
+                            `Incorrect type of argument (${i}) for special form (${
+                              first[VALUE]
+                            }). Expected (${formatSubType(
+                              getTypes(expected)
+                            )}) but got (${formatSubType(
+                              getReturns(actual)
+                            )}) (${stringifyArgs(exp)}) (check #204)`
+                          )
+                        } else {
                           switch (getType(expected)) {
                             // almost exclusively for anonymous lambdas
                             case APPLY:

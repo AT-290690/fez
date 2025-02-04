@@ -652,6 +652,11 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect type of argument (1) for special form (+). Expected (Atom) but got ([]) (+ (f8) (f5 1)) (check #1)`
     )
     fails(
+      `(let fn (lambda x y? (+ x (or y? 1))))
+(fn 1 2)`,
+      `Incorrect type of argument (1) for special form (fn). Expected (Boolean) but got (Atom) (fn 1 2) (check #205)`
+    )
+    fails(
       `(let fn1? (lambda (apply [1] array:empty!)))
 (let fn2? (lambda x (apply x (lambda x (array:empty! [1])))))
 (let x1? (array:empty! [1]))
@@ -772,6 +777,22 @@ ZZZ=ZZZ,ZZZ")
     (array:get [1 2 3] 1)
     )))`,
       `Incorrect type of argument (1) for (array:get). Expected (Atom) but got ([]) (array:get (array 1 2 3) (array)) (check #16)`
+    )
+    fails(
+      `(let f (lambda x (if (and x true) false true)))
+(let r (lambda 10))
+(f (r))`,
+      `Incorrect type of argument (0) for special form (f). Expected (Boolean) but got (Number) (f (r)) (check #204)`
+    )
+    fails(
+      `(let f (lambda x (if (and x true) false true))) (f 2)`,
+      `Incorrect type of argument (0) for special form (f). Expected (Boolean) but got (Atom) (f 2) (check #205)`
+    )
+    fails(
+      `(let f (lambda x (if (and x true) false true)))
+(let r 10)
+(f r)`,
+      `Incorrect type of argument (0) for special form (f). Expected (Boolean) but got (Number) (f r) (check #205)`
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
