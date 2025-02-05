@@ -20,8 +20,8 @@
                           (array:unzip)
                           (mapping:array->array (curry:two array:sort >))
                           (pair:zip)
-                          (mapping:array->number pair:subtract)
-                          (mapping:number->number math:abs)
+                          (mapping:array->atom pair:subtract)
+                          (mapping:atom->atom math:abs)
                           (math:summation))))
                         
 (let part2 (lambda input (do
@@ -29,7 +29,7 @@
   (let [left right .] unzipped)
   (|>
     left
-    (mapping:number->number (lambda l (* l (array:count-of right (lambda r (= l r))))))
+    (mapping:atom->atom (lambda l (* l (array:count-of right (lambda r (= l r))))))
     (math:summation)))))
 
 (let PARSED (parse INPUT))

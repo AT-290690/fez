@@ -120,7 +120,10 @@ export const castType = (stats, type) => {
   )
 }
 export const castReturn = (stats, type) => {
-  return (stats[RETURNS][0] = type[RETURNS][0])
+  return (
+    (stats[RETURNS][0] = type[RETURNS][0]),
+    (stats[RETURNS][1] = type[RETURNS][1])
+  )
 }
 export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) => {
@@ -275,15 +278,21 @@ export const isUknownSubReturn = (stats) =>
   !hasSubReturn(stats) ||
   (stats[RETURNS][1].size === 1 && stats[RETURNS][1].has(UNKNOWN))
 export const isUknownSubType = (stats) =>
-  hasSubReturn(stats) &&
+  hasSubType(stats) &&
   stats[TYPE_PROP][1].size === 1 &&
   stats[TYPE_PROP][1].has(UNKNOWN)
 export const isAtomType = (stats) =>
   isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
 export const isAtomReturn = (stats) =>
   isAnyType(stats) || stats[RETURNS][0] === ATOM
-export const compareTypes = (a, b) =>
-  isAnyType(a) || isAnyType(b) || a[TYPE_PROP][0] === b[TYPE_PROP][0]
+export const compareTypes = (a, b) => {
+  const isAnyAny = isAnyType(a) || isAnyType(b)
+  if (isAnyAny) return true
+  const isSameType = a[TYPE_PROP][0] === b[TYPE_PROP][0]
+  if (!isSameType) return false
+  return true
+}
+
 export const compareReturns = (a, b) =>
   isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
 export const compareTypeWithReturn = (a, b) =>
@@ -308,15 +317,25 @@ const notABooleanType = (a, b) => {
     (!hasSubType(b) || getSubType(a).difference(getSubType(b)).size !== 0)
   )
 }
+// const notABooleanReturn = (a, b) => {
+//   return (
+//     hasSubType(a) &&
+//     getSubType(a).has(PREDICATE) &&
+//     !isUnknownReturn(b) &&
+//     !isAnyReturn(b) &&
+//     (
+//       !isAtomReturn(b) ||
+//       !hasSubReturn(b) ||
+//       getSubType(a).difference(getSubReturn(b)).size !== 0)
+//   )
+// }
 const notABooleanReturn = (a, b) => {
   return (
     hasSubType(a) &&
     getSubType(a).has(PREDICATE) &&
     !isUnknownReturn(b) &&
     !isAnyReturn(b) &&
-    (!isAtomReturn(b) ||
-      !hasSubReturn(b) ||
-      getSubType(a).difference(getSubReturn(b)).size !== 0)
+    (!hasSubReturn(b) || getSubType(a).difference(getSubReturn(b)).size !== 0)
   )
 }
 const isAtomABoolean = (atom) => atom === TRUE || atom === FALSE
@@ -530,39 +549,44 @@ const resolveSetter = (first, rest, env) => {
   ) {
     const name = rest[0][VALUE]
     const current = env[name]
-    if (!hasSubType(current[STATS])) {
-      const right = isLeaf(rest.at(-1)) ? rest.at(-1) : rest.at(-1)[0]
-      switch (right[TYPE]) {
-        case ATOM:
-          current[STATS][TYPE_PROP][1] = new Set([NUMBER])
-          break
-        case WORD:
-          if (env[right[VALUE]]) {
-            if (hasSubType(env[right[VALUE]][STATS]))
-              current[STATS][TYPE_PROP][1] = new Set(
-                getSubType(env[right[VALUE]][STATS])
-              )
-            else
-              current[STATS][TYPE_PROP][1] = new Set([
-                getType(env[right[VALUE]][STATS])
-              ])
+    const right = isLeaf(rest.at(-1)) ? rest.at(-1) : rest.at(-1)[0]
+    switch (right[TYPE]) {
+      case ATOM:
+        current[STATS][TYPE_PROP][1] = new Set([NUMBER])
+        break
+      case WORD:
+        if (env[right[VALUE]]) {
+          if (hasSubType(env[right[VALUE]][STATS]))
+            current[STATS][TYPE_PROP][1] = new Set(
+              getSubType(env[right[VALUE]][STATS])
+            )
+          else
+            current[STATS][TYPE_PROP][1] = new Set([
+              getType(env[right[VALUE]][STATS])
+            ])
+        }
+        break
+      case APPLY:
+        if (env[right[VALUE]]) {
+          if (right[VALUE] === KEYWORDS.CREATE_ARRAY) {
+            current[STATS][TYPE_PROP][1] = (initArrayType({
+              rem: rest.at(-1),
+              env
+            }) ?? { [RETURNS]: [COLLECTION, new Set([])] })[RETURNS][1]
+            break
           }
-          break
-        case APPLY:
-          if (env[right[VALUE]]) {
-            if (hasSubReturn(env[right[VALUE]][STATS]))
-              current[STATS][TYPE_PROP][1] = new Set([
-                ...getSubReturn(env[right[VALUE]][STATS])
-              ])
-            else
-              current[STATS][TYPE_PROP][1] = new Set([
-                env[right[VALUE]][STATS][RETURNS][0]
-              ])
-          }
-          break
-      }
-      setTypeToCollection(current[STATS])
+          if (hasSubReturn(env[right[VALUE]][STATS]))
+            current[STATS][TYPE_PROP][1] = new Set([
+              ...getSubReturn(env[right[VALUE]][STATS])
+            ])
+          else if (!isUnknownReturn(env[right[VALUE]][STATS]))
+            current[STATS][TYPE_PROP][1] = new Set([
+              getReturn(env[right[VALUE]][STATS])
+            ])
+        }
+        break
     }
+    setTypeToCollection(current[STATS])
   }
 }
 const resolveGetter = ({ rem, prop, name, env }) => {
@@ -603,6 +627,33 @@ const resolveGetter = ({ rem, prop, name, env }) => {
   }
   return true
 }
+const initArrayType = ({ rem, env }) => {
+  const ret = rem
+    .slice(1)
+    .map((x) =>
+      isLeaf(x)
+        ? x[TYPE] === WORD
+          ? env[x[VALUE]]
+            ? getTypes(env[x[VALUE]][STATS])
+            : [UNKNOWN]
+          : [x[TYPE]]
+        : env[x[0][VALUE]]
+        ? getReturns(env[x[0][VALUE]][STATS])
+        : [UNKNOWN]
+    )
+  const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
+  if (
+    known &&
+    ret.length &&
+    !ret.some((x) => known[0] !== x[0] || known.length !== x.length)
+  ) {
+    const [main, sub] = ret[0]
+    return {
+      [TYPE_PROP]: [APPLY],
+      [RETURNS]: [COLLECTION, new Set(sub ? [...sub] : [main])]
+    }
+  }
+}
 const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
   if (returns[TYPE] === ATOM) {
     // ATOM ASSIGMENT
@@ -611,27 +662,8 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
     switch (returns[VALUE]) {
       case KEYWORDS.CREATE_ARRAY:
         {
-          const ret = rem
-            .slice(1)
-            .map((x) =>
-              isLeaf(x)
-                ? x[TYPE] === WORD
-                  ? env[x[VALUE]]
-                    ? getTypes(env[x[VALUE]][STATS])
-                    : [UNKNOWN]
-                  : [x[TYPE]]
-                : env[x[0][VALUE]]
-                ? getReturns(env[x[0][VALUE]][STATS])
-                : [UNKNOWN]
-            )
-          const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
-          if (known && ret.length && !ret.some((x) => known[0] !== x[0])) {
-            const [main, sub] = ret[0]
-            setPropToSubReturn(env[name][STATS], prop, {
-              [RETURNS]: [COLLECTION, new Set(sub ? [...sub] : [main])]
-            })
-          }
-          return false
+          const r = initArrayType({ rem, env })
+          if (r) setPropToSubReturn(env[name][STATS], prop, r)
         }
         break
       case KEYWORDS.IF:
@@ -923,6 +955,7 @@ export const typeCheck = (ast) => {
           case STATIC_TYPES.ATOM:
           case STATIC_TYPES.PREDICATE:
           case STATIC_TYPES.ANY:
+          case STATIC_TYPES.NUMBER:
             {
               const ret = isLeaf(rest[0]) ? rest[0] : rest[0][0]
               const ref = env[ret[VALUE]]
@@ -1113,7 +1146,21 @@ export const typeCheck = (ast) => {
                                   getTypes(env[name][STATS])
                                 )}) (${stringifyArgs(exp)}) (check #202)`
                               )
-                            else setType(env[name][STATS], args[i][STATS])
+                            else {
+                              // TODO the special form will set type first but it
+                              // might be known already
+                              // example
+                              // (let xs [])
+                              // (let x (array:set-and-get! xs 0 100))
+                              // (length x)
+                              //
+                              // if (isUnknownType(env[name][STATS])) {
+                              //   retry(env[name][STATS], stack, () =>
+                              //     check(exp, env, scope)
+                              //   )
+                              // } else
+                              setType(env[name][STATS], args[i][STATS])
+                            }
                           }
                           break
                         case ATOM: {
@@ -1340,7 +1387,11 @@ export const typeCheck = (ast) => {
                     }
                   } else if (env[rest[i][0][VALUE]]) {
                     const match = () => {
-                      const actual = env[rest[i][0][VALUE]][STATS]
+                      const actual =
+                        rest[i][0][VALUE] === KEYWORDS.CREATE_ARRAY
+                          ? initArrayType({ rem: rest[i], env }) ??
+                            env[rest[i][0][VALUE]][STATS]
+                          : env[rest[i][0][VALUE]][STATS]
                       const expected = args[i][STATS]
                       retryArgs(args[i][STATS], stack, () => match())
                       if (!isUnknownType(expected) && !isUnknownReturn(actual))

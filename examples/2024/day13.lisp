@@ -35,7 +35,7 @@ Prize: X=18641, Y=10279")
 (let part1 (lambda input
                 (|>
                   input
-                  (reducing:array->number (lambda a b (do
+                  (reducing:array->atom (lambda a b (do
                     (let A (array:first b))
                     (let B (array:second b))
                     (let P (array:third b))
@@ -54,7 +54,7 @@ Prize: X=18641, Y=10279")
 
 (let part2 (lambda input
               (|> input
-                  (reducing:array->number (lambda a b (do
+                  (reducing:array->atom (lambda a b (do
                       (let A (array:first b))
                       (let B (array:second b))
                       (let P (array:third b))

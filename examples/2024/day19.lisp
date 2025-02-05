@@ -38,7 +38,7 @@ bbrgwb")
                     (if (set:exists? patterns pattern)
                         (memoized:num-possibilities (array:slice stripes index (array:length stripes)))))))
                 (math:summation)))))
-  (|> towels (mapping:array->number memoized:num-possibilities) (math:summation)))))
+  (|> towels (mapping:array->atom memoized:num-possibilities) (math:summation)))))
 
 (let PARSED (parse INPUT))
 

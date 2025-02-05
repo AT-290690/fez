@@ -53,16 +53,16 @@
                 (array:set! h i (math:max (array:get h i) y)))))))) h)))
 
     (let fit-sum (lambda pairs (do 
-        (|> pairs (mapping:array->number (lambda [lock key .] 
+        (|> pairs (mapping:array->atom (lambda [lock key .] 
                   (|> (array:zip lock key) 
-                    (mapping:array->number (lambda x (- M (pair:add x)))) 
+                    (mapping:array->atom (lambda x (- M (pair:add x)))) 
                     (array:some? (lambda a (< a 0))) 
                     (not)))) (math:summation)))))
     (let A 0)
     (let B 1)
     
-    (let from:b->heights (lambda matrix (|> matrix (mapping-enumerated:array->array (lambda y i (|> y (mapping:number->number (lambda c (if (= c char:hash) i -1)))))))))
-    (let from:a->heights (lambda matrix (|> matrix (mapping-enumerated:array->array (lambda y i (|> y (mapping:number->number (lambda c (if (= c char:hash) (- (array:length y) i 1) -1)))))))))
+    (let from:b->heights (lambda matrix (|> matrix (mapping-enumerated:array->array (lambda y i (|> y (mapping:atom->atom (lambda c (if (= c char:hash) i -1)))))))))
+    (let from:a->heights (lambda matrix (|> matrix (mapping-enumerated:array->array (lambda y i (|> y (mapping:atom->atom (lambda c (if (= c char:hash) (- (array:length y) i 1) -1)))))))))
     
     (let heights (|> input (mapping:array->array (lambda x
         (if (array:some? (array:get x 0) (lambda y (= y char:dot)))

@@ -11,7 +11,7 @@
 FFFBBBFRRR
 BBFFBBFRLL")
 (let binary-boarding (lambda inp bounds lower upper (|> inp 
-      (reducing:number->array (lambda a b (do 
+      (reducing:atom->array (lambda a b (do 
             (let half (* (+ (array:first a) (array:second a)) 0.5))
             (cond 
                   (= b lower) (set! a 1 (math:floor half))
@@ -22,7 +22,7 @@ BBFFBBFRLL")
 (let PARSED (|> 
     INPUT 
     (string:lines)
-    (mapping:array->number (lambda directions (do
+    (mapping:array->atom (lambda directions (do
       (let fb (binary-boarding (array:take directions 7) [0 127] char:F char:B))
       (let lr (binary-boarding (array:drop directions 7) [0 7] char:L char:R))
       (+ (* fb 8) lr))))))

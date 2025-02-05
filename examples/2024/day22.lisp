@@ -4,13 +4,13 @@
 100
 2024")
 
-(let parse (lambda input (|> input (string:lines) (mapping:array->number from:string->integer))))
+(let parse (lambda input (|> input (string:lines) (mapping:array->atom from:string->integer))))
 
 (let part1 (lambda input (do
 
 (|>
   input
-  (mapping:number->number (lambda secret (do
+  (mapping:atom->atom (lambda secret (do
     (let SECRET (var:def secret))
     ; Each step of the above process involves mixing and pruning:
 

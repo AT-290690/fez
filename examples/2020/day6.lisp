@@ -19,7 +19,7 @@ b")
 (let unique-chars (|> PARSED (mapping:array->array (lambda xs (mapping:array->array xs select-duplicates-of-strings)))))
 
 [(|> unique-chars 
-  (mapping:array->number length)
+  (mapping:array->atom length)
   (math:summation))]
 
 ; (|> PARSED
@@ -28,15 +28,15 @@ b")
 ;     (let bit-masks (|> line 
 ;       (array:map (lambda str 
 ;         (|> str 
-;             (mapping:number->number (lambda ch (string:character-occurances U ch)))
+;             (mapping:atom->atom (lambda ch (string:character-occurances U ch)))
 ;             )))
 ;             (array:chars)
 ;     ;  (from:digits->integer)
 ;       ))
-;         ; (reducing:number->number bit-masks & 1)
+;         ; (reducing:atom->atom bit-masks & 1)
 ;     ))) 
-;     ; (reducing:number->number & 1)
-;     ;   (reducing:number->number & 1)
+;     ; (reducing:atom->atom & 1)
+;     ;   (reducing:atom->atom & 1)
 ;     ;   (math:summation)
 ;       )
 

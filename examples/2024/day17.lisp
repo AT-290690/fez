@@ -9,7 +9,7 @@ Program: 0,1,5,4,3,0")
     (let lines (|> input (string:lines)))
     (let program (|> lines (array:pop!) (string:words) (array:pop!) (string:commas) (array:flat-one) (from:chars->digits)))
     (array:pop! lines)
-    (let registers (|> lines (mapping:array->number (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->integer))))))
+    (let registers (|> lines (mapping:array->atom (lambda x (|> x (string:words) (array:pop!) (from:chars->digits) (from:digits->integer))))))
     [registers program])))
 
 (let part1 (lambda input (do

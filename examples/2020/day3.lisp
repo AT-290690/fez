@@ -17,7 +17,7 @@
   (let w (length (array:first xs)))
   (|> (// h slopeY)
       (math:zeroes)
-      (mapping-enumerated:number->number (lambda . index
+      (mapping-enumerated:atom->atom (lambda . index
         (|> xs 
           (get (* index slopeY))
           (get (mod (* index slopeX) w)))))))))
@@ -38,7 +38,7 @@
     [5 1]
     [7 1]
     [1 2]]
-    (mapping:array->number (lambda x (|> 
+    (mapping:array->atom (lambda x (|> 
                                         matrix 
                                         (part1 (array:first x) (array:second x)) 
                                         (math:summation))))
