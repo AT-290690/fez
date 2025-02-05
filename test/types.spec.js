@@ -639,6 +639,14 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(let arr [1 2 3 4])
+(let y (lambda (do 
+(let x (get arr 0))
+(set! x 0 1)
+)))`,
+      `Incorrect type of argument (0) for special form (set!). Expected ([Unknown]) but got (Number) (set! x 0 1) (check #3)`
+    )
+    fails(
+      `(let arr [1 2 3 4])
 (let fn1 (lambda 1y x (do 
     (let fn2 (lambda 1x (do
         (array:first)
@@ -843,7 +851,7 @@ ZZZ=ZZZ,ZZZ")
       `(let f (lambda x (if (and x true) false true)))
 (let r (lambda 10))
 (f (r))`,
-      `Incorrect type of argument (0) for special form (f). Expected (Boolean) but got (Number) (f (r)) (check #204)`
+      `Incorrect type of argument (0) for (f). Expected (Boolean) but got (Number) (f (r)) (check #206)`
     )
     fails(
       `(let f (lambda x (if (and x true) false true))) (f 2)`,
@@ -856,20 +864,8 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect type of argument (0) for special form (f). Expected (Boolean) but got (Number) (f r) (check #205)`
     )
     fails(
-      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
-(let z [])
-(let n (lambda x (do 
-    (let y 10)
-    (set! x 0 1)
-    [])))
-(fn 1 n)
-
-    
-    (fn 1 (lambda x (do 
-    (let y 10)
-        (set! x 0 1)
-    [])))`,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #779)`
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1))) (fn 1 (lambda x (do  (let y 10) [])))`,
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
     )
     fails(
       `(let arr [])

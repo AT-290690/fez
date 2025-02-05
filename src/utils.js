@@ -24,6 +24,10 @@ export const logExp = function (exp, ...args) {
   console.log(wrapInBracesString(exp), ...args)
   return exp
 }
+export const log = (x) => {
+  console.log(x)
+  return x
+}
 export const formatCallstack = (callstack) =>
   callstack
     .reverse()

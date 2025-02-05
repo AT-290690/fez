@@ -52,6 +52,7 @@ import {
   getSuffix,
   hasApplyLambdaBlock,
   hasBlock,
+  log,
   logExp,
   stringifyArgs
 } from './utils.js'
@@ -129,7 +130,7 @@ export const setPropToPredicate = (stats, prop) => {
   return (stats[prop][1] = BOOLEAN_SUBTYPE())
 }
 export const setReturnToPredicate = (stats) => {
-  return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
+  return (stats[RETURNS][0] = BOOLEAN_SUBTYPE())
 }
 export const setTypeToPredicate = (stats) => {
   return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
@@ -195,6 +196,9 @@ export const setTypeRef = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   (stats[TYPE_PROP] = value[TYPE_PROP])
 export const setReturnRef = (stats, value) => {
+  if (SPECIAL_FORMS_SET.has(value[SIGNATURE])) {
+    return setReturn(stats, value)
+  }
   return isUnknownReturn(stats) && (stats[RETURNS] = value[RETURNS])
 }
 export const setReturnToTypeRef = (stats, value) => {
@@ -237,7 +241,7 @@ export const setPropToSubType = (stats, prop, value) =>
   hasSubType(value) && (stats[prop][1] = value[TYPE_PROP][1])
 export const setPropToSubReturn = (stats, prop, value) =>
   // makes no senseto protect this for now
-  hasSubType(value) && (stats[prop][1] = value[RETURNS][1])
+  hasSubReturn(value) && (stats[prop][1] = value[RETURNS][1])
 export const setTypeToReturn = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   !isUnknownReturn(value) &&
@@ -264,6 +268,13 @@ export const getSubType = (stats) => stats && stats[TYPE_PROP][1]
 export const hasSubType = (stats) => stats && stats[TYPE_PROP][1] instanceof Set
 export const getSubReturn = (stats) => stats && stats[RETURNS][1]
 export const hasSubReturn = (stats) => stats && stats[RETURNS][1] instanceof Set
+export const isUknownSubReturn = (stats) =>
+  !hasSubReturn(stats) ||
+  (stats[RETURNS][1].size === 1 && stats[RETURNS][1].has(UNKNOWN))
+export const isUknownSubType = (stats) =>
+  hasSubReturn(stats) &&
+  stats[TYPE_PROP][1].size === 1 &&
+  stats[TYPE_PROP][1].has(UNKNOWN)
 export const isAtomType = (stats) =>
   isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
 export const isAtomReturn = (stats) =>
@@ -572,7 +583,10 @@ const resolveGetter = ({ rem, prop, name, env }) => {
       {
         if (hasSubType(env[array[VALUE]][STATS])) {
           const rightSub = getSubType(env[array[VALUE]][STATS])
-          const isAtom = rightSub.has(NUMBER) || rightSub.has(PREDICATE)
+          const isAtom =
+            rightSub.has(ATOM) ||
+            rightSub.has(NUMBER) ||
+            rightSub.has(PREDICATE)
           const isCollection = rightSub.has(COLLECTION)
           if (isAtom && !isCollection) {
             setPropToAtom(env[name][STATS], prop)
@@ -592,6 +606,31 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
     setPropToAtom(env[name][STATS], prop)
   } else {
     switch (returns[VALUE]) {
+      case KEYWORDS.CREATE_ARRAY:
+        {
+          const ret = rem
+            .slice(1)
+            .map((x) =>
+              isLeaf(x)
+                ? x[TYPE] === WORD
+                  ? env[x[VALUE]]
+                    ? getTypes(env[x[VALUE]][STATS])
+                    : [UNKNOWN]
+                  : [x[TYPE]]
+                : env[x[0][VALUE]]
+                ? getReturns(env[x[0][VALUE]][STATS])
+                : [UNKNOWN]
+            )
+          const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
+          if (known && ret.length && !ret.some((x) => known[0] !== x[0])) {
+            const [main, sub] = ret[0]
+            setPropToSubReturn(env[name][STATS], prop, {
+              [RETURNS]: [COLLECTION, new Set(sub ? [...sub] : [main])]
+            })
+          }
+          return false
+        }
+        break
       case KEYWORDS.IF:
         resolveCondition({ rem, name, env, exp, prop })
         break
@@ -1314,13 +1353,13 @@ export const typeCheck = (ast) => {
                           )
                         else if (notABooleanReturn(expected, actual)) {
                           throw new TypeError(
-                            `Incorrect type of argument (${i}) for special form (${
+                            `Incorrect type of argument (${i}) for (${
                               first[VALUE]
                             }). Expected (${formatSubType(
                               getTypes(expected)
                             )}) but got (${formatSubType(
                               getReturns(actual)
-                            )}) (${stringifyArgs(exp)}) (check #204)`
+                            )}) (${stringifyArgs(exp)}) (check #206)`
                           )
                         } else {
                           switch (getType(expected)) {

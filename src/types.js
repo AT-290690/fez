@@ -30,7 +30,6 @@ export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
 export const BOOLEAN_SUBTYPE = () => new Set([PREDICATE])
-export const ANY_SUBTYPE = () => new Set([ANY])
 export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
 export const NUMBER_SUBTYPE = () => new Set([NUMBER])
 
@@ -765,8 +764,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [COLLECTION, ANY_SUBTYPE()],
-            [RETURNS]: [COLLECTION, ANY_SUBTYPE()],
+            [TYPE_PROP]: [COLLECTION],
+            [RETURNS]: [COLLECTION],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -795,7 +794,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [COLLECTION, ANY_SUBTYPE()]
+      [RETURNS]: [COLLECTION]
     }
   },
   [KEYWORDS.POP_ARRAY]: {
