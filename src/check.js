@@ -2,8 +2,8 @@ import {
   APPLY,
   ATOM,
   FALSE,
+  GETTERS_SET,
   KEYWORDS,
-  MULTI_DIMENTIONAL_SETTERS,
   MUTATION_SUFFIX,
   MUTATORS_SET,
   PLACEHOLDER,
@@ -505,8 +505,53 @@ const resolveCondition = ({ rem, name, env, exp, prop }) => {
       break
   }
 }
-
-const handleGetter = ({ rem, prop, name, env }) => {
+const resolveSetter = (first, rest, env) => {
+  if (
+    getSuffix(first[VALUE]) === MUTATION_SUFFIX &&
+    MUTATORS_SET.has(first[VALUE]) &&
+    rest[0] &&
+    isLeaf(rest[0]) &&
+    rest[0][TYPE] !== ATOM &&
+    env[rest[0][VALUE]]
+  ) {
+    const name = rest[0][VALUE]
+    const current = env[name]
+    if (!hasSubType(current[STATS])) {
+      const right = isLeaf(rest.at(-1)) ? rest.at(-1) : rest.at(-1)[0]
+      switch (right[TYPE]) {
+        case ATOM:
+          current[STATS][TYPE_PROP][1] = new Set([NUMBER])
+          break
+        case WORD:
+          if (env[right[VALUE]]) {
+            if (hasSubType(env[right[VALUE]][STATS]))
+              current[STATS][TYPE_PROP][1] = new Set(
+                getSubType(env[right[VALUE]][STATS])
+              )
+            else
+              current[STATS][TYPE_PROP][1] = new Set([
+                getType(env[right[VALUE]][STATS])
+              ])
+          }
+          break
+        case APPLY:
+          if (env[right[VALUE]]) {
+            if (hasSubReturn(env[right[VALUE]][STATS]))
+              current[STATS][TYPE_PROP][1] = new Set([
+                ...getSubReturn(env[right[VALUE]][STATS])
+              ])
+            else
+              current[STATS][TYPE_PROP][1] = new Set([
+                env[right[VALUE]][STATS][RETURNS][0]
+              ])
+          }
+          break
+      }
+      setTypeToCollection(current[STATS])
+    }
+  }
+}
+const resolveGetter = ({ rem, prop, name, env }) => {
   const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
   if (!env[array[VALUE]] || !env[name]) return true
   switch (array[TYPE]) {
@@ -547,10 +592,16 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
     setPropToAtom(env[name][STATS], prop)
   } else {
     switch (returns[VALUE]) {
-      case KEYWORDS.GET_ARRAY:
+      case KEYWORDS.IF:
+        resolveCondition({ rem, name, env, exp, prop })
+        break
+      default:
         {
-          if (!handleGetter({ rem, prop, name, env }))
-            retry(env[name][STATS], stack, () => {
+          if (
+            GETTERS_SET.has(returns[VALUE]) &&
+            !resolveGetter({ rem, prop, name, env })
+          )
+            return retry(env[name][STATS], stack, () => {
               resolveRetunType({
                 returns,
                 rem,
@@ -561,45 +612,6 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
                 env
               })
             })
-
-          // const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
-          // switch (array[TYPE]) {
-          //   case APPLY:
-          //     break
-          //   case WORD:
-          //     {
-          //       if (hasSubType(env[array[VALUE]][STATS])) {
-          //         const rightSub = getSubType(env[array[VALUE]][STATS])
-          //         const isAtom = rightSub.has(NUMBER) || rightSub.has(PREDICATE)
-          //         const isCollection = rightSub.has(COLLECTION)
-          //         if (isAtom && !isCollection) {
-          //           setTypeToAtom(env[name][STATS])
-          //           setSubType(env[name][STATS], env[array[VALUE]][STATS])
-          //         } else if (!isAtom && isCollection) {
-          //           setType(env[name][STATS], env[array[VALUE]][STATS])
-          //         }
-          //       } else
-          //         stack.prepend(() =>
-          //           resolveRetunType({
-          //             returns,
-          //             rem,
-          //             stack,
-          //             prop,
-          //             exp,
-          //             name,
-          //             env
-          //           })
-          //         )
-          //     }
-          //     break
-          // }
-        }
-        break
-      case KEYWORDS.IF:
-        resolveCondition({ rem, name, env, exp, prop })
-        break
-      default:
-        {
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           if (!env[returns[VALUE]]) return false
           else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
@@ -615,11 +627,6 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
                     env[name][STATS],
                     env[returns[VALUE]][STATS]
                   )
-                  // env[name][STATS][TYPE_PROP][0] =
-                  //   env[returns[VALUE]][STATS][RETURNS][0]
-                  // this seems to be able to be deleted
-                  // env[name][STATS][TYPE_PROP][1] =
-                  //   env[returns[VALUE]][STATS][RETURNS][1]
                 })
               else setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
             }
@@ -674,6 +681,8 @@ export const typeCheck = (ast) => {
         break
       case APPLY: {
         switch (first[VALUE]) {
+          // Var
+          // ---------------
           case KEYWORDS.DEFINE_VARIABLE:
             if (rest.length !== 2)
               throw new TypeError(
@@ -885,6 +894,12 @@ export const typeCheck = (ast) => {
             }
             break
           default:
+            // Setters are just like DEFINE_VARIABLE as they are essentially the Var case for Collections
+            // So they MUST happen before Judgement
+            resolveSetter(first, rest, env)
+            // end of Var  ---------------
+
+            // Judgement
             stack.append(() => {
               if (!isSpecial && env[first[VALUE]] === undefined)
                 throw new TypeError(
@@ -957,53 +972,6 @@ export const typeCheck = (ast) => {
                 }
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
-                if (
-                  getSuffix(first[VALUE]) === MUTATION_SUFFIX &&
-                  MUTATORS_SET.has(first[VALUE]) &&
-                  rest[0] &&
-                  isLeaf(rest[0]) &&
-                  rest[0][TYPE] !== ATOM &&
-                  env[rest[0][VALUE]]
-                ) {
-                  const name = rest[0][VALUE]
-                  const current = env[name]
-                  if (!hasSubType(current[STATS])) {
-                    const right = isLeaf(rest.at(-1))
-                      ? rest.at(-1)
-                      : rest.at(-1)[0]
-                    switch (right[TYPE]) {
-                      case ATOM:
-                        current[STATS][TYPE_PROP][1] = new Set([NUMBER])
-                        break
-                      case WORD:
-                        if (env[right[VALUE]]) {
-                          if (hasSubType(env[right[VALUE]][STATS]))
-                            current[STATS][TYPE_PROP][1] = new Set(
-                              getSubType(env[right[VALUE]][STATS])
-                            )
-                          else
-                            current[STATS][TYPE_PROP][1] = new Set([
-                              getType(env[right[VALUE]][STATS])
-                            ])
-                        }
-                        break
-                      case APPLY:
-                        if (env[right[VALUE]]) {
-                          if (hasSubType(env[right[VALUE]][STATS])) {
-                            current[STATS][TYPE_PROP][1] = new Set([
-                              getSubReturn(env[right[VALUE]][STATS])
-                            ])
-                          } else {
-                            current[STATS][TYPE_PROP][1] = new Set([
-                              env[right[VALUE]][STATS][RETURNS][0]
-                            ])
-                          }
-                        }
-                        break
-                    }
-                    setTypeToCollection(current[STATS])
-                  }
-                }
                 for (let i = 0; i < args.length; ++i) {
                   const isResLeaf = isLeaf(rest[i])
                   // type check
@@ -1484,78 +1452,6 @@ export const typeCheck = (ast) => {
                     }
                     match()
                   }
-                  // handly typehints for arrays
-                  // if (
-                  //   first[TYPE] === APPLY &&
-                  //   getSuffix(first[VALUE]) === MUTATION_SUFFIX &&
-                  //   env[first[VALUE]]
-                  // ) {
-                  //   const current = env[rest[i][VALUE]]
-                  //   if (current && rest[i][TYPE] === WORD) {
-                  //     if (hasSubType(current[STATS])) return
-                  //     stack.append(() => {
-                  //       // if (!current[STATS][TYPE_PROP][1]) {
-                  //       //   current[STATS][TYPE_PROP][1] = new Set()
-                  //       // }
-
-                  //       const right = isLeaf(rest.at(-1))
-                  //         ? rest.at(-1)
-                  //         : rest.at(-1)[0]
-                  //       switch (right[TYPE]) {
-                  //         case ATOM:
-                  //           // current[STATS][TYPE_PROP][1].add(NUMBER)
-                  //           current[STATS][TYPE_PROP][1] = new Set([NUMBER])
-                  //           break
-                  //         case WORD:
-                  //           if (env[right[VALUE]]) {
-                  //             // if (hasSubType(env[right[VALUE]][STATS]))
-                  //             //   current[STATS][TYPE_PROP][1].add(
-                  //             //     ...[...getSubType(env[right[VALUE]][STATS])]
-                  //             //   )
-                  //             // else
-                  //             //   current[STATS][TYPE_PROP][1].add(
-                  //             //     getType(env[right[VALUE]][STATS])
-                  //             //   )
-                  //             // if (hasSubType(env[right[VALUE]][STATS]))
-                  //             //   current[STATS][TYPE_PROP][1].add(
-                  //             //     ...[...getSubType(env[right[VALUE]][STATS])]
-                  //             //   )
-                  //             // else
-                  //             //   current[STATS][TYPE_PROP][1].add(
-                  //             //     getType(env[right[VALUE]][STATS])
-                  //             //   )
-                  //             if (hasSubType(env[right[VALUE]][STATS]))
-                  //               current[STATS][TYPE_PROP][1] = new Set(
-                  //                 getSubType(env[right[VALUE]][STATS])
-                  //               )
-                  //             else
-                  //               current[STATS][TYPE_PROP][1] = new Set([
-                  //                 getType(env[right[VALUE]][STATS])
-                  //               ])
-                  //           }
-                  //           break
-                  //         case APPLY:
-                  //           // if (env[right[VALUE]])
-                  //           //   current[STATS][TYPE_PROP][1].add(
-                  //           //     ...env[right[VALUE]][STATS][RETURNS]
-                  //           //   )
-                  //           if (env[right[VALUE]]) {
-                  //             if (hasSubType(env[right[VALUE]][STATS])) {
-                  //               current[STATS][TYPE_PROP][1] = new Set([
-                  //                 getSubReturn(env[right[VALUE]][STATS])
-                  //               ])
-                  //             } else {
-                  //               current[STATS][TYPE_PROP][1] = new Set([
-                  //                 env[right[VALUE]][STATS][RETURNS][0]
-                  //               ])
-                  //             }
-                  //           }
-                  //           break
-                  //       }
-                  //     })
-                  //   }
-                  // }
-                  // handly typehints for arrays
                 }
               }
             })

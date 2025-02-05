@@ -68,8 +68,12 @@ describe('Type checking', () => {
 (let g (lambda x (do
                   (or (not (> (length x) 0)) 1)
                   (let index (lambda (do (set! x 0 1) (get x 0)))) 
-                  (index))))`,
-        ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx', 'g']
+                  (index))))
+(let Aarr [])
+(set! Aarr (length Aarr) [])
+(let Ax (get Aarr 0))
+(set! Ax 0 1)`,
+        ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx', 'g', 'Ax']
       ),
       [
         '(let is12? (lambda Number (do Boolean)))',
@@ -81,7 +85,8 @@ describe('Type checking', () => {
         '(let x? Number)',
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda [Number] (do Number)))'
+        '(let g (lambda [Number] (do Number)))',
+        '(let Ax [Number])'
       ]
     )
     deepStrictEqual(
@@ -867,19 +872,35 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) (array)))) (check #779)`
     )
     fails(
+      `(let arr [])
+(set! arr (length arr) 2)
+(let x (get arr 0))
+    
+(let f (lambda (do 
+(and x 0))))`,
+      `Incorrect type of argument (0) for special form (and). Expected (Boolean) but got (Number) (and x 0) (check #202)`
+    )
+    fails(
+      `(let arr [])
+(set! arr (length arr) 2)
+(let x (get arr 0))
+(set! x 0 1)`,
+      `Incorrect type of argument (0) for special form (set!). Expected ([Unknown]) but got (Number) (set! x 0 1) (check #3)`
+    )
+    fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
 (let z [])
+    (fn 1 (lambda x (do 
+    (let y 10)
+        (set! x 0 1)
+    1)))
 (let n (lambda x (do 
     (let y 10)
     (set! x 0 1)
     1)))
 (fn 1 n)
 
-    
-    (fn 1 (lambda x (do 
-    (let y 10)
-        (set! x 0 1)
-    1)))`,
+   `,
       `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got ([Unknown]) (fn 1 n) (check #781)`
     )
     fails(

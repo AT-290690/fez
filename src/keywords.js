@@ -99,8 +99,6 @@ export const PREDICATES_OUTPUT_SET = new Set([
 ])
 export const MUTATORS_SET = new Set([
   KEYWORDS.SET_ARRAY,
-  'set:with!',
-  'map:with!',
   'matrix:set!',
   'matrix:set-and-get!',
   'array:set-and-get!',
@@ -112,19 +110,19 @@ export const MUTATORS_SET = new Set([
   'array:set!',
   'array:append!',
   'array:push!',
-  'var:set!',
-  'array:merge!',
-  'list:merge!',
-  'list:concat!'
+  'var:set!'
 ])
-export const MULTI_DIMENTIONAL_SETTERS = new Set([
-  'set:with!',
-  'map:with!',
-  'matrix:set!',
+export const GETTERS_SET = new Set([
+  KEYWORDS.GET_ARRAY,
+  'matrix:get',
   'matrix:set-and-get!',
   'array:set-and-get!',
-  'set:add!',
-  'map:set!',
-  'list:merge!',
-  'list:concat!'
+  'var:set-and-get!',
+  'map:set-and-get!',
+  'set:add-and-get!',
+  'set:get',
+  'map:get',
+  'array:get',
+  'array:pop!',
+  'var:get'
 ])
