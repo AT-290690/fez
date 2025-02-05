@@ -336,6 +336,7 @@ export const addTypeIdentities = (ast) => {
     identity(STATIC_TYPES.ATOM),
     identity(STATIC_TYPES.COLLECTION),
     identity(STATIC_TYPES.PREDICATE),
+    identity(STATIC_TYPES.NUMBER),
     identity(STATIC_TYPES.ANY),
     identity(STATIC_TYPES.UNKNOWN)
   )

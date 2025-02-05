@@ -114,7 +114,10 @@ export const isUnknownNotAnyType = (stats) =>
 export const isUnknownNotAnyReturn = (stats) =>
   stats && !isAnyReturn(stats) && isUnknownReturn(stats)
 export const castType = (stats, type) => {
-  return (stats[TYPE_PROP][0] = type[RETURNS][0])
+  return (
+    (stats[TYPE_PROP][0] = type[RETURNS][0]),
+    (stats[TYPE_PROP][1] = type[RETURNS][1])
+  )
 }
 export const castReturn = (stats, type) => {
   return (stats[RETURNS][0] = type[RETURNS][0])

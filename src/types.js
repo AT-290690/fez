@@ -133,6 +133,27 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
     }
   },
+  [STATIC_TYPES.NUMBER]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: STATIC_TYPES.NUMBER,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [UNKNOWN],
+            [RETURNS]: [UNKNOWN],
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+    }
+  },
   [STATIC_TYPES.COLLECTION]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],

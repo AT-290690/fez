@@ -275,6 +275,7 @@ const comp = (tree, Drill) => {
       case STATIC_TYPES.ATOM:
       case STATIC_TYPES.PREDICATE:
       case STATIC_TYPES.ANY:
+      case STATIC_TYPES.NUMBER:
       case DEBUG.ASSERT:
       case DEBUG.LOG:
       case DEBUG.STRING:

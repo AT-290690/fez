@@ -837,6 +837,7 @@ export const keywords = {
   [STATIC_TYPES.ATOM]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.COLLECTION]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.PREDICATE]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.NUMBER]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env)
 }
