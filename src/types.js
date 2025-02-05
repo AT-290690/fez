@@ -30,6 +30,9 @@ export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
 export const BOOLEAN_SUBTYPE = () => new Set([PREDICATE])
+export const ANY_SUBTYPE = () => new Set([ANY])
+export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
+export const NUMBER_SUBTYPE = () => new Set([NUMBER])
 
 export const toTypeNames = (type) => {
   switch (type) {
@@ -37,15 +40,16 @@ export const toTypeNames = (type) => {
       return 'Abstraction'
     case PREDICATE:
       return 'Boolean'
+    case ATOM:
     case NUMBER:
       return 'Number'
-    case ATOM:
-      return 'Atom'
+    // case ATOM:
+    //   return 'Atom'
     case UNKNOWN:
       return 'Unknown'
     case COLLECTION:
-      return 'Array'
-    // return '[]'
+      // return 'Array'
+      return '[Unknown]'
     case ANY:
       return 'Any'
     default:
@@ -60,6 +64,8 @@ export const toTypeNamesAnyToUknown = (type) => {
       return toTypeNames(type)
   }
 }
+export const GETTER = 1
+export const SETTER = 2
 export const SPECIAL_FORM_TYPES = {
   [SCOPE_NAME]: ';',
   // [ORDER]: 0,
@@ -718,6 +724,7 @@ export const SPECIAL_FORM_TYPES = {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
       [SIGNATURE]: KEYWORDS.GET_ARRAY,
+      tag: GETTER,
       retried: Infinity,
       [ARG_COUNT]: 2,
       [ARGUMENTS]: [
@@ -750,6 +757,7 @@ export const SPECIAL_FORM_TYPES = {
   [KEYWORDS.SET_ARRAY]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
+      tag: SETTER,
       retried: Infinity,
       [ARG_COUNT]: 3,
       [ARGUMENTS]: [
@@ -757,8 +765,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [COLLECTION],
-            [RETURNS]: [COLLECTION],
+            [TYPE_PROP]: [COLLECTION, ANY_SUBTYPE()],
+            [RETURNS]: [COLLECTION, ANY_SUBTYPE()],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -787,7 +795,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [COLLECTION]
+      [RETURNS]: [COLLECTION, ANY_SUBTYPE()]
     }
   },
   [KEYWORDS.POP_ARRAY]: {
@@ -1185,18 +1193,18 @@ export const SPECIAL_FORM_TYPES = {
 
 export const formatSubType = (T) => {
   switch (T[0]) {
-    // case COLLECTION:
-    //   return `[${
-    //     T[1] instanceof Set
-    //       ? [...T[1]]
-    //           .map((x) =>
-    //             x === COLLECTION
-    //               ? formatSubType([x])
-    //               : toTypeNamesAnyToUknown(x)
-    //           )
-    //           .join(' ')
-    //       : toTypeNamesAnyToUknown(ANY)
-    //   }]`
+    case COLLECTION:
+      return `[${
+        T[1] instanceof Set
+          ? [...T[1]]
+              .map((x) =>
+                x === COLLECTION
+                  ? formatSubType([x])
+                  : toTypeNamesAnyToUknown(x)
+              )
+              .join(' ')
+          : toTypeNamesAnyToUknown(ANY)
+      }]`
     case ATOM:
       return `${
         T[1] instanceof Set

@@ -20,8 +20,8 @@ export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
 export const wrapInBracesString = (exp) => `(${stringifyArgs(exp)})`
-export const logExp = function (exp, marker = ':D') {
-  console.log(marker, wrapInBracesString(exp), ...[...arguments].slice(2))
+export const logExp = function (exp, ...args) {
+  console.log(wrapInBracesString(exp), ...args)
   return exp
 }
 export const formatCallstack = (callstack) =>
@@ -457,6 +457,14 @@ export class Brr {
     for (let i = half; i < initial.length; ++i) this._addToRight(initial[i])
     return this
   }
+  // reverse() {
+  //   const left = this._left
+  //   const right = this._right
+  //   right.unshift(left.shift())
+  //   this._left = right
+  //   this._right = left
+  //   return this
+  // }
   *[Symbol.iterator]() {
     for (let i = 0, len = this.length; i < len; ++i) yield this.get(i)
   }
