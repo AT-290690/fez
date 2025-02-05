@@ -566,6 +566,15 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
     )
     fails(
+      `(let arr [])
+(set! arr (length arr) 10)
+(let f (lambda (do 
+(let x (get arr 0))
+(array:reverse x)
+)))`,
+      `Incorrect type of argument (0) for (array:reverse). Expected ([Unknown]) but got (Number) (array:reverse x) (check #10)`
+    )
+    fails(
       `(and (array:empty! [1 2 3]) 1)`,
       `Incorrect type of argument (0) for special form (and). Expected (Number) but got ([Unknown]) (and (array:empty! (array 1 2 3)) 1) (check #1)`
     )

@@ -1195,7 +1195,7 @@
 ; 1 string:character-occurances count
 (let count [Number])
 ; 1 string:character-occurances at-least-one
-(let at-least-one [[Unknown]])
+(let at-least-one [Unknown])
 ; 1 string:character-occurances recursive:string:character-occurances ch
 (let ch Number)
 ; 1 string:character-occurances recursive:string:character-occurances code
@@ -1249,11 +1249,11 @@
 ; 1 string:lesser? 111 pairs
 (let pairs [Unknown])
 ; 1 string:lesser? 111 is
-(let is [Number])
+(let is [Unknown])
 ; 1 string:lesser? 111 recursive:string:lesser 112 current
 (let current Unknown)
 ; 1 string:lesser? 111 recursive:string:lesser
-(let recursive:string:lesser (lambda (do [Number])))
+(let recursive:string:lesser (lambda (do [Unknown])))
 ; 1 string:lesser?
 (let string:lesser? (lambda [Unknown] [Unknown] (do Boolean)))
 ; 1 string:greater? 113 a
@@ -1263,11 +1263,11 @@
 ; 1 string:greater? 113 pairs
 (let pairs [Unknown])
 ; 1 string:greater? 113 is
-(let is [Number])
+(let is [Unknown])
 ; 1 string:greater? 113 recursive:string:greater 114 current
 (let current Unknown)
 ; 1 string:greater? 113 recursive:string:greater
-(let recursive:string:greater (lambda (do [Number])))
+(let recursive:string:greater (lambda (do [Unknown])))
 ; 1 string:greater?
 (let string:greater? (lambda [Unknown] [Unknown] (do Boolean)))
 ; 1 string:greater-or-equal?
@@ -1305,11 +1305,11 @@
 ; 1 string:join-as-table
 (let string:join-as-table (lambda [Unknown] (do [Unknown])))
 ; 1 string:trim-left tr
-(let tr [[Unknown]])
+(let tr [Unknown])
 ; 1 string:trim-left
 (let string:trim-left (lambda [Unknown] (do [Unknown])))
 ; 1 string:trim-right tr
-(let tr [[Unknown]])
+(let tr [Unknown])
 ; 1 string:trim-right
 (let string:trim-right (lambda [Unknown] (do [Unknown])))
 ; 1 string:trim
@@ -1469,7 +1469,7 @@
 ; 1 set:add-and-get!
 (let set:add-and-get! (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 set:remove-and-get!
-(let set:remove-and-get! (lambda [Unknown] [Unknown] (do [Unknown])))
+(let set:remove-and-get! (lambda [[Unknown]] [Unknown] (do [Unknown])))
 ; 1 set:with!
 (let set:with! (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 set:max-capacity
@@ -1527,7 +1527,7 @@
 ; 1 map:remove-and-get! value
 (let value [Unknown])
 ; 1 map:remove-and-get!
-(let map:remove-and-get! (lambda [Unknown] [Unknown] (do [Unknown])))
+(let map:remove-and-get! (lambda [[Unknown]] [Unknown] (do [Unknown])))
 ; 1 map:get idx
 (let idx Number)
 ; 1 map:get 150 current
@@ -1601,7 +1601,7 @@
 ; 1 bool:false!
 (let bool:false! (lambda [Boolean] (do [Unknown])))
 ; 1 bool:true?
-(let bool:true? (lambda [Number] (do Boolean)))
+(let bool:true? (lambda [Unknown] (do Boolean)))
 ; 1 bool:false?
 (let bool:false? (lambda [Unknown] (do Boolean)))
 ; 1 curry:ternary
@@ -1647,11 +1647,11 @@
 ; 1 brray:remove-from-left! len
 (let len Number)
 ; 1 brray:remove-from-left!
-(let brray:remove-from-left! (lambda [[Unknown]] (do [Unknown])))
+(let brray:remove-from-left! (lambda [Unknown] (do [Unknown])))
 ; 1 brray:remove-from-right! len
 (let len Number)
 ; 1 brray:remove-from-right!
-(let brray:remove-from-right! (lambda [[Unknown]] (do [Unknown])))
+(let brray:remove-from-right! (lambda [Unknown] (do [Unknown])))
 ; 1 brray:iter recursive:brray:iter
 (let recursive:brray:iter (lambda Number Number (do Number)))
 ; 1 brray:iter
@@ -1887,7 +1887,7 @@
 ; 1 heap:sift-up! recursive:heap:sift-up!
 (let recursive:heap:sift-up! (lambda (do Number)))
 ; 1 heap:sift-up!
-(let heap:sift-up! (lambda [Number] (lambda Unknown Unknown (do Unknown)) (do Number)))
+(let heap:sift-up! (lambda [Unknown] (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:sift-down! node
 (let node [Number])
 ; 1 heap:sift-down! recursive:heap:sift-down! 168 max-child
@@ -1895,7 +1895,7 @@
 ; 1 heap:sift-down! recursive:heap:sift-down!
 (let recursive:heap:sift-down! (lambda (do Number)))
 ; 1 heap:sift-down!
-(let heap:sift-down! (lambda [Number] (lambda Unknown Unknown (do Unknown)) (do Number)))
+(let heap:sift-down! (lambda [Unknown] (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:peek
 (let heap:peek (lambda [Unknown] (do Unknown)))
 ; 1 heap:push!
@@ -2011,7 +2011,7 @@
 ; 1 from:chars->ast tree
 (let tree [Unknown])
 ; 1 from:chars->ast stack
-(let stack [[Unknown]])
+(let stack [Unknown])
 ; 1 from:chars->ast head
 (let head [Unknown])
 ; 1 from:chars->ast acc
@@ -2041,7 +2041,7 @@
 ; 1 special-form:lambda 180 local
 (let local [Unknown])
 ; 1 special-form:lambda
-(let special-form:lambda (lambda [Unknown] [Unknown] (do Abstraction)))
+(let special-form:lambda (lambda [Unknown] Unknown (do Abstraction)))
 ; 1 special-form:apply application
 (let application (lambda [Unknown] [Unknown] (do Unknown)))
 ; 1 special-form:apply

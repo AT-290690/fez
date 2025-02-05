@@ -959,6 +959,7 @@ export const typeCheck = (ast) => {
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
                 if (
                   getSuffix(first[VALUE]) === MUTATION_SUFFIX &&
+                  MUTATORS_SET.has(first[VALUE]) &&
                   rest[0] &&
                   isLeaf(rest[0]) &&
                   rest[0][TYPE] !== ATOM &&
