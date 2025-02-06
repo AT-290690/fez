@@ -315,21 +315,10 @@ const notABooleanType = (a, b) => {
     getSubType(a).has(PREDICATE) &&
     !isUnknownType(b) &&
     !isAnyType(b) &&
-    (!hasSubType(b) || getSubType(a).difference(getSubType(b)).size !== 0)
+    ((!hasSubType(b) && getType(b) !== COLLECTION) ||
+      (hasSubType(b) && getSubType(a).difference(getSubType(b)).size !== 0))
   )
 }
-// const notABooleanReturn = (a, b) => {
-//   return (
-//     hasSubType(a) &&
-//     getSubType(a).has(PREDICATE) &&
-//     !isUnknownReturn(b) &&
-//     !isAnyReturn(b) &&
-//     (
-//       !isAtomReturn(b) ||
-//       !hasSubReturn(b) ||
-//       getSubType(a).difference(getSubReturn(b)).size !== 0)
-//   )
-// }
 const notABooleanReturn = (a, b) => {
   return (
     hasSubType(a) &&
@@ -1049,89 +1038,54 @@ export const typeCheck = (ast) => {
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
                 for (let i = 0; i < args.length; ++i) {
-                  const isResLeaf = isLeaf(rest[i])
                   // type check
                   // TODO get rof pred type
                   // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                   const MAIN_TYPE = getType(args[i][STATS])
                   if (MAIN_TYPE === ANY) continue
                   // TODO - try to merge special and non special
-                  if (first[TYPE] === APPLY && isSpecial) {
-                    if (!isResLeaf) {
-                      const name = rest[i][0][VALUE]
-                      if (!env[name]) continue
-                      // there is a problem here with cond pr when passed as an argument
-                      if (name === KEYWORDS.IF) {
-                        const concequent = [...rest]
-                        const alternative = [...rest]
-                        concequent[i] = rest[i][1]
-                        alternative[i] = rest[i][2]
-                        check([first, ...concequent], env, scope)
-                        check([first, ...alternative], env, scope)
-                      } else if (
-                        isUnknownReturn(env[name][STATS]) &&
-                        !env[name][STATS][IS_ARGUMENT]
-                      ) {
-                        return retry(env[name][STATS], stack, () =>
-                          check(exp, env, scope)
-                        )
-                      } else if (
-                        !isUnknownType(args[i][STATS]) &&
-                        !isUnknownReturn(env[name][STATS]) &&
-                        !compareTypeWithReturn(args[i][STATS], env[name][STATS])
-                      )
-                        throw new TypeError(
-                          `Incorrect type of argument (${i}) for special form (${
-                            first[VALUE]
-                          }). Expected (${toTypeNames(
-                            getType(args[i][STATS])
-                          )}) but got (${toTypeNames(
-                            getReturn(env[name][STATS])
-                          )}) (${stringifyArgs(exp)}) (check #1)`
-                        )
-                      else if (
-                        !isUnknownReturn(args[i][STATS]) &&
-                        !isUnknownReturn(env[name][STATS]) &&
-                        notABooleanReturn(args[i][STATS], env[name][STATS])
-                      )
-                        throw new TypeError(
-                          `Incorrect type of argument (${i}) for special form (${
-                            first[VALUE]
-                          }). Expected (${formatSubType(
-                            getTypes(args[i][STATS])
-                          )}) but got (${formatSubType(
-                            getReturns(env[name][STATS])
-                          )}) (${stringifyArgs(exp)}) (check #201)`
-                        )
-                      else {
-                        if (env[name] && getType(env[name][STATS]) === APPLY)
-                          switch (first[VALUE]) {
-                            case KEYWORDS.IF:
-                              break
-                            default:
-                              // TODO fix this assigment
-                              // It turns out it's not possible to determine return type of function here
-                              // what if it's a global function used elsewhere where the return type mwould be different
-                              // THIS willgive lambda return types but refactor is needed still
-                              if (!SPECIAL_FORMS_SET.has(name))
-                                setReturnRef(env[name][STATS], args[i][STATS])
-                              break
-                          }
-                        // TODO also handle casting
-                      }
-                    } else {
+                  // REFACTORING
+                  if (first[TYPE] === APPLY) {
+                    if (isLeaf(rest[i])) {
                       switch (rest[i][TYPE]) {
                         case WORD:
                           {
                             const name = rest[i][VALUE]
                             if (!env[name]) continue
-                            if (
+                            const isKnown =
                               !isUnknownType(args[i][STATS]) &&
-                              !isUnknownType(env[name][STATS]) &&
+                              !isUnknownType(env[name][STATS])
+                            if (
+                              isKnown &&
+                              env[name][STATS][ARG_COUNT] !== VARIADIC
+                            ) {
+                              if (
+                                env[name][STATS][ARG_COUNT] !==
+                                args[i][STATS][ARG_COUNT]
+                              ) {
+                                // TODO: Investigate why there used to be and error called #111 with this condition if (args[i][STATS][ARG_COUNT] === undefined)
+                                if (getType(args[i][STATS]) === APPLY)
+                                  throw new TypeError(
+                                    `Incorrect number of arguments for (${
+                                      args[i][STATS][SIGNATURE]
+                                    }) the (${
+                                      KEYWORDS.ANONYMOUS_FUNCTION
+                                    }) argument of (${
+                                      first[VALUE]
+                                    }) at position (${i}). Expected (= ${
+                                      args[i][STATS][ARG_COUNT]
+                                    }) but got ${
+                                      env[name][STATS][ARG_COUNT]
+                                    } (${stringifyArgs(exp)}) (check #778)`
+                                  )
+                              }
+                            }
+                            if (
+                              isKnown &&
                               !compareTypes(args[i][STATS], env[name][STATS])
                             )
                               throw new TypeError(
-                                `Incorrect type of argument (${i}) for special form (${
+                                `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
                                 }). Expected (${toTypeNames(
                                   getType(args[i][STATS])
@@ -1140,12 +1094,12 @@ export const typeCheck = (ast) => {
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
                             else if (
-                              !isUnknownType(args[i][STATS]) &&
-                              !isUnknownType(env[name][STATS]) &&
+                              isKnown &&
                               notABooleanType(args[i][STATS], env[name][STATS])
+                              // TODO: Add a check if subtype is a UKNOWN (for uknown array)
                             )
                               throw new TypeError(
-                                `Incorrect type of argument (${i}) for special form (${
+                                `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
                                 }). Expected (${formatSubType(
                                   getTypes(args[i][STATS])
@@ -1166,7 +1120,8 @@ export const typeCheck = (ast) => {
                               //     check(exp, env, scope)
                               //   )
                               // } else
-                              setType(env[name][STATS], args[i][STATS])
+                              if (isSpecial)
+                                setType(env[name][STATS], args[i][STATS])
                             }
                           }
                           break
@@ -1176,7 +1131,7 @@ export const typeCheck = (ast) => {
                             rest[i][TYPE] !== args[i][STATS][TYPE_PROP][0]
                           )
                             throw new TypeError(
-                              `Incorrect type of argument (${i}) for special form (${
+                              `Incorrect type of argument (${i}) for (${
                                 first[VALUE]
                               }). Expected (${toTypeNames(
                                 args[i][STATS][TYPE_PROP][0]
@@ -1190,371 +1145,377 @@ export const typeCheck = (ast) => {
                             !isAtomABoolean(rest[i][VALUE])
                           )
                             throw new TypeError(
-                              `Incorrect type of argument (${i}) for special form (${
+                              `Incorrect type of argument (${i}) for (${
                                 first[VALUE]
                               }). Expected (${formatSubType(
                                 getTypes(args[i][STATS])
-                              )}) but got (${rest[i][VALUE]}) (${stringifyArgs(
-                                exp
-                              )}) (check #203)`
+                              )}) but got (${
+                                rest[i][TYPE] === ATOM
+                                  ? toTypeNames(rest[i][TYPE])
+                                  : formatSubType(
+                                      getTypes(env[rest[i][VALUE]][STATS])
+                                    )
+                              }) (${stringifyArgs(exp)}) (check #203)`
                             )
                           break
                         }
-                      }
-                    }
-                  }
-                  // type checking
-                  else if (isResLeaf) {
-                    const T =
-                      rest[i][TYPE] === WORD
-                        ? env[rest[i][VALUE]]
-                          ? getType(env[rest[i][VALUE]][STATS])
-                          : UNKNOWN
-                        : rest[i][TYPE]
-
-                    if (T === ATOM && !isUnknownType(args[i][STATS])) {
-                      if (getType(args[i][STATS]) !== ATOM)
-                        throw new TypeError(
-                          `Incorrect type of argument (${i}) for (${
-                            first[VALUE]
-                          }). Expected (${toTypeNames(
-                            getType(args[i][STATS])
-                          )}) but got (${toTypeNames(T)}) (${stringifyArgs(
-                            exp
-                          )}) (check #10)`
-                        )
-                      else if (
-                        rest[i][TYPE] === ATOM
-                          ? hasSubType(args[i][STATS]) &&
-                            getSubType(args[i][STATS]).has(PREDICATE) &&
-                            !isAtomABoolean(rest[i][VALUE])
-                          : notABooleanType(
-                              args[i][STATS],
-                              env[rest[i][VALUE]][STATS]
-                            )
-                      )
-                        throw new TypeError(
-                          `Incorrect type of argument (${i}) for special form (${
-                            first[VALUE]
-                          }). Expected (${formatSubType(
-                            getTypes(args[i][STATS])
-                          )}) but got (${
-                            rest[i][TYPE] === ATOM
-                              ? toTypeNames(rest[i][TYPE])
-                              : formatSubType(
-                                  getTypes(env[rest[i][VALUE]][STATS])
-                                )
-                          }) (${stringifyArgs(exp)}) (check #205)`
-                        )
-                    } else if (
-                      T === APPLY &&
-                      !isUnknownType(args[i][STATS]) &&
-                      !isUnknownType(env[rest[i][VALUE]][STATS]) &&
-                      env[rest[i][VALUE]][STATS][ARG_COUNT] !== VARIADIC
-                    ) {
-                      // if (
-                      //   getType(args[i][STATS]) !==
-                      //   getType(env[rest[i][VALUE]][STATS][ARGUMENTS][i][STATS])
-                      // )
-                      //   // TODO this should really happen in 10 or 16
-                      //   throw new TypeError(
-                      //     `Incorrect type for argument of (${
-                      //       first[VALUE]
-                      //     }) at position (${i}). Expected (${
-                      //       STATIC_TYPES.ABSTRACTION
-                      //     }) but got (${toTypeNames(
-                      //       getType(
-                      //         env[rest[i][VALUE]][STATS][ARGUMENTS][i][STATS]
-                      //       )
-                      //     )}) (${stringifyArgs(exp)}) (check #111)`
-                      //   )
-                      // // Handles words that are Lambdas
-                      // else
-                      if (
-                        env[rest[i][VALUE]][STATS][ARG_COUNT] !==
-                        args[i][STATS][ARG_COUNT]
-                      ) {
-                        if (args[i][STATS][ARG_COUNT] === undefined)
-                          throw new TypeError(
-                            `Incorrect type for argument of (${
-                              first[VALUE]
-                            }) at position (${i}). Expected (${
-                              STATIC_TYPES.ABSTRACTION
-                            }) but got (${toTypeNames(
-                              getType(args[i][STATS])
-                            )}) (${stringifyArgs(exp)}) (check #111)`
-                          )
-                        else if (getType(args[i][STATS]) === APPLY)
-                          throw new TypeError(
-                            `Incorrect number of arguments for (${
-                              args[i][STATS][SIGNATURE]
-                            }) the (${
-                              KEYWORDS.ANONYMOUS_FUNCTION
-                            }) argument of (${
-                              first[VALUE]
-                            }) at position (${i}). Expected (= ${
-                              args[i][STATS][ARG_COUNT]
-                            }) but got ${
-                              env[rest[i][VALUE]][STATS][ARG_COUNT]
-                            } (${stringifyArgs(exp)}) (check #778)`
-                          )
-                      } else {
-                        // DEFINED  LAMBDAS TYPE CHECKING
-                        // #C1
-                        // TODO delete this maybe
-                        // It will not be possilbe to know return type
-                        const match1 = () => {
-                          const actual = env[rest[i][VALUE]]
-                          const expected = args[i]
+                        case APPLY: {
+                          const name = rest[i][VALUE]
+                          if (!env[name]) continue
                           if (
-                            !isUnknownReturn(expected[STATS]) &&
-                            !isUnknownReturn(actual[STATS]) &&
-                            !compareReturns(expected[STATS], actual[STATS])
+                            !isUnknownType(args[i][STATS]) &&
+                            !isUnknownType(env[name][STATS]) &&
+                            env[name][STATS][ARG_COUNT] !== VARIADIC
                           ) {
-                            throw new TypeError(
-                              `Incorrect return type for (${
-                                expected[STATS][SIGNATURE]
-                              }) the (${
-                                KEYWORDS.ANONYMOUS_FUNCTION
-                              }) argument of (${
-                                first[VALUE]
-                              }) at position (${i}). Expected (${toTypeNames(
-                                getReturn(expected[STATS])
-                              )}) but got (${toTypeNames(
-                                getReturn(actual[STATS])
-                              )}) (${stringifyArgs(exp)}) (check #782)`
-                            )
-                          } else retry(actual[STATS], stack, () => match1())
-                        }
-                        match1()
-                        for (
-                          let j = 0;
-                          j < args[i][STATS][ARGUMENTS].length;
-                          ++j
-                        ) {
-                          const match2 = () => {
-                            const actual =
-                              env[rest[i][VALUE]][STATS][ARGUMENTS][j]
-                            const expected = args[i][STATS][ARGUMENTS][j]
                             if (
-                              !isUnknownType(actual[STATS]) &&
-                              !isUnknownType(expected[STATS]) &&
-                              !compareTypes(actual[STATS], expected[STATS])
-                            )
-                              throw new TypeError(
-                                `Incorrect type for (${
-                                  KEYWORDS.ANONYMOUS_FUNCTION
-                                }) (${
-                                  args[i][STATS][SIGNATURE]
-                                }) argument at position (${j}) named as (${
-                                  actual[STATS][SIGNATURE]
-                                }). Expected (${toTypeNames(
-                                  getType(expected[STATS])
-                                )}) but got (${toTypeNames(
-                                  getType(actual[STATS])
-                                )}) (${stringifyArgs(exp)}) (check #781)`
-                              )
-                            else retry(actual[STATS], stack, () => match2())
+                              env[name][STATS][ARG_COUNT] !==
+                              args[i][STATS][ARG_COUNT]
+                            ) {
+                              if (args[i][STATS][ARG_COUNT] === undefined)
+                                throw new TypeError(
+                                  `Incorrect type for argument of (${
+                                    first[VALUE]
+                                  }) at position (${i}). Expected (${
+                                    STATIC_TYPES.ABSTRACTION
+                                  }) but got (${toTypeNames(
+                                    getType(args[i][STATS])
+                                  )}) (${stringifyArgs(exp)}) (check #111)`
+                                )
+                              else if (getType(args[i][STATS]) === APPLY)
+                                throw new TypeError(
+                                  `Incorrect number of arguments for (${
+                                    args[i][STATS][SIGNATURE]
+                                  }) the (${
+                                    KEYWORDS.ANONYMOUS_FUNCTION
+                                  }) argument of (${
+                                    first[VALUE]
+                                  }) at position (${i}). Expected (= ${
+                                    args[i][STATS][ARG_COUNT]
+                                  }) but got ${
+                                    env[name][STATS][ARG_COUNT]
+                                  } (${stringifyArgs(exp)}) (check #778)`
+                                )
+                            }
                           }
-                          match2()
+                          // DEFINED  LAMBDAS TYPE CHECKING
+                          // #C1
+                          // TODO delete this maybe
+                          // It will not be possilbe to know return type
+                          const match1 = () => {
+                            const actual = env[name]
+                            const expected = args[i]
+                            if (
+                              !isUnknownReturn(expected[STATS]) &&
+                              !isUnknownReturn(actual[STATS]) &&
+                              !compareReturns(expected[STATS], actual[STATS])
+                            ) {
+                              throw new TypeError(
+                                `Incorrect return type for (${
+                                  expected[STATS][SIGNATURE]
+                                }) the (${
+                                  KEYWORDS.ANONYMOUS_FUNCTION
+                                }) argument of (${
+                                  first[VALUE]
+                                }) at position (${i}). Expected (${toTypeNames(
+                                  getReturn(expected[STATS])
+                                )}) but got (${toTypeNames(
+                                  getReturn(actual[STATS])
+                                )}) (${stringifyArgs(exp)}) (check #782)`
+                              )
+                            } else retry(actual[STATS], stack, () => match1())
+                          }
+                          match1()
+                          for (
+                            let j = 0;
+                            j < args[i][STATS][ARGUMENTS].length;
+                            ++j
+                          ) {
+                            const match2 = () => {
+                              const actual = env[name][STATS][ARGUMENTS][j]
+                              const expected = args[i][STATS][ARGUMENTS][j]
+                              if (
+                                !isUnknownType(actual[STATS]) &&
+                                !isUnknownType(expected[STATS]) &&
+                                !compareTypes(actual[STATS], expected[STATS])
+                              )
+                                throw new TypeError(
+                                  `Incorrect type for (${
+                                    KEYWORDS.ANONYMOUS_FUNCTION
+                                  }) (${
+                                    args[i][STATS][SIGNATURE]
+                                  }) argument at position (${j}) named as (${
+                                    actual[STATS][SIGNATURE]
+                                  }). Expected (${toTypeNames(
+                                    getType(expected[STATS])
+                                  )}) but got (${toTypeNames(
+                                    getType(actual[STATS])
+                                  )}) (${stringifyArgs(exp)}) (check #781)`
+                                )
+                              else retry(actual[STATS], stack, () => match2())
+                            }
+                            match2()
+                          }
                         }
                       }
-                    }
-                    if (
-                      T === COLLECTION &&
-                      env[rest[i][VALUE]] &&
-                      !isUnknownType(env[rest[i][VALUE]][STATS]) &&
-                      !isUnknownType(args[i][STATS]) &&
-                      !compareTypes(env[rest[i][VALUE]][STATS], args[i][STATS])
-                    ) {
-                      throw new TypeError(
-                        `Incorrect type of argument (${i}) for (${
-                          first[VALUE]
-                        }). Expected (${toTypeNames(
-                          getType(args[i][STATS])
-                        )}) but got (${toTypeNames(T)}) (${stringifyArgs(
-                          exp
-                        )}) (check #30)`
-                      )
-                    } else if (isUnknownType(args[i][STATS])) {
-                      retry(args[i][STATS], stack, () => check(exp, env, scope))
-                    }
-                    // TOODO maybe we don't need this
-                    else if (
-                      env[rest[i][VALUE]] &&
-                      !isUnknownType(args[i][STATS]) &&
-                      isUnknownType(env[rest[i][VALUE]][STATS]) &&
-                      getType(args[i][STATS]) !== APPLY
-                    ) {
-                      // REFF ASSIGMENT
-                      setTypeRef(env[rest[i][VALUE]][STATS], args[i][STATS])
-                    } else if (
-                      env[rest[i][VALUE]] &&
-                      !isUnknownType(args[i][STATS]) &&
-                      isUnknownType(env[rest[i][VALUE]][STATS])
-                    ) {
-                      setStatsRef(env[rest[i][VALUE]], args[i])
-                    }
-                  } else if (env[rest[i][0][VALUE]]) {
-                    const match = () => {
-                      const actual =
-                        rest[i][0][VALUE] === KEYWORDS.CREATE_ARRAY
-                          ? initArrayType({ rem: rest[i], env }) ??
-                            env[rest[i][0][VALUE]][STATS]
-                          : env[rest[i][0][VALUE]][STATS]
-                      const expected = args[i][STATS]
-                      retryArgs(args[i][STATS], stack, () => match())
-                      if (!isUnknownType(expected) && !isUnknownReturn(actual))
-                        if (!compareTypeWithReturn(expected, actual))
+                      if (!isSpecial) {
+                        const name = rest[i][VALUE]
+                        if (isUnknownType(args[i][STATS])) {
+                          retry(args[i][STATS], stack, () =>
+                            check(exp, env, scope)
+                          )
+                        }
+                        // TOODO maybe we don't need this
+                        else if (
+                          env[name] &&
+                          !isUnknownType(args[i][STATS]) &&
+                          isUnknownType(env[name][STATS]) &&
+                          getType(args[i][STATS]) !== APPLY
+                        ) {
+                          // REFF ASSIGMENT
+                          setTypeRef(env[name][STATS], args[i][STATS])
+                        } else if (
+                          env[name] &&
+                          !isUnknownType(args[i][STATS]) &&
+                          isUnknownType(env[name][STATS])
+                        ) {
+                          setStatsRef(env[rest[i][VALUE]], args[i])
+                        }
+                      }
+                    } else {
+                      const name = rest[i][0][VALUE]
+                      if (!env[name]) continue
+                      if (isSpecial) {
+                        // there is a problem here with cond pr when passed as an argument
+                        if (name === KEYWORDS.IF) {
+                          const concequent = [...rest]
+                          const alternative = [...rest]
+                          concequent[i] = rest[i][1]
+                          alternative[i] = rest[i][2]
+                          check([first, ...concequent], env, scope)
+                          check([first, ...alternative], env, scope)
+                        } else if (
+                          isUnknownReturn(env[name][STATS]) &&
+                          !env[name][STATS][IS_ARGUMENT]
+                        ) {
+                          return retry(env[name][STATS], stack, () =>
+                            check(exp, env, scope)
+                          )
+                        } else if (
+                          !isUnknownType(args[i][STATS]) &&
+                          !isUnknownReturn(env[name][STATS]) &&
+                          !compareTypeWithReturn(
+                            args[i][STATS],
+                            env[name][STATS]
+                          )
+                        )
                           throw new TypeError(
                             `Incorrect type of argument (${i}) for (${
                               first[VALUE]
                             }). Expected (${toTypeNames(
-                              getType(expected)
+                              getType(args[i][STATS])
                             )}) but got (${toTypeNames(
-                              getReturn(actual)
-                            )}) (${stringifyArgs(exp)}) (check #16)`
+                              getReturn(env[name][STATS])
+                            )}) (${stringifyArgs(exp)}) (check #1)`
                           )
-                        else if (notABooleanReturn(expected, actual)) {
+                        else if (
+                          !isUnknownReturn(args[i][STATS]) &&
+                          !isUnknownReturn(env[name][STATS]) &&
+                          notABooleanReturn(args[i][STATS], env[name][STATS])
+                        )
                           throw new TypeError(
                             `Incorrect type of argument (${i}) for (${
                               first[VALUE]
                             }). Expected (${formatSubType(
-                              getTypes(expected)
+                              getTypes(args[i][STATS])
                             )}) but got (${formatSubType(
-                              getReturns(actual)
-                            )}) (${stringifyArgs(exp)}) (check #206)`
+                              getReturns(env[name][STATS])
+                            )}) (${stringifyArgs(exp)}) (check #201)`
                           )
-                        } else {
-                          switch (getType(expected)) {
-                            // almost exclusively for anonymous lambdas
-                            case APPLY:
-                              {
-                                const argsN = rest[i].length - 2
-                                if (
-                                  env[rest[i][0][VALUE]][STATS][SIGNATURE] ===
-                                  KEYWORDS.ANONYMOUS_FUNCTION
-                                ) {
-                                  if (argsN !== args[i][STATS][ARG_COUNT])
-                                    throw new TypeError(
-                                      `Incorrect number of arguments for (${
-                                        args[i][STATS][SIGNATURE]
-                                      }) the (${
-                                        KEYWORDS.ANONYMOUS_FUNCTION
-                                      }) argument of (${
-                                        first[VALUE]
-                                      }) at position (${i}). Expected (= ${
-                                        args[i][STATS][ARG_COUNT]
-                                      }) but got ${argsN} (${stringifyArgs(
-                                        exp
-                                      )}) (check #777)`
-                                    )
-                                  else {
-                                    // ANONYMOUS LAMBDAS TYPE CHECKING
-                                    const local = Object.create(env)
-                                    const lambdaName = `${ANONYMOUS_FUNCTION_TYPE_PREFIX}${i}::${++scopeIndex}`
-                                    check(
-                                      [
-                                        [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                        [WORD, lambdaName],
-                                        rest[i]
-                                      ],
-                                      local,
-                                      scope
-                                    )
-                                    // TODO delete this maybe
-                                    // #C2
-                                    // It will not be possilbe to know return type
-                                    const match1 = () => {
-                                      const actual = local[lambdaName]
-                                      const expected = args[i]
-                                      if (
-                                        !isUnknownReturn(expected[STATS]) &&
-                                        !isUnknownReturn(actual[STATS]) &&
-                                        !compareReturns(
-                                          expected[STATS],
-                                          actual[STATS]
-                                        )
-                                      )
+                        else {
+                          if (env[name] && getType(env[name][STATS]) === APPLY)
+                            switch (first[VALUE]) {
+                              case KEYWORDS.IF:
+                                break
+                              default:
+                                // TODO fix this assigment
+                                // It turns out it's not possible to determine return type of function here
+                                // what if it's a global function used elsewhere where the return type mwould be different
+                                // THIS willgive lambda return types but refactor is needed still
+                                if (!SPECIAL_FORMS_SET.has(name))
+                                  setReturnRef(env[name][STATS], args[i][STATS])
+                                break
+                            }
+                          // TODO also handle casting
+                        }
+                      } else {
+                        const match = () => {
+                          const actual =
+                            rest[i][0][VALUE] === KEYWORDS.CREATE_ARRAY
+                              ? initArrayType({ rem: rest[i], env }) ??
+                                env[rest[i][0][VALUE]][STATS]
+                              : env[rest[i][0][VALUE]][STATS]
+                          const expected = args[i][STATS]
+                          retryArgs(args[i][STATS], stack, () => match())
+                          if (
+                            !isUnknownType(expected) &&
+                            !isUnknownReturn(actual)
+                          )
+                            if (!compareTypeWithReturn(expected, actual))
+                              throw new TypeError(
+                                `Incorrect type of argument (${i}) for (${
+                                  first[VALUE]
+                                }). Expected (${toTypeNames(
+                                  getType(expected)
+                                )}) but got (${toTypeNames(
+                                  getReturn(actual)
+                                )}) (${stringifyArgs(exp)}) (check #16)`
+                              )
+                            else if (notABooleanReturn(expected, actual)) {
+                              throw new TypeError(
+                                `Incorrect type of argument (${i}) for (${
+                                  first[VALUE]
+                                }). Expected (${formatSubType(
+                                  getTypes(expected)
+                                )}) but got (${formatSubType(
+                                  getReturns(actual)
+                                )}) (${stringifyArgs(exp)}) (check #206)`
+                              )
+                            } else {
+                              switch (getType(expected)) {
+                                // almost exclusively for anonymous lambdas
+                                case APPLY:
+                                  {
+                                    const argsN = rest[i].length - 2
+                                    if (
+                                      env[rest[i][0][VALUE]][STATS][
+                                        SIGNATURE
+                                      ] === KEYWORDS.ANONYMOUS_FUNCTION
+                                    ) {
+                                      if (argsN !== args[i][STATS][ARG_COUNT])
                                         throw new TypeError(
-                                          `Incorrect return type for (${
-                                            expected[STATS][SIGNATURE]
+                                          `Incorrect number of arguments for (${
+                                            args[i][STATS][SIGNATURE]
                                           }) the (${
                                             KEYWORDS.ANONYMOUS_FUNCTION
                                           }) argument of (${
                                             first[VALUE]
-                                          }) at position (${i}). Expected (${toTypeNames(
-                                            getReturn(expected[STATS])
-                                          )}) but got (${toTypeNames(
-                                            getReturn(actual[STATS])
-                                          )}) (${stringifyArgs(
+                                          }) at position (${i}). Expected (= ${
+                                            args[i][STATS][ARG_COUNT]
+                                          }) but got ${argsN} (${stringifyArgs(
                                             exp
-                                          )}) (check #779)`
+                                          )}) (check #777)`
                                         )
-                                      else
-                                        retry(actual[STATS], stack, () =>
-                                          match1()
+                                      else {
+                                        // ANONYMOUS LAMBDAS TYPE CHECKING
+                                        const local = Object.create(env)
+                                        const lambdaName = `${ANONYMOUS_FUNCTION_TYPE_PREFIX}${i}::${++scopeIndex}`
+                                        check(
+                                          [
+                                            [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                            [WORD, lambdaName],
+                                            rest[i]
+                                          ],
+                                          local,
+                                          scope
                                         )
-                                    }
-                                    match1()
-                                    for (
-                                      let j = 0;
-                                      j < args[i][STATS][ARGUMENTS].length;
-                                      ++j
-                                    ) {
-                                      const match2 = () => {
-                                        const actual =
-                                          local[lambdaName][STATS][ARGUMENTS][j]
-                                        const expected =
-                                          args[i][STATS][ARGUMENTS][j]
-                                        if (
-                                          !isUnknownType(actual[STATS]) &&
-                                          !isUnknownType(expected[STATS]) &&
-                                          !compareTypes(
-                                            actual[STATS],
-                                            expected[STATS]
+                                        // TODO delete this maybe
+                                        // #C2
+                                        // It will not be possilbe to know return type
+                                        const match1 = () => {
+                                          const actual = local[lambdaName]
+                                          const expected = args[i]
+                                          if (
+                                            !isUnknownReturn(expected[STATS]) &&
+                                            !isUnknownReturn(actual[STATS]) &&
+                                            !compareReturns(
+                                              expected[STATS],
+                                              actual[STATS]
+                                            )
                                           )
-                                        )
-                                          throw new TypeError(
-                                            `Incorrect type for (${
-                                              KEYWORDS.ANONYMOUS_FUNCTION
-                                            }) (${
-                                              args[i][STATS][SIGNATURE]
-                                            }) argument at position (${j}) named as (${
+                                            throw new TypeError(
+                                              `Incorrect return type for (${
+                                                expected[STATS][SIGNATURE]
+                                              }) the (${
+                                                KEYWORDS.ANONYMOUS_FUNCTION
+                                              }) argument of (${
+                                                first[VALUE]
+                                              }) at position (${i}). Expected (${toTypeNames(
+                                                getReturn(expected[STATS])
+                                              )}) but got (${toTypeNames(
+                                                getReturn(actual[STATS])
+                                              )}) (${stringifyArgs(
+                                                exp
+                                              )}) (check #779)`
+                                            )
+                                          else
+                                            retry(actual[STATS], stack, () =>
+                                              match1()
+                                            )
+                                        }
+                                        match1()
+                                        for (
+                                          let j = 0;
+                                          j < args[i][STATS][ARGUMENTS].length;
+                                          ++j
+                                        ) {
+                                          const match2 = () => {
+                                            const actual =
                                               local[lambdaName][STATS][
                                                 ARGUMENTS
-                                              ][j][STATS][SIGNATURE]
-                                            }). Expected (${toTypeNames(
-                                              getType(expected[STATS])
-                                            )}) but got (${toTypeNames(
-                                              getType(actual[STATS])
-                                            )}) (${stringifyArgs(
-                                              exp
-                                            )}) (check #780)`
-                                          )
-                                        else
-                                          retry(actual[STATS], stack, () =>
-                                            match2()
-                                          )
+                                              ][j]
+                                            const expected =
+                                              args[i][STATS][ARGUMENTS][j]
+                                            if (
+                                              !isUnknownType(actual[STATS]) &&
+                                              !isUnknownType(expected[STATS]) &&
+                                              !compareTypes(
+                                                actual[STATS],
+                                                expected[STATS]
+                                              )
+                                            )
+                                              throw new TypeError(
+                                                `Incorrect type for (${
+                                                  KEYWORDS.ANONYMOUS_FUNCTION
+                                                }) (${
+                                                  args[i][STATS][SIGNATURE]
+                                                }) argument at position (${j}) named as (${
+                                                  local[lambdaName][STATS][
+                                                    ARGUMENTS
+                                                  ][j][STATS][SIGNATURE]
+                                                }). Expected (${toTypeNames(
+                                                  getType(expected[STATS])
+                                                )}) but got (${toTypeNames(
+                                                  getType(actual[STATS])
+                                                )}) (${stringifyArgs(
+                                                  exp
+                                                )}) (check #780)`
+                                              )
+                                            else
+                                              retry(actual[STATS], stack, () =>
+                                                match2()
+                                              )
+                                          }
+                                          match2()
+                                        }
                                       }
-                                      match2()
+                                    } else {
+                                      // TODO fix curry: lambdas enter here as undefined
                                     }
                                   }
-                                } else {
-                                  // TODO fix curry: lambdas enter here as undefined
-                                }
+                                  break
+                                // case ATOM:
+                                // case COLLECTION:
+                                //   break
                               }
-                              break
-                            // case ATOM:
-                            // case COLLECTION:
-                            //   break
-                          }
+                            }
+                          else if (isUnknownType(expected))
+                            retry(args[i][STATS], stack, () => match())
                         }
-                      else if (isUnknownType(expected))
-                        retry(args[i][STATS], stack, () => match())
+                        match()
+                      }
                     }
-                    match()
                   }
+                  // REFACTORING
                 }
               }
             })
