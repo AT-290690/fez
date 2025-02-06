@@ -308,6 +308,7 @@ const IsPredicate = (leaf) =>
     (PREDICATES_OUTPUT_SET.has(leaf[VALUE]) ||
       getSuffix(leaf[VALUE]) === PREDICATE_SUFFIX))
 
+// THese should also check if sub type is Uknown array and pass as ok
 const notABooleanType = (a, b) => {
   return (
     hasSubType(a) &&
@@ -1054,10 +1055,12 @@ export const typeCheck = (ast) => {
                   // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                   const MAIN_TYPE = getType(args[i][STATS])
                   if (MAIN_TYPE === ANY) continue
+                  // TODO - try to merge special and non special
                   if (first[TYPE] === APPLY && isSpecial) {
                     if (!isResLeaf) {
                       const name = rest[i][0][VALUE]
                       if (!env[name]) continue
+                      // there is a problem here with cond pr when passed as an argument
                       if (name === KEYWORDS.IF) {
                         const concequent = [...rest]
                         const alternative = [...rest]
@@ -1073,6 +1076,7 @@ export const typeCheck = (ast) => {
                           check(exp, env, scope)
                         )
                       } else if (
+                        !isUnknownType(args[i][STATS]) &&
                         !isUnknownReturn(env[name][STATS]) &&
                         !compareTypeWithReturn(args[i][STATS], env[name][STATS])
                       )
@@ -1086,6 +1090,7 @@ export const typeCheck = (ast) => {
                           )}) (${stringifyArgs(exp)}) (check #1)`
                         )
                       else if (
+                        !isUnknownReturn(args[i][STATS]) &&
                         !isUnknownReturn(env[name][STATS]) &&
                         notABooleanReturn(args[i][STATS], env[name][STATS])
                       )
@@ -1121,6 +1126,7 @@ export const typeCheck = (ast) => {
                             const name = rest[i][VALUE]
                             if (!env[name]) continue
                             if (
+                              !isUnknownType(args[i][STATS]) &&
                               !isUnknownType(env[name][STATS]) &&
                               !compareTypes(args[i][STATS], env[name][STATS])
                             )
@@ -1134,6 +1140,7 @@ export const typeCheck = (ast) => {
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
                             else if (
+                              !isUnknownType(args[i][STATS]) &&
                               !isUnknownType(env[name][STATS]) &&
                               notABooleanType(args[i][STATS], env[name][STATS])
                             )
@@ -1164,7 +1171,10 @@ export const typeCheck = (ast) => {
                           }
                           break
                         case ATOM: {
-                          if (rest[i][TYPE] !== args[i][STATS][TYPE_PROP][0])
+                          if (
+                            !isUnknownType(args[i][STATS]) &&
+                            rest[i][TYPE] !== args[i][STATS][TYPE_PROP][0]
+                          )
                             throw new TypeError(
                               `Incorrect type of argument (${i}) for special form (${
                                 first[VALUE]
