@@ -585,7 +585,7 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(and (array:empty! [1 2 3]) 1)`,
-      `Incorrect type of argument (0) for (and). Expected (Number) but got ([Unknown]) (and (array:empty! (array 1 2 3)) 1) (check #1)`
+      `Incorrect type of argument (0) for (and). Expected (Number) but got ([Unknown]) (and (array:empty! (array 1 2 3)) 1) (check #16)`
     )
 
     fails(
@@ -691,7 +691,7 @@ ZZZ=ZZZ,ZZZ")
 
 (+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
 `,
-      `Incorrect type of argument (1) for (+). Expected (Number) but got ([Unknown]) (+ (f8) (f5 1)) (check #1)`
+      `Incorrect type of argument (1) for (+). Expected (Number) but got ([Unknown]) (+ (f8) (f5 1)) (check #16)`
     )
     fails(
       `(let fn (lambda x y? (+ x (or y? 1))))
@@ -754,7 +754,7 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let f (lambda 10))
 (if (f) 1 1)`,
-      `Incorrect type of argument (0) for (if). Expected (Boolean) but got (Number) (if (f) 1 1) (check #201)`
+      `Incorrect type of argument (0) for (if). Expected (Boolean) but got (Number) (if (f) 1 1) (check #206)`
     )
     fails(
       `(let x 2) (or 1 x)`,
@@ -777,11 +777,11 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(and (array:map [1 2 3] math:square) false)`,
-      `Incorrect type of argument (0) for (and). Expected (Number) but got ([Unknown]) (and (array:map (array 1 2 3) math:square) false) (check #1)`
+      `Incorrect type of argument (0) for (and). Expected (Number) but got ([Unknown]) (and (array:map (array 1 2 3) math:square) false) (check #16)`
     )
     fails(
       `(not (length []))`,
-      `Incorrect type of argument (0) for (not). Expected (Boolean) but got (Number) (not (length (array))) (check #201)`
+      `Incorrect type of argument (0) for (not). Expected (Boolean) but got (Number) (not (length (array))) (check #206)`
     )
     fails(
       `(let p (lambda (do
