@@ -1284,41 +1284,41 @@ export const typeCheck = (ast) => {
                     } else {
                       const name = rest[i][0][VALUE]
                       if (!env[name]) continue
-                      if (isSpecial && name === KEYWORDS.IF) {
-                        const concequent = [...rest]
-                        const alternative = [...rest]
-                        concequent[i] = rest[i][1]
-                        alternative[i] = rest[i][2]
-                        check([first, ...concequent], env, scope)
-                        check([first, ...alternative], env, scope)
-                      }
                       if (
-                        isSpecial &&
                         isUnknownReturn(env[name][STATS]) &&
                         !env[name][STATS][IS_ARGUMENT]
-                      ) {
+                      )
                         return retry(env[name][STATS], stack, () =>
                           check(exp, env, scope)
                         )
-                      }
-                      if (
-                        isSpecial &&
-                        env[name] &&
-                        getType(env[name][STATS]) === APPLY &&
-                        !SPECIAL_FORMS_SET.has(name)
-                      )
-                        switch (first[VALUE]) {
-                          case KEYWORDS.IF:
-                            break
-                          default:
-                            // TODO fix this assigment
-                            // It turns out it's not possible to determine return type of function here
-                            // what if it's a global function used elsewhere where the return type mwould be different
-                            // THIS willgive lambda return types but refactor is needed still
-                            // if (!SPECIAL_FORMS_SET.has(name))
-                            setReturnRef(env[name][STATS], args[i][STATS])
-                            break
+
+                      if (isSpecial) {
+                        if (name === KEYWORDS.IF) {
+                          const concequent = [...rest]
+                          const alternative = [...rest]
+                          concequent[i] = rest[i][1]
+                          alternative[i] = rest[i][2]
+                          check([first, ...concequent], env, scope)
+                          check([first, ...alternative], env, scope)
                         }
+                        if (
+                          env[name] &&
+                          getType(env[name][STATS]) === APPLY &&
+                          !SPECIAL_FORMS_SET.has(name)
+                        )
+                          switch (first[VALUE]) {
+                            case KEYWORDS.IF:
+                              break
+                            default:
+                              // TODO fix this assigment
+                              // It turns out it's not possible to determine return type of function here
+                              // what if it's a global function used elsewhere where the return type mwould be different
+                              // THIS willgive lambda return types but refactor is needed still
+                              // if (!SPECIAL_FORMS_SET.has(name))
+                              setReturnRef(env[name][STATS], args[i][STATS])
+                              break
+                          }
+                      }
                       // TODO also handle casting
                       const match = () => {
                         const actual =
