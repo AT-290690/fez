@@ -42,6 +42,17 @@ const toCamelCase = (name) => {
 const dashToLodashes = (name) => name.replace(new RegExp(/-/g), '_')
 const keywordToHelper = (name) => {
   switch (name) {
+    case STATIC_TYPES.ABSTRACTION:
+    case STATIC_TYPES.COLLECTION:
+    case STATIC_TYPES.UNKNOWN:
+    case STATIC_TYPES.ATOM:
+    case STATIC_TYPES.PREDICATE:
+    case STATIC_TYPES.ANY:
+    case STATIC_TYPES.NUMBER:
+    case DEBUG.ASSERT:
+    case DEBUG.LOG:
+    case DEBUG.STRING:
+      return '__identity'
     case TRUE_WORD:
       return '__true'
     case FALSE_WORD:
@@ -114,7 +125,7 @@ const Helpers = {
   or: `or=(a, b)=>+(a||b)`,
   get: 'get=(arr,i)=>arr[i]',
   length: 'length=(arr)=>arr.length',
-  __tco: `__tco=fn=>(...args)=>{let result=fn(...args);while(typeof result==='function')result=result();return result}`,
+  __identity: `__identity=(x)=>x`,
   atom_predicate: `atom_predicate=(number)=>+(typeof number==='number')`,
   lambda_predicate: `lambda_predicate=(fn)=>+(typeof fn==='function')`,
   __error: `__error=(error)=>{throw new Error(error.map((x)=>String.fromCharCode(x)).join(''))}`,

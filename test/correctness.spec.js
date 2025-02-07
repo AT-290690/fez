@@ -8,6 +8,23 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(let entity ({ "x" 10 "y" 23 }))
+(let set-prop! (lambda entity key vel (map:set! entity key (+ (map:get entity key) vel))))
+(let vel! (lambda entity coord 
+    (|> entity (set-prop! "x" (map:get coord "x")) (set-prop! "y" (map:get coord "y")))))
+(vel! entity ({ "x" 2 "y" 4 }))
+(vel! entity ({ "x" 3 "y" 12 }))
+(vel! entity ({ "x" 4 "y" 3 }))
+(vel! entity ({ "x" 12 "y" 24 }))
+(vel! entity ({ "x" -4 "y" -3 }))
+(vel! entity ({ "x" 2 "y" 4 }))
+(|> entity (matrix:flat-one) (array:map (lambda [key value .] [(string key) value])))`),
+      [
+        [[120], 29],
+        [[121], 67]
+      ]
+    )
+    deepStrictEqual(
       evalJS(
         `(let obj ({ "name" "Anthony" "age" 34 }))
 (let A (["10" "20" "30" "40"]))
