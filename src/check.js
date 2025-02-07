@@ -147,6 +147,12 @@ export const setPropToAbstraction = (stats, prop) => {
     (stats[prop][0] = APPLY)
   )
 }
+export const setPropToCollection = (stats, prop) => {
+  return (
+    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    (stats[prop][0] = COLLECTION)
+  )
+}
 export const setProp = (stats, prop, value) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
@@ -440,6 +446,9 @@ const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
         ref,
         prop
       })
+    case KEYWORDS.CREATE_ARRAY:
+      setPropToReturnRef(ref[STATS], prop, initArrayType({ rem: re, env }))
+      break
     case KEYWORDS.ANONYMOUS_FUNCTION:
       setPropToAbstraction(ref[STATS], prop)
       ref[STATS][RETURNS] = [UNKNOWN]
@@ -569,10 +578,10 @@ const resolveSetter = (first, rest, env) => {
       case APPLY:
         if (env[right[VALUE]]) {
           if (right[VALUE] === KEYWORDS.CREATE_ARRAY) {
-            current[STATS][TYPE_PROP][1] = (initArrayType({
+            current[STATS][TYPE_PROP][1] = initArrayType({
               rem: rest.at(-1),
               env
-            }) ?? { [RETURNS]: [COLLECTION, new Set([])] })[RETURNS][1]
+            })[RETURNS][1]
             break
           }
           if (hasSubReturn(env[right[VALUE]][STATS]))
@@ -652,7 +661,11 @@ const initArrayType = ({ rem, env }) => {
       [TYPE_PROP]: [APPLY],
       [RETURNS]: [COLLECTION, new Set(sub ? [...sub] : [main])]
     }
-  }
+  } else
+    return {
+      [TYPE_PROP]: [APPLY],
+      [RETURNS]: [COLLECTION, new Set([])]
+    }
 }
 const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
   if (returns[TYPE] === ATOM) {
@@ -661,10 +674,7 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
   } else {
     switch (returns[VALUE]) {
       case KEYWORDS.CREATE_ARRAY:
-        {
-          const r = initArrayType({ rem, env })
-          if (r) setPropToSubReturn(env[name][STATS], prop, r)
-        }
+        setPropToSubReturn(env[name][STATS], prop, initArrayType({ rem, env }))
         break
       case KEYWORDS.IF:
         resolveCondition({ rem, name, env, exp, prop })
@@ -739,7 +749,7 @@ export const typeCheck = (ast) => {
     const first = exp[0]
     const actual =
       rest[i][0][VALUE] === KEYWORDS.CREATE_ARRAY
-        ? initArrayType({ rem: rest[i], env }) ?? env[rest[i][0][VALUE]][STATS]
+        ? initArrayType({ rem: rest[i], env })
         : env[rest[i][0][VALUE]][STATS]
     const expected = args[i][STATS]
     retryArgs(args[i][STATS], exp, stack, () =>

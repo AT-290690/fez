@@ -239,7 +239,7 @@
 ; 1 pair:list-zip
 (let pair:list-zip (lambda [Unknown] (do [Unknown])))
 ; 1 pair:list-unzip
-(let pair:list-unzip (lambda [Unknown] (do [[Unknown]])))
+(let pair:list-unzip (lambda [Unknown] (do [Unknown])))
 ; 1 math:range recursive:math:range
 (let recursive:math:range (lambda [Unknown] Number (do [Unknown])))
 ; 1 math:range
@@ -271,7 +271,7 @@
 ; 1 math:overlap?
 (let math:overlap? (lambda Number Number Number (do Boolean)))
 ; 1 math:permutations
-(let math:permutations (lambda [Unknown] (do [Unknown])))
+(let math:permutations (lambda [Unknown] (do [[Unknown]])))
 ; 1 math:combinations out
 (let out [[Unknown]])
 ; 1 math:combinations combinations
@@ -561,7 +561,7 @@
 ; 1 list:zip
 (let list:zip (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 list:unzip
-(let list:unzip (lambda [Unknown] (do [[Unknown]])))
+(let list:unzip (lambda [Unknown] (do [Unknown])))
 ; 1 list:length
 (let list:length (lambda [Unknown] (do Number)))
 ; 1 list:enumerate
@@ -683,7 +683,7 @@
 ; 1 array:find-option index
 (let index Number)
 ; 1 array:find-option
-(let array:find-option (lambda [Unknown] (lambda Unknown (do Unknown)) (do [Unknown])))
+(let array:find-option (lambda [Unknown] (lambda Unknown (do Unknown)) (do [[Unknown]])))
 ; 1 array:has? recursive:array:has
 (let recursive:array:has (lambda Number (do Boolean)))
 ; 1 array:has?
@@ -731,11 +731,11 @@
 ; 1 array:in-bounds?
 (let array:in-bounds? (lambda [Unknown] Number (do Boolean)))
 ; 1 get-option
-(let get-option (lambda [Unknown] Number (do [Unknown])))
+(let get-option (lambda [Unknown] Number (do [[Unknown]])))
 ; 1 get-or-default
 (let get-or-default (lambda [Unknown] Number Unknown (do Unknown)))
 ; 1 array:get-option
-(let array:get-option (lambda [Unknown] Number (do [Unknown])))
+(let array:get-option (lambda [Unknown] Number (do [[Unknown]])))
 ; 1 array:get-or-default
 (let array:get-or-default (lambda [Unknown] Number Unknown (do Unknown)))
 ; 1 array:slice bounds
@@ -959,7 +959,7 @@
 ; 1 matrix:set-and-get!
 (let matrix:set-and-get! (lambda [Unknown] Number Number Unknown (do Unknown)))
 ; 1 matrix:get-option
-(let matrix:get-option (lambda [Unknown] Number Number (do [Unknown])))
+(let matrix:get-option (lambda [Unknown] Number Number (do [[Unknown]])))
 ; 1 matrix:get-or-default
 (let matrix:get-or-default (lambda [Unknown] Number Number Unknown (do Unknown)))
 ; 1 from:yx->key
@@ -1001,7 +1001,7 @@
 ; 1 from:positive-or-negative-digits->chars
 (let from:positive-or-negative-digits->chars (lambda [Unknown] (do [Unknown])))
 ; 1 from:integer->digits recursive:from:integer->digits
-(let recursive:from:integer->digits (lambda Number [Number] (do [Unknown])))
+(let recursive:from:integer->digits (lambda Number [Number] (do [Number])))
 ; 1 from:integer->digits
 (let from:integer->digits (lambda Number (do Unknown)))
 ; 1 from:number->positive-or-negative-digits negative?
@@ -1009,13 +1009,13 @@
 ; 1 from:number->positive-or-negative-digits num
 (let num Number)
 ; 1 from:number->positive-or-negative-digits recursive:from:number->positive-or-negative-digits
-(let recursive:from:number->positive-or-negative-digits (lambda Number [Number] (do [Unknown])))
+(let recursive:from:number->positive-or-negative-digits (lambda Number [Number] (do [Number])))
 ; 1 from:number->positive-or-negative-digits out
 (let out [Number])
 ; 1 from:number->positive-or-negative-digits
 (let from:number->positive-or-negative-digits (lambda Number (do [Number])))
 ; 1 from:integer->bits recursive:from:integer->bits
-(let recursive:from:integer->bits (lambda Number [Number] (do [Unknown])))
+(let recursive:from:integer->bits (lambda Number [Number] (do [Number])))
 ; 1 from:integer->bits
 (let from:integer->bits (lambda Number (do Unknown)))
 ; 1 from:numbers->chars
@@ -1503,7 +1503,7 @@
 ; 1 map:set! idx
 (let idx Number)
 ; 1 map:set! current
-(let current [[Unknown]])
+(let current [Unknown])
 ; 1 map:set! len
 (let len Number)
 ; 1 map:set! index
@@ -1543,7 +1543,7 @@
 ; 1 map:get-option 152 index
 (let index Number)
 ; 1 map:get-option
-(let map:get-option (lambda [Unknown] [Unknown] (do [Unknown])))
+(let map:get-option (lambda [Unknown] [Unknown] (do [[Unknown]])))
 ; 1 map:has? idx
 (let idx Number)
 ; 1 map:has? current
@@ -2031,9 +2031,9 @@
 ; 1 from:chars->ast tree
 (let tree [Unknown])
 ; 1 from:chars->ast stack
-(let stack [[Unknown]])
+(let stack [Unknown])
 ; 1 from:chars->ast head
-(let head [[Unknown]])
+(let head [Unknown])
 ; 1 from:chars->ast acc
 (let acc [Number])
 ; 1 from:chars->ast 176 cursor
@@ -2041,11 +2041,11 @@
 ; 1 from:chars->ast 176 177 temp
 (let temp [Unknown])
 ; 1 from:chars->ast 176 177 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast 176 178 token
 (let token [Unknown])
 ; 1 from:chars->ast 176 178 179 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast
 (let from:chars->ast (lambda [Unknown] (do [Unknown])))
 ; 1 special-form:let name
@@ -2545,21 +2545,21 @@
 ; 1 from:chars->ast 464 465 temp
 (let temp [Unknown])
 ; 1 from:chars->ast 464 465 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast 464 466 token
 (let token [Unknown])
 ; 1 from:chars->ast 464 466 467 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::468 cursor
 (let cursor Number)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::468 469 temp
 (let temp [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::468 469 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::468 470 token
 (let token [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::468 470 471 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::468
 (let lambda::annonymous::1::468 (lambda Number (do [Unknown])))
 ; 1 ast:traverse 186 186 lambda::annonymous::1::473
@@ -2591,11 +2591,11 @@
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 489 temp
 (let temp [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 489 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 490 token
 (let token [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488 490 491 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::488
 (let lambda::annonymous::1::488 (lambda Number (do [Unknown])))
 ; 1 match:number? match:number? lambda::annonymous::1::493
@@ -3121,11 +3121,11 @@
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::841 842 temp
 (let temp [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::841 842 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::841 843 token
 (let token [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::841 843 844 h
-(let h [[Unknown]])
+(let h [Unknown])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::841
 (let lambda::annonymous::1::841 (lambda Number (do [Unknown])))
 ; 1 string:join-as-table-with 121 121 lambda::annonymous::1::848

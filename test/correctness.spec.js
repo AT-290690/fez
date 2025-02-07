@@ -7,6 +7,50 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      evalJS(`(let Option (lambda xs i (get-option xs i)))
+(let None? (lambda [. error .] (= (length error) 0)))
+(let Match (lambda Result (if (None? Result) (Some (get Result 0)) (None))))
+
+(let None (lambda -1))
+(let Some (lambda 
+    [x .] 
+    (cond 
+        (atom? x) (* x x)
+        (array? x) (|> (Collection x) (array:map array) (array:map Some) (math:summation))
+        (lambda? x) (None)
+        (*) (None))))
+        
+
+(let unknown [1 2 [] [1 2 3 [1 2]] [1 1 1 [[1 2 3] [9 1 7]]]])
+(Match (Option unknown 4))`),
+      148
+    )
+    strictEqual(
+      evalJS(`(let Option (lambda xs i (get-option xs i)))
+(let None? (lambda [. error .] (= (length error) 0)))
+(let Match (lambda Result (if (None? Result) (Some (get Result 0)) (None))))
+
+
+(let None (lambda -1))
+(let Some (lambda [x .] (cond 
+                            (atom? x) (* x x)
+                            (array? x) (|> (Collection x) (mapping:atom->atom math:square) (math:summation))
+                            (lambda? x) (None)
+                            (*) (None))))
+
+
+; (let None (lambda []))
+; (let Some (lambda [x .] (cond 
+;                             (atom? x) [(* x x)]
+;                             (array? x) (|> (Collection x) (mapping:atom->atom math:square) (math:summation) [])
+;                             (lambda? x) (None)
+;                             (*) (None))))
+
+(let unknown [1 [1 2 3] 10 [] [4 5 6] 4 14])
+(Match (Option unknown 2))`),
+      100
+    )
     deepStrictEqual(
       evalJS(`(let entity ({ "x" 10 "y" 23 }))
 (let set-prop! (lambda entity key vel (map:set! entity key (+ (map:get entity key) vel))))
