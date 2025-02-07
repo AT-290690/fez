@@ -462,6 +462,27 @@ export class Brr {
     for (let i = half; i < initial.length; ++i) this._addToRight(initial[i])
     return this
   }
+  static from(iterable) {
+    const out = new Brr()
+    const half = (iterable.length / 2) | 0.5
+    for (let i = half - 1; i >= 0; --i) out._addToLeft(iterable[i])
+    for (let i = half; i < iterable.length; ++i) out._addToRight(iterable[i])
+    return out
+  }
+  /**
+   * Returns the elements of an array that meet the condition specified in a callback function.
+   * @param predicate — A function that accepts up to three arguments.
+   * The filter method calls the predicate function one time for each element in the array.
+   */
+  filter(callback = _Identity) {
+    const out = []
+    for (let i = 0, len = this.length; i < len; ++i) {
+      const current = this.get(i)
+      const predicat = callback(current, i, this)
+      if (predicat) out.push(current)
+    }
+    return Brr.from(out)
+  }
   // reverse() {
   //   const left = this._left
   //   const right = this._right

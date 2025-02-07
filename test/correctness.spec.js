@@ -7,6 +7,26 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`(|>
+    [1 2 3 4 5 6]
+   (math:combinations)
+   (array:map length)
+   (array:map from:integer->string)
+   (map:count)
+   (matrix:flat-one)
+   (array:sort (lambda [. a .] [. b .] (< a b)))
+   (array:map (lambda [key value .] [[(+ (array:first key) 50)]value]))
+   )`),
+      [
+        [[101], 20],
+        [[102], 15],
+        [[100], 15],
+        [[103], 6],
+        [[99], 6],
+        [[104], 1]
+      ]
+    )
     strictEqual(
       evalJS(`(let map (new:map ["name" "Anthony" "age" 34]))
 (let option (map:get-option map "age"))

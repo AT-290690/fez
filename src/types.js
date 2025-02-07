@@ -419,7 +419,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.MULTIPLICATION]: {
@@ -452,7 +452,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.SUBTRACTION]: {
@@ -485,7 +485,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.DIVISION]: {
@@ -518,7 +518,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.REMAINDER_OF_DIVISION]: {
@@ -550,7 +550,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.BITWISE_AND]: {
@@ -583,7 +583,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.BITWISE_NOT]: {
@@ -605,7 +605,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.BITWISE_OR]: {
@@ -638,7 +638,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.BITWISE_XOR]: {
@@ -671,7 +671,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.BITWISE_LEFT_SHIFT]: {
@@ -704,7 +704,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.BITWISE_RIGHT_SHIFT]: {
@@ -737,7 +737,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.GET_ARRAY]: {
@@ -859,7 +859,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM]
+      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
     }
   },
   [KEYWORDS.IF]: {

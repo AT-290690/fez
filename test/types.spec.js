@@ -563,6 +563,14 @@ ZZZ=ZZZ,ZZZ")
     // fails(`(let xs [])
     // (let x (array:set-and-get! xs 0 100))
     // (length x)`, '')
+    fails(
+      `(let xs [])
+(set! xs 0 100)
+(let x (array:get xs 0 100))
+(length x)`,
+      `Incorrect type of argument (0) for (length). Expected ([Unknown]) but got (Number) (length x) (check #3)`
+    )
+
     // TODO unbcomment that and makeit work
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
