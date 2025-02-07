@@ -8,6 +8,15 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(
+        `(let obj ({ "name" "Anthony" "age" 34 }))
+(let A (["10" "20" "30" "40"]))
+(let B (["10" "32" "41"]))
+[(map:get obj "age") (set:has? (set:xor A B) "32")]`
+      ),
+      [34, 1]
+    )
+    deepStrictEqual(
       evalJS(`(|>
     [1 2 3 4 5 6]
    (math:combinations)

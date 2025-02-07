@@ -26,6 +26,8 @@ export const SUGGAR = {
   REMAINDER_OF_DIVISION_1: '%',
   UNLESS: 'unless',
   CREATE_LIST: 'list',
+  CREATE_SET: 'new:set',
+  CREATE_MAP: 'new:map',
   POWER: '**',
   INTEGER_DEVISION: '//',
   CONDITION: 'cond'
@@ -683,6 +685,8 @@ export const seeIfProgramIsInvalid = (source) => {
 }
 export const replaceQuotes = (source) =>
   source
+    .replaceAll(/\(\[/g, `(${SUGGAR.CREATE_SET} [`)
+    .replaceAll(/\(\{/g, `(${SUGGAR.CREATE_MAP} [`)
     .replaceAll(/\[/g, `(${KEYWORDS.CREATE_ARRAY} `)
     .replaceAll(/\]/g, ')')
     .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)

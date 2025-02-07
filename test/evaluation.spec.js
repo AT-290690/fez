@@ -6,6 +6,15 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(let obj ({ "name" "Anthony" "age" 34 }))
+(map:get obj "age")`,
+      `(let A (["10" "20" "30" "40"]))
+(let B (["10" "32" "41"]))
+(|> 
+    (set:xor A B)
+    (set:values)
+    ; (array:map string)
+)`,
       `(let sum-n (lambda arr n (do 
     (let empty [])
     (|>

@@ -112,6 +112,10 @@ describe('Type checking', () => {
     )
   })
   it('Does not throw', () => {
+    passes(`(let flip-bools (lambda xs (do
+    (loop:for-n (length xs) (lambda i (set! xs i (not (get xs i)))))
+    xs)))
+(flip-bools [false true false])`)
     passes(`(let arr [0])
 (let item (get-or-default arr 0 -1))
 (cond 
@@ -705,6 +709,13 @@ ZZZ=ZZZ,ZZZ")
       `(let fn (lambda x y? (+ x (or y? 1))))
 (fn 1 2)`,
       `Incorrect type of argument (1) for (fn). Expected (Boolean) but got (Number) (fn 1 2) (check #203)`
+    )
+    fails(
+      `(let flip-bools (lambda xs (do
+    (loop:for-n (length xs) (lambda i (set! xs i (not (get xs i)))))
+    xs)))
+(flip-bools [1 2 3])`,
+      `Incorrect type of argument (0) for (flip-bools). Expected ([Boolean]) but got ([Number]) (flip-bools (array 1 2 3)) (check #206)`
     )
     fails(
       `(let fn1? (lambda (apply [1] array:empty!)))
