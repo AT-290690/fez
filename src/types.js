@@ -1222,8 +1222,8 @@ export const formatSubType = (T) => {
                   ? formatSubType([x])
                   : toTypeNamesAnyToUknown(x)
               )
-              .join(' ')
-          : toTypeNamesAnyToUknown(ANY)
+              .join(' ') || toTypeNames(UNKNOWN)
+          : toTypeNames(UNKNOWN)
       }]`
     case ATOM:
       return `${

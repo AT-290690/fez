@@ -1378,7 +1378,7 @@
           (let current (get table idx))
           (let found-index (array:find-index current (lambda x (string:equal? key (get x 0)))))
           (unless (= found-index -1) (get (get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))
-          []))))
+          (Any nil)))))
 (let map:get-option (lambda table key (do
       (let idx (set:index table key))
       (if (array:in-bounds? table idx) (do
@@ -1401,6 +1401,10 @@
         (if (map:has? table key) 
             (map:set! table key (+ (Atom (map:get table key)) 1))
             (map:set! table key 1)))) (new:map64)))))
+(let map:increment! (lambda map key (map:set! map key (+ (map:get map key) 1))))
+(let map:increment-and-get! (lambda map key (map:set-and-get! map key (+ (map:get map key) 1))))
+(let map:decrement! (lambda map key (map:set! map key (- (map:get map key) 1))))
+(let map:decrement-and-get! (lambda map key (map:set-and-get! map key (- (map:get map key) 1))))
 
 (let doubly-linked-list:prev! (lambda list node (set! list 0 (set! node 2 list))))
 (let doubly-linked-list:next! (lambda list node (set! list 2 (set! node 0 list))))
