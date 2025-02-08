@@ -14,7 +14,7 @@ export const STATIC_TYPES = {
   UNKNOWN: 'Unknown',
   ATOM: 'Atom',
   COLLECTION: 'Collection',
-  PREDICATE: 'Predicate',
+  PREDICATE: 'Boolean',
   ANY: 'Any'
 }
 export const KEYWORDS = {
