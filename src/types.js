@@ -19,7 +19,7 @@ export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
 export const UNKNOWN = -1
 export const COLLECTION = 3
-export const PREDICATE = 5
+export const BOOLEAN = 5
 export const NUMBER = 6
 export const ANY = 4
 export const ANONYMOUS_FUNCTION_TYPE_PREFIX = 'lambda::annonymous::'
@@ -29,7 +29,7 @@ export const IS_ARGUMENT = 'is_arg'
 export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
-export const BOOLEAN_SUBTYPE = () => new Set([PREDICATE])
+export const BOOLEAN_SUBTYPE = () => new Set([BOOLEAN])
 export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
 export const NUMBER_SUBTYPE = () => new Set([NUMBER])
 
@@ -37,7 +37,7 @@ export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
       return 'Abstraction'
-    case PREDICATE:
+    case BOOLEAN:
       return 'Boolean'
     case ATOM:
     case NUMBER:
@@ -112,10 +112,10 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ATOM]
     }
   },
-  [STATIC_TYPES.PREDICATE]: {
+  [STATIC_TYPES.BOOLEAN]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: STATIC_TYPES.PREDICATE,
+      [SIGNATURE]: STATIC_TYPES.BOOLEAN,
       retried: Infinity,
       [ARG_COUNT]: 1,
       [ARGUMENTS]: [

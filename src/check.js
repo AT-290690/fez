@@ -42,7 +42,7 @@ import {
   FALSE_WORD,
   BOOLEAN_SUBTYPE,
   formatSubType,
-  PREDICATE,
+  BOOLEAN,
   IS_ARGUMENT,
   NUMBER,
   SETTER,
@@ -324,7 +324,7 @@ const IsPredicate = (leaf) =>
 const notABooleanType = (a, b) => {
   return (
     hasSubType(a) &&
-    getSubType(a).has(PREDICATE) &&
+    getSubType(a).has(BOOLEAN) &&
     !isUnknownType(b) &&
     !isAnyType(b) &&
     ((!hasSubType(b) && getType(b) !== COLLECTION) ||
@@ -334,7 +334,7 @@ const notABooleanType = (a, b) => {
 const notABooleanTypeWithReturn = (a, b) => {
   return (
     hasSubType(a) &&
-    getSubType(a).has(PREDICATE) &&
+    getSubType(a).has(BOOLEAN) &&
     !isUnknownReturn(b) &&
     !isAnyReturn(b) &&
     (!hasSubReturn(b) || getSubType(a).difference(getSubReturn(b)).size !== 0)
@@ -343,7 +343,7 @@ const notABooleanTypeWithReturn = (a, b) => {
 const notABooleanReturn = (a, b) => {
   return (
     hasSubReturn(a) &&
-    getSubReturn(a).has(PREDICATE) &&
+    getSubReturn(a).has(BOOLEAN) &&
     !isUnknownReturn(b) &&
     !isAnyReturn(b) &&
     (!hasSubReturn(b) || getSubReturn(a).difference(getSubReturn(b)).size !== 0)
@@ -624,7 +624,7 @@ const resolveGetter = ({ rem, prop, name, env }) => {
     case APPLY:
       if (hasSubType(env[array[VALUE]][STATS])) {
         const rightSub = getSubReturn(env[array[VALUE]][STATS])
-        const isAtom = rightSub.has(NUMBER) || rightSub.has(PREDICATE)
+        const isAtom = rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
         const isCollection = rightSub.has(COLLECTION)
         if (isAtom && !isCollection) {
           setPropToAtom(env[name][STATS], prop)
@@ -639,9 +639,7 @@ const resolveGetter = ({ rem, prop, name, env }) => {
         if (hasSubType(env[array[VALUE]][STATS])) {
           const rightSub = getSubType(env[array[VALUE]][STATS])
           const isAtom =
-            rightSub.has(ATOM) ||
-            rightSub.has(NUMBER) ||
-            rightSub.has(PREDICATE)
+            rightSub.has(ATOM) || rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
           const isCollection = rightSub.has(COLLECTION)
           if (isAtom && !isCollection) {
             setPropToAtom(env[name][STATS], prop)
@@ -1160,7 +1158,7 @@ export const typeCheck = (ast) => {
           case STATIC_TYPES.COLLECTION:
           case STATIC_TYPES.UNKNOWN:
           case STATIC_TYPES.ATOM:
-          case STATIC_TYPES.PREDICATE:
+          case STATIC_TYPES.BOOLEAN:
           case STATIC_TYPES.ANY:
           case STATIC_TYPES.NUMBER:
             {
@@ -1340,7 +1338,7 @@ export const typeCheck = (ast) => {
                               )
                             else if (
                               hasSubType(args[i][STATS]) &&
-                              getSubType(args[i][STATS]).has(PREDICATE) &&
+                              getSubType(args[i][STATS]).has(BOOLEAN) &&
                               !isAtomABoolean(rest[i][VALUE])
                             )
                               throw new TypeError(
