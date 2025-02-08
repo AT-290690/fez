@@ -2217,7 +2217,7 @@
 ; 1 array:buckets array:buckets lambda::annonymous::1::210
 (let lambda::annonymous::1::210 (lambda Unknown (do [Unknown])))
 ; 1 math:max-sub-array-sum math:max-sub-array-sum lambda::annonymous::1::211
-(let lambda::annonymous::1::211 (lambda [Number] Number (do [Unknown])))
+(let lambda::annonymous::1::211 (lambda [Number] Number (do [Number])))
 ; 1 math:cartesian-product 17 17 lambda::annonymous::1::212
 (let lambda::annonymous::1::212 (lambda Unknown (do [Unknown])))
 ; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::213

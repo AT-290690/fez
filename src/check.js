@@ -46,7 +46,8 @@ import {
   IS_ARGUMENT,
   NUMBER,
   SETTER,
-  NUMBER_SUBTYPE
+  NUMBER_SUBTYPE,
+  GENERIC
 } from './types.js'
 import {
   Brr,
@@ -132,6 +133,9 @@ export const setPropToAtom = (stats, prop) => {
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     ((stats[prop][0] = ATOM), (stats[prop][1] = NUMBER_SUBTYPE()))
   )
+}
+const setReturnToGeneric = (stats, index) => {
+  stats[RETURNS] = [UNKNOWN, undefined, index]
 }
 export const setPropToPredicate = (stats, prop) => {
   return (stats[prop][1] = BOOLEAN_SUBTYPE())
@@ -227,10 +231,10 @@ export const setTypeToReturnRef = (stats, value) => {
   // To prevent getters overwritting the array subtype
   // Change main type if unknown
   if (isUnknownType(stats) || isAnyType(stats))
-    stats[TYPE_PROP][0] = value[RETURNS][0]
+    if (!isUnknownReturn(value)) stats[TYPE_PROP][0] = value[RETURNS][0]
   // cange sub type if it doesn't have
   if (!hasSubType(stats) || getSubType(stats).has(UNKNOWN))
-    stats[TYPE_PROP][1] = value[RETURNS][1]
+    if (hasSubReturn(value)) stats[TYPE_PROP][1] = value[RETURNS][1]
 }
 export const setPropRef = (stats, prop, value) => {
   return (
@@ -712,7 +716,15 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
               })
             })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
-          if (!env[returns[VALUE]]) return false
+          const index = env[name][STATS][ARGUMENTS]
+            ? env[name][STATS][ARGUMENTS].findIndex(
+                (x) => x[STATS][SIGNATURE] === returns[VALUE]
+              )
+            : -1
+          if (index >= 0) {
+            setReturnToGeneric(env[name][STATS], index)
+            return true
+          } else if (!env[returns[VALUE]]) return false
           else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
             if (returns[TYPE] === WORD)
               setReturnToAbbstraction(env[name][STATS])
@@ -720,12 +732,27 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
               // ALWAYS APPLY
               // rest.at(-1)[0][TYPE] === APPLY
               // Here is upon application to store the result in the variable
+
               if (isUnknownType(env[name][STATS]))
                 stagger(stack, 'prepend', exp, () => {
-                  setTypeToReturnRef(
-                    env[name][STATS],
-                    env[returns[VALUE]][STATS]
-                  )
+                  if (env[returns[VALUE]][STATS][RETURNS].length === 3) {
+                    // env[name][STATS][TYPE_PROP] =
+                    const genericReturn =
+                      rem.slice(1)[env[returns[VALUE]][STATS][RETURNS][2]]
+                    switch (genericReturn[TYPE]) {
+                      case ATOM:
+                        setTypeToAtom(env[name][STATS])
+                        break
+                      case WORD:
+                        if (env[genericReturn[VALUE]])
+                          setStatsRef(env[name], env[genericReturn[VALUE]])
+                        break
+                    }
+                  } else
+                    setTypeToReturnRef(
+                      env[name][STATS],
+                      env[returns[VALUE]][STATS]
+                    )
                 })
               else setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
             }

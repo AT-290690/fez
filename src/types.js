@@ -22,6 +22,7 @@ export const COLLECTION = 3
 export const BOOLEAN = 5
 export const NUMBER = 6
 export const ANY = 4
+export const GENERIC = 7
 export const ANONYMOUS_FUNCTION_TYPE_PREFIX = 'lambda::annonymous::'
 export const MAX_ARGUMENT_RETRY = 1
 export const MAX_RETRY_DEFINITION = 100
@@ -837,6 +838,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
+      // [GENERIC, new Set([PLACEHOLDER]), 0]
       [RETURNS]: [COLLECTION]
     }
   },
