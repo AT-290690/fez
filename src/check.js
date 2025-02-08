@@ -224,10 +224,13 @@ export const setReturnToTypeRef = (stats, value) => {
 }
 export const setStatsRef = (a, b) => (a[STATS] = b[STATS])
 export const setTypeToReturnRef = (stats, value) => {
-  return (
-    (isUnknownType(stats) || isAnyType(stats)) &&
-    (stats[TYPE_PROP] = value[RETURNS])
-  )
+  // To prevent getters overwritting the array subtype
+  // Change main type if uknown
+  if (isUnknownType(stats) || isAnyType(stats))
+    stats[TYPE_PROP][0] = value[RETURNS][0]
+  // cange sub type if it doesn't have
+  if (!hasSubType(stats) || getSubType(stats).has(UNKNOWN))
+    stats[TYPE_PROP][1] = value[RETURNS][1]
 }
 export const setPropRef = (stats, prop, value) => {
   return (
@@ -424,16 +427,15 @@ const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
 }
-const retry = (stats, ctx, stack, cb) => {
+const retry = (stats, ctx, stack, cb, method = 'prepend') => {
   if (
     (isUnknownNotAnyType(stats) || isUnknownNotAnyReturn(stats)) &&
     stats.retried < MAX_RETRY_DEFINITION
   ) {
     stats.retried += 1
-    stagger(stack, 'prepend', ctx, cb)
+    stagger(stack, method, ctx, cb)
   }
 }
-
 const retryArgs = (stats, ctx, stack, cb) => {
   if (stats.counter < MAX_ARGUMENT_RETRY) {
     stats.counter++
