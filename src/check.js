@@ -961,7 +961,7 @@ export const typeCheck = (ast) => {
           // ---------------
           case KEYWORDS.DEFINE_VARIABLE:
             if (rest.length !== 2)
-              throw new TypeError(
+              throw new SyntaxError(
                 `Incorrect number of arguments for (${
                   first[VALUE]
                 }). Expected (= 2) but got ${rest.length} (${stringifyArgs(
@@ -969,6 +969,12 @@ export const typeCheck = (ast) => {
                 )})`
               )
             const name = rest[0][VALUE]
+            if (env.hasOwnProperty(name))
+              throw new ReferenceError(
+                `Attempting to rediclare (${name}) which was previously declared in this scope (${stringifyArgs(
+                  exp
+                )})`
+              )
             //  Predicate name consistency
             const rightHand = rest.at(-1)
             if (

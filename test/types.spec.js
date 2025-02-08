@@ -181,14 +181,16 @@ describe('Type checking', () => {
 (let is12? (lambda x (= x 12)))
 (is12? c)
 `)
-    passes(`(let array:unique (lambda xs (|>
-      (let sorted (array:sort xs (lambda a b (> a b))))
+    passes(`(let array:unique (lambda xs (do 
+    (let sorted (array:sort xs (lambda a b (> a b))))
+    (|>
+      sorted
       (array:zip (math:sequence sorted))
       (array:select (lambda x (do 
                   (let index (array:second x)) 
                   (or (not (> index 0))
                   (not (= (get sorted (- index 1)) (get sorted index)))))))
-      (array:map array:first))))`)
+      (array:map array:first)))))`)
     passes(`(set! [] 0 10)`)
     passes(`(let map (new:map ["name" "Anthony" "age" 34]))
 (let option (map:get-option map "age"))
