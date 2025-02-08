@@ -7,6 +7,12 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`(let square (lambda x (* x x)))
+(let fac (lambda x (if (<= x 1) 1 (* x (fac (- x 1))))))
+[(square 3) (fac 5) (square 120)]`),
+      [9, 120, 14400]
+    )
     strictEqual(
       evalJS(`(let Option (lambda xs i (get-option xs i)))
 (let None? (lambda [. error .] (= (length error) 0)))
