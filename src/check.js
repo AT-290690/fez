@@ -209,6 +209,8 @@ export const setTypeToAtom = (stats) =>
 export const setTypeToCollection = (stats) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   (stats[TYPE_PROP][0] = COLLECTION)
+export const setTypeToAbstraction = (stats) =>
+  (isUnknownType(stats) || isAnyType(stats)) && (stats[TYPE_PROP][0] = APPLY)
 export const setReturnToAbbstraction = (stats) =>
   isUnknownReturn(stats) && (stats[RETURNS][0] = APPLY)
 export const setTypeRef = (stats, value) =>
@@ -739,13 +741,45 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
                     // env[name][STATS][TYPE_PROP] =
                     const genericReturn =
                       rem.slice(1)[env[returns[VALUE]][STATS][RETURNS][2]]
-                    switch (genericReturn[TYPE]) {
+                    const head = isLeaf(genericReturn)
+                      ? genericReturn
+                      : genericReturn[0]
+                    switch (head[TYPE]) {
                       case ATOM:
                         setTypeToAtom(env[name][STATS])
                         break
                       case WORD:
-                        if (env[genericReturn[VALUE]])
-                          setStatsRef(env[name], env[genericReturn[VALUE]])
+                        if (env[head[VALUE]])
+                          setStatsRef(env[name], env[head[VALUE]])
+                        break
+                      case APPLY:
+                      case KEYWORDS.ANONYMOUS_FUNCTION:
+                        {
+                          setTypeToAbstraction(env[name][STATS])
+                          checkReturnType({
+                            exp: [genericReturn],
+                            stack,
+                            name,
+                            env
+                          })
+                        }
+                        break
+                      case KEYWORDS.CREATE_ARRAY:
+                        {
+                          setTypeToCollection(env[name][STATS])
+                          setPropToSubReturn(
+                            env[name][STATS],
+                            TYPE_PROP,
+                            initArrayType({ rem: genericReturn, env })
+                          )
+                        }
+                        break
+                      default:
+                        if (env[head[VALUE]])
+                          setTypeToReturn(
+                            env[name][STATS],
+                            env[head[VALUE]][STATS]
+                          )
                         break
                     }
                   } else
