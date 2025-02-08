@@ -45,7 +45,8 @@ import {
   PREDICATE,
   IS_ARGUMENT,
   NUMBER,
-  SETTER
+  SETTER,
+  NUMBER_SUBTYPE
 } from './types.js'
 import {
   Brr,
@@ -129,14 +130,14 @@ export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-    (stats[prop][0] = ATOM)
+    ((stats[prop][0] = ATOM), (stats[prop][1] = NUMBER_SUBTYPE()))
   )
 }
 export const setPropToPredicate = (stats, prop) => {
   return (stats[prop][1] = BOOLEAN_SUBTYPE())
 }
 export const setReturnToPredicate = (stats) => {
-  return (stats[RETURNS][0] = BOOLEAN_SUBTYPE())
+  return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
 }
 export const setTypeToPredicate = (stats) => {
   return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
@@ -194,11 +195,13 @@ export const setPropToTypeRef = (stats, prop, value) => {
 }
 export const setReturnToAtom = (stats) => {
   return (
-    (isUnknownReturn(stats) || isAnyReturn(stats)) && (stats[RETURNS][0] = ATOM)
+    (isUnknownReturn(stats) || isAnyReturn(stats)) &&
+    ((stats[RETURNS][0] = ATOM), (stats[RETURNS][1] = NUMBER_SUBTYPE()))
   )
 }
 export const setTypeToAtom = (stats) =>
-  (isUnknownType(stats) || isAnyType(stats)) && (stats[TYPE_PROP][0] = ATOM)
+  (isUnknownType(stats) || isAnyType(stats)) &&
+  ((stats[TYPE_PROP][0] = ATOM), (stats[TYPE_PROP][1] = NUMBER_SUBTYPE()))
 export const setTypeToCollection = (stats) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   (stats[TYPE_PROP][0] = COLLECTION)
@@ -547,7 +550,7 @@ const resolveCondition = ({ rem, name, env, exp, prop }) => {
       break
   }
 }
-const resolveSetter = (first, rest, env) => {
+const resolveSetter = (first, rest, env, stack) => {
   if (
     getSuffix(first[VALUE]) === MUTATION_SUFFIX &&
     MUTATORS_SET.has(first[VALUE]) &&
@@ -561,7 +564,7 @@ const resolveSetter = (first, rest, env) => {
     const right = isLeaf(rest.at(-1)) ? rest.at(-1) : rest.at(-1)[0]
     switch (right[TYPE]) {
       case ATOM:
-        current[STATS][TYPE_PROP][1] = new Set([NUMBER])
+        current[STATS][TYPE_PROP][1] = NUMBER_SUBTYPE()
         break
       case WORD:
         if (env[right[VALUE]]) {
@@ -596,6 +599,11 @@ const resolveSetter = (first, rest, env) => {
         break
     }
     setTypeToCollection(current[STATS])
+    // Retry setting the sub-type if infered it out later
+    if (!hasSubType(current[STATS]) || getSubType(current[STATS]).has(UNKNOWN))
+      retry(current[STATS], [first[VALUE], rest], stack, () =>
+        resolveSetter(first, rest, env, stack)
+      )
   }
 }
 const resolveGetter = ({ rem, prop, name, env }) => {
@@ -667,11 +675,9 @@ const initArrayType = ({ rem, env }) => {
       [RETURNS]: [COLLECTION, new Set([])]
     }
 }
-const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
-  if (returns[TYPE] === ATOM) {
-    // ATOM ASSIGMENT
-    setPropToAtom(env[name][STATS], prop)
-  } else {
+const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
+  if (returns[TYPE] === ATOM) setPropToAtom(env[name][STATS], prop)
+  else {
     switch (returns[VALUE]) {
       case KEYWORDS.CREATE_ARRAY:
         setPropToSubReturn(env[name][STATS], prop, initArrayType({ rem, env }))
@@ -686,7 +692,7 @@ const resolveRetunType = ({ returns, rem, stack, prop, exp, name, env }) => {
             !resolveGetter({ rem, prop, name, env })
           )
             return retry(env[name][STATS], [returns, env], stack, () => {
-              resolveRetunType({
+              resolveReturnType({
                 returns,
                 rem,
                 stack,
@@ -726,7 +732,7 @@ const checkReturnType = ({ exp, stack, name, env }) => {
   const body = hasApplyLambdaBlock(last) ? last.at(-1).at(-1) : last
   const rem = hasBlock(body) ? body.at(-1) : body
   const returns = isLeaf(rem) ? rem : rem[0]
-  return resolveRetunType({
+  return resolveReturnType({
     returns,
     rem,
     prop: RETURNS,
@@ -1044,7 +1050,7 @@ export const typeCheck = (ast) => {
                 const body = rightHand
                 const rem = hasBlock(body) ? body.at(-1) : body
                 const returns = isLeaf(rem) ? rem : rem[0]
-                resolveRetunType({
+                resolveReturnType({
                   stack,
                   returns,
                   rem,
@@ -1161,7 +1167,7 @@ export const typeCheck = (ast) => {
           default:
             // Setters are just like DEFINE_VARIABLE as they are essentially the Var case for Collections
             // So they MUST happen before Judgement
-            resolveSetter(first, rest, env)
+            resolveSetter(first, rest, env, stack)
             // end of Var  ---------------
             // Judgement
             stagger(stack, 'append', [first, env], () => {
@@ -1242,8 +1248,6 @@ export const typeCheck = (ast) => {
                   // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
                   const MAIN_TYPE = getType(args[i][STATS])
                   if (MAIN_TYPE === ANY) continue
-                  // TODO - try to merge special and non special
-                  // REFACTORING
                   if (first[TYPE] === APPLY) {
                     if (isLeaf(rest[i])) {
                       switch (rest[i][TYPE]) {
@@ -1322,7 +1326,6 @@ export const typeCheck = (ast) => {
                               //     check(exp, env, scope)
                               //   )
                               // }
-
                               if (isSpecial)
                                 setType(env[name][STATS], args[i][STATS])
                             }
@@ -1531,11 +1534,9 @@ export const typeCheck = (ast) => {
                             setReturnRef(env[name][STATS], args[i][STATS])
                             break
                         }
-
                       match({ rest, args, i, env, scope, exp })
                     }
                   }
-                  // REFACTORING
                 }
               }
             })

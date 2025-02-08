@@ -110,6 +110,8 @@
 (let false? (lambda x (and (atom? x) (= (Any x) 0))))
 (let true (not 0))
 (let false (not 1))
+(let one 1)
+(let zero 0)
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:min-safe-integer -9007199254740991)
