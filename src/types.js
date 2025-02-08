@@ -34,6 +34,9 @@ export const BOOLEAN_SUBTYPE = () => new Set([BOOLEAN])
 export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
 export const NUMBER_SUBTYPE = () => new Set([NUMBER])
 
+const SPECIAL_BOOLEAN = BOOLEAN_SUBTYPE()
+const SPECIAL_COLLECTION = COLLECTION_SUBTYPE()
+const SPECIAL_NUMBER = NUMBER_SUBTYPE()
 export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -131,7 +134,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [STATIC_TYPES.NUMBER]: {
@@ -152,7 +155,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [STATIC_TYPES.COLLECTION]: {
@@ -401,9 +404,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -412,15 +414,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.MULTIPLICATION]: {
@@ -434,9 +435,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -445,15 +445,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.SUBTRACTION]: {
@@ -467,9 +466,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -478,15 +476,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.DIVISION]: {
@@ -500,9 +497,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -511,15 +507,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.REMAINDER_OF_DIVISION]: {
@@ -532,9 +527,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -543,15 +537,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.BITWISE_AND]: {
@@ -565,9 +558,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -576,15 +568,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.BITWISE_NOT]: {
@@ -598,15 +589,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.BITWISE_OR]: {
@@ -620,9 +610,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -631,15 +620,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.BITWISE_XOR]: {
@@ -653,9 +641,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -664,15 +651,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.BITWISE_LEFT_SHIFT]: {
@@ -686,9 +672,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -697,15 +682,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.BITWISE_RIGHT_SHIFT]: {
@@ -719,9 +703,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -730,15 +713,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.GET_ARRAY]: {
@@ -755,7 +737,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -764,9 +745,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -788,7 +768,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -797,9 +776,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -810,7 +788,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ANY],
             [RETURNS]: [ANY],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -832,7 +809,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -855,13 +831,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [KEYWORDS.IF]: {
@@ -875,9 +850,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: 0,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
-            [RETURNS]: [ATOM],
-
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -917,14 +891,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
-            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.EQUAL]: {
@@ -955,7 +929,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.LESS_THAN]: {
@@ -986,7 +960,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.GREATHER_THAN]: {
@@ -1018,7 +992,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.GREATHER_THAN_OR_EQUAL]: {
@@ -1049,7 +1023,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.LESS_THAN_OR_EQUAL]: {
@@ -1080,7 +1054,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.AND]: {
@@ -1094,8 +1068,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
-            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1104,14 +1078,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
-            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.OR]: {
@@ -1125,8 +1099,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
-            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1135,14 +1109,14 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, BOOLEAN_SUBTYPE()],
-            [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()],
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.IS_ATOM]: {
@@ -1158,13 +1132,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ANY],
             [RETURNS]: [ANY],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.IS_LAMBDA]: {
@@ -1180,13 +1153,12 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [ANY],
             [RETURNS]: [ANY],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
-      [RETURNS]: [ATOM, BOOLEAN_SUBTYPE()]
+      [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
   [KEYWORDS.ERROR]: {
@@ -1202,7 +1174,6 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [COLLECTION],
             [RETURNS]: [COLLECTION],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }

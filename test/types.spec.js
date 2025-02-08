@@ -72,8 +72,29 @@ describe('Type checking', () => {
 (let Aarr [])
 (set! Aarr (length Aarr) [])
 (let Ax (get Aarr 0))
-(set! Ax 0 1)`,
-        ['is12?', 'a', 'c', 'b', 'box', 'add', 'x?', 'abb', 'iffx', 'g', 'Ax']
+(set! Ax 0 1)
+
+(let ix (identity 12))
+(let iz (lambda ix))
+(let iy (identity iz))
+`,
+
+        [
+          'is12?',
+          'a',
+          'c',
+          'b',
+          'box',
+          'add',
+          'x?',
+          'abb',
+          'iffx',
+          'g',
+          'Ax',
+          'ix',
+          'iz',
+          'iy'
+        ]
       ),
       [
         '(let is12? (lambda Number (do Boolean)))',
@@ -86,7 +107,10 @@ describe('Type checking', () => {
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
         '(let g (lambda [Number] (do Number)))',
-        '(let Ax [Number])'
+        '(let Ax [Number])',
+        '(let ix Number)',
+        '(let iz (lambda (do Number)))',
+        '(let iy (lambda (do Number)))'
       ]
     )
     deepStrictEqual(
