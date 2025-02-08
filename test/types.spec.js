@@ -458,6 +458,9 @@ ZZZ=ZZZ,ZZZ")
     passes(`(let e? (array:every? [1 2 3] math:odd?))
 (and e? (= 1 1))
 `)
+    passes(`(let xs [true false])
+(let x (get xs 0))
+(and x true)`)
     passes(`(let add (lambda a b (+ a b)))
 (let f1 (lambda x x))
 (let f2 (lambda x (add x 1)))
@@ -567,6 +570,12 @@ ZZZ=ZZZ,ZZZ")
     // fails(`(let xs [])
     // (let x (array:set-and-get! xs 0 100))
     // (length x)`, '')
+    fails(
+      `(let xs [1 2])
+(let x (get xs 0))
+(and x true)`,
+      `Incorrect type of argument (0) for (and). Expected (Boolean) but got (Number) (and x true) (check #202)`
+    )
     fails(
       `(let xs [])
 (set! xs 0 100)
