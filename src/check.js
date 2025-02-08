@@ -436,6 +436,15 @@ const retry = (stats, ctx, stack, cb, method = 'prepend') => {
     stagger(stack, method, ctx, cb)
   }
 }
+const once = (stats, ctx, stack, cb, method = 'prepend') => {
+  if (
+    (isUnknownNotAnyType(stats) || isUnknownNotAnyReturn(stats)) &&
+    !stats.tried
+  ) {
+    stats.tried = true
+    stagger(stack, method, ctx, cb)
+  }
+}
 const retryArgs = (stats, ctx, stack, cb) => {
   if (stats.counter < MAX_ARGUMENT_RETRY) {
     stats.counter++
@@ -622,7 +631,7 @@ const resolveGetter = ({ rem, prop, name, env }) => {
           setPropToSubReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
         } else if (!isAtom && isCollection) {
           setPropToReturn(env[name][STATS], env[array[VALUE]][STATS])
-        }
+        } else return false
       } else return false
       break
     case WORD:
@@ -639,7 +648,7 @@ const resolveGetter = ({ rem, prop, name, env }) => {
             setPropToSubType(env[name][STATS], prop, env[array[VALUE]][STATS])
           } else if (!isAtom && isCollection) {
             setPropToType(env[name][STATS], env[array[VALUE]][STATS])
-          }
+          } else return false
         } else return false
       }
       break
@@ -1319,14 +1328,15 @@ export const typeCheck = (ast) => {
                               // (let xs [])
                               // (let x (array:set-and-get! xs 0 100))
                               // (length x)
-
-                              // if (
-                              //   isUnknownType(env[name][STATS]) &&
-                              //   !env[name][STATS].tried
-                              // ) {
-                              //   once(env[name][STATS], stack, () =>
-                              //     check(exp, env, scope)
-                              //   )
+                              // if (isSpecial) {
+                              //   if (
+                              //     isUnknownType(env[name][STATS]) &&
+                              //     !env[name][STATS].tried
+                              //   ) {
+                              //     once(env[name][STATS], exp, stack, () =>
+                              //       check(exp, env, scope)
+                              //     )
+                              //   } else setType(env[name][STATS], args[i][STATS])
                               // }
                               if (isSpecial)
                                 setType(env[name][STATS], args[i][STATS])

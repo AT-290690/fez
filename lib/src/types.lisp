@@ -1439,7 +1439,7 @@
 ; 1 set:add! idx
 (let idx Number)
 ; 1 set:add! current
-(let current [Unknown])
+(let current [[Unknown]])
 ; 1 set:add! len
 (let len Number)
 ; 1 set:add! index
