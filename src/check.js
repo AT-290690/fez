@@ -1616,8 +1616,8 @@ export const typeCheck = (ast) => {
                       if (isSpecial && name === KEYWORDS.IF) {
                         const concequent = [...rest]
                         const alternative = [...rest]
-                        concequent[i] = rest[i][1]
-                        alternative[i] = rest[i][2]
+                        concequent[i] = rest[i][2]
+                        alternative[i] = rest[i][3]
                         check([first, ...concequent], env, scope)
                         check([first, ...alternative], env, scope)
                       }
