@@ -816,22 +816,6 @@ export const keywords = {
       )
     return +(typeof evaluate(args[0], env) === 'function')
   },
-  [KEYWORDS.ERROR]: (args, env) => {
-    if (args.length !== 1)
-      throw new RangeError(
-        `Invalid number of arguments to (${KEYWORDS.ERROR}) (= 1 required) (${
-          KEYWORDS.ERROR
-        } ${stringifyArgs(args)})`
-      )
-    const expression = evaluate(args[0], env)
-    if (!Array.isArray(expression))
-      throw new TypeError(
-        `Argument of (${KEYWORDS.ERROR}) must be an (${
-          KEYWORDS.ARRAY_TYPE
-        }) but got (${expression}) (${KEYWORDS.ERROR} ${stringifyArgs(args)})`
-      )
-    throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
-  },
 
   [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env),

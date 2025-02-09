@@ -105,34 +105,6 @@ fn main() {
             )),
         );
         env_ref.vars.insert(
-            "throw".to_string(),
-            Evaluated::Function(Rc::new(
-                |args: Vec<Expression>,
-                 env: Rc<RefCell<Env>>,
-                 defs: Rc<RefCell<Env>>|
-                 -> Evaluated {
-                    match evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs)) {
-                        Evaluated::Vector(arr) => {
-                            let chars: Vec<char> = arr
-                                .borrow()
-                                .iter()
-                                .filter_map(|code| {
-                                    if let Evaluated::Number(num) = code {
-                                        std::char::from_u32(*num as u32)
-                                    } else {
-                                        None
-                                    }
-                                })
-                                .collect();
-                            let error_message: String = chars.iter().collect();
-                            panic!("{}", error_message);
-                        }
-                        _ => panic!("First argument must be an array of char codes"),
-                    }
-                },
-            )),
-        );
-        env_ref.vars.insert(
             "array".to_string(),
             Evaluated::Function(Rc::new(
                 |args: Vec<Expression>,

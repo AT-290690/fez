@@ -291,47 +291,6 @@ export const debug = (ast, checkTypes = true) => {
         }
       } else console.log(expression)
       return expression
-    },
-    [DEBUG.ASSERT]: (args, env) => {
-      if (args.length < 2)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            DEBUG.ASSERT
-          }), expected (> 2 required) but got ${args.length} (${
-            DEBUG.ASSERT
-          } ${stringifyArgs(args)})`
-        )
-      if (args.length % 2 !== 0)
-        throw new RangeError(
-          `Invalid number of arguments for (${
-            DEBUG.ASSERT
-          }), expected even number of arguments but got ${args.length} (${
-            DEBUG.ASSERT
-          } ${stringifyArgs(args)})`
-        )
-      for (let i = 0; i < args.length; i += 2) {
-        const condition = evaluate(args[i], env)
-        if (condition !== FALSE && condition !== TRUE)
-          throw new TypeError(
-            `Condition of (${
-              DEBUG.ASSERT
-            }) must be ${TRUE} or ${FALSE} but got (${
-              DEBUG.ASSERT
-            } ${stringifyArgs(args)})`
-          )
-        if (condition) {
-          const error = args[i + 1]
-          if (error[0][TYPE] === APPLY && error[0][VALUE] === KEYWORDS.ERROR)
-            return evaluate(error, env)
-          else
-            throw new TypeError(
-              `Concequence of (${DEBUG.ASSERT}) must be (${
-                KEYWORDS.ERROR
-              }) but got (${DEBUG.ASSERT} ${stringifyArgs(args)})`
-            )
-        }
-      }
-      return 0
     }
   }
   try {

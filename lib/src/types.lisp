@@ -1974,8 +1974,6 @@
 (let option:value? (lambda [Unknown] (do Boolean)))
 ; 1 option:value
 (let option:value (lambda [Unknown] (do Unknown)))
-; 1 option:throw-error
-(let option:throw-error (lambda [Unknown] (do Unknown)))
 ; 1 option:error
 (let option:error (lambda [Unknown] (do Unknown)))
 ; 1 array:get
@@ -2136,8 +2134,6 @@
 (let special-form:and? (lambda Unknown Unknown (do Boolean)))
 ; 1 special-form:or?
 (let special-form:or? (lambda Unknown Unknown (do Boolean)))
-; 1 special-form:throw
-(let special-form:throw (lambda Unknown Unknown (do Unknown)))
 ; 1 special-form:loop
 (let special-form:loop (lambda [Unknown] [Unknown] (do Number)))
 ; 1 special-form:atom?

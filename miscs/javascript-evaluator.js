@@ -38,13 +38,6 @@ const keywords = {
   ['>>']: (args, env) => evaluate(args[0], env) >> evaluate(args[1], env),
   ['if']: (args, env) =>
     evaluate(args[0], env) ? evaluate(args[1], env) : evaluate(args[2], env),
-  ['throw']: (args, env) => {
-    throw new Error(
-      evaluate(args[0], env)
-        .map((x) => String.fromCharCode(x))
-        .join('')
-    )
-  },
   ['loop']: (args, env) => {
     while (evaluate(args[0], env) === TRUE) evaluate(args[1], env)
     return -1

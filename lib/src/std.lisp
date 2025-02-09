@@ -252,7 +252,7 @@
 (let math:square (lambda x (* x x)))
 (let math:power (lambda base exp
   (if (< exp 0)
-      (if (= base 0) (throw "(= base 0) is invalid")
+      (if (= base 0) nil
       (/ (* base (math:power base (- (* exp -1) 1)))))
         (cond
             (= exp 0) 1
@@ -740,10 +740,6 @@
    matrix)))
 (let matrix:rotate-square (lambda matrix (do 
     (let len (length matrix))
-    (cond
-        (= len 0) (throw "matrix is empty at (matrix:rotate-square)")
-        (not (= len (length (get matrix 0)))) (throw "matrix should have the same number of rows as columns at (matrix:rotate-square)")
-        (*) nil)
     (let out (math:zeroes len))
     (let recursive:outer:matrix:rotate-square (lambda row 
         (if (< row len) (do 
@@ -757,10 +753,6 @@
     (recursive:outer:matrix:rotate-square 0) out)))
 (let matrix:flip-square (lambda matrix (do 
     (let len (length matrix))
-    (cond
-        (= len 0) (throw "matrix is empty at (matrix:flip-square)")
-        (not (= len (length (get matrix 0)))) (throw "matrix should have the same number of rows as columns at (matrix:flip-square)")
-        (*) nil)
     (let out (math:zeroes len))
     (let recursive:outer:matrix:flip-square (lambda row 
         (if (< row len) (do 
@@ -827,7 +819,7 @@
     (= d 7) char:7
     (= d 8) char:8
     (= d 9) char:9 
-    (*) (throw (array:append! "Expected a digit but got " d)))))
+    (*) char:space)))
 (let from:char->digit (lambda c 
   (cond 
     (= c char:0) 0
@@ -840,7 +832,7 @@
     (= c char:7) 7 
     (= c char:8) 8 
     (= c char:9) 9
-    (*) (throw (array:append! "Expected a character digit but got " c)))))
+    (*) -1)))
 (let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
 (let from:chars->positive-or-negative-digits (lambda chars (do
     (let current-sign (var:def 1))
@@ -1382,7 +1374,7 @@
         (apply (lambda (do
           (let current (get table idx))
           (let found-index (array:find-index current (lambda x (string:equal? key (get x 0)))))
-          (unless (= found-index -1) (get (get current found-index) 1) (throw (array:concat ["Attempting to access non existing key " key " in (map:get)"]))))))
+          (unless (= found-index -1) (get (get current found-index) 1) (Any nil)))))
           (Any nil)))))
 (let map:get-option (lambda table key (do
       (let idx (set:index table key))
@@ -1868,7 +1860,6 @@ heap)))
 (let option:error? (lambda x (> (length (array:second x)) 0)))
 (let option:value? (lambda x (> (length (array:first x)) 0)))
 (let option:value (lambda x (array:first (array:first x))))
-(let option:throw-error (lambda x (throw (array:second x))))
 (let option:error (lambda x (array:second x)))
 
 ; Fake keywords section
@@ -1979,7 +1970,6 @@ heap)))
 (let special-form:if (lambda args env (if (Boolean (evaluate (get args 0) env)) (evaluate (get args 1) env) (evaluate (get args 2) env))))
 (let special-form:and? (lambda args env (and (Boolean (evaluate (get args 0) env)) (Boolean (evaluate (get args 1) env)))))
 (let special-form:or? (lambda args env (or (Boolean (evaluate (get args 0) env)) (Boolean (evaluate (get args 1) env)))))
-(let special-form:throw (lambda args env (throw (Collection (evaluate (get args 0) env)))))
 (let special-form:loop (lambda args env (loop (Boolean (evaluate (get args 0) env)) (evaluate (get args 1) env))))
 (let special-form:atom? (lambda args env (atom? (evaluate (get args 0) env))))
 (let special-form:lambda? (lambda args env (lambda? (evaluate (get args 0) env))))
@@ -2013,7 +2003,6 @@ heap)))
     "if" special-form:if
     "and" special-form:and?
     "or" special-form:or?
-    "throw" special-form:throw
     "loop" special-form:loop
     "atom?" special-form:atom?
     "lambda?" special-form:lambda?)))

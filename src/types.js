@@ -385,15 +385,6 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [COLLECTION]
     }
   },
-  [DEBUG.ASSERT]: {
-    [STATS]: {
-      [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: DEBUG.ASSERT,
-      retried: Infinity,
-      [ARG_COUNT]: VARIADIC,
-      [RETURNS]: [UNKNOWN]
-    }
-  },
   [DEBUG.SIGNATURE]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
@@ -1265,27 +1256,6 @@ export const SPECIAL_FORM_TYPES = {
         }
       ],
       [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
-    }
-  },
-  [KEYWORDS.ERROR]: {
-    [STATS]: {
-      [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: KEYWORDS.ERROR,
-      retried: Infinity,
-      [ARG_COUNT]: 1,
-      [ARGUMENTS]: [
-        {
-          [STATS]: {
-            retried: Infinity,
-            [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [COLLECTION],
-            [RETURNS]: [COLLECTION],
-            [ARGUMENTS]: [],
-            [ARG_COUNT]: 0
-          }
-        }
-      ],
-      [RETURNS]: [ANY]
     }
   }
 }

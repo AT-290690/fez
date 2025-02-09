@@ -56,8 +56,7 @@ export const KEYWORDS = {
   DEFINE_VARIABLE: 'let',
 
   SET_ARRAY: 'set!',
-  POP_ARRAY: 'pop!',
-  ERROR: 'throw'
+  POP_ARRAY: 'pop!'
 }
 
 export const TYPES = {

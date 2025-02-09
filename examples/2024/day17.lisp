@@ -29,8 +29,8 @@ Program: 0,1,5,4,3,0")
         (= operand 4) (array:get registers A)
         (= operand 5) (array:get registers B)
         (= operand 6) (array:get registers C)
-        (= operand 7) (throw "7 is reserved and SHOULD NOT appear in valid programs!")
-        (*) (throw (array:push! "Invalid combo operand " operand))
+        (= operand 7) nil
+        (*) nil
     )))
     ; (let set-register-A! (lambda value (array:set! registers 0 value)))
     ; (let get-register-A (lambda (array:get registers 0)))
@@ -75,7 +75,7 @@ Program: 0,1,5,4,3,0")
             ; The cdv instruction (opcode 7) works exactly like the adv instruction except that the result is stored in the C register. 
             ; (The numerator is still read from the A register.)
             (= opcode 7) (do (array:set! registers C (>> (array:get registers A) (combo operand))) (move-pointer!))
-            (*) (throw "Invalid instruction"))))
+            (*) nil)))
             
     (let get-opcode (lambda (array:get program (get-instruction-pointer))))
     (let get-operand (lambda (array:get program (+ (get-instruction-pointer) 1))))

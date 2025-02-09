@@ -12,7 +12,6 @@
     | 'loop'
     | 'atom?'
     | 'lambda?'
-    | 'throw'
     | '+'
     | '-'
     | '*'
@@ -263,12 +262,6 @@
       if (!Array.isArray(array)) throw new TypeError('Arg must be an array')
       array.pop()
       return array
-    },
-    ['throw']: (args, env) => {
-      const text = evaluate(args[0], env)
-      if (Array.isArray(text) && text.every((x) => typeof x === 'string'))
-        throw new Error(text.map((x) => String.fromCharCode(x)).join(''))
-      else throw new TypeError('Argument must be an array of strings')
     }
   }
   const isLeaf = ([x]: Expression[]) =>
