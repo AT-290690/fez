@@ -738,6 +738,15 @@
     (loop:for-n width (lambda x
       (cb y x)))))
    matrix)))
+(let matrix:rotate (lambda matrix (do 
+    (let H (length matrix))
+    (let W (length (get matrix 0)))
+    (let out [])
+    (loop:for-range 0 W (lambda i (do
+        (array:push! out [])
+        (loop:for-range 0 H (lambda j 
+            (array:push! (array:at out -1) (matrix:get matrix j i)))))))
+    out)))
 (let matrix:rotate-square (lambda matrix (do 
     (let len (length matrix))
     (let out (math:zeroes len))
@@ -882,6 +891,13 @@
                               (= num 0) (array 0)
                               (*) res)))
   (array:reverse (recursive:from:integer->bits num [])))))
+(let from:bits->integer (lambda bits (do
+  (let xs (array:reverse bits))
+  (let bits->integer (lambda index (if
+                              (= index (length xs)) 0
+                              (+ (* (get xs index) (math:power 2 index))
+                                 (bits->integer (+ index 1))))))
+  (bits->integer 0))))
 (let from:numbers->chars (lambda x (array:map x (lambda x (from:digits->chars (from:integer->digits x))))))
 (let from:chars->integer (lambda n (|> n (from:chars->digits) (from:digits->integer))))
 (let from:positive-or-negative-chars->integer (lambda x (|> x (from:chars->positive-or-negative-digits) (from:positive-or-negative-digits->integer))))
