@@ -967,7 +967,7 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(or (if (and (or 1 false) (or true (array:empty? []))) 10 2) 1)`,
-      `Incorrect type of argument (0) for (or). Expected (Boolean) but got (Number) (or 10 1) (check #203)`
+      `Incorrect type of argument (0) for (or). Expected (Boolean) but got (Number) (or 2 1) (check #203)`
     )
     fails(
       `(let array:unique (lambda xs (|>
