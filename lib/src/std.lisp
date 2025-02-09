@@ -192,20 +192,20 @@
 (let math:fold (lambda xs cb initial (do
                   (let recursive:math:fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:math:fold (+ i 1) (Atom (cb out (Atom (get xs i)))))
-                            (Atom out))))
-                      (recursive:math:fold 0 (Atom initial)))))
+                            (recursive:math:fold (+ i 1) (Number (cb out (Number (get xs i)))))
+                            (Number out))))
+                      (recursive:math:fold 0 (Number initial)))))
 (let math:enumerated-fold (lambda xs cb initial (do
                   (let recursive:enumerated-fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:enumerated-fold (+ i 1) (Atom (cb out (Atom (get xs i)) i)))
-                            (Atom out))))
-                      (recursive:enumerated-fold 0 (Atom initial)))))
+                            (recursive:enumerated-fold (+ i 1) (Number (cb out (Number (get xs i)) i)))
+                            (Number out))))
+                      (recursive:enumerated-fold 0 (Number initial)))))
 (let math:map (lambda xs cb (do
                   (let recursive:math:map (lambda i out
                         (if (> (length xs) i)
                               (recursive:math:map (+ i 1)
-                                (set! out (length out) (Atom (cb (Atom (get xs i))))))
+                                (set! out (length out) (Number (cb (Number (get xs i))))))
                               out)))
                       (Collection (recursive:math:map 0 [])))))
 (let math:max (lambda a b (if (> a b) a b)))
@@ -497,7 +497,7 @@
                               (recursive:array:map (+ i 1)
                                 (set! out (length out) (cb (get xs i))))
                               out)))
-                      (Collection (recursive:array:map 0 [])))))
+                      (recursive:array:map 0 []))))
 (let array:select (lambda xs cb? (do
                   (let recursive:array:select (lambda i out
                         (if (> (length xs) i)
@@ -532,7 +532,7 @@
                   (let recursive:array:reduce (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:reduce (+ i 1) (Atom (cb out (get xs i))))
-                            (Atom out))))
+                            (Number out))))
                       (recursive:array:reduce 0 initial))))
 (let array:every? (lambda xs predicate? (do
                     (let recursive:array:every? (lambda i
