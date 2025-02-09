@@ -127,6 +127,7 @@ export const castReturn = (stats, type) => {
     stats[RETURNS][1] && (stats[RETURNS][1] = type[RETURNS][1])
   )
 }
+export const isGenericReturn = (stats) => stats[RETURNS].length === 3
 export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) => {
   return (
@@ -690,7 +691,16 @@ const initArrayType = ({ rem, env }) => {
       [RETURNS]: [COLLECTION, new Set([])]
     }
 }
-const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
+const resolveReturnType = ({
+  returns,
+  rem,
+  stack,
+  prop,
+  exp,
+  name,
+  env,
+  check
+}) => {
   if (returns[TYPE] === ATOM) setPropToAtom(env[name][STATS], prop)
   else {
     switch (returns[VALUE]) {
@@ -714,7 +724,8 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
                 prop,
                 exp,
                 name,
-                env
+                env,
+                check
               })
             })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
@@ -737,7 +748,7 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
 
               if (isUnknownType(env[name][STATS]))
                 stagger(stack, 'prepend', exp, () => {
-                  if (env[returns[VALUE]][STATS][RETURNS].length === 3) {
+                  if (isGenericReturn(env[returns[VALUE]][STATS])) {
                     // env[name][STATS][TYPE_PROP] =
                     const genericReturn =
                       rem.slice(1)[env[returns[VALUE]][STATS][RETURNS][2]]
@@ -753,27 +764,50 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
                           setStatsRef(env[name], env[head[VALUE]])
                         break
                       case APPLY:
-                      case KEYWORDS.ANONYMOUS_FUNCTION:
-                        {
-                          setTypeToAbstraction(env[name][STATS])
-                          checkReturnType({
-                            exp: [genericReturn],
-                            stack,
-                            name,
-                            env
-                          })
+                        switch (head[VALUE]) {
+                          case KEYWORDS.ANONYMOUS_FUNCTION:
+                            {
+                              // TODO figure out a better way to do this
+                              // This is insitialisation of identity or any other
+                              // function that returns it's argument
+                              // Redifine the variable but since it's an error doing that
+                              // Delete it
+                              delete env[name]
+                              check(
+                                [
+                                  [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                  [WORD, name],
+                                  genericReturn
+                                ],
+                                env,
+                                exp
+                              )
+                              // const n = genericReturn.length
+                              // setTypeToAbstraction(env[name][STATS])
+                              // env[name][STATS][ARG_COUNT] = n - 2
+                              // env[name][STATS][ARGUMENTS] = fillUknownArgs(
+                              //   n - 2
+                              // )
+                              // checkReturnType({
+                              //   exp: [genericReturn],
+                              //   stack,
+                              //   name,
+                              //   env,
+                              //   check
+                              // })
+                            }
+                            break
+                          case KEYWORDS.CREATE_ARRAY:
+                            {
+                              setTypeToCollection(env[name][STATS])
+                              setPropToSubReturn(
+                                env[name][STATS],
+                                TYPE_PROP,
+                                initArrayType({ rem: genericReturn, env })
+                              )
+                            }
+                            break
                         }
-                        break
-                      case KEYWORDS.CREATE_ARRAY:
-                        {
-                          setTypeToCollection(env[name][STATS])
-                          setPropToSubReturn(
-                            env[name][STATS],
-                            TYPE_PROP,
-                            initArrayType({ rem: genericReturn, env })
-                          )
-                        }
-                        break
                       default:
                         if (env[head[VALUE]])
                           setTypeToReturn(
@@ -797,7 +831,7 @@ const resolveReturnType = ({ returns, rem, stack, prop, exp, name, env }) => {
   }
   return true
 }
-const checkReturnType = ({ exp, stack, name, env }) => {
+const checkReturnType = ({ exp, stack, name, env, check }) => {
   const last = exp.at(-1).at(-1)
   const body = hasApplyLambdaBlock(last) ? last.at(-1).at(-1) : last
   const rem = hasBlock(body) ? body.at(-1) : body
@@ -809,7 +843,8 @@ const checkReturnType = ({ exp, stack, name, env }) => {
     exp,
     name,
     env,
-    stack
+    stack,
+    check
   })
 }
 const stagger = (stack, method, data, fn) => {
@@ -1062,7 +1097,8 @@ export const typeCheck = (ast) => {
                   stack,
                   exp,
                   env,
-                  name
+                  name,
+                  check
                 }) ||
                 isUnknownReturn(env[name][STATS])
               ) {
@@ -1071,7 +1107,8 @@ export const typeCheck = (ast) => {
                     stack,
                     exp,
                     env,
-                    name
+                    name,
+                    check
                   })
                   check(rightHand, env, exp)
                 })
@@ -1133,7 +1170,8 @@ export const typeCheck = (ast) => {
                   prop: TYPE_PROP,
                   exp,
                   env,
-                  name
+                  name,
+                  check
                 })
               }
               check(rightHand, env, scope)

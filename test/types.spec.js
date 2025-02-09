@@ -13,7 +13,7 @@ const inference = (source, keys) => {
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
-describe('Type checking', () => {
+describe.only('Type checking', () => {
   it('Std types should not change', () => {
     const B = readFileSync('./lib/src/types.lisp', 'utf-8')
       .split('\n')
@@ -77,6 +77,8 @@ describe('Type checking', () => {
 (let ix (identity 12))
 (let iz (lambda ix))
 (let iy (identity iz))
+(let ib (identity [1 2 3]))
+(let ic (identity (lambda x (* x x))))
 `,
 
         [
@@ -93,7 +95,9 @@ describe('Type checking', () => {
           'Ax',
           'ix',
           'iz',
-          'iy'
+          'iy',
+          'ib',
+          'ic'
         ]
       ),
       [
@@ -110,7 +114,9 @@ describe('Type checking', () => {
         '(let Ax [Number])',
         '(let ix Number)',
         '(let iz (lambda (do Number)))',
-        '(let iy (lambda (do Number)))'
+        '(let iy (lambda (do Number)))',
+        '(let ib [Number])',
+        '(let ic (lambda Number (do Number)))'
       ]
     )
     deepStrictEqual(
