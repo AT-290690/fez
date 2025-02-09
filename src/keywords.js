@@ -105,8 +105,6 @@ export const PREDICATES_OUTPUT_SET = new Set([
 ])
 export const MUTATORS_SET = new Set([
   KEYWORDS.SET_ARRAY,
-  'matrix:set!',
-  'matrix:set-and-get!',
   'array:set-and-get!',
   'var:set-and-get!',
   'array:set!',
