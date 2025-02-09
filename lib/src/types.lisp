@@ -2335,7 +2335,7 @@
 ; 1 array:binary-search recursive:array:binary-search 291 current
 (let current Unknown)
 ; 1 array:join array:join lambda::annonymous::1::293
-(let lambda::annonymous::1::293 (lambda [Unknown] [Unknown] (do [Unknown])))
+(let lambda::annonymous::1::293 (lambda Unknown [Unknown] (do [Unknown])))
 ; 1 array:chars array:chars lambda::annonymous::1::295
 (let lambda::annonymous::1::295 (lambda Unknown [Unknown] (do [Unknown])))
 ; 1 array:lines array:lines lambda::annonymous::1::297
@@ -2353,7 +2353,7 @@
 ; 1 array:dashes array:dashes lambda::annonymous::1::309
 (let lambda::annonymous::1::309 (lambda Unknown [Unknown] (do [Unknown])))
 ; 1 array:flat-one array:flat-one lambda::annonymous::1::311
-(let lambda::annonymous::1::311 (lambda [Unknown] Unknown (do [Unknown])))
+(let lambda::annonymous::1::311 (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 array:flat flatten flatten lambda::annonymous::1::313
 (let lambda::annonymous::1::313 (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 array:sort 314 pivot
@@ -3081,9 +3081,9 @@
 ; 1 array:flat flatten flatten lambda::annonymous::1::808
 (let lambda::annonymous::1::808 (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 array:flat-one array:flat-one lambda::annonymous::1::810
-(let lambda::annonymous::1::810 (lambda [Unknown] Unknown (do [Unknown])))
+(let lambda::annonymous::1::810 (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 array:flat-one array:flat-one lambda::annonymous::1::811
-(let lambda::annonymous::1::811 (lambda [Unknown] Unknown (do [Unknown])))
+(let lambda::annonymous::1::811 (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 array:dashes array:dashes lambda::annonymous::1::813
 (let lambda::annonymous::1::813 (lambda [Unknown] [Unknown] (do [Unknown])))
 ; 1 array:semi-colons array:semi-colons lambda::annonymous::1::815

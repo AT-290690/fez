@@ -1686,7 +1686,14 @@ export const typeCheck = (ast) => {
                     } else {
                       const name = rest[i][0][VALUE]
                       if (!env[name]) continue
-                      if (
+                      else if (name === KEYWORDS.IF) {
+                        const concequent = [...rest]
+                        const alternative = [...rest]
+                        concequent[i] = rest[i][2]
+                        alternative[i] = rest[i][3]
+                        check([first, ...concequent], env, scope)
+                        check([first, ...alternative], env, scope)
+                      } else if (
                         isUnknownReturn(env[name][STATS]) &&
                         !env[name][STATS][IS_ARGUMENT]
                       )
@@ -1696,17 +1703,7 @@ export const typeCheck = (ast) => {
                           stack,
                           () => check(exp, env, scope)
                         )
-
-                      if (isSpecial && name === KEYWORDS.IF) {
-                        const concequent = [...rest]
-                        const alternative = [...rest]
-                        concequent[i] = rest[i][2]
-                        alternative[i] = rest[i][3]
-                        check([first, ...concequent], env, scope)
-                        check([first, ...alternative], env, scope)
-                      }
-
-                      if (
+                      else if (
                         env[name] &&
                         getType(env[name][STATS]) === APPLY &&
                         !SPECIAL_FORMS_SET.has(name)
