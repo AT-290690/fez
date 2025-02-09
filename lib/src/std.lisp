@@ -701,6 +701,10 @@
       prev
       (recursive:array:adjacent-find (+ i 1))) nil)))
       (recursive:array:adjacent-find 1)))) nil))))
+(let matrix:zeroes (lambda W H (|> (math:zeroes W) (array:map (lambda . (math:zeroes H))))))
+(let matrix:ones (lambda W H (|> (math:ones W) (array:map (lambda . (math:ones H))))))
+(let matrix:truth-table (lambda W H (|> (bool:truths W) (array:map (lambda . (bool:truths H))))))
+(let matrix:false-table (lambda W H (|> (bool:lies W) (array:map (lambda . (bool:lies H))))))
 (let matrix:points (lambda matrix cb? (do 
    (let coords [])
    (matrix:enumerated-for matrix (lambda cell y x (if (cb? cell) (array:push! coords (array y x)) nil))) 
@@ -1423,6 +1427,14 @@
 (let var:increment-and-get! (lambda variable (do (set! variable 0 (+ (var:get variable) 1)) (var:get variable))))
 (let var:decrement-and-get! (lambda variable (do (set! variable 0 (- (var:get variable) 1)) (var:get variable))))
 
+(let bool:truths (lambda n (do
+                          (let recursive:bool:truths (lambda out
+                          (if (< (length out) n) (recursive:bool:truths (set! out (length out) true)) out)))
+                          (recursive:bool:truths []))))
+(let bool:lies (lambda n (do
+                          (let recursive:bool:lies (lambda out
+                          (if (< (length out) n) (recursive:bool:lies (set! out (length out) false)) out)))
+                          (recursive:bool:lies []))))
 (let bool:def (lambda val (array (truthy? val))))
 (let bool:get (lambda variable (get variable 0)))
 (let bool:set! (lambda variable value (set! variable 0 (truthy? value))))
