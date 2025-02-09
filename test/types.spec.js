@@ -13,7 +13,7 @@ const inference = (source, keys) => {
 }
 const signatures = (abstractions) =>
   inference(`[${abstractions.join(' ')}]`, abstractions)
-describe.only('Type checking', () => {
+describe('Type checking', () => {
   it('Std types should not change', () => {
     const B = readFileSync('./lib/src/types.lisp', 'utf-8')
       .split('\n')
@@ -142,6 +142,11 @@ describe.only('Type checking', () => {
     )
   })
   it('Does not throw', () => {
+    passes(`(let ifs (Numbers []))
+(set! ifs 0 (numberp (and (> 2 2) (> 1 1))))`)
+    passes(`(let ifs (Booleans []))
+(let m (math:summation [1 2 3]))
+(set! ifs 0 (> m 1))`)
     passes(`(let flip-bools (lambda xs (do
     (loop:for-n (length xs) (lambda i (set! xs i (not (get xs i)))))
     xs)))
@@ -595,8 +600,24 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
     )
     fails(
+      `(let ifs (Numbers []))
+(set! ifs 0 (and (> 2 2) (> 1 1)))`,
+      `Incorrect array type at (set!). ifs is ([Number]) but insertion is (Boolean) (set! (ifs 0 (and (> 2 2) (> 1 1)))) (check #198)`
+    )
+    fails(
+      `(let ifs (Booleans []))
+(let m (math:summation [1 2 3]))
+(set! ifs 0 m)`,
+      `Incorrect array type at (set!). ifs is ([Boolean]) but insertion is (Number) (set! (ifs 0 m)) (check #198)`
+    )
+    fails(
       `(let y? (if (= 1 1) (apply [1] array:empty!)  (apply 1 math:odd?)))`,
       `Assigning predicate (ending in ?) variable  (y?) to an (Atom) that is not (or 1 0) or to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil) (let y? (if (= 1 1) (apply (array 1) array:empty!) (apply 1 math:odd?))) (check #100)`
+    )
+    fails(
+      `(let ifs (Booleans []))
+(set! ifs 0 1)`,
+      `Incorrect array type at (set!). ifs is ([Boolean]) but insertion is (Number) (set! (ifs 0 1)) (check #199)`
     )
     // TODO make this fail
     // fails(`(let xs [])

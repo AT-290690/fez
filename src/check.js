@@ -612,20 +612,48 @@ const resolveSetter = (first, rest, env, stack) => {
     const name = rest[0][VALUE]
     const current = env[name]
     const right = isLeaf(rest.at(-1)) ? rest.at(-1) : rest.at(-1)[0]
+    const currentSubType = hasSubType(current[STATS])
+      ? getSubType(current[STATS])
+      : new Set([UNKNOWN])
     switch (right[TYPE]) {
       case ATOM:
+        if (!currentSubType.has(UNKNOWN) && !currentSubType.has(NUMBER))
+          throw new TypeError(
+            `Incorrect array type at (${
+              first[VALUE]
+            }). ${name} is (${formatSubType(
+              getTypes(current[STATS])
+            )}) but insertion is (${formatSubType([
+              ATOM,
+              NUMBER_SUBTYPE()
+            ])}) (${stringifyArgs([first, rest])}) (check #199)`
+          )
         current[STATS][TYPE_PROP][1] = NUMBER_SUBTYPE()
         break
       case WORD:
         if (env[right[VALUE]]) {
-          if (hasSubType(env[right[VALUE]][STATS]))
+          if (hasSubType(env[right[VALUE]][STATS])) {
+            if (currentSubType.has(UNKNOWN))
+              current[STATS][TYPE_PROP][1] = new Set([
+                ...getSubType(env[right[VALUE]][STATS])
+              ])
+            else if (!equalSubTypes(current[STATS], env[right[VALUE]][STATS]))
+              throw new TypeError(
+                `Incorrect array type at (${
+                  first[VALUE]
+                }). ${name} is (${formatSubType(
+                  getTypes(current[STATS])
+                )}) but insertion is (${formatSubType(
+                  getTypes(env[right[VALUE]][STATS])
+                )}) (${stringifyArgs([first, rest])}) (check #198)`
+              )
             current[STATS][TYPE_PROP][1] = new Set(
               getSubType(env[right[VALUE]][STATS])
             )
-          else
-            current[STATS][TYPE_PROP][1] = new Set([
-              getType(env[right[VALUE]][STATS])
-            ])
+          } else
+            retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
+              resolveSetter(first, rest, env, stack)
+            )
         }
         break
       case APPLY:
@@ -637,14 +665,33 @@ const resolveSetter = (first, rest, env, stack) => {
             })[RETURNS][1]
             break
           }
-          if (hasSubReturn(env[right[VALUE]][STATS]))
+          if (hasSubReturn(env[right[VALUE]][STATS])) {
+            if (currentSubType.has(UNKNOWN))
+              current[STATS][TYPE_PROP][1] = new Set([
+                ...getSubReturn(env[right[VALUE]][STATS])
+              ])
+            else if (
+              !equalSubTypesWithSubReturn(
+                current[STATS],
+                env[right[VALUE]][STATS]
+              )
+            )
+              throw new TypeError(
+                `Incorrect array type at (${
+                  first[VALUE]
+                }). ${name} is (${formatSubType(
+                  getTypes(current[STATS])
+                )}) but insertion is (${formatSubType(
+                  getReturns(env[right[VALUE]][STATS])
+                )}) (${stringifyArgs([first, rest])}) (check #198)`
+              )
             current[STATS][TYPE_PROP][1] = new Set([
               ...getSubReturn(env[right[VALUE]][STATS])
             ])
-          else if (!isUnknownReturn(env[right[VALUE]][STATS]))
-            current[STATS][TYPE_PROP][1] = new Set([
-              getReturn(env[right[VALUE]][STATS])
-            ])
+          } else
+            retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
+              resolveSetter(first, rest, env, stack)
+            )
         }
         break
     }
