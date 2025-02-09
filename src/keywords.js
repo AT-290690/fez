@@ -15,6 +15,11 @@ export const STATIC_TYPES = {
   ATOM: 'Atom',
   COLLECTION: 'Collection',
   BOOLEAN: 'Boolean',
+  NUMBERS: 'Numbers',
+  BOOLEANS: 'Booleans',
+  ABSTRACTIONS: 'Abstractions',
+  COLLECTIONS: 'Collections',
+  AS_NUMBER: 'numberp',
   ANY: 'Any'
 }
 export const KEYWORDS = {
@@ -104,10 +109,6 @@ export const MUTATORS_SET = new Set([
   'matrix:set-and-get!',
   'array:set-and-get!',
   'var:set-and-get!',
-  'map:set-and-get!',
-  'set:add-and-get!',
-  'set:add!',
-  'map:set!',
   'array:set!',
   'array:append!',
   'array:push!',

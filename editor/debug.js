@@ -66,6 +66,10 @@ export const debug = (ast, checkTypes = true) => {
     },
     [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env),
     [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
+    [STATIC_TYPES.NUMBERS]: (args, env) => evaluate(args[0], env),
+    [STATIC_TYPES.COLLECTIONS]: (args, env) => evaluate(args[0], env),
+    [STATIC_TYPES.ABSTRACTIONS]: (args, env) => evaluate(args[0], env),
+    [STATIC_TYPES.BOOLEANS]: (args, env) => evaluate(args[0], env),
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
       if (args.length !== 2)
         throw new RangeError(

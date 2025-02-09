@@ -95,7 +95,6 @@
 (let Library 1)
 (let Type 1)
 (let Search 1)
-
 (let truthy? (lambda x
     (cond
      (atom? x) (not (= (Any x) 0))
@@ -189,13 +188,13 @@
 (let math:multiplication (lambda a b (* a b)))
 (let math:division (lambda a b (/ a b)))
 (let math:subtraction (lambda a b (- a b)))
-(let math:fold (lambda xs cb initial (do
+(let math:fold (lambda xs cb initial (do  (Numbers xs)
                   (let recursive:math:fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:math:fold (+ i 1) (Number (cb out (Number (get xs i)))))
                             (Number out))))
                       (recursive:math:fold 0 (Number initial)))))
-(let math:enumerated-fold (lambda xs cb initial (do
+(let math:enumerated-fold (lambda xs cb initial (do (Numbers xs)
                   (let recursive:enumerated-fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:enumerated-fold (+ i 1) (Number (cb out (Number (get xs i)) i)))
@@ -210,8 +209,8 @@
                       (Collection (recursive:math:map 0 [])))))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
-(let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) (+))))
-(let math:product (lambda xs (math:fold xs (lambda a b (* a b)) (*))))
+(let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) 0)))
+(let math:product (lambda xs (math:fold xs (lambda a b (* a b)) 1)))
 (let math:maximum (lambda xs (math:fold xs math:max (array:first xs))))
 (let math:minimum (lambda xs (math:fold xs math:min (array:first xs))))
 (let math:maximum-index (lambda xs (array:second (array:enumerated-fold xs (lambda a x i (if (> x (array:first a)) (array x i) a)) (array (array:first xs) math:min-safe-integer)))))
@@ -898,7 +897,7 @@
         (from:string->integer str) 
         (do 
             (let neg? (match:negative? str))
-            (let left (array:slice str neg? dec))
+            (let left (array:slice str (numberp neg?) dec))
             (let right (array:slice str (+ dec 1) (length str)))
             (let n (math:power 10 (length right)))
             (let sign (if neg? -1 1))

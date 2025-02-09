@@ -328,7 +328,7 @@ describe.only('Type checking', () => {
 
 [[(part1 sample) (part2 sample2)] [(part2 sample3) (part2 sample4)]]`)
     passes(
-      `(let fn (lambda x y? (+ x (or y? 1))))
+      `(let fn (lambda x y? (+ x (numberp (or y? 1)))))
 (fn 1 1)`
     )
     passes(`(let INPUT 
@@ -747,8 +747,7 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect type of argument (1) for (+). Expected (Number) but got ([Unknown]) (+ (f8) (f5 1)) (check #16)`
     )
     fails(
-      `(let fn (lambda x y? (+ x (or y? 1))))
-(fn 1 2)`,
+      `(let fn (lambda x y? (+ x (numberp (or y? 1))))) (fn 1 2)`,
       `Incorrect type of argument (1) for (fn). Expected (Boolean) but got (Number) (fn 1 2) (check #203)`
     )
     fails(

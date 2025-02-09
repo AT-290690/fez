@@ -23,14 +23,14 @@
     (let l (car left))
     (let r (car right))
     (+ 
-      (if (or (= l char:dot) (= l char:question-mark)) (dp? (cdr left) right))
+      (if (or (= l char:dot) (= l char:question-mark)) (numberp (dp? (cdr left) right)))
       (if (and 
               (or (= l char:hash) (= l char:question-mark))
               (<= r (length left))
               (not (array:has? (array:slice left 0 r) (lambda x (= x char:dot))))
               (or (= r (length left)) (not (= (get left r) char:hash)))
             )
-          (dp? (array:slice left (+ r 1) (length left)) (cdr right))))
+          (numberp (dp? (array:slice left (+ r 1) (length left)) (cdr right)))))
   )))))
 )))
 (let dpm (lambda left right memo (do 
@@ -53,7 +53,7 @@
        res
     ))))))
 )))
-(let part1 (lambda input (|> input (array:fold (lambda a b (+ a (dp? (car b) (car (cdr b))))) 0))))
+(let part1 (lambda input (|> input (array:fold (lambda a b (+ a (numberp (dp? (car b) (car (cdr b)))))) 0))))
 (let part2 (lambda input (|> input (array:map (lambda arg (do 
   (let left (car arg))
   (let right (car (cdr arg)))

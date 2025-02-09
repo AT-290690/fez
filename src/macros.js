@@ -324,8 +324,11 @@ export const deSuggarAst = (ast, scope) => {
                 break
               case KEYWORDS.DIVISION:
                 if (!rest.length) {
-                  exp[0][TYPE] = ATOM
-                  exp[0][VALUE] = FALSE
+                  exp[0][VALUE] = KEYWORDS.NOT
+                  exp[1] = [
+                    [APPLY, KEYWORDS.NOT],
+                    [ATOM, FALSE]
+                  ]
                 } else if (rest.length === 1) {
                   exp.length = 1
                   exp.push([ATOM, 1], rest[0])

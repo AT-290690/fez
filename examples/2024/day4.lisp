@@ -43,11 +43,11 @@ MXMXAXMASX")
         (let B (matrix:get matrix (+ y -1) (+ x 1)))
         (let C (matrix:get matrix (+ y 1) (+ x -1)))
         (let D (matrix:get matrix (+ y 1) (+ x 1)))
-        (+ a (or
+        (+ a (numberp (or
             (and (= A char:M) (= B char:S) (= C char:M) (= D char:S))
             (and (= A char:S) (= B char:M) (= C char:S) (= D char:M))
             (and (= A char:M) (= B char:M) (= C char:S) (= D char:S))
-            (and (= A char:S) (= B char:S) (= C char:M) (= D char:M)))))) 0)))))
+            (and (= A char:S) (= B char:S) (= C char:M) (= D char:M))))))) 0)))))
 
 (let PARSED (parse sample))
 

@@ -33,10 +33,12 @@ export const FALSE_WORD = 'false'
 export const BOOLEAN_SUBTYPE = () => new Set([BOOLEAN])
 export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
 export const NUMBER_SUBTYPE = () => new Set([NUMBER])
+export const ABSTRACTION_SUBTYPE = () => new Set([APPLY])
 
 const SPECIAL_BOOLEAN = BOOLEAN_SUBTYPE()
 const SPECIAL_COLLECTION = COLLECTION_SUBTYPE()
 const SPECIAL_NUMBER = NUMBER_SUBTYPE()
+const SPECIAL_ABSTRACTION = ABSTRACTION_SUBTYPE()
 export const toTypeNames = (type) => {
   switch (type) {
     case APPLY:
@@ -85,13 +87,33 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
       [RETURNS]: [APPLY]
+    }
+  },
+  [STATIC_TYPES.ABSTRACTIONS]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: STATIC_TYPES.ABSTRACTIONS,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [UNKNOWN],
+            [RETURNS]: [UNKNOWN],
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [COLLECTION, SPECIAL_ABSTRACTION]
     }
   },
   [STATIC_TYPES.ATOM]: {
@@ -107,13 +129,33 @@ export const SPECIAL_FORM_TYPES = {
             [SIGNATURE]: PLACEHOLDER,
             [TYPE_PROP]: [UNKNOWN],
             [RETURNS]: [UNKNOWN],
-
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
         }
       ],
       [RETURNS]: [ATOM]
+    }
+  },
+  [STATIC_TYPES.AS_NUMBER]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: STATIC_TYPES.AS_NUMBER,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
+            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [ATOM, SPECIAL_NUMBER]
     }
   },
   [STATIC_TYPES.BOOLEAN]: {
@@ -137,6 +179,27 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ATOM, SPECIAL_BOOLEAN]
     }
   },
+  [STATIC_TYPES.BOOLEANS]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: STATIC_TYPES.BOOLEANS,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [UNKNOWN],
+            [RETURNS]: [UNKNOWN],
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [COLLECTION, SPECIAL_BOOLEAN]
+    }
+  },
   [STATIC_TYPES.NUMBER]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
@@ -156,6 +219,27 @@ export const SPECIAL_FORM_TYPES = {
         }
       ],
       [RETURNS]: [ATOM, SPECIAL_NUMBER]
+    }
+  },
+  [STATIC_TYPES.NUMBERS]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: STATIC_TYPES.NUMBERS,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [UNKNOWN],
+            [RETURNS]: [UNKNOWN],
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [COLLECTION, SPECIAL_NUMBER]
     }
   },
   [STATIC_TYPES.COLLECTION]: {
@@ -178,6 +262,28 @@ export const SPECIAL_FORM_TYPES = {
         }
       ],
       [RETURNS]: [COLLECTION]
+    }
+  },
+  [STATIC_TYPES.COLLECTIONS]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: STATIC_TYPES.COLLECTIONS,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: Infinity,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [UNKNOWN],
+            [RETURNS]: [UNKNOWN],
+
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [COLLECTION, SPECIAL_COLLECTION]
     }
   },
   [STATIC_TYPES.UNKNOWN]: {

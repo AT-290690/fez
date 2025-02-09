@@ -49,6 +49,10 @@ const keywordToHelper = (name) => {
     case STATIC_TYPES.BOOLEAN:
     case STATIC_TYPES.ANY:
     case STATIC_TYPES.NUMBER:
+    case STATIC_TYPES.NUMBERS:
+    case STATIC_TYPES.ABSTRACTIONS:
+    case STATIC_TYPES.BOOLEANS:
+    case STATIC_TYPES.COLLECTIONS:
     case DEBUG.ASSERT:
     case DEBUG.LOG:
     case DEBUG.STRING:
@@ -287,6 +291,10 @@ const comp = (tree, Drill) => {
       case STATIC_TYPES.BOOLEAN:
       case STATIC_TYPES.ANY:
       case STATIC_TYPES.NUMBER:
+      case STATIC_TYPES.NUMBERS:
+      case STATIC_TYPES.ABSTRACTIONS:
+      case STATIC_TYPES.BOOLEANS:
+      case STATIC_TYPES.COLLECTIONS:
       case DEBUG.ASSERT:
       case DEBUG.LOG:
       case DEBUG.STRING:

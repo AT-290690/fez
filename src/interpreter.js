@@ -833,11 +833,17 @@ export const keywords = {
     throw new Error(expression.map((x) => String.fromCharCode(x)).join(''))
   },
 
-  [STATIC_TYPES.ABSTRACTION]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env),
+
   [STATIC_TYPES.ATOM]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.ABSTRACTION]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.COLLECTION]: (args, env) => evaluate(args[0], env),
+
   [STATIC_TYPES.BOOLEAN]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.NUMBER]: (args, env) => evaluate(args[0], env),
-  [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
-  [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env)
+  [STATIC_TYPES.NUMBERS]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.COLLECTIONS]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.ABSTRACTIONS]: (args, env) => evaluate(args[0], env),
+  [STATIC_TYPES.BOOLEANS]: (args, env) => evaluate(args[0], env)
 }

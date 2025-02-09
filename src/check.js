@@ -304,7 +304,7 @@ export const isAtomType = (stats) =>
   isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
 export const isAtomReturn = (stats) =>
   isAnyType(stats) || stats[RETURNS][0] === ATOM
-export const equalsTypes = (a, b) => {
+export const equalTypes = (a, b) => {
   const isAnyAny = isAnyType(a) || isAnyType(b)
   if (isAnyAny) return true
   const isSameType = a[TYPE_PROP][0] === b[TYPE_PROP][0]
@@ -312,7 +312,7 @@ export const equalsTypes = (a, b) => {
   return true
 }
 
-export const equalsReturns = (a, b) =>
+export const equalReturns = (a, b) =>
   isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
 export const equalsTypeWithReturn = (a, b) =>
   isAnyType(a) || isAnyReturn(b) || a[TYPE_PROP][0] === b[RETURNS][0]
@@ -336,6 +336,39 @@ const notABooleanType = (a, b) => {
     !isAnyType(b) &&
     ((!hasSubType(b) && getType(b) !== COLLECTION) ||
       (hasSubType(b) && getSubType(a).difference(getSubType(b)).size !== 0))
+  )
+}
+const equalSubTypes = (a, b) => {
+  return (
+    !hasSubType(a) ||
+    !hasSubType(b) ||
+    getSubType(a).has(UNKNOWN) ||
+    getSubType(b).has(UNKNOWN) ||
+    getSubType(a).has(ANY) ||
+    getSubType(b).has(ANY) ||
+    getSubType(a).difference(getSubType(b)).size === 0
+  )
+}
+const eualSubReturn = (a, b) => {
+  return (
+    !hasSubReturn(a) ||
+    !hasSubReturn(b) ||
+    getSubReturn(a).has(UNKNOWN) ||
+    getSubReturn(b).has(UNKNOWN) ||
+    getSubReturn(a).has(ANY) ||
+    getSubReturn(b).has(ANY) ||
+    getSubReturn(a).difference(getSubReturn(b)).size === 0
+  )
+}
+const equalSubTypesWithSubReturn = (a, b) => {
+  return (
+    !hasSubType(a) ||
+    !hasSubReturn(b) ||
+    getSubType(a).has(UNKNOWN) ||
+    getSubReturn(b).has(UNKNOWN) ||
+    getSubType(a).has(ANY) ||
+    getSubReturn(b).has(ANY) ||
+    getSubType(a).difference(getSubReturn(b)).size === 0
   )
 }
 const notABooleanTypeWithReturn = (a, b) => {
@@ -498,7 +531,6 @@ const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
   }
 }
 const ifExpression = ({ re, env, ref, prop }) => {
-  // console.log(ref, JSON.stringify(env[KEYWORDS.IF][STATS][RETURNS]))
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
     return setPropToAtom(ref[STATS], prop)
   // TODO check that both brancehs are predicates if one is
@@ -669,7 +701,7 @@ const initArrayType = ({ rem, env }) => {
           ? env[x[VALUE]]
             ? getTypes(env[x[VALUE]][STATS])
             : [UNKNOWN]
-          : [x[TYPE]]
+          : [x[TYPE], x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new Set([UNKNOWN])]
         : env[x[0][VALUE]]
         ? getReturns(env[x[0][VALUE]][STATS])
         : [UNKNOWN]
@@ -688,7 +720,7 @@ const initArrayType = ({ rem, env }) => {
   } else
     return {
       [TYPE_PROP]: [APPLY],
-      [RETURNS]: [COLLECTION, new Set([])]
+      [RETURNS]: [COLLECTION, new Set([UNKNOWN])]
     }
 }
 const resolveReturnType = ({
@@ -848,7 +880,6 @@ const checkReturnType = ({ exp, stack, name, env, check }) => {
   })
 }
 const stagger = (stack, method, data, fn) => {
-  // console.log(data[0], data[1])
   stack[method]({ data, fn })
 }
 export const typeCheck = (ast) => {
@@ -877,7 +908,7 @@ export const typeCheck = (ast) => {
             exp
           )}) (check #16)`
         )
-      else if (notABooleanTypeWithReturn(expected, actual)) {
+      else if (!equalSubTypesWithSubReturn(expected, actual)) {
         throw new TypeError(
           `Incorrect type of argument (${i}) for (${
             first[VALUE]
@@ -929,7 +960,7 @@ export const typeCheck = (ast) => {
                     if (
                       !isUnknownReturn(expected[STATS]) &&
                       !isUnknownReturn(actual[STATS]) &&
-                      !equalsReturns(expected[STATS], actual[STATS])
+                      !equalReturns(expected[STATS], actual[STATS])
                     )
                       throw new TypeError(
                         `Incorrect return type for (${
@@ -970,7 +1001,7 @@ export const typeCheck = (ast) => {
                       if (
                         !isUnknownType(actual[STATS]) &&
                         !isUnknownType(expected[STATS]) &&
-                        !equalsTypes(actual[STATS], expected[STATS])
+                        !equalTypes(actual[STATS], expected[STATS])
                       )
                         throw new TypeError(
                           `Incorrect type for (${
@@ -1137,8 +1168,8 @@ export const typeCheck = (ast) => {
                     [SIGNATURE]: name,
                     retried: 0,
                     counter: 0,
-                    [TYPE_PROP]: [ATOM],
-                    [RETURNS]: [ATOM]
+                    [TYPE_PROP]: [ATOM, NUMBER_SUBTYPE()],
+                    [RETURNS]: [ATOM, NUMBER_SUBTYPE()]
                   }
                 }
               } else if (rightHand[0]) {
@@ -1266,6 +1297,10 @@ export const typeCheck = (ast) => {
           case STATIC_TYPES.BOOLEAN:
           case STATIC_TYPES.ANY:
           case STATIC_TYPES.NUMBER:
+          case STATIC_TYPES.NUMBERS:
+          case STATIC_TYPES.ABSTRACTIONS:
+          case STATIC_TYPES.BOOLEANS:
+          case STATIC_TYPES.COLLECTIONS:
             {
               const ret = isLeaf(rest[0]) ? rest[0] : rest[0][0]
               const ref = env[ret[VALUE]]
@@ -1397,10 +1432,15 @@ export const typeCheck = (ast) => {
                                   )
                               }
                             }
-                            if (
-                              isKnown &&
-                              !equalsTypes(args[i][STATS], env[name][STATS])
+                            const eqTypes = equalTypes(
+                              args[i][STATS],
+                              env[name][STATS]
                             )
+                            const eqSubTypes = equalSubTypes(
+                              args[i][STATS],
+                              env[name][STATS]
+                            )
+                            if (isKnown && !eqTypes)
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
@@ -1410,11 +1450,7 @@ export const typeCheck = (ast) => {
                                   getType(env[name][STATS])
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
-                            else if (
-                              isKnown &&
-                              notABooleanType(args[i][STATS], env[name][STATS])
-                              // TODO: Add a check if subtype is a UKNOWN (for uknown array)
-                            )
+                            else if (isKnown && eqTypes && !eqSubTypes) {
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
@@ -1424,6 +1460,7 @@ export const typeCheck = (ast) => {
                                   getTypes(env[name][STATS])
                                 )}) (${stringifyArgs(exp)}) (check #202)`
                               )
+                            }
                           }
                           break
                         case ATOM:
@@ -1510,7 +1547,7 @@ export const typeCheck = (ast) => {
                               if (
                                 !isUnknownReturn(expected[STATS]) &&
                                 !isUnknownReturn(actual[STATS]) &&
-                                !equalsReturns(expected[STATS], actual[STATS])
+                                !equalReturns(expected[STATS], actual[STATS])
                               ) {
                                 throw new TypeError(
                                   `Incorrect return type for (${
@@ -1545,7 +1582,7 @@ export const typeCheck = (ast) => {
                                 if (
                                   !isUnknownType(actual[STATS]) &&
                                   !isUnknownType(expected[STATS]) &&
-                                  !equalsTypes(actual[STATS], expected[STATS])
+                                  !equalTypes(actual[STATS], expected[STATS])
                                 )
                                   throw new TypeError(
                                     `Incorrect type for (${
@@ -1580,8 +1617,8 @@ export const typeCheck = (ast) => {
                           // when it's a special form and it's not equal
                           // or failed the boolean subtype case
                           isSpecial &&
-                          (!equalsTypes(args[i][STATS], env[name][STATS]) ||
-                            !notABooleanType(args[i][STATS], env[name][STATS]))
+                          (!equalTypes(args[i][STATS], env[name][STATS]) ||
+                            !equalSubTypes(args[i][STATS], env[name][STATS]))
                         )
                           setType(env[name][STATS], args[i][STATS])
                         else if (
