@@ -79,6 +79,7 @@ describe('Type checking', () => {
 (let iy (identity iz))
 (let ib (identity [1 2 3]))
 (let ic (identity (lambda x (* x x))))
+(let aafn (lambda a b [(+ a 1) (length (set! b 0 false))]))
 `,
 
         [
@@ -97,7 +98,8 @@ describe('Type checking', () => {
           'iz',
           'iy',
           'ib',
-          'ic'
+          'ic',
+          'aafn'
         ]
       ),
       [
@@ -116,7 +118,8 @@ describe('Type checking', () => {
         '(let iz (lambda (do Number)))',
         '(let iy (lambda (do Number)))',
         '(let ib [Number])',
-        '(let ic (lambda Number (do Number)))'
+        '(let ic (lambda Number (do Number)))',
+        '(let aafn (lambda Number [Boolean] (do [Number])))'
       ]
     )
     deepStrictEqual(
