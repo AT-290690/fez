@@ -45,9 +45,7 @@ import {
   BOOLEAN,
   IS_ARGUMENT,
   NUMBER,
-  SETTER,
-  NUMBER_SUBTYPE,
-  GENERIC
+  NUMBER_SUBTYPE
 } from './types.js'
 import {
   Brr,
@@ -462,14 +460,27 @@ const retryArgs = (stats, ctx, stack, cb) => {
     stagger(stack, 'prepend', ctx, cb)
   }
 }
-const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
+const IfApplyBranch = ({
+  leaf,
+  branch,
+  re,
+  prop,
+  ref,
+  env,
+  stack,
+  exp,
+  check
+}) => {
   switch (leaf[VALUE]) {
     case KEYWORDS.IF:
       return ifExpression({
         re: re.slice(2),
         env,
         ref,
-        prop
+        prop,
+        stack,
+        exp,
+        check
       })
     case KEYWORDS.CREATE_ARRAY:
       setPropToReturnRef(ref[STATS], prop, initArrayType({ rem: re, env }))
@@ -493,7 +504,9 @@ const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
             env,
             prop,
             leaf: re.at(-1),
-            re: re.at(-1).slice(2)
+            re: re.at(-1).slice(2),
+            stack,
+            exp
           })
       }
       break
@@ -501,7 +514,7 @@ const IfApplyBranch = ({ leaf, branch, re, prop, ref, env }) => {
       return setPropToReturnRef(ref[STATS], prop, branch[STATS])
   }
 }
-const ifExpression = ({ re, env, ref, prop }) => {
+const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
     return setPropToAtom(ref[STATS], prop)
   // TODO check that both brancehs are predicates if one is
@@ -510,6 +523,7 @@ const ifExpression = ({ re, env, ref, prop }) => {
     const alt = isLeaf(re[1]) ? re[1] : re[1][0]
     const concequent = env[conc[VALUE]]
     const alternative = env[alt[VALUE]]
+
     // TODO make this more simple - it's so many different things just because types are functions or not
     // WHY not consiter making return types for everything
     if (concequent)
@@ -527,7 +541,10 @@ const ifExpression = ({ re, env, ref, prop }) => {
           re: re[0],
           prop,
           env,
-          ref
+          ref,
+          stack,
+          exp,
+          check
         })
       }
     if (alternative) {
@@ -545,13 +562,16 @@ const ifExpression = ({ re, env, ref, prop }) => {
           re: re[1],
           prop,
           env,
-          ref
+          ref,
+          stack,
+          exp,
+          check
         })
       }
     }
   }
 }
-const resolveCondition = ({ rem, name, env, exp, prop }) => {
+const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
   const ret = rem[0]
   const re = rem.slice(2)
   const ref = env[name]
@@ -559,7 +579,7 @@ const resolveCondition = ({ rem, name, env, exp, prop }) => {
   checkPredicateName(exp, [[WORD, name], isLeaf(re[1]) ? re[1] : re[1][0]])
   switch (ret[VALUE]) {
     case KEYWORDS.IF:
-      ifExpression({ re, env, ref, prop })
+      ifExpression({ re, env, ref, prop, exp, stack, check })
       break
     default:
       if (env[ret[VALUE]]) setPropRef(ref[STATS], prop, env[ret[VALUE]][STATS])
@@ -622,7 +642,7 @@ const resolveSetter = (first, rest, env, stack) => {
               getSubType(env[right[VALUE]][STATS])
             )
           } else
-            retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
+            once(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
               resolveSetter(first, rest, env, stack)
             )
         }
@@ -659,19 +679,20 @@ const resolveSetter = (first, rest, env, stack) => {
             current[STATS][TYPE_PROP][1] = new Set([
               ...getSubReturn(env[right[VALUE]][STATS])
             ])
-          } else
-            retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
-              resolveSetter(first, rest, env, stack)
-            )
+          }
+          // else
+          // retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
+          //   resolveSetter(first, rest, env, stack)
+          // )
         }
         break
     }
     setTypeToCollection(current[STATS])
-    // Retry setting the sub-type if infered it out later
-    if (!hasSubType(current[STATS]) || getSubType(current[STATS]).has(UNKNOWN))
-      retry(current[STATS], [first[VALUE], rest], stack, () =>
-        resolveSetter(first, rest, env, stack)
-      )
+    // // Retry setting the sub-type if infered it out later
+    // if (!hasSubType(current[STATS]) || getSubType(current[STATS]).has(UNKNOWN))
+    //   retry(current[STATS], [first[VALUE], rest], stack, () =>
+    //     resolveSetter(first, rest, env, stack)
+    //   )
   }
 }
 const resolveGetter = ({ rem, prop, name, env }) => {
@@ -758,7 +779,7 @@ const resolveReturnType = ({
         setPropToSubReturn(env[name][STATS], prop, initArrayType({ rem, env }))
         break
       case KEYWORDS.IF:
-        resolveCondition({ rem, name, env, exp, prop })
+        resolveCondition({ rem, name, env, exp, prop, stack, check })
         break
       default:
         {
@@ -766,7 +787,7 @@ const resolveReturnType = ({
             GETTERS_SET.has(returns[VALUE]) &&
             !resolveGetter({ rem, prop, name, env })
           )
-            return retry(env[name][STATS], [returns, env], stack, () => {
+            return once(env[name][STATS], [returns, env], stack, () => {
               resolveReturnType({
                 returns,
                 rem,
@@ -795,7 +816,6 @@ const resolveReturnType = ({
               // ALWAYS APPLY
               // rest.at(-1)[0][TYPE] === APPLY
               // Here is upon application to store the result in the variable
-
               if (isUnknownType(env[name][STATS]))
                 stagger(stack, 'prepend', exp, () => {
                   if (isGenericReturn(env[returns[VALUE]][STATS])) {
@@ -1004,7 +1024,7 @@ export const typeCheck = (ast) => {
                         )}) (${stringifyArgs(exp)}) (check #783)`
                       )
                     else
-                      retry(
+                      once(
                         actual[STATS],
                         [[WORD, lambdaName], local],
                         stack,
@@ -1013,52 +1033,45 @@ export const typeCheck = (ast) => {
                   }
                   match1()
                   for (let j = 0; j < args[i][STATS][ARGUMENTS].length; ++j) {
-                    const match2 = () => {
-                      const actual = local[lambdaName][STATS][ARGUMENTS][j]
-                      const expected = args[i][STATS][ARGUMENTS][j]
-                      if (
-                        !isUnknownType(actual[STATS]) &&
-                        !isUnknownType(expected[STATS]) &&
-                        !equalTypes(actual[STATS], expected[STATS])
+                    const actual = local[lambdaName][STATS][ARGUMENTS][j]
+                    const expected = args[i][STATS][ARGUMENTS][j]
+                    if (
+                      !isUnknownType(actual[STATS]) &&
+                      !isUnknownType(expected[STATS]) &&
+                      !equalTypes(actual[STATS], expected[STATS])
+                    )
+                      throw new TypeError(
+                        `Incorrect type for (${KEYWORDS.ANONYMOUS_FUNCTION}) (${
+                          args[i][STATS][SIGNATURE]
+                        }) argument at position (${j}) named as (${
+                          local[lambdaName][STATS][ARGUMENTS][j][STATS][
+                            SIGNATURE
+                          ]
+                        }). Expected (${toTypeNames(
+                          getType(expected[STATS])
+                        )}) but got (${toTypeNames(
+                          getType(actual[STATS])
+                        )}) (${stringifyArgs(exp)}) (check #780)`
                       )
-                        throw new TypeError(
-                          `Incorrect type for (${
-                            KEYWORDS.ANONYMOUS_FUNCTION
-                          }) (${
-                            args[i][STATS][SIGNATURE]
-                          }) argument at position (${j}) named as (${
-                            local[lambdaName][STATS][ARGUMENTS][j][STATS][
-                              SIGNATURE
-                            ]
-                          }). Expected (${toTypeNames(
-                            getType(expected[STATS])
-                          )}) but got (${toTypeNames(
-                            getType(actual[STATS])
-                          )}) (${stringifyArgs(exp)}) (check #780)`
-                        )
-                      else if (!eualSubReturn(expected[STATS], actual[STATS]))
-                        throw new TypeError(
-                          `Incorrect return type for (${
-                            expected[STATS][SIGNATURE]
-                          }) the (${
-                            KEYWORDS.ANONYMOUS_FUNCTION
-                          }) argument of (${
-                            first[VALUE]
-                          }) at position (${i}). Expected (${toTypeNames(
-                            getReturn(expected[STATS])
-                          )}) but got (${toTypeNames(
-                            getReturn(actual[STATS])
-                          )}) (${stringifyArgs(exp)}) (check #784)`
-                        )
-                      else
-                        retry(
-                          actual[STATS],
-                          [[WORD, lambdaName], local],
-                          stack,
-                          match2
-                        )
-                    }
-                    match2()
+                    else if (!eualSubReturn(expected[STATS], actual[STATS]))
+                      throw new TypeError(
+                        `Incorrect return type for (${
+                          expected[STATS][SIGNATURE]
+                        }) the (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
+                          first[VALUE]
+                        }) at position (${i}). Expected (${toTypeNames(
+                          getReturn(expected[STATS])
+                        )}) but got (${toTypeNames(
+                          getReturn(actual[STATS])
+                        )}) (${stringifyArgs(exp)}) (check #784)`
+                      )
+                    // else
+                    //   retry(
+                    //     actual[STATS],
+                    //     [[WORD, lambdaName], local],
+                    //     stack,
+                    //     match2
+                    //   )
                   }
                 }
               } else {
@@ -1250,11 +1263,11 @@ export const typeCheck = (ast) => {
                   [TYPE_PROP]: [UNKNOWN],
                   [RETURNS]: [UNKNOWN],
                   [ARGUMENTS]: [],
+                  argIndex: i,
                   retried: 0,
                   counter: 0
                 }
               }
-
               const ref = env[copy[SCOPE_NAME]]
               if (!ref) continue
               ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
@@ -1289,7 +1302,8 @@ export const typeCheck = (ast) => {
                         env: copy,
                         exp,
                         stack,
-                        prop: RETURNS
+                        prop: RETURNS,
+                        check
                       })
                       break
                     default:
@@ -1552,76 +1566,6 @@ export const typeCheck = (ast) => {
                                     } (${stringifyArgs(exp)}) (check #778)`
                                   )
                               }
-                            }
-                            // DEFINED  LAMBDAS TYPE CHECKING
-                            // #C1
-                            // TODO delete this maybe
-                            // It will not be possilbe to know return type
-                            const match1 = () => {
-                              const actual = env[name]
-                              const expected = args[i]
-                              if (
-                                !isUnknownReturn(expected[STATS]) &&
-                                !isUnknownReturn(actual[STATS]) &&
-                                !equalReturns(expected[STATS], actual[STATS])
-                              ) {
-                                throw new TypeError(
-                                  `Incorrect return type for (${
-                                    expected[STATS][SIGNATURE]
-                                  }) the (${
-                                    KEYWORDS.ANONYMOUS_FUNCTION
-                                  }) argument of (${
-                                    first[VALUE]
-                                  }) at position (${i}). Expected (${toTypeNames(
-                                    getReturn(expected[STATS])
-                                  )}) but got (${toTypeNames(
-                                    getReturn(actual[STATS])
-                                  )}) (${stringifyArgs(exp)}) (check #782)`
-                                )
-                              } else
-                                retry(
-                                  actual[STATS],
-                                  [first, env],
-                                  stack,
-                                  match1
-                                )
-                            }
-                            match1()
-                            for (
-                              let j = 0;
-                              j < args[i][STATS][ARGUMENTS].length;
-                              ++j
-                            ) {
-                              const match2 = () => {
-                                const actual = env[name][STATS][ARGUMENTS][j]
-                                const expected = args[i][STATS][ARGUMENTS][j]
-                                if (
-                                  !isUnknownType(actual[STATS]) &&
-                                  !isUnknownType(expected[STATS]) &&
-                                  !equalTypes(actual[STATS], expected[STATS])
-                                )
-                                  throw new TypeError(
-                                    `Incorrect type for (${
-                                      KEYWORDS.ANONYMOUS_FUNCTION
-                                    }) (${
-                                      args[i][STATS][SIGNATURE]
-                                    }) argument at position (${j}) named as (${
-                                      actual[STATS][SIGNATURE]
-                                    }). Expected (${toTypeNames(
-                                      getType(expected[STATS])
-                                    )}) but got (${toTypeNames(
-                                      getType(actual[STATS])
-                                    )}) (${stringifyArgs(exp)}) (check #781)`
-                                  )
-                                else
-                                  retry(
-                                    actual[STATS],
-                                    [first, env],
-                                    stack,
-                                    match2
-                                  )
-                              }
-                              match2()
                             }
                           }
                           break
