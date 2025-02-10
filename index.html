@@ -36,8 +36,23 @@
 
     #terminal {
       border-top: 1px solid #8f938f;
-      height: 30%;
+      height: 29%;
       width: 100%;
+    }
+    button {
+      background-color: transparent;
+      border: none;
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      cursor: pointer;
+    }
+    button:active {
+      transform: scale(1.2);
+    }
+    button > img {
+      width: 32px;
+      height: 32px;
     }
   </style>
 </head>
@@ -56,6 +71,6 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   ></script>
-
+  <button id="run"><img src="./favicon.svg" /></button>
   <script type="module" src="./editor/main.js"></script>
 </body>

@@ -123,6 +123,6 @@ document.addEventListener('keydown', (e) => {
     cmd()
   }
 })
-
+document.getElementById('run').addEventListener('click', inter)
 // TODDO delete this after done with debugging
 // inter()
