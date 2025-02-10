@@ -327,17 +327,6 @@ const IsPredicate = (leaf) =>
     (PREDICATES_OUTPUT_SET.has(leaf[VALUE]) ||
       getSuffix(leaf[VALUE]) === PREDICATE_SUFFIX))
 
-// THese should also check if sub type is Uknown array and pass as ok
-const notABooleanType = (a, b) => {
-  return (
-    hasSubType(a) &&
-    getSubType(a).has(BOOLEAN) &&
-    !isUnknownType(b) &&
-    !isAnyType(b) &&
-    ((!hasSubType(b) && getType(b) !== COLLECTION) ||
-      (hasSubType(b) && getSubType(a).difference(getSubType(b)).size !== 0))
-  )
-}
 const equalSubTypes = (a, b) => {
   return (
     !hasSubType(a) ||
@@ -369,24 +358,6 @@ const equalSubTypesWithSubReturn = (a, b) => {
     getSubType(a).has(ANY) ||
     getSubReturn(b).has(ANY) ||
     getSubType(a).difference(getSubReturn(b)).size === 0
-  )
-}
-const notABooleanTypeWithReturn = (a, b) => {
-  return (
-    hasSubType(a) &&
-    getSubType(a).has(BOOLEAN) &&
-    !isUnknownReturn(b) &&
-    !isAnyReturn(b) &&
-    (!hasSubReturn(b) || getSubType(a).difference(getSubReturn(b)).size !== 0)
-  )
-}
-const notABooleanReturn = (a, b) => {
-  return (
-    hasSubReturn(a) &&
-    getSubReturn(a).has(BOOLEAN) &&
-    !isUnknownReturn(b) &&
-    !isAnyReturn(b) &&
-    (!hasSubReturn(b) || getSubReturn(a).difference(getSubReturn(b)).size !== 0)
   )
 }
 const isAtomABoolean = (atom) => atom === TRUE || atom === FALSE
@@ -1020,7 +991,7 @@ export const typeCheck = (ast) => {
                           getReturn(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #779)`
                       )
-                    else if (notABooleanReturn(expected[STATS], actual[STATS]))
+                    else if (!eualSubReturn(expected[STATS], actual[STATS]))
                       throw new TypeError(
                         `Incorrect return type for (${
                           expected[STATS][SIGNATURE]
@@ -1065,9 +1036,7 @@ export const typeCheck = (ast) => {
                             getType(actual[STATS])
                           )}) (${stringifyArgs(exp)}) (check #780)`
                         )
-                      else if (
-                        notABooleanReturn(expected[STATS], actual[STATS])
-                      )
+                      else if (!eualSubReturn(expected[STATS], actual[STATS]))
                         throw new TypeError(
                           `Incorrect return type for (${
                             expected[STATS][SIGNATURE]

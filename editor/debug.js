@@ -227,7 +227,7 @@ export const debug = (ast, checkTypes = true) => {
             RUNTIME_TYPES.ARRAY
           }) but got (${expression}) (${DEBUG.STRING} ${stringifyArgs(args)})`
         )
-      return expression.map((x) => String.fromCharCode(x)).join('')
+      return `"${expression.map((x) => String.fromCharCode(x)).join('')}"`
     },
     [DEBUG.LOG]: (args, env) => {
       if (args.length !== 1 && args.length !== 2)
