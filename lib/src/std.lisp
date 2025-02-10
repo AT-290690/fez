@@ -738,6 +738,12 @@
     (loop:for-n width (lambda x
       (cb y x)))))
    matrix)))
+(let matrix:fill (lambda W H cb (do
+    (let matrix [])
+    (loop:for-n W (lambda i (do 
+        (array:push! matrix [])
+        (loop:for-n H (lambda j (matrix:set! matrix i j (cb i j)))))))
+    matrix)))
 (let matrix:rotate (lambda matrix (do 
     (let H (length matrix))
     (let W (length (get matrix 0)))
