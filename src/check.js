@@ -1657,8 +1657,7 @@ export const typeCheck = (ast) => {
       }
     }
   }
-  const copy = JSON.parse(JSON.stringify(ast))
-  check(copy, SPECIAL_FORM_TYPES, copy)
+  check(ast, SPECIAL_FORM_TYPES, ast)
   while (stack.length) stack.cut().fn()
   return [ast, Types]
 }
