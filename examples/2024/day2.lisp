@@ -6,17 +6,23 @@
 8 6 4 4 1
 1 3 6 7 9")
 
-(let parse (lambda input (|> input (string:lines) (mapping:array->array (lambda l (|> l (string:words) (from:strings->integers)))))))
+(let parse (lambda input (|> input (string:lines) (array:map (lambda l (|> l (string:words) (from:strings->integers)))))))
 
-(let part1 (lambda input (|> input (array:select (lambda line (do
-  (let slice (|> line (array:zip (array:slice line 1 (array:length line))) (mapping:array->atom (lambda x (pair:subtract x)))))
-  (or (array:every? slice (lambda x (and (>= x 1) (<= x 3)))) (array:every? slice (lambda x (and (<= x -1) (>= x -3))))))))
-(length))))
+(let part1 (lambda input (|> input 
+    (array:select (lambda line (do
+        (let slice (|> line 
+                       (array:zip (array:slice line 1 (array:length line)))
+                       (array:map pair:subtract)))
+        ; The levels are either all increasing or all decreasing.
+        ; Any two adjacent levels differ by at least one and at most three.
+        (or (array:every? slice (lambda x (and (>= x 1) (<= x 3)))) 
+            (array:every? slice (lambda x (and (<= x -1) (>= x -3))))))))
+    (length))))
 
 (let part2 (lambda input (|> input
                             (array:map
                               (lambda line (|> line
-                                (mapping-enumerated:array->array (lambda . i
+                                (array:enumerated-map (lambda . i
                                   (|> line (array:enumerated-exclude (lambda . j (= i j)))))))))
                             (array:count-of (lambda x (math:positive? (part1 x)))))))
 

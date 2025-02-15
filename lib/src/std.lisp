@@ -307,6 +307,15 @@
 (let math:negative-one? (lambda x (= x -1)))
 (let math:divisible? (lambda a b (= (mod a b) 0)))
 (let math:factorial (lambda n (if (<= n 0) 1 (* n (math:factorial (- n 1))))))
+(let math:mulberry-32-prng (lambda seed (do
+    (let base (var:def (Number seed)))
+    (let z (var:def (var:set-and-get! base (+ (var:get base) 2654435769))))
+    (var:set! z (^ (var:get z) (>> (var:get z) 16)))
+    (var:set! z (* (var:get z) 569420461))
+    (var:set! z (^ (var:get z) (>> (var:get z) 15)))
+    (var:set! z (* (var:get z) 1935289751))
+    (var:set! z (^ (var:get z) (>> (var:get z) 15)))
+    (Number (var:get z)))))
 (let math:sine (lambda rad terms (do
     (let sine (var:def 0))
     (let recursive:math:sine (lambda i 
@@ -1656,14 +1665,6 @@ q)))
                                 (set! out (length out) (Number (cb (Collection (get xs i))))))
                               (Collection out))))
                       (recursive:mapping:array->number 0 []))))
-
-
-
-
-
-
-
-
 
 (let mapping-enumerated:atom->atom (lambda xs cb (do
                   (let recursive:mapping-enumerated:atom->atom (lambda i out

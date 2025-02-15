@@ -472,6 +472,12 @@
 (let math:divisible? (lambda Number Number (do Boolean)))
 ; 1 math:factorial
 (let math:factorial (lambda Number (do Number)))
+; 1 math:mulberry-32-prng base
+(let base [Number])
+; 1 math:mulberry-32-prng z
+(let z [Number])
+; 1 math:mulberry-32-prng
+(let math:mulberry-32-prng (lambda Number (do Number)))
 ; 1 math:sine sine
 (let sine [Number])
 ; 1 math:sine recursive:math:sine
