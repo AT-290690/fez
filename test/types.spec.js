@@ -3,12 +3,18 @@ import { throws, doesNotThrow, deepStrictEqual, strictEqual } from 'assert'
 import { readFileSync } from 'fs'
 import { typeCheck } from '../src/check.js'
 import std from '../lib/baked/std.js'
+import { definedTypes, withCtxTypes } from '../src/types.js'
+import stdT from '../lib/baked/std-T.js'
 
-const passes = (source) => doesNotThrow(() => type(parse(source)))
+const passes = (source) =>
+  doesNotThrow(() => type(parse(source), withCtxTypes(definedTypes(stdT))))
 const fails = (source, message, name = 'TypeError') =>
-  throws(() => type(parse(source)), { name, message })
+  throws(() => type(parse(source), withCtxTypes(definedTypes(stdT))), {
+    name,
+    message
+  })
 const inference = (source, keys) => {
-  const map = typeCheck(parse(source))[1]
+  const map = typeCheck(parse(source), withCtxTypes(definedTypes(stdT)))[1]
   return keys.map((key) => map.get(`; 1 ${key}`)())
 }
 const signatures = (abstractions) =>
@@ -18,7 +24,9 @@ describe('Type checking', () => {
     const B = readFileSync('./lib/src/types.lisp', 'utf-8')
       .split('\n')
       .filter((x) => !x.startsWith('; '))
-    const A = [...typeCheck(std[0])[1].entries()]
+    const A = [
+      ...typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1].entries()
+    ]
       .filter((x) => x[0][0] === ';')
       .map(([k, v]) => `${v()}`)
     deepStrictEqual(A, B)

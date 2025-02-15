@@ -6,9 +6,11 @@ import {
   KEYWORDS,
   PLACEHOLDER,
   STATIC_TYPES,
+  TYPE,
   VALUE
 } from './keywords.js'
-import { stringifyArgs } from './utils.js'
+import { isLeaf } from './parser.js'
+import { shakedList, stringifyArgs } from './utils.js'
 export const ARG_COUNT = 'argumentsN'
 export const VARIADIC = Infinity
 export const STATS = '__stats__'
@@ -57,6 +59,30 @@ export const toTypeNames = (type) => {
       return '[Unknown]'
     case ANY:
       return 'Any'
+    default:
+      break
+  }
+}
+export const toTypeCodes = (type) => {
+  switch (type) {
+    case 'Abstraction':
+      return [APPLY]
+    case 'Boolean':
+      return [ATOM, BOOLEAN_SUBTYPE()]
+    case 'Atom':
+      return [ATOM]
+    case 'Number':
+      return [ATOM, NUMBER_SUBTYPE()]
+    case 'Unknown':
+      return [UNKNOWN]
+    case 'Unknowns':
+      return [COLLECTION]
+    case 'Numbers':
+      return [COLLECTION, NUMBER_SUBTYPE()]
+    case 'Booleans':
+      return [COLLECTION, BOOLEAN_SUBTYPE()]
+    case 'Any':
+      return [ANY]
     default:
       break
   }
@@ -1330,3 +1356,62 @@ export const validateLambda = (exp, name) => {
           )})`
         )
 }
+
+export const lambdaType = (t) => [t.slice(1, -1), t.at(-1)[1]]
+export const toArgType = (A, i) => {
+  const out = []
+  const arg = isLeaf(A) ? A : A[0]
+  if (arg[TYPE] === APPLY) {
+    const [args, returns] = lambdaType(A)
+    out.push({
+      [STATS]: {
+        argIndex: i,
+        retried: Infinity,
+        [IS_ARGUMENT]: true,
+        [SIGNATURE]: PLACEHOLDER,
+        [TYPE_PROP]: [APPLY],
+        [RETURNS]: toTypeCodes(returns[VALUE]),
+        [ARGUMENTS]: args.map(toArgType).flat(1),
+        [ARG_COUNT]: args.length
+      }
+    })
+  } else {
+    out.push({
+      [STATS]: {
+        argIndex: i,
+        retried: Infinity,
+        [IS_ARGUMENT]: true,
+        [SIGNATURE]: PLACEHOLDER,
+        [TYPE_PROP]: toTypeCodes(arg[VALUE]),
+        [RETURNS]: toTypeCodes(arg[VALUE]),
+        [ARGUMENTS]: [],
+        [ARG_COUNT]: 0
+      }
+    })
+  }
+  return out
+}
+export const fromSourceToType = (T) => {
+  const out = {}
+  for (const t of T) {
+    const name = t[1][VALUE]
+    const [args, returns] = lambdaType(t[2])
+    out[name] = {
+      [STATS]: {
+        retried: Infinity,
+        [TYPE_PROP]: [APPLY],
+        [SIGNATURE]: name,
+        [ARG_COUNT]: args.length,
+        [ARGUMENTS]: args.map(toArgType).flat(1),
+        [RETURNS]: toTypeCodes(returns[VALUE])
+      }
+    }
+  }
+  return out
+}
+export const withCtxTypes = (T) => ({ ...SPECIAL_FORM_TYPES, ...T })
+export const filteredDefinedTypes = (program, lib, libT) => {
+  const deps = new Set(shakedList(program, lib))
+  return libT.filter((x) => deps.has(x[1][1]))
+}
+export const definedTypes = (T) => fromSourceToType(T)

@@ -841,7 +841,7 @@ const resolveReturnType = ({
                               // This is insitialisation of identity or any other
                               // function that returns it's argument
                               // Redifine the variable but since it's an error doing that
-                              // Delete it
+                              // Delete it first
                               delete env[name]
                               check(
                                 [
@@ -920,7 +920,7 @@ const checkReturnType = ({ exp, stack, name, env, check }) => {
 const stagger = (stack, method, data, fn) => {
   stack[method]({ data, fn })
 }
-export const typeCheck = (ast) => {
+export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
   const Types = new Map()
   const stack = new Brr()
   let scopeIndex = 0
@@ -1124,6 +1124,7 @@ export const typeCheck = (ast) => {
                   exp
                 )})`
               )
+            // TODO check leT define types
             const name = rest[0][VALUE]
             if (env.hasOwnProperty(name))
               throw new ReferenceError(
@@ -1131,6 +1132,10 @@ export const typeCheck = (ast) => {
                   exp
                 )})`
               )
+            if (name in env) {
+              Types.set(withScope(name, env), () => formatType(name, env))
+              break
+            }
             //  Predicate name consistency
             const rightHand = rest.at(-1)
             if (
@@ -1657,8 +1662,8 @@ export const typeCheck = (ast) => {
       }
     }
   }
-  check(ast, SPECIAL_FORM_TYPES, ast)
+  check(ast, ctx, ast)
   while (stack.length) stack.cut().fn()
   return [ast, Types]
 }
-export const type = (ast) => typeCheck(ast)[0]
+export const type = (ast, ctx) => typeCheck(ast, ctx)[0]

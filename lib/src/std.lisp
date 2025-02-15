@@ -188,25 +188,25 @@
 (let math:multiplication (lambda a b (* a b)))
 (let math:division (lambda a b (/ a b)))
 (let math:subtraction (lambda a b (- a b)))
-(let math:fold (lambda xs cb initial (do  (Numbers xs)
+(let math:fold (lambda xs cb initial (do 
                   (let recursive:math:fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:math:fold (+ i 1) (Number (cb out (Number (get xs i)))))
-                            (Number out))))
-                      (recursive:math:fold 0 (Number initial)))))
-(let math:enumerated-fold (lambda xs cb initial (do (Numbers xs)
+                            (recursive:math:fold (+ i 1) (cb out (get xs i)))
+                            out)))
+                      (recursive:math:fold 0 initial))))
+(let math:enumerated-fold (lambda xs cb initial (do
                   (let recursive:enumerated-fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:enumerated-fold (+ i 1) (Number (cb out (Number (get xs i)) i)))
-                            (Number out))))
-                      (recursive:enumerated-fold 0 (Number initial)))))
+                            (recursive:enumerated-fold (+ i 1) (cb out (get xs i) i))
+                            out)))
+                      (recursive:enumerated-fold 0 initial))))
 (let math:map (lambda xs cb (do
                   (let recursive:math:map (lambda i out
                         (if (> (length xs) i)
                               (recursive:math:map (+ i 1)
-                                (set! out (length out) (Number (cb (Number (get xs i))))))
+                                (set! out (length out) (cb (get xs i))))
                               out)))
-                      (Collection (recursive:math:map 0 [])))))
+                      (recursive:math:map 0 []))))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
 (let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) 0)))
@@ -308,14 +308,14 @@
 (let math:divisible? (lambda a b (= (mod a b) 0)))
 (let math:factorial (lambda n (if (<= n 0) 1 (* n (math:factorial (- n 1))))))
 (let math:mulberry-32-prng (lambda seed (do
-    (let base (var:def (Number seed)))
+    (let base (var:def seed))
     (let z (var:def (var:set-and-get! base (+ (var:get base) 2654435769))))
     (var:set! z (^ (var:get z) (>> (var:get z) 16)))
     (var:set! z (* (var:get z) 569420461))
     (var:set! z (^ (var:get z) (>> (var:get z) 15)))
     (var:set! z (* (var:get z) 1935289751))
     (var:set! z (^ (var:get z) (>> (var:get z) 15)))
-    (Number (var:get z)))))
+    (var:get z))))
 (let math:sine (lambda rad terms (do
     (let sine (var:def 0))
     (let recursive:math:sine (lambda i 
@@ -539,8 +539,8 @@
 (let array:reduce (lambda xs cb initial (do
                   (let recursive:array:reduce (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:reduce (+ i 1) (Atom (cb out (get xs i))))
-                            (Number out))))
+                            (recursive:array:reduce (+ i 1) (cb out (get xs i)))
+                            out)))
                       (recursive:array:reduce 0 initial))))
 (let array:every? (lambda xs predicate? (do
                     (let recursive:array:every? (lambda i
@@ -1450,6 +1450,11 @@
 (let var:increment-and-get! (lambda variable (do (set! variable 0 (+ (var:get variable) 1)) (var:get variable))))
 (let var:decrement-and-get! (lambda variable (do (set! variable 0 (- (var:get variable) 1)) (var:get variable))))
 
+(let bools:fold (lambda xs cb initial (do xs
+    (let recursive:bools:fold (lambda i out 
+        (if (> (length xs) i) 
+            (recursive:bools:fold (+ i 1) (cb out (get xs i))) out))) 
+            (recursive:bools:fold 0 initial))))
 (let bool:truths (lambda n (do
                           (let recursive:bool:truths (lambda out
                           (if (< (length out) n) (recursive:bool:truths (set! out (length out) true)) out)))

@@ -1,4 +1,5 @@
 import std from '../lib/baked/std.js'
+import stdT from '../lib/baked/std-T.js'
 import { typeCheck } from '../src/check.js'
 import { evaluate } from '../src/evaluator.js'
 import { keywords } from '../src/interpreter.js'
@@ -18,10 +19,16 @@ import {
 } from '../src/keywords.js'
 import { enhance } from '../src/enhance.js'
 import { AST, isLeaf, LISP } from '../src/parser.js'
-import { formatType, SPECIAL_FORM_TYPES } from '../src/types.js'
+import {
+  definedTypes,
+  filteredDefinedTypes,
+  formatType,
+  SPECIAL_FORM_TYPES,
+  withCtxTypes
+} from '../src/types.js'
 import { stringifyArgs } from '../src/utils.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]
-const libraryTypes = typeCheck(std[0])[1]
+const libraryTypes = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
 export const debug = (ast, checkTypes = true) => {
   let types = new Map()
   const debugEnv = {
@@ -294,7 +301,12 @@ export const debug = (ast, checkTypes = true) => {
     }
   }
   try {
-    types = checkTypes ? typeCheck(ast)[1] : new Map()
+    types = checkTypes
+      ? typeCheck(
+          ast,
+          withCtxTypes(definedTypes(filteredDefinedTypes(ast, std, stdT)))
+        )[1]
+      : new Map()
     const evaluated = evaluate(enhance(ast), debugEnv)
     const exp = ast.at(-1).at(-1).at(-1)
     const [head, ...rest] = isLeaf(exp) ? [exp] : exp
