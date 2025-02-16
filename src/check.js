@@ -1052,10 +1052,10 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                           expected[STATS][SIGNATURE]
                         }) the (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
                           first[VALUE]
-                        }) at position (${i}). Expected (${toTypeNames(
-                          getReturn(expected[STATS])
-                        )}) but got (${toTypeNames(
-                          getReturn(actual[STATS])
+                        }) at position (${i}). Expected (${formatSubType(
+                          getReturns(expected[STATS])
+                        )}) but got (${formatSubType(
+                          getReturns(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #779)`
                       )
                     else if (!equalSubReturns(expected[STATS], actual[STATS]))
@@ -1064,10 +1064,10 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                           expected[STATS][SIGNATURE]
                         }) the (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
                           first[VALUE]
-                        }) at position (${i}). Expected (${toTypeNames(
-                          getReturn(expected[STATS])
-                        )}) but got (${toTypeNames(
-                          getReturn(actual[STATS])
+                        }) at position (${i}). Expected (${formatSubType(
+                          getReturns(expected[STATS])
+                        )}) but got (${formatSubType(
+                          getReturns(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #783)`
                       )
                     else

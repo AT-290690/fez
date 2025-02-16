@@ -188,25 +188,11 @@
 (let math:multiplication (lambda a b (* a b)))
 (let math:division (lambda a b (/ a b)))
 (let math:subtraction (lambda a b (- a b)))
-(let math:fold (lambda xs cb initial (do 
-                  (let recursive:math:fold (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:math:fold (+ i 1) (cb out (get xs i)))
-                            out)))
-                      (recursive:math:fold 0 initial))))
-(let math:enumerated-fold (lambda xs cb initial (do
-                  (let recursive:enumerated-fold (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:enumerated-fold (+ i 1) (cb out (get xs i) i))
-                            out)))
-                      (recursive:enumerated-fold 0 initial))))
-(let math:map (lambda xs cb (do
-                  (let recursive:math:map (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:math:map (+ i 1)
-                                (set! out (length out) (cb (get xs i))))
-                              out)))
-                      (recursive:math:map 0 []))))
+(let math:fold (lambda xs cb initial (array:fold xs cb initial)))
+(let math:enumerated-fold (lambda xs cb initial (array:enumerated-fold xs cb initial)))
+(let math:map (lambda xs cb (array:map xs cb)))
+(let math:select (lambda xs cb? (array:select xs cb?)))
+(let math:exclude (lambda xs cb? (array:exclude xs cb?)))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
 (let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) 0)))
@@ -316,6 +302,11 @@
     (math:var-set! z (* (math:var-get z) 1935289751))
     (math:var-set! z (^ (math:var-get z) (>> (math:var-get z) 15)))
     (math:var-get z))))
+; (let rdm (math:random 16))
+; [(rdm) (rdm) (rdm) (rdm) (rdm) (rdm)]
+(let math:random (lambda N (do 
+    (let n (math:var-def N))
+    (lambda (math:mulberry-32-prng (math:var-increment-and-get! n))))))
 (let math:sine (lambda rad terms (do
     (let sine (math:var-def 0))
     (let recursive:math:sine (lambda i 

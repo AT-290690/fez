@@ -1,4 +1,6 @@
 (let math:map (lambda Numbers (lambda Number (do Number)) (do Numbers)))
+(let math:select (lambda Numbers (lambda Number (do Boolean)) (do Numbers)))
+(let math:exclude (lambda Numbers (lambda Number (do Boolean)) (do Numbers)))
 (let math:fold (lambda Numbers (lambda Number Number (do Number)) Number (do Number)))
 (let math:enumerated-fold (lambda Numbers (lambda Number Number Number (do Number)) (do Number)))
 (let math:maximum-index (lambda Numbers (do Number)))
