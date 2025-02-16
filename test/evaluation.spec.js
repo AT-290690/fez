@@ -6,6 +6,7 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Compilation & Interpretation', () => {
   it('Should match', () =>
     [
+      `(let x (lambda (do (let o 10) (* o 10)))) (x)`,
       `(let obj ({ "name" "Anthony" "age" 34 }))
 (map:get obj "age")`,
       `(let A (["10" "20" "30" "40"]))

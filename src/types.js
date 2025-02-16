@@ -76,7 +76,8 @@ export const toTypeCodes = (type) => {
     case 'Unknown':
       return [UNKNOWN]
     case 'Unknowns':
-      return [COLLECTION]
+    case 'Collection':
+      return [COLLECTION, new Set([ANY])]
     case 'Numbers':
       return [COLLECTION, NUMBER_SUBTYPE()]
     case 'Booleans':

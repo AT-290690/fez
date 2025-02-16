@@ -309,7 +309,22 @@ export const equalTypes = (a, b) => {
   if (!isSameType) return false
   return true
 }
-
+const isRedifinedInLambda = (env, name, exp) => {
+  if (exp.slice(1, -1).some((x) => x[VALUE] === name)) return true
+  else if (
+    exp
+      .at(-1)
+      .some(
+        (x) =>
+          !isLeaf(x) &&
+          x[0][TYPE] === APPLY &&
+          x[0][VALUE] === KEYWORDS.DEFINE_VARIABLE &&
+          x[1][VALUE] === name
+      )
+  )
+    return true
+  else return false
+}
 export const equalReturns = (a, b) =>
   isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
 export const equalsTypeWithReturn = (a, b) =>
@@ -523,7 +538,6 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
     const alt = isLeaf(re[1]) ? re[1] : re[1][0]
     const concequent = env[conc[VALUE]]
     const alternative = env[alt[VALUE]]
-
     // TODO make this more simple - it's so many different things just because types are functions or not
     // WHY not consiter making return types for everything
     if (concequent)
@@ -608,7 +622,11 @@ const resolveSetter = (first, rest, env, stack) => {
       : new Set([UNKNOWN])
     switch (right[TYPE]) {
       case ATOM:
-        if (!currentSubType.has(UNKNOWN) && !currentSubType.has(NUMBER))
+        if (
+          !currentSubType.has(ANY) &&
+          !currentSubType.has(UNKNOWN) &&
+          !currentSubType.has(NUMBER)
+        )
           throw new TypeError(
             `Incorrect array type at (${
               first[VALUE]
@@ -1179,7 +1197,14 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   check(rightHand, env, exp)
                 })
                 check(rightHand, env, exp)
-              } else check(rightHand, env, exp)
+              }
+
+              check(rightHand, env, exp)
+
+              // if (isUnknownReturn(env[name][STATS]))
+              //   retry(env[name][STATS], exp, stack, () =>
+              //     check(rightHand, env, exp)
+              //   )
             } else {
               checkPredicateName(exp, rest)
               const isLeafNode = isLeaf(rightHand)
@@ -1226,19 +1251,24 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   : env[right[VALUE]][STATS][RETURNS][0]
                 if (type !== UNKNOWN)
                   setTypeToReturn(env[name][STATS], env[right[VALUE]][STATS])
-                const body = rightHand
-                const rem = hasBlock(body) ? body.at(-1) : body
-                const returns = isLeaf(rem) ? rem : rem[0]
-                resolveReturnType({
-                  stack,
-                  returns,
-                  rem,
-                  prop: TYPE_PROP,
-                  exp,
-                  env,
-                  name,
-                  check
-                })
+                const resolve = () => {
+                  const body = rightHand
+                  const rem = hasBlock(body) ? body.at(-1) : body
+                  const returns = isLeaf(rem) ? rem : rem[0]
+                  resolveReturnType({
+                    stack,
+                    returns,
+                    rem,
+                    prop: TYPE_PROP,
+                    exp,
+                    env,
+                    name,
+                    check
+                  })
+                }
+                resolve()
+                if (isUnknownType(env[name][STATS]))
+                  once(env[name][STATS], exp, stack, () => resolve())
               }
               check(rightHand, env, scope)
             }
@@ -1314,7 +1344,11 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                       break
                     default:
                       if (copy[ret[VALUE]]) {
-                        setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                        if (isUnknownReturn(copy[ret[VALUE]][STATS])) {
+                          once(ref[STATS], [returns, copy], stack, () => {
+                            setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                          })
+                        } else setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
                       } else
                         stagger(stack, 'append', [ret, copy], () => {
                           if (copy[ret[VALUE]])

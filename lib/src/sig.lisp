@@ -13,6 +13,13 @@
 (let math:var-increment-and-get! (lambda Numbers (do Number)))
 (let math:var-decrement-and-get! (lambda Numbers (do Number)))
 
+(let var:def (lambda Any (do Unknowns)))
+(let var:get (lambda Unknowns (do Any)))
+(let var:set! (lambda Unknowns Any (do Unknowns)))
+(let var:del! (lambda Unknowns (do Unknowns)))
+(let var:set-and-get! (lambda Unknowns Any (do Any)))
+
 (let array:reduce (lambda Unknowns (lambda Number Unknown (do Number)) Number (do Number)))
 (let array:enumerated-reduce (lambda Unknowns (lambda Number Unknown Number (do Number)) Number (do Number)))
+
 (let bools:fold (lambda Booleans (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))

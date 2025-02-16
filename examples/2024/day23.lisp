@@ -45,14 +45,14 @@ td-yn")
                 (map:set! a right (new:set (array left))))
             a)) (new:map16)))
 
-    (let total (var:def 0))
+    (let total (math:var-def 0))
     (array:for (map:keys connections) (lambda x
       (array:for (set:values (map:get connections x)) (lambda y
           (array:for (set:values (map:get connections y)) (lambda z
               (if (and (not (string:equal? z x)) 
                   (set:has? (map:get connections z) x) 
                   (array:some? (array x y z) (lambda ch (= (array:first ch) char:t)))) 
-              (var:increment! total))))))))
-    (// (var:get total) 6))))
+              (math:var-increment! total))))))))
+    (// (math:var-get total) 6))))
 
 [(part1 (parse INPUT))]

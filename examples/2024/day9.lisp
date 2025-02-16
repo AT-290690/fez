@@ -3,12 +3,12 @@
 (let parse (lambda input (from:chars->digits input)))
 
 (let part1 (lambda input (do
-    (let file-id (var:def -1))
+    (let file-id (math:var-def -1))
     (let disk (|> input
         (reducing-enumerated:atom->array (lambda disk ch i 
         (array:merge! disk
             (if (math:even? i) (do
-                    (let id (var:get (var:increment! file-id)))
+                    (let id (math:var-increment-and-get! file-id))
                     (array:of ch (lambda . id)))
                     (array:of ch (lambda . -1))))) [])))
     (let blanks (reducing-enumerated:atom->array disk (lambda a x i (if (= x -1) (array:append! a i) a)) []))

@@ -1451,10 +1451,6 @@
 (let var:set! (lambda variable value (set! variable 0 value)))
 (let var:del! (lambda variable (del! variable)))
 (let var:set-and-get! (lambda variable value (do (var:set! variable value) value)))
-(let var:increment! (lambda variable (set! variable 0 (+ (var:get variable) 1))))
-(let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
-(let var:increment-and-get! (lambda variable (do (set! variable 0 (+ (var:get variable) 1)) (var:get variable))))
-(let var:decrement-and-get! (lambda variable (do (set! variable 0 (- (var:get variable) 1)) (var:get variable))))
 
 (let math:var-def (lambda val (array val)))
 (let math:var-get (lambda variable (get variable 0)))

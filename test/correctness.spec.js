@@ -3000,12 +3000,12 @@ matrix
       `(let INPUT "2333133121414131402")
 (let parse (lambda input (from:chars->digits input)))
 (let part1 (lambda input (do
-    (let file-id (var:def -1))
+    (let file-id (math:var-def -1))
     (let disk (|> input
         (array:enumerated-fold (lambda disk ch i 
         (array:merge! disk
             (if (math:even? i) (do
-                    (let id (var:get (var:increment! file-id)))
+                    (let id (math:var-increment-and-get! file-id))
                     (array:of ch (lambda . id)))
                     (array:of ch (lambda . -1))))) [])))
     (let blanks [])
@@ -3307,15 +3307,15 @@ td-yn")
                 (map:set! a right (new:set (array left))))
             a)) (new:map16)))
 
-    (let total (var:def 0))
+    (let total (math:var-def 0))
     (array:for (map:keys connections) (lambda x
       (array:for (set:values (map:get connections x)) (lambda y
           (array:for (set:values (map:get connections y)) (lambda z
               (if (and (not (string:equal? z x)) 
                   (set:has? (map:get connections z) x) 
                   (array:some? (array x y z) (lambda ch (= (array:first ch) char:t)))) 
-              (var:increment! total) nil)))))))
-    (// (var:get total) 6))))
+              (math:var-increment! total) nil)))))))
+    (// (math:var-get total) 6))))
 
 [(part1 (parse INPUT))]
 `),
@@ -3552,13 +3552,13 @@ Program: 0,1,5,4,3,0"
 (let part1 (lambda input (do 
   (let registers (array:first input))
   (let program (array:second input))
-  (let instruction-pointer (var:def 0))
-  (let get-instruction-pointer (lambda (var:get instruction-pointer)))
-  (let move-pointer! (lambda (|> instruction-pointer (var:increment!) (var:increment!))))
-  (let set-pointer! (lambda operand (var:set! instruction-pointer operand)))
+  (let instruction-pointer (math:var-def 0))
+  (let get-instruction-pointer (lambda (math:var-get instruction-pointer)))
+  (let move-pointer! (lambda (|> instruction-pointer (math:var-increment!) (math:var-increment!))))
+  (let set-pointer! (lambda operand (math:var-set! instruction-pointer operand)))
   (let log-outputs! (lambda (log-string! (array:commas (from:integers->strings outputs)))))
-  ; (let halt? (lambda (not (array:in-bounds? program (var:get instruction-pointer)))))
-  (let halt? (lambda (>= (var:get instruction-pointer) (length program))))
+  ; (let halt? (lambda (not (array:in-bounds? program (math:var-get instruction-pointer)))))
+  (let halt? (lambda (>= (math:var-get instruction-pointer) (length program))))
   (let outputs [])
   (let A 0)
   (let B 1)

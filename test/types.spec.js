@@ -88,6 +88,7 @@ describe('Type checking', () => {
 (let ib (identity [1 2 3]))
 (let ic (identity (lambda x (* x x))))
 (let aafn (lambda a b [(+ a 1) (length (set! b 0 false))]))
+(let sqrt-of-nine (math:sqrt 9))
 `,
 
         [
@@ -108,6 +109,8 @@ describe('Type checking', () => {
           'ib',
           'ic',
           'aafn'
+          // TODO fix the issue where return type ignores redifined variables indide the functions
+          // 'sqrt-of-nine'
         ]
       ),
       [
@@ -128,6 +131,7 @@ describe('Type checking', () => {
         '(let ib [Number])',
         '(let ic (lambda Number (do Number)))',
         '(let aafn (lambda Number [Boolean] (do [Number])))'
+        // '(let sqrt-of-nine Number)'
       ]
     )
     deepStrictEqual(
