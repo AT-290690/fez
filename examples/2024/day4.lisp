@@ -37,7 +37,7 @@ MXMXAXMASX")
                         (and
                           (matrix:in-bounds? matrix (+ (array:first dir) -1) (+ (array:second dir) -1)) 
                           (matrix:in-bounds? matrix (+ (array:first dir) 1) (+ (array:second dir) 1)))))
-      (reducing:array->atom (lambda a coord (do
+      (array:fold (lambda a coord (do
         (let [y x .] coord)
         (let A (matrix:get matrix (+ y -1) (+ x -1)))
         (let B (matrix:get matrix (+ y -1) (+ x 1)))

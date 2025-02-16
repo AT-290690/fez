@@ -16,10 +16,10 @@ b")
 (let parse (lambda input (|> input (string:trim) (string:lines) (array:append! []) (array:chunks array:empty?))))
 (let select-duplicates-of-strings (lambda str (|> str (array:enumerated-select (lambda item pos (= (array:index-of str item) pos))))))
 (let PARSED (parse INPUT))
-(let unique-chars (|> PARSED (mapping:array->array (lambda xs (mapping:array->array xs select-duplicates-of-strings)))))
+(let unique-chars (|> PARSED (array:map (lambda xs (array:map xs select-duplicates-of-strings)))))
 
 [(|> unique-chars 
-  (mapping:array->atom length)
+  (array:map length)
   (math:summation))]
 
 ; (|> PARSED

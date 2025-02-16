@@ -32,9 +32,9 @@ wh-qp
 tb-vc
 td-yn")
 
-(let parse (lambda input (|> input (string:trim) (string:lines) (mapping:array->array string:dashes))))
+(let parse (lambda input (|> input (string:trim) (string:lines) (array:map string:dashes))))
 (let part1 (lambda input (do
-    (let connections (reducing:array->array input (lambda a b (do
+    (let connections (array:transform input (lambda a b (do
             (let left (array:first b))
             (let right (array:second b))
             (if (map:has? a left)

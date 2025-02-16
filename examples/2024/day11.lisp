@@ -8,7 +8,7 @@
 (let part1 (lambda input (do
   (let TIMES 5)
   (let recursive:while (lambda stones n (unless (= n 0) 
-      (recursive:while (reducing:atom->array stones (lambda a b (do
+      (recursive:while (array:transform stones (lambda a b (do
           (let n-digits (math:number-of-digits b))
           (array:merge! a
                 (cond
@@ -30,7 +30,7 @@
                       (let right (|> str (array:slice half (array:length str)) (from:digits->integer)))
                       (+ (memoized:count left (- n 1)) (memoized:count right (- n 1))))
                     (*) (memoized:count (* b 2024) (- n 1)))))
-    (|> input (mapping:atom->atom (lambda x (memoized:count x TIMES))) (math:summation)))))
+    (|> input (math:map (lambda x (memoized:count x TIMES))) (math:summation)))))
 
 (let PARSED (parse INPUT))
 

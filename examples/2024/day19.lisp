@@ -17,7 +17,7 @@ bbrgwb")
         (|> lines (array:slice 2 (array:length lines)))))))
 
 (let part1 (lambda input (do
-  (let patterns (reducing:array->array (array:first input) (lambda a b (set:add! a b)) (new:set8)))
+  (let patterns (array:transform (array:first input) (lambda a b (set:add! a b)) (new:set8)))
   (let towels (array:second input))
   (let memoized:dp? (lambda str (loop:some-range? 1 (array:length str) (lambda i (do
               (let a (array:slice str 0 i))
@@ -27,7 +27,7 @@ bbrgwb")
 
 (let part2 (lambda input (do
   (let desings (array:first input))
-  (let patterns (reducing:array->array desings (lambda a b (set:add! a b)) (new:set8)))
+  (let patterns (array:transform desings (lambda a b (set:add! a b)) (new:set8)))
   (let towels (array:second input))
   (let max-len (math:maximum (array:map desings length)))
   (let memoized:num-possibilities (lambda stripes
@@ -38,7 +38,7 @@ bbrgwb")
                     (if (set:exists? patterns pattern)
                         (memoized:num-possibilities (array:slice stripes index (array:length stripes)))))))
                 (math:summation)))))
-  (|> towels (mapping:array->atom memoized:num-possibilities) (math:summation)))))
+  (|> towels (array:map memoized:num-possibilities) (math:summation)))))
 
 (let PARSED (parse INPUT))
 

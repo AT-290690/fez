@@ -32,21 +32,21 @@
     (let lines (|> input (string:lines)))
     (let mid (array:find-index lines array:empty?))
     (array 
-        (|> lines (array:slice 0 mid) (mapping:array->array (lambda x (|> x (string:split char:pipe))))) 
-        (|> lines (array:slice (+ mid 1) (length lines)) (mapping:array->array (lambda x (|> x (string:commas)))))))))
+        (|> lines (array:slice 0 mid) (array:map (lambda x (|> x (string:split char:pipe))))) 
+        (|> lines (array:slice (+ mid 1) (length lines)) (array:map (lambda x (|> x (string:commas)))))))))
 
 (let PARSED (parse INPUT))
 
 (let from:chars->key (lambda a b (array:concat (array a (array char:pipe) b))))
 
-(let new:memo (lambda input (reducing:array->array input (lambda memo entry (do
+(let new:memo (lambda input (array:transform input (lambda memo entry (do
         (let key (from:chars->key (array:first entry) (array:second entry)))
         (let value (array:second entry))
         (if (not (set:has? memo key)) (set:add! memo key))
         memo)) (new:set8))))
 
 (let sum-mid (lambda arr (|> arr
-    (mapping:array->array (lambda m (array:get m (math:floor (* (length m) 0.5)))))
+    (array:map (lambda m (array:get m (math:floor (* (length m) 0.5)))))
     (from:strings->integers)
     (math:summation))))
 
@@ -72,7 +72,7 @@
                 (or (array:empty? rest) (not (array:some? rest (lambda other (do
                 (let key (from:chars->key current other))
                 (not (set:has? memo key)))))))))))))
-    (mapping:array->array (lambda x (array:sort x (lambda a b (not (set:has? memo (from:chars->key a b)))))))
+    (array:map (lambda x (array:sort x (lambda a b (not (set:has? memo (from:chars->key a b)))))))
     (sum-mid)))))
 
     [(part1 PARSED) (part2 PARSED)]

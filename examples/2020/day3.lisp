@@ -38,10 +38,10 @@
     [5 1]
     [7 1]
     [1 2]]
-    (mapping:array->atom (lambda x (|> 
-                                        matrix 
-                                        (part1 (array:first x) (array:second x)) 
-                                        (math:summation))))
+    (math:map (lambda x (|> 
+                          matrix 
+                          (part1 (array:first x) (array:second x)) 
+                          (math:summation))))
     (math:product))])))
 
 (task sample)
