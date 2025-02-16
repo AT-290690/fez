@@ -175,10 +175,13 @@ const isDefinition = (x) =>
   x[TYPE] === APPLY && x[VALUE] === KEYWORDS.DEFINE_VARIABLE
 // [[, [, libs]]] is because std is wrapped in (apply (lambda (do ...)))
 const toDeps = ([[, [, libs]]]) =>
-  libs.reduce(
-    (a, x, i) => a.set(x.at(1)[VALUE], { value: x, index: i }),
-    new Map()
-  )
+  // slice 1 so we get rid of do
+  libs
+    .slice(1)
+    .reduce(
+      (a, x, i) => a.set(x.at(1)[VALUE], { value: x, index: i }),
+      new Map()
+    )
 const deepShake = (tree, deps, visited = new Set(), ignored = new Set()) => {
   const type = tree[TYPE]
   const value = tree[VALUE]

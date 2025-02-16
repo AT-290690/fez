@@ -1175,6 +1175,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                     name,
                     check
                   })
+                  // TODO: remove this as maybe it is not needed
                   check(rightHand, env, exp)
                 })
                 check(rightHand, env, exp)
@@ -1312,9 +1313,9 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                       })
                       break
                     default:
-                      if (copy[ret[VALUE]])
+                      if (copy[ret[VALUE]]) {
                         setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                      else
+                      } else
                         stagger(stack, 'append', [ret, copy], () => {
                           if (copy[ret[VALUE]])
                             setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])

@@ -308,48 +308,48 @@
 (let math:divisible? (lambda a b (= (mod a b) 0)))
 (let math:factorial (lambda n (if (<= n 0) 1 (* n (math:factorial (- n 1))))))
 (let math:mulberry-32-prng (lambda seed (do
-    (let base (var:def seed))
-    (let z (var:def (var:set-and-get! base (+ (var:get base) 2654435769))))
-    (var:set! z (^ (var:get z) (>> (var:get z) 16)))
-    (var:set! z (* (var:get z) 569420461))
-    (var:set! z (^ (var:get z) (>> (var:get z) 15)))
-    (var:set! z (* (var:get z) 1935289751))
-    (var:set! z (^ (var:get z) (>> (var:get z) 15)))
-    (var:get z))))
+    (let base (math:var-def seed))
+    (let z (math:var-def (math:var-set-and-get! base (+ (math:var-get base) 2654435769))))
+    (math:var-set! z (^ (math:var-get z) (>> (math:var-get z) 16)))
+    (math:var-set! z (* (math:var-get z) 569420461))
+    (math:var-set! z (^ (math:var-get z) (>> (math:var-get z) 15)))
+    (math:var-set! z (* (math:var-get z) 1935289751))
+    (math:var-set! z (^ (math:var-get z) (>> (math:var-get z) 15)))
+    (math:var-get z))))
 (let math:sine (lambda rad terms (do
-    (let sine (var:def 0))
+    (let sine (math:var-def 0))
     (let recursive:math:sine (lambda i 
       (do 
-        (var:set! sine 
-          (+ (var:get sine) 
+        (math:var-set! sine 
+          (+ (math:var-get sine) 
             (* 
               (/ (math:factorial (+ (* 2 i) 1))) 
               (math:power -1 i) 
               (math:power rad (+ (* 2 i) 1))))) 
-        (if (< i terms) (recursive:math:sine (+ i 1)) (var:get sine)))))
+        (if (< i terms) (recursive:math:sine (+ i 1)) (math:var-get sine)))))
       (recursive:math:sine 0))))
 (let math:cosine (lambda rad terms (do
-    (let cosine (var:def 0))
+    (let cosine (math:var-def 0))
     (let recursive:math:cosine (lambda i 
       (do 
-        (var:set! cosine 
-          (+ (var:get cosine) 
+        (math:var-set! cosine 
+          (+ (math:var-get cosine) 
             (* 
               (/ (math:factorial (* 2 i))) 
               (math:power -1 i) 
               (math:power rad (* 2 i))))) 
-        (if (< i terms) (recursive:math:cosine (+ i 1)) (var:get cosine)))))
+        (if (< i terms) (recursive:math:cosine (+ i 1)) (math:var-get cosine)))))
       (recursive:math:cosine 0))))
 (let math:prime-factors (lambda N (do 
   (let a []) 
-  (let n (var:def N))
-  (let f (var:def 2))
-  (let recursive:math:prime-factors (lambda (if (> (var:get n) 1) (apply (lambda (do 
-    (if (= (mod (var:get n) (var:get f)) 0) 
+  (let n (math:var-def N))
+  (let f (math:var-def 2))
+  (let recursive:math:prime-factors (lambda (if (> (math:var-get n) 1) (apply (lambda (do 
+    (if (= (mod (math:var-get n) (math:var-get f)) 0) 
       (apply (lambda (do 
-        (set! a (length a) (var:get f))
-        (var:set! n (* (var:get n) (/ (var:get f)))))))
-      (var:set! f (+ (var:get f) 1)))
+        (set! a (length a) (math:var-get f))
+        (math:var-set! n (* (math:var-get n) (/ (math:var-get f)))))))
+      (math:var-set! f (+ (math:var-get f) 1)))
     (recursive:math:prime-factors)))) a)))
     (recursive:math:prime-factors))))
 (let math:prime? (lambda n
@@ -540,6 +540,12 @@
                   (let recursive:array:reduce (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:reduce (+ i 1) (cb out (get xs i)))
+                            out)))
+                      (recursive:array:reduce 0 initial))))
+(let array:enumerated-reduce (lambda xs cb initial (do
+                  (let recursive:array:reduce (lambda i out
+                        (if (> (length xs) i)
+                            (recursive:array:reduce (+ i 1) (cb out (get xs i) i))
                             out)))
                       (recursive:array:reduce 0 initial))))
 (let array:every? (lambda xs predicate? (do
@@ -1449,6 +1455,16 @@
 (let var:decrement! (lambda variable (set! variable 0 (- (var:get variable) 1))))
 (let var:increment-and-get! (lambda variable (do (set! variable 0 (+ (var:get variable) 1)) (var:get variable))))
 (let var:decrement-and-get! (lambda variable (do (set! variable 0 (- (var:get variable) 1)) (var:get variable))))
+
+(let math:var-def (lambda val (array val)))
+(let math:var-get (lambda variable (get variable 0)))
+(let math:var-set! (lambda variable value (set! variable 0 value)))
+(let math:var-del! (lambda variable (del! variable)))
+(let math:var-set-and-get! (lambda variable value (do (math:var-set! variable value) value)))
+(let math:var-increment! (lambda variable (set! variable 0 (+ (math:var-get variable) 1))))
+(let math:var-decrement! (lambda variable (set! variable 0 (- (math:var-get variable) 1))))
+(let math:var-increment-and-get! (lambda variable (do (set! variable 0 (+ (math:var-get variable) 1)) (math:var-get variable))))
+(let math:var-decrement-and-get! (lambda variable (do (set! variable 0 (- (math:var-get variable) 1)) (math:var-get variable))))
 
 (let bools:fold (lambda xs cb initial (do xs
     (let recursive:bools:fold (lambda i out 
