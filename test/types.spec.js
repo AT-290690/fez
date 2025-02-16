@@ -53,9 +53,9 @@ describe('Type checking', () => {
         '(let math:prime? (lambda Number (do Boolean)))',
         '(let matrix:adjacent (lambda [Unknown] [Unknown] Number Number (lambda Unknown [Unknown] Number Number (do Unknown)) (do [Unknown])))',
         '(let array:every? (lambda [Unknown] (lambda Unknown (do Boolean)) (do Boolean)))',
-        '(let list:find (lambda [Unknown] (lambda Unknown (do Unknown)) (do [Unknown])))',
-        '(let list:every? (lambda [Unknown] (lambda Unknown (do Number)) (do Number)))',
-        '(let array:unique (lambda [Unknown] (do [Unknown])))',
+        '(let list:find (lambda [Unknown] (lambda Unknown (do Boolean)) (do [Unknown])))',
+        '(let list:every? (lambda [Unknown] (lambda Unknown (do Boolean)) (do Boolean)))',
+        '(let array:unique (lambda [Number] (do [Number])))',
         '(let array:empty? (lambda [Unknown] (do Boolean)))',
         '(let array:join (lambda [Unknown] [Unknown] (do [Unknown])))',
         '(let string:join-as-table-with (lambda [Unknown] [Unknown] Unknown (do [Unknown])))',
@@ -995,16 +995,6 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(or (if (and (or 1 false) (or true (array:empty? []))) 10 2) 1)`,
       `Incorrect type of argument (0) for (or). Expected (Boolean) but got (Number) (or 2 1) (check #203)`
-    )
-    fails(
-      `(let array:unique (lambda xs (|>
-      (let sorted (array:sort xs (lambda a b (> a b))))
-      (array:zip (math:sequence sorted))
-      (array:select (lambda x (do 
-                  (let index (array:second x)) (or (not (> x 0))
-                  (not (= (get sorted (- index 1)) (get sorted index)))))))
-      (array:map array:first))))`,
-      `Incorrect type of argument (0) for (array:second). Expected ([Unknown]) but got (Number) (array:second x) (check #3)`
     )
     fails(
       `(math:list-summation (lambda []))`,

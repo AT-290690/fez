@@ -122,7 +122,7 @@ export const castType = (stats, type) => {
 export const castReturn = (stats, type) => {
   return (
     (stats[RETURNS][0] = type[RETURNS][0]),
-    stats[RETURNS][1] && (stats[RETURNS][1] = type[RETURNS][1])
+    type[RETURNS][1] && (stats[RETURNS][1] = type[RETURNS][1])
   )
 }
 export const isGenericReturn = (stats) => stats[RETURNS].length === 3
@@ -1729,6 +1729,8 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                       )
                         switch (first[VALUE]) {
                           case KEYWORDS.IF:
+                            if (i === 0)
+                              setReturnRef(env[name][STATS], args[i][STATS])
                             break
                           default:
                             // TODO fix this assigment

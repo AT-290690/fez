@@ -12,6 +12,7 @@
 (let math:var-decrement! (lambda Numbers (do Numbers)))
 (let math:var-increment-and-get! (lambda Numbers (do Number)))
 (let math:var-decrement-and-get! (lambda Numbers (do Number)))
+(let math:max-sub-array-sum (lambda Numbers (do Number)))
 
 (let var:def (lambda Any (do Unknowns)))
 (let var:get (lambda Unknowns (do Any)))
@@ -28,8 +29,5 @@
 (let array:reduce (lambda Unknowns (lambda Number Unknown (do Number)) Number (do Number)))
 (let array:enumerated-reduce (lambda Unknowns (lambda Number Unknown Number (do Number)) Number (do Number)))
 
-(let string:join-as-table-with (lambda Unknowns Unknowns Unknown (do Unknowns)))
 (let bools:fold (lambda Booleans (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
-
-(let matrix:enumerated-for (lambda Unknowns (lambda Unknown Number Number (do Unknown)) (do Unknowns)))
-(let matrix:adjacent (lambda Unknowns Unknowns Number Number (lambda Unknown Unknowns Number Number (do Unknown)) (do Unknowns)))
+(let array:unique (lambda Numbers (do Numbers)))

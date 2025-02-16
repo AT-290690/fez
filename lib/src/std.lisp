@@ -398,7 +398,7 @@
 (let math:list-minimum (lambda xs (math:list-fold xs math:min math:max-safe-integer)))
 (let math:list-summation (lambda xs (math:list-fold xs + 0)))
 (let math:list-product (lambda xs (math:list-fold xs * 1)))
-(let math:list-range (lambda low high (if (> low high) [] (list:pair low (math:list-range (+ low 1) high)))))
+(let math:list-range (lambda low high (if (> low high) (Numbers []) (list:pair low (math:list-range (+ low 1) high)))))
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (get pair 0)))
 (let list:cdr (lambda pair (get pair 1)))
@@ -423,12 +423,12 @@
                               (f? (list:head xs)) xs
                               (*) (list:find-tail (list:tail xs) f?))))
 (let list:some? (lambda xs f? (cond 
-                                (list:nil? xs) 0
-                                (f? (list:head xs)) 1
+                                (list:nil? xs) false
+                                (f? (list:head xs)) true
                                 (*) (list:some? (list:tail xs) f?))))
 (let list:every? (lambda xs f? (cond 
-                                  (list:nil? xs) 1
-                                  (not (> (f? (list:head xs)) 0)) 0
+                                  (list:nil? xs) true
+                                  (not (f? (list:head xs))) false
                                   (*) (list:every? (list:tail xs) f?))))
 (let list:remove-at (lambda xs pos (do 
   (let remove (lambda xs ini (if (= pos (- ini 1)) (list:tail xs) (list:pair (list:head xs) (remove (list:tail xs) (+ ini 1))))))
