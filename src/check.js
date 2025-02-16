@@ -1071,7 +1071,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                         )}) (${stringifyArgs(exp)}) (check #783)`
                       )
                     else
-                      once(
+                      retry(
                         actual[STATS],
                         [[WORD, lambdaName], local],
                         stack,
@@ -1735,7 +1735,6 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                             // It turns out it's not possible to determine return type of function here
                             // what if it's a global function used elsewhere where the return type mwould be different
                             // THIS willgive lambda return types but refactor is needed still
-                            // if (!SPECIAL_FORMS_SET.has(name))
                             setReturnRef(env[name][STATS], args[i][STATS])
                             break
                         }

@@ -650,17 +650,16 @@ ZZZ=ZZZ,ZZZ")
 (length x)`,
       `Incorrect type of argument (0) for (length). Expected ([Unknown]) but got (Number) (length x) (check #3)`
     )
-    // TODO resovle regression #Lambda return refactor
-    // fails(
-    //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
-    //   (let z [])
-    //       (fn 1 (lambda x (do
-    //       (let y 10)
-    //       [])))
-    //       (set! [] 0 1)
-    //   `,
-    //   `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
-    // )
+    fails(
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+      (let z [])
+          (fn 1 (lambda x (do
+          (let y 10)
+          [])))
+          (set! [] 0 1)
+      `,
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+    )
     fails(
       `(let arr [])
 (set! arr (length arr) 10)
@@ -1110,12 +1109,12 @@ ZZZ=ZZZ,ZZZ")
 ; [(part1 PARSED) (part2 PARSED)]`,
       `Incorrect type of argument (0) for (-). Expected (Number) but got (Abstraction) (- matrix:shallow-copy y2) (check #3)`
     )
-
+    fails(
+      `(let fn (lambda a cb (+ (cb (+ a 1)) 1))) (fn 1 (lambda x (do  (let y 10) [])))`,
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+    )
     // // TODO Regression 2! Have to investigate this again later
-    // fails(
-    //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1))) (fn 1 (lambda x (do  (let y 10) [])))`,
-    //   `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
-    // )
+
     // fails(
     //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
     //   (let z [])
@@ -1141,9 +1140,6 @@ ZZZ=ZZZ,ZZZ")
     //    `,
     //   `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got ([Unknown]) (fn 1 n) (check #781)`
     // )
-
-    // TODO Regression 1! Something happened with lambda type check - maybe full ref assigment got lost
-
     fails(
       `(let add (lambda a b c (+ a b c)))
     (array:fold [1 2 3] add 11)`,
