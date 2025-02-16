@@ -19,7 +19,17 @@
 (let var:del! (lambda Unknowns (do Unknowns)))
 (let var:set-and-get! (lambda Unknowns Any (do Any)))
 
+(let array:first (lambda Unknowns (do Any)))
+(let array:second (lambda Unknowns (do Any)))
+(let array:third (lambda Unknowns (do Any)))
+(let array:last (lambda Unknowns (do Any)))
+
+(let array:transform (lambda Unknowns (lambda Unknowns Unknown (do Unknown)) Unknowns (do Unknowns)))
 (let array:reduce (lambda Unknowns (lambda Number Unknown (do Number)) Number (do Number)))
 (let array:enumerated-reduce (lambda Unknowns (lambda Number Unknown Number (do Number)) Number (do Number)))
 
+(let string:join-as-table-with (lambda Unknowns Unknowns Unknown (do Unknowns)))
 (let bools:fold (lambda Booleans (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
+
+(let matrix:enumerated-for (lambda Unknowns (lambda Unknown Number Number (do Unknown)) (do Unknowns)))
+(let matrix:adjacent (lambda Unknowns Unknowns Number Number (lambda Unknown Unknowns Number Number (do Unknown)) (do Unknowns)))

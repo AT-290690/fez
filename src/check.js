@@ -351,7 +351,7 @@ const equalSubTypes = (a, b) => {
     getSubType(a).difference(getSubType(b)).size === 0
   )
 }
-const eualSubReturn = (a, b) => {
+const equalSubReturns = (a, b) => {
   return (
     !hasSubReturn(a) ||
     !hasSubReturn(b) ||
@@ -660,7 +660,7 @@ const resolveSetter = (first, rest, env, stack) => {
               getSubType(env[right[VALUE]][STATS])
             )
           } else
-            once(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
+            retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
               resolveSetter(first, rest, env, stack)
             )
         }
@@ -791,9 +791,31 @@ const resolveReturnType = ({
   check
 }) => {
   if (returns[TYPE] === ATOM) setPropToAtom(env[name][STATS], prop)
-  else {
+  else if (returns[TYPE] === WORD) {
+    if (env[returns[VALUE]]) {
+      if (!isUnknownType(env[returns[VALUE]][STATS]))
+        setPropToType(env[name][STATS], prop, env[returns[VALUE]][STATS])
+      else
+        once(env[name][STATS], exp, stack, () => {
+          setPropToTypeRef(env[name][STATS], prop, env[returns[VALUE]][STATS])
+          if (isUnknownProp(env[name][STATS], prop)) {
+            // TODO: DRY
+            const index = env[name][STATS][ARGUMENTS]
+              ? env[name][STATS][ARGUMENTS].findIndex(
+                  (x) => x[STATS][SIGNATURE] === returns[VALUE]
+                )
+              : -1
+            if (index >= 0) {
+              setReturnToGeneric(env[name][STATS], index)
+              return true
+            } else if (!env[returns[VALUE]]) return false
+          }
+        })
+    }
+  } else {
     switch (returns[VALUE]) {
       case KEYWORDS.CREATE_ARRAY:
+        setPropToCollection(env[name][STATS], prop)
         setPropToSubReturn(env[name][STATS], prop, initArrayType({ rem, env }))
         break
       case KEYWORDS.IF:
@@ -818,11 +840,13 @@ const resolveReturnType = ({
               })
             })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
+          // TODO: DRY
           const index = env[name][STATS][ARGUMENTS]
             ? env[name][STATS][ARGUMENTS].findIndex(
                 (x) => x[STATS][SIGNATURE] === returns[VALUE]
               )
             : -1
+
           if (index >= 0) {
             setReturnToGeneric(env[name][STATS], index)
             return true
@@ -910,7 +934,12 @@ const resolveReturnType = ({
                       env[returns[VALUE]][STATS]
                     )
                 })
-              else setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
+              else {
+                // if (SPECIAL_FORMS_SET.has(returns[VALUE]))
+                //   setReturn(env[name][STATS], env[returns[VALUE]][STATS])
+                // else
+                setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
+              }
             }
           }
         }
@@ -1029,7 +1058,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                           getReturn(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #779)`
                       )
-                    else if (!eualSubReturn(expected[STATS], actual[STATS]))
+                    else if (!equalSubReturns(expected[STATS], actual[STATS]))
                       throw new TypeError(
                         `Incorrect return type for (${
                           expected[STATS][SIGNATURE]
@@ -1071,7 +1100,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                           getType(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #780)`
                       )
-                    else if (!eualSubReturn(expected[STATS], actual[STATS]))
+                    else if (!equalSubReturns(expected[STATS], actual[STATS]))
                       throw new TypeError(
                         `Incorrect return type for (${
                           expected[STATS][SIGNATURE]
@@ -1151,6 +1180,36 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 )})`
               )
             if (name in env) {
+              // const [head, ...tail] = isLeaf(rest.at(-1))
+              //   ? [rest.at(-1)]
+              //   : rest.at(-1)
+              // const ref = env[name]
+              // if (ref) {
+              //   if (getType(ref[STATS]) === APPLY && head[TYPE] !== APPLY)
+              //     throw new TypeError(
+              //       `Miss-matching type for (${name}) predifined expected type is (${toTypeNames(
+              //         APPLY
+              //       )}) but got (${stringifyArgs(exp)})`
+              //     )
+              //   const returns = deepLambdaReturn(
+              //     hasBlock(tail) ? tail.at(-1) : tail,
+              //     (result) => result[VALUE] !== KEYWORDS.IF
+              //   )
+              //   const [rhead] = isLeaf(returns) ? [returns] : returns
+              //   const rightRef = env[rhead[VALUE]]
+              //   if (rightRef)
+              //     if (
+              //       !equalReturns(ref[STATS], rightRef[STATS]) ||
+              //       !equalSubReturns(ref[STATS], rightRef[STATS])
+              //     )
+              //       throw new TypeError(
+              //         `Miss-matching return type for (${name}) predifined expected return is (${formatSubType(
+              //           getReturns(ref[STATS])
+              //         )}) but got (${formatSubType(
+              //           getReturns(rightRef[STATS])
+              //         )}) (${stringifyArgs(exp)})`
+              //       )
+              // }
               Types.set(withScope(name, env), () => formatType(name, env))
               break
             }
@@ -1175,36 +1234,11 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   [RETURNS]: [UNKNOWN]
                 }
               }
-              if (
-                !checkReturnType({
-                  stack,
-                  exp,
-                  env,
-                  name,
-                  check
-                }) ||
-                isUnknownReturn(env[name][STATS])
-              ) {
-                retry(env[name][STATS], [first, env], stack, () => {
-                  checkReturnType({
-                    stack,
-                    exp,
-                    env,
-                    name,
-                    check
-                  })
-                  // TODO: remove this as maybe it is not needed
-                  check(rightHand, env, exp)
-                })
-                check(rightHand, env, exp)
-              }
-
               check(rightHand, env, exp)
-
-              // if (isUnknownReturn(env[name][STATS]))
-              //   retry(env[name][STATS], exp, stack, () =>
-              //     check(rightHand, env, exp)
-              //   )
+              if (isUnknownReturn(env[name][STATS]))
+                retry(env[name][STATS], exp, stack, () =>
+                  check(rightHand, env, exp)
+                )
             } else {
               checkPredicateName(exp, rest)
               const isLeafNode = isLeaf(rightHand)
@@ -1275,90 +1309,122 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
             Types.set(withScope(name, env), () => formatType(name, env))
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
-            validateLambda(exp)
-            const params = exp.slice(1, -1)
-            const copy = Object.create(env)
-            if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD)
-              copy[SCOPE_NAME] = scope[1][VALUE]
-            else copy[SCOPE_NAME] = ++scopeIndex
-            for (let i = 0; i < params.length; ++i) {
-              const param = params[i]
-              // TODO move this somewhere else
-              if (!isLeaf(param))
-                throw new TypeError(
-                  `Invalid body for (${
-                    first[VALUE]
-                  }) if it takes more than one expression it must be wrapped in a (${
-                    KEYWORDS.BLOCK
-                  }) (${stringifyArgs(exp)}) (check #666)`
-                )
-              copy[param[VALUE]] = {
-                [STATS]: {
-                  [IS_ARGUMENT]: true,
-                  [SIGNATURE]: param[VALUE],
-                  [TYPE_PROP]: [UNKNOWN],
-                  [RETURNS]: [UNKNOWN],
-                  [ARGUMENTS]: [],
-                  argIndex: i,
-                  retried: 0,
-                  counter: 0
-                }
-              }
+            {
+              validateLambda(exp)
+              const params = exp.slice(1, -1)
+              const copy = Object.create(env)
+              if (Array.isArray(scope[1]) && scope[1][TYPE] === WORD)
+                copy[SCOPE_NAME] = scope[1][VALUE]
+              else copy[SCOPE_NAME] = ++scopeIndex
               const ref = env[copy[SCOPE_NAME]]
-              if (!ref) continue
-              ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
-              // TODO overwrite return type check here
-            }
-            const returns = deepLambdaReturn(
-              hasBlock(exp) ? exp.at(-1) : exp,
-              (result) => result[VALUE] !== KEYWORDS.IF
-            )
-            const ref = env[copy[SCOPE_NAME]]
-            if (ref)
-              if (isLeaf(returns))
-                // TODO figure out what we do here
-                // this here is a variable WORD
-                // so return type of that function is that varible type
-                stagger(
-                  stack,
-                  'append',
-                  [returns, copy],
-                  () =>
-                    copy[returns[VALUE]] &&
-                    setReturnToType(ref[STATS], copy[returns[VALUE]][STATS])
-                )
-              else {
-                stagger(stack, 'append', [returns, copy], () => {
-                  const ret = returns[0]
-                  switch (ret[VALUE]) {
-                    case KEYWORDS.IF:
-                      resolveCondition({
-                        rem: returns,
-                        name: ref[STATS][SIGNATURE],
-                        env: copy,
-                        exp,
-                        stack,
-                        prop: RETURNS,
-                        check
+              for (let i = 0; i < params.length; ++i) {
+                const param = params[i]
+                // TODO move this somewhere else
+                if (!isLeaf(param))
+                  throw new TypeError(
+                    `Invalid body for (${
+                      first[VALUE]
+                    }) if it takes more than one expression it must be wrapped in a (${
+                      KEYWORDS.BLOCK
+                    }) (${stringifyArgs(exp)}) (check #666)`
+                  )
+                copy[param[VALUE]] = {
+                  [STATS]: {
+                    [IS_ARGUMENT]: true,
+                    [SIGNATURE]: param[VALUE],
+                    [TYPE_PROP]: [UNKNOWN],
+                    [RETURNS]: [UNKNOWN],
+                    [ARGUMENTS]: [],
+                    argIndex: i,
+                    retried: 0,
+                    counter: 0
+                  }
+                }
+                if (!ref) continue
+                ref[STATS][ARGUMENTS][i] = copy[param[VALUE]]
+                // TODO overwrite return type check here
+              }
+              const returns = deepLambdaReturn(
+                hasBlock(exp) ? exp.at(-1) : exp,
+                (result) => result[VALUE] !== KEYWORDS.IF
+              )
+              if (ref)
+                if (isLeaf(returns)) {
+                  // TODO figure out what we do here
+                  // this here is a variable WORD
+                  // so return type of that function is that varible type
+                  switch (returns[TYPE]) {
+                    case ATOM:
+                      setReturnToAtom(ref[STATS])
+                      break
+                    case WORD:
+                      stagger(stack, 'append', [returns, copy], () => {
+                        copy[returns[VALUE]] &&
+                          checkReturnType({
+                            stack,
+                            exp: [
+                              [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                              [WORD, ref[STATS][SIGNATURE]],
+                              exp
+                            ],
+                            env: copy,
+                            name: ref[STATS][SIGNATURE],
+                            check
+                          })
+                        // setReturnToType(
+                        //   ref[STATS],
+                        //   copy[returns[VALUE]][STATS]
+                        // )
                       })
                       break
-                    default:
-                      if (copy[ret[VALUE]]) {
-                        if (isUnknownReturn(copy[ret[VALUE]][STATS])) {
-                          once(ref[STATS], [returns, copy], stack, () => {
-                            setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                          })
-                        } else setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                      } else
-                        stagger(stack, 'append', [ret, copy], () => {
-                          if (copy[ret[VALUE]])
-                            setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                        })
-                      break
                   }
-                })
-              }
-            check(rest.at(-1), copy, copy)
+                } else {
+                  stagger(stack, 'append', [returns, copy], () => {
+                    retry(ref[STATS], exp, stack, () => {
+                      checkReturnType({
+                        stack,
+                        exp: [
+                          [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                          [WORD, ref[STATS][SIGNATURE]],
+                          exp
+                        ],
+                        env: copy,
+                        name: ref[STATS][SIGNATURE],
+                        check
+                      })
+                    })
+                    // const ret = returns[0]
+                    // switch (ret[VALUE]) {
+                    //   case KEYWORDS.IF:
+                    //     resolveCondition({
+                    //       rem: returns,
+                    //       name: ref[STATS][SIGNATURE],
+                    //       env: copy,
+                    //       exp,
+                    //       stack,
+                    //       prop: RETURNS,
+                    //       check
+                    //     })
+                    //     break
+                    //   default:
+                    //     if (copy[ret[VALUE]]) {
+                    //       if (isUnknownReturn(copy[ret[VALUE]][STATS])) {
+                    //         once(ref[STATS], [returns, copy], stack, () => {
+                    //           setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                    //         })
+                    //       } else setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                    //     } else
+                    //       stagger(stack, 'append', [ret, copy], () => {
+                    //         if (copy[ret[VALUE]])
+                    //           setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
+                    //       })
+                    //     break
+                    // }
+                  })
+                }
+              check(rest.at(-1), copy, copy)
+            }
+
             break
           case STATIC_TYPES.ABSTRACTION:
           case STATIC_TYPES.COLLECTION:

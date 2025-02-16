@@ -113,6 +113,10 @@ export const MUTATORS_SET = new Set([
 ])
 export const GETTERS_SET = new Set([
   KEYWORDS.GET_ARRAY,
+  'array:first',
+  'array:second',
+  'array:third',
+  'array:last',
   'matrix:get',
   'matrix:set-and-get!',
   'array:set-and-get!',

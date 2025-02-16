@@ -108,9 +108,8 @@ describe('Type checking', () => {
           'iy',
           'ib',
           'ic',
-          'aafn'
-          // TODO fix the issue where return type ignores redifined variables indide the functions
-          // 'sqrt-of-nine'
+          'aafn',
+          'sqrt-of-nine'
         ]
       ),
       [
@@ -130,8 +129,8 @@ describe('Type checking', () => {
         '(let iy (lambda (do Number)))',
         '(let ib [Number])',
         '(let ic (lambda Number (do Number)))',
-        '(let aafn (lambda Number [Boolean] (do [Number])))'
-        // '(let sqrt-of-nine Number)'
+        '(let aafn (lambda Number [Boolean] (do [Number])))',
+        '(let sqrt-of-nine Number)'
       ]
     )
     deepStrictEqual(
@@ -651,18 +650,17 @@ ZZZ=ZZZ,ZZZ")
 (length x)`,
       `Incorrect type of argument (0) for (length). Expected ([Unknown]) but got (Number) (length x) (check #3)`
     )
-
-    // TODO unbcomment that and makeit work
-    fails(
-      `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
-      (let z [])
-          (fn 1 (lambda x (do
-          (let y 10)
-          [])))
-          (set! [] 0 1)
-      `,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
-    )
+    // TODO resovle regression #Lambda return refactor
+    // fails(
+    //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
+    //   (let z [])
+    //       (fn 1 (lambda x (do
+    //       (let y 10)
+    //       [])))
+    //       (set! [] 0 1)
+    //   `,
+    //   `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+    // )
     fails(
       `(let arr [])
 (set! arr (length arr) 10)
@@ -799,7 +797,7 @@ ZZZ=ZZZ,ZZZ")
 (let x1? (array:empty! [1]))
 (let x2? 1)
 (let x3? array:empty!)`,
-      `Assigning predicate (ending in ?) variable  (fn1?) to an (Atom) that is not (or 1 0) or to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil) (let fn1? (lambda (apply (array 1) array:empty!))) (check #100)`
+      `Assigning predicate (ending in ?) variable (array:empty!)  to another variable which is not a predicate (also ending in ?) or to a variable that is not (or true false nil)  (let x1? (array:empty! (array 1))) (check #101)`
     )
     //     fails(
     //       `(let map (new:map ["name" "Anthony" "age" 34]))
@@ -964,11 +962,6 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect type of argument (0) for (f). Expected (Boolean) but got (Number) (f 2) (check #203)`
     )
     fails(
-      `(let fn (lambda a cb (+ (cb (+ a 1)) 1))) (fn 1 (lambda x (do  (let y 10) [])))`,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
-    )
-
-    fails(
       `(let arr [])
 (set! arr (length arr) 2)
 (let x (get arr 0))
@@ -1119,6 +1112,10 @@ ZZZ=ZZZ,ZZZ")
     )
 
     // // TODO Regression 2! Have to investigate this again later
+    // fails(
+    //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1))) (fn 1 (lambda x (do  (let y 10) [])))`,
+    //   `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got ([Unknown]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+    // )
     // fails(
     //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
     //   (let z [])

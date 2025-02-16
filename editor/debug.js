@@ -26,10 +26,10 @@ import {
   SPECIAL_FORM_TYPES,
   withCtxTypes
 } from '../src/types.js'
-import { stringifyArgs } from '../src/utils.js'
+import { removeNoCode, stringifyArgs } from '../src/utils.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
-export const debug = (ast, checkTypes = true) => {
+export const debug = (ast, checkTypes = true, userDefinedTypes) => {
   let types = new Map()
   const debugEnv = {
     ...keywords,
@@ -304,7 +304,14 @@ export const debug = (ast, checkTypes = true) => {
     types = checkTypes
       ? typeCheck(
           ast,
-          withCtxTypes(definedTypes(filteredDefinedTypes(ast, std, stdT)))
+          withCtxTypes(
+            userDefinedTypes
+              ? {
+                  ...definedTypes(filteredDefinedTypes(ast, std, stdT)),
+                  ...definedTypes(LISP.parse(removeNoCode(userDefinedTypes)))
+                }
+              : definedTypes(filteredDefinedTypes(ast, std, stdT))
+          )
         )[1]
       : new Map()
     const evaluated = evaluate(enhance(ast), debugEnv)

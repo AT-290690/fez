@@ -534,7 +534,7 @@
                   (let recursive:array:fold (lambda i out
                         (if (> (length xs) i)
                             (recursive:array:fold (+ i 1) (cb out (get xs i)))
-                            (Collection out))))
+                            out)))
                       (recursive:array:fold 0 initial))))
 (let array:reduce (lambda xs cb initial (do
                   (let recursive:array:reduce (lambda i out
@@ -1081,20 +1081,20 @@
 (let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
 (let string:character-occurances (lambda str letter (do
   (let xs str)
-  (let bitmask (var:def 0))
+  (let bitmask (math:var-def 0))
   (let zero char:a)
-  (let count (var:def 0))
+  (let count (math:var-def 0))
   (let at-least-one (bool:false))
   (let recursive:string:character-occurances (lambda i bounds (do
       (let ch (get xs i))
       (let code (- ch zero))
       (let mask (<< 1 code))
       (if (and (if (= ch letter) (bool:true? (bool:true! at-least-one)) 0)
-          (not (= (& (var:get bitmask) mask) 0))) 
-          (var:set! count (+ (var:get count) 1))
-          (var:set! bitmask (| (var:get bitmask) mask)))
+          (not (= (& (math:var-get bitmask) mask) 0))) 
+          (math:var-set! count (+ (math:var-get count) 1))
+          (math:var-set! bitmask (| (math:var-get bitmask) mask)))
       (if (< i bounds) (recursive:string:character-occurances (+ i 1) bounds) 
-      (+ (var:get count) (var:get at-least-one))))))
+      (+ (math:var-get count) (numberp (bool:get at-least-one)))))))
       (recursive:string:character-occurances 0 (- (length xs) 1)))))
 (let string:slice-from (lambda a b (do
   (let index (|> a (string:match b)))

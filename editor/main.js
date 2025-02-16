@@ -51,9 +51,13 @@ const inter = () => {
   const value = editor.getValue()
   if (value.trim()) {
     try {
-      const compressed = LZString.compressToBase64(editor.getValue())
-      const parsed = parse(editor.getValue())
-      const { evaluated, type, error } = debug(parsed)
+      const compressed = LZString.compressToBase64(value)
+      const parsed = parse(value)
+      // const T = value
+      //   .match(new RegExp(/; @Type.+/, 'g'))
+      //   ?.map((x) => x.replaceAll('; @Type ', '').trim())
+      //   .join(' ')
+      const { evaluated, type, error } = debug(parsed, true)
       terminal.setValue(
         error == null
           ? type
