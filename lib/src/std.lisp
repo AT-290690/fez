@@ -1902,6 +1902,20 @@ heap)))
 (let option:value (lambda x (array:first (array:first x))))
 (let option:error (lambda x (array:second x)))
 
+; (let ring (new:ring-buffer 5))
+; (let [gt ps bf .] ring)
+; (loop:for-range 0 6 (lambda i (ps i)))
+; (identity bf)
+(let new:ring-buffer (lambda len (do 
+    (let pointer (math:var-def 0))
+    (let buffer [])
+    [(lambda index (get buffer index)) 
+    (lambda item (do 
+        (let pt (math:var-get pointer))
+        (set! buffer pt item)
+        (math:var-set! pointer (mod (+ len pt 1) len))
+        item)) buffer])))
+
 ; Fake keywords section
 ; xxx
 
