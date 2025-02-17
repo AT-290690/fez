@@ -366,6 +366,8 @@
 (let math:modulo-bit (lambda Number Number (do Number)))
 ; 1 math:n-one-bit?
 (let math:n-one-bit? (lambda Number Number (do Boolean)))
+; 1 math:percent
+(let math:percent (lambda Number Number (do Number)))
 ; 1 math:median len
 (let len Number)
 ; 1 math:median half

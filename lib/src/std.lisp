@@ -221,6 +221,7 @@
 (let math:bit-equal? (lambda a b (< (^ a b) 1)))
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
+(let math:percent (lambda a b (* 100 (/ a b))))
 (let math:median (lambda xs (do
     (let len (length xs))
     (let half (math:floor (/ len 2)))
