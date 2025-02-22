@@ -557,7 +557,7 @@
 
 (let array:find-option (lambda xs predicate? (do
   (let index (array:find-index xs predicate?))
-  (if (= index -1) [[] "No such item found in (array:find-option)"] [[(get xs index)] []]))))
+  (if (= index -1) [[] [-1]] [[(get xs index)] []]))))
 
 (let array:has? (lambda xs predicate? (do
                     (let recursive:array:has (lambda i
@@ -597,7 +597,7 @@
 (let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
 (let array:empty! (lambda xs (do (let recursive:array:empty! (lambda (if (> (length xs) 0) (apply (lambda (do (del! xs) (recursive:array:empty!)))) xs))) (recursive:array:empty!))))
 (let array:in-bounds? (lambda xs index (and (< index (length xs)) (>= index 0))))
-(let get-option (lambda xs i (if (array:in-bounds? xs i) [[(get xs i)] []] [[] "Index is outside of array bounds (get-option)"])))
+(let get-option (lambda xs i (if (array:in-bounds? xs i) [[(get xs i)] []] [[] [-1]])))
 (let get-or-default (lambda xs i def (if (array:in-bounds? xs i) (get xs i) def)))
 (let array:get-option get-option)
 (let array:get-or-default get-or-default)
@@ -815,7 +815,7 @@
 (let matrix:set! (lambda matrix y x value (set! (get matrix y) x value)))
 (let matrix:get (lambda matrix y x (get (get matrix y) x)))
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
-(let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] "Coordinates are outside of matrix bounds (matrix:get-option)"])))
+(let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] [-1]])))
 (let matrix:get-or-default (lambda xs y x def (if (matrix:in-bounds? xs y x) (matrix:get xs y x) def)))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
 (let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x 
@@ -1410,7 +1410,7 @@
       (if (array:in-bounds? table idx) (do
           (let current (get table idx))
             (let index (array:find-index current (lambda x (string:equal? key (get x 0)))))
-            (if (= index -1) [[] "No such item found in (map:get-option)"] [[(array:second (get current index))] []]))
+            (if (= index -1) [[] [-1]] [[(array:second (get current index))] []]))
             [[] []]))))
 (let map:has? (lambda table key (do 
           (let idx (set:index table key))
@@ -1915,6 +1915,7 @@ heap)))
 (let array:length length)
 (let array:set! set!)
 (let array:remove-last! pop!)
+(let push! (lambda xs x (array:push! xs x)))
 (let del! (lambda xs (pop! xs)))
 (let array:del! (lambda xs (del! xs)))
 (let equal? array:equal?)

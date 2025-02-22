@@ -107,6 +107,7 @@ export const MUTATORS_SET = new Set([
   'array:set-and-get!',
   'var:set-and-get!',
   'array:set!',
+  'push!',
   'array:append!',
   'array:push!',
   'var:set!'

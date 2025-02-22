@@ -2026,6 +2026,8 @@
 (let array:set! (lambda Unknowns Number Unknown (do Unknowns)))
 ; 1 array:remove-last!
 (let array:remove-last! (lambda Unknowns (do Unknowns)))
+; 1 push!
+(let push! (lambda Unknowns Unknown (do Unknown)))
 ; 1 del!
 (let del! (lambda Unknowns (do Unknowns)))
 ; 1 array:del!
