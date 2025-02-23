@@ -670,7 +670,7 @@
         (let left (if (= predicate 0) (array:merge a (array current)) a))
         (let right (if (= predicate 1) (array:merge b (array current)) b))
         (if (< i bounds) (recursive:array:sort (+ i 1) bounds left right) (array left right)))))
-    (let sorted (Collection (recursive:array:sort 1 (- (length xs) 1) [] [])))
+    (let sorted (recursive:array:sort 1 (- (length xs) 1) [] []))
     (let left (array:first sorted))
     (let right (array:second sorted))
     (array:merge (array:merge (array:sort left cb) (array pivot)) (array:sort right cb)))))))))
@@ -1986,7 +1986,7 @@ heap)))
 (let special-form:lambda (lambda args env (do 
     (let params (array:slice args 0 (- (length args) 1))) 
     (let body (array:at args -1)) 
-    (lambda props scope (do 
+    (lambda props scope (do
         (let local (prototype:create! env)) 
         (loop:for-n (length props) (lambda i 
         (map:set! (list:head local) (get (get params i) ast:value) (Any (evaluate (get props i) scope))))) 
