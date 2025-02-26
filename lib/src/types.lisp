@@ -368,14 +368,10 @@
 (let math:n-one-bit? (lambda Number Number (do Boolean)))
 ; 1 math:percent
 (let math:percent (lambda Number Number (do Number)))
-; 1 math:median len
-(let len Number)
-; 1 math:median half
-(let half Number)
 ; 1 math:median
-(let math:median (lambda Unknowns (do Number)))
+(let math:median (lambda Numbers (do Number)))
 ; 1 math:mean
-(let math:mean (lambda Unknowns (do Number)))
+(let math:mean (lambda Numbers (do Number)))
 ; 1 math:bit-count32 n1
 (let n1 Number)
 ; 1 math:bit-count32 n2

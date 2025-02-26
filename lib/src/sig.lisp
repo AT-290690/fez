@@ -15,6 +15,8 @@
 (let math:var-increment-and-get! (lambda Numbers (do Number)))
 (let math:var-decrement-and-get! (lambda Numbers (do Number)))
 (let math:max-sub-array-sum (lambda Numbers (do Number)))
+(let math:median (lambda Numbers (do Number)))
+(let math:mean (lambda Numbers (do Number)))
 
 (let var:def (lambda Any (do Unknowns)))
 (let var:get (lambda Unknowns (do Any)))
