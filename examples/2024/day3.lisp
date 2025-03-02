@@ -6,7 +6,7 @@
 
 (let match? (lambda source pattern index (do
     (let size (array:length pattern))
-    (and (array:in-bounds? source (- index size)) (array:enumerated-every? pattern (lambda x i  (= (array:get source (+ (- index size) i)) x)))))))
+    (and (array:in-bounds? source (- index size)) (array:enumerated-every? pattern (lambda x i (= (array:get source (+ (- index size) i)) x)))))))
 
 (let digit? (lambda digit (and (>= digit char:0) (<= digit char:9))))
 

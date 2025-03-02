@@ -1,7 +1,7 @@
 # Fez Programming Language
 
 <p align="center">
-<img width="128" src="./logo.svg"/>
+<img width="128" src="./favicon.svg"/>
 </p>
 
 ```lisp
@@ -36,4 +36,11 @@ npm i fez-lisp
 import { parse, compile } from 'fez-lisp'
 console.log(compile(parse('(+ 1 2)')))
 // '(()=>{;return(()=>{return (1+2);})()})()'
+```
+
+```js
+import { parse, fez } from 'fez-lisp'
+const parsed = parse(`(|> [ 1 2 3 4 ] (math:map math:square) (math:summation))`)
+const [result, error] = fez(parsed, false)
+error == null ? console.log(result) : console.log('\x1b[31m', error, '\x1b[0m')
 ```

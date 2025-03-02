@@ -15,7 +15,11 @@ import {
   deSuggarSource,
   handleUnbalancedQuotes
 } from './macros.js'
-import { OPTIMIZATIONS } from './enhance.js'
+import { enhance, OPTIMIZATIONS } from './enhance.js'
+import { type } from './check.js'
+import stdT from '../lib/baked/std-T.js'
+import { definedTypes, withCtxTypes } from './types.js'
+import { compile } from './compiler.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
@@ -496,5 +500,14 @@ export class Brr {
   // }
   *[Symbol.iterator]() {
     for (let i = 0, len = this.length; i < len; ++i) yield this.get(i)
+  }
+}
+export const fez = (ast, c = false) => {
+  try {
+    if (!c) type(ast, withCtxTypes(definedTypes(stdT)))
+    const opt = enhance(ast)
+    return [c ? compile(ast) : evaluate(opt), null]
+  } catch (err) {
+    return [null, err]
   }
 }
