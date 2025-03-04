@@ -191,6 +191,7 @@
 (let math:fold (lambda xs cb initial (array:fold xs cb initial)))
 (let math:enumerated-fold (lambda xs cb initial (array:enumerated-fold xs cb initial)))
 (let math:map (lambda xs cb (array:map xs cb)))
+(let math:enumerated-map (lambda xs cb (array:enumerated-map xs cb)))
 (let math:select (lambda xs cb? (array:select xs cb?)))
 (let math:exclude (lambda xs cb? (array:exclude xs cb?)))
 (let math:max (lambda a b (if (> a b) a b)))
@@ -818,8 +819,8 @@
 (let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] [-1]])))
 (let matrix:get-or-default (lambda xs y x def (if (matrix:in-bounds? xs y x) (matrix:get xs y x) def)))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
-(let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x 
-      (cond 
+(let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x
+      (cond
           (atom? x) (array x)
           (= (length x) 0) (array char:comma) 
           (*) x))))))
@@ -1455,8 +1456,8 @@
 (let math:var-decrement-and-get! (lambda variable (do (set! variable 0 (- (math:var-get variable) 1)) (math:var-get variable))))
 
 (let bools:fold (lambda xs cb initial (do xs
-    (let recursive:bools:fold (lambda i out 
-        (if (> (length xs) i) 
+    (let recursive:bools:fold (lambda i out
+        (if (> (length xs) i)
             (recursive:bools:fold (+ i 1) (cb out (get xs i))) out))) 
             (recursive:bools:fold 0 initial))))
 (let bool:truths (lambda n (do
@@ -1619,140 +1620,6 @@ q)))
 (let stack:push! (lambda stack item (brray:append! stack item)))
 (let stack:pop! (lambda stack (brray:head! stack)))
 (let stack:peek (lambda stack (brray:last stack)))
-
-(let mapping:atom->atom (lambda xs cb (do
-                  (let recursive:mapping:atom->atom (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:atom->atom (+ i 1)
-                                (set! out (length out) (Atom (cb (Atom (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:atom->atom 0 []))))
-(let mapping:atom->array (lambda xs cb (do
-                  (let recursive:mapping:atom->array (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:atom->array (+ i 1)
-                                (set! out (length out) (Collection (cb (Atom (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:atom->array 0 []))))
-(let mapping:array->array (lambda xs cb (do
-                  (let recursive:mapping:array->array (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:array->array (+ i 1)
-                                (set! out (length out) (Collection (cb (Collection (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:array->array 0 []))))
-(let mapping:array->atom (lambda xs cb (do
-                  (let recursive:mapping:array->atom (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:array->atom (+ i 1)
-                                (set! out (length out) (Atom (cb (Collection (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:array->atom 0 []))))
-
-
-
-
-
-(let mapping:number->number (lambda xs cb (do
-                  (let recursive:mapping:number->number (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:number->number (+ i 1)
-                                (set! out (length out) (Number (cb (Number (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:number->number 0 []))))
-(let mapping:number->array (lambda xs cb (do
-                  (let recursive:mapping:number->array (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:number->array (+ i 1)
-                                (set! out (length out) (Collection (cb (Number (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:number->array 0 []))))
-(let mapping:array->number (lambda xs cb (do
-                  (let recursive:mapping:array->number (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping:array->number (+ i 1)
-                                (set! out (length out) (Number (cb (Collection (get xs i))))))
-                              (Collection out))))
-                      (recursive:mapping:array->number 0 []))))
-
-(let mapping-enumerated:atom->atom (lambda xs cb (do
-                  (let recursive:mapping-enumerated:atom->atom (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping-enumerated:atom->atom (+ i 1)
-                                (set! out (length out) (Atom (cb (Atom (get xs i)) i))))
-                              (Collection out))))
-                      (recursive:mapping-enumerated:atom->atom 0 []))))
-(let mapping-enumerated:atom->array (lambda xs cb (do
-                  (let recursive:mapping-enumerated:atom->array (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping-enumerated:atom->array (+ i 1)
-                                (set! out (length out) (Collection (cb (Atom (get xs i)) i))))
-                              (Collection out))))
-                      (recursive:mapping-enumerated:atom->array 0 []))))
-(let mapping-enumerated:array->array (lambda xs cb (do
-                  (let recursive:mapping-enumerated:array->array (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping-enumerated:array->array (+ i 1)
-                                (set! out (length out) (Collection (cb (Collection (get xs i)) i))))
-                              (Collection out))))
-                      (recursive:mapping-enumerated:array->array 0 []))))
-(let mapping-enumerated:array->atom (lambda xs cb (do
-                  (let recursive:mapping-enumerated:array->atom (lambda i out
-                        (if (> (length xs) i)
-                              (recursive:mapping-enumerated:array->atom (+ i 1)
-                                (set! out (length out) (Atom (cb (Collection (get xs i)) i))))
-                              (Collection out))))
-                      (recursive:mapping-enumerated:array->atom 0 []))))
-                      
-(let reducing:atom->atom (lambda xs cb initial (do
-                  (let recursive:reducing:atom->atom (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing:atom->atom (+ i 1) (Atom (cb out (Atom (get xs i)))))
-                            (Atom out))))
-                      (recursive:reducing:atom->atom 0 initial))))
-(let reducing:atom->array (lambda xs cb initial (do
-                  (let recursive:reducing:atom->array (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing:atom->array (+ i 1) (Collection (cb out (Atom (get xs i)))))
-                            (Collection out))))
-                      (recursive:reducing:atom->array 0 initial))))
-(let reducing:array->array (lambda xs cb initial (do
-                  (let recursive:reducing:array->array (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing:array->array (+ i 1) (Collection (cb out (Collection (get xs i)))))
-                            (Collection out))))
-                      (recursive:reducing:array->array 0 initial))))
-(let reducing:array->atom (lambda xs cb initial (do
-                  (let recursive:reducing:array->array (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing:array->array (+ i 1) (Atom (cb out (Collection (get xs i)))))
-                            (Atom out))))
-                      (recursive:reducing:array->array 0 initial))))
-
-(let reducing-enumerated:atom->atom (lambda xs cb initial (do
-                  (let recursive:reducing-enumerated:atom->atom (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing-enumerated:atom->atom (+ i 1) (Atom (cb out (Atom (get xs i)) i)))
-                            (Atom out))))
-                      (recursive:reducing-enumerated:atom->atom 0 initial))))
-(let reducing-enumerated:atom->array (lambda xs cb initial (do
-                  (let recursive:reducing-enumerated:atom->array (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing-enumerated:atom->array (+ i 1) (Collection (cb out (Atom (get xs i)) i)))
-                            (Collection out))))
-                      (recursive:reducing-enumerated:atom->array 0 initial))))
-(let reducing-enumerated:array->array (lambda xs cb initial (do
-                  (let recursive:reducing-enumerated:array->array (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing-enumerated:array->array (+ i 1) (Collection (cb out (Collection (get xs i)) i)))
-                            (Collection out))))
-                      (recursive:reducing-enumerated:array->array 0 initial))))
-(let reducing-enumerated:array->atom (lambda xs cb initial (do
-                  (let recursive:reducing-enumerated:array->array (lambda i out
-                        (if (> (length xs) i)
-                            (recursive:reducing-enumerated:array->array (+ i 1) (Atom (cb out (Collection (get xs i)) i)))
-                            (Atom out))))
-                      (recursive:reducing-enumerated:array->array 0 initial))))
 
 (let time:add-seconds (lambda date-time seconds (+ date-time (* seconds 1000))))
 (let time:add-minutes (lambda date-time minutes (+ date-time (* minutes 1000 60))))

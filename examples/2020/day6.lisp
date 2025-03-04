@@ -28,15 +28,15 @@ b")
 ;     (let bit-masks (|> line 
 ;       (array:map (lambda str 
 ;         (|> str 
-;             (mapping:atom->atom (lambda ch (string:character-occurances U ch)))
+;             (math:map (lambda ch (string:character-occurances U ch)))
 ;             )))
 ;             (array:chars)
 ;     ;  (from:digits->integer)
 ;       ))
-;         ; (reducing:atom->atom bit-masks & 1)
+;         ; (math:fold bit-masks & 1)
 ;     ))) 
-;     ; (reducing:atom->atom & 1)
-;     ;   (reducing:atom->atom & 1)
+;     ; (math:fold & 1)
+;     ;   (math:fold & 1)
 ;     ;   (math:summation)
 ;       )
 

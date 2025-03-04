@@ -370,7 +370,7 @@ describe('Type checking', () => {
   (let matrix (matrix:shallow-copy input)) 
   (let starting (matrix:find-index input (lambda x (= x 94))))
   (matrix:set! matrix (array:get starting 0) (array:get starting 1) char:X)
-  (let from:matrix->string (lambda matrix (array:lines (mapping:array->array matrix (lambda m (array:map m array))))))
+  (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let recursive:step (lambda start angle (do 
       (let current-dir (array:get dir (mod angle (array:length dir))))
       (let start-copy (array:shallow-copy start))

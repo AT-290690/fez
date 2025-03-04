@@ -17,7 +17,7 @@
   (let w (length (array:first xs)))
   (|> (// h slopeY)
       (math:zeroes)
-      (mapping-enumerated:atom->atom (lambda . index
+      (math:enumerated-map (lambda . index
         (|> xs 
           (get (* index slopeY))
           (get (mod (* index slopeX) w)))))))))

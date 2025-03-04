@@ -306,6 +306,8 @@
 (let math:enumerated-fold (lambda Numbers (lambda Number Number Number (do Number)) (do Number)))
 ; 1 math:map
 (let math:map (lambda Numbers (lambda Number (do Number)) (do Numbers)))
+; 1 math:enumerated-map
+(let math:enumerated-map (lambda Unknowns (lambda Unknown Number (do Unknown)) (do Unknowns)))
 ; 1 math:select
 (let math:select (lambda Numbers (lambda Number (do Boolean)) (do Numbers)))
 ; 1 math:exclude
@@ -1812,82 +1814,6 @@
 (let stack:pop! (lambda Unknowns (do Unknowns)))
 ; 1 stack:peek
 (let stack:peek (lambda Unknowns (do Unknown)))
-; 1 mapping:atom->atom recursive:mapping:atom->atom
-(let recursive:mapping:atom->atom (lambda Number Unknowns (do Unknowns)))
-; 1 mapping:atom->atom
-(let mapping:atom->atom (lambda Unknowns (lambda Number (do Number)) (do Unknowns)))
-; 1 mapping:atom->array recursive:mapping:atom->array
-(let recursive:mapping:atom->array (lambda Number Unknowns (do Unknowns)))
-; 1 mapping:atom->array
-(let mapping:atom->array (lambda Unknowns (lambda Number (do Unknowns)) (do Unknowns)))
-; 1 mapping:array->array recursive:mapping:array->array
-(let recursive:mapping:array->array (lambda Number Unknowns (do Unknowns)))
-; 1 mapping:array->array
-(let mapping:array->array (lambda Unknowns (lambda Unknowns (do Unknowns)) (do Unknowns)))
-; 1 mapping:array->atom recursive:mapping:array->atom
-(let recursive:mapping:array->atom (lambda Number Unknowns (do Unknowns)))
-; 1 mapping:array->atom
-(let mapping:array->atom (lambda Unknowns (lambda Unknowns (do Number)) (do Unknowns)))
-; 1 mapping:number->number recursive:mapping:number->number
-(let recursive:mapping:number->number (lambda Number Numbers (do Unknowns)))
-; 1 mapping:number->number
-(let mapping:number->number (lambda Unknowns (lambda Number (do Number)) (do Unknowns)))
-; 1 mapping:number->array recursive:mapping:number->array
-(let recursive:mapping:number->array (lambda Number Unknowns (do Unknowns)))
-; 1 mapping:number->array
-(let mapping:number->array (lambda Unknowns (lambda Number (do Unknowns)) (do Unknowns)))
-; 1 mapping:array->number recursive:mapping:array->number
-(let recursive:mapping:array->number (lambda Number Numbers (do Unknowns)))
-; 1 mapping:array->number
-(let mapping:array->number (lambda Unknowns (lambda Unknowns (do Number)) (do Unknowns)))
-; 1 mapping-enumerated:atom->atom recursive:mapping-enumerated:atom->atom
-(let recursive:mapping-enumerated:atom->atom (lambda Number Unknowns (do Unknowns)))
-; 1 mapping-enumerated:atom->atom
-(let mapping-enumerated:atom->atom (lambda Unknowns (lambda Number Number (do Number)) (do Unknowns)))
-; 1 mapping-enumerated:atom->array recursive:mapping-enumerated:atom->array
-(let recursive:mapping-enumerated:atom->array (lambda Number Unknowns (do Unknowns)))
-; 1 mapping-enumerated:atom->array
-(let mapping-enumerated:atom->array (lambda Unknowns (lambda Number Number (do Unknowns)) (do Unknowns)))
-; 1 mapping-enumerated:array->array recursive:mapping-enumerated:array->array
-(let recursive:mapping-enumerated:array->array (lambda Number Unknowns (do Unknowns)))
-; 1 mapping-enumerated:array->array
-(let mapping-enumerated:array->array (lambda Unknowns (lambda Unknowns Number (do Unknowns)) (do Unknowns)))
-; 1 mapping-enumerated:array->atom recursive:mapping-enumerated:array->atom
-(let recursive:mapping-enumerated:array->atom (lambda Number Unknowns (do Unknowns)))
-; 1 mapping-enumerated:array->atom
-(let mapping-enumerated:array->atom (lambda Unknowns (lambda Unknowns Number (do Number)) (do Unknowns)))
-; 1 reducing:atom->atom recursive:reducing:atom->atom
-(let recursive:reducing:atom->atom (lambda Number Number (do Number)))
-; 1 reducing:atom->atom
-(let reducing:atom->atom (lambda Unknowns (lambda Number Number (do Number)) Number (do Number)))
-; 1 reducing:atom->array recursive:reducing:atom->array
-(let recursive:reducing:atom->array (lambda Number Unknowns (do Unknowns)))
-; 1 reducing:atom->array
-(let reducing:atom->array (lambda Unknowns (lambda Unknowns Number (do Unknowns)) Unknowns (do Unknowns)))
-; 1 reducing:array->array recursive:reducing:array->array
-(let recursive:reducing:array->array (lambda Number Unknowns (do Unknowns)))
-; 1 reducing:array->array
-(let reducing:array->array (lambda Unknowns (lambda Unknowns Unknowns (do Unknowns)) Unknowns (do Unknowns)))
-; 1 reducing:array->atom recursive:reducing:array->array
-(let recursive:reducing:array->array (lambda Number Number (do Number)))
-; 1 reducing:array->atom
-(let reducing:array->atom (lambda Unknowns (lambda Number Unknowns (do Number)) Number (do Number)))
-; 1 reducing-enumerated:atom->atom recursive:reducing-enumerated:atom->atom
-(let recursive:reducing-enumerated:atom->atom (lambda Number Number (do Number)))
-; 1 reducing-enumerated:atom->atom
-(let reducing-enumerated:atom->atom (lambda Unknowns (lambda Number Number Number (do Number)) Number (do Number)))
-; 1 reducing-enumerated:atom->array recursive:reducing-enumerated:atom->array
-(let recursive:reducing-enumerated:atom->array (lambda Number Unknowns (do Unknowns)))
-; 1 reducing-enumerated:atom->array
-(let reducing-enumerated:atom->array (lambda Unknowns (lambda Unknowns Number Number (do Unknowns)) Unknowns (do Unknowns)))
-; 1 reducing-enumerated:array->array recursive:reducing-enumerated:array->array
-(let recursive:reducing-enumerated:array->array (lambda Number Unknowns (do Unknowns)))
-; 1 reducing-enumerated:array->array
-(let reducing-enumerated:array->array (lambda Unknowns (lambda Unknowns Unknowns Number (do Unknowns)) Unknowns (do Unknowns)))
-; 1 reducing-enumerated:array->atom recursive:reducing-enumerated:array->array
-(let recursive:reducing-enumerated:array->array (lambda Number Number (do Number)))
-; 1 reducing-enumerated:array->atom
-(let reducing-enumerated:array->atom (lambda Unknowns (lambda Number Unknowns Number (do Number)) Number (do Number)))
 ; 1 time:add-seconds
 (let time:add-seconds (lambda Number Number (do Number)))
 ; 1 time:add-minutes

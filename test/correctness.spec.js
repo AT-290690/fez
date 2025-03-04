@@ -51,7 +51,7 @@ describe('Corretness', () => {
 (let None (lambda -1))
 (let Some (lambda [x .] (cond 
                             (atom? x) (* x x)
-                            (array? x) (|> (Collection x) (mapping:atom->atom math:square) (math:summation))
+                            (array? x) (|> (Collection x) (math:map math:square) (math:summation))
                             (lambda? x) (None)
                             (*) (None))))
 
@@ -59,7 +59,7 @@ describe('Corretness', () => {
 ; (let None (lambda []))
 ; (let Some (lambda [x .] (cond 
 ;                             (atom? x) [(* x x)]
-;                             (array? x) (|> (Collection x) (mapping:atom->atom math:square) (math:summation) [])
+;                             (array? x) (|> (Collection x) (math:map math:square) (math:summation) [])
 ;                             (lambda? x) (None)
 ;                             (*) (None))))
 
@@ -2577,7 +2577,7 @@ matrix
   (let matrix (matrix:shallow-copy input)) 
   (let starting (matrix:find-index input (lambda x (= x 94))))
   (matrix:set! matrix (array:get starting 0) (array:get starting 1) char:X)
-  (let from:matrix->string (lambda matrix (array:lines (mapping:array->array matrix (lambda m (array:map m array))))))
+  (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let recursive:step (lambda start angle (do 
       (let current-dir (array:get dir (mod angle (array:length dir))))
       (let start-copy (array:shallow-copy start))
@@ -3294,9 +3294,9 @@ wh-qp
 tb-vc
 td-yn")
 
-(let parse (lambda input (|> input (string:trim) (string:lines) (mapping:array->array string:dashes))))
+(let parse (lambda input (|> input (string:trim) (string:lines) (array:map string:dashes))))
 (let part1 (lambda input (do
-    (let connections (reducing:array->array input (lambda a b (do
+    (let connections (array:fold input (lambda a b (do
             (let left (array:first b))
             (let right (array:second b))
             (if (map:has? a left)
