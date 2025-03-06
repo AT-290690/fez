@@ -1,0 +1,128 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"
+  />
+  <meta name="description" content="Write and run Fez programs" />
+  <title>Fez</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <style>
+    html {
+      color: white;
+      background-color: black;
+      font-family: 'Fantasque' !important;
+    }
+    .centered {
+      text-align: center;
+    }
+    /* @font-face {
+      font-family: 'Fantastic';
+      src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
+      font-display: swap;
+    } */
+    @font-face {
+      font-family: 'Fantasque';
+      src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
+      font-display: swap;
+    }
+    button {
+      background-color: transparent;
+      border: none;
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      cursor: pointer;
+    }
+    button:active {
+      transform: scale(1.2);
+    }
+    button > img {
+      width: 32px;
+      height: 32px;
+    }
+    iframe {
+      width: 90%;
+      height: 200px;
+      border: 1px solid #8f938f;
+    }
+    p {
+      margin: 8px 0 8px 0;
+    }
+    .paragraph {
+      margin-left: 5%;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="centered">
+    <img
+      src="./favicon.svg"
+      height="64px"
+      style="margin-top: 16px; margin-left: 10px"
+    />
+    <p style="font-size: 32px">Fez</p>
+    <p></p>
+    <p style="font-size: 20px">Simple, typed, lisp programming language</p>
+  </div>
+  <div class="paragraph" style="margin-top: 16px">
+    <p>Here you will learn everything you need to know about Fez.</p>
+    <ul>
+      <li>
+        It has types and they are mostly infered (no need to define them).
+      </li>
+      <li>
+        Everything is an expression (everything can be assigned to a variable).
+      </li>
+      <li>
+        Tree shaking of functions from standard library (imports automatically
+        and only the functions needed).
+      </li>
+      <li>
+        Tail call and Memoized optimizations on recursions using a simple
+        prefix.
+      </li>
+      <li>It has only Floats, Arrays and Functions.</li>
+      <li>Booleans are the numbers 0 and 1.</li>
+      <li>
+        Strings, Objects, Sets, Trees - these are implemented using only the
+        Array.
+      </li>
+      <li>There is an interpreter written in JavaScript.</li>
+      <li>There is a compiler that compiles to JavaScript.</li>
+      <li>
+        You can always try it on the
+        <a href="https://at-290690.github.io/fez/index.html">
+          Online Playground </a
+        >.
+      </li>
+    </ul>
+  </div>
+  <div class="paragraph" style="margin-top: 16px">
+    <p>
+      This language is so simple that an interpreter for it can be implemented
+      in any other language
+    </p>
+    <p>For example there are python, rust and even fez interpreters!</p>
+    <p>
+      The one here can easily run them on the web where you can share your
+      programs with others via a link.
+    </p>
+  </div>
+  <div class="centered">
+    <iframe src="index.html?l=BQagBAjGBMCUQ%3D%3D%3D"></iframe>
+  </div>
+
+  <div class="centered">
+    <iframe
+      src="index.html?l=BQGwpgLgBAHlCMAGAlFA3FAJmAZgSwDswoBDKANxICc8SAjcWKAdzwgAsoPjKQBXYkgBQoSLADOUANrwoAJigBmWAF1UGbPiKkCpKlRIBPCSzadCbWiAol%2BYcUA%3D"
+    ></iframe>
+  </div>
+
+  <div class="centered">
+    <iframe
+      src="index.html?l=BQGwpgLgBAFmIgPZQEQAl5KgdUQJxABMBCFASgCg4FEg"
+    ></iframe>
+  </div>
+</body>

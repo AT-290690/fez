@@ -1,35 +1,9 @@
 import { parse, compile, enhance, AST } from '../index.js'
 import { debug } from './debug.js'
-const editor = ace.edit('editor')
-editor.setOptions({
-  fontFamily: 'Monaco9',
-  fontSize: '10pt',
-  copyWithEmptySelection: true
-})
-editor.setKeyboardHandler('ace/keyboard/vscode')
+import { makeEditor, serialise } from './utils.js'
 const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
-const EDITOR_THEME = THEME
-const TERMINAL_THEME = THEME
-editor.renderer.setShowGutter(false)
-editor.setTheme(`ace/theme/${EDITOR_THEME}`)
-editor.setShowPrintMargin(false)
-editor.session.setMode('ace/mode/lisp')
-editor.renderer.setScrollMargin(10, 10)
-editor.session.setUseWrapMode(true)
-
-const terminal = ace.edit('terminal')
-terminal.setOptions({
-  fontFamily: 'Monaco9',
-  fontSize: '10pt',
-  copyWithEmptySelection: true
-})
-terminal.setKeyboardHandler('ace/keyboard/vscode')
-terminal.renderer.setShowGutter(false)
-terminal.setTheme(`ace/theme/${TERMINAL_THEME}`)
-terminal.setShowPrintMargin(false)
-terminal.session.setMode('ace/mode/lisp')
-terminal.renderer.setScrollMargin(10, 10)
-terminal.session.setUseWrapMode(true)
+const editor = makeEditor('editor', THEME)
+const terminal = makeEditor('terminal', THEME)
 const initial = new URLSearchParams(location.search).get('l') ?? ''
 if (initial) {
   try {
@@ -40,12 +14,6 @@ if (initial) {
   } catch (e) {
     alert(e instanceof Error ? e.message : e)
   }
-}
-const serialise = (arg) => {
-  if (typeof arg === 'number' || typeof arg === 'string') return arg.toString()
-  else if (Array.isArray(arg))
-    return arg.length ? `[${arg.map((a) => serialise(a)).join(' ')}]` : '[]'
-  else return '(lambda)'
 }
 const inter = () => {
   const value = editor.getValue()

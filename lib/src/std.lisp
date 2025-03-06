@@ -432,8 +432,7 @@
         (list:pair (list:head xs) (list:insert-at (list:tail xs) (- pos 1) elem)))))
 (let list:get (lambda list i (do 
   (let l (list:find list (lambda x (= (list:head (list:tail x)) i))))
-  (if (list:nil? l) l (list:head l))
-)))
+  (if (list:nil? l) l (list:head l)))))
 (let list:end (lambda xs (if (list:nil? (list:tail xs)) xs (list:end (list:tail xs)))))
 (let list:rotate-left (lambda xs (do
 (let fst (list:head xs))
@@ -677,6 +676,16 @@
     (array:merge (array:merge (array:sort left cb) (array pivot)) (array:sort right cb)))))))))
 (let array:sorted-ascending? (lambda xs (array:enumerated-every? xs (lambda x i (or (= i 0) (>= x (get xs (- i 1))))))))
 (let array:sorted-descending? (lambda xs (array:enumerated-every? xs (lambda x i (or (= i 0) (<= x (get xs (- i 1))))))))
+(let array:bubble-sort-asc (lambda arr (do
+    (let n (length arr))
+    (loop:for-n (- n 1) (lambda i (loop:for-n (- n i 1) (lambda j 
+        (if (and (array:in-bounds? arr (+ j 1)) (> (get arr j) (get arr (+ j 1)))) (array:swap! arr j (+ j 1)))))))
+    arr)))
+(let array:bubble-sort-desc (lambda arr (do
+    (let n (length arr))
+    (loop:for-n (- n 1) (lambda i (loop:for-n (- n i 1) (lambda j 
+        (if (and (array:in-bounds? arr (+ j 1)) (< (get arr j) (get arr (+ j 1)))) (array:swap! arr j (+ j 1)))))))
+    arr)))
 (let array:sorted-by? (lambda xs cb? (array:enumerated-every? xs (lambda x i (or (= i 0) (cb? x (get xs (- i 1))))))))
 (let array:increment! (lambda xs idx value (set! xs idx (+ (get xs idx) value))))
 (let array:set (lambda xs index item (set! (array:shallow-copy xs) index item)))
