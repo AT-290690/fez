@@ -550,6 +550,8 @@
 (let math:list-product (lambda Unknowns (do Number)))
 ; 1 math:list-range
 (let math:list-range (lambda Number Number (do Numbers)))
+; 1 math:unique
+(let math:unique (lambda Numbers (do Numbers)))
 ; 1 list:pair
 (let list:pair (lambda Unknown Unknown (do Unknowns)))
 ; 1 list:car
@@ -718,8 +720,6 @@
 (let array:even-indexed (lambda Unknowns (do Unknowns)))
 ; 1 array:odd-indexed
 (let array:odd-indexed (lambda Unknowns (do Unknowns)))
-; 1 array:unique
-(let array:unique (lambda Numbers (do Numbers)))
 ; 1 array:iterate
 (let array:iterate (lambda Unknowns (lambda Number (do Unknown)) (do Unknowns)))
 ; 1 array:empty?

@@ -41,7 +41,7 @@ describe('Type checking', () => {
         'array:every?',
         'list:find',
         'list:every?',
-        'array:unique',
+        'math:unique',
         'array:empty?',
         'array:join',
         'string:join-as-table-with',
@@ -55,7 +55,7 @@ describe('Type checking', () => {
         '(let array:every? (lambda Unknowns (lambda Unknown (do Boolean)) (do Boolean)))',
         '(let list:find (lambda Unknowns (lambda Unknown (do Boolean)) (do Unknowns)))',
         '(let list:every? (lambda Unknowns (lambda Unknown (do Boolean)) (do Boolean)))',
-        '(let array:unique (lambda Numbers (do Numbers)))',
+        '(let math:unique (lambda Numbers (do Numbers)))',
         '(let array:empty? (lambda Unknowns (do Boolean)))',
         '(let array:join (lambda Unknowns Unknowns (do Unknowns)))',
         '(let string:join-as-table-with (lambda Unknowns Unknowns Unknown (do Unknowns)))',
@@ -230,7 +230,7 @@ describe('Type checking', () => {
 (let is12? (lambda x (= x 12)))
 (is12? c)
 `)
-    passes(`(let array:unique (lambda xs (do 
+    passes(`(let math:unique (lambda xs (do 
     (let sorted (array:sort xs (lambda a b (> a b))))
     (|>
       sorted

@@ -392,6 +392,17 @@
 (let math:list-summation (lambda xs (math:list-fold xs + 0)))
 (let math:list-product (lambda xs (math:list-fold xs * 1)))
 (let math:list-range (lambda low high (if (> low high) (Numbers []) (list:pair low (math:list-range (+ low 1) high)))))
+(let math:unique (lambda xs (do 
+    (let sorted (array:sort xs (lambda a b (> a b))))
+    (|> 
+      sorted
+      (array:zip (math:sequence sorted))
+      (array:select (lambda x (do 
+                  (let index (array:second x)) 
+                  (or (not (> index 0))
+                  (not (= (get sorted (- index 1)) (get sorted index)))))))
+      (math:map array:first)))))
+
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (get pair 0)))
 (let list:cdr (lambda pair (get pair 1)))
@@ -578,16 +589,6 @@
 (let array:pop! (lambda q (do (let l (array:at q -1)) (del! q) l)))
 (let array:even-indexed (lambda x (array:enumerated-transform x (lambda a b i (if (math:even? i) (array:append! a b) a)) [])))
 (let array:odd-indexed (lambda x (array:enumerated-transform x (lambda a b i (if (math:odd? i) (array:append! a b) a)) [])))
-(let array:unique (lambda xs (do 
-    (let sorted (array:sort xs (lambda a b (> a b))))
-    (|> 
-      sorted
-      (array:zip (math:sequence sorted))
-      (array:select (lambda x (do 
-                  (let index (array:second x)) 
-                  (or (not (> index 0))
-                  (not (= (get sorted (- index 1)) (get sorted index)))))))
-      (mapping:array->atom array:first)))))
 (let array:iterate (lambda xs cb (do 
   (loop:for-n (length xs) cb)
   xs)))

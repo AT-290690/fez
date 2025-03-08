@@ -34,4 +34,4 @@
 (let array:enumerated-reduce (lambda Unknowns (lambda Number Unknown Number (do Number)) Number (do Number)))
 
 (let bools:fold (lambda Booleans (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
-(let array:unique (lambda Numbers (do Numbers)))
+(let math:unique (lambda Numbers (do Numbers)))
