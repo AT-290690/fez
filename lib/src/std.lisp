@@ -676,15 +676,10 @@
     (array:merge (array:merge (array:sort left cb) (array pivot)) (array:sort right cb)))))))))
 (let array:sorted-ascending? (lambda xs (array:enumerated-every? xs (lambda x i (or (= i 0) (>= x (get xs (- i 1))))))))
 (let array:sorted-descending? (lambda xs (array:enumerated-every? xs (lambda x i (or (= i 0) (<= x (get xs (- i 1))))))))
-(let array:bubble-sort-asc (lambda arr (do
+(let array:bubble-sort (lambda arr cb (do
     (let n (length arr))
     (loop:for-n (- n 1) (lambda i (loop:for-n (- n i 1) (lambda j 
-        (if (and (array:in-bounds? arr (+ j 1)) (> (get arr j) (get arr (+ j 1)))) (array:swap! arr j (+ j 1)))))))
-    arr)))
-(let array:bubble-sort-desc (lambda arr (do
-    (let n (length arr))
-    (loop:for-n (- n 1) (lambda i (loop:for-n (- n i 1) (lambda j 
-        (if (and (array:in-bounds? arr (+ j 1)) (< (get arr j) (get arr (+ j 1)))) (array:swap! arr j (+ j 1)))))))
+        (if (and (array:in-bounds? arr (+ j 1)) (cb (get arr j) (get arr (+ j 1)))) (array:swap! arr j (+ j 1)))))))
     arr)))
 (let array:sorted-by? (lambda xs cb? (array:enumerated-every? xs (lambda x i (or (= i 0) (cb? x (get xs (- i 1))))))))
 (let array:increment! (lambda xs idx value (set! xs idx (+ (get xs idx) value))))
