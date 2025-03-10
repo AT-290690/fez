@@ -1296,6 +1296,14 @@
 (let binary-tree:left! (lambda tree node (set! tree 1 node)))
 (let binary-tree:right! (lambda tree node (set! tree 2 node)))
 (let binary-tree:value (lambda node (get node 0)))
+(let binary-tree:value! (lambda tree value (set! tree 0 value)))
+(let binary-tree:node? (lambda tree (array:not-empty? tree)))
+(let binary-tree:traverse-in-order (lambda tree cb
+    (if (binary-tree:node? tree) (do 
+        (cb tree)
+        (binary-tree:traverse-in-order (binary-tree:left tree) cb)
+        (binary-tree:traverse-in-order (binary-tree:right tree) cb)
+        ))))
 
 (let set:index
   (lambda table key
