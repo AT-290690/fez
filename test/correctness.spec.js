@@ -7,6 +7,67 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`(let facts "
+    m = 3.28 ft
+    ft = 12 in
+    hr = 60 min
+    min = 60 sec
+")
+
+(let parse (lambda input (|> input 
+    (string:trim) 
+    (string:lines) 
+    (array:map (lambda x (|> x (string:trim) (string:words))))
+    (array:map (lambda [ a . v b .] [ a (from:string->float v) b ])))))
+
+(let from:unit->key (lambda a b (array:concat-with [ a b ] char:dash)))
+
+(let graph (new:map16))
+(let table (array:fold (parse facts) (lambda table [ a v b .] (do 
+   (map:set! table (from:unit->key a b) [v a b])
+   (map:set! table (from:unit->key b a) [(/ 1 v) b a])
+   (map:set! graph a b)
+   table))
+(new:map16)))
+
+(let entries (|> table (array:flat-one)))
+(array:map entries (lambda [key value .] (do
+    (let [v1 from to .] value)
+    (if (map:exists? graph to) (do 
+        (let g (map:get graph to))
+        (let v2 (array:first (map:get table (from:unit->key to g))))
+        (let res (* v1 v2))
+        (map:set! table (from:unit->key from g) [res from g])
+        (map:set! table (from:unit->key g from) [(/ 1 res) g from]))))))
+
+(let query (lambda table question (do
+    (let parsed (string:words question))
+    (let [ v a . . b . ] parsed)
+    (let value (from:string->float v))
+    (let key (from:unit->key a b))
+    (if (map:has? table key) (* (array:first (map:get table key)) value) "not convertible!"))))
+
+[
+    (query table "2 m = ? in")
+    (query table "13 in = ? m")
+    (query table "2 hr = ? min")
+    (query table "5 min = ? sec")
+    (query table "5 hr = ? sec")
+    (query table "13 in = ? hr")
+]`),
+      [
+        78.72,
+        0.33028455284552843,
+        120,
+        300,
+        18000,
+        [
+          110, 111, 116, 32, 99, 111, 110, 118, 101, 114, 116, 105, 98, 108,
+          101, 33
+        ]
+      ]
+    )
     deepStrictEqual(evalJS(`(matrix:fill 8 8 (lambda i j (mod (+ i j) 2)))`), [
       [0, 1, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 0, 1, 0],
