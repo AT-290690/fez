@@ -4,6 +4,9 @@ import { makeEditor, serialise } from './utils.js'
 const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
 const editor = makeEditor('editor', THEME)
 const terminal = makeEditor('terminal', THEME)
+terminal.setValue(
+  '; To run press cmd/ctrl + S or the fez hat at the bottom right corner'
+)
 const initial = new URLSearchParams(location.search).get('l') ?? ''
 if (initial) {
   try {
