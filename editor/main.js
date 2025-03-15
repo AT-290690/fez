@@ -7,6 +7,7 @@ const terminal = makeEditor('terminal', THEME)
 terminal.setValue(
   '; To run press cmd/ctrl + S or the fez hat at the bottom right corner'
 )
+terminal.clearSelection()
 const initial = new URLSearchParams(location.search).get('l') ?? ''
 if (initial) {
   try {
