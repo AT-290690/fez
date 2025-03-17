@@ -8,6 +8,25 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(let find-kth-bit (lambda n k 
+    (if (= n 1) 0 (do 
+        (let len (** 2 n)) 
+        (cond 
+            (< k (/ len 2)) (find-kth-bit (- n 1) k) 
+            (= k (/ len 2)) 1
+            (= (find-kth-bit (- n 1) (- len k)) 0) 1
+            (*) 0)))))
+    [
+      (find-kth-bit 1 1)
+      (find-kth-bit 2 1)
+      (find-kth-bit 3 1)
+      (find-kth-bit 4 11)
+      (find-kth-bit 20 1000000)
+    ]    
+        `),
+      [0, 0, 0, 1, 1]
+    )
+    deepStrictEqual(
       evalJS(`(let facts "
     m = 3.28 ft
     ft = 12 in
