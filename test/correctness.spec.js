@@ -8,6 +8,18 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`    (let longest-common-prefix (lambda strs (do
+      (if (array:every? strs (lambda x (string:equal? x (array:first strs)))) (array:first strs)
+          (do
+              (let recursive:iter (lambda n (do
+                  (let prefix (array:take (array:first strs) n))
+                  (if (array:every? strs (lambda x (string:equal? (array:take x n) prefix))) (recursive:iter (+ n 1)) (array:take (array:first strs) (- n 1))))))
+              (recursive:iter 0))))))
+
+  (longest-common-prefix ["flower" "flow" "flight"])`),
+      [102, 108]
+    )
+    deepStrictEqual(
       evalJS(`(let find-kth-bit (lambda n k 
     (if (= n 1) 0 (do 
         (let len (** 2 n)) 
@@ -2633,11 +2645,10 @@ matrix
       ),
       [143, 123]
     )
-  })
 
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT 
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT 
 "....#.....
 .........#
 ..........
@@ -2716,13 +2727,13 @@ matrix
 (let PARSED (parse INPUT))
 
 (array (part1 PARSED) (part2 PARSED))`
-    ),
-    [41, 6]
-  )
+      ),
+      [41, 6]
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `
+    deepStrictEqual(
+      evalJS(
+        `
    (let INPUT (array:concat-with (array 
   "190: 10 19"
   "3267: 81 40 27"
@@ -2777,12 +2788,12 @@ matrix
 (array (sum PARSED part1) (sum PARSED part2))
 
     `
-    ),
-    [3749, 11387]
-  )
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT (array:concat-with (array 
+      ),
+      [3749, 11387]
+    )
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT (array:concat-with (array 
   "............"
   "........0..."
   ".....0......"
@@ -2875,12 +2886,12 @@ matrix
  (let PARSED (parse INPUT))
 
 (array (part1 PARSED) (part2 PARSED))`
-    ),
-    [14, 34]
-  )
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT (array:concat-with (array 
+      ),
+      [14, 34]
+    )
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT (array:concat-with (array 
   "89010123"
   "78121874"
   "87430965"
@@ -2948,13 +2959,13 @@ matrix
 (let PARSED (parse INPUT))
 
 (array (part1 PARSED) (part2 PARSED))`
-    ),
-    [36, 81]
-  )
+      ),
+      [36, 81]
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `
+    deepStrictEqual(
+      evalJS(
+        `
     (let INPUT "125 17")
 (let parse (lambda input (|> input (string:words) (array:map (lambda x (|> x (from:chars->digits) (from:digits->integer)))))))
 
@@ -2988,13 +2999,13 @@ matrix
 (let PARSED (parse INPUT))
 (array (part1 PARSED) (part2 PARSED))
     `
-    ),
-    [13, 13]
-  )
+      ),
+      [13, 13]
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT (string:concat-with-lines (array 
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT (string:concat-with-lines (array 
     "p=0,4 v=3,-3"
     "p=6,3 v=-1,-3"
     "p=10,3 v=-1,2"
@@ -3071,13 +3082,13 @@ matrix
 (let PARSED (parse INPUT))
 (array (part1 PARSED))
 `
-    ),
-    [12]
-  )
+      ),
+      [12]
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT "2333133121414131402")
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT "2333133121414131402")
 (let parse (lambda input (from:chars->digits input)))
 (let part1 (lambda input (do
     (let file-id (math:var-def -1))
@@ -3101,13 +3112,13 @@ matrix
        
 (let PARSED (parse INPUT))
 (array (part1 PARSED))`
-    ),
-    [1928]
-  )
+      ),
+      [1928]
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `(let samples (array 
+    deepStrictEqual(
+      evalJS(
+        `(let samples (array 
     "(())"    ; result in floor 0.
     "()()"    ; result in floor 0.
     "((("     ; result in floor 3.
@@ -3131,15 +3142,15 @@ matrix
     (recursive:iter input 0 0))))
 (array (|> samples (array:map part1)) (|> samples (array:map part2)))
 `
-    ),
-    [
-      [0, 0, 3, 3, 3, -1, -1, -3, -3, -1, -1],
-      [-1, -1, -1, -1, 1, 3, 1, 1, 1, 1, 5]
-    ]
-  )
-  strictEqual(
-    evalJS(
-      `(let parse (lambda input (|> input 
+      ),
+      [
+        [0, 0, 3, 3, 3, -1, -1, -3, -3, -1, -1],
+        [-1, -1, -1, -1, 1, 3, 1, 1, 1, 1, 5]
+      ]
+    )
+    strictEqual(
+      evalJS(
+        `(let parse (lambda input (|> input 
                               (string:lines)
                               (array:map (lambda line 
                                                   (|> 
@@ -3167,13 +3178,13 @@ matrix
         (solve))
 
 `
-    ),
-    288
-  )
+      ),
+      288
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `(let object (new:map (array 
+    deepStrictEqual(
+      evalJS(
+        `(let object (new:map (array 
     "x" 69 
     "y" 29 
     "price" 42
@@ -3190,21 +3201,21 @@ matrix
   (map:get object "y")
   (map:get object "price")
    (|> U (array:flat-one) (array:map from:chars->integer)))`
-    ),
-    [100, 69, 29, 42, [40, 100, 200, 50]]
-  )
+      ),
+      [100, 69, 29, 42, [40, 100, 200, 50]]
+    )
 
-  strictEqual(
-    evalJS(
-      `
+    strictEqual(
+      evalJS(
+        `
 (|> (array "-123" "2345" "12" "8" "-0" "-2") (from:strings->integers) (math:summation))`
-    ),
-    2240
-  )
+      ),
+      2240
+    )
 
-  strictEqual(
-    evalJS(
-      `(let I 
+    strictEqual(
+      evalJS(
+        `(let I 
 "5,4
 4,2
 4,5
@@ -3269,15 +3280,15 @@ matrix
     (var:get solution))))
     
     (part1 (parse I) 12)`
-    ),
-    22
-  )
+      ),
+      22
+    )
 
-  // slow tests
+    // slow tests
 
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT 
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT 
 "r, wr, b, g, bwu, rb, gb, br
 
 brwrr
@@ -3335,12 +3346,12 @@ bbrgwb")
 
 (array (part1 PARSED) (part2 PARSED))
 `
-    ),
-    [6, 16]
-  )
+      ),
+      [6, 16]
+    )
 
-  deepStrictEqual(
-    evalJS(`(let INPUT 
+    deepStrictEqual(
+      evalJS(`(let INPUT 
 "kh-tc
 qp-kh
 de-cg
@@ -3399,12 +3410,12 @@ td-yn")
 
 [(part1 (parse INPUT))]
 `),
-    [7]
-  )
+      [7]
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `(let INPUT
+    deepStrictEqual(
+      evalJS(
+        `(let INPUT
 "1
 10
 100
@@ -3461,12 +3472,12 @@ input (array:map
 )))
 (let PARSED (parse INPUT))
 (array (part1 PARSED))`
-    ),
-    [37327623]
-  )
-  strictEqual(
-    evalJS(
-      `(let INPUT
+      ),
+      [37327623]
+    )
+    strictEqual(
+      evalJS(
+        `(let INPUT
   (string:concat-with-lines (array 
       "###############"
       "#.......#....E#"
@@ -3523,12 +3534,12 @@ input (array:map
 
 (let PARSED (parse INPUT))
 (part1 PARSED)`
-    ),
-    7036
-  )
-  deepStrictEqual(
-    evalJS(
-      `(let out [])
+      ),
+      7036
+    )
+    deepStrictEqual(
+      evalJS(
+        `(let out [])
 (let comp (lambda a b (< a b)))
 (let heap (from:array->heap (array 30 10 50 20 40) comp))
 (heap:peek heap)
@@ -3538,13 +3549,13 @@ input (array:map
 (recursive:while)))))
 (recursive:while)
 (identity out)`
-    ),
-    [10, 20, 30, 40, 50]
-  )
+      ),
+      [10, 20, 30, 40, 50]
+    )
 
-  strictEqual(
-    evalJS(
-      `
+    strictEqual(
+      evalJS(
+        `
 (let part1 (lambda matrix (do 
 
   (let from:stats->key (lambda item (|> item (array:map (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars)))) (array:commas))))
@@ -3608,13 +3619,13 @@ input (array:map
       "#.###.#.#.#.#.#"
       "#S..#.....#...#"
       "###############"))))`
-    ),
-    7036
-  )
+      ),
+      7036
+    )
 
-  deepStrictEqual(
-    evalJS(
-      `(let I 
+    deepStrictEqual(
+      evalJS(
+        `(let I 
 "Register A: 729
 Register B: 0
 Register C: 0
@@ -3763,11 +3774,11 @@ Program: 0,1,5,4,3,0"
 ; ))))
 
 `
-    ),
-    [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
-  )
-  deepStrictEqual(
-    evalJS(`(let sum-n (lambda arr n (do 
+      ),
+      [4, 6, 3, 5, 6, 3, 5, 2, 1, 0]
+    )
+    deepStrictEqual(
+      evalJS(`(let sum-n (lambda arr n (do 
     (let empty [])
     (|>
      (math:range 0 n)
@@ -3781,6 +3792,7 @@ Program: 0,1,5,4,3,0"
     (sum-n [1 2 3 4 5 6 7 8] 10)
     (sum-n [1 2 3 4 5 6 7 8 9 10 11 12] 10)
 ]`),
-    [0, 10, 36, 66]
-  )
+      [0, 10, 36, 66]
+    )
+  })
 })
