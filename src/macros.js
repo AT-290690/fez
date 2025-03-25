@@ -21,6 +21,7 @@ import { NIL } from './types.js'
 export const SUGGAR = {
   // Syntactic suggars
   PIPE: '|>',
+  STR_LIST: '~~',
   NOT_EQUAL_1: '!=',
   NOT_EQUAL_2: '<>',
   REMAINDER_OF_DIVISION_1: '%',
@@ -184,6 +185,15 @@ export const deSuggarAst = (ast, scope) => {
                       temp = temp.at(-1)
                     }
                   }
+                  deSuggarAst(exp, scope)
+                }
+                break
+              case SUGGAR.STR_LIST:
+                {
+                  const items = rest[0].slice(1)
+                  exp.length = 0
+                  exp.push([APPLY, SUGGAR.CREATE_LIST])
+                  exp.push(...items)
                   deSuggarAst(exp, scope)
                 }
                 break
@@ -688,6 +698,7 @@ export const seeIfProgramIsInvalid = (source) => {
 }
 export const replaceQuotes = (source) =>
   source
+    .replaceAll(/\(\(array /g, `(${SUGGAR.STR_LIST} (array `)
     .replaceAll(/\(\[/g, `(${SUGGAR.CREATE_SET} [`)
     .replaceAll(/\(\{/g, `(${SUGGAR.CREATE_MAP} [`)
     .replaceAll(/\[/g, `(${KEYWORDS.CREATE_ARRAY} `)
