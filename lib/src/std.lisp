@@ -170,14 +170,36 @@
               (array []))))
 (let math:combinations (lambda xs (do
     (let out [])
-    (let combinations (lambda arr size start temp (do
+    (let combinations (lambda arr size start temp
         (if (= (length temp) size)
             (array:push! out (array:shallow-copy temp))
             (loop:for-range start (length arr) (lambda i (do
                     (array:push! temp (get arr i))
                     (combinations arr size (+ i 1) temp)
-                    (array:pop! temp))))))))
+                    (array:pop! temp)))))))
    (loop:for-range 1 (+ 1 (length xs)) (lambda i (combinations xs i 0 [])))
+    out)))
+(let math:combinations-n (lambda xs n (do
+    (let out [])
+    (let combinations (lambda arr size start temp
+        (if (= (length temp) size)
+            (array:push! out (array:shallow-copy temp))
+            (loop:for-range start (length arr) (lambda i (do
+                    (array:push! temp (get arr i))
+                    (combinations arr size (+ i 1) temp)
+                    (array:pop! temp)))))))
+    (combinations xs n 0 [])
+    out)))
+(let math:variants (lambda xs n (do
+    (let out [])
+    (let variants (lambda arr size temp
+        (if (= (length temp) size)
+            (array:push! out (array:shallow-copy temp))
+            (loop:for-range 0 (length arr) (lambda i (do
+                    (array:push! temp (get arr i))
+                    (variants arr size temp)
+                    (array:pop! temp)))))))
+    (variants xs n [])
     out)))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
