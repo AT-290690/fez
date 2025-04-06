@@ -274,6 +274,8 @@
 (let math:between? (lambda Number Number Number (do Boolean)))
 ; 1 math:overlap?
 (let math:overlap? (lambda Number Number Number (do Boolean)))
+; 1 math:bionomial-coefficient
+(let math:bionomial-coefficient (lambda Number Number (do Number)))
 ; 1 math:permutations
 (let math:permutations (lambda Unknowns (do Unknowns)))
 ; 1 math:combinations out

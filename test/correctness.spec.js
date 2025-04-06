@@ -8,6 +8,20 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`
+(|> [
+    [3 7]
+    [3 2]
+    [1 1]
+    [23 12]
+    [19 13]
+] (array:map (lambda [n m .] 
+    (math:bionomial-coefficient (+ m (- n 2)) (- n 1))
+)))
+`),
+      [28, 3, 1, 193536720, 86493225]
+    )
+    deepStrictEqual(
       evalJS(`    (let longest-common-prefix (lambda strs (do
       (if (array:every? strs (lambda x (string:equal? x (array:first strs)))) (array:first strs)
           (do

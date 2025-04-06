@@ -161,6 +161,12 @@
                           (recursive:math:numbers []))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
+(let math:bionomial-coefficient (lambda a b
+    (math:round
+        (/ (math:factorial a)
+            (*
+                (math:factorial b)
+                (math:factorial (- a b)))))))
 (let math:permutations (lambda xs
   (if (> (length xs) 0)
               (|> xs (array:enumerated-map (lambda x i (|>
