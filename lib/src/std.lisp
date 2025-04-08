@@ -290,8 +290,8 @@
 (let math:circumference (lambda radius (* math:pi (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
 (let math:abs (lambda n (- (^ n (>> n 31)) (>> n 31))))
-(let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0.5)))
-(let math:remove-nth-digits (lambda digit n (| (/ digit (math:power 10 n)) 0.5)))
+(let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0)))
+(let math:remove-nth-digits (lambda digit n (| (/ digit (math:power 10 n)) 0)))
 (let math:keep-nth-digits (lambda digit n (do
     (let recursive:math:keep-nth-digits (lambda i out base 
                     (if (> i 0) 
@@ -723,12 +723,10 @@
       (let recursive:array:adjacent-difference (lambda i result (if (< i len) (apply (lambda (do
         (recursive:array:adjacent-difference (+ i 1) (set! result i (cb (get xs (- i 1)) (get xs i))))))) result)))
         (recursive:array:adjacent-difference 1 xs))))))))
-(let array:partition (lambda xs n (array:transform (array:zip xs (math:sequence xs)) (lambda a b (do
-      (let x (array:first b))
-      (let i (array:second b))
-      (if (> (mod i n) 0)
-        (array:push! (array:at a -1) x)
-        (array:push! a (array x))) a))
+(let array:partition (lambda xs n (array:enumerated-transform xs (lambda a x i (do
+      (if (= (mod i n) 0)
+        (array:push! a (array x))
+        (array:push! (array:at a -1) x)) a))
       [])))
 (let array:ranges (lambda xs predicate? (array:sliding-window (array:enumerated-transform xs (lambda a x i (if (predicate? x) (array:merge! a [i]) a)) [0]) 2)))
 (let array:chunks (lambda xs predicate? (|> xs (array:ranges predicate?) (array:map (lambda [start end .] (array:exclude (array:slice xs start end) predicate?))))))
