@@ -1326,13 +1326,24 @@
 (let binary-tree:value (lambda node (get node 0)))
 (let binary-tree:value! (lambda tree value (set! tree 0 value)))
 (let binary-tree:node? (lambda tree (array:not-empty? tree)))
-(let binary-tree:traverse-in-order (lambda tree cb
-    (if (binary-tree:node? tree) (do 
+(let binary-tree:traverse-pre-order (lambda tree cb
+    (if (binary-tree:node? tree) (do
         (cb tree)
+        (binary-tree:traverse-pre-order (binary-tree:left tree) cb)
+        (binary-tree:traverse-pre-order (binary-tree:right tree) cb)
+        tree))))
+(let binary-tree:traverse-in-order (lambda tree cb
+    (if (binary-tree:node? tree) (do
         (binary-tree:traverse-in-order (binary-tree:left tree) cb)
+        (cb tree)
         (binary-tree:traverse-in-order (binary-tree:right tree) cb)
-        ))))
-
+        tree))))
+(let binary-tree:traverse-post-order (lambda tree cb
+    (if (binary-tree:node? tree) (do
+        (binary-tree:traverse-post-order (binary-tree:left tree) cb)
+        (binary-tree:traverse-post-order (binary-tree:right tree) cb)
+        (cb tree)
+        tree))))
 (let set:index
   (lambda table key
     (do

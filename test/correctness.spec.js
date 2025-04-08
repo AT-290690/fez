@@ -8,6 +8,23 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(
+        `(let tree [1 [3 [] [2 [] []]] []])
+(let pre-order [])
+(let in-order [])
+(let post-order [])
+(binary-tree:traverse-pre-order tree (lambda x (array:push! pre-order (binary-tree:value x))))
+(binary-tree:traverse-in-order tree (lambda x (array:push! in-order (binary-tree:value x))))
+(binary-tree:traverse-post-order tree (lambda x (array:push! post-order (binary-tree:value x))))
+[pre-order in-order post-order]`
+      ),
+      [
+        [1, 3, 2],
+        [3, 2, 1],
+        [2, 3, 1]
+      ]
+    )
+    deepStrictEqual(
       evalJS(`
 (|> [
     [3 7]
