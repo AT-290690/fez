@@ -1790,8 +1790,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
               }
             }
             stagger(stack, 'append', [first, env], judge)
-            // stagger(stack, 'prepend', [first, env], judge)
-
+            stagger(stack, 'prepend', [first, env], judge)
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
               if (isLeaf(r) && r[TYPE] !== ATOM)

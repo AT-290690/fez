@@ -1179,6 +1179,10 @@ ZZZ=ZZZ,ZZZ")
       `Incorrect type of argument (2) for (add). Expected (Number) but got (Unknown[]) (add 1 2 (array)) (check #16)`
     )
     fails(
+      `(let rrr [(math:odd? 3) (math:odd? 2)]) (math:summation rrr)`,
+      `Incorrect type of argument (0) for (math:summation). Expected (Number[]) but got (Boolean[]) (math:summation rrr) (check #202)`
+    )
+    fails(
       `(let add (lambda x y z (do 
     (let f (lambda a b c (do 
         (+ x y z a b c)
