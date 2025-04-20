@@ -1060,8 +1060,10 @@
 (let out Numbers)
 ; 1 from:number->positive-or-negative-digits
 (let from:number->positive-or-negative-digits (lambda Number (do Numbers)))
-; 1 from:integer->bits recursive:from:integer->bits
-(let recursive:from:integer->bits (lambda Number Numbers (do Numbers)))
+; 1 from:integer->bits-reversed recursive:from:integer->bits-reversed
+(let recursive:from:integer->bits-reversed (lambda Number Numbers (do Numbers)))
+; 1 from:integer->bits-reversed
+(let from:integer->bits-reversed (lambda Number (do Numbers)))
 ; 1 from:integer->bits
 (let from:integer->bits (lambda Number (do Unknowns)))
 ; 1 from:bits->integer xs
