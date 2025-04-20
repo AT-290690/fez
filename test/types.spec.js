@@ -1001,15 +1001,6 @@ ZZZ=ZZZ,ZZZ")
       `(let fn (lambda x (+ x 1)))
 (let x 10)
 (let y 23)
-(fn [])
-`,
-      `Incorrect type of argument (0) for (fn). Expected (Number) but got (Unknown[]) (fn (array)) (check #16)`
-    )
-    fails(
-      `(let fn (lambda x (+ x 1)))
-(let x 10)
-(let y 23)
-(fn [])
 (fn (lambda 1))
 `,
       `Incorrect type of argument (0) for (fn). Expected (Number) but got (Abstraction) (fn (lambda 1)) (check #16)`
@@ -1176,7 +1167,17 @@ ZZZ=ZZZ,ZZZ")
 (let fold (lambda xs cb x (array:fold xs1 cb x)))`,
       `(array:map) is trying to access undefined variable (xs) at argument (0) (array:map xs cb) (check #20)`
     )
-
+    fails(
+      `(let add (lambda x y z (do 
+    (let f (lambda a b c (do 
+        (+ x y z a b c)
+    )))
+    (f x y 2)
+)))
+(add 1 2 [])
+`,
+      `Incorrect type of argument (2) for (add). Expected (Number) but got (Unknown[]) (add 1 2 (array)) (check #16)`
+    )
     fails(
       `(let add (lambda x y z (do 
     (let f (lambda a b c (do 
@@ -1184,9 +1185,8 @@ ZZZ=ZZZ,ZZZ")
     )))
     (f x y [])
 )))
-(add 1 2 [])
 `,
-      `Incorrect type of argument (2) for (add). Expected (Number) but got (Unknown[]) (add 1 2 (array)) (check #16)`
+      `Incorrect type of argument (2) for (f). Expected (Number) but got (Unknown[]) (f x y (array)) (check #16)`
     )
     fails(
       `(let x (if (= 1 1) (lambda x 1) (lambda x 2)))

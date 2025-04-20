@@ -1498,7 +1498,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
             resolveSetter(first, rest, env, stack)
             // end of Var  ---------------
             // Judgement
-            stagger(stack, 'append', [first, env], () => {
+            const judge = () => {
               if (!isSpecial && env[first[VALUE]] === undefined)
                 throw new TypeError(
                   `Trying to call undefined (${KEYWORDS.ANONYMOUS_FUNCTION}) ${first[VALUE]} (check #9)`
@@ -1788,7 +1788,10 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   }
                 }
               }
-            })
+            }
+            stagger(stack, 'append', [first, env], judge)
+            stagger(stack, 'prepend', [first, env], judge)
+
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
               if (isLeaf(r) && r[TYPE] !== ATOM)
