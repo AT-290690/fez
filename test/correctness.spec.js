@@ -7,6 +7,16 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(evalJS(`(math:subset [1 2 3])`), [
+      [],
+      [1],
+      [2],
+      [1, 2],
+      [3],
+      [1, 3],
+      [2, 3],
+      [1, 2, 3]
+    ])
     deepStrictEqual(
       evalJS(
         `(let tree [1 [3 [] [2 [] []]] []])

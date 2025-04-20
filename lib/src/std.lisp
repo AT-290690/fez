@@ -207,6 +207,18 @@
                     (array:pop! temp)))))))
     (variants xs n [])
     out)))
+(let math:subset (lambda nums (do
+    (let n (length nums))
+    (let out [])
+    (loop:for-range 0 (math:power 2 n) (lambda i (do
+        ; generate bitmask, from 0..00 to 1..11
+        (array:append! out (|>
+                i
+                (from:integer->bits)
+                (array:reverse)
+                (array:enumerated-fold (lambda a x i
+                    (if (= x 1) (array:append! a (get nums i)) a)) []))))))
+    out)))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
 (let math:lesser-or-equal? (lambda a b (<= a b)))
