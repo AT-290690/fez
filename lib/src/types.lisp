@@ -356,6 +356,14 @@
 (let math:increment (lambda Number (do Number)))
 ; 1 math:decrement
 (let math:decrement (lambda Number (do Number)))
+; 1 math:signed-floor
+(let math:signed-floor (lambda Number (do Number)))
+; 1 math:signed-trunc
+(let math:signed-trunc (lambda Number (do Number)))
+; 1 math:signed-round
+(let math:signed-round (lambda Number (do Number)))
+; 1 math:signed-ceil
+(let math:signed-ceil (lambda Number (do Number)))
 ; 1 math:floor
 (let math:floor (lambda Number (do Number)))
 ; 1 math:round
