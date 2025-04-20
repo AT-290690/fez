@@ -256,6 +256,7 @@
 (let math:clear-bit (lambda n bit (& n (~ (<< 1 bit)))))
 (let math:power-of-two-bits (lambda n (<< 2 (- n 1))))
 (let math:odd-bit? (lambda n (= (& n 1) 1)))
+(let math:even-bit? (lambda n (= (& n 1) 0)))
 (let math:average-bit (lambda a b (>> (+ a b) 1)))
 (let math:flag-flip (lambda x (- 1 (* x x))))
 (let math:toggle-bit (lambda n a b (^ (^ a b) n)))

@@ -378,6 +378,8 @@
 (let math:power-of-two-bits (lambda Number (do Number)))
 ; 1 math:odd-bit?
 (let math:odd-bit? (lambda Number (do Boolean)))
+; 1 math:even-bit?
+(let math:even-bit? (lambda Number (do Boolean)))
 ; 1 math:average-bit
 (let math:average-bit (lambda Number Number (do Number)))
 ; 1 math:flag-flip
