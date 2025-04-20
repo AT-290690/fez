@@ -827,7 +827,7 @@ const resolveReturnType = ({
             GETTERS_SET.has(returns[VALUE]) &&
             !resolveGetter({ rem, prop, name, env })
           )
-            return once(env[name][STATS], [returns, env], stack, () => {
+            return retry(env[name][STATS], [returns, env], stack, () => {
               resolveReturnType({
                 returns,
                 rem,
@@ -1215,10 +1215,10 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
             }
             //  Predicate name consistency
             const rightHand = rest.at(-1)
+            const isApply =
+              rightHand && rightHand[0] && rightHand[0][TYPE] === APPLY
             if (
-              rightHand &&
-              rightHand[0] &&
-              rightHand[0][TYPE] === APPLY &&
+              isApply &&
               rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
             ) {
               validateLambda(rightHand, name)
@@ -1239,6 +1239,49 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 retry(env[name][STATS], exp, stack, () =>
                   check(rightHand, env, exp)
                 )
+            } else if (
+              isApply &&
+              rightHand[0][VALUE] === KEYWORDS.CREATE_ARRAY
+            ) {
+              const right = rightHand[0]
+              env[name] = {
+                [STATS]: {
+                  [TYPE_PROP]: [COLLECTION],
+                  [RETURNS]: [UNKNOWN],
+                  [SIGNATURE]: name,
+                  retried: 0,
+                  counter: 0
+                }
+              }
+              setTypeToReturn(env[name][STATS], env[right[VALUE]][STATS])
+              const resolve = () => {
+                const body = rightHand
+                const rem = hasBlock(body) ? body.at(-1) : body
+                const returns = isLeaf(rem) ? rem : rem[0]
+                resolveReturnType({
+                  stack,
+                  returns,
+                  rem,
+                  prop: TYPE_PROP,
+                  exp,
+                  env,
+                  name,
+                  check
+                })
+              }
+              resolve()
+              if (isUknownSubType(env[name][STATS]))
+                stagger(stack, 'prepend', exp, () => {
+                  once(env[name][STATS], exp, stack, () => {
+                    setPropToCollection(env[name][STATS], TYPE_PROP)
+                    setPropToSubReturn(
+                      env[name][STATS],
+                      TYPE_PROP,
+                      initArrayType({ rem: rightHand, env })
+                    )
+                  })
+                })
+              check(rightHand, env, scope)
             } else {
               checkPredicateName(exp, rest)
               const isLeafNode = isLeaf(rightHand)

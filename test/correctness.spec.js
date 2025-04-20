@@ -7,6 +7,33 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`(let num-of-rabbits (lambda answers (do 
+    (|> answers 
+        (from:integers->strings) 
+        (map:count) 
+        (array:flat-one)
+        (array:map (lambda [ k v . ] [(from:string->integer k) v]))
+        (array:map (lambda [ k v . ] (* (math:ceil (/ v (+ k 1))) (+ k 1))))
+        (math:summation)))))
+[
+    (num-of-rabbits [ 1 1 2 ])
+    (num-of-rabbits [ 10 10 10 ])
+    (num-of-rabbits [ 0 0 1 1 1 ])
+]`),
+      [5, 11, 6]
+    )
+    strictEqual(
+      evalJS(`(let users [
+    ({ "name" "Anthony" "age" 34 })
+    ({ "name" "Dimana" "age" 26 })
+])
+(let find-age (lambda users name (do 
+    (let option (array:find-option users (lambda user (if (map:has? user "name") (string:equal? (map:get user "name") name)))))
+    (let age (if (option:value? option) (map:get (option:value option) "age"))))))
+(find-age users "Dimana")`),
+      26
+    )
     deepStrictEqual(evalJS(`(math:subset [1 2 3])`), [
       [],
       [1],

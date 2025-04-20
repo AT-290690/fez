@@ -56,7 +56,7 @@ export const toTypeNames = (type) => {
       return 'Unknown'
     case COLLECTION:
       // return 'Array'
-      return 'Unknowns'
+      return 'Unknown[]'
     case ANY:
       return 'Any'
     default:
@@ -75,6 +75,7 @@ export const toTypeCodes = (type) => {
       return [ATOM, NUMBER_SUBTYPE()]
     case 'Unknown':
       return [UNKNOWN]
+    case 'Unknown[]':
     case 'Unknowns':
     case 'Collection':
       return [COLLECTION, new Set([ANY])]
@@ -1300,7 +1301,7 @@ export const formatSubType = (T) => {
               )
               .join(' ') || toTypeNames(UNKNOWN)
           : toTypeNames(UNKNOWN)
-      }s`
+      }[]`
     case ATOM:
       return `${
         T[1] instanceof Set

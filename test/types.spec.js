@@ -48,18 +48,18 @@ describe('Type checking', () => {
         'list:zip'
       ]),
       [
-        '(let matrix:enumerated-for (lambda Unknowns (lambda Unknown Number Number (do Unknown)) (do Unknowns)))',
+        '(let matrix:enumerated-for (lambda Unknown[] (lambda Unknown Number Number (do Unknown)) (do Unknown[])))',
         '(let math:overlap? (lambda Number Number Number (do Boolean)))',
         '(let math:prime? (lambda Number (do Boolean)))',
-        '(let matrix:adjacent (lambda Unknowns Unknowns Number Number (lambda Unknown Unknowns Number Number (do Unknown)) (do Unknowns)))',
-        '(let array:every? (lambda Unknowns (lambda Unknown (do Boolean)) (do Boolean)))',
-        '(let list:find (lambda Unknowns (lambda Unknown (do Boolean)) (do Unknowns)))',
-        '(let list:every? (lambda Unknowns (lambda Unknown (do Boolean)) (do Boolean)))',
-        '(let math:unique (lambda Numbers (do Numbers)))',
-        '(let array:empty? (lambda Unknowns (do Boolean)))',
-        '(let array:join (lambda Unknowns Unknowns (do Unknowns)))',
-        '(let string:join-as-table-with (lambda Unknowns Unknowns Unknown (do Unknowns)))',
-        '(let list:zip (lambda Unknowns Unknowns (do Unknowns)))'
+        '(let matrix:adjacent (lambda Unknown[] Unknown[] Number Number (lambda Unknown Unknown[] Number Number (do Unknown)) (do Unknown[])))',
+        '(let array:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))',
+        '(let list:find (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))',
+        '(let list:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))',
+        '(let math:unique (lambda Number[] (do Number[])))',
+        '(let array:empty? (lambda Unknown[] (do Boolean)))',
+        '(let array:join (lambda Unknown[] Unknown[] (do Unknown[])))',
+        '(let string:join-as-table-with (lambda Unknown[] Unknown[] Unknown (do Unknown[])))',
+        '(let list:zip (lambda Unknown[] Unknown[] (do Unknown[])))'
       ]
     )
     deepStrictEqual(
@@ -89,6 +89,24 @@ describe('Type checking', () => {
 (let ic (identity (lambda x (* x x))))
 (let aafn (lambda a b [(+ a 1) (length (set! b 0 false))]))
 (let sqrt-of-nine (math:sqrt 9))
+
+(let num-of-rabbits (lambda answers (do 
+    (|> answers 
+        (from:integers->strings) 
+        (map:count) 
+        (array:flat-one)
+        (array:map (lambda [ k v . ] [(from:string->integer k) v]))
+        (array:map (lambda [ k v . ] (* (math:ceil (/ v (+ k 1))) (+ k 1))))
+        (math:summation)))))
+
+(let rabbits [
+    (num-of-rabbits [ 1 1 2 ])
+    (num-of-rabbits [ 10 10 10 ])
+    (num-of-rabbits [ 0 0 1 1 1 ])
+])
+
+(let fff (get rabbits 0))
+
 `,
 
         [
@@ -109,28 +127,32 @@ describe('Type checking', () => {
           'ib',
           'ic',
           'aafn',
-          'sqrt-of-nine'
+          'sqrt-of-nine',
+          'rabbits',
+          'fff'
         ]
       ),
       [
         '(let is12? (lambda Number (do Boolean)))',
         '(let a Number)',
         '(let c Number)',
-        '(let b Unknowns)',
-        '(let box (lambda Unknown (do Unknowns)))',
-        '(let add (lambda Number Unknowns (do Number)))',
+        '(let b Unknown[])',
+        '(let box (lambda Unknown (do Unknown[])))',
+        '(let add (lambda Number Unknown[] (do Number)))',
         '(let x? Number)',
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda Numbers (do Number)))',
-        '(let Ax Numbers)',
+        '(let g (lambda Number[] (do Number)))',
+        '(let Ax Number[])',
         '(let ix Number)',
         '(let iz (lambda (do Number)))',
         '(let iy (lambda (do Number)))',
-        '(let ib Numbers)',
+        '(let ib Number[])',
         '(let ic (lambda Number (do Number)))',
-        '(let aafn (lambda Number Booleans (do Numbers)))',
-        '(let sqrt-of-nine Number)'
+        '(let aafn (lambda Number Boolean[] (do Number[])))',
+        '(let sqrt-of-nine Number)',
+        '(let rabbits Number[])',
+        '(let fff Number)'
       ]
     )
     deepStrictEqual(
@@ -611,18 +633,18 @@ ZZZ=ZZZ,ZZZ")
         1
     )))
     `,
-      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Unknowns) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
+      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Unknown[]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
     )
     fails(
       `(let ifs (Numbers []))
 (set! ifs 0 (and (> 2 2) (> 1 1)))`,
-      `Incorrect array type at (set!). ifs is (Numbers) but insertion is (Boolean) (set! (ifs 0 (and (> 2 2) (> 1 1)))) (check #198)`
+      `Incorrect array type at (set!). ifs is (Number[]) but insertion is (Boolean) (set! (ifs 0 (and (> 2 2) (> 1 1)))) (check #198)`
     )
     fails(
       `(let ifs (Booleans []))
 (let m (math:summation [1 2 3]))
 (set! ifs 0 m)`,
-      `Incorrect array type at (set!). ifs is (Booleans) but insertion is (Number) (set! (ifs 0 m)) (check #198)`
+      `Incorrect array type at (set!). ifs is (Boolean[]) but insertion is (Number) (set! (ifs 0 m)) (check #198)`
     )
     fails(
       `(let y? (if (= 1 1) (apply [1] array:empty!)  (apply 1 math:odd?)))`,
@@ -631,7 +653,7 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let ifs (Booleans []))
 (set! ifs 0 1)`,
-      `Incorrect array type at (set!). ifs is (Booleans) but insertion is (Number) (set! (ifs 0 1)) (check #199)`
+      `Incorrect array type at (set!). ifs is (Boolean[]) but insertion is (Number) (set! (ifs 0 1)) (check #199)`
     )
     // TODO make this fail
     // fails(`(let xs [])
@@ -648,7 +670,7 @@ ZZZ=ZZZ,ZZZ")
 (set! xs 0 100)
 (let x (array:get xs 0 100))
 (length x)`,
-      `Incorrect type of argument (0) for (length). Expected (Unknowns) but got (Number) (length x) (check #3)`
+      `Incorrect type of argument (0) for (length). Expected (Unknown[]) but got (Number) (length x) (check #3)`
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
@@ -658,7 +680,7 @@ ZZZ=ZZZ,ZZZ")
           [])))
           (set! [] 0 1)
       `,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got (Unknowns) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got (Unknown[]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
     )
     fails(
       `(let arr [])
@@ -667,11 +689,11 @@ ZZZ=ZZZ,ZZZ")
 (let x (get arr 0))
 (array:reverse x)
 )))`,
-      `Incorrect type of argument (0) for (array:reverse). Expected (Unknowns) but got (Number) (array:reverse x) (check #3)`
+      `Incorrect type of argument (0) for (array:reverse). Expected (Unknown[]) but got (Number) (array:reverse x) (check #3)`
     )
     fails(
       `(and (array:empty! [1 2 3]) 1)`,
-      `Incorrect type of argument (0) for (and). Expected (Number) but got (Unknowns) (and (array:empty! (array 1 2 3)) 1) (check #16)`
+      `Incorrect type of argument (0) for (and). Expected (Number) but got (Unknown[]) (and (array:empty! (array 1 2 3)) 1) (check #16)`
     )
 
     fails(
@@ -683,17 +705,17 @@ ZZZ=ZZZ,ZZZ")
       `(let x 1)
 (let y 2)
 (set! x 1 10)`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknowns) but got (Number) (set! x 1 10) (check #3)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! x 1 10) (check #3)`
     )
     fails(
       `(let x 1)
 (let y 2)
 (set! 1 1 4)`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknowns) but got (Number) (set! 1 1 4) (check #2)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! 1 1 4) (check #2)`
     )
     fails(
       `(set! 1 1 10)`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknowns) but got (Number) (set! 1 1 10) (check #2)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! 1 1 10) (check #2)`
     )
     fails(
       `(let x ())`,
@@ -725,7 +747,7 @@ ZZZ=ZZZ,ZZZ")
 (let x (get arr 0))
 (set! x 0 1)
 )))`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknowns) but got (Number) (set! x 0 1) (check #3)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! x 0 1) (check #3)`
     )
     fails(
       `(let arr [1 2 3 4])
@@ -777,7 +799,7 @@ ZZZ=ZZZ,ZZZ")
 
 (+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
 `,
-      `Incorrect type of argument (1) for (+). Expected (Number) but got (Unknowns) (+ (f8) (f5 1)) (check #16)`
+      `Incorrect type of argument (1) for (+). Expected (Number) but got (Unknown[]) (+ (f8) (f5 1)) (check #16)`
     )
     fails(
       `(let fn (lambda x y? (+ x (numberp (or y? 1))))) (fn 1 2)`,
@@ -788,7 +810,7 @@ ZZZ=ZZZ,ZZZ")
     (loop:for-n (length xs) (lambda i (set! xs i (not (get xs i)))))
     xs)))
 (flip-bools [1 2 3])`,
-      `Incorrect type of argument (0) for (flip-bools). Expected (Booleans) but got (Numbers) (flip-bools (array 1 2 3)) (check #206)`
+      `Incorrect type of argument (0) for (flip-bools). Expected (Boolean[]) but got (Number[]) (flip-bools (array 1 2 3)) (check #206)`
     )
     fails(
       `(let fn1? (lambda (apply [1] array:empty!)))
@@ -804,7 +826,7 @@ ZZZ=ZZZ,ZZZ")
     // (if (option:value? option) (do
     //     (let item ([] (option:value option)))
     //     (- item 10)))`,
-    //       `Incorrect type of argument (0) for (-). Expected (Number) but got (Unknowns) (- item 10) (check #3)`
+    //       `Incorrect type of argument (0) for (-). Expected (Number) but got (Unknown[]) (- item 10) (check #3)`
     //     )
     fails(
       `(let INPUT
@@ -869,7 +891,7 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(and (array:map [1 2 3] math:square) false)`,
-      `Incorrect type of argument (0) for (and). Expected (Number) but got (Unknowns) (and (array:map (array 1 2 3) math:square) false) (check #16)`
+      `Incorrect type of argument (0) for (and). Expected (Number) but got (Unknown[]) (and (array:map (array 1 2 3) math:square) false) (check #16)`
     )
     fails(
       `(not (length []))`,
@@ -896,7 +918,7 @@ ZZZ=ZZZ,ZZZ")
 (let add (lambda a b (+ a b)))
 (add idx 1))))
 `,
-      `Incorrect type of argument (0) for (add). Expected (Number) but got (Unknowns) (add idx 1) (check #3)`
+      `Incorrect type of argument (0) for (add). Expected (Number) but got (Unknown[]) (add idx 1) (check #3)`
     )
     // TODO revisit this test - array:first should set the type as it's the first one to be called
     // There is actually a conflict of types. Maybe the error message should be different
@@ -904,7 +926,7 @@ ZZZ=ZZZ,ZZZ")
       `(let g (lambda x (do 
                   (let index (array:second x)) 
                   (or (not (> x 0)) 1))))`,
-      `Incorrect type of argument (0) for (array:second). Expected (Unknowns) but got (Number) (array:second x) (check #3)`
+      `Incorrect type of argument (0) for (array:second). Expected (Unknown[]) but got (Number) (array:second x) (check #3)`
     )
     fails(
       `(math:pi 10)`,
@@ -925,7 +947,7 @@ ZZZ=ZZZ,ZZZ")
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Unknowns) (array:get (array 1 2 3) idx) (check #3)`
+      `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Unknown[]) (array:get (array 1 2 3) idx) (check #3)`
     )
     fails(
       `(let array:get (lambda xs i (get xs i)))
@@ -948,7 +970,7 @@ ZZZ=ZZZ,ZZZ")
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Unknowns) (array:get (array 1 2 3) (array)) (check #16)`
+      `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Unknown[]) (array:get (array 1 2 3) (array)) (check #16)`
     )
     fails(
       `(let f (lambda x (if (and x true) false true)))
@@ -965,7 +987,7 @@ ZZZ=ZZZ,ZZZ")
 (set! arr (length arr) 2)
 (let x (get arr 0))
 (set! x 0 1)`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknowns) but got (Number) (set! x 0 1) (check #3)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! x 0 1) (check #3)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -973,7 +995,7 @@ ZZZ=ZZZ,ZZZ")
 (let y 23)
 (fn [])
 `,
-      `Incorrect type of argument (0) for (fn). Expected (Number) but got (Unknowns) (fn (array)) (check #16)`
+      `Incorrect type of argument (0) for (fn). Expected (Number) but got (Unknown[]) (fn (array)) (check #16)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -981,7 +1003,7 @@ ZZZ=ZZZ,ZZZ")
 (let y 23)
 (fn [])
 `,
-      `Incorrect type of argument (0) for (fn). Expected (Number) but got (Unknowns) (fn (array)) (check #16)`
+      `Incorrect type of argument (0) for (fn). Expected (Number) but got (Unknown[]) (fn (array)) (check #16)`
     )
     fails(
       `(let fn (lambda x (+ x 1)))
@@ -998,12 +1020,12 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(math:list-summation (lambda []))`,
-      `Incorrect type of argument (0) for (math:list-summation). Expected (Unknowns) but got (Abstraction) (math:list-summation (lambda (array))) (check #16)`
+      `Incorrect type of argument (0) for (math:list-summation). Expected (Unknown[]) but got (Abstraction) (math:list-summation (lambda (array))) (check #16)`
     )
     fails(
       `(let x (lambda []))
 (math:list-summation x)`,
-      `Incorrect type of argument (0) for (math:list-summation). Expected (Unknowns) but got (Abstraction) (math:list-summation x) (check #3)`
+      `Incorrect type of argument (0) for (math:list-summation). Expected (Unknown[]) but got (Abstraction) (math:list-summation x) (check #3)`
     )
     fails(
       `(let INPUT
@@ -1101,7 +1123,7 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1))) (fn 1 (lambda x (do  (let y 10) [])))`,
-      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got (Unknowns) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
+      `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got (Unknown[]) (fn 1 (lambda x (do (let y 10) (array)))) (check #779)`
     )
     // // TODO Regression 2! Have to investigate this again later
 
@@ -1112,7 +1134,7 @@ ZZZ=ZZZ,ZZZ")
     //       (let y 10)
     //       [(+ x 1)])))
     //   (fn 1 n)`,
-    //   `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got (Unknowns) (fn 1 n) (check #782)`
+    //   `Incorrect return type for (cb) the (lambda) argument of (fn) at position (1). Expected (Number) but got (Unknown[]) (fn 1 n) (check #782)`
     // )
     // fails(
     //   `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
@@ -1128,7 +1150,7 @@ ZZZ=ZZZ,ZZZ")
     // (fn 1 n)
 
     //    `,
-    //   `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Unknowns) (fn 1 n) (check #781)`
+    //   `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Unknown[]) (fn 1 n) (check #781)`
     // )
     fails(
       `(let add (lambda a b c (+ a b c)))
@@ -1147,7 +1169,7 @@ ZZZ=ZZZ,ZZZ")
   (and (array? a)
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))`,
-      `Incorrect type of argument (0) for (=). Expected (Number) but got (Unknowns) (= a b) (check #3)`
+      `Incorrect type of argument (0) for (=). Expected (Number) but got (Unknown[]) (= a b) (check #3)`
     )
     fails(
       `(let map (lambda xs1 cb (array:map xs cb)))
@@ -1164,7 +1186,7 @@ ZZZ=ZZZ,ZZZ")
 )))
 (add 1 2 [])
 `,
-      `Incorrect type of argument (2) for (add). Expected (Number) but got (Unknowns) (add 1 2 (array)) (check #16)`
+      `Incorrect type of argument (2) for (add). Expected (Number) but got (Unknown[]) (add 1 2 (array)) (check #16)`
     )
     fails(
       `(let x (if (= 1 1) (lambda x 1) (lambda x 2)))
