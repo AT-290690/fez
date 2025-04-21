@@ -293,7 +293,7 @@
 (let math:greatest-common-divisor (lambda a b (do
     (let recursive:math:greatest-common-divisor (lambda a b
           (if (= b 0) a (recursive:math:greatest-common-divisor b (mod a b))))) (recursive:math:greatest-common-divisor a b))))
-(let math:least-common-divisor (lambda a b (* a b (/ (math:greatest-common-divisor a b)))))
+(let math:least-common-divisor (lambda a b (/ (* a b) (math:greatest-common-divisor a b))))
 (let math:coprime? (lambda a b (= (math:greatest-common-divisor a b) 1)))
 (let math:sqrt (lambda x (do
   (let good-enough? (lambda g x (< (math:abs (- (math:square g) x)) 0.01)))
