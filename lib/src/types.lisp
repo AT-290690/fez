@@ -986,6 +986,8 @@
 (let matrix:in-bounds? (lambda Unknown[] Number Number (do Boolean)))
 ; 1 matrix:diagonal-neighborhood
 (let matrix:diagonal-neighborhood Unknown[][])
+; 1 matrix:kernel-neighborhood
+(let matrix:kernel-neighborhood Unknown[][])
 ; 1 matrix:moore-neighborhood
 (let matrix:moore-neighborhood Unknown[][])
 ; 1 matrix:von-neumann-neighborhood
