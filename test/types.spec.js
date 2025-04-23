@@ -106,7 +106,8 @@ describe('Type checking', () => {
 ])
 
 (let fff (get rabbits 0))
-
+(let iitem (array:zip [1 2 3] [10 20 30]))
+(let iiitem (get iitem 0))
 `,
 
         [
@@ -129,7 +130,9 @@ describe('Type checking', () => {
           'aafn',
           'sqrt-of-nine',
           'rabbits',
-          'fff'
+          'fff',
+          'iitem',
+          'iiitem'
         ]
       ),
       [
@@ -152,7 +155,9 @@ describe('Type checking', () => {
         '(let aafn (lambda Number Boolean[] (do Number[])))',
         '(let sqrt-of-nine Number)',
         '(let rabbits Number[])',
-        '(let fff Number)'
+        '(let fff Number)',
+        '(let iitem Unknown[][])',
+        '(let iiitem Unknown[])'
       ]
     )
     deepStrictEqual(

@@ -45,7 +45,8 @@ import {
   BOOLEAN,
   IS_ARGUMENT,
   NUMBER,
-  NUMBER_SUBTYPE
+  NUMBER_SUBTYPE,
+  UNKNOWN_SUBTYPE
 } from './types.js'
 import {
   Brr,
@@ -161,6 +162,7 @@ export const setProp = (stats, prop, value) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[prop][0] !== UNKNOWN &&
+    value[prop][0] !== ANY &&
     ((stats[prop][0] = value[prop][0]),
     value[prop][1] && (stats[prop][1] = value[prop][1]))
   )
@@ -169,6 +171,7 @@ export const setPropToReturn = (stats, prop, value) => {
   return (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[RETURNS][0] !== UNKNOWN &&
+    value[RETURNS][0] !== ANY &&
     ((stats[prop][0] = value[RETURNS][0]),
     value[RETURNS][1] && (stats[prop][1] = value[RETURNS][1]))
   )
@@ -178,6 +181,7 @@ export const setPropToReturnRef = (stats, prop, value) => {
     stats[prop] &&
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[RETURNS][0] !== UNKNOWN &&
+    value[RETURNS][0] !== ANY &&
     (stats[prop] = value[RETURNS])
   )
 }
@@ -185,6 +189,7 @@ export const setPropToType = (stats, prop, value) => {
   return (
     stats[prop] &&
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
+    value[TYPE_PROP][0] !== ANY &&
     ((stats[prop][0] = value[TYPE_PROP][0]),
     value[TYPE_PROP][1] && (stats[prop][1] = value[TYPE_PROP][1]))
   )
@@ -726,7 +731,12 @@ const resolveGetter = ({ rem, prop, name, env }) => {
           setPropToAtom(env[name][STATS], prop)
           setPropToSubReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
         } else if (!isAtom && isCollection) {
-          setPropToReturn(env[name][STATS], env[array[VALUE]][STATS])
+          setPropToReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
+          // TODO: handle this nested array overwrite better
+          if (getSubReturn(env[array[VALUE]][STATS]).has(COLLECTION))
+            setPropToSubReturn(env[name][STATS], prop, {
+              [RETURNS]: [COLLECTION, UNKNOWN_SUBTYPE()]
+            })
         } else return false
       } else return false
       break
@@ -741,7 +751,12 @@ const resolveGetter = ({ rem, prop, name, env }) => {
             setPropToAtom(env[name][STATS], prop)
             setPropToSubType(env[name][STATS], prop, env[array[VALUE]][STATS])
           } else if (!isAtom && isCollection) {
-            setPropToType(env[name][STATS], env[array[VALUE]][STATS])
+            setPropToType(env[name][STATS], prop, env[array[VALUE]][STATS])
+            // TODO: handle this nested array overwrite better
+            if (getSubType(env[array[VALUE]][STATS]).has(COLLECTION))
+              setPropToSubType(env[name][STATS], prop, {
+                [TYPE_PROP]: [COLLECTION, UNKNOWN_SUBTYPE()]
+              })
           } else return false
         } else return false
       }
@@ -824,6 +839,7 @@ const resolveReturnType = ({
       default:
         {
           if (
+            !GETTERS_SET.has(name) &&
             GETTERS_SET.has(returns[VALUE]) &&
             !resolveGetter({ rem, prop, name, env })
           )

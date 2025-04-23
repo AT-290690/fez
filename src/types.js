@@ -36,6 +36,7 @@ export const BOOLEAN_SUBTYPE = () => new Set([BOOLEAN])
 export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
 export const NUMBER_SUBTYPE = () => new Set([NUMBER])
 export const ABSTRACTION_SUBTYPE = () => new Set([APPLY])
+export const UNKNOWN_SUBTYPE = () => new Set([UNKNOWN])
 
 const SPECIAL_BOOLEAN = BOOLEAN_SUBTYPE()
 const SPECIAL_COLLECTION = COLLECTION_SUBTYPE()
@@ -80,9 +81,15 @@ export const toTypeCodes = (type) => {
     case 'Collection':
       return [COLLECTION, new Set([ANY])]
     case 'Numbers':
+    case 'Number[]':
       return [COLLECTION, NUMBER_SUBTYPE()]
     case 'Booleans':
+    case 'Boolean[]':
       return [COLLECTION, BOOLEAN_SUBTYPE()]
+    case 'Collections':
+    case 'Collection[]':
+    case 'Unknown[][]':
+      return [COLLECTION, COLLECTION_SUBTYPE()]
     case 'Any':
       return [ANY]
     default:
