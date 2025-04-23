@@ -17,6 +17,11 @@
 (let math:max-sub-array-sum (lambda Number[] (do Number)))
 (let math:median (lambda Number[] (do Number)))
 (let math:mean (lambda Number[] (do Number)))
+(let math:subset (lambda Unknown[] (do Unknown[][])))
+(let math:permutations (lambda Unknown[] (do Unknown[][])))
+(let math:combinations (lambda Unknown[] (do Unknown[][])))
+(let math:combinations-n (lambda Unknown[] Number (do Unknown[][])))
+(let math:variants (lambda Unknown[] Number (do Unknown[][])))
 
 (let var:def (lambda Any (do Unknown[])))
 (let var:get (lambda Unknown[] (do Any)))
