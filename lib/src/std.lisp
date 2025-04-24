@@ -669,15 +669,15 @@
 (let array:binary-search
         (lambda xs target (do
   (let recursive:array:binary-search
-        (lambda xs target start end (do
+        (lambda start end (do
     (if (<= start end) (apply (lambda (do
         (let index (math:floor (* (+ start end) 0.5)))
         (let current (get xs index))
         (if (= target current) target
           (if (> current target)
-            (recursive:array:binary-search xs target start (- index 1))
-            (recursive:array:binary-search xs target (+ index 1) end)))))) 0))))
-   (recursive:array:binary-search xs target 0 (length xs)))))
+            (recursive:array:binary-search start (- index 1))
+            (recursive:array:binary-search (+ index 1) end)))))) 0))))
+   (recursive:array:binary-search 0 (length xs)))))
 (let array:zip (lambda a b (do
   (let recursive:array:zip (lambda i j output
     (if (and (> (length a) i) (> (length b) j)) (recursive:array:zip (+ i 1) (+ j 1) (set! output (length output) (array (get a i) (get b j)))) output)))

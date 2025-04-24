@@ -785,7 +785,7 @@
 ; 1 array:binary-search recursive:array:binary-search 31 current
 (let current Unknown)
 ; 1 array:binary-search recursive:array:binary-search
-(let recursive:array:binary-search (lambda Unknown[] Number Number Number (do Number)))
+(let recursive:array:binary-search (lambda Number Number (do Number)))
 ; 1 array:binary-search
 (let array:binary-search (lambda Unknown[] Number (do Number)))
 ; 1 array:zip
