@@ -1522,7 +1522,28 @@
 (let math:var-decrement! (lambda variable (set! variable 0 (- (math:var-get variable) 1))))
 (let math:var-increment-and-get! (lambda variable (do (set! variable 0 (+ (math:var-get variable) 1)) (math:var-get variable))))
 (let math:var-decrement-and-get! (lambda variable (do (set! variable 0 (- (math:var-get variable) 1)) (math:var-get variable))))
-
+(let math:var-add! (lambda variable x (set! variable 0 (+ (math:var-get variable) x))))
+(let math:var-subtract! (lambda variable x (set! variable 0 (- (math:var-get variable) x))))
+(let math:var-multiply! (lambda variable x (set! variable 0 (* (math:var-get variable) x))))
+(let math:var-divide! (lambda variable x (set! variable 0 (/ (math:var-get variable) x))))
+(let math:var-add-and-get! (lambda variable x (do (set! variable 0 (+ (math:var-get variable) x)) (math:var-get variable))))
+(let math:var-subtract-and-get! (lambda variable x (do (set! variable 0 (- (math:var-get variable) x)) (math:var-get variable))))
+(let math:var-multiply-and-get! (lambda variable x (do (set! variable 0 (* (math:var-get variable) x)) (math:var-get variable))))
+(let math:var-divide-and-get! (lambda variable x (do (set! variable 0 (/ (math:var-get variable) x)) (math:var-get variable))))
+(let math:shoelace (lambda points (do
+    (let len (length points))
+    (|> (math:sequence points)
+        (array:fold (lambda [a b .] i (do
+            (let left (get points i))
+            (let right (get points (mod (+ i 1) len)))
+            (let [y1 x1 .] left)
+            (let [y2 x2 .] right)
+            [(+ a (* y1 x2)) (+ b (* y2 x1))])) 
+        [0 0])
+        (pair:subtract)
+        (math:abs)
+        (* 0.5)))))
+(let math:collinear? (lambda points (= (math:shoelace points) 0)))
 (let bools:fold (lambda xs cb initial (do xs
     (let recursive:bools:fold (lambda i out
         (if (> (length xs) i)
