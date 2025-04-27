@@ -238,6 +238,7 @@ export const setTypeToReturnRef = (stats, value) => {
   // Change main type if unknown
   if (isUnknownType(stats) || isAnyType(stats))
     if (!isUnknownReturn(value)) stats[TYPE_PROP][0] = value[RETURNS][0]
+  // TODO: Figure out what we do if generic thigns get infered
   // cange sub type if it doesn't have
   if (!hasSubType(stats) || getSubType(stats).has(UNKNOWN))
     if (hasSubReturn(value)) stats[TYPE_PROP][1] = value[RETURNS][1]

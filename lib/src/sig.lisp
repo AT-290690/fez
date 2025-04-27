@@ -3,6 +3,10 @@
 (let math:exclude (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
 (let math:fold (lambda Number[] (lambda Number Number (do Number)) Number (do Number)))
 (let math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) (do Number)))
+(let math:every? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
+(let math:some? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
+(let math:enumerated-every? (lambda Number[] (lambda Number Number (do Boolean)) (do Boolean)))
+(let math:enumerated-some? (lambda Number[] (lambda Number Number (do Boolean)) (do Boolean)))
 (let math:maximum-index (lambda Number[] (do Number)))
 (let math:minimum-index (lambda Number[] (do Number)))
 (let math:var-def (lambda Number (do Number[])))
@@ -22,7 +26,6 @@
 (let math:var-subtract-and-get! (lambda Number[] (do Number)))
 (let math:var-multiply-and-get! (lambda Number[] (do Number)))
 (let math:var-divide-and-get! (lambda Number[] (do Number)))
-
 (let math:max-sub-array-sum (lambda Number[] (do Number)))
 (let math:median (lambda Number[] (do Number)))
 (let math:mean (lambda Number[] (do Number)))
@@ -50,6 +53,8 @@
 (let array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
 (let array:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
 (let array:some? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
+(let array:enumerated-every? (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Boolean)))
+(let array:enumerated-some? (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Boolean)))
 
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
 
