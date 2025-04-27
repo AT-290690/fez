@@ -1,0 +1,1 @@
+(|> 600851475143 (math:prime-factors) (math:maximum))

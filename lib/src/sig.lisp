@@ -31,6 +31,7 @@
 (let math:combinations (lambda Unknown[] (do Unknown[][])))
 (let math:combinations-n (lambda Unknown[] Number (do Unknown[][])))
 (let math:variants (lambda Unknown[] Number (do Unknown[][])))
+(let math:unique (lambda Number[] (do Number[])))
 
 (let var:def (lambda Any (do Unknown[])))
 (let var:get (lambda Unknown[] (do Any)))
@@ -47,9 +48,10 @@
 (let array:reduce (lambda Unknown[] (lambda Number Unknown (do Number)) Number (do Number)))
 (let array:enumerated-reduce (lambda Unknown[] (lambda Number Unknown Number (do Number)) Number (do Number)))
 (let array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
+(let array:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
+(let array:some? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
 
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
-(let math:unique (lambda Number[] (do Number[])))
 
 (let from:string->array (lambda Number[] Number (do Unknown[][])))
 (let from:array->string (lambda Unknown[][] Number (do Number[])))
