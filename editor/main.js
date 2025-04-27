@@ -24,8 +24,7 @@ const inter = async () => {
   if (value.trim()) {
     try {
       const compressed = LZString.compressToBase64(value)
-      const parsed = parse(value)
-      await fetchData(parsed)
+      const parsed = await fetchData(parse(value))
       // const T = value
       //   .match(new RegExp(/; @Type.+/, 'g'))
       //   ?.map((x) => x.replaceAll('; @Type ', '').trim())

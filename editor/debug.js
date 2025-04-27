@@ -384,24 +384,28 @@ export const fetchData = async (parsed) => {
           .map((x) => String.fromCharCode(x[1]))
           .join('')
       )
-    const x = await Promise.all(srcs.map((x) => fetch(x)))
-    const data = await Promise.all(x.map((x) => x.text()))
-    inputs[inputs.length - 1] = [[APPLY, KEYWORDS.CREATE_ARRAY]]
-    for (let i = 0; i < data.length; ++i) {
-      if (data[i][0] === '{') {
-        const current = deSuggarAst(
-          LISP.parse(
-            removeNoCode(deSuggarSource(LISP.json(JSON.parse(data[i]))))
+    try {
+      const x = await Promise.all(srcs.map((x) => fetch(x)))
+      const data = await Promise.all(x.map((x) => x.text()))
+      inputs[inputs.length - 1] = [[APPLY, KEYWORDS.CREATE_ARRAY]]
+      for (let i = 0; i < data.length; ++i) {
+        if (data[i][0] === '{') {
+          const current = deSuggarAst(
+            LISP.parse(
+              removeNoCode(deSuggarSource(LISP.json(JSON.parse(data[i]))))
+            )
           )
-        )
-        inputs[inputs.length - 1].push(current[0])
-      } else {
-        const current = data[i].split('').map((x) => [ATOM, x.charCodeAt()])
-        inputs[inputs.length - 1].push([
-          [APPLY, KEYWORDS.CREATE_ARRAY],
-          ...current
-        ])
+          inputs[inputs.length - 1].push(current[0])
+        } else {
+          const current = data[i].split('').map((x) => [ATOM, x.charCodeAt()])
+          inputs[inputs.length - 1].push([
+            [APPLY, KEYWORDS.CREATE_ARRAY],
+            ...current
+          ])
+        }
       }
+    } catch (error) {
+      console.log(error.message)
     }
   }
   return parsed
