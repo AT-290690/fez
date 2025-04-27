@@ -159,53 +159,53 @@ export const setPropToCollection = (stats, prop) => {
   )
 }
 export const setProp = (stats, prop, value) => {
-  return (
+  if (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[prop][0] !== UNKNOWN &&
-    value[prop][0] !== ANY &&
-    ((stats[prop][0] = value[prop][0]),
-    value[prop][1] && (stats[prop][1] = value[prop][1]))
-  )
+    value[prop][0] !== ANY
+  ) {
+    stats[prop][0] = value[prop][0]
+    if (value[prop][1]) stats[prop][1] = value[prop][1]
+  }
 }
 export const setPropToReturn = (stats, prop, value) => {
-  return (
+  if (
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[RETURNS][0] !== UNKNOWN &&
-    value[RETURNS][0] !== ANY &&
-    ((stats[prop][0] = value[RETURNS][0]),
-    value[RETURNS][1] && (stats[prop][1] = value[RETURNS][1]))
-  )
+    value[RETURNS][0] !== ANY
+  ) {
+    stats[prop][0] = value[RETURNS][0]
+    if (value[RETURNS][1]) stats[prop][1] = value[RETURNS][1]
+  }
 }
 export const setPropToReturnRef = (stats, prop, value) => {
-  return (
+  if (
     stats[prop] &&
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
     value[RETURNS][0] !== UNKNOWN &&
-    value[RETURNS][0] !== ANY &&
-    (stats[prop] = value[RETURNS])
+    value[RETURNS][0] !== ANY
   )
+    stats[prop] = value[RETURNS]
 }
 export const setPropToType = (stats, prop, value) => {
-  return (
+  if (
     stats[prop] &&
     (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-    value[TYPE_PROP][0] !== ANY &&
-    ((stats[prop][0] = value[TYPE_PROP][0]),
-    value[TYPE_PROP][1] && (stats[prop][1] = value[TYPE_PROP][1]))
-  )
+    value[TYPE_PROP][0] !== ANY
+  ) {
+    stats[prop][0] = value[TYPE_PROP][0]
+    if (value[TYPE_PROP][1]) stats[prop][1] = value[TYPE_PROP][1]
+  }
 }
 export const setPropToTypeRef = (stats, prop, value) => {
-  return (
-    stats[prop] &&
-    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-    (stats[prop] = value[TYPE_PROP])
-  )
+  if (stats[prop] && (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY))
+    stats[prop] = value[TYPE_PROP]
 }
 export const setReturnToAtom = (stats) => {
-  return (
-    (isUnknownReturn(stats) || isAnyReturn(stats)) &&
-    ((stats[RETURNS][0] = ATOM), (stats[RETURNS][1] = NUMBER_SUBTYPE()))
-  )
+  if (isUnknownReturn(stats) || isAnyReturn(stats)) {
+    stats[RETURNS][0] = ATOM
+    stats[RETURNS][1] = NUMBER_SUBTYPE()
+  }
 }
 export const setTypeToAtom = (stats) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
@@ -1591,7 +1591,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   // type check
                   // TODO get rof pred type
                   // const PRED_TYPE = args[i][STATS][TYPE_PROP][1]
-                  const MAIN_TYPE = getType(args[i][STATS])
+                  const MAIN_TYPE = getType(args[i][STATS], rest[i])
                   if (MAIN_TYPE === ANY) continue
                   if (first[TYPE] === APPLY) {
                     if (isLeaf(rest[i])) {
@@ -1747,11 +1747,13 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                             !equalSubTypes(args[i][STATS], env[name][STATS]))
                         )
                           setType(env[name][STATS], args[i][STATS])
-                        else if (
-                          !isUnknownType(args[i][STATS]) &&
-                          isUnknownType(env[name][STATS])
-                        ) {
+                        else if (isUnknownType(env[name][STATS])) {
                           // REFF ASSIGMENT
+                          // EXPLAIN: Not asigning ref fixes this overwritting
+                          // (let sum (lambda testxs (+ (get testxs 0) (get testxs 1))))
+                          // (let range (math:range 1 10))
+                          // (sum range)
+                          // But it reduces good inference too
                           if (getType(args[i][STATS]) !== APPLY)
                             setTypeRef(env[name][STATS], args[i][STATS])
                           else setStatsRef(env[rest[i][VALUE]], args[i])
