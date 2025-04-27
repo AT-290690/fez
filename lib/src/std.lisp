@@ -1024,6 +1024,15 @@
       (if (< index bounds) (recursive:from:brray->array (+ index 1) bounds) nil))))
     (recursive:from:brray->array 0 (- (brray:length q) 1))
     out)))
+(let from:string->array (lambda str char (|> str
+              (array:transform (lambda a b (do
+              (let prev (array:at a -1))
+                (if (string:equal? (array b) (array char))
+                    (set! a (length a) [])
+                    (set! prev (length prev) b)) a))
+              (array []))
+              (array:map (lambda x (from:array->string (array x) char:empty))))))
+(let from:array->string (lambda xs delim (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge! (array:append! a delim) (array:first b)) (array:first b))) [])))
 (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:spaces m))))))
 (let array:shallow-copy (lambda xs (array:transform xs (lambda a b (set! a (length a) b)) [])))
 (let array:deep-copy (lambda xs (array:transform xs (lambda a b (set! a (length a) (if (array? b) (array:deep-copy b) b))) [])))
@@ -1236,7 +1245,6 @@
               (array:map (lambda y 
               (string:pad-right y M (array char:space))))
               (array:join colum))))
-            
  (array:join (array char:new-line))))))
 (let string:starts-with? (lambda str pattern (and (<= (length pattern) (length str)) (string:equal? (array:slice str 0 (length pattern)) pattern))))
 (let string:ends-with? (lambda str pattern (and (<= (length pattern) (length str)) (string:equal? (array:slice (array:reverse str) 0 (length pattern)) (array:reverse pattern)))))

@@ -50,3 +50,12 @@
 
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
 (let math:unique (lambda Number[] (do Number[])))
+
+(let from:string->array (lambda Number[] Number (do Unknown[][])))
+(let from:array->string (lambda Unknown[][] Number (do Number[])))
+(let from:strings->integers (lambda Unknown[][] (do Number[])))
+(let from:string->integer (lambda Number[] (do Number)))
+(let from:integer->string (lambda Number (do Number[])))
+(let from:strings->floats (lambda Unknown[][] (do Number[])))
+(let from:string->float (lambda Number[] (do Number)))
+(let from:float->string (lambda Number (do Number[])))
