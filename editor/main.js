@@ -1,5 +1,5 @@
 import { parse, compile, enhance, AST } from '../index.js'
-import { debug } from './debug.js'
+import { debug, fetchData } from './debug.js'
 import { makeEditor, serialise } from './utils.js'
 const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
 const editor = makeEditor('editor', THEME)
@@ -19,12 +19,13 @@ if (initial) {
     alert(e instanceof Error ? e.message : e)
   }
 }
-const inter = () => {
+const inter = async () => {
   const value = editor.getValue()
   if (value.trim()) {
     try {
       const compressed = LZString.compressToBase64(value)
       const parsed = parse(value)
+      await fetchData(parsed)
       // const T = value
       //   .match(new RegExp(/; @Type.+/, 'g'))
       //   ?.map((x) => x.replaceAll('; @Type ', '').trim())

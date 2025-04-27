@@ -31,7 +31,8 @@ export const SUGGAR = {
   CREATE_MAP: 'new:map',
   POWER: '**',
   INTEGER_DEVISION: '//',
-  CONDITION: 'cond'
+  CONDITION: 'cond',
+  PROMISES: '*DATA*'
 }
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast

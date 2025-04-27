@@ -27,6 +27,7 @@ import {
   withCtxTypes
 } from '../src/types.js'
 import { removeNoCode, stringifyArgs } from '../src/utils.js'
+import { deSuggarAst, deSuggarSource, SUGGAR } from '../src/macros.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
 export const debug = (ast, checkTypes = true, userDefinedTypes) => {
@@ -363,4 +364,45 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
       }
     }
   }
+}
+
+export const fetchData = async (parsed) => {
+  const inputs = parsed[1][1].find(
+    (x) =>
+      !isLeaf(x) &&
+      x[0][TYPE] === APPLY &&
+      x[0][VALUE] === KEYWORDS.DEFINE_VARIABLE &&
+      x[1][VALUE] === SUGGAR.PROMISES
+  )
+  if (inputs) {
+    const srcs = inputs
+      .at(-1)
+      .slice(1)
+      .map((x) =>
+        x
+          .slice(1)
+          .map((x) => String.fromCharCode(x[1]))
+          .join('')
+      )
+    const x = await Promise.all(srcs.map((x) => fetch(x)))
+    const data = await Promise.all(x.map((x) => x.text()))
+    inputs[inputs.length - 1] = [[APPLY, KEYWORDS.CREATE_ARRAY]]
+    for (let i = 0; i < data.length; ++i) {
+      if (data[i][0] === '{') {
+        const current = deSuggarAst(
+          LISP.parse(
+            removeNoCode(deSuggarSource(LISP.json(JSON.parse(data[i]))))
+          )
+        )
+        inputs[inputs.length - 1].push(current[0])
+      } else {
+        const current = data[i].split('').map((x) => [ATOM, x.charCodeAt()])
+        inputs[inputs.length - 1].push([
+          [APPLY, KEYWORDS.CREATE_ARRAY],
+          ...current
+        ])
+      }
+    }
+  }
+  return parsed
 }
