@@ -42,6 +42,20 @@ export const LISP = {
           .join(' ')})`
     else return array
   },
+  json: (item) => {
+    if (item === null) return 0
+    else if (typeof item === 'boolean') return item
+    else if (typeof item === 'string') return `"${item}"`
+    // return item.split('').map((x) => x.charCodeAt())
+    else if (typeof item === 'object')
+      if (Array.isArray(item))
+        return item.length ? `[${item.map(LISP.json).join(' ')}]` : '[]'
+      else
+        return `({ ${Object.entries(item)
+          .map(([key, value]) => `"${key}" ${LISP.json(value)}`)
+          .join(' ')} })`
+    else return item
+  },
   source: (ast) => {
     const dfs = (exp) => {
       let out = ''
