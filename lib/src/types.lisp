@@ -1651,11 +1651,11 @@
 ; 1 math:var-divide!
 (let math:var-divide! (lambda Number[] Number (do Number)))
 ; 1 math:var-add-and-get!
-(let math:var-add-and-get! (lambda Number[] (do Number)))
+(let math:var-add-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-subtract-and-get!
-(let math:var-subtract-and-get! (lambda Number[] (do Number)))
+(let math:var-subtract-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-multiply-and-get!
-(let math:var-multiply-and-get! (lambda Number[] (do Number)))
+(let math:var-multiply-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-divide-and-get!
 (let math:var-divide-and-get! (lambda Number[] (do Number)))
 ; 1 math:shoelace len
