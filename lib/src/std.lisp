@@ -859,6 +859,22 @@
             (and (array:in-bounds? xs dy) (array:in-bounds? (get xs dy) dx))
               (cb a (matrix:get xs dy dx)) 
               a))) 0)))
+(let matrix:adjacent-product (lambda xs directions y x cb
+      (array:reduce directions (lambda a dir (do
+          (let dy (+ (array:first dir) y))
+          (let dx (+ (array:second dir) x))
+          (if
+            (and (array:in-bounds? xs dy) (array:in-bounds? (get xs dy) dx))
+              (cb a (matrix:get xs dy dx)) 
+              a))) 1)))
+(let matrix:adjacent-fold (lambda xs directions y x cb init
+      (array:reduce directions (lambda a dir (do
+          (let dy (+ (array:first dir) y))
+          (let dx (+ (array:second dir) x))
+          (if
+            (and (array:in-bounds? xs dy) (array:in-bounds? (get xs dy) dx))
+              (cb a (matrix:get xs dy dx)) 
+              a))) init)))
 (let matrix:sliding-adjacent-sum (lambda xs directions y x N cb
       (array:reduce directions (lambda a dir (do
           (let dy (+ (array:first dir)  y))
