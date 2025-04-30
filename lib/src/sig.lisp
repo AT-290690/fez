@@ -35,6 +35,7 @@
 (let math:combinations-n (lambda Unknown[] Number (do Unknown[][])))
 (let math:variants (lambda Unknown[] Number (do Unknown[][])))
 (let math:unique (lambda Number[] (do Number[])))
+(let math:divisors (lambda Number (do Number[])))
 
 (let var:def (lambda Any (do Unknown[])))
 (let var:get (lambda Unknown[] (do Any)))

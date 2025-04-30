@@ -396,6 +396,8 @@
 (let math:median (lambda Number[] (do Number)))
 ; 1 math:mean
 (let math:mean (lambda Number[] (do Number)))
+; 1 math:divisors
+(let math:divisors (lambda Number (do Number[])))
 ; 1 math:bit-count32 n1
 (let n1 Number)
 ; 1 math:bit-count32 n2

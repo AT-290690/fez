@@ -278,6 +278,15 @@
         (get xs half)
         (/ (+ (get xs (- half 1)) (get xs half)) 2)))))
 (let math:mean (lambda xs (/ (math:summation xs) (length xs))))
+; (let math:divisors (lambda num (do 
+;     (let divisors [])
+;     (loop:for-range 1 (+ num 1) (lambda i (if (math:divisible? num i) (array:push! divisors i))))
+;     divisors)))
+(let math:divisors (lambda num (do 
+    (let divisors [])
+    (loop:for-range 1 (+ (math:floor (math:sqrt num)) 1) (lambda i (if (and (math:divisible? num i) (not (= i num))) 
+        (|> divisors (array:append! i) (array:append! (/ num i))))))
+    divisors)))
 (let math:bit-count32 (lambda n0 (do 
   (let n1 (- n0 (& (>> n0 1) 1431655765)))
   (let n2 (+ (& n1 858993459) (& (>> n1 2) 858993459)))
