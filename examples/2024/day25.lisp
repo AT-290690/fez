@@ -62,7 +62,7 @@
     (let B 1)
     
     (let from:b->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (math:map (lambda c (if (= c char:hash) i -1)))))))))
-    (let from:a->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (math:map (lambda c (if (= c char:hash) (- (array:length y) i 1) -1)))))))))
+    (let from:a->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (math:map (lambda c (if (= c char:hash) (- (array:length y) (- i 1)) -1)))))))))
     
     (let heights (|> input (array:map (lambda x
         (if (array:some? (array:get x 0) (lambda y (= y char:dot)))

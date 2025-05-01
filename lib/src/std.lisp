@@ -947,6 +947,7 @@
 (let from:digits->integer (lambda digits (do
     (let recursive:from:digits->integer (lambda i num base (if (> (length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
     (recursive:from:digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)))))
+(let from:digits->integer-base (lambda digits base (math:fold (math:sequence digits) (lambda a i (+ a (* (get digits i) (math:power base (- (length digits) i 1))))) 0)))
 (let from:positive-or-negative-digits->integer (lambda digits-with-sign (do
     (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))

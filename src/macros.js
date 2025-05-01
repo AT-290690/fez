@@ -11,7 +11,6 @@ import {
   KEYWORDS,
   PLACEHOLDER,
   STATIC_TYPES,
-  TRUE,
   TYPE,
   VALUE,
   WORD
@@ -308,11 +307,12 @@ export const deSuggarAst = (ast, scope) => {
               case KEYWORDS.SUBTRACTION:
                 if (rest.length > 2) {
                   exp.length = 0
+                  rest.reverse()
                   let temp = exp
                   for (let i = 0; i < rest.length; i += 1) {
                     if (i < rest.length - 1) {
-                      temp.push([APPLY, KEYWORDS.SUBTRACTION], rest[i], [])
-                      temp = temp.at(-1)
+                      temp.push([APPLY, KEYWORDS.SUBTRACTION], [], rest[i])
+                      temp = temp.at(-2)
                     } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)
@@ -345,11 +345,12 @@ export const deSuggarAst = (ast, scope) => {
                   exp.push([ATOM, 1], rest[0])
                 } else if (rest.length > 2) {
                   exp.length = 0
+                  rest.reverse()
                   let temp = exp
                   for (let i = 0; i < rest.length; i += 1) {
                     if (i < rest.length - 1) {
-                      temp.push([APPLY, KEYWORDS.DIVISION], rest[i], [])
-                      temp = temp.at(-1)
+                      temp.push([APPLY, KEYWORDS.DIVISION], [], rest[i])
+                      temp = temp.at(-2)
                     } else temp.push(...rest[i])
                   }
                   deSuggarAst(exp, scope)

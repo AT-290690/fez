@@ -70,7 +70,7 @@ describe('Corretness', () => {
     [23 12]
     [19 13]
 ] (array:map (lambda [n m .] 
-    (math:bionomial-coefficient (+ m (- n 2)) (- n 1))
+    (math:round (math:bionomial-coefficient (+ m (- n 2)) (- n 1)))
 )))
 `),
       [28, 3, 1, 193536720, 86493225]
@@ -548,7 +548,7 @@ bbrgwb")
 (let part1 (lambda input (do
     (let lock? (lambda x (array:some? (get x 0) (lambda y (= y char:dot)))))
     (let from:key->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) i -1)))))))))
-    (let from:lock->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) (- (length y) i 1) -1)))))))))
+    (let from:lock->heights (lambda matrix (|> matrix (array:enumerated-map (lambda y i (|> y (array:map (lambda c (if (= c char:hash) (- (length y) (- i 1)) -1)))))))))
     (let heights (|> input (array:map (lambda x
         (if (lock? x)
         (from:lock->heights x) ; is lock
@@ -877,8 +877,10 @@ Prize: X=18641, Y=10279")
     )
     strictEqual(
       interpred(`(- (- (+ 1 2 3 4 5 (- 6 4 3 2) (* 1 2 3 4 (/ 10 5 2)))))`),
-      114
+      36
     )
+    strictEqual(interpred(`(- 6 4 3 2)`), -3)
+    strictEqual(interpred(`(/ 6 4 3 2)`), 0.25)
     deepStrictEqual(
       interpred(`
 (let fn (lambda {a b c d e f g . R} (+ a b c d e f g (math:list-product R))))
