@@ -30,7 +30,7 @@
   ">>" (lambda args env (>> (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "<<" (lambda args env (<< (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "~" (lambda args env (~ (evaluate (get args 0) env)))
-  "do" (lambda args env (array:first (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) ())))
+  "do" (lambda args env (array:first (array:fold args (lambda a arg (array:set! a 0 (evaluate arg env))) [])))
   "if" (lambda args env (if (evaluate (get args 0) env) (evaluate (get args 1) env) (evaluate (get args 2) env)))
   "and" (lambda args env (and (evaluate (get args 0) env) (evaluate (get args 1) env)))
   "or" (lambda args env (or (evaluate (get args 0) env) (evaluate (get args 1) env)))
@@ -51,6 +51,6 @@
       (= pattern ast:word) (prototype:get env (get head ast:value))
       (= pattern ast:apply) (apply tail env (prototype:get env (get head ast:value)))
       (= pattern ast:atom) (get head ast:value)
-      (*) ())) ()))))
+      (*) [])) []))))
      
 ; (apply (from:chars->ast "(let add (lambda a b (+ a b))) (add 1 2)") { keywords } (map:get keywords "do"))
