@@ -8,6 +8,10 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(string:lower "Hello World")`),
+      [104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100]
+    )
+    deepStrictEqual(
       evalJS(`(let num-of-rabbits (lambda answers (do 
     (|> answers 
         (from:integers->strings) 

@@ -88,6 +88,8 @@
 (let char:at 64)
 (let char:backtick 96)
 (let char:digit? (lambda ch (and (>= ch char:0) (<= ch char:9))))
+(let char:upper (lambda char (if (and (>= char char:a) (<= char char:z)) (- char 32) char)))
+(let char:lower (lambda char (if (and (>= char char:A) (<= char char:Z)) (+ char 32) char)))
 (let nil 0)
 (let identity (lambda x x))
 (let Scope 1)
@@ -1325,10 +1327,7 @@
     (let n (length str))
     (let recursive:string:upper (lambda i (if (< i n) (apply (lambda (do
       (let current-char (get str i))
-      (set! xs i 
-        (if (and (>= current-char 97) (<= current-char 122))
-          (- current-char 32)
-          current-char))
+      (set! xs i (char:upper current-char))
       (recursive:string:upper (+ i 1)))))
       xs))) (recursive:string:upper 0))))
 (let string:lower (lambda str (do
@@ -1336,10 +1335,7 @@
     (let n (length str))
     (let recursive:string:lower (lambda i (if (< i n) (apply (lambda (do
       (let current-char (get str i))
-      (set! xs i 
-        (if (and (>= current-char 65) (<= current-char 90))
-          (+ current-char 32)
-          current-char))
+      (set! xs i (char:lower current-char))
       (recursive:string:lower (+ i 1)))))
       xs))) (recursive:string:lower 0))))
 

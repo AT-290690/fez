@@ -176,6 +176,10 @@
 (let char:backtick Number)
 ; 1 char:digit?
 (let char:digit? (lambda Number (do Boolean)))
+; 1 char:upper
+(let char:upper (lambda Number (do Number)))
+; 1 char:lower
+(let char:lower (lambda Number (do Number)))
 ; 1 nil
 (let nil Number)
 ; 1 identity
