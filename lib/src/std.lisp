@@ -1063,6 +1063,20 @@
                     (set! prev (length prev) b)) a))
               (array []))
               (array:map (lambda x (from:array->string (array x) char:empty))))))
+(let from:string->words (lambda str (|> str
+    (array:fold (lambda a b (do 
+        (if (or (and (>= b char:a) (<= b char:z)) (and (>= b char:A) (<= b char:Z))) 
+            (array:push! (array:last a) b)
+            (array:push! a []))
+        a)) [[]])
+        (array:exclude array:empty?))))
+(let from:string->chunks (lambda str predicate? (|> str
+    (array:fold (lambda a b (do 
+        (if (predicate? b) 
+            (array:push! (array:last a) b)
+            (array:push! a []))
+        a)) [[]])
+        (array:exclude array:empty?))))
 (let from:array->string (lambda xs delim (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge! (array:append! a delim) (array:first b)) (array:first b))) [])))
 (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:spaces m))))))
 (let array:shallow-copy (lambda xs (array:transform xs (lambda a b (set! a (length a) b)) [])))
@@ -1529,6 +1543,24 @@
         (if (map:has? table key) 
             (map:set! table key (+ (Atom (map:get table key)) 1))
             (map:set! table key 1)))) (new:map64)))))
+(let map:max (lambda xs (do 
+    (let max (math:var-def 0))
+    (let out [])
+    (let entries (array:flat-one xs))
+    (array:for entries (lambda [ key value . ] 
+      (if (< (math:var-get max) value) (do 
+          (math:var-set! max value)
+          (array:push! out key)))))
+    out)))
+(let map:min (lambda xs (do 
+    (let min (math:var-def math:max-safe-integer))
+    (let out [])
+    (let entries (array:flat-one xs))
+    (array:for entries (lambda [ key value . ] 
+      (if (> (math:var-get min) value) (do 
+          (math:var-set! min value)
+          (array:push! out key)))))
+    out)))
 (let map:increment! (lambda map key (map:set! map key (+ (map:get map key) 1))))
 (let map:increment-and-get! (lambda map key (map:set-and-get! map key (+ (map:get map key) 1))))
 (let map:decrement! (lambda map key (map:set! map key (- (map:get map key) 1))))

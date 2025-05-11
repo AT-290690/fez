@@ -52,6 +52,8 @@
 (let array:reduce (lambda Unknown[] (lambda Number Unknown (do Number)) Number (do Number)))
 (let array:enumerated-reduce (lambda Unknown[] (lambda Number Unknown Number (do Number)) Number (do Number)))
 (let array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
+(let array:push! (lambda Unknown[] Any (do Unknown)))
+(let array:append! (lambda Unknown[] Any (do Unknown[])))
 
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
 
