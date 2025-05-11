@@ -671,7 +671,31 @@ export const replaceStrings = (source) => {
       )
   return source
 }
-
+export const replaceTemplateLiteralStrings = (source) => {
+  // const quotes = source.match(/"(.*?)"/g)
+  const quotes = source.match(/`"(?:.*?(\n|\r))*?.*?"/g)
+  // TODO: handle escaping
+  if (quotes)
+    for (const q of quotes) {
+      const string = [...q.replaceAll('\r', '')].slice(2, -1)
+      let str = `(array `
+      let isVar = false
+      for (let i = 0; i < string.length; ++i) {
+        if (isVar) {
+          if (string[i] === '}') {
+            isVar = false
+            str += ' (array '
+          } else str += string[i]
+        } else if (string[i] === '{') {
+          isVar = true
+          str += ') '
+        } else str += string[i].charCodeAt(0) + ' '
+      }
+      str += ')'
+      source = source.replaceAll(q, `(array:concat (array ${str}))`)
+    }
+  return source
+}
 const iron = (scope) => {
   const indecies = scope
     .map((x, i) => {
@@ -708,7 +732,8 @@ export const replaceQuotes = (source) =>
     .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\}/g, ')')
 
-export const deSuggarSource = (source) => replaceQuotes(replaceStrings(source))
+export const deSuggarSource = (source) =>
+  replaceQuotes(replaceStrings(replaceTemplateLiteralStrings(source)))
 export const handleUnbalancedQuotes = (source) => {
   const diff = (source.match(/\"/g) ?? []).length % 2
   if (diff !== 0) throw new SyntaxError(`Quotes are unbalanced "`)
