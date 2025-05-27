@@ -8,6 +8,10 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(from:integer->string-base -100 7)`),
+      [45, 50, 48, 50]
+    )
+    deepStrictEqual(
       evalJS(
         `(let $ (lambda x (if (atom? x) (from:float->string x) x)))
 (let N 23)
