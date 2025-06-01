@@ -1607,6 +1607,13 @@
 (let math:var-subtract-and-get! (lambda variable x (do (set! variable 0 (- (math:var-get variable) x)) (math:var-get variable))))
 (let math:var-multiply-and-get! (lambda variable x (do (set! variable 0 (* (math:var-get variable) x)) (math:var-get variable))))
 (let math:var-divide-and-get! (lambda variable x (do (set! variable 0 (/ (math:var-get variable) x)) (math:var-get variable))))
+(let math:hamming-weight (lambda N (do
+    (let n (math:var-def N))
+    (let count (math:var-def 0))
+    (loop:while (lambda (> (math:var-get n) 0)) (lambda (do 
+        (math:var-add! count (& (math:var-get n) 1))
+        (math:var-set! n (>> (math:var-get n) 1)))))
+    (math:var-get count))))
 (let math:shoelace (lambda points (do
     (let len (length points))
     (|> (math:sequence points)
@@ -1806,6 +1813,9 @@ q)))
 (let date:month-day (lambda date (array:tail date)))
 (let date:year-month (lambda date (array (array:first date) (array:second date))))
 
+(let loop:while (lambda condition cb (do 
+   (let recursive:while (lambda (if (condition) (do (cb) (recursive:while)) nil)))
+   (recursive:while))))
 (let loop:for-range (lambda start end cb (do
                           (let recursive:loop:for-range (lambda i
                           (if (< i end)
