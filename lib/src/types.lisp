@@ -1100,8 +1100,6 @@
 (let from:integer->bits-reversed (lambda Number (do Number[])))
 ; 1 from:integer->bits
 (let from:integer->bits (lambda Number (do Unknown[])))
-; 1 from:bits->integer xs
-(let xs Unknown[])
 ; 1 from:bits->integer bits->integer
 (let bits->integer (lambda Number (do Number)))
 ; 1 from:bits->integer

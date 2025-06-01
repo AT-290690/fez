@@ -16,7 +16,7 @@
 (let PARSED (parse INPUT))
 
 (let part1 (lambda input (do 
-  (let from:matrix->count (lambda matrix sig (|> matrix (array:map (lambda xs (> (array:count xs (not (not sig))) (array:count xs (not sig))))) (from:bits->integer))))
+  (let from:matrix->count (lambda matrix sig (|> matrix (array:map (lambda xs (> (array:count xs (not (not sig))) (array:count xs (not sig))))) (array:reverse) (from:bits->integer))))
   (let matrix (matrix:rotate input))
   (let gamma (from:matrix->count matrix 1))
   (let epsilon (from:matrix->count matrix 0))

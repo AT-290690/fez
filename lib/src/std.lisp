@@ -998,8 +998,7 @@
                               (*) res)))
   (recursive:from:integer->bits-reversed num []))))
 (let from:integer->bits (lambda num (array:reverse (from:integer->bits-reversed num))))
-(let from:bits->integer (lambda bits (do
-  (let xs (array:reverse bits))
+(let from:bits->integer (lambda xs (do
   (let bits->integer (lambda index (if
                               (= index (length xs)) 0
                               (+ (* (get xs index) (math:power 2 index))
