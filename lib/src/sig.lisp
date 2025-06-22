@@ -2,7 +2,7 @@
 (let math:select (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
 (let math:exclude (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
 (let math:fold (lambda Number[] (lambda Number Number (do Number)) Number (do Number)))
-(let math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) (do Number)))
+(let math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) Number (do Number)))
 (let math:every? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
 (let math:some? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
 (let math:enumerated-every? (lambda Number[] (lambda Number Number (do Boolean)) (do Boolean)))

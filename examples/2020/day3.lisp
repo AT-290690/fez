@@ -38,7 +38,7 @@
     [5 1]
     [7 1]
     [1 2]]
-    (math:map (lambda x (|> 
+    (array:map (lambda x (|> 
                           matrix 
                           (part1 (array:first x) (array:second x)) 
                           (math:summation))))

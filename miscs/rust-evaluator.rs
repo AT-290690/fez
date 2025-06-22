@@ -33,25 +33,59 @@ impl fmt::Debug for Evaluated {
 #[derive(Clone)]
 struct Env {
     vars: HashMap<String, Evaluated>,
+    parent: Option<Rc<RefCell<Env>>>,
 }
+
+impl Env {
+    fn new() -> Self {
+        Env {
+            vars: HashMap::new(),
+            parent: None,
+        }
+    }
+    
+    fn with_parent(parent: Rc<RefCell<Env>>) -> Self {
+        Env {
+            vars: HashMap::new(),
+            parent: Some(parent),
+        }
+    }
+    
+    fn get(&self, name: &str) -> Option<Evaluated> {
+        // First check current scope
+        if let Some(var) = self.vars.get(name) {
+            return Some(var.clone());
+        }
+        // Then check parent scope (prototype chain)
+        if let Some(ref parent) = self.parent {
+            return parent.borrow().get(name);
+        }
+        None
+    }
+    
+    fn set(&mut self, name: String, value: Evaluated) {
+        self.vars.insert(name, value);
+    }
+}
+
 fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> Evaluated {
     match exp {
         Expression::Atom(value) => Evaluated::Number(*value),
         Expression::Word(name) => {
             let env_ref = env.borrow();
-            if let Some(var) = env_ref.vars.get(name) {
-                return var.clone();
+            if let Some(var) = env_ref.get(name) {
+                return var;
             }
             let defs_ref = defs.borrow();
-            if let Some(var) = defs_ref.vars.get(name) {
-                return var.clone();
+            if let Some(var) = defs_ref.get(name) {
+                return var;
             }
             panic!("Undefined variable: {}", name);
         }
         Expression::Apply(exprs) => {
             if let Expression::Word(name) = &exprs[0] {
                 let env_ref = env.borrow();
-                if let Some(var) = env_ref.vars.get(name) {
+                if let Some(var) = env_ref.get(name) {
                     match var {
                         Evaluated::Function(func) => {
                             return func(exprs[1..].to_vec(), Rc::clone(&env), Rc::clone(&defs));
@@ -60,7 +94,7 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
                     }
                 }
                 let defs_ref = defs.borrow();
-                if let Some(var) = defs_ref.vars.get(name) {
+                if let Some(var) = defs_ref.get(name) {
                     match var {
                         Evaluated::Function(func) => {
                             return func(exprs[1..].to_vec(), Rc::clone(&env), Rc::clone(&defs));
@@ -76,12 +110,8 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
 }
 
 fn main() {
-    let env = Rc::new(RefCell::new(Env {
-        vars: HashMap::new(),
-    }));
-    let defs = Rc::new(RefCell::new(Env {
-        vars: HashMap::new(),
-    }));
+    let env = Rc::new(RefCell::new(Env::new()));
+    let defs = Rc::new(RefCell::new(Env::new()));
     {
         let mut env_ref = env.borrow_mut();
         env_ref.vars.insert(
@@ -639,18 +669,14 @@ fn main() {
                                     lambda_args.len()
                                 );
                             }
-                            let local_defs = Rc::new(RefCell::new(Env {
-                                vars: HashMap::new(),
-                            }));
+                            // Create new environment with prototype chaining
+                            let local_defs = Rc::new(RefCell::new(Env::with_parent(Rc::clone(&scope))));
                             {
                                 let mut local_defs_ref = local_defs.borrow_mut();
-                                let outer_scope = &scope.borrow().vars;
-                                for (key, value) in outer_scope.into_iter() {
-                                    local_defs_ref.vars.insert(key.to_string(), value.clone());
-                                }
+                                // Add parameters to the new scope
                                 for (param, arg) in params.iter().zip(lambda_args.iter()) {
                                     let value = evaluate(arg, Rc::clone(&env), Rc::clone(&defs));
-                                    local_defs_ref.vars.insert(param.clone(), value);
+                                    local_defs_ref.set(param.clone(), value);
                                 }
                             }
                             evaluate(&body, Rc::clone(&env), Rc::clone(&local_defs))
@@ -671,7 +697,7 @@ fn main() {
                     }
                     if let Expression::Word(var_name) = &args[0] {
                         let value = evaluate(&args[1], Rc::clone(&env), Rc::clone(&defs));
-                        defs.borrow_mut().vars.insert(var_name.clone(), value);
+                        defs.borrow_mut().set(var_name.clone(), value);
                         return evaluate(&args[0], Rc::clone(&env), Rc::clone(&defs));
                     } else {
                         panic!("First argument to 'let' must be a variable name");

@@ -311,7 +311,7 @@
 ; 1 math:fold
 (let math:fold (lambda Number[] (lambda Number Number (do Number)) Number (do Number)))
 ; 1 math:enumerated-fold
-(let math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) (do Number)))
+(let math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) Number (do Number)))
 ; 1 math:map
 (let math:map (lambda Number[] (lambda Number (do Number)) (do Number[])))
 ; 1 math:enumerated-map
