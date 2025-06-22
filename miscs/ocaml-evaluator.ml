@@ -178,6 +178,47 @@ and builtin_mod args env defs =
   | Number a, Number b -> Number (mod_float a b)
   | _ -> failwith "Both arguments must be numbers"
 
+and builtin_bitwise_and args env defs =
+  let a = evaluate (List.hd args) env defs in
+  let b = evaluate (List.nth args 1) env defs in
+  match a, b with
+  | Number a, Number b -> Number (float_of_int (int_of_float a land int_of_float b))
+  | _ -> failwith "Both arguments must be numbers"
+
+and builtin_bitwise_or args env defs =
+  let a = evaluate (List.hd args) env defs in
+  let b = evaluate (List.nth args 1) env defs in
+  match a, b with
+  | Number a, Number b -> Number (float_of_int (int_of_float a lor int_of_float b))
+  | _ -> failwith "Both arguments must be numbers"
+
+and builtin_bitwise_xor args env defs =
+  let a = evaluate (List.hd args) env defs in
+  let b = evaluate (List.nth args 1) env defs in
+  match a, b with
+  | Number a, Number b -> Number (float_of_int (int_of_float a lxor int_of_float b))
+  | _ -> failwith "Both arguments must be numbers"
+
+and builtin_bitwise_shift_right args env defs =
+  let a = evaluate (List.hd args) env defs in
+  let b = evaluate (List.nth args 1) env defs in
+  match a, b with
+  | Number a, Number b -> Number (float_of_int (int_of_float a lsr int_of_float b))
+  | _ -> failwith "Both arguments must be numbers"
+
+and builtin_bitwise_shift_left args env defs =
+  let a = evaluate (List.hd args) env defs in
+  let b = evaluate (List.nth args 1) env defs in
+  match a, b with
+  | Number a, Number b -> Number (float_of_int (int_of_float a lsl int_of_float b))
+  | _ -> failwith "Both arguments must be numbers"
+
+and builtin_bitwise_not args env defs =
+  let a = evaluate (List.hd args) env defs in
+  match a with
+  | Number a -> Number (float_of_int (lnot (int_of_float a)))
+  | _ -> failwith "Argument must be a number"
+
 and builtin_and args env defs =
   let a = evaluate (List.hd args) env defs in
   match a with
@@ -308,6 +349,12 @@ let create_global_env () =
   env_set global_env "*" (Function (builtin_mul, global_env));
   env_set global_env "/" (Function (builtin_div, global_env));
   env_set global_env "mod" (Function (builtin_mod, global_env));
+  env_set global_env "&" (Function (builtin_bitwise_and, global_env));
+  env_set global_env "|" (Function (builtin_bitwise_or, global_env));
+  env_set global_env "^" (Function (builtin_bitwise_xor, global_env));
+  env_set global_env ">>" (Function (builtin_bitwise_shift_right, global_env));
+  env_set global_env "<<" (Function (builtin_bitwise_shift_left, global_env));
+  env_set global_env "~" (Function (builtin_bitwise_not, global_env));
   env_set global_env "and" (Function (builtin_and, global_env));
   env_set global_env "or" (Function (builtin_or, global_env));
   env_set global_env "not" (Function (builtin_not, global_env));
@@ -345,7 +392,7 @@ let rec print_evaluated = function
           print_evaluated v
         ) !arr;
       Printf.printf ")"
-      
+
 (* Test the evaluator *)
 (*
 
