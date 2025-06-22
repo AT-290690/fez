@@ -117,7 +117,7 @@ export const AST = {
       : typeof ast === 'string'
       ? `"${ast}"`
       : ast,
-  struct: (ast) => {
+  struct: (ast, mod = '') => {
     const dfs = (exp) => {
       let out = ''
       const [head, ...tail] = isLeaf(exp) ? [exp] : exp
@@ -136,6 +136,34 @@ export const AST = {
           out += `Expression::Apply(vec![Expression::Word("${
             head[VALUE]
           }".to_string()),${tail.map(dfs).join(',')}])`
+          break
+      }
+      return out
+    }
+    const str = dfs(ast)
+    return mod
+      ? `use crate::fez::Expression;
+pub fn ${mod}() -> Expression { ${str} }`
+      : str
+  },
+  ocaml: (ast) => {
+    const dfs = (exp) => {
+      let out = ''
+      const [head, ...tail] = isLeaf(exp) ? [exp] : exp
+      switch (head[TYPE]) {
+        case WORD:
+          out += `Word "${head[VALUE]}"`
+          break
+        case ATOM:
+          {
+            const n = Number.isInteger(head[VALUE])
+              ? `${head[VALUE]}.0`
+              : head[VALUE].toString()
+            out += `Atom ${head[VALUE] < 0 ? `(${n})` : n}`
+          }
+          break
+        case APPLY:
+          out += `Apply [Word "${head[VALUE]}"; ${tail.map(dfs).join('; ')}]`
           break
       }
       return out

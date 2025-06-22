@@ -2,7 +2,8 @@ use core::panic;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use std::{fmt, vec};
+use std::{fmt};
+
 #[derive(Debug, Clone)]
 enum Expression {
     Atom(f64),
@@ -109,7 +110,7 @@ fn evaluate(exp: &Expression, env: Rc<RefCell<Env>>, defs: Rc<RefCell<Env>>) -> 
     }
 }
 
-fn main() {
+fn run(expr: &Expression) -> Evaluated {
     let env = Rc::new(RefCell::new(Env::new()));
     let defs = Rc::new(RefCell::new(Env::new()));
     {
@@ -786,7 +787,9 @@ fn main() {
             )),
         );
     }
-
+    return evaluate(&expr, Rc::clone(&env), Rc::clone(&defs))
+}
+fn main() {
     // let expr = Expression::Apply(vec![Expression::Word("apply".to_string()),Expression::Apply(vec![Expression::Word("lambda".to_string()),Expression::Apply(vec![Expression::Word("do".to_string()),Expression::Apply(vec![Expression::Word("let".to_string()),Expression::Word("add".to_string()),Expression::Apply(vec![Expression::Word("lambda".to_string()),Expression::Word("a".to_string()),Expression::Word("b".to_string()),Expression::Apply(vec![Expression::Word("+".to_string()),Expression::Word("a".to_string()),Expression::Word("b".to_string())])])]),Expression::Apply(vec![Expression::Word("add".to_string()),Expression::Atom(1.0),Expression::Atom(2.0)])])])]);
-    // println!("{:?}",evaluate(&expr, Rc::clone(&env), Rc::clone(&defs)));
+    // println!("{:?}",run(&expr));
 }
