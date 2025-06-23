@@ -8,6 +8,84 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(let two-sum (lambda nums target (do
+  (let len (length nums))
+  (let recursive:find (lambda i (if (< i len)
+    (do
+      (let recursive:j (lambda j (if (< j len)
+        (if (and (!= i j) (= (+ (get nums i) (get nums j)) target))
+          [i j]
+          (recursive:j (+ j 1))))))
+      (let res (recursive:j 0))
+      (if (truthy? res) res (recursive:find (+ i 1)))))))
+  (recursive:find 0))))
+
+[(two-sum [2 7 11 15] 9)
+ (two-sum [3 2 4] 6)
+ (two-sum [3 3] 6)]
+
+
+(let two-sum-hash (lambda nums target (do
+  (let seen (new:map64))
+  (let len (length nums))
+  (let recursive:find (lambda i (if (< i len)
+    (do
+      (let num (get nums i))
+      (let complement (- target num))
+      (let key-num (|> num (from:integer->digits) (from:digits->chars)))
+      (let key-complement (|> complement (from:integer->digits) (from:digits->chars)))
+      (if (map:has? seen key-complement)
+        [(map:get seen key-complement) i]
+        (do (map:set! seen key-num i)
+            (recursive:find (+ i 1))))))))
+  (recursive:find 0))))
+
+
+ (let last-stone-weight (lambda stones (do
+  (let max-cmp (lambda a b (> a b)))
+  (let heap (from:array->heap stones max-cmp))
+  (let recursive:smash (lambda
+    (if (> (length heap) 1)
+      (do
+        (let y (heap:peek heap))
+        (heap:pop! heap max-cmp)
+        (let x (heap:peek heap))
+        (heap:pop! heap max-cmp)
+        (if (!= x y)
+          (heap:push! heap (- y x) max-cmp))
+        (recursive:smash)))))
+  (recursive:smash)
+  (if (> (length heap) 0) (heap:peek heap) 0))))
+
+(let max-bottles (lambda num-bottles num-exchange (do
+  (let total num-bottles)
+  (let empties num-bottles)
+  (let recursive:loop (lambda total empties (if (>= empties num-exchange) (do
+    (let new-bottles (// empties num-exchange))
+    (let new-empties (+ (mod empties num-exchange) new-bottles))
+    (recursive:loop (+ total new-bottles) new-empties))
+    total)))
+  (recursive:loop total empties))))
+
+[
+[(two-sum-hash [2 7 11 15] 9)
+ (two-sum-hash [3 2 4] 6)
+ (two-sum-hash [3 3] 6)]
+[(last-stone-weight [2 7 4 1 8 1])
+ (last-stone-weight [1])]
+[(max-bottles 9 3) (max-bottles 15 4)]
+]`),
+      [
+        [
+          [0, 1],
+          [1, 2],
+          [0, 1]
+        ],
+        [1, 1],
+        [13, 19]
+      ]
+    )
+    deepStrictEqual(
       evalJS(`(from:integer->string-base -100 7)`),
       [45, 50, 48, 50]
     )

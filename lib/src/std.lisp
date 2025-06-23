@@ -304,6 +304,49 @@
             (= exp 0) 1
             (= exp 1) base
             (*) (* base (math:power base (- exp 1)))))))
+(let math:power-fast (lambda base exp (do
+  (if (< exp 0)
+    (/ 1 (math:power base (- exp)))
+    (do
+      (let result (math:var-def 1))
+      (let b (math:var-def base))
+      (let e (math:var-def exp))
+      (loop:while (lambda (> (math:var-get e) 0))
+        (lambda (do
+          (if (= (mod (math:var-get e) 2) 1)
+            (math:var-set! result (* (math:var-get result) (math:var-get b))))
+          (math:var-set! b (* (math:var-get b) (math:var-get b)))
+          (math:var-set! e (// (math:var-get e) 2)))))
+      (math:var-get result))))))
+; Integer logarithm base 2
+(let math:int-log2 (lambda n (do
+  (let count (math:var-def 0))
+  (let value (math:var-def n))
+  (loop:while (lambda (> (math:var-get value) 1))
+    (lambda (do
+      (math:var-set! value (// (math:var-get value) 2))
+      (math:var-set! count (+ (math:var-get count) 1)))))
+  (math:var-get count))))
+; Floating-point logarithm for any base using Newton's method
+(let math:log-base (lambda x base (do
+  (if (or (<= x 0) (<= base 0) (= base 1)) nil
+    (do
+      (let epsilon 0.0001)
+      (let max-iter 200)
+      (let ln-base (lambda b (do
+        (if (= b 1) 0
+          (do
+            (let g (var:def 1.0))
+            (let i (var:def 0))
+            (loop:while (lambda (and (< (var:get i) max-iter)
+                                     (> (math:abs (- (math:power-fast math:e (var:get g)) b)) epsilon)))
+              (lambda (do
+                (var:set! g (- (var:get g) (/ (- (math:power-fast math:e (var:get g)) b) (math:power-fast math:e (var:get g)))))
+                (var:set! i (+ (var:get i) 1)))))
+            (var:get g))))))
+      (let ln-x (ln-base x))
+      (let ln-b (ln-base base))
+      (/ ln-x ln-b))))))
 (let math:greatest-common-divisor (lambda a b (do
     (let recursive:math:greatest-common-divisor (lambda a b
           (if (= b 0) a (recursive:math:greatest-common-divisor b (mod a b))))) (recursive:math:greatest-common-divisor a b))))
