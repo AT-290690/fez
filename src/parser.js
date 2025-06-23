@@ -1,4 +1,4 @@
-import { APPLY, ATOM, TYPE, WORD, VALUE } from './keywords.js'
+import { APPLY, ATOM, TYPE, WORD, VALUE, STATIC_TYPES } from './keywords.js'
 export const leaf = (type, value) => [type, value]
 export const isLeaf = ([car]) => car === APPLY || car === ATOM || car === WORD
 export const LISP = {
@@ -117,6 +117,45 @@ export const AST = {
       : typeof ast === 'string'
       ? `"${ast}"`
       : ast,
+  json: (ast) => {
+    const dfs = (exp) => {
+      let out = ''
+      const [head, ...tail] = isLeaf(exp) ? [exp] : exp
+      switch (head[TYPE]) {
+        case WORD:
+          out += `[${WORD},"${head[VALUE]}"]`
+          break
+        case ATOM:
+          out += `[${ATOM},${head[VALUE]}]`
+          break
+        case APPLY:
+          switch (head[VALUE]) {
+            case STATIC_TYPES.ABSTRACTION:
+            case STATIC_TYPES.COLLECTION:
+            case STATIC_TYPES.UNKNOWN:
+            case STATIC_TYPES.ATOM:
+            case STATIC_TYPES.BOOLEAN:
+            case STATIC_TYPES.ANY:
+            case STATIC_TYPES.NUMBER:
+            case STATIC_TYPES.NUMBERS:
+            case STATIC_TYPES.ABSTRACTIONS:
+            case STATIC_TYPES.BOOLEANS:
+            case STATIC_TYPES.COLLECTIONS:
+            case STATIC_TYPES.AS_NUMBER:
+              out += dfs(tail[0])
+              break
+            default:
+              out += `[[${APPLY},"${head[VALUE]}"]${
+                tail.length ? ',' : ''
+              }${tail.map(dfs).join(',')}]`
+              break
+          }
+          break
+      }
+      return out
+    }
+    return dfs(ast)
+  },
   struct: (ast, mod = '') => {
     const dfs = (exp) => {
       let out = ''
@@ -133,9 +172,27 @@ export const AST = {
           })`
           break
         case APPLY:
-          out += `Expression::Apply(vec![Expression::Word("${
-            head[VALUE]
-          }".to_string()),${tail.map(dfs).join(',')}])`
+          switch (head[VALUE]) {
+            case STATIC_TYPES.ABSTRACTION:
+            case STATIC_TYPES.COLLECTION:
+            case STATIC_TYPES.UNKNOWN:
+            case STATIC_TYPES.ATOM:
+            case STATIC_TYPES.BOOLEAN:
+            case STATIC_TYPES.ANY:
+            case STATIC_TYPES.NUMBER:
+            case STATIC_TYPES.NUMBERS:
+            case STATIC_TYPES.ABSTRACTIONS:
+            case STATIC_TYPES.BOOLEANS:
+            case STATIC_TYPES.COLLECTIONS:
+            case STATIC_TYPES.AS_NUMBER:
+              out += dfs(tail[0])
+              break
+            default:
+              out += `Expression::Apply(vec![Expression::Word("${
+                head[VALUE]
+              }".to_string()),${tail.map(dfs).join(',')}])`
+              break
+          }
           break
       }
       return out
@@ -163,7 +220,28 @@ pub fn ${mod}() -> Expression { ${str} }`
           }
           break
         case APPLY:
-          out += `Apply [Word "${head[VALUE]}"; ${tail.map(dfs).join('; ')}]`
+          switch (head[VALUE]) {
+            case STATIC_TYPES.ABSTRACTION:
+            case STATIC_TYPES.COLLECTION:
+            case STATIC_TYPES.UNKNOWN:
+            case STATIC_TYPES.ATOM:
+            case STATIC_TYPES.BOOLEAN:
+            case STATIC_TYPES.ANY:
+            case STATIC_TYPES.NUMBER:
+            case STATIC_TYPES.NUMBERS:
+            case STATIC_TYPES.ABSTRACTIONS:
+            case STATIC_TYPES.BOOLEANS:
+            case STATIC_TYPES.COLLECTIONS:
+            case STATIC_TYPES.AS_NUMBER:
+              out += dfs(tail[0])
+              break
+            default:
+              out += `Apply [Word "${head[VALUE]}"; ${tail
+                .map(dfs)
+                .join('; ')}]`
+              break
+          }
+
           break
       }
       return out

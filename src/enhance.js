@@ -36,17 +36,6 @@ const opt = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
-              case STATIC_TYPES.ABSTRACTION:
-              case STATIC_TYPES.COLLECTION:
-              case STATIC_TYPES.UNKNOWN:
-              case STATIC_TYPES.ATOM:
-              case STATIC_TYPES.BOOLEAN:
-              case STATIC_TYPES.ANY:
-              case STATIC_TYPES.NUMBER:
-              case STATIC_TYPES.NUMBERS:
-              case STATIC_TYPES.ABSTRACTIONS:
-              case STATIC_TYPES.BOOLEANS:
-              case STATIC_TYPES.COLLECTIONS:
               case STATIC_TYPES.AS_NUMBER:
                 exp.length = 0
                 for (let i = 0; i < rest.length; ++i) exp.push(...rest[i])
@@ -245,4 +234,46 @@ const opt = (ast) => {
   return wrapInBlock(shaked)
 }
 
+export const removeCast = (ast) => {
+  const evaluate = (exp) => {
+    const [first, ...rest] = isLeaf(exp) ? [exp] : exp
+    if (first != undefined) {
+      switch (first[TYPE]) {
+        case WORD:
+          break
+        case ATOM:
+          break
+        case APPLY:
+          {
+            switch (first[VALUE]) {
+              case STATIC_TYPES.ABSTRACTION:
+              case STATIC_TYPES.COLLECTION:
+              case STATIC_TYPES.UNKNOWN:
+              case STATIC_TYPES.ATOM:
+              case STATIC_TYPES.BOOLEAN:
+              case STATIC_TYPES.ANY:
+              case STATIC_TYPES.NUMBER:
+              case STATIC_TYPES.NUMBERS:
+              case STATIC_TYPES.ABSTRACTIONS:
+              case STATIC_TYPES.BOOLEANS:
+              case STATIC_TYPES.COLLECTIONS:
+              case STATIC_TYPES.AS_NUMBER:
+                exp.length = 0
+                for (let i = 0; i < rest.length; ++i) exp.push(...rest[i])
+                evaluate(exp)
+                break
+              default:
+                break
+            }
+          }
+          break
+        default:
+          break
+      }
+      for (const r of rest) evaluate(r)
+    }
+  }
+  evaluate(ast)
+  return wrapInBlock(ast)
+}
 export const enhance = (ast) => opt(AST.parse(AST.stringify(ast))[0])

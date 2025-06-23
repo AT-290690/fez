@@ -816,7 +816,7 @@ export const keywords = {
       )
     return +(typeof evaluate(args[0], env) === 'function')
   },
-
+  // Only for type checking
   [STATIC_TYPES.UNKNOWN]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.ANY]: (args, env) => evaluate(args[0], env),
 
