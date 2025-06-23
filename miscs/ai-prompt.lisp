@@ -11,6 +11,24 @@
 ; The final value must be wrapped in (identity ...), in an array [result],
 ; or be the result of a function or a do block.
 
+; Note: Built in variable name like 'loop' 'if' 'do' are forbidden in this language.
+; If the block in an 'if' statement contains more than one expression, you must use 'do' to wrap those expressions.
+
+; You can wrap multiple results in an array, e.g. [(f 1) (f 2)], to return and compare multiple outputs at once.
+; This is handy compared to using identity, which only returns one value.
+
+; The condition in an if statement must be strictly 1 or 0, not just any non-nil value.
+; Use (truthy? ...) or (falsy? ...) to convert values to 1 or 0 for if conditions.
+; If a branch of if has multiple expressions, wrap them in a do block.
+
+; By default, if an if statement has only one branch, the else branch will be nil.
+
+; If you write (if condition then), the language will automatically add nil as the else branch, so it is equivalent to (if condition then nil).
+; nil is equivalent to 0 in this language.
+
+; For lambda, if a function takes no arguments, do not provide an argument list; just write (lambda body).
+; The last argument to lambda is always the body.
+
 (let x 10) ; define a variable x with the value 10
 (let xs (array 1 2 3 4)) ; define an array xs with initial values
 
@@ -116,6 +134,9 @@
 [a b . c] 
 ; list destructuring
 {a b . c}
+; . means skip that element and last one is aways the rest unelss skipped
+[a . b c]
+[a b .]
 ; pipe operator
 (|> 1 (+ 1 2) (* 3 4))
 ; pipe operator with destructuring
