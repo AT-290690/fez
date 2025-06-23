@@ -257,8 +257,9 @@
 (let math:floor (lambda n (| n 0)))
 (let math:round (lambda n (| (+ n 0.5) 0)))
 (let math:ceil (lambda n (if (= n (| n 0)) (| n 0) (+ (| n 0) 1))))
-(let math:set-bit (lambda n bit (| n (<< 1 bit))))
-(let math:clear-bit (lambda n bit (& n (~ (<< 1 bit)))))
+(let math:bit-set? (lambda n pos (= (& n (<< 1 pos)) 0)))
+(let math:bit-set (lambda n pos (| n (<< 1 pos))))
+(let math:bit-clear (lambda n pos (& n (~ (<< 1 pos)))))
 (let math:power-of-two-bits (lambda n (<< 2 (- n 1))))
 (let math:odd-bit? (lambda n (= (& n 1) 1)))
 (let math:even-bit? (lambda n (= (& n 1) 0)))
@@ -295,6 +296,7 @@
 (let math:bit-count (lambda n (do 
   (let recursive:math:bit-count (lambda n bits (if (= n 0) bits (recursive:math:bit-count (/ n 4294967296) (+ bits (math:bit-count32 (| n 0)))))))
   (recursive:math:bit-count n 0))))
+(let math:exp (lambda x (math:power-fast math:e x)))
 (let math:square (lambda x (* x x)))
 (let math:power (lambda base exp
   (if (< exp 0)
@@ -382,6 +384,7 @@
 (let math:enumerated-even? (lambda . i (= (mod i 2) 0)))
 (let math:sign (lambda n (if (< n 0) -1 1)))
 (let math:radians (lambda deg (/ (* deg math:pi) 180)))
+(let math:degrees (lambda rad (* rad (/ 180 math:pi))))
 (let math:average (lambda x y (* (+ x y) 0.5)))
 (let math:euclidean-mod (lambda a b (mod (+ (mod a b) b) b)))
 (let math:euclidean-distance (lambda x1 y1 x2 y2 (do
@@ -396,6 +399,18 @@
 (let math:negative-one? (lambda x (= x -1)))
 (let math:divisible? (lambda a b (= (mod a b) 0)))
 (let math:factorial (lambda n (if (<= n 0) 1 (* n (math:factorial (- n 1))))))
+(let math:sinh (lambda x (/ (- (math:exp x) (math:exp (- x))) 2)))
+(let math:cosh (lambda x (/ (+ (math:exp x) (math:exp (- x))) 2)))
+(let math:tanh (lambda x (/ (math:sinh x) (math:cosh x))))
+(let math:standard-deviation (lambda xs (math:sqrt (math:variance xs))))
+(let math:variance (lambda xs (do
+  (let mean (math:mean xs))
+  (/ (math:summation (array:map xs (lambda x (math:square (- x mean))))) (length xs)))))
+(let math:lerp math:linear-interpolation)
+(let math:gcd math:greatest-common-divisor)
+(let math:lcm math:least-common-divisor)
+(let math:gcd-zero (lambda a b (if (or (= a 0) (= b 0)) 0 (math:gcd a b))))
+(let math:lcm-zero (lambda a b (if (or (= a 0) (= b 0)) 0 (/ (math:abs (* a b)) (math:gcd a b)))))
 (let math:mulberry-32-prng (lambda seed (do
     (let base (math:var-def seed))
     (let z (math:var-def (math:var-set-and-get! base (+ (math:var-get base) 2654435769))))
@@ -939,6 +954,8 @@
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
 (let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] [-1]])))
 (let matrix:get-or-default (lambda xs y x def (if (matrix:in-bounds? xs y x) (matrix:get xs y x) def)))
+(let from:degrees->radians (lambda deg (* deg (/ math:pi 180))))
+(let from:radians->degrees (lambda rad (* rad (/ 180 math:pi))))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
 (let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x
       (cond
