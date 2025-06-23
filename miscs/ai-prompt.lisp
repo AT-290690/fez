@@ -7,6 +7,10 @@
 ; Unbalanced parentheses can lead to syntax errors or unexpected behavior in the code.
 ; Always double-check your parentheses to ensure they match correctly.
 
+; Note: In this language, you can't have a value float outside by itself.
+; The final value must be wrapped in (identity ...), in an array [result],
+; or be the result of a function or a do block.
+
 (let x 10) ; define a variable x with the value 10
 (let xs (array 1 2 3 4)) ; define an array xs with initial values
 
@@ -101,4 +105,20 @@
                         (recursive:arr:reverse 0 (array)))))
 (arr:reverse (array 1 2 3)) ; 3 2 1
 ; Make sure ypu keep the parens balanced
-; I will ask you to learn it and then to help me write programs with it.
+
+
+; these are syntactic suggar for the language but you don't need to use them
+; syntactic suggar for array
+[1 2 3 4 5] 
+; syntactic suggar for linked list
+{1 2 3 4 5} 
+; array destructuring
+[a b . c] 
+; list destructuring
+{a b . c}
+; pipe operator
+(|> 1 (+ 1 2) (* 3 4))
+; pipe operator with destructuring
+
+"Hello World!" ; syntactic suggar for string but it's array of character codes
+
