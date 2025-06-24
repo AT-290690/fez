@@ -29,6 +29,12 @@
 ; For lambda, if a function takes no arguments, do not provide an argument list; just write (lambda body).
 ; The last argument to lambda is always the body.
 
+; IMPORTANT: Do not use the 'recursive:' prefix unless you are absolutely certain the function can be tail-call optimized (TCO).
+; For branching recursion (such as DFS, flood fill, tree/graph traversal, etc.), do NOT use 'recursive:'.
+; Only use 'recursive:' for linear/tail-position recursion (like loops or accumulators).
+; Similarly, only use 'memoized:' if you specifically want memoization for the function.
+; Be conservative with both prefixes, even if you see them in examples.
+
 (let x 10) ; define a variable x with the value 10
 (let xs (array 1 2 3 4)) ; define an array xs with initial values
 
