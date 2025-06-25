@@ -2,7 +2,7 @@
   (|> answers
       (array:map from:integer->string)
       (map:count)
-      (array:flat-one)
+      (map:entries)
       (array:fold (lambda acc [str count .]
         (+ acc (* (math:ceil (/ count (+ (from:string->integer str) 1)))
                   (+ (from:string->integer str) 1))))
