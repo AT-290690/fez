@@ -1636,6 +1636,8 @@
 (let map:keys (lambda Unknown[] (do Unknown[])))
 ; 1 map:values
 (let map:values (lambda Unknown[] (do Unknown[])))
+; 1 map:entries
+(let map:entries (lambda Unknown[] (do Unknown[])))
 ; 1 map:set! idx
 (let idx Number)
 ; 1 map:set! current

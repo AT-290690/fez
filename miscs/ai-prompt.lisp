@@ -44,9 +44,13 @@
 
 ; Array operations
 (array:set! xs 0 100) ; set the first element of array xs to 100
+(set! xs 0 100) ; same as above
 (array:pop! xs) ; remove the last element of array xs
+(pop! xs) ; same as above
 (array:push! xs (length xs) 10) ; add the value 10 at the end of array xs
 (array:get xs 0) ; get the first element of array xs
+(get xs 0) ; same as above
+
 
 ; Mathematical operations
 (+ (+ 1 2) x) ; add 1, 2, and x
@@ -148,4 +152,3 @@
 ; pipe operator with destructuring
 
 "Hello World!" ; syntactic suggar for string but it's array of character codes
-

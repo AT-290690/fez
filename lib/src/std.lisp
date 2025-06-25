@@ -1527,7 +1527,7 @@
   (array:transform args (lambda a b (set:add! a b)) initial)))
 (let set:max-capacity (lambda a b (array:buckets (math:max (length a) (length b)))))
 (let set:min-capacity (lambda a b (array:buckets (math:min (length a) (length b)))))
-(let set:values (lambda table (array:select (array:flat-one table) array:not-empty?)))
+(let set:values (lambda table (array:flat-one table)))
 (let set:intersection (lambda a b
         (|> b
           (from:set->array)
@@ -1561,6 +1561,7 @@
 (let map:empty! (lambda table (array:map table array:empty!)))
 (let map:keys (lambda table (|> table (array:flat-one) (array:map array:first))))
 (let map:values (lambda table (|> table (array:flat-one) (array:map array:second))))
+(let map:entries (lambda table (|> table (array:flat-one))))
 (let map:set! (lambda table key value
         (do
           (let idx (set:index table key))
