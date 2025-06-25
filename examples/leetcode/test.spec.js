@@ -33,5 +33,13 @@ test('leetcode', [
   {
     file: '781. Rabbits in Forrest.lisp',
     result: [5, 11]
+  },
+  {
+    file: '914. X of a Kind in a Deck of Cards.lisp',
+    result: [1, 0]
+  },
+  {
+    file: '448. Find All Numbers Disappeared in an Array.lisp',
+    result: [[5, 6], [2]]
   }
 ])
