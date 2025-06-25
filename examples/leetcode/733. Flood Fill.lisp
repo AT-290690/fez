@@ -19,5 +19,5 @@
           image)))))
 
 (let image [[1 1 1] [1 1 0] [1 0 1]])
-(flood-fill image 1 1 2)
+[(flood-fill image 1 1 2)]
 ; Output: [[2 2 2] [2 2 0] [2 0 1]]

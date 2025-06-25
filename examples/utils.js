@@ -9,8 +9,8 @@ export const isEqual = (a, b) =>
     !a.some((_, i) => !isEqual(a.at(i), b.at(i)))) ||
   a === b ||
   0
-export const test = (year, arr) => {
-  const path = `./examples/${year}/`
+export const test = (folder, arr) => {
+  const path = `./examples/${folder}/`
   const map = arr.reduce((a, b) => {
     a.set(b.file, b.result)
     return a
@@ -34,7 +34,7 @@ export const test = (year, arr) => {
         }
       })
   )
-    logSuccess(`AOC for year ${year} passed!`)
+    logSuccess(`Examples ${folder} passed!`)
   // console.log(
   //   readdirSync("./")
   //     .filter((x) => x.endsWith(".lisp"))

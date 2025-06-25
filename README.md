@@ -25,22 +25,3 @@
 ```
 
 ## ⚠️ Important: Do not use this programming language in production!
-
-Here is how to install the compiler:
-
-```
-npm i fez-lisp
-```
-
-```js
-import { parse, compile } from 'fez-lisp'
-console.log(compile(parse('(+ 1 2)')))
-// '(()=>{;return(()=>{return (1+2);})()})()'
-```
-
-```js
-import { parse, fez } from 'fez-lisp'
-const parsed = parse(`(|> [ 1 2 3 4 ] (math:map math:square) (math:summation))`)
-const [result, error] = fez(parsed, false)
-error == null ? console.log(result) : console.log('\x1b[31m', error, '\x1b[0m')
-```
