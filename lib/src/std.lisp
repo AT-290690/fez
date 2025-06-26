@@ -296,17 +296,17 @@
 (let math:bit-count (lambda n (do 
   (let recursive:math:bit-count (lambda n bits (if (= n 0) bits (recursive:math:bit-count (/ n 4294967296) (+ bits (math:bit-count32 (| n 0)))))))
   (recursive:math:bit-count n 0))))
-(let math:exp (lambda x (math:power-fast math:e x)))
+(let math:exp (lambda x (math:power math:e x)))
 (let math:square (lambda x (* x x)))
-(let math:power (lambda base exp
-  (if (< exp 0)
-      (if (= base 0) nil
-      (/ (* base (math:power base (- (* exp -1) 1)))))
-        (cond
-            (= exp 0) 1
-            (= exp 1) base
-            (*) (* base (math:power base (- exp 1)))))))
-(let math:power-fast (lambda base exp (do
+; (let math:power (lambda base exp
+;   (if (< exp 0)
+;       (if (= base 0) nil
+;       (/ (* base (math:power base (- (* exp -1) 1)))))
+;         (cond
+;             (= exp 0) 1
+;             (= exp 1) base
+;             (*) (* base (math:power base (- exp 1)))))))
+(let math:power (lambda base exp (do
   (if (< exp 0)
     (/ 1 (math:power base (- exp)))
     (do
@@ -341,9 +341,9 @@
             (let g (var:def 1.0))
             (let i (var:def 0))
             (loop:while (lambda (and (< (var:get i) max-iter)
-                                     (> (math:abs (- (math:power-fast math:e (var:get g)) b)) epsilon)))
+                                     (> (math:abs (- (math:power math:e (var:get g)) b)) epsilon)))
               (lambda (do
-                (var:set! g (- (var:get g) (/ (- (math:power-fast math:e (var:get g)) b) (math:power-fast math:e (var:get g)))))
+                (var:set! g (- (var:get g) (/ (- (math:power math:e (var:get g)) b) (math:power math:e (var:get g)))))
                 (var:set! i (+ (var:get i) 1)))))
             (var:get g))))))
       (let ln-x (ln-base x))
@@ -968,33 +968,41 @@
 (let from:array->list (lambda xs (do
   (let recursive:from:array->list (lambda xs out (if (not (> (length xs) 0)) out (recursive:from:array->list (array:tail xs) (list:pair (array:head xs) out)))))
   (recursive:from:array->list (array:reverse xs) []))))
-(let from:digit->char (lambda d 
-  (cond 
-    (= d 0) char:0 
-    (= d 1) char:1
-    (= d 2) char:2
-    (= d 3) char:3
-    (= d 4) char:4
-    (= d 5) char:5
-    (= d 6) char:6
-    (= d 7) char:7
-    (= d 8) char:8
-    (= d 9) char:9 
-    (*) char:space)))
-(let from:char->digit (lambda c 
-  (cond 
-    (= c char:0) 0
-    (= c char:1) 1 
-    (= c char:2) 2
-    (= c char:3) 3
-    (= c char:4) 4 
-    (= c char:5) 5
-    (= c char:6) 6 
-    (= c char:7) 7 
-    (= c char:8) 8 
-    (= c char:9) 9
-    (*) -1)))
-(let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
+
+; (let from:digit->char (lambda d 
+;   (cond 
+;     (= d 0) char:0 
+;     (= d 1) char:1
+;     (= d 2) char:2
+;     (= d 3) char:3
+;     (= d 4) char:4
+;     (= d 5) char:5
+;     (= d 6) char:6
+;     (= d 7) char:7
+;     (= d 8) char:8
+;     (= d 9) char:9 
+;     (*) char:space)))
+; (let from:char->digit (lambda c 
+;   (cond 
+;     (= c char:0) 0
+;     (= c char:1) 1 
+;     (= c char:2) 2
+;     (= c char:3) 3
+;     (= c char:4) 4 
+;     (= c char:5) 5
+;     (= c char:6) 6 
+;     (= c char:7) 7 
+;     (= c char:8) 8 
+;     (= c char:9) 9
+;     (*) -1)))
+; (let from:chars->digits (lambda chars (array:map chars (lambda ch (from:char->digit ch)))))
+; (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
+
+(let from:char->digit (lambda ch (- ch char:0)))
+(let from:chars->digits (lambda str (array:map str from:char->digit)))
+(let from:digit->char (lambda digit (+ digit char:0)))
+(let from:digits->chars (lambda digits (array:map digits from:digit->char)))
+
 (let from:chars->positive-or-negative-digits (lambda chars (do
     (let current-sign (var:def 1))
     (|> chars 
@@ -1005,7 +1013,6 @@
                     (array:push! a (* (var:get current-sign) (from:char->digit ch))) 
                     (var:set! current-sign 1)))
                 a)) [])))))
-(let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 (let from:digits->integer (lambda digits (do
     (let recursive:from:digits->integer (lambda i num base (if (> (length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
     (recursive:from:digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)))))
