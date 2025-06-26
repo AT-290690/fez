@@ -999,7 +999,7 @@
 ; (let from:digits->chars (lambda numbers (array:map numbers (lambda digit (from:digit->char digit)))))
 
 (let from:char->digit (lambda ch (- ch char:0)))
-(let from:chars->digits (lambda str (array:map str from:char->digit)))
+(let from:chars->digits (lambda digits (array:map digits from:char->digit)))
 (let from:digit->char (lambda digit (+ digit char:0)))
 (let from:digits->chars (lambda digits (array:map digits from:digit->char)))
 
