@@ -35,6 +35,12 @@
 ; Similarly, only use 'memoized:' if you specifically want memoization for the function.
 ; Be conservative with both prefixes, even if you see them in examples.
 
+; Lambda functions:
+; If a lambda body has more than one expression, you must wrap the body in a (do ...) block.
+; Example:
+; (lambda x y (do (let z (+ x y)) (* z 2)))
+; If the lambda body is a single expression, you do not need (do ...).
+
 (let x 10) ; define a variable x with the value 10
 (let xs (array 1 2 3 4)) ; define an array xs with initial values
 
@@ -51,6 +57,7 @@
 (array:get xs 0) ; get the first element of array xs
 (get xs 0) ; same as above
 
+; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs). If you want to update variables (scalars), use the variable helpers: var:def to define, var:set! to update, and var:get to retrieve the value.
 
 ; Mathematical operations
 (+ (+ 1 2) x) ; add 1, 2, and x

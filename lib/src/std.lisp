@@ -280,6 +280,12 @@
         (get xs half)
         (/ (+ (get xs (- half 1)) (get xs half)) 2)))))
 (let math:mean (lambda xs (/ (math:summation xs) (length xs))))
+(let math:fold-n (lambda n cb acc (do 
+    (let recursive:fold-n (lambda i out (if (< i n) (recursive:fold-n (+ i 1) (cb out i)) out)))
+    (recursive:fold-n 0 acc))))
+(let math:fold-range (lambda start end cb acc (do 
+    (let recursive:fold-range (lambda i out (if (<= i end) (recursive:fold-range (+ i 1) (cb out i)) out)))
+    (recursive:fold-range start acc))))
 ; (let math:divisors (lambda num (do 
 ;     (let divisors [])
 ;     (loop:for-range 1 (+ num 1) (lambda i (if (math:divisible? num i) (array:push! divisors i))))
@@ -880,6 +886,15 @@
         (loop:for-range 0 H (lambda j 
             (array:push! (array:at out -1) (matrix:get matrix j i)))))))
     out)))
+(let matrix:multiplication (lambda A B (do
+  (let dimsA (matrix:dimensions A))
+  (let dimsB (matrix:dimensions B))
+  (let rowsA (get dimsA 0))
+  (let colsA (get dimsA 1))
+  (let rowsB (get dimsB 0))
+  (let colsB (get dimsB 1))
+  (if (= colsA rowsB) (matrix:fill rowsA colsB (lambda i j
+      (math:fold-n colsA (lambda sum k (+ sum (* (matrix:get A i k) (matrix:get B k j)))) 0))) []))))
 (let matrix:rotate-square (lambda matrix (do 
     (let len (length matrix))
     (let out (math:zeroes len))
