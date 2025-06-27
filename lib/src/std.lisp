@@ -886,7 +886,7 @@
         (loop:for-range 0 H (lambda j 
             (array:push! (array:at out -1) (matrix:get matrix j i)))))))
     out)))
-(let matrix:multiplication (lambda A B (do
+(let matrix:product (lambda A B (do
   (let dimsA (matrix:dimensions A))
   (let dimsB (matrix:dimensions B))
   (let rowsA (get dimsA 0))
@@ -895,6 +895,12 @@
   (let colsB (get dimsB 1))
   (if (= colsA rowsB) (matrix:fill rowsA colsB (lambda i j
       (math:fold-n colsA (lambda sum k (+ sum (* (matrix:get A i k) (matrix:get B k j)))) 0))) []))))
+(let matrix:dot-product (lambda a b (do
+  (let lenA (length a))
+  (let lenB (length b))
+  (if (= lenA lenB)
+    (math:fold-n lenA (lambda sum i (+ sum (* (get a i) (get b i)))) 0)
+    []))))
 (let matrix:rotate-square (lambda matrix (do 
     (let len (length matrix))
     (let out (math:zeroes len))
