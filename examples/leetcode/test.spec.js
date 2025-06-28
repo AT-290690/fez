@@ -61,5 +61,9 @@ test('leetcode', [
   {
     file: '2103. Rings and Rods.lisp',
     result: [1, 1, 0]
+  },
+  {
+    file: '1971. Find if Path Exists in Graph.lisp',
+    result: [1, 0]
   }
 ])
