@@ -41,5 +41,25 @@ test('leetcode', [
   {
     file: '448. Find All Numbers Disappeared in an Array.lisp',
     result: [[5, 6], [2]]
+  },
+  {
+    file: '2778. Sum of Squares of Special Elements.lisp',
+    result: [21, 63]
+  },
+  {
+    file: '860. Lemonade Change.lisp',
+    result: [1, 0]
+  },
+  {
+    file: '2980. Check if Bitwise OR Has Trailing Zeros.lisp',
+    result: [1, 1, 0, 0]
+  },
+  {
+    file: '1646. Get Maximum in Generated Array.lisp',
+    result: [3, 1, 2]
+  },
+  {
+    file: '2103. Rings and Rods.lisp',
+    result: [1, 1, 0]
   }
 ])

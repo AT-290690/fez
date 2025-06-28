@@ -1,0 +1,17 @@
+(let get-maximum-generated (lambda n (do
+  (let nums (math:zeroes (+ n 1)))
+  (if (= n 0) 0
+    (do
+      (set! nums 0 0)
+      (set! nums 1 1)
+      (loop:for-range 1 (+ (// n 2) 1) (lambda i (do
+        (let double-i (* 2 i))
+        (let double-i-plus-1 (+ double-i 1))
+        (set! nums double-i (get nums i))
+        (if (<= double-i-plus-1 n)
+          (set! nums double-i-plus-1 (+ (get nums i) (get nums (+ i 1))))))))
+      (math:maximum nums))))))
+
+[(get-maximum-generated 7) ; Should return 3
+ (get-maximum-generated 2) ; Should return 1
+ (get-maximum-generated 3)] ; Should return 2

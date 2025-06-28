@@ -101,6 +101,23 @@
 (if (= 1 2) 10 -1) ; if 1 equals 2, return 10; otherwise, return -1
 (let y (if (> 2 1) (add 1 2) (add 2 3))) ; assign to y based on condition
 
+; Cond expression (multiple conditions)
+; Use cond for multiple if-else conditions. Each clause has a condition and result.
+; The (*) clause is the default/else case and is REQUIRED as the last clause.
+(cond
+  (= x 1) "one"
+  (= x 2) "two"
+  (= x 3) "three"
+  (*) "unknown") ; default case - REQUIRED
+
+; Cond with do blocks for multiple expressions
+(cond
+  (= bill 5) (do (math:var-increment! fives) true)
+  (= bill 10) (if (> (math:var-get fives) 0)
+                 (do (math:var-decrement! fives) (math:var-increment! tens) true)
+                 false)
+  (*) false) ; default case - REQUIRED
+
 ; Using do for multiple expressions
 (if (> 2 1) (do 
     (let x 10) ; define x
@@ -159,3 +176,4 @@
 ; pipe operator with destructuring
 
 "Hello World!" ; syntactic suggar for string but it's array of character codes
+
