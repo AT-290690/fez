@@ -215,7 +215,7 @@ export const setTypeToCollection = (stats) =>
   (stats[TYPE_PROP][0] = COLLECTION)
 export const setTypeToAbstraction = (stats) =>
   (isUnknownType(stats) || isAnyType(stats)) && (stats[TYPE_PROP][0] = APPLY)
-export const setReturnToAbbstraction = (stats) =>
+export const setReturnToAbstraction = (stats) =>
   isUnknownReturn(stats) && (stats[RETURNS][0] = APPLY)
 export const setTypeRef = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
@@ -238,8 +238,8 @@ export const setTypeToReturnRef = (stats, value) => {
   // Change main type if unknown
   if (isUnknownType(stats) || isAnyType(stats))
     if (!isUnknownReturn(value)) stats[TYPE_PROP][0] = value[RETURNS][0]
-  // TODO: Figure out what we do if generic thigns get infered
-  // cange sub type if it doesn't have
+  // TODO: Figure out what we do if generic things get inferred
+  // change sub type if it doesn't have
   if (!hasSubType(stats) || getSubType(stats).has(UNKNOWN))
     if (hasSubReturn(value)) stats[TYPE_PROP][1] = value[RETURNS][1]
 }
@@ -263,13 +263,13 @@ export const setType = (stats, value) =>
   ((stats[TYPE_PROP][0] = value[TYPE_PROP][0]),
   value[TYPE_PROP][1] && (stats[TYPE_PROP][1] = value[TYPE_PROP][1]))
 export const setSubType = (stats, value) =>
-  // makes no senseto protect this for now
+  // makes no sense to protect this for now
   hasSubType(value) && (stats[TYPE_PROP][1] = value[TYPE_PROP][1])
 export const setPropToSubType = (stats, prop, value) =>
-  // makes no senseto protect this for now
+  // makes no sense to protect this for now
   hasSubType(value) && (stats[prop][1] = value[TYPE_PROP][1])
 export const setPropToSubReturn = (stats, prop, value) =>
-  // makes no senseto protect this for now
+  // makes no sense to protect this for now
   hasSubReturn(value) && (stats[prop][1] = value[RETURNS][1])
 export const setTypeToReturn = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
@@ -297,11 +297,18 @@ export const getSubType = (stats) => stats && stats[TYPE_PROP][1]
 export const hasSubType = (stats) => stats && stats[TYPE_PROP][1] instanceof Set
 export const getSubReturn = (stats) => stats && stats[RETURNS][1]
 export const hasSubReturn = (stats) => stats && stats[RETURNS][1] instanceof Set
-export const isUknownSubReturn = (stats) =>
+export const isUnknownSubReturn = (stats) =>
   !hasSubReturn(stats) ||
-  (stats[RETURNS][1].size === 1 && stats[RETURNS][1].has(UNKNOWN))
-export const isUknownSubType = (stats) =>
+  (stats &&
+    stats[RETURNS] &&
+    stats[RETURNS][1] &&
+    stats[RETURNS][1].size === 1 &&
+    stats[RETURNS][1].has(UNKNOWN))
+export const isUnknownSubType = (stats) =>
   hasSubType(stats) &&
+  stats &&
+  stats[TYPE_PROP] &&
+  stats[TYPE_PROP][1] &&
   stats[TYPE_PROP][1].size === 1 &&
   stats[TYPE_PROP][1].has(UNKNOWN)
 export const isAtomType = (stats) =>
@@ -315,7 +322,7 @@ export const equalTypes = (a, b) => {
   if (!isSameType) return false
   return true
 }
-const isRedifinedInLambda = (env, name, exp) => {
+const isRedefinedInLambda = (env, name, exp) => {
   if (exp.slice(1, -1).some((x) => x[VALUE] === name)) return true
   else if (
     exp
@@ -424,12 +431,12 @@ const checkPredicateNameDeep = (name, exp, rest, returns) => {
       [WORD, name],
       isLeaf(fn)
         ? fn // when apply is a word (let x? (lambda (apply [] array:empty!)))
-        : drillReturnType(fn, (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION) // when apply is an annonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
+        : drillReturnType(fn, (r) => r[VALUE] === KEYWORDS.CALL_FUNCTION) // when apply is an anonymous lambda // (let fn? (lambda x (apply x (lambda x (array:empty! [])))))
     ])
   }
   return checkPredicateName(exp, [[WORD, name], returns])
 }
-const fillUknownArgs = (n) =>
+const fillUnknownArgs = (n) =>
   Array.from({ length: n })
     .fill(null)
     .map(() => ({
@@ -510,7 +517,7 @@ const IfApplyBranch = ({
       setPropToAbstraction(ref[STATS], prop)
       ref[STATS][RETURNS] = [UNKNOWN]
       ref[STATS][ARG_COUNT] = re.length - 2
-      ref[STATS][ARGUMENTS] = fillUknownArgs(re.length - 2)
+      ref[STATS][ARGUMENTS] = fillUnknownArgs(re.length - 2)
       break
     case KEYWORDS.CALL_FUNCTION:
       if (re.at(-1)[TYPE] === WORD) {
@@ -538,14 +545,14 @@ const IfApplyBranch = ({
 const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
     return setPropToAtom(ref[STATS], prop)
-  // TODO check that both brancehs are predicates if one is
+  // TODO check that both branches are predicates if one is
   else {
     const conc = isLeaf(re[0]) ? re[0] : re[0][0]
     const alt = isLeaf(re[1]) ? re[1] : re[1][0]
     const concequent = env[conc[VALUE]]
     const alternative = env[alt[VALUE]]
     // TODO make this more simple - it's so many different things just because types are functions or not
-    // WHY not consiter making return types for everything
+    // WHY not consider making return types for everything
     if (concequent)
       if (conc[TYPE] === WORD) {
         return setPropToTypeRef(ref[STATS], prop, concequent[STATS])
@@ -869,8 +876,7 @@ const resolveReturnType = ({
             return true
           } else if (!env[returns[VALUE]]) return false
           else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
-            if (returns[TYPE] === WORD)
-              setReturnToAbbstraction(env[name][STATS])
+            if (returns[TYPE] === WORD) setReturnToAbstraction(env[name][STATS])
             else {
               // ALWAYS APPLY
               // rest.at(-1)[0][TYPE] === APPLY
@@ -897,9 +903,9 @@ const resolveReturnType = ({
                           case KEYWORDS.ANONYMOUS_FUNCTION:
                             {
                               // TODO figure out a better way to do this
-                              // This is insitialisation of identity or any other
+                              // This is initialization of identity or any other
                               // function that returns it's argument
-                              // Redifine the variable but since it's an error doing that
+                              // Redefine the variable but since it's an error doing that
                               // Delete it first
                               delete env[name]
                               check(
@@ -914,7 +920,7 @@ const resolveReturnType = ({
                               // const n = genericReturn.length
                               // setTypeToAbstraction(env[name][STATS])
                               // env[name][STATS][ARG_COUNT] = n - 2
-                              // env[name][STATS][ARGUMENTS] = fillUknownArgs(
+                              // env[name][STATS][ARGUMENTS] = fillUnknownArgs(
                               //   n - 2
                               // )
                               // checkReturnType({
@@ -1055,7 +1061,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   )
                   // TODO delete this maybe
                   // #C2
-                  // It will not be possilbe to know return type
+                  // It will not be possible to know return type
                   const match1 = () => {
                     const actual = local[lambdaName]
                     const expected = args[i]
@@ -1165,7 +1171,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
       case WORD:
         if (!isSpecial)
           stagger(stack, 'append', [first, env], () => {
-            // Figure out how to determine if varible is define after it's used
+            // Figure out how to determine if variable is define after it's used
             if (env[first[VALUE]] === undefined) {
               throw new TypeError(
                 `Trying to access undefined variable ${first[VALUE]} (check #11)`
@@ -1188,11 +1194,11 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   exp
                 )})`
               )
-            // TODO check leT define types
+            // TODO check let define types
             const name = rest[0][VALUE]
             if (env.hasOwnProperty(name))
               throw new ReferenceError(
-                `Attempting to rediclare (${name}) which was previously declared in this scope (${stringifyArgs(
+                `Attempting to redeclare (${name}) which was previously declared in this scope (${stringifyArgs(
                   exp
                 )})`
               )
@@ -1247,7 +1253,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                   retried: 0,
                   counter: 0,
                   [ARG_COUNT]: n - 2,
-                  [ARGUMENTS]: fillUknownArgs(n - 2),
+                  [ARGUMENTS]: fillUnknownArgs(n - 2),
                   [RETURNS]: [UNKNOWN]
                 }
               }
@@ -1287,7 +1293,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 })
               }
               resolve()
-              if (isUknownSubType(env[name][STATS]))
+              if (isUnknownSubType(env[name][STATS]))
                 stagger(stack, 'prepend', exp, () => {
                   once(env[name][STATS], exp, stack, () => {
                     setPropToCollection(env[name][STATS], TYPE_PROP)
@@ -1303,12 +1309,12 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
               checkPredicateName(exp, rest)
               const isLeafNode = isLeaf(rightHand)
               if (isLeafNode && rightHand[TYPE] === WORD) {
-                // TODO make sure this prevents the assigment all together
+                // TODO make sure this prevents the assignment all together
                 if (env[rest[1][VALUE]] === undefined)
                   throw new TypeError(
                     `Trying to access undefined variable ${rest[1][VALUE]} (check #22)`
                   )
-                // Used to be checkin if it's an assigment to a special form
+                // Used to be checking if it's an assignment to a special form
                 // but this should not cause problems
                 // env[name] = SPECIAL_FORMS_SET.has(rest[1][VALUE])
                 //   ? structuredClone(env[rest[1][VALUE]])
@@ -1412,7 +1418,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 if (isLeaf(returns)) {
                   // TODO figure out what we do here
                   // this here is a variable WORD
-                  // so return type of that function is that varible type
+                  // so return type of that function is that variable type
                   switch (returns[TYPE]) {
                     case ATOM:
                       setReturnToAtom(ref[STATS])
@@ -1469,9 +1475,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                     //   default:
                     //     if (copy[ret[VALUE]]) {
                     //       if (isUnknownReturn(copy[ret[VALUE]][STATS])) {
-                    //         once(ref[STATS], [returns, copy], stack, () => {
-                    //           setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                    //         })
+                    //         once(ref[STATS], copy[ret[VALUE]][STATS])
                     //       } else setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
                     //     } else
                     //       stagger(stack, 'append', [ret, copy], () => {
@@ -1541,13 +1545,13 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                       }) (${stringifyArgs(exp)}) (check #12)`
                     )
                   else if (!env[first[VALUE]][STATS][ARG_COUNT]) {
-                    // TODO recursively take return type of applicaion
+                    // TODO recursively take return type of application
                     // FN ASSIGMENT
-                    // ASSIGMENT of paramaters of lambda that are a lambda
+                    // ASSIGMENT of parameters of lambda that are a lambda
                     // minus one to remove the body
                     env[first[VALUE]][STATS][TYPE_PROP] = [APPLY]
                     env[first[VALUE]][STATS][ARG_COUNT] = rest.length
-                    env[first[VALUE]][STATS][ARGUMENTS] = fillUknownArgs(
+                    env[first[VALUE]][STATS][ARGUMENTS] = fillUnknownArgs(
                       rest.length
                     )
                     for (let i = 0; i < rest.length; ++i) {
@@ -1569,7 +1573,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                         // case ATOM:
                         // break
                         case APPLY:
-                          // passing arg asA APPLICATION
+                          // passing arg as a APPLICATION
                           if (isUnknownType(arg[i][STATS]))
                             setTypeToReturnRef(
                               arg[i][STATS],
@@ -1577,7 +1581,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                             )
                           break
                         case WORD:
-                          // if param is a word we assosiate them by referanc
+                          // if param is a word we associate them by reference
                           // if (isUnknownType(arg[i][STATS]))
                           setStatsRef(arg[i], env[ARG[VALUE]])
                           break
@@ -1611,7 +1615,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                                 env[name][STATS][ARG_COUNT] !==
                                 args[i][STATS][ARG_COUNT]
                               ) {
-                                // TODO: Investigate why there used to be and error called #111 with this condition if (args[i][STATS][ARG_COUNT] === undefined)
+                                // TODO: Investigate why there used to be an error called #111 with this condition if (args[i][STATS][ARG_COUNT] === undefined)
                                 if (getType(args[i][STATS]) === APPLY)
                                   throw new TypeError(
                                     `Incorrect number of arguments for (${
@@ -1749,7 +1753,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                           setType(env[name][STATS], args[i][STATS])
                         else if (isUnknownType(env[name][STATS])) {
                           // REFF ASSIGMENT
-                          // EXPLAIN: Not asigning ref fixes this overwritting
+                          // EXPLAIN: Not assigning ref fixes this overwriting
                           // (let sum (lambda testxs (+ (get testxs 0) (get testxs 1))))
                           // (let range (math:range 1 10))
                           // (sum range)
@@ -1795,10 +1799,10 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                               setReturnRef(env[name][STATS], args[i][STATS])
                             break
                           default:
-                            // TODO fix this assigment
+                            // TODO fix this assignment
                             // It turns out it's not possible to determine return type of function here
                             // what if it's a global function used elsewhere where the return type mwould be different
-                            // THIS willgive lambda return types but refactor is needed still
+                            // THIS will give lambda return types but refactor is needed still
                             setReturnRef(env[name][STATS], args[i][STATS])
                             break
                         }
