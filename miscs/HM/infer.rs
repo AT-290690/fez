@@ -1,11 +1,23 @@
 use crate::fez::Expression;
-use crate::types::{Type, TypeScheme, TypeEnv, Substitution, unify, generalize, instantiate};
+use crate::types::{Type, TypeScheme, TypeEnv, Substitution};
+use std::collections::HashMap;
+use std::rc::Rc;
+use std::collections::HashSet;
+use std::sync::Mutex;
+use std::sync::Arc;
+
+// Global set to track recursive type variables across all contexts
+lazy_static::lazy_static! {
+    static ref GLOBAL_RECURSIVE_TYPE_VARS: Arc<Mutex<HashSet<String>>> = Arc::new(Mutex::new(HashSet::new()));
+}
 
 // Type inference context
 pub struct InferenceContext {
     pub env: TypeEnv,
     pub constraints: Vec<(Type, Type)>,
     pub fresh_var_counter: usize,
+    pub recursive_functions: std::collections::HashSet<String>,
+    pub recursive_type_vars: std::collections::HashSet<String>, // Track type variables for recursive functions
 }
 
 impl InferenceContext {
@@ -14,6 +26,8 @@ impl InferenceContext {
             env: TypeEnv::new(),
             constraints: Vec::new(),
             fresh_var_counter: 0,
+            recursive_functions: std::collections::HashSet::new(),
+            recursive_type_vars: std::collections::HashSet::new(),
         }
     }
     
@@ -22,6 +36,8 @@ impl InferenceContext {
             env,
             constraints: Vec::new(),
             fresh_var_counter: 0,
+            recursive_functions: std::collections::HashSet::new(),
+            recursive_type_vars: std::collections::HashSet::new(),
         }
     }
     
@@ -44,7 +60,7 @@ pub fn infer_type(expr: &Expression, env: &TypeEnv) -> Result<Type, String> {
     // Solve constraints
     let mut subst = Substitution::empty();
     for (t1, t2) in &ctx.constraints {
-        let unifier = unify(t1, t2)?;
+        let unifier = crate::types::unify(t1, t2)?;
         subst = subst.compose(&unifier);
     }
     
@@ -67,7 +83,7 @@ fn infer_expr_with_context(expr: &Expression, ctx: &mut InferenceContext, contex
         }
         Expression::Word(name) => {
             if let Some(scheme) = ctx.env.get(name) {
-                Ok(instantiate(&scheme))
+                Ok(crate::types::instantiate(&scheme))
             } else {
                 Err(format!("Undefined variable: {}", name))
             }
@@ -183,11 +199,13 @@ fn infer_let(args: &[Expression], ctx: &mut InferenceContext) -> Result<Type, St
             if !lambda_args.is_empty() && matches!(lambda_args[0], Expression::Word(ref name) if name == "lambda") {
                 // Check if this lambda calls itself (is recursive)
                 if is_recursive_lambda(var_name, value_expr) {
-                    // This is a recursive lambda
+                    // This is a recursive lambda - mark it as recursive in the context
+                    ctx.recursive_functions.insert(var_name.clone());
+                    
                     // For complex recursive functions, try to infer the type from usage patterns
                     if let Some(inferred_type) = infer_recursive_function_type(var_name, value_expr, ctx) {
                         // Add the inferred type to the environment
-                        let scheme = generalize(&ctx.env, inferred_type.clone());
+                        let scheme = crate::types::generalize(&ctx.env, inferred_type.clone());
                         ctx.env.set(var_name.clone(), scheme);
                         
                         // Return the variable's type
@@ -195,6 +213,14 @@ fn infer_let(args: &[Expression], ctx: &mut InferenceContext) -> Result<Type, St
                     } else {
                         // For complex recursive functions, create a placeholder and accept recursive types
                         let placeholder_type = ctx.fresh_var();
+                        // Mark this type variable as recursive globally
+                        if let Type::Var(var_name) = &placeholder_type {
+                            ctx.recursive_type_vars.insert(var_name.clone());
+                            // Also add to global set
+                            if let Ok(mut global_set) = GLOBAL_RECURSIVE_TYPE_VARS.lock() {
+                                global_set.insert(var_name.clone());
+                            }
+                        }
                         let placeholder_scheme = TypeScheme::monotype(placeholder_type.clone());
                         
                         // Add placeholder to environment BEFORE inferring the lambda body
@@ -210,21 +236,21 @@ fn infer_let(args: &[Expression], ctx: &mut InferenceContext) -> Result<Type, St
                 } else {
                     // Not recursive, proceed normally
                     let value_type = infer_expr(value_expr, ctx)?;
-                    let scheme = generalize(&ctx.env, value_type);
+                    let scheme = crate::types::generalize(&ctx.env, value_type);
                     ctx.env.set(var_name.clone(), scheme);
                     Ok(Type::Var(var_name.clone()))
                 }
             } else {
                 // Not a lambda, proceed normally
                 let value_type = infer_expr(value_expr, ctx)?;
-                let scheme = generalize(&ctx.env, value_type);
+                let scheme = crate::types::generalize(&ctx.env, value_type);
                 ctx.env.set(var_name.clone(), scheme);
                 Ok(Type::Var(var_name.clone()))
             }
         } else {
             // Not a lambda, proceed normally
             let value_type = infer_expr(value_expr, ctx)?;
-            let scheme = generalize(&ctx.env, value_type);
+            let scheme = crate::types::generalize(&ctx.env, value_type);
             ctx.env.set(var_name.clone(), scheme);
             Ok(Type::Var(var_name.clone()))
         }
@@ -235,12 +261,26 @@ fn infer_let(args: &[Expression], ctx: &mut InferenceContext) -> Result<Type, St
 
 // Helper function to check if a lambda is recursive
 fn is_recursive_lambda(func_name: &str, expr: &Expression) -> bool {
+    // Check if the function name appears in the lambda body (last argument of lambda)
+    if let Expression::Apply(lambda_args) = expr {
+        if lambda_args.len() >= 3 && matches!(lambda_args[0], Expression::Word(ref name) if name == "lambda") {
+            // The body is the last argument of the lambda
+            let body = &lambda_args[lambda_args.len() - 1];
+            if contains_word(func_name, body) {
+                return true;
+            }
+        }
+    }
+    false
+}
+
+fn contains_word(word: &str, expr: &Expression) -> bool {
     match expr {
         Expression::Atom(_) => false,
-        Expression::Word(name) => name == func_name,
+        Expression::Word(name) => name == word,
         Expression::Apply(args) => {
             for arg in args {
-                if is_recursive_lambda(func_name, arg) {
+                if contains_word(word, arg) {
                     return true;
                 }
             }
@@ -393,7 +433,7 @@ fn infer_type_predicate(pred: &str, args: &[Expression], ctx: &mut InferenceCont
 }
 
 // Built-in function type signatures
-pub fn create_builtin_env() -> TypeEnv {
+pub fn create_builtin_environment() -> TypeEnv {
     let mut env = TypeEnv::new();
     
     // Arithmetic operations
@@ -421,6 +461,12 @@ pub fn create_builtin_env() -> TypeEnv {
         ))
     ));
     
+    env.set("mod".to_string(), TypeScheme::monotype(
+        Type::Function(Box::new(Type::Number), Box::new(
+            Type::Function(Box::new(Type::Number), Box::new(Type::Number))
+        ))
+    ));
+    
     // Comparison operations
     env.set(">".to_string(), TypeScheme::monotype(
         Type::Function(Box::new(Type::Number), Box::new(
@@ -440,6 +486,18 @@ pub fn create_builtin_env() -> TypeEnv {
         ))
     ));
     
+    env.set(">=".to_string(), TypeScheme::monotype(
+        Type::Function(Box::new(Type::Number), Box::new(
+            Type::Function(Box::new(Type::Number), Box::new(Type::Boolean))
+        ))
+    ));
+    
+    env.set("<=".to_string(), TypeScheme::monotype(
+        Type::Function(Box::new(Type::Number), Box::new(
+            Type::Function(Box::new(Type::Number), Box::new(Type::Boolean))
+        ))
+    ));
+    
     // Logical operations
     env.set("and".to_string(), TypeScheme::monotype(
         Type::Function(Box::new(Type::Boolean), Box::new(
@@ -451,6 +509,10 @@ pub fn create_builtin_env() -> TypeEnv {
         Type::Function(Box::new(Type::Boolean), Box::new(
             Type::Function(Box::new(Type::Boolean), Box::new(Type::Boolean))
         ))
+    ));
+    
+    env.set("not".to_string(), TypeScheme::monotype(
+        Type::Function(Box::new(Type::Boolean), Box::new(Type::Boolean))
     ));
     
     // Array operations - variadic and polymorphic
@@ -533,8 +595,25 @@ pub fn create_builtin_env() -> TypeEnv {
 
 // Helper function to infer type with built-in environment
 pub fn infer_with_builtins(expr: &Expression) -> Result<Type, String> {
-    let env = create_builtin_env();
-    infer_type(expr, &env)
+    // Clear the global recursive type variables set at the start
+    if let Ok(mut global_set) = GLOBAL_RECURSIVE_TYPE_VARS.lock() {
+        global_set.clear();
+    }
+    
+    let mut ctx = InferenceContext {
+        env: create_builtin_environment(),
+        constraints: Vec::new(),
+        fresh_var_counter: 0,
+        recursive_functions: std::collections::HashSet::new(),
+        recursive_type_vars: std::collections::HashSet::new(),
+    };
+    
+    let typ = infer_expr(expr, &mut ctx)?;
+    
+    // Solve constraints with recursive function support
+    let subst = solve_constraints(&ctx.constraints, &ctx)?;
+    
+    Ok(typ.substitute(&subst.mapping))
 }
 
 // Pretty printing for type inference results
@@ -750,5 +829,23 @@ fn infer_recursive_function_type(func_name: &str, expr: &Expression, ctx: &mut I
     }
     
     None
+}
+
+fn solve_constraints(constraints: &[(Type, Type)], ctx: &InferenceContext) -> Result<Substitution, String> {
+    // Get the global recursive type variables
+    let global_recursive_vars = if let Ok(global_set) = GLOBAL_RECURSIVE_TYPE_VARS.lock() {
+        global_set.clone()
+    } else {
+        std::collections::HashSet::new()
+    };
+    
+    let mut subst = Substitution::empty();
+    
+    for (t1, t2) in constraints {
+        let s = crate::types::unify_with_recursive_check(&t1.substitute(&subst.mapping), &t2.substitute(&subst.mapping), &mut global_recursive_vars.clone())?;
+        subst = subst.compose(&s);
+    }
+    
+    Ok(subst)
 }
 
