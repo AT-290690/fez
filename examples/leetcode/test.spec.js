@@ -65,5 +65,13 @@ test('leetcode', [
   {
     file: '1971. Find if Path Exists in Graph.lisp',
     result: [1, 0]
+  },
+  {
+    file: '2582. Pass the Pillow.lisp',
+    result: [2, 3]
+  },
+  {
+    file: '268. Missing Number.lisp',
+    result: [2, 2, 8]
   }
 ])
