@@ -38,7 +38,7 @@
 ; Lambda functions:
 ; If a lambda body has more than one expression, you must wrap the body in a (do ...) block.
 ; Example:
-; (lambda x y (do (let z (+ x y)) (* z 2)))
+(lambda x y (do (let z (+ x y)) (* z 2)))
 ; If the lambda body is a single expression, you do not need (do ...).
 
 (let x 10) ; define a variable x with the value 10
