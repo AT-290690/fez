@@ -73,5 +73,9 @@ test('leetcode', [
   {
     file: '268. Missing Number.lisp',
     result: [2, 2, 8]
+  },
+  {
+    file: '1323. Maximum 69 Number.lisp',
+    result: [9969, 9999, 9999]
   }
 ])

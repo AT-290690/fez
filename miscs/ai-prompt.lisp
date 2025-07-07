@@ -143,48 +143,48 @@
 ; There are three types of variable systems in this language:
 ;
 ; 1. var:* - General purpose variables (any type)
-;    (var:def value)     - Define a variable with initial value
-;    (var:set! var value) - Set variable to new value
-;    (var:get var)       - Get current value of variable
-;    (var:del! var)      - Delete/destroy variable
-;
+   (var:def value)      ; - Define a variable with initial value
+   (var:set! var value) ; - Set variable to new value
+   (var:get var)        ; - Get current value of variable
+   (var:del! var)       ; - Delete/destroy variable
+
 ; 2. math:var-* - Numeric variables (numbers only)
-;    (math:var-def number)     - Define a numeric variable
-;    (math:var-set! var number) - Set numeric variable to new number
-;    (math:var-get var)        - Get current numeric value
-;    (math:var-increment! var) - Add 1 to numeric variable
-;    (math:var-decrement! var) - Subtract 1 from numeric variable
-;    (math:var-add! var x)     - Add x to numeric variable
-;    (math:var-subtract! var x) - Subtract x from numeric variable
+   (math:var-def number)      ; - Define a numeric variable
+   (math:var-set! var number) ; - Set numeric variable to new number
+   (math:var-get var)         ; - Get current numeric value
+   (math:var-increment! var)  ; - Add 1 to numeric variable
+   (math:var-decrement! var)  ; - Subtract 1 from numeric variable
+   (math:var-add! var x)      ; - Add x to numeric variable
+   (math:var-subtract! var x) ; - Subtract x from numeric variable
 ;
 ; 3. bool:* - Boolean variables (true/false only)
-;    (bool:true)         - Create boolean variable initialized to true
-;    (bool:false)        - Create boolean variable initialized to false
-;    (bool:true! var)    - Set boolean variable to true
-;    (bool:false! var)   - Set boolean variable to false
-;    (bool:true? var)    - Check if boolean variable is true
-;    (bool:false? var)   - Check if boolean variable is false
+   (bool:true)         ; - Create boolean variable initialized to true
+   (bool:false)        ; - Create boolean variable initialized to false
+   (bool:true! var)    ; - Set boolean variable to true
+   (bool:false! var)   ; - Set boolean variable to false
+   (bool:true? var)    ; - Check if boolean variable is true
+   (bool:false? var)   ; - Check if boolean variable is false
 ;
 ; Examples:
-; (let counter (math:var-def 0))           ; numeric variable
-; (math:var-increment! counter)            ; increment by 1
-; (math:var-set! counter 10)               ; set to 10
-;
-; (let found (bool:false))                 ; boolean variable
-; (bool:true! found)                       ; set to true
-; (if (bool:true? found) "yes" "no")       ; check if true
-;
-; (let data (var:def "hello"))             ; general variable
-; (var:set! data "world")                  ; set to new value
-; (var:get data)                           ; get current value
+(let counter (math:var-def 0))           ; numeric variable
+(math:var-increment! counter)            ; increment by 1
+(math:var-set! counter 10)               ; set to 10
+
+(let found (bool:false))                 ; boolean variable
+(bool:true! found)                       ; set to true
+(if (bool:true? found) "yes" "no")       ; check if true
+
+(let data (var:def "hello"))             ; general variable
+(var:set! data "world")                  ; set to new value
+(var:get data)                           ; get current value
 ;
 ; WRONG: (set! counter 5)                  ; ERROR: set! only works on arrays
 ; RIGHT: (math:var-set! counter 5)         ; Use appropriate variable function
 ;
 ; Array operations (set! works here):
-; (let arr [1 2 3])
-; (set! arr 0 100)                         ; Set array element at index 0 to 100
-; (array:set! arr 1 200)                   ; Same as above
+(let arr [1 2 3])
+(set! arr 0 100)                         ; Set array element at index 0 to 100
+(array:set! arr 1 200)                   ; Same as above
 
 ; Defining functions to reverse an array
 (let arr:for (lambda xs cb (do 
