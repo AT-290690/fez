@@ -55,7 +55,7 @@
 
         (let distanceY (math:abs (- y1 y2)))
         (let distanceX (math:abs (- x1 x2)))
-        (let recursive:iter (lambda i (do
+        (let tail-call:iter (lambda i (do
         
             (let Y1 (if (= y1 y2) y1 (if (> y1 y2) (+ y1 (* distanceY i)) (- y1 (* distanceY i)))))
             (let X1 (if (= x1 x2) x1 (if (> x1 x2) (+ x1 (* distanceX i)) (- x1 (* distanceX i)))))
@@ -66,9 +66,9 @@
             (if bounds1? (matrix:set! copy Y1 X1 char:hash))
             (if bounds2? (matrix:set! copy Y2 X2 char:hash))
             
-            (if (or bounds1? bounds2?) (recursive:iter (+ i 1))))))
+            (if (or bounds1? bounds2?) (tail-call:iter (+ i 1))))))
 
-        (recursive:iter 1))))
+        (tail-call:iter 1))))
     
      (let map (array:transform coords (lambda a b 
         (if (map:has? a (array (array:first b))) 

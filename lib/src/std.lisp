@@ -137,30 +137,30 @@
 (let pair:list-unzip (lambda xs (list:unzip xs)))
 
 (let math:range (lambda start end (do
-                          (let recursive:math:range (lambda out count
-                          (if (<= count end) (recursive:math:range (set! out (length out) count) (+ count 1)) out)))
-                          (recursive:math:range [] start))))
+                          (let tail-call:math:range (lambda out count
+                          (if (<= count end) (tail-call:math:range (set! out (length out) count) (+ count 1)) out)))
+                          (tail-call:math:range [] start))))
 (let math:sequence (lambda xs (do
                           (let end (length xs))
-                          (let recursive:math:sequence (lambda out count
-                          (if (< (length out) end) (recursive:math:sequence (set! out (length out) count) (+ count 1)) out)))
-                          (recursive:math:sequence [] 0))))
+                          (let tail-call:math:sequence (lambda out count
+                          (if (< (length out) end) (tail-call:math:sequence (set! out (length out) count) (+ count 1)) out)))
+                          (tail-call:math:sequence [] 0))))
 (let math:sequence-n (lambda n (do
-                          (let recursive:sequence-n (lambda out count
-                          (if (< (length out) n) (recursive:sequence-n (set! out (length out) count) (+ count 1)) out)))
-                          (recursive:sequence-n [] 0))))
+                          (let tail-call:sequence-n (lambda out count
+                          (if (< (length out) n) (tail-call:sequence-n (set! out (length out) count) (+ count 1)) out)))
+                          (tail-call:sequence-n [] 0))))
 (let math:zeroes (lambda n (do
-                          (let recursive:math:zeroes (lambda out
-                          (if (< (length out) n) (recursive:math:zeroes (set! out (length out) 0)) out)))
-                          (recursive:math:zeroes []))))
+                          (let tail-call:math:zeroes (lambda out
+                          (if (< (length out) n) (tail-call:math:zeroes (set! out (length out) 0)) out)))
+                          (tail-call:math:zeroes []))))
 (let math:ones (lambda n (do
-                          (let recursive:math:ones (lambda out
-                          (if (< (length out) n) (recursive:math:ones (set! out (length out) 1)) out)))
-                          (recursive:math:ones []))))
+                          (let tail-call:math:ones (lambda out
+                          (if (< (length out) n) (tail-call:math:ones (set! out (length out) 1)) out)))
+                          (tail-call:math:ones []))))
 (let math:numbers (lambda n num (do
-                          (let recursive:math:numbers (lambda out
-                          (if (< (length out) n) (recursive:math:numbers (set! out (length out) num)) out)))
-                          (recursive:math:numbers []))))
+                          (let tail-call:math:numbers (lambda out
+                          (if (< (length out) n) (tail-call:math:numbers (set! out (length out) num)) out)))
+                          (tail-call:math:numbers []))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
 (let math:bionomial-coefficient (lambda a b
@@ -281,11 +281,11 @@
         (/ (+ (get xs (- half 1)) (get xs half)) 2)))))
 (let math:mean (lambda xs (/ (math:summation xs) (length xs))))
 (let math:fold-n (lambda n cb acc (do 
-    (let recursive:fold-n (lambda i out (if (< i n) (recursive:fold-n (+ i 1) (cb out i)) out)))
-    (recursive:fold-n 0 acc))))
+    (let tail-call:fold-n (lambda i out (if (< i n) (tail-call:fold-n (+ i 1) (cb out i)) out)))
+    (tail-call:fold-n 0 acc))))
 (let math:fold-range (lambda start end cb acc (do 
-    (let recursive:fold-range (lambda i out (if (<= i end) (recursive:fold-range (+ i 1) (cb out i)) out)))
-    (recursive:fold-range start acc))))
+    (let tail-call:fold-range (lambda i out (if (<= i end) (tail-call:fold-range (+ i 1) (cb out i)) out)))
+    (tail-call:fold-range start acc))))
 ; (let math:divisors (lambda num (do 
 ;     (let divisors [])
 ;     (loop:for-range 1 (+ num 1) (lambda i (if (math:divisible? num i) (array:push! divisors i))))
@@ -300,8 +300,8 @@
   (let n2 (+ (& n1 858993459) (& (>> n1 2) 858993459)))
   (>> (* (& (+ n2 (>> n2 4)) 252645135) 16843009) 24))))
 (let math:bit-count (lambda n (do 
-  (let recursive:math:bit-count (lambda n bits (if (= n 0) bits (recursive:math:bit-count (/ n 4294967296) (+ bits (math:bit-count32 (| n 0)))))))
-  (recursive:math:bit-count n 0))))
+  (let tail-call:math:bit-count (lambda n bits (if (= n 0) bits (tail-call:math:bit-count (/ n 4294967296) (+ bits (math:bit-count32 (| n 0)))))))
+  (tail-call:math:bit-count n 0))))
 (let math:exp (lambda x (math:power math:e x)))
 (let math:square (lambda x (* x x)))
 ; (let math:power (lambda base exp
@@ -356,17 +356,17 @@
       (let ln-b (ln-base base))
       (/ ln-x ln-b))))))
 (let math:greatest-common-divisor (lambda a b (do
-    (let recursive:math:greatest-common-divisor (lambda a b
-          (if (= b 0) a (recursive:math:greatest-common-divisor b (mod a b))))) (recursive:math:greatest-common-divisor a b))))
+    (let tail-call:math:greatest-common-divisor (lambda a b
+          (if (= b 0) a (tail-call:math:greatest-common-divisor b (mod a b))))) (tail-call:math:greatest-common-divisor a b))))
 (let math:least-common-divisor (lambda a b (/ (* a b) (math:greatest-common-divisor a b))))
 (let math:coprime? (lambda a b (= (math:greatest-common-divisor a b) 1)))
 (let math:sqrt (lambda x (do
   (let good-enough? (lambda g x (< (math:abs (- (math:square g) x)) 0.01)))
   (let improve-guess (lambda g x (math:average g (/ x g))))
-  (let recursive:math:sqrt (lambda g x
+  (let tail-call:math:sqrt (lambda g x
       (if (good-enough? g x) g
-          (recursive:math:sqrt (improve-guess g x) x))))
-  (recursive:math:sqrt 1.0 x))))
+          (tail-call:math:sqrt (improve-guess g x) x))))
+  (tail-call:math:sqrt 1.0 x))))
 (let math:perfect-square? (lambda n (- (math:floor (math:sqrt n)) (math:floor (math:sqrt (- n 1))))))
 (let math:circumference (lambda radius (* math:pi (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
@@ -374,10 +374,10 @@
 (let math:nth-digit (lambda digit n (| (mod (/ digit (math:power 10 (- n 1))) 10) 0)))
 (let math:remove-nth-digits (lambda digit n (| (/ digit (math:power 10 n)) 0)))
 (let math:keep-nth-digits (lambda digit n (do
-    (let recursive:math:keep-nth-digits (lambda i out base 
+    (let tail-call:math:keep-nth-digits (lambda i out base 
                     (if (> i 0) 
-                        (recursive:math:keep-nth-digits (- i 1) (+ out (* base (math:nth-digit digit i))) (* base 0.1)) out)))
-    (recursive:math:keep-nth-digits n 0 (* (math:power 10 n) 0.1)))))
+                        (tail-call:math:keep-nth-digits (- i 1) (+ out (* base (math:nth-digit digit i))) (* base 0.1)) out)))
+    (tail-call:math:keep-nth-digits n 0 (* (math:power 10 n) 0.1)))))
 (let math:normalize (lambda value math:min math:max (* (- value math:min) (/ (- math:max math:min)))))
 (let math:linear-interpolation (lambda a b n (+ (* (- 1 n) a) (* n b))))
 (let math:gauss-sum (lambda n (* n (+ n 1) 0.5)))
@@ -433,7 +433,7 @@
     (lambda (math:mulberry-32-prng (math:var-increment-and-get! n))))))
 (let math:sine (lambda rad terms (do
     (let sine (math:var-def 0))
-    (let recursive:math:sine (lambda i 
+    (let tail-call:math:sine (lambda i 
       (do 
         (math:var-set! sine 
           (+ (math:var-get sine) 
@@ -441,11 +441,11 @@
               (/ (math:factorial (+ (* 2 i) 1))) 
               (math:power -1 i) 
               (math:power rad (+ (* 2 i) 1))))) 
-        (if (< i terms) (recursive:math:sine (+ i 1)) (math:var-get sine)))))
-      (recursive:math:sine 0))))
+        (if (< i terms) (tail-call:math:sine (+ i 1)) (math:var-get sine)))))
+      (tail-call:math:sine 0))))
 (let math:cosine (lambda rad terms (do
     (let cosine (math:var-def 0))
-    (let recursive:math:cosine (lambda i 
+    (let tail-call:math:cosine (lambda i 
       (do 
         (math:var-set! cosine 
           (+ (math:var-get cosine) 
@@ -453,29 +453,29 @@
               (/ (math:factorial (* 2 i))) 
               (math:power -1 i) 
               (math:power rad (* 2 i))))) 
-        (if (< i terms) (recursive:math:cosine (+ i 1)) (math:var-get cosine)))))
-      (recursive:math:cosine 0))))
+        (if (< i terms) (tail-call:math:cosine (+ i 1)) (math:var-get cosine)))))
+      (tail-call:math:cosine 0))))
 (let math:prime-factors (lambda N (do 
   (let a []) 
   (let n (math:var-def N))
   (let f (math:var-def 2))
-  (let recursive:math:prime-factors (lambda (if (> (math:var-get n) 1) (apply (lambda (do 
+  (let tail-call:math:prime-factors (lambda (if (> (math:var-get n) 1) (apply (lambda (do 
     (if (= (mod (math:var-get n) (math:var-get f)) 0) 
       (apply (lambda (do 
         (set! a (length a) (math:var-get f))
         (math:var-set! n (* (math:var-get n) (/ (math:var-get f)))))))
       (math:var-set! f (+ (math:var-get f) 1)))
-    (recursive:math:prime-factors)))) a)))
-    (recursive:math:prime-factors))))
+    (tail-call:math:prime-factors)))) a)))
+    (tail-call:math:prime-factors))))
 (let math:prime? (lambda n
       (cond
         (= n 1) false
         (< n 0) false
         (*) (apply (lambda (do
-        (let recursive:math:prime? (lambda i end (do
+        (let tail-call:math:prime? (lambda i end (do
             (let prime? (not (= (mod n i) 0)))
-            (if (and (<= i end) prime?) (recursive:math:prime? (+ i 1) end) prime?))))
-        (or (= n 2) (recursive:math:prime? 2 (math:sqrt n)))))))))
+            (if (and (<= i end) prime?) (tail-call:math:prime? (+ i 1) end) prime?))))
+        (or (= n 2) (tail-call:math:prime? 2 (math:sqrt n)))))))))
 (let math:number-of-digits (lambda n
   (cond
     (= n 0) 1
@@ -610,81 +610,81 @@
 (let array:third (lambda xs (get xs 2)))
 (let array:last (lambda xs (array:at xs -1)))
 (let array:for (lambda xs cb (do 
-                    (let recursive:array:for (lambda i 
-                      (if (> (length xs) i) (apply (lambda (do (cb (get xs i)) (recursive:array:for (+ i 1))))) 0)))
-                    (recursive:array:for 0)
+                    (let tail-call:array:for (lambda i 
+                      (if (> (length xs) i) (apply (lambda (do (cb (get xs i)) (tail-call:array:for (+ i 1))))) 0)))
+                    (tail-call:array:for 0)
                 xs)))
 (let array:buckets (lambda n (do (let out []) (loop:for-n n (lambda . (set! out (length out) []))) out)))
 (let array:enumerated-for (lambda xs cb (do 
   (loop:for-n (length xs) (lambda i (cb (get xs i) i)))
   xs)))
 (let array:fill (lambda n cb (do 
-  (let recursive:array:fill (lambda xs i (if (= i 0) xs (recursive:array:fill (array:merge! xs (array (cb))) (- i 1)))))
-  (recursive:array:fill [] n))))
+  (let tail-call:array:fill (lambda xs i (if (= i 0) xs (tail-call:array:fill (array:merge! xs (array (cb))) (- i 1)))))
+  (tail-call:array:fill [] n))))
 (let array:of (lambda n cb (do 
-  (let recursive:array:of (lambda xs i (if (= i n) xs (recursive:array:of (array:merge! xs (array (cb i))) (+ i 1)))))
-  (recursive:array:of [] 0))))
+  (let tail-call:array:of (lambda xs i (if (= i n) xs (tail-call:array:of (array:merge! xs (array (cb i))) (+ i 1)))))
+  (tail-call:array:of [] 0))))
 (let array:map (lambda xs cb (do
-                  (let recursive:array:map (lambda i out
+                  (let tail-call:array:map (lambda i out
                         (if (> (length xs) i)
-                              (recursive:array:map (+ i 1)
+                              (tail-call:array:map (+ i 1)
                                 (set! out (length out) (cb (get xs i))))
                               out)))
-                      (recursive:array:map 0 []))))
+                      (tail-call:array:map 0 []))))
 (let array:select (lambda xs cb? (do
-                  (let recursive:array:select (lambda i out
+                  (let tail-call:array:select (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:select (+ i 1)
+                            (tail-call:array:select (+ i 1)
                                       (if (cb? (get xs i))
                                             (set! out (length out) (get xs i))
                                             out))
                             out)))
-                      (recursive:array:select 0 []))))
+                      (tail-call:array:select 0 []))))
 (let array:exclude (lambda xs cb? (do
-                  (let recursive:array:exclude (lambda i out
+                  (let tail-call:array:exclude (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:exclude (+ i 1)
+                            (tail-call:array:exclude (+ i 1)
                                       (if (not (cb? (get xs i)))
                                             (set! out (length out) (get xs i))
                                             out))
                             out)))
-                      (recursive:array:exclude 0 []))))
+                      (tail-call:array:exclude 0 []))))
 (let array:fold (lambda xs cb initial (do
-                  (let recursive:array:fold (lambda i out
+                  (let tail-call:array:fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:fold (+ i 1) (cb out (get xs i)))
+                            (tail-call:array:fold (+ i 1) (cb out (get xs i)))
                             (Any out))))
-                      (recursive:array:fold 0 initial))))
+                      (tail-call:array:fold 0 initial))))
 (let array:transform (lambda xs cb initial (do
-                  (let recursive:array:fold (lambda i out
+                  (let tail-call:array:fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:fold (+ i 1) (cb out (get xs i)))
+                            (tail-call:array:fold (+ i 1) (cb out (get xs i)))
                             out)))
-                      (recursive:array:fold 0 initial))))
+                      (tail-call:array:fold 0 initial))))
 (let array:reduce (lambda xs cb initial (do
-                  (let recursive:array:reduce (lambda i out
+                  (let tail-call:array:reduce (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:reduce (+ i 1) (cb out (get xs i)))
+                            (tail-call:array:reduce (+ i 1) (cb out (get xs i)))
                             out)))
-                      (recursive:array:reduce 0 initial))))
+                      (tail-call:array:reduce 0 initial))))
 (let array:enumerated-reduce (lambda xs cb initial (do
-                  (let recursive:array:reduce (lambda i out
+                  (let tail-call:array:reduce (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:reduce (+ i 1) (cb out (get xs i) i))
+                            (tail-call:array:reduce (+ i 1) (cb out (get xs i) i))
                             out)))
-                      (recursive:array:reduce 0 initial))))
+                      (tail-call:array:reduce 0 initial))))
 (let array:every? (lambda xs predicate? (do
-                    (let recursive:array:every? (lambda i
+                    (let tail-call:array:every? (lambda i
                           (if (and (> (length xs) i) (predicate? (get xs i)))
-                              (recursive:array:every? (+ i 1))
+                              (tail-call:array:every? (+ i 1))
                               (not (> (length xs) i)))))
-                        (recursive:array:every? 0))))
+                        (tail-call:array:every? 0))))
 (let array:some? (lambda xs predicate? (do
-                    (let recursive:array:some? (lambda i
+                    (let tail-call:array:some? (lambda i
                           (if (and (> (length xs) i)  (not (predicate? (get xs i))))
-                              (recursive:array:some? (+ i 1))
+                              (tail-call:array:some? (+ i 1))
                               (not (= (> (length xs) i) 0)))))
-                              (recursive:array:some? 0))))
+                              (tail-call:array:some? 0))))
 
 (let array:find (lambda xs predicate? (get xs (array:find-index xs predicate?))))
 
@@ -693,17 +693,17 @@
   (if (= index -1) [[] [-1]] [[(get xs index)] []]))))
 
 (let array:has? (lambda xs predicate? (do
-                    (let recursive:array:has (lambda i
+                    (let tail-call:array:has (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i)) true (recursive:array:has (+ i 1))) false)))
-                        (recursive:array:has 0))))
+                              (if (predicate? (get xs i)) true (tail-call:array:has (+ i 1))) false)))
+                        (tail-call:array:has 0))))
 (let array:reverse (lambda xs (do
-                    (let recursive:array:reverse (lambda i out
+                    (let tail-call:array:reverse (lambda i out
                           (if (> (length xs) i)
-                              (recursive:array:reverse (+ i 1)
+                              (tail-call:array:reverse (+ i 1)
                               (array:merge! (array (get xs i)) out))
                           out)))
-                        (recursive:array:reverse 0 []))))
+                        (tail-call:array:reverse 0 []))))
 (let array:append! (lambda q item (set! q (length q) item)))
 (let array:set-and-get! (lambda q index item (do (set! q index item) item)))
 (let array:tail! (lambda q (del! q)))
@@ -718,7 +718,7 @@
 (let array:not-empty? (lambda xs (not (= (length xs) 0))))
 (let array:count-of (lambda xs cb? (length (array:select xs cb?))))
 (let array:count (lambda input item (array:count-of input (lambda x (= x item)))))
-(let array:empty! (lambda xs (do (let recursive:array:empty! (lambda (if (> (length xs) 0) (apply (lambda (do (del! xs) (recursive:array:empty!)))) xs))) (recursive:array:empty!))))
+(let array:empty! (lambda xs (do (let tail-call:array:empty! (lambda (if (> (length xs) 0) (apply (lambda (do (del! xs) (tail-call:array:empty!)))) xs))) (tail-call:array:empty!))))
 (let array:in-bounds? (lambda xs index (and (< index (length xs)) (>= index 0))))
 (let get-option (lambda xs i (if (array:in-bounds? xs i) [[(get xs i)] []] [[] [-1]])))
 (let get-or-default (lambda xs i def (if (array:in-bounds? xs i) (get xs i) def)))
@@ -726,40 +726,40 @@
 (let array:get-or-default get-or-default)
 (let array:slice (lambda xs start end (do
         (let bounds (- end start))
-        (let recursive:array:slice (lambda i out
+        (let tail-call:array:slice (lambda i out
           (if (< i bounds)
-              (recursive:array:slice (+ i 1) (set! out (length out) (get xs (+ start i))))
+              (tail-call:array:slice (+ i 1) (set! out (length out) (get xs (+ start i))))
               out)))
-        (Collection (recursive:array:slice 0 [])))))
+        (Collection (tail-call:array:slice 0 [])))))
 
 (let car (lambda xs (get xs 0)))
 (let cdr (lambda xs (do
         (let bounds (length xs))
-        (let recursive:cdr (lambda i out
+        (let tail-call:cdr (lambda i out
           (if (< i bounds)
-              (recursive:cdr (+ i 1) (set! out (length out) (get xs i)))
+              (tail-call:cdr (+ i 1) (set! out (length out) (get xs i)))
               out)))
-        (recursive:cdr 1 []))))
+        (tail-call:cdr 1 []))))
 (let cons (lambda a b (do (let out []) (array:for a (lambda x (set! out (length out) x))) (array:for b (lambda x (set! out (length out) x))) out)))
 
 (let array:take (lambda xs n (array:slice xs 0 n)))
 (let array:drop (lambda xs n (array:slice xs n (length xs))))
 (let array:binary-search
         (lambda xs target (do
-  (let recursive:array:binary-search
+  (let tail-call:array:binary-search
         (lambda start end (do
     (if (<= start end) (apply (lambda (do
         (let index (math:floor (* (+ start end) 0.5)))
         (let current (get xs index))
         (if (= target current) target
           (if (> current target)
-            (recursive:array:binary-search start (- index 1))
-            (recursive:array:binary-search (+ index 1) end)))))) 0))))
-   (recursive:array:binary-search 0 (length xs)))))
+            (tail-call:array:binary-search start (- index 1))
+            (tail-call:array:binary-search (+ index 1) end)))))) 0))))
+   (tail-call:array:binary-search 0 (length xs)))))
 (let array:zip (lambda a b (do
-  (let recursive:array:zip (lambda i j output
-    (if (and (> (length a) i) (> (length b) j)) (recursive:array:zip (+ i 1) (+ j 1) (set! output (length output) (array (get a i) (get b j)))) output)))
-  (recursive:array:zip 0 0 []))))
+  (let tail-call:array:zip (lambda i j output
+    (if (and (> (length a) i) (> (length b) j)) (tail-call:array:zip (+ i 1) (+ j 1) (set! output (length output) (array (get a i) (get b j)))) output)))
+  (tail-call:array:zip 0 0 []))))
 (let array:unzip (lambda xs (array (array:map xs array:first) (array:map xs array:second))))
 (let array:equal? (lambda a b (do (Collection a) (Collection b)
   (or
@@ -787,13 +787,13 @@
 (let array:sort (lambda xs cb (do
   (if (<= (length xs) 1) xs (apply (lambda (do
     (let pivot (array:head xs))
-    (let recursive:array:sort (lambda i bounds a b (do
+    (let tail-call:array:sort (lambda i bounds a b (do
         (let current (get xs i))
         (let predicate (cb current pivot))
         (let left (if (= predicate 0) (array:merge a (array current)) a))
         (let right (if (= predicate 1) (array:merge b (array current)) b))
-        (if (< i bounds) (recursive:array:sort (+ i 1) bounds left right) (array left right)))))
-    (let sorted (recursive:array:sort 1 (- (length xs) 1) [] []))
+        (if (< i bounds) (tail-call:array:sort (+ i 1) bounds left right) (array left right)))))
+    (let sorted (tail-call:array:sort 1 (- (length xs) 1) [] []))
     (let left (array:first sorted))
     (let right (array:second sorted))
     (array:merge (array:merge (array:sort left cb) (array pivot)) (array:sort right cb)))))))))
@@ -814,9 +814,9 @@
   (if (= len 1) xs
     (apply (lambda (do
       (array (array:first xs))
-      (let recursive:array:adjacent-difference (lambda i result (if (< i len) (apply (lambda (do
-        (recursive:array:adjacent-difference (+ i 1) (set! result i (cb (get xs (- i 1)) (get xs i))))))) result)))
-        (recursive:array:adjacent-difference 1 xs))))))))
+      (let tail-call:array:adjacent-difference (lambda i result (if (< i len) (apply (lambda (do
+        (tail-call:array:adjacent-difference (+ i 1) (set! result i (cb (get xs (- i 1)) (get xs i))))))) result)))
+        (tail-call:array:adjacent-difference 1 xs))))))))
 (let array:partition (lambda xs n (array:enumerated-transform xs (lambda a x i (do
       (if (= (mod i n) 0)
         (array:push! a (array x))
@@ -827,13 +827,13 @@
 (let array:adjacent-find (lambda xs cb? (do
   (let len (length xs))
   (if (not (= len 1)) (apply (lambda (do
-      (let recursive:array:adjacent-find (lambda i
+      (let tail-call:array:adjacent-find (lambda i
       (if (< i len)
       ; todo: get rid of this inlined variable declaration
       (if (cb? (let prev (get xs (- i 1))) (let current (get xs i)))
       prev
-      (recursive:array:adjacent-find (+ i 1))) nil)))
-      (recursive:array:adjacent-find 1)))) nil))))
+      (tail-call:array:adjacent-find (+ i 1))) nil)))
+      (tail-call:array:adjacent-find 1)))) nil))))
 (let matrix:zeroes (lambda W H (|> (math:zeroes W) (array:map (lambda . (math:zeroes H))))))
 (let matrix:ones (lambda W H (|> (math:ones W) (array:map (lambda . (math:ones H))))))
 (let matrix:truth-table (lambda W H (|> (bool:truths W) (array:map (lambda . (bool:truths H))))))
@@ -904,29 +904,29 @@
 (let matrix:rotate-square (lambda matrix (do 
     (let len (length matrix))
     (let out (math:zeroes len))
-    (let recursive:outer:matrix:rotate-square (lambda row 
+    (let tail-call:outer:matrix:rotate-square (lambda row 
         (if (< row len) (do 
             (set! out row [])
-            (let recursive:inner:matrix:rotate-square (lambda col 
+            (let tail-call:inner:matrix:rotate-square (lambda col 
         (if (< col len) (do 
             (set! (get out row) col (get (get matrix col) (- (- len 1) row)))
-            (recursive:inner:matrix:rotate-square (+ col 1))) nil)))
-            (recursive:inner:matrix:rotate-square 0)
-        (recursive:outer:matrix:rotate-square (+ row 1))) nil)))
-    (recursive:outer:matrix:rotate-square 0) out)))
+            (tail-call:inner:matrix:rotate-square (+ col 1))) nil)))
+            (tail-call:inner:matrix:rotate-square 0)
+        (tail-call:outer:matrix:rotate-square (+ row 1))) nil)))
+    (tail-call:outer:matrix:rotate-square 0) out)))
 (let matrix:flip-square (lambda matrix (do 
     (let len (length matrix))
     (let out (math:zeroes len))
-    (let recursive:outer:matrix:flip-square (lambda row 
+    (let tail-call:outer:matrix:flip-square (lambda row 
         (if (< row len) (do 
             (set! out row [])
-            (let recursive:inner:matrix:flip-square (lambda col 
+            (let tail-call:inner:matrix:flip-square (lambda col 
         (if (< col len) (do 
             (set! (get out row) col (get (get matrix row) (- (- len 1) col)))
-            (recursive:inner:matrix:flip-square (+ col 1))) [])))
-            (recursive:inner:matrix:flip-square 0)
-        (recursive:outer:matrix:flip-square (+ row 1))) [])))
-    (recursive:outer:matrix:flip-square 0) out)))
+            (tail-call:inner:matrix:flip-square (+ col 1))) [])))
+            (tail-call:inner:matrix:flip-square 0)
+        (tail-call:outer:matrix:flip-square (+ row 1))) [])))
+    (tail-call:outer:matrix:flip-square 0) out)))
 (let matrix:dimensions (lambda matrix (array (length matrix) (length (get matrix 0)))))
 (let matrix:in-bounds? (lambda matrix y x (and (array:in-bounds? matrix y) (array:in-bounds? (get matrix y) x))))
 (let matrix:diagonal-neighborhood (array (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
@@ -984,11 +984,11 @@
           (= (length x) 0) (array char:comma) 
           (*) x))))))
 (let from:list->array (lambda list (do
-  (let recursive:from:list->array (lambda lst out (if (list:nil? lst) out (recursive:from:list->array (list:tail lst) (array:merge out (array (list:head lst)))))))
-  (recursive:from:list->array list []))))
+  (let tail-call:from:list->array (lambda lst out (if (list:nil? lst) out (tail-call:from:list->array (list:tail lst) (array:merge out (array (list:head lst)))))))
+  (tail-call:from:list->array list []))))
 (let from:array->list (lambda xs (do
-  (let recursive:from:array->list (lambda xs out (if (not (> (length xs) 0)) out (recursive:from:array->list (array:tail xs) (list:pair (array:head xs) out)))))
-  (recursive:from:array->list (array:reverse xs) []))))
+  (let tail-call:from:array->list (lambda xs out (if (not (> (length xs) 0)) out (tail-call:from:array->list (array:tail xs) (list:pair (array:head xs) out)))))
+  (tail-call:from:array->list (array:reverse xs) []))))
 
 ; (let from:digit->char (lambda d 
 ;   (cond 
@@ -1035,27 +1035,27 @@
                     (var:set! current-sign 1)))
                 a)) [])))))
 (let from:digits->integer (lambda digits (do
-    (let recursive:from:digits->integer (lambda i num base (if (> (length digits) i) (recursive:from:digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
-    (recursive:from:digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)))))
+    (let tail-call:from:digits->integer (lambda i num base (if (> (length digits) i) (tail-call:from:digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
+    (tail-call:from:digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)))))
 (let from:digits->integer-base (lambda digits base (math:fold (math:sequence digits) (lambda a i (+ a (* (get digits i) (math:power base (- (length digits) i 1))))) 0)))
 (let from:integer->string-base (lambda num base  
     (if (= num 0) [char:0] (do 
         (let out [])
         (let neg? (< num 0))
         (let n (math:var-def (if neg? (* num -1) num)))
-        (let recursive:while (lambda 
+        (let tail-call:while (lambda 
             (if (> (math:var-get n) 0) (do
                 (array:push! out (mod (math:var-get n) base))
                 (math:var-set! n (// (math:var-get n) base))
-                (recursive:while)))))
-        (recursive:while)
+                (tail-call:while)))))
+        (tail-call:while)
         (let str (from:digits->chars out))
         (array:reverse (if neg? (array:append! str char:dash) str))))))
 (let from:positive-or-negative-digits->integer (lambda digits-with-sign (do
     (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
-    (let recursive:from:positive-or-negative-digits->integer (lambda i num base (if (> (length digits) i) (recursive:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
-    (* (recursive:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
+    (let tail-call:from:positive-or-negative-digits->integer (lambda i num base (if (> (length digits) i) (tail-call:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (get digits i))) (* base 0.1)) num)))
+    (* (tail-call:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
 (let from:positive-or-negative-digits->chars (lambda xs (|>
   xs
   (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
@@ -1064,27 +1064,27 @@
       (set! a (length a) (from:digit->char (array:second x)))
       (set! (set! a (length a) char:dash) (length a) (from:digit->char (array:second x))))) []))))
 (let from:integer->digits (lambda num (do
-  (let recursive:from:integer->digits (lambda num res (cond
-                              (>= num 1) (recursive:from:integer->digits (/ num 10) (set! res (length res) (| (mod num 10) 0)))
+  (let tail-call:from:integer->digits (lambda num res (cond
+                              (>= num 1) (tail-call:from:integer->digits (/ num 10) (set! res (length res) (| (mod num 10) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (array:reverse (recursive:from:integer->digits num [])))))
+  (array:reverse (tail-call:from:integer->digits num [])))))
 (let from:number->positive-or-negative-digits (lambda positive-or-negative-num (do
   (let negative? (math:negative? positive-or-negative-num))
   (let num (if negative? (* positive-or-negative-num -1) positive-or-negative-num))
-  (let recursive:from:number->positive-or-negative-digits (lambda num res (cond
-                              (>= num 1) (recursive:from:number->positive-or-negative-digits (/ num 10) (set! res (length res) (| (mod num 10) 0)))
+  (let tail-call:from:number->positive-or-negative-digits (lambda num res (cond
+                              (>= num 1) (tail-call:from:number->positive-or-negative-digits (/ num 10) (set! res (length res) (| (mod num 10) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (let out (array:reverse (recursive:from:number->positive-or-negative-digits num [])))
+  (let out (array:reverse (tail-call:from:number->positive-or-negative-digits num [])))
   (if negative? (set! out 0 (* (get out 0) -1)) nil)
   out)))
 (let from:integer->bits-reversed (lambda num (do
-  (let recursive:from:integer->bits-reversed (lambda num res (cond
-                              (>= num 1) (recursive:from:integer->bits-reversed (/ num 2) (set! res (length res) (| (mod num 2) 0)))
+  (let tail-call:from:integer->bits-reversed (lambda num res (cond
+                              (>= num 1) (tail-call:from:integer->bits-reversed (/ num 2) (set! res (length res) (| (mod num 2) 0)))
                               (= num 0) (array 0)
                               (*) res)))
-  (recursive:from:integer->bits-reversed num []))))
+  (tail-call:from:integer->bits-reversed num []))))
 (let from:integer->bits (lambda num (array:reverse (from:integer->bits-reversed num))))
 (let from:bits->integer (lambda xs (do
   (let bits->integer (lambda index (if
@@ -1118,12 +1118,12 @@
     (let left (from:integer->string exponent))
     (let right (from:integer->string (* mantisa math:decimal-scaling flip)))
     (let len (length right))
-    (let recursive:while (lambda i 
+    (let tail-call:while (lambda i 
         (if (= (get right (- len i)) char:0) (do 
             (array:pop! right)
-            (recursive:while (+ i 1)) 0) 
+            (tail-call:while (+ i 1)) 0) 
         nil)))
-    (recursive:while 1)    
+    (tail-call:while 1)    
     (array:concat [left [char:dot] right])))))
 (let from:floats->strings (lambda xs (array:map xs from:float->string)))
 (let from:string->date 
@@ -1139,21 +1139,21 @@
 (let from:array->brray (lambda initial (do
  (let q (new:brray))
  (let half (math:floor (* (length initial) 0.5)))
- (let recursive:left:from:array->brray (lambda index (do
+ (let tail-call:left:from:array->brray (lambda index (do
     (brray:add-to-left! q (get initial index))
-   (if (> index 0) (recursive:left:from:array->brray (- index 1)) []))))
- (recursive:left:from:array->brray (- half 1))
-(let recursive:right:from:array->brray (lambda index bounds (do
+   (if (> index 0) (tail-call:left:from:array->brray (- index 1)) []))))
+ (tail-call:left:from:array->brray (- half 1))
+(let tail-call:right:from:array->brray (lambda index bounds (do
    (brray:add-to-right! q (get initial index))
-   (if (< index bounds) (recursive:right:from:array->brray (+ index 1) bounds) []))))
- (recursive:right:from:array->brray half (- (length initial) 1))
+   (if (< index bounds) (tail-call:right:from:array->brray (+ index 1) bounds) []))))
+ (tail-call:right:from:array->brray half (- (length initial) 1))
     q)))
 (let from:brray->array (lambda q (do
   (let out [])
-  (let recursive:from:brray->array (lambda index bounds (do
+  (let tail-call:from:brray->array (lambda index bounds (do
       (set! out (length out) (brray:get q index))
-      (if (< index bounds) (recursive:from:brray->array (+ index 1) bounds) nil))))
-    (recursive:from:brray->array 0 (- (brray:length q) 1))
+      (if (< index bounds) (tail-call:from:brray->array (+ index 1) bounds) nil))))
+    (tail-call:from:brray->array 0 (- (brray:length q) 1))
     out)))
 (let from:string->array (lambda str char (|> str
               (array:transform (lambda a b (do
@@ -1189,76 +1189,76 @@
 (let array:swap-remove! (lambda xs i (do (set! xs i (get xs (- (length xs) 1))) (del! xs))))
 (let array:swap! (lambda xs i j (do (let temp (get xs i)) (set! xs i (get xs j)) (set! xs j temp))))
 (let array:index-of (lambda xs item (do
-                    (let recursive:array:index-of (lambda i
+                    (let tail-call:array:index-of (lambda i
                           (if (> (length xs) i)
-                              (if (= (get xs i) item) i (recursive:array:index-of (+ i 1))) -1)))
-                        (recursive:array:index-of 0))))
+                              (if (= (get xs i) item) i (tail-call:array:index-of (+ i 1))) -1)))
+                        (tail-call:array:index-of 0))))
 (let array:enumerate (lambda xs (array:zip (math:sequence xs) xs)))
 (let array:enumerated-map (lambda xs cb (do
-                  (let recursive:array:enumerated-map (lambda i out
+                  (let tail-call:array:enumerated-map (lambda i out
                         (if (> (length xs) i)
-                              (recursive:array:enumerated-map (+ i 1)
+                              (tail-call:array:enumerated-map (+ i 1)
                                 (set! out (length out) (cb (get xs i) i)))
                               out)))
-                      (recursive:array:enumerated-map 0 []))))
+                      (tail-call:array:enumerated-map 0 []))))
 (let array:enumerated-select (lambda xs predicate? (do
-                  (let recursive:array:enumerated-select (lambda i out
+                  (let tail-call:array:enumerated-select (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:enumerated-select (+ i 1)
+                            (tail-call:array:enumerated-select (+ i 1)
                                       (if (predicate? (get xs i) i)
                                             (set! out (length out) (get xs i))
                                             out))
                             out)))
-                      (recursive:array:enumerated-select 0 []))))
+                      (tail-call:array:enumerated-select 0 []))))
 (let array:enumerated-exclude (lambda xs predicate? (do
-                  (let recursive:array:enumerated-exclude (lambda i out
+                  (let tail-call:array:enumerated-exclude (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:enumerated-exclude (+ i 1)
+                            (tail-call:array:enumerated-exclude (+ i 1)
                                       (if (not (predicate? (get xs i) i))
                                             (set! out (length out) (get xs i))
                                             out))
                             out)))
-                      (recursive:array:enumerated-exclude 0 []))))
+                      (tail-call:array:enumerated-exclude 0 []))))
 (let array:enumerated-fold (lambda xs cb initial (do
-                  (let recursive:array:enumerated-fold (lambda i out
+                  (let tail-call:array:enumerated-fold (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:enumerated-fold (+ i 1) (cb out (get xs i) i))
+                            (tail-call:array:enumerated-fold (+ i 1) (cb out (get xs i) i))
                             out)))
-                      (recursive:array:enumerated-fold 0 initial))))
+                      (tail-call:array:enumerated-fold 0 initial))))
 (let array:enumerated-transform (lambda xs cb initial (do
-                  (let recursive:array:enumerated-transform (lambda i out
+                  (let tail-call:array:enumerated-transform (lambda i out
                         (if (> (length xs) i)
-                            (recursive:array:enumerated-transform (+ i 1) (cb out (get xs i) i))
+                            (tail-call:array:enumerated-transform (+ i 1) (cb out (get xs i) i))
                             (Collection out))))
-                      (recursive:array:enumerated-transform 0 initial))))
+                      (tail-call:array:enumerated-transform 0 initial))))
 (let array:enumerated-find (lambda xs predicate? (do
-                    (let recursive:array:enumerated-find (lambda i
+                    (let tail-call:array:enumerated-find (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i) i) [(get xs i)] (recursive:array:enumerated-find (+ i 1)))
+                              (if (predicate? (get xs i) i) [(get xs i)] (tail-call:array:enumerated-find (+ i 1)))
                               [])))
-                        (recursive:array:enumerated-find 0))))
+                        (tail-call:array:enumerated-find 0))))
 (let array:enumerated-find-index (lambda xs predicate? (do
-                    (let recursive:array:enumerated-find-index (lambda i
+                    (let tail-call:array:enumerated-find-index (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i) i) i (recursive:array:enumerated-find-index (+ i 1))) -1)))
-                        (recursive:array:enumerated-find-index 0))))
+                              (if (predicate? (get xs i) i) i (tail-call:array:enumerated-find-index (+ i 1))) -1)))
+                        (tail-call:array:enumerated-find-index 0))))
 (let array:enumerated-every? (lambda xs predicate? (do
-                    (let recursive:array:enumerated-every? (lambda i
+                    (let tail-call:array:enumerated-every? (lambda i
                           (if (and (> (length xs) i) (predicate? (get xs i) i))
-                              (recursive:array:enumerated-every? (+ i 1))
+                              (tail-call:array:enumerated-every? (+ i 1))
                               (not (> (length xs) i)))))
-                        (recursive:array:enumerated-every? 0))))
+                        (tail-call:array:enumerated-every? 0))))
 (let array:enumerated-some? (lambda xs predicate? (do
-                    (let recursive:array:enumerated-some? (lambda i
+                    (let tail-call:array:enumerated-some? (lambda i
                           (if (and (> (length xs) i) (not (predicate? (get xs i) i)))
-                              (recursive:array:enumerated-some? (+ i 1))
+                              (tail-call:array:enumerated-some? (+ i 1))
                               (not (= (> (length xs) i) 0)))))
-                        (recursive:array:enumerated-some? 0))))
+                        (tail-call:array:enumerated-some? 0))))
 (let array:find-index (lambda xs cb? (do
-                    (let recursive:array:find-index (lambda i
+                    (let tail-call:array:find-index (lambda i
                           (if (> (length xs) i)
-                              (if (cb? (get xs i)) i (recursive:array:find-index (+ i 1))) -1)))
-                        (recursive:array:find-index 0))))
+                              (if (cb? (get xs i)) i (tail-call:array:find-index (+ i 1))) -1)))
+                        (tail-call:array:find-index 0))))
 (let array:remove (lambda xs i
       (array:transform xs (lambda a x (do (if (= x i) a (set! a (length a) x)))) [])))
 (let array:pad-right (lambda a b (if (> (length a) (length b))
@@ -1281,7 +1281,7 @@
   (let zero char:a)
   (let count (math:var-def 0))
   (let at-least-one (bool:false))
-  (let recursive:string:character-occurances (lambda i bounds (do
+  (let tail-call:string:character-occurances (lambda i bounds (do
       (let ch (get xs i))
       (let code (- ch zero))
       (let mask (<< 1 code))
@@ -1289,9 +1289,9 @@
           (not (= (& (math:var-get bitmask) mask) 0))) 
           (math:var-set! count (+ (math:var-get count) 1))
           (math:var-set! bitmask (| (math:var-get bitmask) mask)))
-      (if (< i bounds) (recursive:string:character-occurances (+ i 1) bounds) 
+      (if (< i bounds) (tail-call:string:character-occurances (+ i 1) bounds) 
       (+ (math:var-get count) (numberp (bool:get at-least-one)))))))
-      (recursive:string:character-occurances 0 (- (length xs) 1)))))
+      (tail-call:string:character-occurances 0 (- (length xs) 1)))))
 (let string:slice-from (lambda a b (do
   (let index (|> a (string:match b)))
   (|> a (array:slice index (+ index (- (length a) index)))))))
@@ -1320,46 +1320,46 @@
                                     (< (length str) (length word)) -1
                                     (string:equal? str word) 0
                                     (*) (apply (lambda (do
-                                          (let recursive:string:match (lambda xs i
+                                          (let tail-call:string:match (lambda xs i
                                                 (if (and (> (length xs) 0) (>= (length xs) (length word)))
                                                       (if (string:equal?
                                                         (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
-                                                        word) i (recursive:string:match (array:tail xs) (+ i 1)))
+                                                        word) i (tail-call:string:match (array:tail xs) (+ i 1)))
                                                     -1)))
-                                              (recursive:string:match str 0)))))))
+                                              (tail-call:string:match str 0)))))))
 (let string:has? (lambda str word  (cond
                                         (< (length str) (length word)) false
                                         (string:equal? str word) true
                                         (*) (apply (lambda (do
-                                              (let recursive:string:has (lambda xs i
+                                              (let tail-call:string:has (lambda xs i
                                                     (if (and (> (length xs) 0) (>= (length xs) (length word)))
                                                           (if (string:equal?
                                                             (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
                                                             word)
                                                             true 
-                                                            (recursive:string:has (array:tail xs) (+ i 1))) false)))
-                                                  (recursive:string:has str 0)))))))
+                                                            (tail-call:string:has (array:tail xs) (+ i 1))) false)))
+                                                  (tail-call:string:has str 0)))))))
 (let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
    (let pairs (array:reverse (array:zip a b)))
    (let is (bool:false))
-   (let recursive:string:lesser (lambda (unless (array:empty? pairs) (do 
+   (let tail-call:string:lesser (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (recursive:string:lesser) (bool:set! is (< (array:first current) (array:second current)))))
+    (if (= (array:first current) (array:second current)) (tail-call:string:lesser) (bool:set! is (< (array:first current) (array:second current)))))
     is)))
-   (recursive:string:lesser)
+   (tail-call:string:lesser)
    (bool:true? is)))))))
 (let string:greater? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))
    (let pairs (array:reverse (array:zip a b)))
    (let is (bool:false))
-   (let recursive:string:greater (lambda (unless (array:empty? pairs) (do 
+   (let tail-call:string:greater (lambda (unless (array:empty? pairs) (do 
     (let current (array:pop! pairs))
-    (if (= (array:first current) (array:second current)) (recursive:string:greater) (bool:set! is (> (array:first current) (array:second current)))))
+    (if (= (array:first current) (array:second current)) (tail-call:string:greater) (bool:set! is (> (array:first current) (array:second current)))))
     is)))
-   (recursive:string:greater)
+   (tail-call:string:greater)
    (bool:true? is)))))))
 (let string:greater-or-equal? (lambda A B (or (string:equal? A B) (string:greater? A B))))
 (let string:lesser-or-equal? (lambda A B (or (string:equal? A B) (string:lesser? A B))))
@@ -1430,28 +1430,28 @@
 (let string:prepend (lambda a b (array:merge b a)))
 (let string:pad-left (lambda str N ch (do 
   (let n (- N (length str)))
-  (let recursive:string:pad-left (lambda i str (if (< i n) (recursive:string:pad-left (+ i 1) (array:merge ch str)) str)))
-  (recursive:string:pad-left 0 str))))
+  (let tail-call:string:pad-left (lambda i str (if (< i n) (tail-call:string:pad-left (+ i 1) (array:merge ch str)) str)))
+  (tail-call:string:pad-left 0 str))))
 (let string:pad-right (lambda str N ch (do 
   (let n (- N (length str)))
-  (let recursive:string:pad-right (lambda i str (if (< i n) (recursive:string:pad-right (+ i 1) (array:merge str ch)) str)))
-  (recursive:string:pad-right 0 str))))
+  (let tail-call:string:pad-right (lambda i str (if (< i n) (tail-call:string:pad-right (+ i 1) (array:merge str ch)) str)))
+  (tail-call:string:pad-right 0 str))))
 (let string:upper (lambda str (do
     (let xs []) 
     (let n (length str))
-    (let recursive:string:upper (lambda i (if (< i n) (apply (lambda (do
+    (let tail-call:string:upper (lambda i (if (< i n) (apply (lambda (do
       (let current-char (get str i))
       (set! xs i (char:upper current-char))
-      (recursive:string:upper (+ i 1)))))
-      xs))) (recursive:string:upper 0))))
+      (tail-call:string:upper (+ i 1)))))
+      xs))) (tail-call:string:upper 0))))
 (let string:lower (lambda str (do
     (let xs []) 
     (let n (length str))
-    (let recursive:string:lower (lambda i (if (< i n) (apply (lambda (do
+    (let tail-call:string:lower (lambda i (if (< i n) (apply (lambda (do
       (let current-char (get str i))
       (set! xs i (char:lower current-char))
-      (recursive:string:lower (+ i 1)))))
-      xs))) (recursive:string:lower 0))))
+      (tail-call:string:lower (+ i 1)))))
+      xs))) (tail-call:string:lower 0))))
 
 (let new:map (lambda args 
   (array:enumerated-transform args (lambda a . i 
@@ -1512,11 +1512,11 @@
     (do
       (let prime-num 31)
       (let total (array 0))
-      (let recursive:set:index (lambda i bounds (do
+      (let tail-call:set:index (lambda i bounds (do
         (let letter (get key i))
         (set! total 0 (math:euclidean-mod (+ (* (array:first total) prime-num) letter) (length table)))
-        (if (< i bounds) (recursive:set:index (+ i 1) bounds) (array:first total)))))
-      (recursive:set:index 0 (if (< (- (length key) 1) 100) (- (length key) 1) 100)))))
+        (if (< i bounds) (tail-call:set:index (+ i 1) bounds) (array:first total)))))
+      (tail-call:set:index 0 (if (< (- (length key) 1) 100) (- (length key) 1) 100)))))
 (let set:add!
       (lambda table key
         (do
@@ -1718,18 +1718,18 @@
         (* 0.5)))))
 (let math:collinear? (lambda points (= (math:shoelace points) 0)))
 (let bools:fold (lambda xs cb initial (do xs
-    (let recursive:bools:fold (lambda i out
+    (let tail-call:bools:fold (lambda i out
         (if (> (length xs) i)
-            (recursive:bools:fold (+ i 1) (cb out (get xs i))) out))) 
-            (recursive:bools:fold 0 initial))))
+            (tail-call:bools:fold (+ i 1) (cb out (get xs i))) out))) 
+            (tail-call:bools:fold 0 initial))))
 (let bool:truths (lambda n (do
-                          (let recursive:bool:truths (lambda out
-                          (if (< (length out) n) (recursive:bool:truths (set! out (length out) true)) out)))
-                          (recursive:bool:truths []))))
+                          (let tail-call:bool:truths (lambda out
+                          (if (< (length out) n) (tail-call:bool:truths (set! out (length out) true)) out)))
+                          (tail-call:bool:truths []))))
 (let bool:lies (lambda n (do
-                          (let recursive:bool:lies (lambda out
-                          (if (< (length out) n) (recursive:bool:lies (set! out (length out) false)) out)))
-                          (recursive:bool:lies []))))
+                          (let tail-call:bool:lies (lambda out
+                          (if (< (length out) n) (tail-call:bool:lies (set! out (length out) false)) out)))
+                          (tail-call:bool:lies []))))
 (let bool:def (lambda val (array (truthy? val))))
 (let bool:get (lambda variable (get variable 0)))
 (let bool:set! (lambda variable value (set! variable 0 (truthy? value))))
@@ -1784,22 +1784,22 @@
         (> (length (get q 1)) 0) (del! (get q 1))
         (*) q) q))))
 (let brray:iter (lambda q cb (do
-  (let recursive:brray:iter (lambda index bounds (do
+  (let tail-call:brray:iter (lambda index bounds (do
       (cb (brray:get q index))
-      (if (< index bounds) (recursive:brray:iter (+ index 1) bounds) nil))))
-    (recursive:brray:iter 0 (brray:length q)))))
+      (if (< index bounds) (tail-call:brray:iter (+ index 1) bounds) nil))))
+    (tail-call:brray:iter 0 (brray:length q)))))
 (let brray:map (lambda q cb (do
   (let result (new:brray))
   (let len (brray:length q))
   (let half (math:floor (* len 0.5)))
-  (let recursive:left:brray:map (lambda index (do
+  (let tail-call:left:brray:map (lambda index (do
     (brray:add-to-left! result (cb (brray:get q index)))
-   (if (> index 0) (recursive:left:brray:map (- index 1)) q))))
- (recursive:left:brray:map (- half 1))
-(let recursive:right:brray:map (lambda index bounds (do
+   (if (> index 0) (tail-call:left:brray:map (- index 1)) q))))
+ (tail-call:left:brray:map (- half 1))
+(let tail-call:right:brray:map (lambda index bounds (do
    (brray:add-to-right! result (cb (brray:get q index)))
-   (if (< index bounds) (recursive:right:brray:map (+ index 1) bounds) nil))))
- (recursive:right:brray:map half (- len 1))
+   (if (< index bounds) (tail-call:right:brray:map (+ index 1) bounds) nil))))
+ (tail-call:right:brray:map half (- len 1))
  result)))
 (let brray:balance? (lambda q (= (+ (brray:offset-right q) (brray:offset-left q)) 0)))
 (let brray:balance! (lambda q
@@ -1807,14 +1807,14 @@
       (let initial (from:brray->array q))
       (brray:empty! q)
       (let half (math:floor (* (length initial) 0.5)))
-      (let recursive:left:brray:balance! (lambda index (do
+      (let tail-call:left:brray:balance! (lambda index (do
         (brray:add-to-left! q (get initial index))
-        (if (> index 0) (recursive:left:brray:balance! (- index 1)) nil))))
-      (let recursive:right:brray:balance! (lambda index bounds (do
+        (if (> index 0) (tail-call:left:brray:balance! (- index 1)) nil))))
+      (let tail-call:right:brray:balance! (lambda index bounds (do
         (brray:add-to-right! q (get initial index))
-        (if (< index bounds) (recursive:right:brray:balance! (+ index 1) bounds) nil))))
-      (recursive:right:brray:balance! half (- (length initial) 1))
-      (if (> (length initial) 1) (recursive:left:brray:balance! (- half 1)) nil)
+        (if (< index bounds) (tail-call:right:brray:balance! (+ index 1) bounds) nil))))
+      (tail-call:right:brray:balance! half (- (length initial) 1))
+      (if (> (length initial) 1) (tail-call:left:brray:balance! (- half 1)) nil)
     q))))))
 (let brray:append! (lambda q item (do (brray:add-to-right! q item) q)))
 (let brray:prepend! (lambda q item (do (brray:add-to-left! q item) q)))
@@ -1838,20 +1838,20 @@ q)))
     first)))
 (let brray:rotate-left! (lambda q n (do
   (let N (mod n (brray:length q)))
-  (let recursive:brray:rotate-left! (lambda index bounds (do
+  (let tail-call:brray:rotate-left! (lambda index bounds (do
       (if (= (brray:offset-left q) 0) (brray:balance! q) nil)
       (brray:add-to-right! q (brray:first q))
       (brray:remove-from-left! q)
-      (if (< index bounds) (recursive:brray:rotate-left! (+ index 1) bounds) nil))))
-    (recursive:brray:rotate-left! 0 N) q)))
+      (if (< index bounds) (tail-call:brray:rotate-left! (+ index 1) bounds) nil))))
+    (tail-call:brray:rotate-left! 0 N) q)))
 (let brray:rotate-right! (lambda q n (do
   (let N (mod n (brray:length q)))
-  (let recursive:brray:rotate-left! (lambda index bounds (do
+  (let tail-call:brray:rotate-left! (lambda index bounds (do
       (if (= (brray:offset-right q) 0) (brray:balance! q) nil)
       (brray:add-to-left! q (brray:last q))
       (brray:remove-from-right! q)
-      (if (< index bounds) (recursive:brray:rotate-left! (+ index 1) bounds) nil))))
-    (recursive:brray:rotate-left! 0 N) q)))
+      (if (< index bounds) (tail-call:brray:rotate-left! (+ index 1) bounds) nil))))
+    (tail-call:brray:rotate-left! 0 N) q)))
 (let brray:slice (lambda entity s e (do
   (let len (brray:length entity))
   (let start (if (< s 0) (math:max (+ len s) 0) (math:min s len)))
@@ -1859,14 +1859,14 @@ q)))
   (let slice (new:brray))
   (let slice-len (math:max (- end start) 0))
   (let half (math:floor (* slice-len 0.5)))
-  (let recursive:left:brray:slice (lambda index (do
+  (let tail-call:left:brray:slice (lambda index (do
       (brray:add-to-left! slice (brray:get entity (+ start index)))
-      (if (> index 0) (recursive:left:brray:slice (- index 1)) nil))))
-  (recursive:left:brray:slice (- half 1))
-  (let recursive:right:brray:slice (lambda index bounds (do
+      (if (> index 0) (tail-call:left:brray:slice (- index 1)) nil))))
+  (tail-call:left:brray:slice (- half 1))
+  (let tail-call:right:brray:slice (lambda index bounds (do
       (brray:add-to-right! slice (brray:get entity (+ start index)))
-      (if (< index bounds) (recursive:right:brray:slice (+ index 1) bounds) nil))))
-  (recursive:right:brray:slice half (- slice-len 1))
+      (if (< index bounds) (tail-call:right:brray:slice (+ index 1) bounds) nil))))
+  (tail-call:right:brray:slice half (- slice-len 1))
   slice)))
 
 (let queue:empty? brray:empty?)
@@ -1903,46 +1903,46 @@ q)))
 (let date:year-month (lambda date (array (array:first date) (array:second date))))
 
 (let loop:while (lambda condition cb (do 
-   (let recursive:while (lambda (if (condition) (do (cb) (recursive:while)) nil)))
-   (recursive:while))))
+   (let tail-call:while (lambda (if (condition) (do (cb) (tail-call:while)) nil)))
+   (tail-call:while))))
 (let loop:for-range (lambda start end cb (do
-                          (let recursive:loop:for-range (lambda i
+                          (let tail-call:loop:for-range (lambda i
                           (if (< i end)
                                 (apply (lambda (do
                                   (cb i)
-                                  (recursive:loop:for-range (+ i 1))))) nil)))
-                          (recursive:loop:for-range start))))
+                                  (tail-call:loop:for-range (+ i 1))))) nil)))
+                          (tail-call:loop:for-range start))))
 
 (let loop:for-n (lambda n cb (do
-                          (let recursive:loop:for-n (lambda i
+                          (let tail-call:loop:for-n (lambda i
                           (if (< i n)
                                 (apply (lambda (do
                                   (cb i)
-                                  (recursive:loop:for-n (+ i 1))))) nil)))
-                          (recursive:loop:for-n 0))))
+                                  (tail-call:loop:for-n (+ i 1))))) nil)))
+                          (tail-call:loop:for-n 0))))
 
 (let loop:repeat (lambda n cb (do
-                          (let recursive:loop:repeat (lambda i
+                          (let tail-call:loop:repeat (lambda i
                           (if (< i n)
                                 (apply (lambda (do
                                   (cb)
-                                  (recursive:loop:repeat (+ i 1))))) nil)))
-                          (recursive:loop:repeat 0))))
+                                  (tail-call:loop:repeat (+ i 1))))) nil)))
+                          (tail-call:loop:repeat 0))))
 
 (let loop:some-n? (lambda n predicate? (do
-                          (let recursive:loop:some-n (lambda i
+                          (let tail-call:loop:some-n (lambda i
                           (if (< i n)
-                                (if (predicate? i) 1 (recursive:loop:some-n (+ i 1))) nil)))
-                          (recursive:loop:some-n n))))
+                                (if (predicate? i) 1 (tail-call:loop:some-n (+ i 1))) nil)))
+                          (tail-call:loop:some-n n))))
 
 (let loop:some-range? (lambda start end predicate? (do
-                          (let recursive:loop:some-range (lambda i
+                          (let tail-call:loop:some-range (lambda i
                           (if (< i end)
                                 (if (predicate? i) 
                                     1 
-                                    (recursive:loop:some-range (+ i 1))) 
+                                    (tail-call:loop:some-range (+ i 1))) 
                             nil)))
-                          (recursive:loop:some-range start))))
+                          (tail-call:loop:some-range start))))
 
 (let node:parent (lambda i (- (>> (+ i 1) 1) 1)))
 (let node:left (lambda i (+ (<< i 1) 1)))
@@ -1952,17 +1952,17 @@ q)))
 (let heap:greater? (lambda heap i j cb? (cb? (get heap i) (get heap j))))
 (let heap:sift-up! (lambda heap cb (do 
   (let node (var:def (- (length heap) 1)))  
-  (let recursive:heap:sift-up! (lambda 
+  (let tail-call:heap:sift-up! (lambda 
     (if (and (> (var:get node) heap:top) (heap:greater? heap (var:get node) (node:parent (var:get node)) cb))
       (do 
         (array:swap! heap (var:get node) (node:parent (var:get node)))
         (var:set! node (node:parent (var:get node)))
-        (recursive:heap:sift-up!)) nil)))
-  (recursive:heap:sift-up!))))
+        (tail-call:heap:sift-up!)) nil)))
+  (tail-call:heap:sift-up!))))
 
 (let heap:sift-down! (lambda heap cb (do
   (let node (var:def heap:top))
-  (let recursive:heap:sift-down! (lambda 
+  (let tail-call:heap:sift-down! (lambda 
     (if (or 
           (and 
             (< (node:left (var:get node)) (length heap))
@@ -1978,8 +1978,8 @@ q)))
                             (node:left (var:get node))))
         (array:swap! heap (var:get node) max-child)
         (var:set! node max-child)
-        (recursive:heap:sift-down!)) nil)))
-  (recursive:heap:sift-down!))))
+        (tail-call:heap:sift-down!)) nil)))
+  (tail-call:heap:sift-down!))))
 
 (let heap:peek (lambda heap (get heap heap:top)))
 
@@ -2057,11 +2057,11 @@ heap)))
 (let array:head (lambda xs (get xs 0)))
 (let array:tail (lambda xs (do
         (let bounds (length xs))
-        (let recursive:array:tail (lambda i out
+        (let tail-call:array:tail (lambda i out
           (if (< i bounds)
-              (recursive:array:tail (+ i 1) (set! out (length out) (get xs i)))
+              (tail-call:array:tail (+ i 1) (set! out (length out) (get xs i)))
               out)))
-        (recursive:array:tail 1 []))))
+        (tail-call:array:tail 1 []))))
 (let array:car array:head)
 (let array:cdr array:tail)
 (let array:for-range loop:for-range)

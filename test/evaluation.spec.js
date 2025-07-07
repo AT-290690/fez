@@ -85,7 +85,7 @@ describe('Compilation & Interpretation', () => {
               (set:add! visited (from:yx->key y x))
               (queue:enqueue! queue (array y x))
               (let score (var:def 0))
-              (let recursive:while (lambda (unless (queue:empty? queue) (do 
+              (let tail-call:while (lambda (unless (queue:empty? queue) (do 
                   (let element (queue:peek queue))
                   (queue:dequeue! queue)
                   (let y (array:first element))
@@ -95,8 +95,8 @@ describe('Compilation & Interpretation', () => {
                        (if (and (= (- cell (matrix:get matrix y x)) 1) (not (set:has? visited key))) (do
                           (if (= cell 9) (var:set! score (math:increment (var:get score))) (queue:enqueue! queue (array dy dx)))
                           (set:add! visited key))))))
-              (recursive:while)))))
-              (recursive:while)
+              (tail-call:while)))))
+              (tail-call:while)
               (+ a (var:get score)))) 0))))
       
       (let part2 (lambda matrix (do 
@@ -111,7 +111,7 @@ describe('Compilation & Interpretation', () => {
               (map:set! visited root-key 1)
               (queue:enqueue! queue (array y x))
               (let score (var:def 0))
-              (let recursive:while (lambda (unless (queue:empty? queue) (do 
+              (let tail-call:while (lambda (unless (queue:empty? queue) (do 
                   (let element (queue:peek queue))
                   (let y (array:first element))
                   (let x (array:second element))
@@ -122,8 +122,8 @@ describe('Compilation & Interpretation', () => {
                        (if (= (- cell (matrix:get matrix y x)) 1) (do
                           (queue:enqueue! queue (array dy dx))
                           (if (map:has? visited key) (map:set! visited key (+ (map:get visited root-key) (map:get visited key))) (map:set! visited key (map:get visited root-key))))))))
-              (recursive:while)))))
-              (recursive:while)
+              (tail-call:while)))))
+              (tail-call:while)
               (+ a (var:get score)))) 0))))
       
       (let PARSED (parse INPUT))
@@ -157,10 +157,10 @@ describe('Compilation & Interpretation', () => {
 (let cos (lambda x (math:cosine x *FACTOR*)))
 (array (array:map arr sin) (array:map arr cos))`,
       `(let map (lambda xs f (do
-  (let recursive:iter (lambda xs out
+  (let tail-call:iter (lambda xs out
   (if (list:nil? xs) out
-  (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (recursive:iter xs [])))))
+  (tail-call:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (tail-call:iter xs [])))))
   (map (list 2 3 4) math:square)`,
       `(let memo (array [] []))
 (let fibonacci (lambda n (do 
@@ -228,12 +228,12 @@ describe('Compilation & Interpretation', () => {
       (let part1 (lambda input (do 
         (let dirs (car input))
         (let adj (car (cdr input)))
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
-              (recursive:move node target (+ step 1))))))
-        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
+              (tail-call:move node target (+ step 1))))))
+        (+ (tail-call:move "AAA" "ZZZ" 0) 1))))
       
       
       (let part2 (lambda input (do 
@@ -242,11 +242,11 @@ describe('Compilation & Interpretation', () => {
         (let adj (car (cdr input)))
         (let keys (car (cdr (cdr input))))
         
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? (array (array:at node -1)) target)
               step 
-              (recursive:move node target (+ step 1))))))
+              (tail-call:move node target (+ step 1))))))
       
         (|> 
           keys
@@ -256,7 +256,7 @@ describe('Compilation & Interpretation', () => {
                 (array:at -1)
                 (array )
                 (string:equal? "A"))))
-          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
+          (array:map (lambda source (+ (tail-call:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
          (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`,
@@ -264,11 +264,11 @@ describe('Compilation & Interpretation', () => {
       ; returns a copy of the array but reversed
       ; (array 1 2 3) -> (array 3 2 1)
       (let reverse (lambda arr (do
-        (let recursive:iter (lambda arr out
+        (let tail-call:iter (lambda arr out
           (if (> (length arr) 0)
-              (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
+              (tail-call:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
-        (recursive:iter arr []))))
+        (tail-call:iter arr []))))
       
       (let lazy (array reverse (array 1 2 3 4 5 6)))
       (apply (car (cdr lazy)) (car lazy))`,

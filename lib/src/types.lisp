@@ -248,30 +248,30 @@
 (let pair:list-zip (lambda Unknown[] (do Unknown[])))
 ; 1 pair:list-unzip
 (let pair:list-unzip (lambda Unknown[] (do Unknown[])))
-; 1 math:range recursive:math:range
-(let recursive:math:range (lambda Number[] Number (do Number[])))
+; 1 math:range tail-call:math:range
+(let tail-call:math:range (lambda Number[] Number (do Number[])))
 ; 1 math:range
 (let math:range (lambda Number Number (do Number[])))
 ; 1 math:sequence end
 (let end Number)
-; 1 math:sequence recursive:math:sequence
-(let recursive:math:sequence (lambda Number[] Number (do Number[])))
+; 1 math:sequence tail-call:math:sequence
+(let tail-call:math:sequence (lambda Number[] Number (do Number[])))
 ; 1 math:sequence
 (let math:sequence (lambda Unknown[] (do Number[])))
-; 1 math:sequence-n recursive:sequence-n
-(let recursive:sequence-n (lambda Number[] Number (do Number[])))
+; 1 math:sequence-n tail-call:sequence-n
+(let tail-call:sequence-n (lambda Number[] Number (do Number[])))
 ; 1 math:sequence-n
 (let math:sequence-n (lambda Number (do Number[])))
-; 1 math:zeroes recursive:math:zeroes
-(let recursive:math:zeroes (lambda Number[] (do Number[])))
+; 1 math:zeroes tail-call:math:zeroes
+(let tail-call:math:zeroes (lambda Number[] (do Number[])))
 ; 1 math:zeroes
 (let math:zeroes (lambda Number (do Number[])))
-; 1 math:ones recursive:math:ones
-(let recursive:math:ones (lambda Number[] (do Number[])))
+; 1 math:ones tail-call:math:ones
+(let tail-call:math:ones (lambda Number[] (do Number[])))
 ; 1 math:ones
 (let math:ones (lambda Number (do Number[])))
-; 1 math:numbers recursive:math:numbers
-(let recursive:math:numbers (lambda Unknown[] (do Unknown[])))
+; 1 math:numbers tail-call:math:numbers
+(let tail-call:math:numbers (lambda Unknown[] (do Unknown[])))
 ; 1 math:numbers
 (let math:numbers (lambda Number Unknown (do Unknown[])))
 ; 1 math:between?
@@ -402,12 +402,12 @@
 (let math:median (lambda Number[] (do Number)))
 ; 1 math:mean
 (let math:mean (lambda Number[] (do Number)))
-; 1 math:fold-n recursive:fold-n
-(let recursive:fold-n (lambda Number Unknown (do Unknown)))
+; 1 math:fold-n tail-call:fold-n
+(let tail-call:fold-n (lambda Number Unknown (do Unknown)))
 ; 1 math:fold-n
 (let math:fold-n (lambda Number (lambda Unknown Number (do Unknown)) Unknown (do Unknown)))
-; 1 math:fold-range recursive:fold-range
-(let recursive:fold-range (lambda Number Unknown (do Unknown)))
+; 1 math:fold-range tail-call:fold-range
+(let tail-call:fold-range (lambda Number Unknown (do Unknown)))
 ; 1 math:fold-range
 (let math:fold-range (lambda Number Number (lambda Unknown Number (do Unknown)) Unknown (do Unknown)))
 ; 1 math:divisors
@@ -418,8 +418,8 @@
 (let n2 Number)
 ; 1 math:bit-count32
 (let math:bit-count32 (lambda Number (do Number)))
-; 1 math:bit-count recursive:math:bit-count
-(let recursive:math:bit-count (lambda Number Number (do Number)))
+; 1 math:bit-count tail-call:math:bit-count
+(let tail-call:math:bit-count (lambda Number Number (do Number)))
 ; 1 math:bit-count
 (let math:bit-count (lambda Number (do Number)))
 ; 1 math:exp
@@ -456,8 +456,8 @@
 (let ln-b Number)
 ; 1 math:log-base
 (let math:log-base (lambda Number Number (do Number)))
-; 1 math:greatest-common-divisor recursive:math:greatest-common-divisor
-(let recursive:math:greatest-common-divisor (lambda Number Number (do Number)))
+; 1 math:greatest-common-divisor tail-call:math:greatest-common-divisor
+(let tail-call:math:greatest-common-divisor (lambda Number Number (do Number)))
 ; 1 math:greatest-common-divisor
 (let math:greatest-common-divisor (lambda Number Number (do Number)))
 ; 1 math:least-common-divisor
@@ -468,8 +468,8 @@
 (let good-enough? (lambda Number Number (do Boolean)))
 ; 1 math:sqrt improve-guess
 (let improve-guess (lambda Number Number (do Number)))
-; 1 math:sqrt recursive:math:sqrt
-(let recursive:math:sqrt (lambda Number Number (do Number)))
+; 1 math:sqrt tail-call:math:sqrt
+(let tail-call:math:sqrt (lambda Number Number (do Number)))
 ; 1 math:sqrt
 (let math:sqrt (lambda Number (do Number)))
 ; 1 math:perfect-square?
@@ -484,8 +484,8 @@
 (let math:nth-digit (lambda Number Number (do Number)))
 ; 1 math:remove-nth-digits
 (let math:remove-nth-digits (lambda Number Number (do Number)))
-; 1 math:keep-nth-digits recursive:math:keep-nth-digits
-(let recursive:math:keep-nth-digits (lambda Number Number Number (do Number)))
+; 1 math:keep-nth-digits tail-call:math:keep-nth-digits
+(let tail-call:math:keep-nth-digits (lambda Number Number Number (do Number)))
 ; 1 math:keep-nth-digits
 (let math:keep-nth-digits (lambda Number Number (do Number)))
 ; 1 math:normalize
@@ -574,14 +574,14 @@
 (let math:random (lambda Number (do Abstraction)))
 ; 1 math:sine sine
 (let sine Number[])
-; 1 math:sine recursive:math:sine
-(let recursive:math:sine (lambda Number (do Number)))
+; 1 math:sine tail-call:math:sine
+(let tail-call:math:sine (lambda Number (do Number)))
 ; 1 math:sine
 (let math:sine (lambda Number Number (do Number)))
 ; 1 math:cosine cosine
 (let cosine Number[])
-; 1 math:cosine recursive:math:cosine
-(let recursive:math:cosine (lambda Number (do Number)))
+; 1 math:cosine tail-call:math:cosine
+(let tail-call:math:cosine (lambda Number (do Number)))
 ; 1 math:cosine
 (let math:cosine (lambda Number Number (do Number)))
 ; 1 math:prime-factors a
@@ -590,14 +590,14 @@
 (let n Number[])
 ; 1 math:prime-factors f
 (let f Number[])
-; 1 math:prime-factors recursive:math:prime-factors
-(let recursive:math:prime-factors (lambda (do Unknown[])))
+; 1 math:prime-factors tail-call:math:prime-factors
+(let tail-call:math:prime-factors (lambda (do Unknown[])))
 ; 1 math:prime-factors
 (let math:prime-factors (lambda Number (do Unknown[])))
-; 1 math:prime? 20 recursive:math:prime? prime?
+; 1 math:prime? 20 tail-call:math:prime? prime?
 (let prime? Boolean)
-; 1 math:prime? 20 recursive:math:prime?
-(let recursive:math:prime? (lambda Number Number (do Boolean)))
+; 1 math:prime? 20 tail-call:math:prime?
+(let tail-call:math:prime? (lambda Number Number (do Boolean)))
 ; 1 math:prime?
 (let math:prime? (lambda Number (do Boolean)))
 ; 1 math:number-of-digits
@@ -734,8 +734,8 @@
 (let array:third (lambda Unknown[] (do Unknown)))
 ; 1 array:last
 (let array:last (lambda Unknown[] (do Unknown)))
-; 1 array:for recursive:array:for
-(let recursive:array:for (lambda Number (do Number)))
+; 1 array:for tail-call:array:for
+(let tail-call:array:for (lambda Number (do Number)))
 ; 1 array:for
 (let array:for (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
 ; 1 array:buckets out
@@ -744,28 +744,28 @@
 (let array:buckets (lambda Number (do Unknown[])))
 ; 1 array:enumerated-for
 (let array:enumerated-for (lambda Unknown[] (lambda Unknown Number (do Unknown)) (do Unknown[])))
-; 1 array:fill recursive:array:fill
-(let recursive:array:fill (lambda Unknown[] Number (do Unknown[])))
+; 1 array:fill tail-call:array:fill
+(let tail-call:array:fill (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:fill
 (let array:fill (lambda Number (lambda (do Unknown)) (do Unknown[])))
-; 1 array:of recursive:array:of
-(let recursive:array:of (lambda Unknown[] Number (do Unknown[])))
+; 1 array:of tail-call:array:of
+(let tail-call:array:of (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:of
 (let array:of (lambda Number (lambda Number (do Unknown)) (do Unknown[])))
-; 1 array:map recursive:array:map
-(let recursive:array:map (lambda Number Unknown[] (do Unknown[])))
+; 1 array:map tail-call:array:map
+(let tail-call:array:map (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:map
 (let array:map (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
-; 1 array:select recursive:array:select
-(let recursive:array:select (lambda Number Unknown[] (do Unknown[])))
+; 1 array:select tail-call:array:select
+(let tail-call:array:select (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:select
 (let array:select (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
-; 1 array:exclude recursive:array:exclude
-(let recursive:array:exclude (lambda Number Unknown[] (do Unknown[])))
+; 1 array:exclude tail-call:array:exclude
+(let tail-call:array:exclude (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:exclude
 (let array:exclude (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
-; 1 array:fold recursive:array:fold
-(let recursive:array:fold (lambda Number Unknown (do Unknown)))
+; 1 array:fold tail-call:array:fold
+(let tail-call:array:fold (lambda Number Unknown (do Unknown)))
 ; 1 array:fold
 (let array:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 array:transform
@@ -774,12 +774,12 @@
 (let array:reduce (lambda Unknown[] (lambda Number Unknown (do Number)) Number (do Number)))
 ; 1 array:enumerated-reduce
 (let array:enumerated-reduce (lambda Unknown[] (lambda Number Unknown Number (do Number)) Number (do Number)))
-; 1 array:every? recursive:array:every?
-(let recursive:array:every? (lambda Number (do Boolean)))
+; 1 array:every? tail-call:array:every?
+(let tail-call:array:every? (lambda Number (do Boolean)))
 ; 1 array:every?
 (let array:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
-; 1 array:some? recursive:array:some?
-(let recursive:array:some? (lambda Number (do Boolean)))
+; 1 array:some? tail-call:array:some?
+(let tail-call:array:some? (lambda Number (do Boolean)))
 ; 1 array:some?
 (let array:some? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
 ; 1 array:find
@@ -788,12 +788,12 @@
 (let index Number)
 ; 1 array:find-option
 (let array:find-option (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[][])))
-; 1 array:has? recursive:array:has
-(let recursive:array:has (lambda Number (do Boolean)))
+; 1 array:has? tail-call:array:has
+(let tail-call:array:has (lambda Number (do Boolean)))
 ; 1 array:has?
 (let array:has? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
-; 1 array:reverse recursive:array:reverse
-(let recursive:array:reverse (lambda Number Unknown[] (do Unknown[])))
+; 1 array:reverse tail-call:array:reverse
+(let tail-call:array:reverse (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:reverse
 (let array:reverse (lambda Unknown[] (do Unknown[])))
 ; 1 array:append!
@@ -822,8 +822,8 @@
 (let array:count-of (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number)))
 ; 1 array:count
 (let array:count (lambda Unknown[] Number (do Number)))
-; 1 array:empty! recursive:array:empty!
-(let recursive:array:empty! (lambda (do Unknown[])))
+; 1 array:empty! tail-call:array:empty!
+(let tail-call:array:empty! (lambda (do Unknown[])))
 ; 1 array:empty!
 (let array:empty! (lambda Unknown[] (do Unknown[])))
 ; 1 array:in-bounds?
@@ -838,16 +838,16 @@
 (let array:get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:slice bounds
 (let bounds Number)
-; 1 array:slice recursive:array:slice
-(let recursive:array:slice (lambda Number Unknown[] (do Unknown[])))
+; 1 array:slice tail-call:array:slice
+(let tail-call:array:slice (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:slice
 (let array:slice (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 car
 (let car (lambda Unknown[] (do Unknown)))
 ; 1 cdr bounds
 (let bounds Number)
-; 1 cdr recursive:cdr
-(let recursive:cdr (lambda Number Unknown[] (do Unknown[])))
+; 1 cdr tail-call:cdr
+(let tail-call:cdr (lambda Number Unknown[] (do Unknown[])))
 ; 1 cdr
 (let cdr (lambda Unknown[] (do Unknown[])))
 ; 1 cons out
@@ -858,12 +858,12 @@
 (let array:take (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:drop
 (let array:drop (lambda Unknown[] Number (do Unknown[])))
-; 1 array:binary-search recursive:array:binary-search 41 index
+; 1 array:binary-search tail-call:array:binary-search 41 index
 (let index Number)
-; 1 array:binary-search recursive:array:binary-search 41 current
+; 1 array:binary-search tail-call:array:binary-search 41 current
 (let current Unknown)
-; 1 array:binary-search recursive:array:binary-search
-(let recursive:array:binary-search (lambda Number Number (do Number)))
+; 1 array:binary-search tail-call:array:binary-search
+(let tail-call:array:binary-search (lambda Number Number (do Number)))
 ; 1 array:binary-search
 (let array:binary-search (lambda Unknown[] Number (do Number)))
 ; 1 array:zip
@@ -900,16 +900,16 @@
 (let array:flat (lambda Unknown[] (do Unknown[])))
 ; 1 array:sort 54 pivot
 (let pivot Unknown)
-; 1 array:sort 54 recursive:array:sort current
+; 1 array:sort 54 tail-call:array:sort current
 (let current Unknown)
-; 1 array:sort 54 recursive:array:sort predicate
+; 1 array:sort 54 tail-call:array:sort predicate
 (let predicate Unknown)
-; 1 array:sort 54 recursive:array:sort left
+; 1 array:sort 54 tail-call:array:sort left
 (let left Unknown)
-; 1 array:sort 54 recursive:array:sort right
+; 1 array:sort 54 tail-call:array:sort right
 (let right Unknown)
-; 1 array:sort 54 recursive:array:sort
-(let recursive:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
+; 1 array:sort 54 tail-call:array:sort
+(let tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
 ; 1 array:sort 54 sorted
 (let sorted Unknown[])
 ; 1 array:sort 54 left
@@ -938,8 +938,8 @@
 (let array:sliding-window (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:adjacent-difference len
 (let len Number)
-; 1 array:adjacent-difference 61 recursive:array:adjacent-difference
-(let recursive:array:adjacent-difference (lambda Number Unknown[] (do Unknown[])))
+; 1 array:adjacent-difference 61 tail-call:array:adjacent-difference
+(let tail-call:array:adjacent-difference (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:adjacent-difference
 (let array:adjacent-difference (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (do Unknown[])))
 ; 1 array:partition
@@ -954,12 +954,12 @@
 (let array:chunks (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:adjacent-find len
 (let len Number)
-; 1 array:adjacent-find 66 recursive:array:adjacent-find prev
+; 1 array:adjacent-find 66 tail-call:array:adjacent-find prev
 (let prev Unknown)
-; 1 array:adjacent-find 66 recursive:array:adjacent-find current
+; 1 array:adjacent-find 66 tail-call:array:adjacent-find current
 (let current Unknown)
-; 1 array:adjacent-find 66 recursive:array:adjacent-find
-(let recursive:array:adjacent-find (lambda Number (do Number)))
+; 1 array:adjacent-find 66 tail-call:array:adjacent-find
+(let tail-call:array:adjacent-find (lambda Number (do Number)))
 ; 1 array:adjacent-find
 (let array:adjacent-find (lambda Unknown[] (lambda Unknown Unknown (do Boolean)) (do Number)))
 ; 1 matrix:zeroes
@@ -1044,20 +1044,20 @@
 (let len Number)
 ; 1 matrix:rotate-square out
 (let out Unknown[])
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 86 recursive:inner:matrix:rotate-square
-(let recursive:inner:matrix:rotate-square (lambda Number (do Number)))
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square
-(let recursive:outer:matrix:rotate-square (lambda Number (do Number)))
+; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square 86 tail-call:inner:matrix:rotate-square
+(let tail-call:inner:matrix:rotate-square (lambda Number (do Number)))
+; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square
+(let tail-call:outer:matrix:rotate-square (lambda Number (do Number)))
 ; 1 matrix:rotate-square
 (let matrix:rotate-square (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:flip-square len
 (let len Number)
 ; 1 matrix:flip-square out
 (let out Unknown[])
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 88 recursive:inner:matrix:flip-square
-(let recursive:inner:matrix:flip-square (lambda Number (do Unknown[])))
-; 1 matrix:flip-square recursive:outer:matrix:flip-square
-(let recursive:outer:matrix:flip-square (lambda Number (do Unknown[])))
+; 1 matrix:flip-square tail-call:outer:matrix:flip-square 88 tail-call:inner:matrix:flip-square
+(let tail-call:inner:matrix:flip-square (lambda Number (do Unknown[])))
+; 1 matrix:flip-square tail-call:outer:matrix:flip-square
+(let tail-call:outer:matrix:flip-square (lambda Number (do Unknown[])))
 ; 1 matrix:flip-square
 (let matrix:flip-square (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:dimensions
@@ -1120,12 +1120,12 @@
 (let from:yx->key (lambda Unknown Unknown (do Unknown[])))
 ; 1 from:string-or-number->key
 (let from:string-or-number->key (lambda Unknown[] (do Unknown[])))
-; 1 from:list->array recursive:from:list->array
-(let recursive:from:list->array (lambda Unknown[] Unknown[] (do Unknown[])))
+; 1 from:list->array tail-call:from:list->array
+(let tail-call:from:list->array (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 from:list->array
 (let from:list->array (lambda Unknown[] (do Unknown[])))
-; 1 from:array->list recursive:from:array->list
-(let recursive:from:array->list (lambda Unknown[] Unknown (do Unknown)))
+; 1 from:array->list tail-call:from:array->list
+(let tail-call:from:array->list (lambda Unknown[] Unknown (do Unknown)))
 ; 1 from:array->list
 (let from:array->list (lambda Unknown[] (do Unknown)))
 ; 1 from:char->digit
@@ -1140,8 +1140,8 @@
 (let current-sign Number[])
 ; 1 from:chars->positive-or-negative-digits
 (let from:chars->positive-or-negative-digits (lambda Unknown[] (do Unknown[])))
-; 1 from:digits->integer recursive:from:digits->integer
-(let recursive:from:digits->integer (lambda Number Number Number (do Number)))
+; 1 from:digits->integer tail-call:from:digits->integer
+(let tail-call:from:digits->integer (lambda Number Number Number (do Number)))
 ; 1 from:digits->integer
 (let from:digits->integer (lambda Unknown[] (do Number)))
 ; 1 from:digits->integer-base
@@ -1152,8 +1152,8 @@
 (let neg? Boolean)
 ; 1 from:integer->string-base 100 n
 (let n Number[])
-; 1 from:integer->string-base 100 recursive:while
-(let recursive:while (lambda (do Number)))
+; 1 from:integer->string-base 100 tail-call:while
+(let tail-call:while (lambda (do Number)))
 ; 1 from:integer->string-base 100 str
 (let str Number[])
 ; 1 from:integer->string-base
@@ -1162,28 +1162,28 @@
 (let negative? Boolean)
 ; 1 from:positive-or-negative-digits->integer digits
 (let digits Unknown[])
-; 1 from:positive-or-negative-digits->integer recursive:from:positive-or-negative-digits->integer
-(let recursive:from:positive-or-negative-digits->integer (lambda Number Number Number (do Number)))
+; 1 from:positive-or-negative-digits->integer tail-call:from:positive-or-negative-digits->integer
+(let tail-call:from:positive-or-negative-digits->integer (lambda Number Number Number (do Number)))
 ; 1 from:positive-or-negative-digits->integer
 (let from:positive-or-negative-digits->integer (lambda Unknown[] (do Number)))
 ; 1 from:positive-or-negative-digits->chars
 (let from:positive-or-negative-digits->chars (lambda Unknown[] (do Unknown[])))
-; 1 from:integer->digits recursive:from:integer->digits
-(let recursive:from:integer->digits (lambda Number Number[] (do Number[])))
+; 1 from:integer->digits tail-call:from:integer->digits
+(let tail-call:from:integer->digits (lambda Number Number[] (do Number[])))
 ; 1 from:integer->digits
 (let from:integer->digits (lambda Number (do Unknown[])))
 ; 1 from:number->positive-or-negative-digits negative?
 (let negative? Boolean)
 ; 1 from:number->positive-or-negative-digits num
 (let num Number)
-; 1 from:number->positive-or-negative-digits recursive:from:number->positive-or-negative-digits
-(let recursive:from:number->positive-or-negative-digits (lambda Number Number[] (do Number[])))
+; 1 from:number->positive-or-negative-digits tail-call:from:number->positive-or-negative-digits
+(let tail-call:from:number->positive-or-negative-digits (lambda Number Number[] (do Number[])))
 ; 1 from:number->positive-or-negative-digits out
 (let out Number[])
 ; 1 from:number->positive-or-negative-digits
 (let from:number->positive-or-negative-digits (lambda Number (do Number[])))
-; 1 from:integer->bits-reversed recursive:from:integer->bits-reversed
-(let recursive:from:integer->bits-reversed (lambda Number Number[] (do Number[])))
+; 1 from:integer->bits-reversed tail-call:from:integer->bits-reversed
+(let tail-call:from:integer->bits-reversed (lambda Number Number[] (do Number[])))
 ; 1 from:integer->bits-reversed
 (let from:integer->bits-reversed (lambda Number (do Number[])))
 ; 1 from:integer->bits
@@ -1234,16 +1234,16 @@
 (let q Unknown[][])
 ; 1 from:array->brray half
 (let half Number)
-; 1 from:array->brray recursive:left:from:array->brray
-(let recursive:left:from:array->brray (lambda Number (do Unknown[])))
-; 1 from:array->brray recursive:right:from:array->brray
-(let recursive:right:from:array->brray (lambda Number Number (do Unknown[])))
+; 1 from:array->brray tail-call:left:from:array->brray
+(let tail-call:left:from:array->brray (lambda Number (do Unknown[])))
+; 1 from:array->brray tail-call:right:from:array->brray
+(let tail-call:right:from:array->brray (lambda Number Number (do Unknown[])))
 ; 1 from:array->brray
 (let from:array->brray (lambda Unknown[] (do Unknown[])))
 ; 1 from:brray->array out
 (let out Unknown[])
-; 1 from:brray->array recursive:from:brray->array
-(let recursive:from:brray->array (lambda Number Number (do Number)))
+; 1 from:brray->array tail-call:from:brray->array
+(let tail-call:from:brray->array (lambda Number Number (do Number)))
 ; 1 from:brray->array
 (let from:brray->array (lambda Unknown[] (do Unknown[])))
 ; 1 from:string->array
@@ -1278,50 +1278,50 @@
 (let temp Unknown)
 ; 1 array:swap!
 (let array:swap! (lambda Unknown[] Number Number (do Unknown[])))
-; 1 array:index-of recursive:array:index-of
-(let recursive:array:index-of (lambda Number (do Number)))
+; 1 array:index-of tail-call:array:index-of
+(let tail-call:array:index-of (lambda Number (do Number)))
 ; 1 array:index-of
 (let array:index-of (lambda Unknown[] Number (do Number)))
 ; 1 array:enumerate
 (let array:enumerate (lambda Unknown[] (do Unknown[][])))
-; 1 array:enumerated-map recursive:array:enumerated-map
-(let recursive:array:enumerated-map (lambda Number Unknown[] (do Unknown[])))
+; 1 array:enumerated-map tail-call:array:enumerated-map
+(let tail-call:array:enumerated-map (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:enumerated-map
 (let array:enumerated-map (lambda Unknown[] (lambda Unknown Number (do Unknown)) (do Unknown[])))
-; 1 array:enumerated-select recursive:array:enumerated-select
-(let recursive:array:enumerated-select (lambda Number Unknown[] (do Unknown[])))
+; 1 array:enumerated-select tail-call:array:enumerated-select
+(let tail-call:array:enumerated-select (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:enumerated-select
 (let array:enumerated-select (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Unknown[])))
-; 1 array:enumerated-exclude recursive:array:enumerated-exclude
-(let recursive:array:enumerated-exclude (lambda Number Unknown[] (do Unknown[])))
+; 1 array:enumerated-exclude tail-call:array:enumerated-exclude
+(let tail-call:array:enumerated-exclude (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:enumerated-exclude
 (let array:enumerated-exclude (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Unknown[])))
-; 1 array:enumerated-fold recursive:array:enumerated-fold
-(let recursive:array:enumerated-fold (lambda Number Unknown (do Unknown)))
+; 1 array:enumerated-fold tail-call:array:enumerated-fold
+(let tail-call:array:enumerated-fold (lambda Number Unknown (do Unknown)))
 ; 1 array:enumerated-fold
 (let array:enumerated-fold (lambda Unknown[] (lambda Unknown Unknown Number (do Unknown)) Unknown (do Unknown)))
-; 1 array:enumerated-transform recursive:array:enumerated-transform
-(let recursive:array:enumerated-transform (lambda Number Unknown[] (do Unknown[])))
+; 1 array:enumerated-transform tail-call:array:enumerated-transform
+(let tail-call:array:enumerated-transform (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:enumerated-transform
 (let array:enumerated-transform (lambda Unknown[] (lambda Unknown[] Unknown Number (do Unknown)) Unknown[] (do Unknown[])))
-; 1 array:enumerated-find recursive:array:enumerated-find
-(let recursive:array:enumerated-find (lambda Number (do Unknown[])))
+; 1 array:enumerated-find tail-call:array:enumerated-find
+(let tail-call:array:enumerated-find (lambda Number (do Unknown[])))
 ; 1 array:enumerated-find
 (let array:enumerated-find (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Unknown[])))
-; 1 array:enumerated-find-index recursive:array:enumerated-find-index
-(let recursive:array:enumerated-find-index (lambda Number (do Number)))
+; 1 array:enumerated-find-index tail-call:array:enumerated-find-index
+(let tail-call:array:enumerated-find-index (lambda Number (do Number)))
 ; 1 array:enumerated-find-index
 (let array:enumerated-find-index (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Number)))
-; 1 array:enumerated-every? recursive:array:enumerated-every?
-(let recursive:array:enumerated-every? (lambda Number (do Boolean)))
+; 1 array:enumerated-every? tail-call:array:enumerated-every?
+(let tail-call:array:enumerated-every? (lambda Number (do Boolean)))
 ; 1 array:enumerated-every?
 (let array:enumerated-every? (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Boolean)))
-; 1 array:enumerated-some? recursive:array:enumerated-some?
-(let recursive:array:enumerated-some? (lambda Number (do Boolean)))
+; 1 array:enumerated-some? tail-call:array:enumerated-some?
+(let tail-call:array:enumerated-some? (lambda Number (do Boolean)))
 ; 1 array:enumerated-some?
 (let array:enumerated-some? (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Boolean)))
-; 1 array:find-index recursive:array:find-index
-(let recursive:array:find-index (lambda Number (do Number)))
+; 1 array:find-index tail-call:array:find-index
+(let tail-call:array:find-index (lambda Number (do Number)))
 ; 1 array:find-index
 (let array:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number)))
 ; 1 array:remove
@@ -1348,14 +1348,14 @@
 (let count Number[])
 ; 1 string:character-occurances at-least-one
 (let at-least-one Boolean[])
-; 1 string:character-occurances recursive:string:character-occurances ch
+; 1 string:character-occurances tail-call:string:character-occurances ch
 (let ch Unknown)
-; 1 string:character-occurances recursive:string:character-occurances code
+; 1 string:character-occurances tail-call:string:character-occurances code
 (let code Number)
-; 1 string:character-occurances recursive:string:character-occurances mask
+; 1 string:character-occurances tail-call:string:character-occurances mask
 (let mask Number)
-; 1 string:character-occurances recursive:string:character-occurances
-(let recursive:string:character-occurances (lambda Number Number (do Number)))
+; 1 string:character-occurances tail-call:string:character-occurances
+(let tail-call:string:character-occurances (lambda Number Number (do Number)))
 ; 1 string:character-occurances
 (let string:character-occurances (lambda Unknown[] Number (do Number)))
 ; 1 string:slice-from index
@@ -1386,12 +1386,12 @@
 (let prev Unknown[])
 ; 1 string:split
 (let string:split (lambda Unknown[] Unknown (do Unknown[])))
-; 1 string:match 124 recursive:string:match
-(let recursive:string:match (lambda Unknown[] Number (do Number)))
+; 1 string:match 124 tail-call:string:match
+(let tail-call:string:match (lambda Unknown[] Number (do Number)))
 ; 1 string:match
 (let string:match (lambda Unknown[] Unknown[] (do Number)))
-; 1 string:has? 125 recursive:string:has
-(let recursive:string:has (lambda Unknown[] Number (do Boolean)))
+; 1 string:has? 125 tail-call:string:has
+(let tail-call:string:has (lambda Unknown[] Number (do Boolean)))
 ; 1 string:has?
 (let string:has? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:lesser? 126 a
@@ -1402,10 +1402,10 @@
 (let pairs Unknown[])
 ; 1 string:lesser? 126 is
 (let is Boolean[])
-; 1 string:lesser? 126 recursive:string:lesser 127 current
+; 1 string:lesser? 126 tail-call:string:lesser 127 current
 (let current Unknown[])
-; 1 string:lesser? 126 recursive:string:lesser
-(let recursive:string:lesser (lambda (do Boolean[])))
+; 1 string:lesser? 126 tail-call:string:lesser
+(let tail-call:string:lesser (lambda (do Boolean[])))
 ; 1 string:lesser?
 (let string:lesser? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:greater? 128 a
@@ -1416,10 +1416,10 @@
 (let pairs Unknown[])
 ; 1 string:greater? 128 is
 (let is Boolean[])
-; 1 string:greater? 128 recursive:string:greater 129 current
+; 1 string:greater? 128 tail-call:string:greater 129 current
 (let current Unknown[])
-; 1 string:greater? 128 recursive:string:greater
-(let recursive:string:greater (lambda (do Boolean[])))
+; 1 string:greater? 128 tail-call:string:greater
+(let tail-call:string:greater (lambda (do Boolean[])))
 ; 1 string:greater?
 (let string:greater? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:greater-or-equal?
@@ -1490,34 +1490,34 @@
 (let string:prepend (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 string:pad-left n
 (let n Number)
-; 1 string:pad-left recursive:string:pad-left
-(let recursive:string:pad-left (lambda Number Unknown[] (do Unknown[])))
+; 1 string:pad-left tail-call:string:pad-left
+(let tail-call:string:pad-left (lambda Number Unknown[] (do Unknown[])))
 ; 1 string:pad-left
 (let string:pad-left (lambda Unknown[] Number Unknown[] (do Unknown[])))
 ; 1 string:pad-right n
 (let n Number)
-; 1 string:pad-right recursive:string:pad-right
-(let recursive:string:pad-right (lambda Number Unknown[] (do Unknown[])))
+; 1 string:pad-right tail-call:string:pad-right
+(let tail-call:string:pad-right (lambda Number Unknown[] (do Unknown[])))
 ; 1 string:pad-right
 (let string:pad-right (lambda Unknown[] Number Unknown[] (do Unknown[])))
 ; 1 string:upper xs
 (let xs Unknown[])
 ; 1 string:upper n
 (let n Number)
-; 1 string:upper recursive:string:upper 145 current-char
+; 1 string:upper tail-call:string:upper 145 current-char
 (let current-char Unknown)
-; 1 string:upper recursive:string:upper
-(let recursive:string:upper (lambda Number (do Unknown[])))
+; 1 string:upper tail-call:string:upper
+(let tail-call:string:upper (lambda Number (do Unknown[])))
 ; 1 string:upper
 (let string:upper (lambda Unknown[] (do Unknown[])))
 ; 1 string:lower xs
 (let xs Unknown[])
 ; 1 string:lower n
 (let n Number)
-; 1 string:lower recursive:string:lower 146 current-char
+; 1 string:lower tail-call:string:lower 146 current-char
 (let current-char Unknown)
-; 1 string:lower recursive:string:lower
-(let recursive:string:lower (lambda Number (do Unknown[])))
+; 1 string:lower tail-call:string:lower
+(let tail-call:string:lower (lambda Number (do Unknown[])))
 ; 1 string:lower
 (let string:lower (lambda Unknown[] (do Unknown[])))
 ; 1 new:map
@@ -1588,10 +1588,10 @@
 (let prime-num Number)
 ; 1 set:index total
 (let total Number[])
-; 1 set:index recursive:set:index letter
+; 1 set:index tail-call:set:index letter
 (let letter Unknown)
-; 1 set:index recursive:set:index
-(let recursive:set:index (lambda Number Number (do Unknown)))
+; 1 set:index tail-call:set:index
+(let tail-call:set:index (lambda Number Number (do Unknown)))
 ; 1 set:index
 (let set:index (lambda Unknown[] Unknown[] (do Unknown)))
 ; 1 set:add! idx
@@ -1836,12 +1836,12 @@
 (let math:collinear? (lambda Unknown[] (do Boolean)))
 ; 1 bools:fold
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
-; 1 bool:truths recursive:bool:truths
-(let recursive:bool:truths (lambda Boolean[] (do Boolean[])))
+; 1 bool:truths tail-call:bool:truths
+(let tail-call:bool:truths (lambda Boolean[] (do Boolean[])))
 ; 1 bool:truths
 (let bool:truths (lambda Number (do Boolean[])))
-; 1 bool:lies recursive:bool:lies
-(let recursive:bool:lies (lambda Boolean[] (do Boolean[])))
+; 1 bool:lies tail-call:bool:lies
+(let tail-call:bool:lies (lambda Boolean[] (do Boolean[])))
 ; 1 bool:lies
 (let bool:lies (lambda Number (do Boolean[])))
 ; 1 bool:def
@@ -1912,8 +1912,8 @@
 (let len Number)
 ; 1 brray:remove-from-right!
 (let brray:remove-from-right! (lambda Unknown[] (do Unknown[])))
-; 1 brray:iter recursive:brray:iter
-(let recursive:brray:iter (lambda Number Number (do Number)))
+; 1 brray:iter tail-call:brray:iter
+(let tail-call:brray:iter (lambda Number Number (do Number)))
 ; 1 brray:iter
 (let brray:iter (lambda Unknown[] (lambda Unknown (do Unknown)) (do Number)))
 ; 1 brray:map result
@@ -1922,10 +1922,10 @@
 (let len Number)
 ; 1 brray:map half
 (let half Number)
-; 1 brray:map recursive:left:brray:map
-(let recursive:left:brray:map (lambda Number (do Unknown[])))
-; 1 brray:map recursive:right:brray:map
-(let recursive:right:brray:map (lambda Number Number (do Number)))
+; 1 brray:map tail-call:left:brray:map
+(let tail-call:left:brray:map (lambda Number (do Unknown[])))
+; 1 brray:map tail-call:right:brray:map
+(let tail-call:right:brray:map (lambda Number Number (do Number)))
 ; 1 brray:map
 (let brray:map (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
 ; 1 brray:balance?
@@ -1934,10 +1934,10 @@
 (let initial Unknown[])
 ; 1 brray:balance! 188 half
 (let half Number)
-; 1 brray:balance! 188 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Number (do Number)))
-; 1 brray:balance! 188 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Number Number (do Number)))
+; 1 brray:balance! 188 tail-call:left:brray:balance!
+(let tail-call:left:brray:balance! (lambda Number (do Number)))
+; 1 brray:balance! 188 tail-call:right:brray:balance!
+(let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 brray:balance!
 (let brray:balance! (lambda Unknown[][] (do Unknown[])))
 ; 1 brray:append!
@@ -1962,14 +1962,14 @@
 (let brray:pop-left! (lambda Unknown[] (do Unknown)))
 ; 1 brray:rotate-left! N
 (let N Number)
-; 1 brray:rotate-left! recursive:brray:rotate-left!
-(let recursive:brray:rotate-left! (lambda Number Number (do Number)))
+; 1 brray:rotate-left! tail-call:brray:rotate-left!
+(let tail-call:brray:rotate-left! (lambda Number Number (do Number)))
 ; 1 brray:rotate-left!
 (let brray:rotate-left! (lambda Unknown[] Number (do Unknown[])))
 ; 1 brray:rotate-right! N
 (let N Number)
-; 1 brray:rotate-right! recursive:brray:rotate-left!
-(let recursive:brray:rotate-left! (lambda Number Number (do Number)))
+; 1 brray:rotate-right! tail-call:brray:rotate-left!
+(let tail-call:brray:rotate-left! (lambda Number Number (do Number)))
 ; 1 brray:rotate-right!
 (let brray:rotate-right! (lambda Unknown[] Number (do Unknown[])))
 ; 1 brray:slice len
@@ -1984,10 +1984,10 @@
 (let slice-len Number)
 ; 1 brray:slice half
 (let half Number)
-; 1 brray:slice recursive:left:brray:slice
-(let recursive:left:brray:slice (lambda Number (do Number)))
-; 1 brray:slice recursive:right:brray:slice
-(let recursive:right:brray:slice (lambda Number Number (do Number)))
+; 1 brray:slice tail-call:left:brray:slice
+(let tail-call:left:brray:slice (lambda Number (do Number)))
+; 1 brray:slice tail-call:right:brray:slice
+(let tail-call:right:brray:slice (lambda Number Number (do Number)))
 ; 1 brray:slice
 (let brray:slice (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 queue:empty?
@@ -2048,28 +2048,28 @@
 (let date:month-day (lambda Unknown[] (do Unknown[])))
 ; 1 date:year-month
 (let date:year-month (lambda Unknown[] (do Unknown[])))
-; 1 loop:while recursive:while
-(let recursive:while (lambda (do Number)))
+; 1 loop:while tail-call:while
+(let tail-call:while (lambda (do Number)))
 ; 1 loop:while
 (let loop:while (lambda (lambda (do Boolean)) (lambda (do Unknown)) (do Number)))
-; 1 loop:for-range recursive:loop:for-range
-(let recursive:loop:for-range (lambda Number (do Number)))
+; 1 loop:for-range tail-call:loop:for-range
+(let tail-call:loop:for-range (lambda Number (do Number)))
 ; 1 loop:for-range
 (let loop:for-range (lambda Number Number (lambda Number (do Unknown)) (do Number)))
-; 1 loop:for-n recursive:loop:for-n
-(let recursive:loop:for-n (lambda Number (do Number)))
+; 1 loop:for-n tail-call:loop:for-n
+(let tail-call:loop:for-n (lambda Number (do Number)))
 ; 1 loop:for-n
 (let loop:for-n (lambda Number (lambda Number (do Unknown)) (do Number)))
-; 1 loop:repeat recursive:loop:repeat
-(let recursive:loop:repeat (lambda Number (do Number)))
+; 1 loop:repeat tail-call:loop:repeat
+(let tail-call:loop:repeat (lambda Number (do Number)))
 ; 1 loop:repeat
 (let loop:repeat (lambda Number (lambda (do Unknown)) (do Number)))
-; 1 loop:some-n? recursive:loop:some-n
-(let recursive:loop:some-n (lambda Number (do Number)))
+; 1 loop:some-n? tail-call:loop:some-n
+(let tail-call:loop:some-n (lambda Number (do Number)))
 ; 1 loop:some-n?
 (let loop:some-n? (lambda Number (lambda Number (do Boolean)) (do Number)))
-; 1 loop:some-range? recursive:loop:some-range
-(let recursive:loop:some-range (lambda Number (do Number)))
+; 1 loop:some-range? tail-call:loop:some-range
+(let tail-call:loop:some-range (lambda Number (do Number)))
 ; 1 loop:some-range?
 (let loop:some-range? (lambda Number Number (lambda Number (do Boolean)) (do Number)))
 ; 1 node:parent
@@ -2084,16 +2084,16 @@
 (let heap:greater? (lambda Unknown[] Number Number (lambda Unknown Unknown (do Unknown)) (do Unknown)))
 ; 1 heap:sift-up! node
 (let node Number[])
-; 1 heap:sift-up! recursive:heap:sift-up!
-(let recursive:heap:sift-up! (lambda (do Number)))
+; 1 heap:sift-up! tail-call:heap:sift-up!
+(let tail-call:heap:sift-up! (lambda (do Number)))
 ; 1 heap:sift-up!
 (let heap:sift-up! (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:sift-down! node
 (let node Number[])
-; 1 heap:sift-down! recursive:heap:sift-down! 194 max-child
+; 1 heap:sift-down! tail-call:heap:sift-down! 194 max-child
 (let max-child Unknown)
-; 1 heap:sift-down! recursive:heap:sift-down!
-(let recursive:heap:sift-down! (lambda (do Number)))
+; 1 heap:sift-down! tail-call:heap:sift-down!
+(let tail-call:heap:sift-down! (lambda (do Number)))
 ; 1 heap:sift-down!
 (let heap:sift-down! (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:peek
@@ -2168,8 +2168,8 @@
 (let array:head (lambda Unknown[] (do Unknown)))
 ; 1 array:tail bounds
 (let bounds Number)
-; 1 array:tail recursive:array:tail
-(let recursive:array:tail (lambda Number Unknown[] (do Unknown[])))
+; 1 array:tail tail-call:array:tail
+(let tail-call:array:tail (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:tail
 (let array:tail (lambda Unknown[] (do Unknown[])))
 ; 1 array:car
@@ -2598,10 +2598,10 @@
 (let lambda::annonymous::1::339 (lambda Number (do Number)))
 ; 1 math:variance math:variance lambda::annonymous::1::341
 (let lambda::annonymous::1::341 (lambda Number (do Number)))
-; 1 math:prime? 347 recursive:math:prime? prime?
+; 1 math:prime? 347 tail-call:math:prime? prime?
 (let prime? Boolean)
-; 1 math:prime? 347 recursive:math:prime?
-(let recursive:math:prime? (lambda Number Number (do Boolean)))
+; 1 math:prime? 347 tail-call:math:prime?
+(let tail-call:math:prime? (lambda Number Number (do Boolean)))
 ; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::348
 (let lambda::annonymous::1::348 (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::348 lambda::annonymous::1::348 lambda::annonymous::1::350
@@ -2670,13 +2670,13 @@
 (let lambda::annonymous::1::404 (lambda Unknown (do Unknown[])))
 ; 1 cons cons lambda::annonymous::1::405
 (let lambda::annonymous::1::405 (lambda Unknown (do Unknown[])))
-; 1 array:binary-search recursive:array:binary-search 406 index
+; 1 array:binary-search tail-call:array:binary-search 406 index
 (let index Number)
-; 1 array:binary-search recursive:array:binary-search 406 current
+; 1 array:binary-search tail-call:array:binary-search 406 current
 (let current Unknown)
-; 1 array:binary-search recursive:array:binary-search 407 index
+; 1 array:binary-search tail-call:array:binary-search 407 index
 (let index Number)
-; 1 array:binary-search recursive:array:binary-search 407 current
+; 1 array:binary-search tail-call:array:binary-search 407 current
 (let current Unknown)
 ; 1 array:join array:join lambda::annonymous::1::409
 (let lambda::annonymous::1::409 (lambda Unknown[] Unknown[] (do Unknown[])))
@@ -2726,16 +2726,16 @@
 (let lambda::annonymous::1::443 (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 array:sort 444 pivot
 (let pivot Unknown)
-; 1 array:sort 444 recursive:array:sort current
+; 1 array:sort 444 tail-call:array:sort current
 (let current Unknown)
-; 1 array:sort 444 recursive:array:sort predicate
+; 1 array:sort 444 tail-call:array:sort predicate
 (let predicate Unknown)
-; 1 array:sort 444 recursive:array:sort left
+; 1 array:sort 444 tail-call:array:sort left
 (let left Unknown)
-; 1 array:sort 444 recursive:array:sort right
+; 1 array:sort 444 tail-call:array:sort right
 (let right Unknown)
-; 1 array:sort 444 recursive:array:sort
-(let recursive:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
+; 1 array:sort 444 tail-call:array:sort
+(let tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
 ; 1 array:sort 444 sorted
 (let sorted Unknown[])
 ; 1 array:sort 444 left
@@ -2770,8 +2770,8 @@
 (let lambda::annonymous::1::464 (lambda Unknown[] Unknown Number (do Unknown[])))
 ; 1 array:sliding-window array:sliding-window lambda::annonymous::1::466
 (let lambda::annonymous::1::466 (lambda Unknown[] Unknown Number (do Unknown[])))
-; 1 array:adjacent-difference 468 recursive:array:adjacent-difference
-(let recursive:array:adjacent-difference (lambda Number Unknown[] (do Unknown[])))
+; 1 array:adjacent-difference 468 tail-call:array:adjacent-difference
+(let tail-call:array:adjacent-difference (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:partition array:partition lambda::annonymous::1::470
 (let lambda::annonymous::1::470 (lambda Unknown[] Unknown Number (do Unknown[])))
 ; 1 array:partition array:partition lambda::annonymous::1::472
@@ -2784,12 +2784,12 @@
 (let start Unknown)
 ; 1 array:chunks 476 end
 (let end Unknown)
-; 1 array:adjacent-find 477 recursive:array:adjacent-find prev
+; 1 array:adjacent-find 477 tail-call:array:adjacent-find prev
 (let prev Unknown)
-; 1 array:adjacent-find 477 recursive:array:adjacent-find current
+; 1 array:adjacent-find 477 tail-call:array:adjacent-find current
 (let current Unknown)
-; 1 array:adjacent-find 477 recursive:array:adjacent-find
-(let recursive:array:adjacent-find (lambda Number (do Number)))
+; 1 array:adjacent-find 477 tail-call:array:adjacent-find
+(let tail-call:array:adjacent-find (lambda Number (do Number)))
 ; 1 matrix:points matrix:points lambda::annonymous::1::482
 (let lambda::annonymous::1::482 (lambda Unknown Unknown Unknown (do Number)))
 ; 1 matrix:points matrix:points lambda::annonymous::1::484
@@ -2882,14 +2882,14 @@
 (let lambda::annonymous::1::544 (lambda Number Number (do Number)))
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::546
 (let lambda::annonymous::1::546 (lambda Number Number (do Number)))
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 548 recursive:inner:matrix:rotate-square
-(let recursive:inner:matrix:rotate-square (lambda Number (do Number)))
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 550 recursive:inner:matrix:rotate-square
-(let recursive:inner:matrix:rotate-square (lambda Number (do Number)))
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 553 recursive:inner:matrix:flip-square
-(let recursive:inner:matrix:flip-square (lambda Number (do Unknown[])))
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 555 recursive:inner:matrix:flip-square
-(let recursive:inner:matrix:flip-square (lambda Number (do Unknown[])))
+; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square 548 tail-call:inner:matrix:rotate-square
+(let tail-call:inner:matrix:rotate-square (lambda Number (do Number)))
+; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square 550 tail-call:inner:matrix:rotate-square
+(let tail-call:inner:matrix:rotate-square (lambda Number (do Number)))
+; 1 matrix:flip-square tail-call:outer:matrix:flip-square 553 tail-call:inner:matrix:flip-square
+(let tail-call:inner:matrix:flip-square (lambda Number (do Unknown[])))
+; 1 matrix:flip-square tail-call:outer:matrix:flip-square 555 tail-call:inner:matrix:flip-square
+(let tail-call:inner:matrix:flip-square (lambda Number (do Unknown[])))
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::557 dy
 (let dy Number)
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::557 dx
@@ -2988,8 +2988,8 @@
 (let neg? Boolean)
 ; 1 from:integer->string-base 586 n
 (let n Number[])
-; 1 from:integer->string-base 586 recursive:while
-(let recursive:while (lambda (do Number)))
+; 1 from:integer->string-base 586 tail-call:while
+(let tail-call:while (lambda (do Number)))
 ; 1 from:integer->string-base 586 str
 (let str Number[])
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::588
@@ -3074,11 +3074,11 @@
 (let lambda::annonymous::1::646 (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 string:split string:split lambda::annonymous::1::647
 (let lambda::annonymous::1::647 (lambda Unknown (do Unknown[])))
-; 1 string:match 648 recursive:string:match
-(let recursive:string:match (lambda Unknown[] Number (do Number)))
-; 1 string:has? 649 recursive:string:has
-(let recursive:string:has (lambda Unknown[] Number (do Boolean)))
-; 1 string:lesser? 126 recursive:string:lesser 650 current
+; 1 string:match 648 tail-call:string:match
+(let tail-call:string:match (lambda Unknown[] Number (do Number)))
+; 1 string:has? 649 tail-call:string:has
+(let tail-call:string:has (lambda Unknown[] Number (do Boolean)))
+; 1 string:lesser? 126 tail-call:string:lesser 650 current
 (let current Unknown[])
 ; 1 string:lesser? 651 a
 (let a Unknown[])
@@ -3088,11 +3088,11 @@
 (let pairs Unknown[])
 ; 1 string:lesser? 651 is
 (let is Boolean[])
-; 1 string:lesser? 651 recursive:string:lesser 652 current
+; 1 string:lesser? 651 tail-call:string:lesser 652 current
 (let current Unknown[])
-; 1 string:lesser? 651 recursive:string:lesser
-(let recursive:string:lesser (lambda (do Boolean[])))
-; 1 string:greater? 128 recursive:string:greater 653 current
+; 1 string:lesser? 651 tail-call:string:lesser
+(let tail-call:string:lesser (lambda (do Boolean[])))
+; 1 string:greater? 128 tail-call:string:greater 653 current
 (let current Unknown[])
 ; 1 string:greater? 654 a
 (let a Unknown[])
@@ -3102,10 +3102,10 @@
 (let pairs Unknown[])
 ; 1 string:greater? 654 is
 (let is Boolean[])
-; 1 string:greater? 654 recursive:string:greater 655 current
+; 1 string:greater? 654 tail-call:string:greater 655 current
 (let current Unknown[])
-; 1 string:greater? 654 recursive:string:greater
-(let recursive:string:greater (lambda (do Boolean[])))
+; 1 string:greater? 654 tail-call:string:greater
+(let tail-call:string:greater (lambda (do Boolean[])))
 ; 1 string:equal? string:equal? lambda::annonymous::1::656
 (let lambda::annonymous::1::656 (lambda Unknown[] (do Boolean)))
 ; 1 string:equal? string:equal? lambda::annonymous::1::658
@@ -3146,13 +3146,13 @@
 (let lambda::annonymous::1::694 (lambda Unknown (do Unknown[])))
 ; 1 string:chars string:chars lambda::annonymous::1::696
 (let lambda::annonymous::1::696 (lambda Unknown (do Unknown[])))
-; 1 string:upper recursive:string:upper 697 current-char
+; 1 string:upper tail-call:string:upper 697 current-char
 (let current-char Unknown)
-; 1 string:upper recursive:string:upper 698 current-char
+; 1 string:upper tail-call:string:upper 698 current-char
 (let current-char Unknown)
-; 1 string:lower recursive:string:lower 699 current-char
+; 1 string:lower tail-call:string:lower 699 current-char
 (let current-char Unknown)
-; 1 string:lower recursive:string:lower 700 current-char
+; 1 string:lower tail-call:string:lower 700 current-char
 (let current-char Unknown)
 ; 1 new:map new:map lambda::annonymous::1::701
 (let lambda::annonymous::1::701 (lambda Unknown[] Unknown Number (do Unknown[])))
@@ -3278,13 +3278,13 @@
 (let initial Unknown[])
 ; 1 brray:balance! 782 half
 (let half Number)
-; 1 brray:balance! 782 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Number (do Number)))
-; 1 brray:balance! 782 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Number Number (do Number)))
-; 1 heap:sift-down! recursive:heap:sift-down! 793 max-child
+; 1 brray:balance! 782 tail-call:left:brray:balance!
+(let tail-call:left:brray:balance! (lambda Number (do Number)))
+; 1 brray:balance! 782 tail-call:right:brray:balance!
+(let tail-call:right:brray:balance! (lambda Number Number (do Number)))
+; 1 heap:sift-down! tail-call:heap:sift-down! 793 max-child
 (let max-child Unknown)
-; 1 heap:sift-down! recursive:heap:sift-down! 794 max-child
+; 1 heap:sift-down! tail-call:heap:sift-down! 794 max-child
 (let max-child Unknown)
 ; 1 from:array->heap from:array->heap lambda::annonymous::1::795
 (let lambda::annonymous::1::795 (lambda Unknown (do Unknown[])))
@@ -3438,10 +3438,10 @@
 (let initial Unknown[])
 ; 1 brray:balance! 866 half
 (let half Number)
-; 1 brray:balance! 866 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Number (do Number)))
-; 1 brray:balance! 866 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Number Number (do Number)))
+; 1 brray:balance! 866 tail-call:left:brray:balance!
+(let tail-call:left:brray:balance! (lambda Number (do Number)))
+; 1 brray:balance! 866 tail-call:right:brray:balance!
+(let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 math:shoelace 867 a
 (let a Unknown)
 ; 1 math:shoelace 867 b
@@ -3652,14 +3652,14 @@
 (let lambda::annonymous::1::976 (lambda Unknown[] (do Boolean)))
 ; 1 string:equal? string:equal? lambda::annonymous::1::978
 (let lambda::annonymous::1::978 (lambda Unknown[] (do Boolean)))
-; 1 string:greater? 128 recursive:string:greater 979 current
+; 1 string:greater? 128 tail-call:string:greater 979 current
 (let current Unknown[])
-; 1 string:lesser? 126 recursive:string:lesser 980 current
+; 1 string:lesser? 126 tail-call:string:lesser 980 current
 (let current Unknown[])
-; 1 string:has? 981 recursive:string:has
-(let recursive:string:has (lambda Unknown[] Number (do Boolean)))
-; 1 string:match 982 recursive:string:match
-(let recursive:string:match (lambda Unknown[] Number (do Number)))
+; 1 string:has? 981 tail-call:string:has
+(let tail-call:string:has (lambda Unknown[] Number (do Boolean)))
+; 1 string:match 982 tail-call:string:match
+(let tail-call:string:match (lambda Unknown[] Number (do Number)))
 ; 1 string:split string:split lambda::annonymous::1::983
 (let lambda::annonymous::1::983 (lambda Unknown (do Unknown[])))
 ; 1 array:rotate-left array:rotate-left lambda::annonymous::1::985
@@ -4034,9 +4034,9 @@
 (let lambda::annonymous::1::1243 (lambda Unknown (do Unknown[])))
 ; 1 cons cons lambda::annonymous::1::1244
 (let lambda::annonymous::1::1244 (lambda Unknown (do Unknown[])))
-; 1 array:binary-search recursive:array:binary-search 1245 index
+; 1 array:binary-search tail-call:array:binary-search 1245 index
 (let index Number)
-; 1 array:binary-search recursive:array:binary-search 1245 current
+; 1 array:binary-search tail-call:array:binary-search 1245 current
 (let current Unknown)
 ; 1 array:equal? array:equal? lambda::annonymous::1::1247
 (let lambda::annonymous::1::1247 (lambda Number (do Boolean)))
@@ -4282,10 +4282,10 @@
 (let lambda::annonymous::1::1402 (lambda Number Number (do Number)))
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::1404
 (let lambda::annonymous::1::1404 (lambda Number Number (do Number)))
-; 1 matrix:rotate-square recursive:outer:matrix:rotate-square 1407 recursive:inner:matrix:rotate-square
-(let recursive:inner:matrix:rotate-square (lambda Number (do Number)))
-; 1 matrix:flip-square recursive:outer:matrix:flip-square 1411 recursive:inner:matrix:flip-square
-(let recursive:inner:matrix:flip-square (lambda Number (do Unknown[])))
+; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square 1407 tail-call:inner:matrix:rotate-square
+(let tail-call:inner:matrix:rotate-square (lambda Number (do Number)))
+; 1 matrix:flip-square tail-call:outer:matrix:flip-square 1411 tail-call:inner:matrix:flip-square
+(let tail-call:inner:matrix:flip-square (lambda Number (do Unknown[])))
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::1413 dy
 (let dy Number)
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::1413 dx
@@ -4420,29 +4420,29 @@
 (let prev Unknown[])
 ; 1 string:split string:split lambda::annonymous::1::1496
 (let lambda::annonymous::1::1496 (lambda Unknown[] Unknown (do Unknown[])))
-; 1 string:match 1497 recursive:string:match
-(let recursive:string:match (lambda Unknown[] Number (do Number)))
-; 1 string:match 1498 recursive:string:match
-(let recursive:string:match (lambda Unknown[] Number (do Number)))
-; 1 string:has? 1499 recursive:string:has
-(let recursive:string:has (lambda Unknown[] Number (do Boolean)))
-; 1 string:has? 1500 recursive:string:has
-(let recursive:string:has (lambda Unknown[] Number (do Boolean)))
-; 1 string:lesser? 126 recursive:string:lesser 1501 current
+; 1 string:match 1497 tail-call:string:match
+(let tail-call:string:match (lambda Unknown[] Number (do Number)))
+; 1 string:match 1498 tail-call:string:match
+(let tail-call:string:match (lambda Unknown[] Number (do Number)))
+; 1 string:has? 1499 tail-call:string:has
+(let tail-call:string:has (lambda Unknown[] Number (do Boolean)))
+; 1 string:has? 1500 tail-call:string:has
+(let tail-call:string:has (lambda Unknown[] Number (do Boolean)))
+; 1 string:lesser? 126 tail-call:string:lesser 1501 current
 (let current Unknown[])
-; 1 string:lesser? 126 recursive:string:lesser 1502 current
+; 1 string:lesser? 126 tail-call:string:lesser 1502 current
 (let current Unknown[])
-; 1 string:lesser? 651 recursive:string:lesser 1503 current
+; 1 string:lesser? 651 tail-call:string:lesser 1503 current
 (let current Unknown[])
-; 1 string:lesser? 651 recursive:string:lesser 1504 current
+; 1 string:lesser? 651 tail-call:string:lesser 1504 current
 (let current Unknown[])
-; 1 string:greater? 128 recursive:string:greater 1505 current
+; 1 string:greater? 128 tail-call:string:greater 1505 current
 (let current Unknown[])
-; 1 string:greater? 128 recursive:string:greater 1506 current
+; 1 string:greater? 128 tail-call:string:greater 1506 current
 (let current Unknown[])
-; 1 string:greater? 654 recursive:string:greater 1507 current
+; 1 string:greater? 654 tail-call:string:greater 1507 current
 (let current Unknown[])
-; 1 string:greater? 654 recursive:string:greater 1508 current
+; 1 string:greater? 654 tail-call:string:greater 1508 current
 (let current Unknown[])
 ; 1 string:equal? string:equal? lambda::annonymous::1::1510
 (let lambda::annonymous::1::1510 (lambda Unknown[] (do Boolean)))
@@ -4550,9 +4550,9 @@
 (let lambda::annonymous::1::1601 (lambda Unknown[] Number (do Unknown[])))
 ; 1 string:chars string:chars lambda::annonymous::1::1603
 (let lambda::annonymous::1::1603 (lambda Unknown (do Unknown[])))
-; 1 string:upper recursive:string:upper 1604 current-char
+; 1 string:upper tail-call:string:upper 1604 current-char
 (let current-char Unknown)
-; 1 string:lower recursive:string:lower 1605 current-char
+; 1 string:lower tail-call:string:lower 1605 current-char
 (let current-char Unknown)
 ; 1 new:map new:map lambda::annonymous::1::1606
 (let lambda::annonymous::1::1606 (lambda Unknown[] Unknown Number (do Unknown[])))
@@ -4954,19 +4954,19 @@
 (let initial Unknown[])
 ; 1 brray:balance! 1702 half
 (let half Number)
-; 1 brray:balance! 1702 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Number (do Number)))
-; 1 brray:balance! 1702 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Number Number (do Number)))
+; 1 brray:balance! 1702 tail-call:left:brray:balance!
+(let tail-call:left:brray:balance! (lambda Number (do Number)))
+; 1 brray:balance! 1702 tail-call:right:brray:balance!
+(let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 brray:balance! 1703 initial
 (let initial Unknown[])
 ; 1 brray:balance! 1703 half
 (let half Number)
-; 1 brray:balance! 1703 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Number (do Number)))
-; 1 brray:balance! 1703 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Number Number (do Number)))
-; 1 heap:sift-down! recursive:heap:sift-down! 1709 max-child
+; 1 brray:balance! 1703 tail-call:left:brray:balance!
+(let tail-call:left:brray:balance! (lambda Number (do Number)))
+; 1 brray:balance! 1703 tail-call:right:brray:balance!
+(let tail-call:right:brray:balance! (lambda Number Number (do Number)))
+; 1 heap:sift-down! tail-call:heap:sift-down! 1709 max-child
 (let max-child Number)
 ; 1 from:array->heap from:array->heap lambda::annonymous::1::1710
 (let lambda::annonymous::1::1710 (lambda Unknown (do Unknown[])))
@@ -5132,10 +5132,10 @@
 (let initial Unknown[])
 ; 1 brray:balance! 1768 half
 (let half Number)
-; 1 brray:balance! 1768 recursive:left:brray:balance!
-(let recursive:left:brray:balance! (lambda Number (do Number)))
-; 1 brray:balance! 1768 recursive:right:brray:balance!
-(let recursive:right:brray:balance! (lambda Number Number (do Number)))
+; 1 brray:balance! 1768 tail-call:left:brray:balance!
+(let tail-call:left:brray:balance! (lambda Number (do Number)))
+; 1 brray:balance! 1768 tail-call:right:brray:balance!
+(let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::1769 a
 (let a Unknown)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::1769 b
@@ -5614,9 +5614,9 @@
 (let lambda::annonymous::1::1884 (lambda Unknown[] (do Boolean)))
 ; 1 string:equal? string:equal? lambda::annonymous::1::1886
 (let lambda::annonymous::1::1886 (lambda Unknown[] (do Boolean)))
-; 1 string:greater? 128 recursive:string:greater 1887 current
+; 1 string:greater? 128 tail-call:string:greater 1887 current
 (let current Unknown[])
-; 1 string:lesser? 126 recursive:string:lesser 1888 current
+; 1 string:lesser? 126 tail-call:string:lesser 1888 current
 (let current Unknown[])
 ; 1 array:rotate-left array:rotate-left lambda::annonymous::1::1889
 (let lambda::annonymous::1::1889 (lambda Unknown[] Unknown[] (do Unknown[])))

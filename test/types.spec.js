@@ -320,14 +320,14 @@ describe('Type checking', () => {
     (> 2))))
 
 (let consecative-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 1)) 
              (true? out)  
-            (recursive:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
-    (recursive:iterate 0 str)
+            (tail-call:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
+    (tail-call:iterate 0 str)
 )))
 (let non-consecative-non-overlapping-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
             (true? out) 
             (apply (lambda (do
@@ -335,17 +335,17 @@ describe('Type checking', () => {
                          (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
                          (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest (array (car rest) (car rest) (car rest))) -1))
                          ))
-            (recursive:iterate match?
+            (tail-call:iterate match?
             (cdr rest))))))))
-    (recursive:iterate 0 str)
+    (tail-call:iterate 0 str)
 )))
 
 (let consecative-between-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
              (true? out)  
-            (recursive:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
-    (recursive:iterate 0 str)
+            (tail-call:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
+    (tail-call:iterate 0 str)
 )))
 ; It contains at least three vowels (aeiou only), like aei, xazegov, or aeiouaeiouaeiou.
 ; It contains at least one letter that appears twice in a row, like xx, abcdde (dd), or aabbccdd (aa, bb, cc, or dd).
@@ -398,7 +398,7 @@ describe('Type checking', () => {
   (let starting (matrix:find-index input (lambda x (= x 94))))
   (matrix:set! matrix (array:get starting 0) (array:get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
-  (let recursive:step (lambda start angle (do 
+  (let tail-call:step (lambda start angle (do 
       (let current-dir (array:get dir (mod angle (array:length dir))))
       (let start-copy (array:shallow-copy start))
       (array:set! start-copy 0 (+ (array:get start-copy 0) (array:get current-dir 0)))
@@ -408,10 +408,10 @@ describe('Type checking', () => {
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
       (cond
-          (= current char:hash) (recursive:step start (+ angle 1))
-          (or (= current char:dot) (= current char:X)) (recursive:step start-copy angle) 
+          (= current char:hash) (tail-call:step start (+ angle 1))
+          (or (= current char:dot) (= current char:X)) (tail-call:step start-copy angle) 
           (*) 0))))))
-  (recursive:step starting 0)
+  (tail-call:step starting 0)
   (|> matrix (array:flat-one) (array:count char:X)))))
 
 (let part2 (lambda input (do
@@ -421,7 +421,7 @@ describe('Type checking', () => {
   (matrix:set! matrix (array:get starting 0) (array:get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let from:numbers->key (lambda a b (array:concat (array (from:digits->chars (from:integer->digits a)) (array char:pipe) (from:digits->chars (from:integer->digits b))))))
-  (let recursive:step (lambda matrix start angle corners (do 
+  (let tail-call:step (lambda matrix start angle corners (do 
       (let current-dir (array:get dir (mod angle (array:length dir))))
       (let start-copy (array:shallow-copy start))
       (array:set! start-copy 0 (+ (array:get start-copy 0) (array:get current-dir 0)))
@@ -436,10 +436,10 @@ describe('Type checking', () => {
           (let c (if (map:has? corners key) (map:get corners key) -1))
           (if (= c 4) 
           (var:set! loops (+ (var:get loops) 1))
-          (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
-          (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)
+          (tail-call:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
+          (or (= current char:dot) (= current char:X)) (tail-call:step matrix start-copy angle corners)
           (*) 0))))))
-  (recursive:step matrix starting 0 (new:set64))
+  (tail-call:step matrix starting 0 (new:set64))
   (let path [])
   (let [Y X .] starting)
   (matrix:enumerated-for matrix (lambda current y x (if
@@ -450,7 +450,7 @@ describe('Type checking', () => {
       (let x (array:get pos 1))
       (matrix:set! copy Y X char:X)
       (matrix:set! copy y x char:hash)
-      (if (not (and (= y Y) (= x X))) (recursive:step copy starting 0 (new:set64))))))
+      (if (not (and (= y Y) (= x X))) (tail-call:step copy starting 0 (new:set64))))))
   (var:get loops))))
   
 (let PARSED (parse INPUT))
@@ -504,21 +504,21 @@ ZZZ=ZZZ,ZZZ")
       
       (let part1 (lambda input (do 
         (let [dirs adj .] input)
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
-              (recursive:move node target (+ step 1))))))
-        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
+              (tail-call:move node target (+ step 1))))))
+        (+ (tail-call:move "AAA" "ZZZ" 0) 1))))
       
       
       (let part2 (lambda input (do 
         (let [dirs adj keys .] input)
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? [(array:at node -1)] target)
               step 
-              (recursive:move node target (+ step 1))))))
+              (tail-call:move node target (+ step 1))))))
       
         (|> 
           keys
@@ -528,7 +528,7 @@ ZZZ=ZZZ,ZZZ")
                 (array:at -1)
                 []
                 (string:equal? "A"))))
-          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
+          (array:map (lambda source (+ (tail-call:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
   [[(part1 (parse sample1)) (part1 (parse sample2))] (part2 (parse sample3))]
@@ -568,8 +568,8 @@ ZZZ=ZZZ,ZZZ")
 (let from:positive-or-negative-digits->integer (lambda digits-with-sign (do
     (let negative? (< (array:first digits-with-sign) 0))
     (let digits (if negative? (array:map digits-with-sign math:abs) digits-with-sign))
-    (let recursive:from:positive-or-negative-digits->integer (lambda i num base (if (> (array:length digits) i) (recursive:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
-    (* (recursive:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
+    (let tail-call:from:positive-or-negative-digits->integer (lambda i num base (if (> (array:length digits) i) (tail-call:from:positive-or-negative-digits->integer (+ i 1) (+ num (* base (array:get digits i))) (* base 0.1)) num)))
+    (* (tail-call:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (array:length digits)) 0.1)) (if negative? -1 1)))))
 )))`)
     passes(`(let INPUT
 "3   4
@@ -782,11 +782,11 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(let array:enumerated-find-index (lambda xs predicate? (do
-                    (let recursive:array:enumerated-find-index (lambda i
+                    (let tail-call:array:enumerated-find-index (lambda i
                           (if (> (length xs) i)
-                              (if (predicate? (get xs i) i) i (recursive:array:enumerated-find-index (+ i 1))) -1)))
-                        (recursive:array:enumerated-find-index xs 0))))`,
-      `Incorrect number of arguments for (recursive:array:enumerated-find-index). Expected (= 1) but got 2 (recursive:array:enumerated-find-index xs 0) (check #15)`
+                              (if (predicate? (get xs i) i) i (tail-call:array:enumerated-find-index (+ i 1))) -1)))
+                        (tail-call:array:enumerated-find-index xs 0))))`,
+      `Incorrect number of arguments for (tail-call:array:enumerated-find-index). Expected (= 1) but got 2 (tail-call:array:enumerated-find-index xs 0) (check #15)`
     )
     fails(
       `(let add (lambda a b (+ a b)))
@@ -1081,7 +1081,7 @@ ZZZ=ZZZ,ZZZ")
 
         (let distanceY (math:abs (- y1 y2)))
         (let distanceX (math:abs (- x1 x2)))
-        (let recursive:iter (lambda i (do
+        (let tail-call:iter (lambda i (do
         
             (let Y1 (if (= y1 y2) y1 (if (> y1 y2) (+ y1 (* distanceY i)) (- y1 (* distanceY i)))))
             (let X1 (if (= x1 x2) x1 (if (> x1 x2) (+ x1 (* distanceX i)) (- x1 (* distanceX i)))))
@@ -1092,9 +1092,9 @@ ZZZ=ZZZ,ZZZ")
             (if bounds1? (matrix:set! copy Y1 X1 char:hash))
             (if bounds2? (matrix:set! copy Y2 X2 char:hash))
             
-            (if (or bounds1? bounds2?) (recursive:iter (+ i 1))))))
+            (if (or bounds1? bounds2?) (tail-call:iter (+ i 1))))))
 
-        (recursive:iter 1))))
+        (tail-call:iter 1))))
     
      (let map (array:fold coords (lambda a b 
         (if (map:has? a (array (array:first b))) 

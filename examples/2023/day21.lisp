@@ -26,7 +26,7 @@
         (set:add! steps key)
         (queue:enqueue! queue (array y x target))
         (matrix:set! matrix y x char:dot)
-        (let recursive:while (lambda (unless (queue:empty? queue) (do 
+        (let tail-call:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
           (let [y x step .] element)
@@ -36,9 +36,9 @@
               (if (and (= cell char:dot) (not (set:has? visited key))) (do 
                 (queue:enqueue! queue (array dy dx (- step 1)))
                 (set:add! visited key))))))
-          (recursive:while))
+          (tail-call:while))
           0)))
-        (recursive:while)
+        (tail-call:while)
         (var:set! output (length (array:flat-one steps)))))))
   (var:get output))))
 

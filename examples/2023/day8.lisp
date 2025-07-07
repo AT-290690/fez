@@ -46,21 +46,21 @@ ZZZ=ZZZ,ZZZ")
       
       (let part1 (lambda input (do 
         (let [dirs adj .] input)
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
-              (recursive:move node target (+ step 1))))))
-        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
+              (tail-call:move node target (+ step 1))))))
+        (+ (tail-call:move "AAA" "ZZZ" 0) 1))))
       
       
       (let part2 (lambda input (do 
         (let [dirs adj keys .] input)
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? [(array:at node -1)] target)
               step 
-              (recursive:move node target (+ step 1))))))
+              (tail-call:move node target (+ step 1))))))
       
         (|> 
           keys
@@ -70,7 +70,7 @@ ZZZ=ZZZ,ZZZ")
                 (array:at -1)
                 []
                 (string:equal? "A"))))
-          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
+          (array:map (lambda source (+ (tail-call:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
   [[(part1 (parse sample1)) (part1 (parse sample2))] (part2 (parse sample3))]

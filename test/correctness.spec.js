@@ -10,15 +10,15 @@ describe('Corretness', () => {
     deepStrictEqual(
       evalJS(`(let two-sum (lambda nums target (do
   (let len (length nums))
-  (let recursive:find (lambda i (if (< i len)
+  (let tail-call:find (lambda i (if (< i len)
     (do
-      (let recursive:j (lambda j (if (< j len)
+      (let tail-call:j (lambda j (if (< j len)
         (if (and (!= i j) (= (+ (get nums i) (get nums j)) target))
           [i j]
-          (recursive:j (+ j 1))))))
-      (let res (recursive:j 0))
-      (if (truthy? res) res (recursive:find (+ i 1)))))))
-  (recursive:find 0))))
+          (tail-call:j (+ j 1))))))
+      (let res (tail-call:j 0))
+      (if (truthy? res) res (tail-call:find (+ i 1)))))))
+  (tail-call:find 0))))
 
 [(two-sum [2 7 11 15] 9)
  (two-sum [3 2 4] 6)
@@ -28,7 +28,7 @@ describe('Corretness', () => {
 (let two-sum-hash (lambda nums target (do
   (let seen (new:map64))
   (let len (length nums))
-  (let recursive:find (lambda i (if (< i len)
+  (let tail-call:find (lambda i (if (< i len)
     (do
       (let num (get nums i))
       (let complement (- target num))
@@ -37,14 +37,14 @@ describe('Corretness', () => {
       (if (map:has? seen key-complement)
         [(map:get seen key-complement) i]
         (do (map:set! seen key-num i)
-            (recursive:find (+ i 1))))))))
-  (recursive:find 0))))
+            (tail-call:find (+ i 1))))))))
+  (tail-call:find 0))))
 
 
  (let last-stone-weight (lambda stones (do
   (let max-cmp (lambda a b (> a b)))
   (let heap (from:array->heap stones max-cmp))
-  (let recursive:smash (lambda
+  (let tail-call:smash (lambda
     (if (> (length heap) 1)
       (do
         (let y (heap:peek heap))
@@ -53,19 +53,19 @@ describe('Corretness', () => {
         (heap:pop! heap max-cmp)
         (if (!= x y)
           (heap:push! heap (- y x) max-cmp))
-        (recursive:smash)))))
-  (recursive:smash)
+        (tail-call:smash)))))
+  (tail-call:smash)
   (if (> (length heap) 0) (heap:peek heap) 0))))
 
 (let max-bottles (lambda num-bottles num-exchange (do
   (let total num-bottles)
   (let empties num-bottles)
-  (let recursive:loop (lambda total empties (if (>= empties num-exchange) (do
+  (let tail-call:loop (lambda total empties (if (>= empties num-exchange) (do
     (let new-bottles (// empties num-exchange))
     (let new-empties (+ (mod empties num-exchange) new-bottles))
-    (recursive:loop (+ total new-bottles) new-empties))
+    (tail-call:loop (+ total new-bottles) new-empties))
     total)))
-  (recursive:loop total empties))))
+  (tail-call:loop total empties))))
 
 [
 [(two-sum-hash [2 7 11 15] 9)
@@ -178,10 +178,10 @@ describe('Corretness', () => {
       evalJS(`    (let longest-common-prefix (lambda strs (do
       (if (array:every? strs (lambda x (string:equal? x (array:first strs)))) (array:first strs)
           (do
-              (let recursive:iter (lambda n (do
+              (let tail-call:iter (lambda n (do
                   (let prefix (array:take (array:first strs) n))
-                  (if (array:every? strs (lambda x (string:equal? (array:take x n) prefix))) (recursive:iter (+ n 1)) (array:take (array:first strs) (- n 1))))))
-              (recursive:iter 0))))))
+                  (if (array:every? strs (lambda x (string:equal? (array:take x n) prefix))) (tail-call:iter (+ n 1)) (array:take (array:first strs) (- n 1))))))
+              (tail-call:iter 0))))))
 
   (longest-common-prefix ["flower" "flow" "flight"])`),
       [102, 108]
@@ -457,11 +457,11 @@ describe('Corretness', () => {
 (let part2 (lambda input (do
   (let calc (lambda x (- (// x 3) 2)))
   (let retry (lambda x (do 
-      (let recursive:retry (lambda x out (do 
+      (let tail-call:retry (lambda x out (do 
           (let result (calc x))
           (if (<= result 0) out 
-              (recursive:retry result (+ result out))))))
-      (recursive:retry x 0))))
+              (tail-call:retry result (+ result out))))))
+      (tail-call:retry x 0))))
      
  (|>    
     input 
@@ -559,8 +559,8 @@ bbrgwb")
     )
     strictEqual(
       interpred(`
-(let std:map "(let map (lambda xs callback (do (let recursive:map (lambda i out (if (> (length xs) i) (recursive:map (+ i 1) (set! out (length out) (callback (get xs i)))) out))) (recursive:map 0 (array)))))")
-(let std:fold "(let fold (lambda xs callback initial (do (let recursive:array:fold (lambda i out (if (> (length xs) i) (recursive:array:fold (+ i 1) (callback out (get xs i))) out))) (recursive:array:fold 0 initial))))")
+(let std:map "(let map (lambda xs callback (do (let tail-call:map (lambda i out (if (> (length xs) i) (tail-call:map (+ i 1) (set! out (length out) (callback (get xs i)))) out))) (tail-call:map 0 (array)))))")
+(let std:fold "(let fold (lambda xs callback initial (do (let tail-call:array:fold (lambda i out (if (> (length xs) i) (tail-call:array:fold (+ i 1) (callback out (get xs i))) out))) (tail-call:array:fold 0 initial))))")
 (let code "(fold (map (array 1 2 3 4 5) (lambda x (* x x))) (lambda a b (+ a b)) 0)")
 (let source (|>
     [] 
@@ -1223,21 +1223,21 @@ ZZZ=ZZZ,ZZZ")
       
       (let part1 (lambda input (do 
         (let [dirs adj .] input)
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
-              (recursive:move node target (+ step 1))))))
-        (+ (recursive:move "AAA" "ZZZ" 0) 1))))
+              (tail-call:move node target (+ step 1))))))
+        (+ (tail-call:move "AAA" "ZZZ" 0) 1))))
       
       
       (let part2 (lambda input (do 
         (let [dirs adj keys .] input)
-        (let recursive:move (lambda source target step (do 
+        (let tail-call:move (lambda source target step (do 
           (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
           (if (string:equal? [(array:at node -1)] target)
               step 
-              (recursive:move node target (+ step 1))))))
+              (tail-call:move node target (+ step 1))))))
       
         (|> 
           keys
@@ -1247,7 +1247,7 @@ ZZZ=ZZZ,ZZZ")
                 (array:at -1)
                 []
                 (string:equal? "A"))))
-          (array:map (lambda source (+ (recursive:move source "Z" 0) 1)))
+          (array:map (lambda source (+ (tail-call:move source "Z" 0) 1)))
           (array:fold math:least-common-divisor 1)))))
       
          (array (part1 (parse sample1)) (part1 (parse sample2)) (part2 (parse sample3)))`
@@ -1280,11 +1280,11 @@ ZZZ=ZZZ,ZZZ")
     ; returns a copy of the array but reversed
     ; (array 1 2 3) -> (array 3 2 1)
     (let reverse (lambda arr (do
-      (let recursive:iter (lambda arr out
+      (let tail-call:iter (lambda arr out
         (if (> (length arr) 0)
-            (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
+            (tail-call:iter (cdr arr) (array:merge (array (car arr)) out)) 
             out)))
-      (recursive:iter arr []))))
+      (tail-call:iter arr []))))
     
     (let lazy (array reverse (array 1 2 3 4 5 6)))
     (apply (car (cdr lazy)) (car lazy))`
@@ -1803,12 +1803,12 @@ ZZZ=ZZZ,ZZZ")
 ))
 (let part1 (lambda input (- (array:count input char:left-brace) (array:count input char:right-brace))))
 (let part2 (lambda input (do
-    (let recursive:part2 (lambda a out idx
+    (let tail-call:part2 (lambda a out idx
                       (cond
                         (= out -1) idx
                         (array:empty? a) -1
-                        (*) (recursive:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
-    (recursive:part2 input 0 0))))
+                        (*) (tail-call:part2 (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
+    (tail-call:part2 input 0 0))))
 (array (|> samples (array:map part1)) (|> samples (array:map part2)))
 `
       ),
@@ -2002,14 +2002,14 @@ ZZZ=ZZZ,ZZZ")
     (> 2))))
 
 (let consecative-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 1)) 
             out 
-            (recursive:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
-    (recursive:iterate 0 str)
+            (tail-call:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
+    (tail-call:iterate 0 str)
 )))
 (let non-consecative-non-overlapping-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
             out 
             (apply (lambda (do
@@ -2017,17 +2017,17 @@ ZZZ=ZZZ,ZZZ")
                          (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
                          (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest (array (car rest) (car rest) (car rest))) -1))
                          ))
-            (recursive:iterate match?
+            (tail-call:iterate match?
             (cdr rest))))))))
-    (recursive:iterate 0 str)
+    (tail-call:iterate 0 str)
 )))
 
 (let consecative-between-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
             out 
-            (recursive:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
-    (recursive:iterate 0 str)
+            (tail-call:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
+    (tail-call:iterate 0 str)
 )))
 ; It contains at least three vowels (aeiou only), like aei, xazegov, or aeiouaeiouaeiou.
 ; It contains at least one letter that appears twice in a row, like xx, abcdde (dd), or aabbccdd (aa, bb, cc, or dd).
@@ -2204,10 +2204,10 @@ matrix
     deepStrictEqual(
       evalJS(
         `(let empty! (lambda arr (do 
-      (let recursive:iterate (lambda 
+      (let tail-call:iterate (lambda 
         (unless (= (length arr) 0) 
-          (do (pop! arr) (recursive:iterate))
-        arr))) (recursive:iterate))))
+          (do (pop! arr) (tail-call:iterate))
+        arr))) (tail-call:iterate))))
 (array  
   (do 1 2)
   (empty! (array 1 2 3 4 5))
@@ -2233,10 +2233,10 @@ matrix
     deepStrictEqual(
       evalJS(
         `(let map (lambda xs f (do
-  (let recursive:iter (lambda xs out
+  (let tail-call:iter (lambda xs out
   (if (list:nil? xs) out
-  (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (recursive:iter xs [])))))
+  (tail-call:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (tail-call:iter xs [])))))
   (map (list 2 3 4) math:square)`
       ),
       [4, [9, [16, []]]]
@@ -2353,7 +2353,7 @@ matrix
         (set:add! steps key)
         (queue:enqueue! queue (array y x target))
         (matrix:set! matrix y x char:dot)
-        (let recursive:while (lambda (unless (queue:empty? queue) (do 
+        (let tail-call:while (lambda (unless (queue:empty? queue) (do 
           (let element (queue:peek queue))
           (queue:dequeue! queue)
           (let [y x step .] element)
@@ -2363,8 +2363,8 @@ matrix
               (if (and (= cell char:dot) (not (set:has? visited key))) (do 
                 (queue:enqueue! queue (array dy dx (- step 1)))
                 (set:add! visited key))))))
-          (recursive:while)))))
-        (recursive:while)
+          (tail-call:while)))))
+        (tail-call:while)
         (var:set! output (length (array:flat-one steps)))))))
   (var:get output))))
 (part1 (parse sample))`
@@ -2838,7 +2838,7 @@ matrix
   (let starting (matrix:find-index input (lambda x (= x 94))))
   (matrix:set! matrix (array:get starting 0) (array:get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
-  (let recursive:step (lambda start angle (do 
+  (let tail-call:step (lambda start angle (do 
       (let current-dir (array:get dir (mod angle (array:length dir))))
       (let start-copy (array:shallow-copy start))
       (array:set! start-copy 0 (+ (array:get start-copy 0) (array:get current-dir 0)))
@@ -2848,10 +2848,10 @@ matrix
       (let current (matrix:get matrix y x))
       (if (not (= current char:hash)) (matrix:set! matrix y x char:X))
       (cond
-          (= current char:hash) (recursive:step start (+ angle 1))
-          (or (= current char:dot) (= current char:X)) (recursive:step start-copy angle) 
+          (= current char:hash) (tail-call:step start (+ angle 1))
+          (or (= current char:dot) (= current char:X)) (tail-call:step start-copy angle) 
           (*) 0))))))
-  (recursive:step starting 0)
+  (tail-call:step starting 0)
   (|> matrix (array:flat-one) (array:count char:X)))))
 
 (let part2 (lambda input (do
@@ -2861,7 +2861,7 @@ matrix
   (matrix:set! matrix (array:get starting 0) (array:get starting 1) char:X)
   (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:map m array))))))
   (let from:numbers->key (lambda a b (array:concat (array (from:digits->chars (from:integer->digits a)) (array char:pipe) (from:digits->chars (from:integer->digits b))))))
-  (let recursive:step (lambda matrix start angle corners (do 
+  (let tail-call:step (lambda matrix start angle corners (do 
       (let current-dir (array:get dir (mod angle (array:length dir))))
       (let start-copy (array:shallow-copy start))
       (array:set! start-copy 0 (+ (array:get start-copy 0) (array:get current-dir 0)))
@@ -2876,10 +2876,10 @@ matrix
           (let c (if (map:has? corners key) (map:get corners key) -1))
           (if (= c 4) 
           (var:set! loops (+ (var:get loops) 1))
-          (recursive:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
-          (or (= current char:dot) (= current char:X)) (recursive:step matrix start-copy angle corners)
+          (tail-call:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
+          (or (= current char:dot) (= current char:X)) (tail-call:step matrix start-copy angle corners)
           (*) 0))))))
-  (recursive:step matrix starting 0 (new:set64))
+  (tail-call:step matrix starting 0 (new:set64))
   (let path [])
   (let [Y X .] starting)
   (matrix:enumerated-for matrix (lambda current y x (if
@@ -2890,7 +2890,7 @@ matrix
       (let x (array:get pos 1))
       (matrix:set! copy Y X char:X)
       (matrix:set! copy y x char:hash)
-      (if (not (and (= y Y) (= x X))) (recursive:step copy starting 0 (new:set64))))))
+      (if (not (and (= y Y) (= x X))) (tail-call:step copy starting 0 (new:set64))))))
   (var:get loops))))
   
 (let PARSED (parse INPUT))
@@ -3021,7 +3021,7 @@ matrix
 
         (let distanceY (math:abs (- y1 y2)))
         (let distanceX (math:abs (- x1 x2)))
-        (let recursive:iter (lambda i (do 
+        (let tail-call:iter (lambda i (do 
         
             (let Y1 (if (= y1 y2) y1 (if (> y1 y2) (+ y1 (* distanceY i)) (- y1 (* distanceY i)))))
             (let X1 (if (= x1 x2) x1 (if (> x1 x2) (+ x1 (* distanceX i)) (- x1 (* distanceX i)))))
@@ -3032,9 +3032,9 @@ matrix
             (if bounds1? (matrix:set! copy Y1 X1 char:hash))
             (if bounds2? (matrix:set! copy Y2 X2 char:hash))
             
-            (if (or bounds1? bounds2?) (recursive:iter (+ i 1))))))
+            (if (or bounds1? bounds2?) (tail-call:iter (+ i 1))))))
 
-        (recursive:iter 1))))
+        (tail-call:iter 1))))
     
      (let map (array:fold coords (lambda a b 
         (if (map:has? a (array (array:first b))) 
@@ -3084,7 +3084,7 @@ matrix
         (set:add! visited (from:yx->key y x))
         (queue:enqueue! queue (array y x))
         (let score (var:def 0))
-        (let recursive:while (lambda (unless (queue:empty? queue) (do 
+        (let tail-call:while (lambda (unless (queue:empty? queue) (do 
             (let element (queue:peek queue))
             (queue:dequeue! queue)
             (let y (array:first element))
@@ -3094,8 +3094,8 @@ matrix
                  (if (and (= (- cell (matrix:get matrix y x)) 1) (not (set:has? visited key))) (do
                     (if (= cell 9) (var:set! score (math:increment (var:get score))) (queue:enqueue! queue (array dy dx)))
                     (set:add! visited key))))))
-        (recursive:while)))))
-        (recursive:while)
+        (tail-call:while)))))
+        (tail-call:while)
         (+ a (var:get score)))) 0))))
 
 (let part2 (lambda matrix (do 
@@ -3110,7 +3110,7 @@ matrix
         (map:set! visited root-key 1)
         (queue:enqueue! queue (array y x))
         (let score (var:def 0))
-        (let recursive:while (lambda (unless (queue:empty? queue) (do 
+        (let tail-call:while (lambda (unless (queue:empty? queue) (do 
             (let element (queue:peek queue))
             (let y (array:first element))
             (let x (array:second element))
@@ -3121,8 +3121,8 @@ matrix
                  (if (= (- cell (matrix:get matrix y x)) 1) (do
                     (queue:enqueue! queue (array dy dx))
                     (if (map:has? visited key) (map:set! visited key (+ (map:get visited root-key) (map:get visited key))) (map:set! visited key (map:get visited root-key))))))))
-        (recursive:while)))))
-        (recursive:while)
+        (tail-call:while)))))
+        (tail-call:while)
         (+ a (var:get score)))) 0))))
 
 (let PARSED (parse INPUT))
@@ -3143,27 +3143,27 @@ matrix
 ; If none of the other rules apply, the stone is replaced by a new stone; the old stone's number multiplied by 2024 is engraved on the new stone.
 (let part1 (lambda input (do 
   (let TIMES 5)
-  (let recursive:while (lambda stones n (unless (= n 0) 
-      (recursive:while (array:fold stones (lambda a b (do
+  (let tail-call:while (lambda stones n (unless (= n 0) 
+      (tail-call:while (array:fold stones (lambda a b (do
           (let n-digits (math:number-of-digits b))
           (array:merge! a 
                 (cond 
                   (= b 0) (array 1)
                   (math:even? n-digits) (array (math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
                   (*) (array (* b 2024)))))) []) (- n 1)) (length stones))))
-  (recursive:while input TIMES))))
+  (tail-call:while input TIMES))))
 
 (let part2 (lambda input (do 
   (let TIMES 5)
-  (let recursive:while (lambda stones n (unless (= n 0) 
-      (recursive:while (array:fold stones (lambda a b (do
+  (let tail-call:while (lambda stones n (unless (= n 0) 
+      (tail-call:while (array:fold stones (lambda a b (do
           (let n-digits (math:number-of-digits b))
           (array:merge! a 
                 (cond 
                   (= b 0) (array 1)
                   (math:even? n-digits) (array (math:remove-nth-digits b (/ n-digits 2)) (math:keep-nth-digits b (/ n-digits 2)))
                   (*) (array (* b 2024)))))) []) (- n 1)) (length stones))))
-  (recursive:while input TIMES))))
+  (tail-call:while input TIMES))))
 
 (let PARSED (parse INPUT))
 (array (part1 PARSED) (part2 PARSED))
@@ -3270,13 +3270,13 @@ matrix
                     (array:of ch (lambda . -1))))) [])))
     (let blanks [])
     (array:enumerated-for disk (lambda x i (if (= x -1) (array:push! blanks i))))
-    (let recursive:fragment (lambda ind (do
+    (let tail-call:fragment (lambda ind (do
         (let i (get blanks ind))
-        (if (= (array:last disk) -1) (do (array:pop! disk) (recursive:fragment ind))
+        (if (= (array:last disk) -1) (do (array:pop! disk) (tail-call:fragment ind))
             (unless (<= (length disk) i) (do 
             (array:set! disk i (array:pop! disk))
-            (recursive:fragment (+ ind 1))))))))
-        (recursive:fragment 0)
+            (tail-call:fragment (+ ind 1))))))))
+        (tail-call:fragment 0)
         (|> disk (array:enumerated-fold (lambda a b i (+ a (* b i))) 0)))))
        
 (let PARSED (parse INPUT))
@@ -3303,12 +3303,12 @@ matrix
 
 (let part1 (lambda input (- (array:count input char:left-brace) (array:count input char:right-brace))))
 (let part2 (lambda input (do
-    (let recursive:iter (lambda a out idx
+    (let tail-call:iter (lambda a out idx
                       (cond
                         (= out -1) idx
                         (array:empty? a) -1
-                        (*) (recursive:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
-    (recursive:iter input 0 0))))
+                        (*) (tail-call:iter (cdr a) (+ out (if (= (car a) char:left-brace) 1 -1)) (+ idx 1)))))
+    (tail-call:iter input 0 0))))
 (array (|> samples (array:map part1)) (|> samples (array:map part2)))
 `
       ),
@@ -3428,7 +3428,7 @@ matrix
 
     (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
     (let solution (var:def 0))
-    (let recursive:while (lambda (unless (or (heap:empty? q) (> (var:get solution) 0)) (do
+    (let tail-call:while (lambda (unless (or (heap:empty? q) (> (var:get solution) 0)) (do
             (let first (queue:peek q))
             (queue:dequeue! q)
             (let steps (get first 0))
@@ -3444,8 +3444,8 @@ matrix
                                     (do 
                                     (queue:enqueue! q (array (+ steps 1) nr nc))
                                     (set:add! seen (from:stats->key (array nr nc)))))))))
-            (recursive:while)))))
-    (recursive:while)
+            (tail-call:while)))))
+    (tail-call:while)
     (var:get solution))))
     
     (part1 (parse I) 12)`
@@ -3680,7 +3680,7 @@ input (array:map
   (let lower? (lambda a b (< (array:first a) (array:first b))))
   (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
 
-  (let recursive:while (lambda (unless (heap:empty? pq) (do
+  (let tail-call:while (lambda (unless (heap:empty? pq) (do
       (let first (heap:peek pq))
       (heap:pop! pq lower?)
       (let [cost r c dr dc .] first)
@@ -3698,8 +3698,8 @@ input (array:map
                                   (not (= (matrix:get matrix nr nc) char:hash)) 
                                   (not (set:has? seen (from:stats->key [nr nc ndr ndc]))))
                               (heap:push! pq [new-cost nr nc ndr ndc] lower?))))
-          (recursive:while)))))))
-  (recursive:while))))
+          (tail-call:while)))))))
+  (tail-call:while))))
 
 (let PARSED (parse INPUT))
 (part1 PARSED)`
@@ -3712,11 +3712,11 @@ input (array:map
 (let comp (lambda a b (< a b)))
 (let heap (from:array->heap (array 30 10 50 20 40) comp))
 (heap:peek heap)
-(let recursive:while (lambda (unless (array:empty? heap) (do 
+(let tail-call:while (lambda (unless (array:empty? heap) (do 
 (array:push! out (heap:peek heap))
 (heap:pop! heap comp)
-(recursive:while)))))
-(recursive:while)
+(tail-call:while)))))
+(tail-call:while)
 (identity out)`
       ),
       [10, 20, 30, 40, 50]
@@ -3878,14 +3878,14 @@ Program: 0,1,5,4,3,0"
       )))
   (let get-opcode (lambda (get program (get-instruction-pointer))))
   (let get-operand (lambda (get program (+ (get-instruction-pointer) 1))))
-  (let recursive:process (lambda (unless (halt?) (do 
+  (let tail-call:process (lambda (unless (halt?) (do 
       (let opcode (get-opcode))
       (let operand (get-operand))
       (opcodes opcode operand)
-      (recursive:process)
+      (tail-call:process)
   ))))
   
-  (recursive:process)
+  (tail-call:process)
   ; (log-outputs!)
   outputs
 )))

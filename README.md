@@ -58,9 +58,9 @@
 ; For lambda, if a function takes no arguments, do not provide an argument list; just write (lambda body).
 ; The last argument to lambda is always the body.
 
-; IMPORTANT: Do not use the 'recursive:' prefix unless you are absolutely certain the function can be tail-call optimized (TCO).
-; For branching recursion (such as DFS, flood fill, tree/graph traversal, etc.), do NOT use 'recursive:'.
-; Only use 'recursive:' for linear/tail-position recursion (like loops or accumulators).
+; IMPORTANT: Do not use the 'tail-call:' prefix unless you are absolutely certain the function can be tail-call optimized (TCO).
+; For branching recursion (such as DFS, flood fill, tree/graph traversal, etc.), do NOT use 'tail-call:'.
+; Only use 'tail-call:' for linear/tail-position recursion (like loops or accumulators).
 ; Similarly, only use 'memoized:' if you specifically want memoization for the function.
 ; Be conservative with both prefixes, even if you see them in examples.
 
@@ -217,26 +217,26 @@
 
 ; Defining functions to reverse an array
 (let arr:for (lambda xs cb (do
-                    (let recursive:arr:for (lambda i (do
+                    (let tail-call:arr:for (lambda i (do
                         (if (> (length xs) i) (do
                             (cb (get xs i)) ; apply callback to current element
                             ; recurse to next index
-                            (recursive:arr:for (+ i 1)))
+                            (tail-call:arr:for (+ i 1)))
                             ; return 0 when done
                             0))))
-                    (recursive:arr:for 0)
+                    (tail-call:arr:for 0)
                 xs)))
 (let arr:merge (lambda a b (do
     (let out (array))  initialize an empty array for output
     (arr:for a (lambda x (do (set! out (length out) x))))
     (arr:for b (lambda x (do (set! out (length out) x)))) out)))
 (let arr:reverse (lambda xs (do
-                    (let recursive:arr:reverse (lambda i out (do
+                    (let tail-call:arr:reverse (lambda i out (do
                         (if (> (length xs) i)
-                              (recursive:arr:reverse (+ i 1)
+                              (tail-call:arr:reverse (+ i 1)
                               (arr:merge (array (get xs i)) out))
                           out))))
-                        (recursive:arr:reverse 0 (array)))))
+                        (tail-call:arr:reverse 0 (array)))))
 (arr:reverse (array 1 2 3)) ; 3 2 1
 ; Make sure ypu keep the parens balanced
 

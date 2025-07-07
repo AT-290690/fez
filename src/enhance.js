@@ -11,7 +11,7 @@ import {
 import { getPrefix, shake, wrapInBlock } from './utils.js'
 import std from '../lib/baked/std.js'
 export const OPTIMIZATIONS = {
-  RECURSION: 'recursive',
+  TAILCALL: 'tail-call',
   CACHE: 'memoized'
 }
 export const OPTIMIZED_PREFIX = 'optimized-lambda::'
@@ -53,7 +53,7 @@ const opt = (ast) => {
                   ) {
                     const name = exp[1][VALUE]
                     const prefix = getPrefix(name)
-                    if (prefix === OPTIMIZATIONS.RECURSION) {
+                    if (prefix === OPTIMIZATIONS.TAILCALL) {
                       const args = last.slice(1, -1)
                       const newName = `${OPTIMIZED_PREFIX}${name}::*${performance
                         .now()

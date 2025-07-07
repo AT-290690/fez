@@ -31,7 +31,7 @@
     (let lower? (lambda a b (< (array:first a) (array:first b))))
     (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
   
-    (let recursive:while (lambda (unless (heap:empty? pq) (do
+    (let tail-call:while (lambda (unless (heap:empty? pq) (do
         (let first (heap:peek pq))
         (heap:pop! pq lower?)
         (let [cost r c dr dc .] first)
@@ -47,8 +47,8 @@
                                     (not (= (matrix:get matrix nr nc) char:hash)) 
                                     (not (set:has? seen (from:stats->key [nr nc ndr ndc]))))
                                 (heap:push! pq [new-cost nr nc ndr ndc] lower?))))
-            (recursive:while)))) 0)))
-    (recursive:while))))
+            (tail-call:while)))) 0)))
+    (tail-call:while))))
 
 (let PARSED (parse INPUT))
 

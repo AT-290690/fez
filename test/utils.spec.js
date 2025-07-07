@@ -21,20 +21,20 @@ describe('Utils', () => {
       (G ls)
       (fn {1 2 3 4 5 6 7 8 9 10 11 12}))`,
       `(let map (lambda xs f (do
-  (let recursive:iter (lambda xs out
+  (let tail-call:iter (lambda xs out
   (if (list:nil? xs) out
-  (recursive:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
-  (list:reverse (recursive:iter xs [])))))
+  (tail-call:iter (list:tail xs) (list:pair (f (list:head xs)) out)))))
+  (list:reverse (tail-call:iter xs [])))))
   (map (list 2 3 4) math:square)`,
       `; reverse array
       ; returns a copy of the array but reversed
       ; (array 1 2 3) -> (array 3 2 1)
       (let reverse (lambda arr (do
-        (let recursive:iter (lambda arr out
+        (let tail-call:iter (lambda arr out
           (if (> (length arr) 0)
-              (recursive:iter (cdr arr) (array:merge (array (car arr)) out)) 
+              (tail-call:iter (cdr arr) (array:merge (array (car arr)) out)) 
               out)))
-        (recursive:iter arr []))))
+        (tail-call:iter arr []))))
       
       (let lazy (array reverse (array 1 2 3 4 5 6)))
       (apply (car (cdr lazy)) (car lazy))`,
@@ -80,10 +80,10 @@ describe('Utils', () => {
                 (math:product))`,
       `(from:positive-or-negative-digits->chars (array -1 2 3 -4 -5 6 7))`,
       `(let empty! (lambda arr (do 
-      (let recursive:iterate (lambda 
+      (let tail-call:iterate (lambda 
         (unless (= (length arr) 0) 
-          (do (pop! arr) (recursive:iterate))
-        arr))) (recursive:iterate))))
+          (do (pop! arr) (tail-call:iterate))
+        arr))) (tail-call:iterate))))
 (array  
   (do 1 2)
   (empty! (array 1 2 3 4 5))

@@ -16,11 +16,11 @@
 (let part2 (lambda input (do
 
 (let retry (lambda x (do 
-    (let recursive:retry! (lambda x out (do 
+    (let tail-call:retry! (lambda x out (do 
         (let result (- (// x 3) 2))
         (if (<= result 0) out 
-            (recursive:retry! result (array:append! out result))))))
-     (recursive:retry! x []))))
+            (tail-call:retry! result (array:append! out result))))))
+     (tail-call:retry! x []))))
      
  (|>
     input 

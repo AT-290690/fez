@@ -24,14 +24,14 @@
     (> 2))))
 
 (let consecative-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 1)) 
              (true? out)  
-            (recursive:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
-    (recursive:iterate 0 str)
+            (tail-call:iterate (= (car rest) (car (cdr rest))) (cdr rest)))))
+    (tail-call:iterate 0 str)
 )))
 (let non-consecative-non-overlapping-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
              (true? out)  
             (apply (lambda (do
@@ -39,17 +39,17 @@
                          (not (= (string:match (cdr rest) (array (car rest) (car (cdr rest)))) -1))
                          (or (not (= (car rest) (car (cdr rest)))) (= (string:match rest (array (car rest) (car rest) (car rest))) -1))
                          ))
-            (recursive:iterate match?
+            (tail-call:iterate match?
             (cdr rest))))))))
-    (recursive:iterate 0 str)
+    (tail-call:iterate 0 str)
 )))
 
 (let consecative-between-pair? (lambda str (do 
-    (let recursive:iterate (lambda out rest 
+    (let tail-call:iterate (lambda out rest 
         (if (or (= out 1) (= (length rest) 2)) 
              (true? out)  
-            (recursive:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
-    (recursive:iterate 0 str)
+            (tail-call:iterate (= (car rest) (car (cdr (cdr rest)))) (cdr rest)))))
+    (tail-call:iterate 0 str)
 )))
 ; It contains at least three vowels (aeiou only), like aei, xazegov, or aeiouaeiouaeiou.
 ; It contains at least one letter that appears twice in a row, like xx, abcdde (dd), or aabbccdd (aa, bb, cc, or dd).

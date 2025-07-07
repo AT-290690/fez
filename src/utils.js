@@ -119,7 +119,7 @@ const KEYWORDS_SET = Object.values(KEYWORDS).reduce((a, b) => {
 export const isForbiddenVariableName = (name) => {
   switch (name) {
     case '_':
-    case OPTIMIZATIONS.RECURSION:
+    case OPTIMIZATIONS.TAILCALL:
     case OPTIMIZATIONS.CACHE:
       return true
     default:
