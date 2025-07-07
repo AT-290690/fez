@@ -240,19 +240,18 @@
 (arr:reverse (array 1 2 3)) ; 3 2 1
 ; Make sure ypu keep the parens balanced
 
-
 ; these are syntactic suggar for the language but you don't need to use them
 ; syntactic suggar for array
-[1 2 3 4 5]
+[ 1 2 3 4 5 ]
 ; syntactic suggar for linked list
-{1 2 3 4 5}
+{ 1 2 3 4 5 }
 ; array destructuring
-[a b . c]
+[ a b . c ]
 ; list destructuring
-{a b . c}
+{ a b . c }
 ; . means skip that element and last one is aways the rest unelss skipped
-[a . b c]
-[a b .]
+[ a . b c ]
+[ a b . ]
 ; pipe operator
 (|> 1 (+ 1 2) (* 3 4))
 ; pipe operator with destructuring
