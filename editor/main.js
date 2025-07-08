@@ -1,7 +1,7 @@
 import { parse, compile, enhance, AST } from '../index.js'
 import { debug } from './debug.js'
 import { makeEditor, serialise } from './utils.js'
-const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
+const THEME = new URLSearchParams(location.search).get('t') ?? 'github_dark'
 const editor = makeEditor('editor', THEME)
 const terminal = makeEditor('terminal', THEME)
 terminal.setValue(
