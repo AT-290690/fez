@@ -521,8 +521,9 @@ const IfApplyBranch = ({
       break
     case KEYWORDS.CALL_FUNCTION:
       if (re.at(-1)[TYPE] === WORD) {
-        if (env[re.at(-1)[VALUE]] && re.at(-1)[VALUE] !== ref[STATS][SIGNATURE])
-          setPropToReturnRef(ref[STATS], prop, env[re.at(-1)[VALUE]][STATS])
+        const name = re.at(-1)[VALUE]
+        if (env[name] && re.at(-1)[VALUE] !== ref[STATS][SIGNATURE])
+          setPropToReturnRef(ref[STATS], prop, env[name][STATS])
       } else {
         const returns = returnType(re.at(-1))
         if (env[returns[VALUE]] && returns[VALUE] !== ref[STATS][SIGNATURE])
@@ -1816,8 +1817,9 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
             stagger(stack, 'prepend', [first, env], judge)
             for (let i = 0; i < rest.length; ++i) {
               const r = rest[i]
-              if (isLeaf(r) && r[TYPE] !== ATOM)
-                if (env[r[VALUE]] == undefined)
+              if (isLeaf(r) && r[TYPE] !== ATOM) {
+                const name = r[VALUE]
+                if (env[name] == undefined)
                   throw new TypeError(
                     `(${
                       first[VALUE]
@@ -1825,6 +1827,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                       r[VALUE]
                     }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
                   )
+              }
               check(r, env, scope)
             }
             break
