@@ -1,3 +1,4 @@
+(let math:reverse (lambda Number[] (do Number[])))
 (let math:map (lambda Number[] (lambda Number (do Number)) (do Number[])))
 (let math:select (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
 (let math:exclude (lambda Number[] (lambda Number (do Boolean)) (do Number[])))

@@ -228,6 +228,7 @@
 (let math:multiplication (lambda a b (* a b)))
 (let math:division (lambda a b (/ a b)))
 (let math:subtraction (lambda a b (- a b)))
+(let math:reverse (lambda xs (array:reverse xs)))
 (let math:fold (lambda xs cb initial (array:fold xs cb initial)))
 (let math:enumerated-fold (lambda xs cb initial (array:enumerated-fold xs cb initial)))
 (let math:map (lambda xs cb (array:map xs cb)))
@@ -333,7 +334,73 @@
       (math:var-set! carry (math:floor (/ (math:var-get carry) 10)))))
     ; Increment p using variable helper
     (math:var-set! p (+ (math:var-get p) 1))))
-  digits)))
+  (math:reverse digits))))
+(let math:big-integer-addition (lambda a b (do
+  (let max-length (math:max (length a) (length b)))
+  (let result (array))
+  (let carry (math:var-def 0))
+  (loop:for-n max-length (lambda i (do
+    (let digit-A (if (< i (length a)) (array:get a i) 0))
+    (let digit-b (if (< i (length b)) (array:get b i) 0))
+    (let sum (+ digit-A digit-b (math:var-get carry)))
+    (array:push! result (mod sum 10))
+    (math:var-set! carry (math:floor (/ sum 10))))
+  ))
+  ; Handle remaining carry
+  (loop (> (math:var-get carry) 0) (do
+    (array:push! result (mod (math:var-get carry) 10))
+    (math:var-set! carry (math:floor (/ (math:var-get carry) 10)))))
+  (math:reverse result))))
+(let math:big-integer-subtraction (lambda a b (do
+  (let max-length (math:max (length a) (length b)))
+  (let result (array))
+  (let borrow (math:var-def 0))
+  (loop:for-n max-length (lambda i (do
+    (let digit-A (if (< i (length a)) (array:get a i) 0))
+    (let digit-b (if (< i (length b)) (array:get b i) 0))
+    (let sub (- digit-A digit-b (math:var-get borrow)))
+    (if (< sub 0)
+      (do
+        (array:push! result (+ sub 10))
+        (math:var-set! borrow 1))
+      (do
+        (array:push! result sub)
+        (math:var-set! borrow 0))))))
+  ; Remove trailing zeros (from the most significant end)
+  (let i (math:var-def (- (length result) 1)))
+  (loop (and (> (math:var-get i) 0) (= (array:get result (math:var-get i)) 0)) (do
+    (array:pop! result)
+    (math:var-set! i (- (math:var-get i) 1))))
+  (math:reverse result))))
+(let math:big-integer-multiplication (lambda a b (do
+  (let big-int-a (math:reverse big-int-a))
+  (let big-int-b (math:reverse big-int-b))
+  (let result (array))
+  ; Initialize result array with zeros
+  (loop:for-n (+ (length big-int-a) (length big-int-b)) (lambda . (array:push! result 0)))
+  (loop:for-n (length big-int-a) (lambda i (do
+    (let carry (math:var-def 0))
+    (let digit-big-int-a (array:get big-int-a i))
+    (loop:for-n (length big-int-b) (lambda j (do
+      (let digit-big-int-b (array:get big-int-b j))
+      (let idx (+ i j))
+      (let prod (+ (* digit-big-int-a digit-big-int-b) (array:get result idx) (math:var-get carry)))
+      (array:set! result idx (mod prod 10))
+      (math:var-set! carry (math:floor (/ prod 10))))))
+    ; Handle carry for this digit-big-int-a
+    (let k (math:var-def (+ i (length big-int-b))))
+    (loop (> (math:var-get carry) 0) (do
+      (if (not (< (math:var-get k) (length result))) (array:push! result 0) nil)
+      (let sum (+ (array:get result (math:var-get k)) (math:var-get carry)))
+      (array:set! result (math:var-get k) (mod sum 10))
+      (math:var-set! carry (math:floor (/ sum 10)))
+      (math:var-set! k (+ (math:var-get k) 1)))))))
+  ; Remove trailing zeros (from the most significant end), but keep at least one digit
+  (let i (math:var-def (- (length result) 1)))
+  (loop (and (> (math:var-get i) 0) (= (array:get result (math:var-get i)) 0) (> (length result) 1)) (do
+    (array:pop! result)
+    (math:var-set! i (- (math:var-get i) 1))))
+  (math:reverse result))))
 (let math:power (lambda base exp (do
   (if (< exp 0)
     (/ 1 (math:power base (- exp)))
