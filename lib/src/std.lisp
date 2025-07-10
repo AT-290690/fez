@@ -372,23 +372,23 @@
     (array:pop! result)
     (math:var-set! i (- (math:var-get i) 1))))
   (math:reverse result))))
-(let math:big-integer-multiplication (lambda a b (do
-  (let big-int-a (math:reverse big-int-a))
-  (let big-int-b (math:reverse big-int-b))
+(let math:big-integer-multiplication (lambda a1 b1 (do
+  (let a (math:reverse a1))
+  (let b (math:reverse b1))
   (let result (array))
   ; Initialize result array with zeros
-  (loop:for-n (+ (length big-int-a) (length big-int-b)) (lambda . (array:push! result 0)))
-  (loop:for-n (length big-int-a) (lambda i (do
+  (loop:for-n (+ (length a) (length b)) (lambda . (array:push! result 0)))
+  (loop:for-n (length a) (lambda i (do
     (let carry (math:var-def 0))
-    (let digit-big-int-a (array:get big-int-a i))
-    (loop:for-n (length big-int-b) (lambda j (do
-      (let digit-big-int-b (array:get big-int-b j))
+    (let digit-a (array:get a i))
+    (loop:for-n (length b) (lambda j (do
+      (let digit-b (array:get b j))
       (let idx (+ i j))
-      (let prod (+ (* digit-big-int-a digit-big-int-b) (array:get result idx) (math:var-get carry)))
+      (let prod (+ (* digit-a digit-b) (array:get result idx) (math:var-get carry)))
       (array:set! result idx (mod prod 10))
       (math:var-set! carry (math:floor (/ prod 10))))))
-    ; Handle carry for this digit-big-int-a
-    (let k (math:var-def (+ i (length big-int-b))))
+    ; Handle carry for this digit-a
+    (let k (math:var-def (+ i (length b))))
     (loop (> (math:var-get carry) 0) (do
       (if (not (< (math:var-get k) (length result))) (array:push! result 0) nil)
       (let sum (+ (array:get result (math:var-get k)) (math:var-get carry)))

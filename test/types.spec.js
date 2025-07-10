@@ -607,6 +607,10 @@ ZZZ=ZZZ,ZZZ")
 
       
    `)
+    passes(`(let zz 10)
+(let test (lambda (do 
+    (let zz [])
+    (length zz))))`)
     // If we apply order of definition we can no longer do this
     // passes(`(let math:decimal-scaling 1000)
     // (from:float->string 10.2)`)

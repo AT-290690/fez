@@ -1204,38 +1204,8 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 )})`
               )
             if (name in env) {
-              // const [head, ...tail] = isLeaf(rest.at(-1))
-              //   ? [rest.at(-1)]
-              //   : rest.at(-1)
-              // const ref = env[name]
-              // if (ref) {
-              //   if (getType(ref[STATS]) === APPLY && head[TYPE] !== APPLY)
-              //     throw new TypeError(
-              //       `Miss-matching type for (${name}) predifined expected type is (${toTypeNames(
-              //         APPLY
-              //       )}) but got (${stringifyArgs(exp)})`
-              //     )
-              //   const returns = deepLambdaReturn(
-              //     hasBlock(tail) ? tail.at(-1) : tail,
-              //     (result) => result[VALUE] !== KEYWORDS.IF
-              //   )
-              //   const [rhead] = isLeaf(returns) ? [returns] : returns
-              //   const rightRef = env[rhead[VALUE]]
-              //   if (rightRef)
-              //     if (
-              //       !equalReturns(ref[STATS], rightRef[STATS]) ||
-              //       !equalSubReturns(ref[STATS], rightRef[STATS])
-              //     )
-              //       throw new TypeError(
-              //         `Miss-matching return type for (${name}) predifined expected return is (${formatSubType(
-              //           getReturns(ref[STATS])
-              //         )}) but got (${formatSubType(
-              //           getReturns(rightRef[STATS])
-              //         )}) (${stringifyArgs(exp)})`
-              //       )
-              // }
               Types.set(withScope(name, env), () => formatType(name, env))
-              break
+              if (!env[env[SCOPE_NAME]]) break
             }
             //  Predicate name consistency
             const rightHand = rest.at(-1)

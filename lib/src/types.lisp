@@ -470,18 +470,18 @@
 (let i Number[])
 ; 1 math:big-integer-subtraction
 (let math:big-integer-subtraction (lambda Unknown[] Unknown[] (do Number[])))
-; 1 math:big-integer-multiplication big-int-a
-(let big-int-a Number[])
-; 1 math:big-integer-multiplication big-int-b
-(let big-int-b Number[])
+; 1 math:big-integer-multiplication a
+(let a Number[])
+; 1 math:big-integer-multiplication b
+(let b Number[])
 ; 1 math:big-integer-multiplication result
 (let result Number[])
 ; 1 math:big-integer-multiplication 17 carry
 (let carry Number[])
-; 1 math:big-integer-multiplication 17 digit-big-int-a
-(let digit-big-int-a Number)
-; 1 math:big-integer-multiplication 17 18 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication 17 digit-a
+(let digit-a Number)
+; 1 math:big-integer-multiplication 17 18 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication 17 18 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 17 18 prod
@@ -493,7 +493,7 @@
 ; 1 math:big-integer-multiplication i
 (let i Number[])
 ; 1 math:big-integer-multiplication
-(let math:big-integer-multiplication (lambda Unknown Unknown (do Number[])))
+(let math:big-integer-multiplication (lambda Number[] Number[] (do Number[])))
 ; 1 math:power 21 result
 (let result Number[])
 ; 1 math:power 21 b
@@ -971,13 +971,13 @@
 ; 1 array:sort 68 tail-call:array:sort current
 (let current Unknown)
 ; 1 array:sort 68 tail-call:array:sort predicate
-(let predicate Unknown)
+(let predicate Number)
 ; 1 array:sort 68 tail-call:array:sort left
-(let left Unknown)
+(let left Unknown[])
 ; 1 array:sort 68 tail-call:array:sort right
-(let right Unknown)
+(let right Unknown[])
 ; 1 array:sort 68 tail-call:array:sort
-(let tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
+(let tail-call:array:sort (lambda Number Number Unknown[] Unknown[] (do Unknown[])))
 ; 1 array:sort 68 sorted
 (let sorted Unknown[])
 ; 1 array:sort 68 left
@@ -2580,8 +2580,8 @@
 (let lambda::annonymous::0::305 (lambda (do Boolean)))
 ; 1 math:power 21 21 lambda::annonymous::1::306
 (let lambda::annonymous::1::306 (lambda (do Number[])))
-; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::307 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::307 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::307 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::307 prod
@@ -2590,10 +2590,10 @@
 (let lambda::annonymous::1::307 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 carry
 (let carry Number[])
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 digit-big-int-a
-(let digit-big-int-a Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 309 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 digit-a
+(let digit-a Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 309 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 309 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 309 prod
@@ -2604,8 +2604,8 @@
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308
 (let lambda::annonymous::1::308 (lambda Number (do Number)))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::311 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::311 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::311 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::311 prod
@@ -2730,10 +2730,10 @@
 (let lambda::annonymous::1::357 (lambda Unknown (do Unknown)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 carry
 (let carry Number[])
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 digit-big-int-a
-(let digit-big-int-a Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 359 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 digit-a
+(let digit-a Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 359 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 359 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 359 prod
@@ -2744,16 +2744,16 @@
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358
 (let lambda::annonymous::1::358 (lambda Number (do Number)))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::361 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::361 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::361 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::361 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::361
 (let lambda::annonymous::1::361 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::362 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::362 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::362 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 17 17 lambda::annonymous::1::362 prod
@@ -2762,10 +2762,10 @@
 (let lambda::annonymous::1::362 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication 364 carry
 (let carry Number[])
-; 1 math:big-integer-multiplication 364 digit-big-int-a
-(let digit-big-int-a Number)
-; 1 math:big-integer-multiplication 364 365 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication 364 digit-a
+(let digit-a Number)
+; 1 math:big-integer-multiplication 364 365 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication 364 365 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 364 365 prod
@@ -2774,8 +2774,8 @@
 (let k Number[])
 ; 1 math:big-integer-multiplication 364 366 sum
 (let sum Number)
-; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::368 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::368 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::368 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::368 prod
@@ -2784,10 +2784,10 @@
 (let lambda::annonymous::1::368 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 carry
 (let carry Number[])
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 digit-big-int-a
-(let digit-big-int-a Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 370 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 digit-a
+(let digit-a Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 370 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 370 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 370 prod
@@ -2798,8 +2798,8 @@
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369
 (let lambda::annonymous::1::369 (lambda Number (do Number)))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::372 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::372 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::372 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::372 prod
@@ -2995,13 +2995,13 @@
 ; 1 array:sort 505 tail-call:array:sort current
 (let current Unknown)
 ; 1 array:sort 505 tail-call:array:sort predicate
-(let predicate Unknown)
+(let predicate Number)
 ; 1 array:sort 505 tail-call:array:sort left
-(let left Unknown)
+(let left Unknown[])
 ; 1 array:sort 505 tail-call:array:sort right
-(let right Unknown)
+(let right Unknown[])
 ; 1 array:sort 505 tail-call:array:sort
-(let tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
+(let tail-call:array:sort (lambda Number Number Unknown[] Unknown[] (do Unknown[])))
 ; 1 array:sort 505 sorted
 (let sorted Unknown[])
 ; 1 array:sort 505 left
@@ -4172,24 +4172,24 @@
 (let lambda::annonymous::0::1224 (lambda (do Boolean)))
 ; 1 math:int-log2 math:int-log2 lambda::annonymous::1::1225
 (let lambda::annonymous::1::1225 (lambda (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1226 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1226 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1226 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1226 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1226
 (let lambda::annonymous::1::1226 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 1227 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 1227 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 1227 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 1227 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 1228 sum
 (let sum Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1229 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1229 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1229 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::1229 prod
@@ -4228,24 +4228,24 @@
 (let sub Number)
 ; 1 math:big-integer-subtraction math:big-integer-subtraction lambda::annonymous::1::1241
 (let lambda::annonymous::1::1241 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1246 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1246 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1246 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1246 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1246
 (let lambda::annonymous::1::1246 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 1247 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 1247 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 1247 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 1247 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 1248 sum
 (let sum Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1249 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1249 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1249 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::1249 prod
@@ -4256,10 +4256,10 @@
 (let lambda::annonymous::1::1250 (lambda Unknown (do Unknown)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 carry
 (let carry Number[])
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 digit-big-int-a
-(let digit-big-int-a Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 1252 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 digit-a
+(let digit-a Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 1252 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 1252 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 1252 prod
@@ -4270,40 +4270,40 @@
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251
 (let lambda::annonymous::1::1251 (lambda Number (do Number)))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::1254 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::1254 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::1254 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::1254 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::1254
 (let lambda::annonymous::1::1254 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::1255 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::1255 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::1255 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::1255 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication 364 364 lambda::annonymous::1::1255
 (let lambda::annonymous::1::1255 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1256 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1256 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1256 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1256 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1256
 (let lambda::annonymous::1::1256 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 1257 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 1257 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 1257 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 1257 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 1258 sum
 (let sum Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1259 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1259 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1259 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::1259 prod
@@ -6244,48 +6244,48 @@
 (let lambda::annonymous::0::2113 (lambda (do Boolean)))
 ; 1 math:int-log2 math:int-log2 lambda::annonymous::1::2114
 (let lambda::annonymous::1::2114 (lambda (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::2115 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::2115 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::2115 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::2115 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::308 lambda::annonymous::1::308 lambda::annonymous::1::2115
 (let lambda::annonymous::1::2115 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::2118 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::2118 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::2118 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::2118 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::358 lambda::annonymous::1::358 lambda::annonymous::1::2118
 (let lambda::annonymous::1::2118 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2119 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2119 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2119 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2119 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2119
 (let lambda::annonymous::1::2119 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 2120 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 2120 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 2120 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 2120 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 2121 sum
 (let sum Number)
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2122 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2122 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2122 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2122 prod
 (let prod Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2122
 (let lambda::annonymous::1::2122 (lambda Number (do Number[])))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::2123 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::2123 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::2123 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::369 lambda::annonymous::1::369 lambda::annonymous::1::2123 prod
@@ -7710,8 +7710,8 @@
 (let lambda::annonymous::1::2550 (lambda Number (do Boolean)))
 ; 1 math:variance math:variance lambda::annonymous::1::2551
 (let lambda::annonymous::1::2551 (lambda Number (do Number)))
-; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2552 digit-big-int-b
-(let digit-big-int-b Number)
+; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2552 digit-b
+(let digit-b Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2552 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1251 lambda::annonymous::1::1251 lambda::annonymous::1::2552 prod
