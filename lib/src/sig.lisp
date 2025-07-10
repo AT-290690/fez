@@ -66,3 +66,7 @@
 (let from:strings->floats (lambda Unknown[][] (do Number[])))
 (let from:string->float (lambda Number[] (do Number)))
 (let from:float->string (lambda Number (do Number[])))
+(let from:chars->digits (lambda Number[] (do Number[])))
+(let from:digits->chars (lambda Number[] (do Number[])))
+(let from:digits->integer (lambda Number[] (do Number)))
+(let from:integer->digits (lambda Number (do Number[])))

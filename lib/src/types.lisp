@@ -1207,19 +1207,17 @@
 ; 1 from:char->digit
 (let from:char->digit (lambda Number (do Number)))
 ; 1 from:chars->digits
-(let from:chars->digits (lambda Unknown[] (do Unknown[])))
+(let from:chars->digits (lambda Number[] (do Number[])))
 ; 1 from:digit->char
 (let from:digit->char (lambda Number (do Number)))
 ; 1 from:digits->chars
-(let from:digits->chars (lambda Unknown[] (do Unknown[])))
+(let from:digits->chars (lambda Number[] (do Number[])))
 ; 1 from:chars->positive-or-negative-digits current-sign
 (let current-sign Number[])
 ; 1 from:chars->positive-or-negative-digits
 (let from:chars->positive-or-negative-digits (lambda Unknown[] (do Unknown[])))
-; 1 from:digits->integer tail-call:from:digits->integer
-(let tail-call:from:digits->integer (lambda Number Number Number (do Number)))
 ; 1 from:digits->integer
-(let from:digits->integer (lambda Unknown[] (do Number)))
+(let from:digits->integer (lambda Number[] (do Number)))
 ; 1 from:digits->integer-base
 (let from:digits->integer-base (lambda Unknown[] Number (do Number)))
 ; 1 from:integer->string-base 114 out
@@ -1244,10 +1242,8 @@
 (let from:positive-or-negative-digits->integer (lambda Unknown[] (do Number)))
 ; 1 from:positive-or-negative-digits->chars
 (let from:positive-or-negative-digits->chars (lambda Unknown[] (do Unknown[])))
-; 1 from:integer->digits tail-call:from:integer->digits
-(let tail-call:from:integer->digits (lambda Number Number[] (do Number[])))
 ; 1 from:integer->digits
-(let from:integer->digits (lambda Number (do Unknown[])))
+(let from:integer->digits (lambda Number (do Number[])))
 ; 1 from:number->positive-or-negative-digits negative?
 (let negative? Boolean)
 ; 1 from:number->positive-or-negative-digits num
@@ -1271,7 +1267,7 @@
 ; 1 from:numbers->chars
 (let from:numbers->chars (lambda Unknown[] (do Unknown[])))
 ; 1 from:chars->integer
-(let from:chars->integer (lambda Unknown[] (do Number)))
+(let from:chars->integer (lambda Number[] (do Number)))
 ; 1 from:positive-or-negative-chars->integer
 (let from:positive-or-negative-chars->integer (lambda Unknown[] (do Number)))
 ; 1 from:string->integer
@@ -2238,6 +2234,8 @@
 (let equal? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 not-equal?
 (let not-equal? (lambda Unknown[] Unknown[] (do Boolean)))
+; 1 new:big-integer
+(let new:big-integer (lambda Number[] (do Number[])))
 ; 1 array:at
 (let array:at (lambda Unknown[] Number (do Unknown)))
 ; 1 array:head
@@ -3245,9 +3243,9 @@
 ; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::632
 (let lambda::annonymous::1::632 (lambda Unknown Unknown[] (do Unknown)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::633
-(let lambda::annonymous::1::633 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::633 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::635
-(let lambda::annonymous::1::635 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::635 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::636
 (let lambda::annonymous::1::636 (lambda Unknown[] (do Unknown[][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::638
@@ -3271,9 +3269,9 @@
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::652
 (let lambda::annonymous::1::652 (lambda Number (do Number[])))
 ; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::653
-(let lambda::annonymous::1::653 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::653 (lambda Number (do Number[])))
 ; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::655
-(let lambda::annonymous::1::655 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::655 (lambda Number (do Number[])))
 ; 1 from:array->set from:array->set lambda::annonymous::1::657
 (let lambda::annonymous::1::657 (lambda Unknown[] (do Unknown[])))
 ; 1 from:array->set from:array->set lambda::annonymous::1::659
@@ -3983,7 +3981,7 @@
 ; 1 from:array->set from:array->set lambda::annonymous::1::1080
 (let lambda::annonymous::1::1080 (lambda Unknown[] (do Unknown[])))
 ; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::1082
-(let lambda::annonymous::1::1082 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1082 (lambda Number (do Number[])))
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::1083
 (let lambda::annonymous::1::1083 (lambda Number (do Number[])))
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::1086
@@ -3993,9 +3991,9 @@
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::1091
 (let lambda::annonymous::1::1091 (lambda Unknown[] (do Unknown[][])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1092
-(let lambda::annonymous::1::1092 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1092 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1094
-(let lambda::annonymous::1::1094 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1094 (lambda Number (do Number[])))
 ; 1 matrix:adjacent 1095 dy
 (let dy Number)
 ; 1 matrix:adjacent 1095 dx
@@ -4719,13 +4717,13 @@
 ; 1 matrix:sliding-adjacent-sum matrix:sliding-adjacent-sum lambda::annonymous::1::1507
 (let lambda::annonymous::1::1507 (lambda Unknown Unknown[] (do Unknown)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1509
-(let lambda::annonymous::1::1509 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1509 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1510
-(let lambda::annonymous::1::1510 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1510 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1511
-(let lambda::annonymous::1::1511 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1511 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1513
-(let lambda::annonymous::1::1513 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1513 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::1515
 (let lambda::annonymous::1::1515 (lambda Unknown[] (do Unknown[][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::1516
@@ -4753,17 +4751,17 @@
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::1538
 (let lambda::annonymous::1::1538 (lambda Number[] Unknown[] (do Unknown[])))
 ; 1 from:numbers->chars from:numbers->chars lambda::annonymous::1::1539
-(let lambda::annonymous::1::1539 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::1539 (lambda Number (do Number[])))
 ; 1 from:array->set from:array->set lambda::annonymous::1::1542
 (let lambda::annonymous::1::1542 (lambda Unknown[] (do Unknown[])))
 ; 1 from:array->table from:array->table lambda::annonymous::1::1543
 (let lambda::annonymous::1::1543 (lambda Unknown[] (do Unknown[])))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::1545
-(let lambda::annonymous::1::1545 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::1545 (lambda Number[] (do Number)))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::1546
-(let lambda::annonymous::1::1546 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::1546 (lambda Number[] (do Number)))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::1548
-(let lambda::annonymous::1::1548 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::1548 (lambda Number[] (do Number)))
 ; 1 from:string->words from:string->words lambda::annonymous::1::1550
 (let lambda::annonymous::1::1550 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:string->words from:string->words lambda::annonymous::1::1551
@@ -6045,17 +6043,17 @@
 ; 1 from:string->words from:string->words lambda::annonymous::1::1992
 (let lambda::annonymous::1::1992 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::1993
-(let lambda::annonymous::1::1993 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::1993 (lambda Number[] (do Number)))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::1995
-(let lambda::annonymous::1::1995 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::1995 (lambda Number[] (do Number)))
 ; 1 from:array->table from:array->table lambda::annonymous::1::1996
 (let lambda::annonymous::1::1996 (lambda Unknown[] (do Unknown[])))
 ; 1 from:array->set from:array->set lambda::annonymous::1::1997
 (let lambda::annonymous::1::1997 (lambda Unknown[] (do Unknown[])))
 ; 1 from:string->date from:string->date lambda::annonymous::1::1998
-(let lambda::annonymous::1::1998 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::1998 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2000
-(let lambda::annonymous::1::2000 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2000 (lambda Number[] (do Number)))
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::2001
 (let lambda::annonymous::1::2001 (lambda Number[] Unknown[] (do Unknown[])))
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::2002
@@ -6065,7 +6063,7 @@
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2004
 (let lambda::annonymous::1::2004 (lambda Unknown[] (do Unknown[][])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2005
-(let lambda::annonymous::1::2005 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2005 (lambda Number (do Number[])))
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::2006 dy
 (let dy Number)
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::2006 dx
@@ -6489,15 +6487,15 @@
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::2237
 (let lambda::annonymous::1::2237 (lambda Number Number (do Number)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2240
-(let lambda::annonymous::1::2240 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2240 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2242
-(let lambda::annonymous::1::2242 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2242 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2244
-(let lambda::annonymous::1::2244 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2244 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2245
-(let lambda::annonymous::1::2245 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2245 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2247
-(let lambda::annonymous::1::2247 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2247 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2248
 (let lambda::annonymous::1::2248 (lambda Unknown[] (do Unknown[][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2249
@@ -6515,19 +6513,19 @@
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::2256
 (let lambda::annonymous::1::2256 (lambda Number (do Number[])))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2257
-(let lambda::annonymous::1::2257 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2257 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2259
-(let lambda::annonymous::1::2259 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2259 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2261
-(let lambda::annonymous::1::2261 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2261 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2262
-(let lambda::annonymous::1::2262 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2262 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2264
-(let lambda::annonymous::1::2264 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2264 (lambda Number[] (do Number)))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::2265
-(let lambda::annonymous::1::2265 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2265 (lambda Number[] (do Number)))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::2266
-(let lambda::annonymous::1::2266 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2266 (lambda Number[] (do Number)))
 ; 1 from:string->words from:string->words lambda::annonymous::1::2267
 (let lambda::annonymous::1::2267 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:string->words from:string->words lambda::annonymous::1::2269
@@ -7615,11 +7613,11 @@
 ; 1 from:string->words from:string->words lambda::annonymous::1::2477
 (let lambda::annonymous::1::2477 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:set->integers from:set->integers lambda::annonymous::1::2478
-(let lambda::annonymous::1::2478 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2478 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2479
-(let lambda::annonymous::1::2479 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2479 (lambda Number[] (do Number)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2481
-(let lambda::annonymous::1::2481 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2481 (lambda Number (do Number[])))
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::2483
 (let lambda::annonymous::1::2483 (lambda Number Number (do Number)))
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::2484
@@ -7775,27 +7773,27 @@
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::2576
 (let lambda::annonymous::1::2576 (lambda Number Number (do Number)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2578
-(let lambda::annonymous::1::2578 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2578 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2579
-(let lambda::annonymous::1::2579 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2579 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2581
-(let lambda::annonymous::1::2581 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2581 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2582
-(let lambda::annonymous::1::2582 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2582 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2584
-(let lambda::annonymous::1::2584 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2584 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2586
-(let lambda::annonymous::1::2586 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2586 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2587
-(let lambda::annonymous::1::2587 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2587 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2589
-(let lambda::annonymous::1::2589 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2589 (lambda Number (do Number[])))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2590
-(let lambda::annonymous::1::2590 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2590 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2591
-(let lambda::annonymous::1::2591 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2591 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2592
-(let lambda::annonymous::1::2592 (lambda Unknown[] (do Number)))
+(let lambda::annonymous::1::2592 (lambda Number[] (do Number)))
 ; 1 from:string->words from:string->words lambda::annonymous::1::2594
 (let lambda::annonymous::1::2594 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:string->words from:string->words lambda::annonymous::1::2595
@@ -8159,9 +8157,9 @@
 ; 1 from:string->words from:string->words lambda::annonymous::1::2659
 (let lambda::annonymous::1::2659 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2660
-(let lambda::annonymous::1::2660 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2660 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2662
-(let lambda::annonymous::1::2662 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2662 (lambda Number (do Number[])))
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::2663
 (let lambda::annonymous::1::2663 (lambda Number Number (do Number)))
 ; 1 matrix:dot-product matrix:dot-product lambda::annonymous::1::2664
@@ -8209,31 +8207,31 @@
 ; 1 matrix:rotate matrix:rotate lambda::annonymous::2::2055 lambda::annonymous::2::2055 lambda::annonymous::2::2685
 (let lambda::annonymous::2::2685 (lambda Number (do Unknown)))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2686
-(let lambda::annonymous::1::2686 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2686 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2688
-(let lambda::annonymous::1::2688 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2688 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2690
-(let lambda::annonymous::1::2690 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2690 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2691
-(let lambda::annonymous::1::2691 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2691 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2693
-(let lambda::annonymous::1::2693 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2693 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2695
-(let lambda::annonymous::1::2695 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2695 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2696
-(let lambda::annonymous::1::2696 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2696 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2698
-(let lambda::annonymous::1::2698 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2698 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2699
-(let lambda::annonymous::1::2699 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2699 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2701
-(let lambda::annonymous::1::2701 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2701 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2703
-(let lambda::annonymous::1::2703 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2703 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2704
-(let lambda::annonymous::1::2704 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2704 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2706
-(let lambda::annonymous::1::2706 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2706 (lambda Number (do Number[])))
 ; 1 from:string->words from:string->words lambda::annonymous::1::2707
 (let lambda::annonymous::1::2707 (lambda Unknown[] Number (do Unknown[])))
 ; 1 from:string->words from:string->words lambda::annonymous::1::2708
@@ -8257,148 +8255,148 @@
 ; 1 string:join-as-table string:join-as-table lambda::annonymous::1::2338 lambda::annonymous::1::2338 lambda::annonymous::1::2717
 (let lambda::annonymous::1::2717 (lambda Unknown[] (do Unknown[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2719
-(let lambda::annonymous::1::2719 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2719 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2720
-(let lambda::annonymous::1::2720 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2720 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2722
-(let lambda::annonymous::1::2722 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2722 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2724
-(let lambda::annonymous::1::2724 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2724 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2725
-(let lambda::annonymous::1::2725 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2725 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2727
-(let lambda::annonymous::1::2727 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2727 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2728
-(let lambda::annonymous::1::2728 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2728 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2730
-(let lambda::annonymous::1::2730 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2730 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2732
-(let lambda::annonymous::1::2732 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2732 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2733
-(let lambda::annonymous::1::2733 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2733 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2735
-(let lambda::annonymous::1::2735 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2735 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2736
-(let lambda::annonymous::1::2736 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2736 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2738
-(let lambda::annonymous::1::2738 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2738 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2740
-(let lambda::annonymous::1::2740 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2740 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2741
-(let lambda::annonymous::1::2741 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2741 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2743
-(let lambda::annonymous::1::2743 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2743 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2745
-(let lambda::annonymous::1::2745 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2745 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2746
-(let lambda::annonymous::1::2746 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2746 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2748
-(let lambda::annonymous::1::2748 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2748 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2749
-(let lambda::annonymous::1::2749 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2749 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2751
-(let lambda::annonymous::1::2751 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2751 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2753
-(let lambda::annonymous::1::2753 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2753 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2754
-(let lambda::annonymous::1::2754 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2754 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2756
-(let lambda::annonymous::1::2756 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2756 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2757
-(let lambda::annonymous::1::2757 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2757 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2759
-(let lambda::annonymous::1::2759 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2759 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2761
-(let lambda::annonymous::1::2761 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2761 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2762
-(let lambda::annonymous::1::2762 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2762 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2764
-(let lambda::annonymous::1::2764 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2764 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2765
-(let lambda::annonymous::1::2765 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2765 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2767
-(let lambda::annonymous::1::2767 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2767 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2769
-(let lambda::annonymous::1::2769 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2769 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2770
-(let lambda::annonymous::1::2770 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2770 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2772
-(let lambda::annonymous::1::2772 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2772 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2774
-(let lambda::annonymous::1::2774 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2774 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2775
-(let lambda::annonymous::1::2775 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2775 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2777
-(let lambda::annonymous::1::2777 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2777 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2778
-(let lambda::annonymous::1::2778 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2778 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2780
-(let lambda::annonymous::1::2780 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2780 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2782
-(let lambda::annonymous::1::2782 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2782 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2783
-(let lambda::annonymous::1::2783 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2783 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2785
-(let lambda::annonymous::1::2785 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2785 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2787
-(let lambda::annonymous::1::2787 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2787 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2788
-(let lambda::annonymous::1::2788 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2788 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2790
-(let lambda::annonymous::1::2790 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2790 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2791
-(let lambda::annonymous::1::2791 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2791 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2793
-(let lambda::annonymous::1::2793 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2793 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2795
-(let lambda::annonymous::1::2795 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2795 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2796
-(let lambda::annonymous::1::2796 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2796 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2798
-(let lambda::annonymous::1::2798 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2798 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2799
-(let lambda::annonymous::1::2799 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2799 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2801
-(let lambda::annonymous::1::2801 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2801 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2802
-(let lambda::annonymous::1::2802 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2802 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2803
-(let lambda::annonymous::1::2803 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2803 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2804
-(let lambda::annonymous::1::2804 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2804 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2805
-(let lambda::annonymous::1::2805 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2805 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2806
-(let lambda::annonymous::1::2806 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2806 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2807
-(let lambda::annonymous::1::2807 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2807 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2808
-(let lambda::annonymous::1::2808 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2808 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2809
-(let lambda::annonymous::1::2809 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2809 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2810
-(let lambda::annonymous::1::2810 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2810 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2811
-(let lambda::annonymous::1::2811 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2811 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2812
-(let lambda::annonymous::1::2812 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2812 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2813
-(let lambda::annonymous::1::2813 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2813 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2814
-(let lambda::annonymous::1::2814 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2814 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2815
-(let lambda::annonymous::1::2815 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2815 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2816
-(let lambda::annonymous::1::2816 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2816 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2817
-(let lambda::annonymous::1::2817 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2817 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2818
-(let lambda::annonymous::1::2818 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2818 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2819
-(let lambda::annonymous::1::2819 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2819 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2820
-(let lambda::annonymous::1::2820 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2820 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2821
-(let lambda::annonymous::1::2821 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2821 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2822
-(let lambda::annonymous::1::2822 (lambda Number (do Unknown[])))
+(let lambda::annonymous::1::2822 (lambda Number (do Number[])))

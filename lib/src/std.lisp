@@ -2145,6 +2145,7 @@ heap)))
 (let array:del! (lambda xs (del! xs)))
 (let equal? array:equal?)
 (let not-equal? array:not-equal?)
+(let new:big-integer from:chars->digits)
 
 (let array:at (lambda xs i (if (< i 0) (get xs (+ (length xs) i)) (get xs i))))
 (let array:head (lambda xs (get xs 0)))
