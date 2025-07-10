@@ -335,7 +335,9 @@
     ; Increment p using variable helper
     (math:var-set! p (+ (math:var-get p) 1))))
   (math:reverse digits))))
-(let math:big-integer-addition (lambda a b (do
+(let math:big-integer-addition (lambda a1 b1 (do
+  (let a (math:reverse a1))
+  (let b (math:reverse b1))
   (let max-length (math:max (length a) (length b)))
   (let result (array))
   (let carry (math:var-def 0))
@@ -351,7 +353,9 @@
     (array:push! result (mod (math:var-get carry) 10))
     (math:var-set! carry (math:floor (/ (math:var-get carry) 10)))))
   (math:reverse result))))
-(let math:big-integer-subtraction (lambda a b (do
+(let math:big-integer-subtraction (lambda a1 b1 (do
+  (let a (math:reverse a1))
+  (let b (math:reverse b1))
   (let max-length (math:max (length a) (length b)))
   (let result (array))
   (let borrow (math:var-def 0))

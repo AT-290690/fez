@@ -8,6 +8,18 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(let a [ 1 0 0 0 0 ])
+(|> a 
+(math:big-integer-multiplication [ 1 0 0 0 ])
+(math:big-integer-addition [ 1 2 ])
+(math:big-integer-subtraction [ 6 ])
+(math:big-integer-subtraction [ 6 ])
+(math:big-integer-subtraction [ 6 ])
+
+)`),
+      [9, 9, 9, 9, 9, 9, 4]
+    )
+    deepStrictEqual(
       evalJS(`(let two-sum (lambda nums target (do
   (let len (length nums))
   (let tail-call:find (lambda i (if (< i len)

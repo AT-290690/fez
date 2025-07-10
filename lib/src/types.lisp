@@ -440,6 +440,10 @@
 (let newCarry Number)
 ; 1 math:large-power
 (let math:large-power (lambda Number Number (do Number[])))
+; 1 math:big-integer-addition a
+(let a Number[])
+; 1 math:big-integer-addition b
+(let b Number[])
 ; 1 math:big-integer-addition max-length
 (let max-length Number)
 ; 1 math:big-integer-addition result
@@ -453,7 +457,11 @@
 ; 1 math:big-integer-addition 10 sum
 (let sum Number)
 ; 1 math:big-integer-addition
-(let math:big-integer-addition (lambda Unknown[] Unknown[] (do Number[])))
+(let math:big-integer-addition (lambda Number[] Number[] (do Number[])))
+; 1 math:big-integer-subtraction a
+(let a Number[])
+; 1 math:big-integer-subtraction b
+(let b Number[])
 ; 1 math:big-integer-subtraction max-length
 (let max-length Number)
 ; 1 math:big-integer-subtraction result
@@ -469,7 +477,7 @@
 ; 1 math:big-integer-subtraction i
 (let i Number[])
 ; 1 math:big-integer-subtraction
-(let math:big-integer-subtraction (lambda Unknown[] Unknown[] (do Number[])))
+(let math:big-integer-subtraction (lambda Number[] Number[] (do Number[])))
 ; 1 math:big-integer-multiplication a
 (let a Number[])
 ; 1 math:big-integer-multiplication b
