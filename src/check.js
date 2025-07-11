@@ -1643,8 +1643,8 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  args[i][STATS][TYPE_PROP][0]
+                                }). Expected (${formatSubType(
+                                  getTypes(args[i][STATS])
                                 )}) but got (${toTypeNames(
                                   rest[i][TYPE]
                                 )}) (${stringifyArgs(exp)}) (check #2)`
