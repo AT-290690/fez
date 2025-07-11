@@ -405,6 +405,65 @@
     (array:pop! result)
     (math:var-set! i (- (math:var-get i) 1))))
   (math:reverse result))))
+(let math:remove-leading-zeroes (lambda digits (do
+  (let tr (bool:true))
+  (|> digits (array:transform (lambda a b (if
+  (and (bool:true? tr) (math:zero? b)) a
+    (do
+      (if (bool:true? tr) (bool:false! tr))
+      (array:merge a [b])))) [])))))
+
+(let math:big-integer-less-or-equal? (lambda a b (do
+  (if (< (length a) (length b)) true
+  (if (> (length a) (length b)) false
+    ; Equal length, compare digit by digit
+    (do
+      (let i (math:var-def 0))
+      (let result (bool:true)) ; assume a <= b
+      (loop (< (math:var-get i) (length a)) (do
+        (let da (array:get a (math:var-get i)))
+        (let db (array:get b (math:var-get i)))
+        (if (< da db) (do
+          (bool:true! result)
+          (math:var-set! i (length a))))
+        (if (> da db) (do
+          (bool:false! result)
+          (math:var-set! i (length a))))
+        (math:var-set! i (+ (math:var-get i) 1))))
+      (if (bool:true? result) true false)))))))
+
+(let math:big-integer-division (lambda dividend divisor (do
+  (let result [])
+  (let current (var:def []))
+  (let i (math:var-def 0))
+  (let len (length dividend))
+
+  ; Main loop: process each digit of the dividend
+  (loop (< (math:var-get i) len) (do
+    (let digit (array:get dividend (math:var-get i)))
+    (var:set! current (math:remove-leading-zeroes (array:merge (var:get current) [digit])))
+    ; Find max digit q such that (divisor * q) <= current
+    (let low (math:var-def 0))
+    (let high (math:var-def 9))
+    (let q (math:var-def 0))
+    (loop (<= (math:var-get low) (math:var-get high)) (do
+      (let mid (// (+ (math:var-get low) (math:var-get high)) 2))
+      (let prod (math:big-integer-multiplication divisor [mid]))
+      (if (math:big-integer-less-or-equal? prod (var:get current))
+        (do
+          (math:var-set! q mid)
+          (math:var-set! low (+ mid 1)))
+        (math:var-set! high (- mid 1)))))
+
+    (array:push! result (math:var-get q))
+
+    ; current := current - (divisor * q)
+    (let sub (math:big-integer-multiplication divisor [(math:var-get q)]))
+    (var:set! current (math:big-integer-subtraction (var:get current) sub))
+
+    (math:var-set! i (+ (math:var-get i) 1))))
+
+  (math:remove-leading-zeroes result))))
 (let math:power (lambda base exp (do
   (if (< exp 0)
     (/ 1 (math:power base (- exp)))
@@ -1998,6 +2057,11 @@ q)))
 (let loop:while (lambda condition cb (do 
    (let tail-call:while (lambda (if (condition) (do (cb) (tail-call:while)) nil)))
    (tail-call:while))))
+
+(let loop:while-safe (lambda condition cb (do 
+    (let while (lambda (if (condition) (do (cb) (while)))))
+    (while))))
+
 (let loop:for-range (lambda start end cb (do
                           (let tail-call:loop:for-range (lambda i
                           (if (< i end)
@@ -2146,6 +2210,7 @@ heap)))
 (let equal? array:equal?)
 (let not-equal? array:not-equal?)
 (let new:big-integer from:chars->digits)
+(let while loop)
 
 (let array:at (lambda xs i (if (< i 0) (get xs (+ (length xs) i)) (get xs i))))
 (let array:head (lambda xs (get xs 0)))
