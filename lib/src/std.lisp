@@ -462,8 +462,9 @@
     (var:set! current (math:big-integer-subtraction (var:get current) sub))
 
     (math:var-set! i (+ (math:var-get i) 1))))
+    (let out (math:remove-leading-zeroes result))
+    (if (array:empty? out) [0] out))))
 
-  (math:remove-leading-zeroes result))))
 (let math:power (lambda base exp (do
   (if (< exp 0)
     (/ 1 (math:power base (- exp)))
@@ -2211,6 +2212,12 @@ heap)))
 (let not-equal? array:not-equal?)
 (let new:big-integer from:chars->digits)
 (let while loop)
+
+(let #int new:big-integer)
+(let #+ math:big-integer-addition)
+(let #- math:big-integer-subtraction)
+(let #* math:big-integer-multiplication)
+(let #/ math:big-integer-division)
 
 (let array:at (lambda xs i (if (< i 0) (get xs (+ (length xs) i)) (get xs i))))
 (let array:head (lambda xs (get xs 0)))

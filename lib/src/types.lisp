@@ -536,6 +536,8 @@
 (let prod Unknown[])
 ; 1 math:big-integer-division 25 sub
 (let sub Number[])
+; 1 math:big-integer-division out
+(let out Number[])
 ; 1 math:big-integer-division
 (let math:big-integer-division (lambda Unknown[] Number[] (do Number[])))
 ; 1 math:power 28 result
@@ -2278,6 +2280,16 @@
 (let new:big-integer (lambda Number[] (do Number[])))
 ; 1 while
 (let while (lambda Number Unknown (do Number)))
+; 1 #int
+(let #int (lambda Number[] (do Number[])))
+; 1 #+
+(let #+ (lambda Number[] Number[] (do Number[])))
+; 1 #-
+(let #- (lambda Number[] Number[] (do Number[])))
+; 1 #*
+(let #* (lambda Number[] Number[] (do Number[])))
+; 1 #/
+(let #/ (lambda Unknown[] Number[] (do Number[])))
 ; 1 array:at
 (let array:at (lambda Unknown[] Number (do Unknown)))
 ; 1 array:head

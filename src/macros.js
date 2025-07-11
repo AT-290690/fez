@@ -31,6 +31,12 @@ export const SUGGAR = {
   POWER: '**',
   INTEGER_DEVISION: '//',
   CONDITION: 'cond',
+  BIG_INT: '#i',
+  BIG_INT_ADDITION: '#+',
+  BIG_INT_SUBTRACTION: '#-',
+  BIG_INT_DIVISION: '#/',
+  BIG_INT_MULTIPLICATION: '#*',
+  NEW_BIG_INTEGER: 'new:big-integer',
   PROMISES: '*DATA*'
 }
 export const deSuggarAst = (ast, scope) => {
@@ -356,6 +362,24 @@ export const deSuggarAst = (ast, scope) => {
                   deSuggarAst(exp, scope)
                 }
                 break
+              case SUGGAR.BIG_INT_ADDITION:
+              case SUGGAR.BIG_INT_MULTIPLICATION:
+              case SUGGAR.BIG_INT_SUBTRACTION:
+              case SUGGAR.BIG_INT_DIVISION:
+                if (rest.length > 2) {
+                  exp.length = 0
+                  rest.reverse()
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, first[VALUE]], [], rest[i])
+                      temp = temp.at(-2)
+                    } else temp.push(...rest[i])
+                  }
+                  deSuggarAst(exp, scope)
+                }
+                break
+
               case KEYWORDS.AND:
                 if (!rest.length) {
                   exp[0][TYPE] = ATOM
@@ -731,9 +755,12 @@ export const replaceQuotes = (source) =>
     .replaceAll(/\]/g, ')')
     .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\}/g, ')')
-
+export const replaceBigInteger = (source) =>
+  source.replaceAll(/\(#i\s+([0-9]+)\)/g, (_, num) => `(#int "${num}")`)
 export const deSuggarSource = (source) =>
-  replaceQuotes(replaceStrings(replaceTemplateLiteralStrings(source)))
+  replaceQuotes(
+    replaceStrings(replaceTemplateLiteralStrings(replaceBigInteger(source)))
+  )
 export const handleUnbalancedQuotes = (source) => {
   const diff = (source.match(/\"/g) ?? []).length % 2
   if (diff !== 0) throw new SyntaxError(`Quotes are unbalanced "`)
