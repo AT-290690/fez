@@ -237,6 +237,24 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
         )
       return `"${expression.map((x) => String.fromCharCode(x)).join('')}"`
     },
+    [DEBUG.UNQUOTED_STRING]: (args, env) => {
+      if (args.length !== 1)
+        throw new RangeError(
+          `Invalid number of arguments to (${DEBUG.UNQUOTED_STRING}) (= 1) (${
+            DEBUG.UNQUOTED_STRING
+          } but got (${args.length}) ${stringifyArgs(args)})`
+        )
+      const expression = evaluate(args[0], env)
+      if (!Array.isArray(expression))
+        throw new TypeError(
+          `Argument of (${DEBUG.UNQUOTED_STRING}) must be an (${
+            RUNTIME_TYPES.ARRAY
+          }) but got (${expression}) (${DEBUG.UNQUOTED_STRING} ${stringifyArgs(
+            args
+          )})`
+        )
+      return `${expression.map((x) => String.fromCharCode(x)).join('')}`
+    },
     [DEBUG.LOG]: (args, env) => {
       if (args.length !== 1 && args.length !== 2)
         throw new RangeError(

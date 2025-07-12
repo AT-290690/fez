@@ -1447,6 +1447,7 @@
      (array:merge! (math:zeroes (- (length b) (length a))) a))))
 (let array:rotate-right (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (set! a (mod (+ (array:second b)  n) (length xs)) (array:first b))) (math:zeroes (length xs))))))
 (let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
+(let string:wrap-in-quotes (lambda str (array:concat [[char:double-quote] str [char:double-quote]])))
 (let string:character-occurances (lambda str letter (do
   (let xs str)
   (let bitmask (math:var-def 0))

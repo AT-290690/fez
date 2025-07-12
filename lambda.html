@@ -1,0 +1,64 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height"
+  />
+  <meta name="description" content="Write and run Fez programs" />
+  <title>Lambda</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <style>
+    html {
+      background-color: black;
+    }
+    @font-face {
+      font-family: 'Fantastic';
+      src: url(./assets/fonts/FantasqueSansMono-Regular.ttf) format('truetype');
+      font-display: swap;
+    }
+    * {
+      font-family: 'Fantastic' !important;
+      font-size: 20px !important;
+    }
+    /* @font-face {
+      font-family: 'Monaco9';
+      src: url(./assets/fonts/monaco-9.ttf) format('truetype');
+      font-display: swap;
+    } */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #terminal {
+      height: 95%;
+      width: 100%;
+    }
+    #run {
+      width: 100%;
+      height: 5%;
+      color: gold;
+      background-color: rgb(91, 95, 206);
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="terminal"></div>
+  <button id="run" title="run code">evaluate</button>
+  <script
+    defer
+    src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js"
+    type="text/javascript"
+    charset="utf-8"
+  ></script>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js"
+    integrity="sha512-qtX0GLM3qX8rxJN1gyDfcnMFFrKvixfoEOwbBib9VafR5vbChV5LeE5wSI/x+IlCkTY5ZFddFDCCfaVJJNnuKQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script src="https://cdn.jsdelivr.net/npm/prompts-js"></script>
+  <script type="module" src="./lambda/main.js"></script>
+</body>

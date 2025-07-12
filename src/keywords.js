@@ -71,6 +71,7 @@ export const RUNTIME_TYPES = {
 }
 export const DEBUG = {
   STRING: 'string',
+  UNQUOTED_STRING: 'unquoted-string',
   LOG: 'log',
   ASSERT: 'assert',
   SIGNATURE: 'Info',

@@ -23,7 +23,6 @@ const inter = () => {
   const value = editor.getValue()
   if (value.trim()) {
     try {
-      const compressed = LZString.compressToBase64(value)
       const parsed = parse(value)
       // const T = value
       //   .match(new RegExp(/; @Type.+/, 'g'))
@@ -37,14 +36,6 @@ const inter = () => {
             : serialise(evaluated)
           : error.message
       )
-      terminal.clearSelection()
-      const newurl =
-        window.location.protocol +
-        '//' +
-        window.location.host +
-        window.location.pathname +
-        `?t=${THEME}&l=${encodeURIComponent(compressed)}`
-      window.history.pushState({ path: newurl }, '', newurl)
     } catch (error) {
       console.log(error)
       terminal.setValue(error.message)

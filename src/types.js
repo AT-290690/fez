@@ -420,6 +420,28 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [COLLECTION]
     }
   },
+  [DEBUG.UNQUOTED_STRING]: {
+    [STATS]: {
+      [TYPE_PROP]: [APPLY],
+      [SIGNATURE]: DEBUG.UNQUOTED_STRING,
+      retried: Infinity,
+      [ARG_COUNT]: 1,
+      [ARGUMENTS]: [
+        {
+          [STATS]: {
+            retried: 0,
+            [SIGNATURE]: PLACEHOLDER,
+            [TYPE_PROP]: [COLLECTION],
+            [RETURNS]: [COLLECTION],
+
+            [ARGUMENTS]: [],
+            [ARG_COUNT]: 0
+          }
+        }
+      ],
+      [RETURNS]: [COLLECTION]
+    }
+  },
   [DEBUG.SIGNATURE]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],

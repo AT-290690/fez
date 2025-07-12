@@ -1454,6 +1454,8 @@
 (let array:rotate-right (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:rotate-left
 (let array:rotate-left (lambda Unknown[] Number (do Unknown[])))
+; 1 string:wrap-in-quotes
+(let string:wrap-in-quotes (lambda Unknown (do Unknown[])))
 ; 1 string:character-occurances xs
 (let xs Unknown[])
 ; 1 string:character-occurances bitmask
