@@ -8,6 +8,18 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(Isub 
+    (Imul 
+        (Idiv 
+            (Iadd 
+                (I 100) 
+                (I 100)) 
+        (I 10))
+    (I 4))
+(I 11))`),
+      [6, 9]
+    )
+    deepStrictEqual(
       evalJS(`(let a [ 1 0 0 0 0 ])
 (|> a 
 (math:big-integer-multiplication [ 1 0 0 0 ])

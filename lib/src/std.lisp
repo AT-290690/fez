@@ -343,8 +343,8 @@
   (let carry (math:var-def 0))
   (loop:for-n max-length (lambda i (do
     (let digit-A (if (< i (length a)) (array:get a i) 0))
-    (let digit-b (if (< i (length b)) (array:get b i) 0))
-    (let sum (+ digit-A digit-b (math:var-get carry)))
+    (let digit-B (if (< i (length b)) (array:get b i) 0))
+    (let sum (+ digit-A digit-B (math:var-get carry)))
     (array:push! result (mod sum 10))
     (math:var-set! carry (math:floor (/ sum 10))))
   ))
@@ -361,8 +361,8 @@
   (let borrow (math:var-def 0))
   (loop:for-n max-length (lambda i (do
     (let digit-A (if (< i (length a)) (array:get a i) 0))
-    (let digit-b (if (< i (length b)) (array:get b i) 0))
-    (let sub (- digit-A digit-b (math:var-get borrow)))
+    (let digit-B (if (< i (length b)) (array:get b i) 0))
+    (let sub (- digit-A digit-B (math:var-get borrow)))
     (if (< sub 0)
       (do
         (array:push! result (+ sub 10))
@@ -386,9 +386,9 @@
     (let carry (math:var-def 0))
     (let digit-a (array:get a i))
     (loop:for-n (length b) (lambda j (do
-      (let digit-b (array:get b j))
+      (let digit-B (array:get b j))
       (let idx (+ i j))
-      (let prod (+ (* digit-a digit-b) (array:get result idx) (math:var-get carry)))
+      (let prod (+ (* digit-a digit-B) (array:get result idx) (math:var-get carry)))
       (array:set! result idx (mod prod 10))
       (math:var-set! carry (math:floor (/ prod 10))))))
     ; Handle carry for this digit-a
@@ -411,8 +411,14 @@
   (and (bool:true? tr) (math:zero? b)) a
     (do
       (if (bool:true? tr) (bool:false! tr))
-      (array:merge a [b])))) [])))))
-
+      (array:merge! a [b])))) [])))))
+(let math:remove-trailing-zeroes (lambda digits (do
+  (let tr (bool:false))
+  (|> digits (array:transform (lambda a b (if
+  (and (bool:true? tr) (math:zero? b)) a
+    (do
+      (if (bool:false? tr) (bool:true! tr))
+      (array:merge! a [b])))) [])))))
 (let math:big-integer-less-or-equal? (lambda a b (do
   (if (< (length a) (length b)) true
   (if (> (length a) (length b)) false
@@ -2213,11 +2219,11 @@ heap)))
 (let new:big-integer from:chars->digits)
 (let while loop)
 
-(let #int new:big-integer)
-(let #+ math:big-integer-addition)
-(let #- math:big-integer-subtraction)
-(let #* math:big-integer-multiplication)
-(let #/ math:big-integer-division)
+(let Int new:big-integer)
+(let Iadd math:big-integer-addition)
+(let Isub math:big-integer-subtraction)
+(let Imul math:big-integer-multiplication)
+(let Idiv math:big-integer-division)
 
 (let array:at (lambda xs i (if (< i 0) (get xs (+ (length xs) i)) (get xs i))))
 (let array:head (lambda xs (get xs 0)))

@@ -31,11 +31,11 @@ export const SUGGAR = {
   POWER: '**',
   INTEGER_DEVISION: '//',
   CONDITION: 'cond',
-  BIG_INT: '#i',
-  BIG_INT_ADDITION: '#+',
-  BIG_INT_SUBTRACTION: '#-',
-  BIG_INT_DIVISION: '#/',
-  BIG_INT_MULTIPLICATION: '#*',
+  BIG_INT: 'Int',
+  BIG_INT_ADDITION: 'Iadd',
+  BIG_INT_SUBTRACTION: 'Isub',
+  BIG_INT_DIVISION: 'Idiv',
+  BIG_INT_MULTIPLICATION: 'Imul',
   NEW_BIG_INTEGER: 'new:big-integer',
   PROMISES: '*DATA*'
 }
@@ -756,7 +756,7 @@ export const replaceQuotes = (source) =>
     .replaceAll(/\{/g, `(${SUGGAR.CREATE_LIST} `)
     .replaceAll(/\}/g, ')')
 export const replaceBigInteger = (source) =>
-  source.replaceAll(/\(#i\s+([0-9]+)\)/g, (_, num) => `(#int "${num}")`)
+  source.replaceAll(/\(I\s+([0-9]+)\)/g, (_, num) => `(Int "${num}")`)
 export const deSuggarSource = (source) =>
   replaceQuotes(
     replaceStrings(replaceTemplateLiteralStrings(replaceBigInteger(source)))
