@@ -72,7 +72,7 @@
                 (or (array:empty? rest) (not (array:some? rest (lambda other (do
                 (let key (from:chars->key current other))
                 (not (set:has? memo key)))))))))))))
-    (array:map (lambda x (array:sort x (lambda a b (not (set:has? memo (from:chars->key a b)))))))
+    (array:map (lambda x (math:sort x (lambda a b (not (set:has? memo (from:chars->key a b)))))))
     (sum-mid)))))
 
     [(part1 PARSED) (part2 PARSED)]

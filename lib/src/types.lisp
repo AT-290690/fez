@@ -1230,6 +1230,8 @@
 (let matrix:get-option (lambda Unknown[] Number Number (do Unknown[][])))
 ; 1 matrix:get-or-default
 (let matrix:get-or-default (lambda Unknown[] Number Number Unknown (do Unknown)))
+; 1 from:digit->word
+(let from:digit->word (lambda Number (do Number[])))
 ; 1 from:degrees->radians
 (let from:degrees->radians (lambda Number (do Number)))
 ; 1 from:radians->degrees
@@ -1888,6 +1890,10 @@
 (let var:set-and-get! (lambda Unknown[] Unknown (do Unknown)))
 ; 1 math:var-def
 (let math:var-def (lambda Number (do Number[])))
+; 1 math:var-zero
+(let math:var-zero (lambda (do Number[])))
+; 1 math:var-one
+(let math:var-one (lambda (do Number[])))
 ; 1 math:var-get
 (let math:var-get (lambda Number[] (do Number)))
 ; 1 math:var-set!
@@ -2284,6 +2290,8 @@
 (let new:big-integer (lambda Number[] (do Number[])))
 ; 1 while
 (let while (lambda Number Unknown (do Number)))
+; 1 math:sort
+(let math:sort (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
 ; 1 Int
 (let Int (lambda Number[] (do Number[])))
 ; 1 Iadd

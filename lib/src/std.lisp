@@ -1134,6 +1134,19 @@
 (let matrix:set-and-get! (lambda matrix y x value (do (matrix:set! matrix y x value) value)))
 (let matrix:get-option (lambda xs y x (if (matrix:in-bounds? xs y x) [[(matrix:get xs y x)] []] [[] [-1]])))
 (let matrix:get-or-default (lambda xs y x def (if (matrix:in-bounds? xs y x) (matrix:get xs y x) def)))
+(let from:digit->word (lambda digit 
+  (cond 
+    (= digit 0) "zero"
+    (= digit 1) "one"
+    (= digit 2) "two"
+    (= digit 3) "three"
+    (= digit 4) "four"
+    (= digit 5) "five"
+    (= digit 6) "six"
+    (= digit 7) "seven"
+    (= digit 8) "eight"
+    (= digit 9) "nine"
+    (*) [])))
 (let from:degrees->radians (lambda deg (* deg (/ math:pi 180))))
 (let from:radians->degrees (lambda rad (* rad (/ 180 math:pi))))
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
@@ -1839,6 +1852,8 @@
 (let var:set-and-get! (lambda variable value (do (var:set! variable value) value)))
 
 (let math:var-def (lambda val (array val)))
+(let math:var-zero (lambda (array 0)))
+(let math:var-one (lambda (array 1)))
 (let math:var-get (lambda variable (get variable 0)))
 (let math:var-set! (lambda variable value (set! variable 0 value)))
 (let math:var-del! (lambda variable (del! variable)))
@@ -2218,6 +2233,7 @@ heap)))
 (let not-equal? array:not-equal?)
 (let new:big-integer from:chars->digits)
 (let while loop)
+(let math:sort array:sort)
 
 (let Int new:big-integer)
 (let Iadd math:big-integer-addition)

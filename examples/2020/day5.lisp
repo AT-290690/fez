@@ -31,7 +31,7 @@ BBFFBBFRLL")
       PARSED
       (math:maximum)))
 
-(let sorted (array:sort PARSED >))
+(let sorted (math:sort PARSED >))
 (let min-seat (math:minimum sorted))
 
 (let res2 (|> 

@@ -27,7 +27,7 @@
     (let w (car (cdr x)))
     (let h (car (cdr (cdr x))))
     ; 2*l*w + 2*w*h + 2*h*l
-    (let s (|> x (array:sort >)))
+    (let s (|> x (math:sort >)))
     (let m1 (car s))
     (let m2 (car (cdr s)))
     (+ (* m1 2) (* m2 2) (* l w h))
