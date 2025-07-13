@@ -1,6 +1,6 @@
 import { makeEditor, serialise } from '../editor/utils.js'
 import { debug } from '../editor/debug.js'
-import { parse } from '../src/utils.js'
+import { isInputVariable, parse, unwrapDo } from '../src/utils.js'
 import { Prompt } from './prompt.js'
 
 const THEME = 'github_dark'
@@ -17,9 +17,14 @@ const inter = (source) => {
     ).then((prompt) => {
       if (!prompt) return
       inputValue = prompt
-      const input = `(let INPUT "${prompt}") ${source}`
       try {
-        const parsed = parse(input)
+        const parsed = parse(source)
+        const inputToReplace = unwrapDo(parsed).find(isInputVariable)
+        if (!inputToReplace)
+          return terminal.setValue(
+            'This program is missing INPUT variable definition'
+          )
+        inputToReplace[2] = unwrapDo(parse(`(let INPUT "${prompt}")`))[1].at(-1)
         const { evaluated, error } = debug(parsed, false)
         terminal.setValue(error == null ? serialise(evaluated) : error.message)
         terminal.clearSelection()

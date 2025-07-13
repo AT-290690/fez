@@ -318,6 +318,7 @@ export const ast = (source, deps) =>
 
 export const astWithStd = (source) => wrapInBlock(shake(prep(source), std))
 export const unwrapped = (source) => shake(prep(source), std)
+export const unwrapDo = (ast) => ast[1][1]
 export const parse = (source) =>
   wrapInBlock(
     shake(
@@ -348,6 +349,14 @@ export const addTypeIdentities = (ast) => {
     identity(STATIC_TYPES.UNKNOWN)
   )
 }
+export const isInputVariable = (x) =>
+  x &&
+  x[0] &&
+  x[0][TYPE] === APPLY &&
+  x[0][VALUE] === 'let' &&
+  x[1] &&
+  x[1][TYPE] === WORD &&
+  x[1][VALUE] === 'INPUT'
 
 export const UTILS = {
   handleUnbalancedQuotes,

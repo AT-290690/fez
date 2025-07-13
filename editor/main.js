@@ -107,11 +107,10 @@ const mini = () => {
   editor.setValue(code)
 }
 export const link = () =>
-  window.open(
+  terminal.setValue(
     `https://at-290690.github.io/fez/lambda.html?l=${encodeURIComponent(
       LZString.compressToBase64(editor.getValue().trim())
-    )}`,
-    '_blank'
+    )}`
   )
 document.getElementById('run').addEventListener('click', inter)
 document.getElementById('log').addEventListener('click', log)
