@@ -1,4 +1,4 @@
-import { parse, compile, enhance, AST } from '../index.js'
+import { parse, compile, enhance, AST, LISP } from '../index.js'
 import { debug } from './debug.js'
 import { makeEditor, serialise } from './utils.js'
 const THEME = new URLSearchParams(location.search).get('t') ?? 'github_dark'
@@ -24,10 +24,6 @@ const inter = () => {
   if (value.trim()) {
     try {
       const parsed = parse(value)
-      // const T = value
-      //   .match(new RegExp(/; @Type.+/, 'g'))
-      //   ?.map((x) => x.replaceAll('; @Type ', '').trim())
-      //   .join(' ')
       const { evaluated, type, error } = debug(parsed, true)
       terminal.setValue(
         error == null
@@ -36,8 +32,16 @@ const inter = () => {
             : serialise(evaluated)
           : error.message
       )
+      // terminal.clearSelection()
+      const compressed = LZString.compressToBase64(value)
+      const newurl =
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        window.location.pathname +
+        `?t=${THEME}&l=${encodeURIComponent(compressed)}`
+      window.history.pushState({ path: newurl }, '', newurl)
     } catch (error) {
-      console.log(error)
       terminal.setValue(error.message)
       terminal.clearSelection()
     }
@@ -58,17 +62,25 @@ const comp = () => {
     terminal.clearSelection()
   }
 }
-const cmd = () => {
-  const selection = terminal.getSelectedText()?.trim()
-  if (selection) {
-    const parsed = parse(selection)
-    const { evaluated, error } = debug(parsed)
-    terminal.setValue(`${selection
-      .split('\n')
-      .map((x) => `; ${x}`)
-      .join('\n')}
-${error == null ? serialise(evaluated) : error.message}`)
-    terminal.clearSelection()
+const log = () => {
+  globalThis.__debugStack__.length = 0
+  const selectedText = editor.getSelectedText()
+  const selection = editor.selection.getRange()
+  if (selectedText?.trim()) {
+    editor.session.replace(selection, `(log ${selectedText} "!")`)
+    const parsed = parse(editor.getValue())
+    debug(parsed, false)
+    terminal.setValue(globalThis.__debugStack__.map(serialise).join('\n'))
+    globalThis.__debugStack__.length = 0
+    editor.session.getUndoManager().undo()
+    //     const parsed = parse(selection)
+    //     const { evaluated, error } = debug(parsed)
+    //     terminal.setValue(`${selection
+    //       .split('\n')
+    //       .map((x) => `; ${x}`)
+    //       .join('\n')}
+    // ${error == null ? serialise(evaluated) : error.message}`)
+    //     terminal.clearSelection()
   }
 }
 document.addEventListener('keydown', (e) => {
@@ -87,9 +99,23 @@ document.addEventListener('keydown', (e) => {
   } else if (e.key === '§' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault()
     e.stopPropagation()
-    cmd()
+    log()
   }
 })
+const mini = () => {
+  const code = LISP.source(parse(editor.getValue()))
+  editor.setValue(code)
+}
+export const link = () =>
+  window.open(
+    `https://at-290690.github.io/fez/lambda.html?l=${encodeURIComponent(
+      LZString.compressToBase64(editor.getValue().trim())
+    )}`,
+    '_blank'
+  )
 document.getElementById('run').addEventListener('click', inter)
+document.getElementById('log').addEventListener('click', log)
+document.getElementById('link').addEventListener('click', link)
+
 // TODDO delete this after done with debugging
 // inter()

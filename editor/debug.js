@@ -30,6 +30,7 @@ import { removeNoCode, stringifyArgs } from '../src/utils.js'
 import { deSuggarAst, deSuggarSource, SUGGAR } from '../src/macros.js'
 // const libraryTypes = new Map() ?? typeCheck(std[0])[1]
 const libraryTypes = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
+globalThis.__debugStack__ = []
 export const debug = (ast, checkTypes = true, userDefinedTypes) => {
   let types = new Map()
   const debugEnv = {
@@ -307,6 +308,9 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
             break
           case '*':
             console.log(expression)
+            break
+          case '!':
+            globalThis.__debugStack__.push(structuredClone(expression))
             break
           default:
             throw new TypeError(

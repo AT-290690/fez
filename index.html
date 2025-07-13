@@ -39,20 +39,39 @@
       height: 29%;
       width: 100%;
     }
+    #link {
+      position: absolute;
+      bottom: 15px;
+      right: 60px;
+    }
+    #log {
+      position: absolute;
+      bottom: 12px;
+      right: 35px;
+    }
+    #run {
+      position: absolute;
+      bottom: 15px;
+      right: 12px;
+    }
     button {
       background-color: transparent;
       border: none;
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
       cursor: pointer;
     }
     button:active {
       transform: scale(1.2);
     }
-    button > img {
-      width: 32px;
-      height: 32px;
+    button > span:hover {
+      opacity: 1;
+      color: rgb(255, 255, 255);
+    }
+    button > span:active {
+      color: rgb(140, 255, 73);
+    }
+    button > span {
+      opacity: 0.8;
+      color: rgb(255, 255, 255);
     }
   </style>
 </head>
@@ -71,6 +90,8 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   ></script>
-  <button id="run" title="run code"><img src="./favicon.svg" /></button>
+  <button id="link" title="run link"><span>⚙</span></button>
+  <button id="log" title="run log"><span>⛶</span></button>
+  <button id="run" title="run code"><span>▶</span></button>
   <script type="module" src="./editor/main.js"></script>
 </body>
