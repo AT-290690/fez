@@ -430,18 +430,20 @@
 (let math:exp (lambda Number (do Number)))
 ; 1 math:square
 (let math:square (lambda Number (do Number)))
-; 1 math:large-power digits
+; 1 math:big-integer-factorial
+(let math:big-integer-factorial (lambda Number[] (do Number[])))
+; 1 math:big-integer-power digits
 (let digits Number[])
-; 1 math:large-power p
+; 1 math:big-integer-power p
 (let p Number[])
-; 1 math:large-power carry
+; 1 math:big-integer-power carry
 (let carry Number[])
-; 1 math:large-power 7 8 prod
+; 1 math:big-integer-power 7 8 prod
 (let prod Number)
-; 1 math:large-power 7 8 newCarry
+; 1 math:big-integer-power 7 8 newCarry
 (let newCarry Number)
-; 1 math:large-power
-(let math:large-power (lambda Number Number (do Number[])))
+; 1 math:big-integer-power
+(let math:big-integer-power (lambda Number Number (do Number[])))
 ; 1 math:big-integer-addition a
 (let a Number[])
 ; 1 math:big-integer-addition b
@@ -2714,11 +2716,11 @@
 (let sum Number)
 ; 1 math:big-integer-addition math:big-integer-addition lambda::annonymous::1::328
 (let lambda::annonymous::1::328 (lambda Number (do Number[])))
-; 1 math:large-power 7 7 lambda::annonymous::1::329 prod
+; 1 math:big-integer-power 7 7 lambda::annonymous::1::329 prod
 (let prod Number)
-; 1 math:large-power 7 7 lambda::annonymous::1::329 newCarry
+; 1 math:big-integer-power 7 7 lambda::annonymous::1::329 newCarry
 (let newCarry Number)
-; 1 math:large-power 7 7 lambda::annonymous::1::329
+; 1 math:big-integer-power 7 7 lambda::annonymous::1::329
 (let lambda::annonymous::1::329 (lambda Number (do Number[])))
 ; 1 math:min-length math:min-length lambda::annonymous::1::330
 (let lambda::annonymous::1::330 (lambda Number Unknown[] (do Number)))
@@ -2750,21 +2752,21 @@
 (let lambda::annonymous::1::347 (lambda Number Unknown[] (do Number)))
 ; 1 math:min-length math:min-length lambda::annonymous::1::349
 (let lambda::annonymous::1::349 (lambda Number Unknown[] (do Number)))
-; 1 math:large-power 7 7 lambda::annonymous::1::350 prod
+; 1 math:big-integer-power 7 7 lambda::annonymous::1::350 prod
 (let prod Number)
-; 1 math:large-power 7 7 lambda::annonymous::1::350 newCarry
+; 1 math:big-integer-power 7 7 lambda::annonymous::1::350 newCarry
 (let newCarry Number)
-; 1 math:large-power 7 7 lambda::annonymous::1::350
+; 1 math:big-integer-power 7 7 lambda::annonymous::1::350
 (let lambda::annonymous::1::350 (lambda Number (do Number[])))
-; 1 math:large-power 351 352 prod
+; 1 math:big-integer-power 351 352 prod
 (let prod Number)
-; 1 math:large-power 351 352 newCarry
+; 1 math:big-integer-power 351 352 newCarry
 (let newCarry Number)
-; 1 math:large-power 351 351 lambda::annonymous::1::354 prod
+; 1 math:big-integer-power 351 351 lambda::annonymous::1::354 prod
 (let prod Number)
-; 1 math:large-power 351 351 lambda::annonymous::1::354 newCarry
+; 1 math:big-integer-power 351 351 lambda::annonymous::1::354 newCarry
 (let newCarry Number)
-; 1 math:large-power 351 351 lambda::annonymous::1::354
+; 1 math:big-integer-power 351 351 lambda::annonymous::1::354
 (let lambda::annonymous::1::354 (lambda Number (do Number[])))
 ; 1 math:big-integer-addition math:big-integer-addition lambda::annonymous::1::355 digit-A
 (let digit-A Number)
@@ -4316,11 +4318,11 @@
 (let lambda::annonymous::1::1264 (lambda Number Unknown[] (do Number)))
 ; 1 math:min-length math:min-length lambda::annonymous::1::1265
 (let lambda::annonymous::1::1265 (lambda Number Unknown[] (do Number)))
-; 1 math:large-power 351 351 lambda::annonymous::1::1266 prod
+; 1 math:big-integer-power 351 351 lambda::annonymous::1::1266 prod
 (let prod Number)
-; 1 math:large-power 351 351 lambda::annonymous::1::1266 newCarry
+; 1 math:big-integer-power 351 351 lambda::annonymous::1::1266 newCarry
 (let newCarry Number)
-; 1 math:large-power 351 351 lambda::annonymous::1::1266
+; 1 math:big-integer-power 351 351 lambda::annonymous::1::1266
 (let lambda::annonymous::1::1266 (lambda Number (do Number[])))
 ; 1 math:big-integer-addition math:big-integer-addition lambda::annonymous::1::1267 digit-A
 (let digit-A Number)

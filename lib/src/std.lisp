@@ -314,7 +314,8 @@
 ;             (= exp 0) 1
 ;             (= exp 1) base
 ;             (*) (* base (math:power base (- exp 1)))))))
-(let math:large-power (lambda n pow (do
+(let math:big-integer-factorial (lambda n (if (math:zero? (array:first n)) [1] (math:big-integer-multiplication n (math:big-integer-factorial (math:big-integer-subtraction n [1]))))))
+(let math:big-integer-power (lambda n pow (do
   ; Initialize digits array with the first digit
   (let digits (array n))
   (let p (math:var-def 1)) ; Use numeric variable for p

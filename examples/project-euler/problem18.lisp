@@ -1,11 +1,11 @@
-; (let input [
+; (let INPUT [
 ;     [ 3 ]
 ;     [ 7 4 ]
 ;     [ 2 4 6 ]
 ;     [ 8 5 9 3 ]
 ; ])
 
-(let input [
+(let INPUT [
     [ 75 ]
     [ 95 64 ]
     [ 17 47 82 ]
@@ -23,11 +23,11 @@
     [ 04 62 98 27 23 09 70 98 73 93 38 53 60 04 23 ]
 ])
 
-(let n (math:var-def (length input)))
+(let n (math:var-def (length INPUT)))
 (loop (>= (math:var-get n) 2) (do 
   (let i (math:var-def (- (math:var-get n) 2)))
-  (let row (array:get input (math:var-get i)))
-  (let next_row (array:get input (+ (math:var-get i) 1)))
+  (let row (array:get INPUT (math:var-get i)))
+  (let next_row (array:get INPUT (+ (math:var-get i) 1)))
   (let j (math:var-zero))
   (loop (< (math:var-get j) (length row)) (do 
     (array:set! row (math:var-get j)
@@ -36,4 +36,4 @@
     (math:var-increment! j)))
   (math:var-decrement! n)))
 
-(matrix:get input 0 0)
+(matrix:get INPUT 0 0)
