@@ -1,5 +1,6 @@
 import { compile, enhance, parse, type } from '../index.js'
 import { readFileSync, readdirSync } from 'fs'
+import { withStdDefinedTypes } from '../src/types.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
@@ -22,7 +23,7 @@ export const test = (folder, arr) => {
         try {
           const a = map.get(x)
           const parsed = parse(readFileSync(`${path}${x}`, 'utf-8'))
-          type(parsed)
+          type(parsed, withStdDefinedTypes(parsed))
           const b = new Function(`return ${compile(enhance(parsed))}`)()
           const assertion = isEqual(a, b)
           if (!assertion) {

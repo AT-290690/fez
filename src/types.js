@@ -1,3 +1,5 @@
+import stdT from '../lib/baked/std-T.js'
+import std from '../lib/baked/std.js'
 import { getReturn, getReturns, getType, getTypes } from './check.js'
 import {
   APPLY,
@@ -1446,3 +1448,5 @@ export const filteredDefinedTypes = (program, lib, libT) => {
   return libT.filter((x) => deps.has(x[1][1]))
 }
 export const definedTypes = (T) => fromSourceToType(T)
+export const withStdDefinedTypes = (ast) =>
+  withCtxTypes(definedTypes(filteredDefinedTypes(ast, std, stdT)))
