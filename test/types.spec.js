@@ -145,7 +145,7 @@ describe('Type checking', () => {
         '(let x? Number)',
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda Number[] (do Number)))',
+        '(let g (lambda Number[] (do Unknown)))',
         '(let Ax Number[])',
         '(let ix Number)',
         '(let iz (lambda (do Number)))',
@@ -155,9 +155,9 @@ describe('Type checking', () => {
         '(let aafn (lambda Number Boolean[] (do Number[])))',
         '(let sqrt-of-nine Number)',
         '(let rabbits Number[])',
-        '(let fff Number)',
+        '(let fff Unknown)',
         '(let iitem Unknown[][])',
-        '(let iiitem Unknown[])'
+        '(let iiitem Unknown)'
       ]
     )
     deepStrictEqual(
@@ -668,16 +668,17 @@ ZZZ=ZZZ,ZZZ")
     // fails(`(let xs [])
     // (let x (array:set-and-get! xs 0 100))
     // (length x)`, '')
-    fails(
-      `(let xs [1 2])
-(let x (get xs 0))
-(and x true)`,
-      `Incorrect type of argument (0) for (and). Expected (Boolean) but got (Number) (and x true) (check #202)`
-    )
+    // TODO some day maybe check getters again
+    //     fails(
+    //       `(let xs [1 2])
+    // (let x (get xs 0))
+    // (and x true)`,
+    //       `Incorrect type of argument (0) for (and). Expected (Boolean) but got (Number) (and x true) (check #202)`
+    //     )
     fails(
       `(let xs [])
 (set! xs 0 100)
-(let x (array:get xs 0 100))
+(let x (array:get-number xs 0))
 (length x)`,
       `Incorrect type of argument (0) for (length). Expected (Unknown[]) but got (Number) (length x) (check #3)`
     )
@@ -695,7 +696,7 @@ ZZZ=ZZZ,ZZZ")
       `(let arr [])
 (set! arr (length arr) 10)
 (let f (lambda (do 
-(let x (get arr 0))
+(let x (array:get-number arr 0))
 (array:reverse x)
 )))`,
       `Incorrect type of argument (0) for (array:reverse). Expected (Unknown[]) but got (Number) (array:reverse x) (check #3)`
@@ -753,7 +754,7 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let arr [1 2 3 4])
 (let y (lambda (do 
-(let x (get arr 0))
+(let x (array:get-number arr 0))
 (set! x 0 1)
 )))`,
       `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! x 0 1) (check #3)`
@@ -892,7 +893,7 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let arr [])
     (set! arr (length arr) 2)
-    (let x (get arr 0))
+    (let x (array:get-number arr 0))
 
     (let f (lambda (do
     (and x 0))))`,
@@ -994,7 +995,7 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let arr [])
 (set! arr (length arr) 2)
-(let x (get arr 0))
+(let x (array:get-number arr 0))
 (set! x 0 1)`,
       `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! x 0 1) (check #3)`
     )

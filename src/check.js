@@ -2,7 +2,6 @@ import {
   APPLY,
   ATOM,
   FALSE,
-  GETTERS_SET,
   KEYWORDS,
   MUTATION_SUFFIX,
   MUTATORS_SET,
@@ -847,23 +846,23 @@ const resolveReturnType = ({
         break
       default:
         {
-          if (
-            !GETTERS_SET.has(name) &&
-            GETTERS_SET.has(returns[VALUE]) &&
-            !resolveGetter({ rem, prop, name, env })
-          )
-            return retry(env[name][STATS], [returns, env], stack, () => {
-              resolveReturnType({
-                returns,
-                rem,
-                stack,
-                prop,
-                exp,
-                name,
-                env,
-                check
-              })
-            })
+          // if (
+          //   !GETTERS_SET.has(name) &&
+          //   GETTERS_SET.has(returns[VALUE]) &&
+          //   !resolveGetter({ rem, prop, name, env })
+          // )
+          //   return retry(env[name][STATS], [returns, env], stack, () => {
+          //     resolveReturnType({
+          //       returns,
+          //       rem,
+          //       stack,
+          //       prop,
+          //       exp,
+          //       name,
+          //       env,
+          //       check
+          //     })
+          //   })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           // TODO: DRY
           const index = env[name][STATS][ARGUMENTS]

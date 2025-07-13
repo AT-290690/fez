@@ -2242,6 +2242,10 @@ heap)))
 (let Imul math:big-integer-multiplication)
 (let Idiv math:big-integer-division)
 
+(let array:get-number get)
+(let array:get-array get)
+(let array:get-boolean get)
+
 (let array:at (lambda xs i (if (< i 0) (get xs (+ (length xs) i)) (get xs i))))
 (let array:head (lambda xs (get xs 0)))
 (let array:tail (lambda xs (do

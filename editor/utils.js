@@ -6,7 +6,7 @@ export const makeEditor = (el, theme) => {
     copyWithEmptySelection: true
   })
   editor.setKeyboardHandler('ace/keyboard/vscode')
-  editor.renderer.setShowGutter(false)
+  editor.renderer.setShowGutter(true)
   editor.setTheme(`ace/theme/${theme}`)
   editor.setShowPrintMargin(false)
   editor.session.setMode('ace/mode/lisp')
