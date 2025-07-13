@@ -168,6 +168,7 @@
             (*
                 (math:factorial b)
                 (math:factorial (- a b))))))
+(let math:number-of-permutations (lambda a b (/ (math:factorial a) (math:factorial (- a b)))))
 (let math:permutations (lambda xs
   (if (> (length xs) 0)
               (|> xs (array:enumerated-map (lambda x i (|>

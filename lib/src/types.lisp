@@ -280,6 +280,8 @@
 (let math:overlap? (lambda Number Number Number (do Boolean)))
 ; 1 math:bionomial-coefficient
 (let math:bionomial-coefficient (lambda Number Number (do Number)))
+; 1 math:number-of-permutations
+(let math:number-of-permutations (lambda Number Number (do Number)))
 ; 1 math:permutations
 (let math:permutations (lambda Unknown[] (do Unknown[][])))
 ; 1 math:combinations
