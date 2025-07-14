@@ -292,6 +292,7 @@ const comp = (tree, Drill) => {
       case STATIC_TYPES.AS_NUMBER:
       case DEBUG.LOG:
       case DEBUG.STRING:
+      case DEBUG.UNQUOTED_STRING:
         return compile(tail[0], Drill)
 
       default: {
