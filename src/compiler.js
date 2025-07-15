@@ -248,9 +248,7 @@ const comp = (tree, Drill) => {
           .map((x) => (typeof x === 'number' && x < 0 ? ` ${x}` : x))
           .join(token)});`
       case KEYWORDS.MULTIPLICATION:
-        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.DIVISION:
-        return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.ADDITION:
         return `(${parseArgs(tail, Drill, token)});`
       case KEYWORDS.BITWISE_AND:
