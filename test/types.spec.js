@@ -629,6 +629,15 @@ ZZZ=ZZZ,ZZZ")
       )
       (do
       (let fn? (lambda x (apply x (lambda x (math:even? x))))))`)
+    passes(`(let math:power-bug (lambda base exp (do
+    (lambda (do
+        (let zz [base])
+        ; (let zz (lambda 1))
+        (set! zz 0 (* (get zz 0) 2))
+        ))
+  )))
+(let zz 12)
+(+ zz 2)`)
     doesNotThrow(() => type(std))
   })
   it('Should throw', () => {
@@ -643,6 +652,17 @@ ZZZ=ZZZ,ZZZ")
     )))
     `,
       `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Unknown[]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
+    )
+    fails(
+      `(let math:power-bug (lambda base exp (do
+      (lambda (do
+           (let zz (lambda 1))
+          (set! zz 0 (* (get zz 0) 2))
+          ))
+    )))
+  (let zz 12)
+  (+ zz 2)`,
+      `Incorrect type of argument (0) for (get). Expected (Unknown[]) but got (Abstraction) (get zz 0) (check #3)`
     )
     fails(
       `(let ifs (Numbers []))

@@ -239,7 +239,7 @@
 (let math:every? (lambda xs cb (array:every? xs cb)))
 (let math:some? (lambda xs cb (array:some? xs cb)))
 (let math:enumerated-every? (lambda xs cb (array:enumerated-every? xs cb)))
-(let math:enumerated-some? (lambda xs cb (array:enumerated-some xs cb)))
+(let math:enumerated-some? (lambda xs cb (array:enumerated-some? xs cb)))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
 (let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) 0)))

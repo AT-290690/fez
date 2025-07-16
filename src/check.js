@@ -16,7 +16,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { isLeaf } from './parser.js'
+import { isLeaf, LISP } from './parser.js'
 import {
   SPECIAL_FORM_TYPES,
   toTypeNames,
@@ -461,7 +461,7 @@ const getScopeNames = (scope) => {
 }
 const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
-  return `${chain.length === 1 ? '; ' : ''}${chain.join(' ')} ${name}`
+  return `${chain.join(' ')} ${name}`
 }
 const retry = (stats, ctx, stack, cb, method = 'prepend') => {
   if (
@@ -993,6 +993,7 @@ const stagger = (stack, method, data, fn) => {
 export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
   const Types = new Map()
   const stack = new Brr()
+  const rootScopeIndex = 1
   let scopeIndex = 0
   // TODO also handle casting
   const match = ({ rest, args, i, env, scope, exp }) => {
@@ -1204,7 +1205,9 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
               )
             if (name in env) {
               Types.set(withScope(name, env), () => formatType(name, env))
-              if (!env[env[SCOPE_NAME]]) break
+              if (env[SCOPE_NAME] === rootScopeIndex) {
+                break
+              }
             }
             //  Predicate name consistency
             const rightHand = rest.at(-1)
@@ -1429,34 +1432,9 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                         check
                       })
                     })
-                    // const ret = returns[0]
-                    // switch (ret[VALUE]) {
-                    //   case KEYWORDS.IF:
-                    //     resolveCondition({
-                    //       rem: returns,
-                    //       name: ref[STATS][SIGNATURE],
-                    //       env: copy,
-                    //       exp,
-                    //       stack,
-                    //       prop: RETURNS,
-                    //       check
-                    //     })
-                    //     break
-                    //   default:
-                    //     if (copy[ret[VALUE]]) {
-                    //       if (isUnknownReturn(copy[ret[VALUE]][STATS])) {
-                    //         once(ref[STATS], copy[ret[VALUE]][STATS])
-                    //       } else setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                    //     } else
-                    //       stagger(stack, 'append', [ret, copy], () => {
-                    //         if (copy[ret[VALUE]])
-                    //           setReturnRef(ref[STATS], copy[ret[VALUE]][STATS])
-                    //       })
-                    //     break
-                    // }
                   })
                 }
-              check(rest.at(-1), copy, copy)
+              check(rest.at(-1), copy, [])
             }
 
             break
@@ -1480,7 +1458,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 castReturn(ref[STATS], caster[STATS])
               else if (isUnknownType(ref[STATS]))
                 castType(ref[STATS], caster[STATS])
-              check(rest[0], env, env)
+              check(rest[0], env, exp)
             }
             break
           default:
@@ -1610,7 +1588,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                               args[i][STATS],
                               env[name][STATS]
                             )
-                            if (isKnown && !eqTypes)
+                            if (isKnown && !eqTypes) {
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
@@ -1620,7 +1598,7 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                                   getTypes(env[name][STATS])
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
-                            else if (isKnown && eqTypes && !eqSubTypes) {
+                            } else if (isKnown && eqTypes && !eqSubTypes) {
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
