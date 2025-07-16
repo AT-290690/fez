@@ -1205,9 +1205,8 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
               )
             if (name in env) {
               Types.set(withScope(name, env), () => formatType(name, env))
-              if (env[SCOPE_NAME] === rootScopeIndex) {
-                break
-              }
+              // If current scope is root then these are user defined types
+              if (env[SCOPE_NAME] === rootScopeIndex) break
             }
             //  Predicate name consistency
             const rightHand = rest.at(-1)
