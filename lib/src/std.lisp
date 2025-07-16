@@ -473,10 +473,7 @@
     (let out (math:remove-leading-zeroes result))
     (if (array:empty? out) [0] out))))
 
-(let math:power (lambda base exp (do
-  (if (< exp 0)
-    (/ 1 (math:power base (- exp)))
-    (do
+(let math:power-helper (lambda base exp (do
       (let result (math:var-def 1))
       (let b (math:var-def base))
       (let e (math:var-def exp))
@@ -486,7 +483,11 @@
             (math:var-set! result (* (math:var-get result) (math:var-get b))))
           (math:var-set! b (* (math:var-get b) (math:var-get b)))
           (math:var-set! e (// (math:var-get e) 2)))))
-      (math:var-get result))))))
+      (math:var-get result))))
+(let math:power (lambda base exp (do
+  (if (< exp 0)
+    (/ 1 (math:power base (- exp)))
+    (math:power-helper base exp)))))
 ; Integer logarithm base 2
 (let math:int-log2 (lambda n (do
   (let count (math:var-def 0))
@@ -528,7 +529,7 @@
       (if (good-enough? g x) g
           (tail-call:math:sqrt (improve-guess g x) x))))
   (tail-call:math:sqrt 1.0 x))))
-(let math:standard-deviation (lambda xs (do 
+(let math:standard-deviation2 (lambda xs (do 
   (let mean (math:mean xs))
   (|> xs (math:map (lambda x (** (- x mean) 2))) (math:summation) (/ (- (length xs) 1)) (math:sqrt)))))
 (let math:perfect-square? (lambda n (- (math:floor (math:sqrt n)) (math:floor (math:sqrt (- n 1))))))
