@@ -528,6 +528,9 @@
       (if (good-enough? g x) g
           (tail-call:math:sqrt (improve-guess g x) x))))
   (tail-call:math:sqrt 1.0 x))))
+(let math:standard-deviation (lambda xs (do 
+  (let mean (math:mean xs))
+  (|> xs (math:map (lambda x (** (- x mean) 2))) (math:summation) (/ (- (length xs) 1)) (math:sqrt)))))
 (let math:perfect-square? (lambda n (- (math:floor (math:sqrt n)) (math:floor (math:sqrt (- n 1))))))
 (let math:circumference (lambda radius (* math:pi (* radius 2))))
 (let math:hypotenuse (lambda a b (math:sqrt (+ (* a a) (* b b)))))
