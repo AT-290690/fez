@@ -1614,10 +1614,10 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                               throw new TypeError(
                                 `Incorrect type of argument (${i}) for (${
                                   first[VALUE]
-                                }). Expected (${toTypeNames(
-                                  getType(args[i][STATS])
-                                )}) but got (${toTypeNames(
-                                  getType(env[name][STATS])
+                                }). Expected (${formatSubType(
+                                  getTypes(args[i][STATS])
+                                )}) but got (${formatSubType(
+                                  getTypes(env[name][STATS])
                                 )}) (${stringifyArgs(exp)}) (check #3)`
                               )
                             else if (isKnown && eqTypes && !eqSubTypes) {
