@@ -4,7 +4,7 @@ import { enhance } from '../src/enhance.js'
 import { isInputVariable, parse, unwrapDo } from '../src/utils.js'
 import { Prompt } from './prompt.js'
 
-const THEME = 'github_dark'
+const THEME = 'terminal'
 const terminal = makeEditor('terminal', THEME)
 terminal.renderer.setShowGutter(false)
 

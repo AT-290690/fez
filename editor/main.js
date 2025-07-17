@@ -1,11 +1,13 @@
 import { parse, compile, enhance, AST, LISP } from '../index.js'
 import { debug } from './debug.js'
 import { makeEditor, serialise } from './utils.js'
-const THEME = new URLSearchParams(location.search).get('t') ?? 'github_dark'
+const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
 const editor = makeEditor('editor', THEME)
 const terminal = makeEditor('terminal', THEME)
+terminal.renderer.setShowGutter(false)
+
 terminal.setValue(
-  '; To run press cmd/ctrl + S or the fez hat at the bottom right corner'
+  '; To run press cmd/ctrl + S or the play button at the bottom right corner'
 )
 terminal.clearSelection()
 const initial = new URLSearchParams(location.search).get('l') ?? ''
@@ -88,6 +90,7 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     inter()
+    terminal.clearSelection()
   } else if (
     e.key.toLowerCase() === 's' &&
     e.shiftKey &&
@@ -96,6 +99,7 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault()
     e.stopPropagation()
     comp()
+    terminal.clearSelection()
   } else if (e.key === '§' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault()
     e.stopPropagation()
