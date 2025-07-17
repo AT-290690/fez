@@ -136,6 +136,10 @@
 (let pair:list-zip (lambda xs (list:zip (list:head xs) (list:head (list:tail xs)))))
 (let pair:list-unzip (lambda xs (list:unzip xs)))
 
+(let math:range-exclusive (lambda start end (do
+                          (let tail-call:range-exclusive (lambda out count
+                          (if (< count end) (tail-call:range-exclusive (set! out (length out) count) (+ count 1)) out)))
+                          (tail-call:range-exclusive [] start))))
 (let math:range (lambda start end (do
                           (let tail-call:math:range (lambda out count
                           (if (<= count end) (tail-call:math:range (set! out (length out) count) (+ count 1)) out)))
@@ -240,6 +244,8 @@
 (let math:some? (lambda xs cb (array:some? xs cb)))
 (let math:enumerated-every? (lambda xs cb (array:enumerated-every? xs cb)))
 (let math:enumerated-some? (lambda xs cb (array:enumerated-some? xs cb)))
+(let math:enumerated-select (lambda xs cb (array:enumerated-select xs cb)))
+(let math:enumerated-exclude (lambda xs cb (array:enumerated-exclude xs cb)))
 (let math:max (lambda a b (if (> a b) a b)))
 (let math:min (lambda a b (if (< a b) a b)))
 (let math:summation (lambda xs (math:fold xs (lambda a b (+ a b)) 0)))
@@ -297,6 +303,12 @@
     (loop:for-range 1 (+ (math:floor (math:sqrt num)) 1) (lambda i (if (and (math:divisible? num i) (not (= i num))) 
         (|> divisors (array:append! i) (array:append! (/ num i))))))
     divisors)))
+(let math:divisors-exclusive (lambda n (|> (math:range-exclusive 1 n) (math:select (lambda x (math:divisible? n x))))))
+(let math:amicable? (lambda n (do 
+   (let a (|> n (math:divisors-exclusive) (math:summation)))
+   (let b (|> a (math:divisors-exclusive) (math:summation)))
+   (and (<> a b) (= b n)))))
+(let math:amicable-pair (lambda n [ n (|> n (math:divisors-exclusive) (math:summation)) ]))
 (let math:bit-count32 (lambda n0 (do 
   (let n1 (- n0 (& (>> n0 1) 1431655765)))
   (let n2 (+ (& n1 858993459) (& (>> n1 2) 858993459)))

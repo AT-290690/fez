@@ -1,0 +1,1 @@
+(|> (math:range 1 10000) (math:select math:even?) (math:select math:amicable?) (math:summation))
