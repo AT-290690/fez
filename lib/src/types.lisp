@@ -278,6 +278,12 @@
 (let tail-call:math:numbers (lambda Unknown[] (do Unknown[])))
 ; 1 math:numbers
 (let math:numbers (lambda Number Unknown (do Unknown[])))
+; 1 math:range-steps step
+(let step Number)
+; 1 math:range-steps tail-call:math:range-steps
+(let tail-call:math:range-steps (lambda Number[] Number (do Number[])))
+; 1 math:range-steps
+(let math:range-steps (lambda Number Number Number (do Number[])))
 ; 1 math:between?
 (let math:between? (lambda Number Number Number (do Boolean)))
 ; 1 math:overlap?

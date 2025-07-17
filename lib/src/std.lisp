@@ -165,6 +165,11 @@
                           (let tail-call:math:numbers (lambda out
                           (if (< (length out) n) (tail-call:math:numbers (set! out (length out) num)) out)))
                           (tail-call:math:numbers []))))
+(let math:range-steps (lambda start end s (do
+                          (let step (math:max s 1))
+                          (let tail-call:math:range-steps (lambda out count
+                          (if (<= count end) (tail-call:math:range-steps (set! out (length out) count) (+ count step)) out)))
+                          (tail-call:math:range-steps [] start))))
 (let math:between? (lambda v min max (and (> v min) (< v max))))
 (let math:overlap? (lambda v min max (and (>= v min) (<= v max))))
 (let math:bionomial-coefficient (lambda a b
