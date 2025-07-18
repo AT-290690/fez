@@ -14,8 +14,8 @@ BBFFBBFRLL")
       (array:fold (lambda a b (do 
             (let half (* (+ (array:first a) (array:second a)) 0.5))
             (cond 
-                  (= b lower) (set! a 1 (math:floor half))
-                  (= b upper) (set! a 0 (math:round half))
+                  (= b lower) (array:set! a 1 (math:floor half))
+                  (= b upper) (array:set! a 0 (math:round half))
                   (*) a))) bounds)
       (array:get (numberp (= (array:last inp) upper))))))
 

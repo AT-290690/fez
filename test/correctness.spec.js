@@ -2545,18 +2545,18 @@ matrix
     (let tree [])
     (let head (var:def tree))
     (let acc [])
-    (let inside-parens (bool:false))
-    (let valid-separator (bool:false))
-    (let disabled (bool:false))
+    (let inside-parens (boole:false))
+    (let valid-separator (boole:false))
+    (let disabled (boole:false))
     (let MUL "mul")
     (let DO "do(")
     (let NOT-DO "don't(")
     (array:enumerated-for source (lambda cursor i (do 
-        (let mul? (and (bool:false? disabled) (match? source MUL i)))
+        (let mul? (and (boole:false? disabled) (match? source MUL i)))
         (cond 
             (and mul? (= cursor char:left-brace)) (do 
-                (bool:true! inside-parens)
-                (bool:false! valid-separator)
+                (boole:true! inside-parens)
+                (boole:false! valid-separator)
                 (array:empty! acc)
                 (let temp [])
                 (var:set! head temp)
@@ -2564,26 +2564,26 @@ matrix
             (or (= cursor char:right-brace) (= cursor char:comma)) (do 
                 (let token (array:shallow-copy acc))
                 (array:empty! acc)
-                (if (and (bool:true? inside-parens) (array:not-empty? token)) (array:push! (var:get head) token))
+                (if (and (boole:true? inside-parens) (array:not-empty? token)) (array:push! (var:get head) token))
                 (if (= cursor char:right-brace) (do
                 (let do? (match? source DO i))
                 (let not-do? (match? source NOT-DO i))
                 (cond 
-                    do? (bool:false! disabled)
-                    not-do? (bool:true! disabled)
+                    do? (boole:false! disabled)
+                    not-do? (boole:true! disabled)
                     (*) [])
                 (var:set! head tree)
-                (bool:false! inside-parens)) 
-                (bool:true! valid-separator)))
+                (boole:false! inside-parens)) 
+                (boole:true! valid-separator)))
             (*) (do 
                 (if (match:digit? cursor) (do 
                     (array:append! acc cursor)
                     (if (> (length acc) 3) (array:empty! acc))
-                    (bool:false! valid-separator)) (do 
-                    (if (bool:true? inside-parens) (do 
+                    (boole:false! valid-separator)) (do 
+                    (if (boole:true? inside-parens) (do 
                         (array:pop! tree)
                         (array:empty! (var:get head))))
-                    (if (bool:false? valid-separator) (bool:false! inside-parens)))))))))
+                    (if (boole:false? valid-separator) (boole:false! inside-parens)))))))))
     tree)))
 (let part1 (lambda inp (|> 
         inp 
@@ -2636,18 +2636,18 @@ matrix
     (let tree [])
     (let head (var:def tree))
     (let acc [])
-    (let inside-parens (bool:false))
-    (let valid-separator (bool:false))
-    (let disabled (bool:false))
+    (let inside-parens (boole:false))
+    (let valid-separator (boole:false))
+    (let disabled (boole:false))
     (let MUL "mul")
     (let DO "do(")
     (let NOT-DO "don't(")
     (array:enumerated-for source (lambda cursor i (do 
-        (let mul? (and (bool:false? disabled) (match? source MUL i)))
+        (let mul? (and (boole:false? disabled) (match? source MUL i)))
         (cond 
             (and mul? (= cursor char:left-brace)) (do 
-                (bool:true! inside-parens)
-                (bool:false! valid-separator)
+                (boole:true! inside-parens)
+                (boole:false! valid-separator)
                 (array:empty! acc)
                 (let temp [])
                 (var:set! head temp)
@@ -2655,26 +2655,26 @@ matrix
             (or (= cursor char:right-brace) (= cursor char:comma)) (do 
                 (let token (array:shallow-copy acc))
                 (array:empty! acc)
-                (if (and (bool:true? inside-parens) (array:not-empty? token)) (array:push! (var:get head) token))
+                (if (and (boole:true? inside-parens) (array:not-empty? token)) (array:push! (var:get head) token))
                 (if (= cursor char:right-brace) (do
                 (let do? (match? source DO i))
                 (let not-do? (match? source NOT-DO i))
                 (cond 
-                    do? (bool:false! disabled)
-                    not-do? (bool:true! disabled)
+                    do? (boole:false! disabled)
+                    not-do? (boole:true! disabled)
                     (*) [])
                 (var:set! head tree)
-                (bool:false! inside-parens)) 
-                (bool:true! valid-separator)))
+                (boole:false! inside-parens)) 
+                (boole:true! valid-separator)))
             (*) (do 
                 (if (digit? cursor) (do
                     (array:append! acc cursor)
                     (if (> (length acc) 3) (array:empty! acc))
-                    (bool:false! valid-separator)) (do 
-                    (if (bool:true? inside-parens) (do 
+                    (boole:false! valid-separator)) (do 
+                    (if (boole:true? inside-parens) (do 
                         (array:pop! tree)
                         (array:empty! (var:get head))))
-                    (if (bool:false? valid-separator) (bool:false! inside-parens)))))))))
+                    (if (boole:false? valid-separator) (boole:false! inside-parens)))))))))
     tree)))
 (let part1 (lambda inp (|> 
         inp 
@@ -3762,10 +3762,10 @@ input (array:map
 
   (let lower? (lambda a b (< (array:first a) (array:first b))))
   (let goal? (lambda r c (and (= r (array:first end)) (= c (array:second end)))))
-  (let goal-reached? (bool:false))
+  (let goal-reached? (boole:false))
   (let output (var:def 0))
   (loop 
-      (and (heap:not-empty? pq) (bool:false? goal-reached?))
+      (and (heap:not-empty? pq) (boole:false? goal-reached?))
       (do
           (let first (heap:peek pq))
           (heap:pop! pq lower?)
@@ -3777,7 +3777,7 @@ input (array:map
           (set:add! seen (from:stats->key (array r c dr dc)))
           (if (goal? r c) 
               (do 
-                  (bool:true! goal-reached?)
+                  (boole:true! goal-reached?)
                   (var:set! output cost))
               (do 
                   (let dirs (array (array (+ cost 1) (+ r dr) (+ c dc) dr dc)

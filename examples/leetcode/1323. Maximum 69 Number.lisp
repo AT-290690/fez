@@ -1,9 +1,9 @@
 (let maximum-69-number (lambda num (do
-    (let changed (bool:false))
+    (boolean changed false)
     (|>
         num
         (from:integer->digits)
-        (array:map (lambda d (if (and (= d 6) (bool:false? changed)) (do (bool:true! changed) 9) d)))
+        (array:map (lambda d (if (and (= d 6) (boole:false? changed)) (do (boole-set changed true) 9) d)))
         (from:digits->integer)))))
 ; Test cases
 [(maximum-69-number 9669)   ; 9969

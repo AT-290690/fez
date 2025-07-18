@@ -155,22 +155,22 @@
    (math:var-add! var x)      ; - Add x to numeric variable
    (math:var-subtract! var x) ; - Subtract x from numeric variable
 ;
-; 3. bool:* - Boolean variables (true/false only)
-   (bool:true)         ; - Create boolean variable initialized to true
-   (bool:false)        ; - Create boolean variable initialized to false
-   (bool:true! var)    ; - Set boolean variable to true
-   (bool:false! var)   ; - Set boolean variable to false
-   (bool:true? var)    ; - Check if boolean variable is true
-   (bool:false? var)   ; - Check if boolean variable is false
+; 3. boole:* - Boolean variables (true/false only)
+   (boole:true)         ; - Create boolean variable initialized to true
+   (boole:false)        ; - Create boolean variable initialized to false
+   (boole:true! var)    ; - Set boolean variable to true
+   (boole:false! var)   ; - Set boolean variable to false
+   (boole:true? var)    ; - Check if boolean variable is true
+   (boole:false? var)   ; - Check if boolean variable is false
 ;
 ; Examples:
 (let counter (math:var-def 0))           ; numeric variable
 (math:var-increment! counter)            ; increment by 1
 (math:var-set! counter 10)               ; set to 10
 
-(let found (bool:false))                 ; boolean variable
-(bool:true! found)                       ; set to true
-(if (bool:true? found) "yes" "no")       ; check if true
+(let found (boole:false))                 ; boolean variable
+(boole:true! found)                       ; set to true
+(if (boole:true? found) "yes" "no")       ; check if true
 
 (let data (var:def "hello"))             ; general variable
 (var:set! data "world")                  ; set to new value

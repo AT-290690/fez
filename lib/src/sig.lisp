@@ -66,6 +66,14 @@
 (let array:append! (lambda Unknown[] Any (do Unknown[])))
 
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
+(let boole:def-strict (lambda Boolean (do Boolean[])))
+(let boole:get (lambda Boolean[] (do Boolean)))
+(let boole:set! (lambda Boolean[] Boolean (do Boolean[])))
+(let boole:toggle! (lambda Boolean[] (do Boolean[])))
+(let boole:true! (lambda Boolean[] (do Boolean[])))
+(let boole:false! (lambda Boolean[] (do Boolean[])))
+(let boole:true? (lambda Boolean[] (do Boolean)))
+(let boole:false? (lambda Boolean[] (do Boolean)))
 
 (let from:string->array (lambda Number[] Number (do Unknown[][])))
 (let from:array->string (lambda Unknown[][] Number (do Number[])))

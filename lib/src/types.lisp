@@ -539,7 +539,7 @@
 ; 1 math:big-integer-less-or-equal? 24 i
 (let i Number[])
 ; 1 math:big-integer-less-or-equal? 24 result
-(let result Unknown[])
+(let result Boolean[])
 ; 1 math:big-integer-less-or-equal? 24 25 da
 (let da Unknown)
 ; 1 math:big-integer-less-or-equal? 24 25 db
@@ -1499,7 +1499,7 @@
 ; 1 string:character-occurances count
 (let count Number[])
 ; 1 string:character-occurances at-least-one
-(let at-least-one Unknown[])
+(let at-least-one Boolean[])
 ; 1 string:character-occurances tail-call:string:character-occurances ch
 (let ch Unknown)
 ; 1 string:character-occurances tail-call:string:character-occurances code
@@ -1553,11 +1553,11 @@
 ; 1 string:lesser? 150 pairs
 (let pairs Unknown[])
 ; 1 string:lesser? 150 is
-(let is Unknown[])
+(let is Boolean[])
 ; 1 string:lesser? 150 tail-call:string:lesser 151 current
 (let current Unknown[])
 ; 1 string:lesser? 150 tail-call:string:lesser
-(let tail-call:string:lesser (lambda (do Unknown[])))
+(let tail-call:string:lesser (lambda (do Boolean[])))
 ; 1 string:lesser?
 (let string:lesser? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:greater? 152 a
@@ -1567,11 +1567,11 @@
 ; 1 string:greater? 152 pairs
 (let pairs Unknown[])
 ; 1 string:greater? 152 is
-(let is Unknown[])
+(let is Boolean[])
 ; 1 string:greater? 152 tail-call:string:greater 153 current
 (let current Unknown[])
 ; 1 string:greater? 152 tail-call:string:greater
-(let tail-call:string:greater (lambda (do Unknown[])))
+(let tail-call:string:greater (lambda (do Boolean[])))
 ; 1 string:greater?
 (let string:greater? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:greater-or-equal?
@@ -1992,34 +1992,36 @@
 (let math:collinear? (lambda Unknown[] (do Boolean)))
 ; 1 bools:fold
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
-; 1 bool:truths tail-call:bool:truths
-(let tail-call:bool:truths (lambda Boolean[] (do Boolean[])))
-; 1 bool:truths
-(let bool:truths (lambda Number (do Boolean[])))
-; 1 bool:lies tail-call:bool:lies
-(let tail-call:bool:lies (lambda Boolean[] (do Boolean[])))
-; 1 bool:lies
-(let bool:lies (lambda Number (do Boolean[])))
-; 1 bool:def
-(let bool:def (lambda Unknown (do Boolean[])))
-; 1 bool:get
-(let bool:get (lambda Unknown[] (do Unknown)))
-; 1 bool:set!
-(let bool:set! (lambda Unknown[] Unknown (do Unknown[])))
-; 1 bool:toggle!
-(let bool:toggle! (lambda Boolean[] (do Unknown[])))
-; 1 bool:true
-(let bool:true (lambda (do Boolean[])))
-; 1 bool:false
-(let bool:false (lambda (do Boolean[])))
-; 1 bool:true!
-(let bool:true! (lambda Boolean[] (do Unknown[])))
-; 1 bool:false!
-(let bool:false! (lambda Boolean[] (do Unknown[])))
-; 1 bool:true?
-(let bool:true? (lambda Unknown[] (do Boolean)))
-; 1 bool:false?
-(let bool:false? (lambda Unknown[] (do Boolean)))
+; 1 boole:truths tail-call:boole:truths
+(let tail-call:boole:truths (lambda Boolean[] (do Boolean[])))
+; 1 boole:truths
+(let boole:truths (lambda Number (do Boolean[])))
+; 1 boole:lies tail-call:boole:lies
+(let tail-call:boole:lies (lambda Boolean[] (do Boolean[])))
+; 1 boole:lies
+(let boole:lies (lambda Number (do Boolean[])))
+; 1 boole:def
+(let boole:def (lambda Unknown (do Boolean[])))
+; 1 boole:def-strict
+(let boole:def-strict (lambda Boolean (do Boolean[])))
+; 1 boole:get
+(let boole:get (lambda Boolean[] (do Boolean)))
+; 1 boole:set!
+(let boole:set! (lambda Boolean[] Boolean (do Boolean[])))
+; 1 boole:toggle!
+(let boole:toggle! (lambda Boolean[] (do Boolean[])))
+; 1 boole:true
+(let boole:true (lambda (do Boolean[])))
+; 1 boole:false
+(let boole:false (lambda (do Boolean[])))
+; 1 boole:true!
+(let boole:true! (lambda Boolean[] (do Boolean[])))
+; 1 boole:false!
+(let boole:false! (lambda Boolean[] (do Boolean[])))
+; 1 boole:true?
+(let boole:true? (lambda Boolean[] (do Boolean)))
+; 1 boole:false?
+(let boole:false? (lambda Boolean[] (do Boolean)))
 ; 1 curry:ternary
 (let curry:ternary (lambda (lambda Unknown Unknown Unknown (do Unknown)) Unknown Unknown (do Abstraction)))
 ; 1 curry:binary
@@ -2933,7 +2935,7 @@
 ; 1 math:big-integer-less-or-equal? 395 i
 (let i Number[])
 ; 1 math:big-integer-less-or-equal? 395 result
-(let result Unknown[])
+(let result Boolean[])
 ; 1 math:big-integer-less-or-equal? 395 396 da
 (let da Unknown)
 ; 1 math:big-integer-less-or-equal? 395 396 db
@@ -3495,11 +3497,11 @@
 ; 1 string:lesser? 742 pairs
 (let pairs Unknown[])
 ; 1 string:lesser? 742 is
-(let is Unknown[])
+(let is Boolean[])
 ; 1 string:lesser? 742 tail-call:string:lesser 743 current
 (let current Unknown[])
 ; 1 string:lesser? 742 tail-call:string:lesser
-(let tail-call:string:lesser (lambda (do Unknown[])))
+(let tail-call:string:lesser (lambda (do Boolean[])))
 ; 1 string:greater? 152 tail-call:string:greater 744 current
 (let current Unknown[])
 ; 1 string:greater? 745 a
@@ -3509,11 +3511,11 @@
 ; 1 string:greater? 745 pairs
 (let pairs Unknown[])
 ; 1 string:greater? 745 is
-(let is Unknown[])
+(let is Boolean[])
 ; 1 string:greater? 745 tail-call:string:greater 746 current
 (let current Unknown[])
 ; 1 string:greater? 745 tail-call:string:greater
-(let tail-call:string:greater (lambda (do Unknown[])))
+(let tail-call:string:greater (lambda (do Boolean[])))
 ; 1 string:equal? string:equal? lambda::annonymous::1::747
 (let lambda::annonymous::1::747 (lambda Unknown[] (do Boolean)))
 ; 1 string:equal? string:equal? lambda::annonymous::1::749

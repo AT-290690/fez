@@ -39,7 +39,14 @@ export const SUGGAR = {
   NEW_BIG_INTEGER: 'new:big-integer',
   PROMISES: '*DATA*',
   VARIABLE: 'variable',
-  SET_VARIABLE: 'set'
+  SET_VARIABLE: 'set',
+  INCREMENT: '++',
+  DECREMENT: '--',
+  INCREMENT_BY: '+=',
+  DECREMENT_BY: '-=',
+  BOOLEAN_VARIABLE: 'boolean',
+  BOOLEAN_VARIABLE_GET: 'boole',
+  BOOLEAN_VARIABLE_SET: 'boole-set'
 }
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
@@ -102,19 +109,44 @@ export const deSuggarAst = (ast, scope) => {
               //       break
               case KEYWORDS.GET_ARRAY:
                 if (rest.length === 1) {
-                  exp.push([ATOM, 0])
+                  exp[0][VALUE] = 'math:var-get'
+                  // exp.push([ATOM, 0])
                 }
                 break
+              case SUGGAR.INCREMENT:
+                exp[0][VALUE] = 'math:var-increment!'
+                break
+              case SUGGAR.DECREMENT:
+                exp[0][VALUE] = 'math:var-decrement!'
+                break
+              case SUGGAR.INCREMENT_BY:
+                exp[0][VALUE] = 'math:var-add!'
+                deSuggarAst(exp.at(-1))
+                break
+              case SUGGAR.DECREMENT_BY:
+                exp[0][VALUE] = 'math:var-subtract!'
+                deSuggarAst(exp.at(-1))
+                break
               case SUGGAR.VARIABLE:
-                {
-                  exp[0][VALUE] = 'let'
-                  const temp = exp.pop()
-                  exp.push([[APPLY, 'var:def'], temp])
-                }
+                exp[0][VALUE] = 'let'
+                exp.push([[APPLY, 'math:var-def'], exp.pop()])
                 deSuggarAst(exp.at(-1))
                 break
               case SUGGAR.SET_VARIABLE:
-                exp[0][VALUE] = 'var:set!'
+                exp[0][VALUE] = 'math:var-set!'
+                deSuggarAst(exp.at(-1))
+                break
+              case SUGGAR.BOOLEAN_VARIABLE:
+                exp[0][VALUE] = 'let'
+                exp.push([[APPLY, 'boole:def-strict'], exp.pop()])
+                deSuggarAst(exp.at(-1))
+                break
+              case SUGGAR.BOOLEAN_VARIABLE_SET:
+                exp[0][VALUE] = 'boole:set!'
+                deSuggarAst(exp.at(-1))
+                break
+              case SUGGAR.BOOLEAN_VARIABLE_GET:
+                exp[0][VALUE] = 'boole:get'
                 deSuggarAst(exp.at(-1))
                 break
               case KEYWORDS.BLOCK:

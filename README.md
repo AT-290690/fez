@@ -83,7 +83,7 @@
 (array:push! xs (length xs) 10) ; add the value 10 at the end of array xs
 (array:get xs 0) ; get the first element of array xs
 
-; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs).
+; Note: array:set! and array:pop! are functions that update arrays (array:set! xs idx value, array:pop! xs).
 ; If you want to update variables (scalars), use the variable helpers: var:def to define, var:set! to update, and var:get to retrieve the value.
 
 ; Mathematical operations
@@ -164,7 +164,7 @@
 ; IMPORTANT: Variable Handling and set! Usage
 ; ===========================================
 ;
-; set! is ONLY for arrays - it cannot be used to update scalar variables.
+; array:set! is ONLY for arrays - it cannot be used to update scalar variables.
 ; If you want to update variables (scalars), use the appropriate variable helper functions.
 ;
 ; There are three types of variable systems in this language:
@@ -184,22 +184,22 @@
    (math:var-add! var x)      ; - Add x to numeric variable
    (math:var-subtract! var x) ; - Subtract x from numeric variable
 ;
-; 3. bool:* - Boolean variables (true/false only)
-   (bool:true)         ; - Create boolean variable initialized to true
-   (bool:false)        ; - Create boolean variable initialized to false
-   (bool:true! var)    ; - Set boolean variable to true
-   (bool:false! var)   ; - Set boolean variable to false
-   (bool:true? var)    ; - Check if boolean variable is true
-   (bool:false? var)   ; - Check if boolean variable is false
+; 3. boole:* - Boolean variables (true/false only)
+   (boole:true)         ; - Create boolean variable initialized to true
+   (boole:false)        ; - Create boolean variable initialized to false
+   (boole:true! var)    ; - Set boolean variable to true
+   (boole:false! var)   ; - Set boolean variable to false
+   (boole:true? var)    ; - Check if boolean variable is true
+   (boole:false? var)   ; - Check if boolean variable is false
 ;
 ; Examples:
 (let counter (math:var-def 0))           ; numeric variable
 (math:var-increment! counter)            ; increment by 1
 (math:var-set! counter 10)               ; set to 10
 
-(let found (bool:false))                 ; boolean variable
-(bool:true! found)                       ; set to true
-(if (bool:true? found) "yes" "no")       ; check if true
+(let found (boole:false))                 ; boolean variable
+(boole:true! found)                       ; set to true
+(if (boole:true? found) "yes" "no")       ; check if true
 
 (let data (var:def "hello"))             ; general variable
 (var:set! data "world")                  ; set to new value
@@ -226,8 +226,8 @@
                 xs)))
 (let arr:merge (lambda a b (do
     (let out (array))  initialize an empty array for output
-    (arr:for a (lambda x (do (set! out (length out) x))))
-    (arr:for b (lambda x (do (set! out (length out) x)))) out)))
+    (arr:for a (lambda x (do (array:set! out (length out) x))))
+    (arr:for b (lambda x (do (array:set! out (length out) x)))) out)))
 (let arr:reverse (lambda xs (do
                     (let tail-call:arr:reverse (lambda i out (do
                         (if (> (length xs) i)
