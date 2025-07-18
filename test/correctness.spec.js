@@ -8,6 +8,13 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`(let xs [])
+(variable i 0)
+(loop (< (get i) 10) (do (array:push! xs (get i)) (++ i)))
+(identity xs)`),
+      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    )
+    deepStrictEqual(
       evalJS(`(Isub 
     (Imul 
         (Idiv 
