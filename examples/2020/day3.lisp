@@ -19,8 +19,8 @@
       (math:zeroes)
       (math:enumerated-map (lambda . index
         (|> xs 
-          (get (* index slopeY))
-          (get (mod (* index slopeX) w)))))))))
+          (array:get (* index slopeY))
+          (array:get (mod (* index slopeX) w)))))))))
 
 (let task (lambda input (do 
   (let matrix (|> input

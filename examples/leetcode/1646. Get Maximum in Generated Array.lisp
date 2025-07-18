@@ -7,9 +7,9 @@
       (loop:for-range 1 (+ (// n 2) 1) (lambda i (do
         (let double-i (* 2 i))
         (let double-i-plus-1 (+ double-i 1))
-        (set! nums double-i (get nums i))
+        (set! nums double-i (array:get nums i))
         (if (<= double-i-plus-1 n)
-          (set! nums double-i-plus-1 (+ (get nums i) (get nums (+ i 1))))))))
+          (set! nums double-i-plus-1 (+ (array:get nums i) (array:get nums (+ i 1))))))))
       (math:maximum nums))))))
 
 [(get-maximum-generated 7) ; Should return 3

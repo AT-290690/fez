@@ -47,7 +47,7 @@ ZZZ=ZZZ,ZZZ")
       (let part1 (lambda input (do 
         (let [dirs adj .] input)
         (let tail-call:move (lambda source target step (do 
-          (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
+          (let node (array:get (map:get adj source) (array:get dirs (mod step (length dirs)))))
           (if (string:equal? node target)
               step 
               (tail-call:move node target (+ step 1))))))
@@ -57,7 +57,7 @@ ZZZ=ZZZ,ZZZ")
       (let part2 (lambda input (do 
         (let [dirs adj keys .] input)
         (let tail-call:move (lambda source target step (do 
-          (let node (get (map:get adj source) (get dirs (mod step (length dirs)))))
+          (let node (array:get (map:get adj source) (array:get dirs (mod step (length dirs)))))
           (if (string:equal? [(array:at node -1)] target)
               step 
               (tail-call:move node target (+ step 1))))))

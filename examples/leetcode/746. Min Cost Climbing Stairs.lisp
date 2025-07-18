@@ -8,7 +8,7 @@
           (let prev1 (var:def (array:second cost)))
           (loop:for-range 2 n (lambda i
             (do
-              (let curr (+ (get cost i) (math:min (var:get prev1) (var:get prev2))))
+              (let curr (+ (array:get cost i) (math:min (var:get prev1) (var:get prev2))))
               (var:set! prev2 (var:get prev1))
               (var:set! prev1 curr))))
           (math:min (var:get prev1) (var:get prev2)))))))
@@ -25,7 +25,7 @@
     (let memoized:min-cost-from (lambda i
       (if (>= i n)
           0
-          (+ (get cost i) (math:min (memoized:min-cost-from (+ i 1)) (memoized:min-cost-from (+ i 2)))))))
+          (+ (array:get cost i) (math:min (memoized:min-cost-from (+ i 1)) (memoized:min-cost-from (+ i 2)))))))
     (math:min (memoized:min-cost-from 0) (memoized:min-cost-from 1)))))
 
 [

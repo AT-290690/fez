@@ -515,9 +515,9 @@
 ; 1 math:big-integer-multiplication 18 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication 18 digit-a
-(let digit-a Number)
+(let digit-a Unknown)
 ; 1 math:big-integer-multiplication 18 19 digit-B
-(let digit-B Number)
+(let digit-B Unknown)
 ; 1 math:big-integer-multiplication 18 19 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 18 19 prod
@@ -539,11 +539,11 @@
 ; 1 math:big-integer-less-or-equal? 24 i
 (let i Number[])
 ; 1 math:big-integer-less-or-equal? 24 result
-(let result Boolean[])
+(let result Unknown[])
 ; 1 math:big-integer-less-or-equal? 24 25 da
-(let da Number)
+(let da Unknown)
 ; 1 math:big-integer-less-or-equal? 24 25 db
-(let db Number)
+(let db Unknown)
 ; 1 math:big-integer-less-or-equal?
 (let math:big-integer-less-or-equal? (lambda Number[] Unknown[] (do Boolean)))
 ; 1 math:big-integer-division result
@@ -1173,9 +1173,9 @@
 ; 1 matrix:rotate
 (let matrix:rotate (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:product dimsA
-(let dimsA Number[])
+(let dimsA Unknown[])
 ; 1 matrix:product dimsB
-(let dimsB Number[])
+(let dimsB Unknown[])
 ; 1 matrix:product rowsA
 (let rowsA Unknown)
 ; 1 matrix:product colsA
@@ -1381,7 +1381,7 @@
 ; 1 from:set->integers
 (let from:set->integers (lambda Unknown[] (do Unknown[])))
 ; 1 from:array->brray q
-(let q Unknown[][])
+(let q Unknown[])
 ; 1 from:array->brray half
 (let half Number)
 ; 1 from:array->brray tail-call:left:from:array->brray
@@ -1499,7 +1499,7 @@
 ; 1 string:character-occurances count
 (let count Number[])
 ; 1 string:character-occurances at-least-one
-(let at-least-one Boolean[])
+(let at-least-one Unknown[])
 ; 1 string:character-occurances tail-call:string:character-occurances ch
 (let ch Unknown)
 ; 1 string:character-occurances tail-call:string:character-occurances code
@@ -1553,11 +1553,11 @@
 ; 1 string:lesser? 150 pairs
 (let pairs Unknown[])
 ; 1 string:lesser? 150 is
-(let is Boolean[])
+(let is Unknown[])
 ; 1 string:lesser? 150 tail-call:string:lesser 151 current
 (let current Unknown[])
 ; 1 string:lesser? 150 tail-call:string:lesser
-(let tail-call:string:lesser (lambda (do Boolean[])))
+(let tail-call:string:lesser (lambda (do Unknown[])))
 ; 1 string:lesser?
 (let string:lesser? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:greater? 152 a
@@ -1567,11 +1567,11 @@
 ; 1 string:greater? 152 pairs
 (let pairs Unknown[])
 ; 1 string:greater? 152 is
-(let is Boolean[])
+(let is Unknown[])
 ; 1 string:greater? 152 tail-call:string:greater 153 current
 (let current Unknown[])
 ; 1 string:greater? 152 tail-call:string:greater
-(let tail-call:string:greater (lambda (do Boolean[])))
+(let tail-call:string:greater (lambda (do Unknown[])))
 ; 1 string:greater?
 (let string:greater? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:greater-or-equal?
@@ -2059,7 +2059,7 @@
 ; 1 brray:add-to-right! c
 (let c Unknown[])
 ; 1 brray:add-to-right!
-(let brray:add-to-right! (lambda Unknown[][] Unknown (do Unknown[])))
+(let brray:add-to-right! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 brray:remove-from-left! len
 (let len Number)
 ; 1 brray:remove-from-left!
@@ -2073,7 +2073,7 @@
 ; 1 brray:iter
 (let brray:iter (lambda Unknown[] (lambda Unknown (do Unknown)) (do Number)))
 ; 1 brray:map result
-(let result Unknown[][])
+(let result Unknown[])
 ; 1 brray:map len
 (let len Number)
 ; 1 brray:map half
@@ -2095,9 +2095,9 @@
 ; 1 brray:balance! 212 tail-call:right:brray:balance!
 (let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 brray:balance!
-(let brray:balance! (lambda Unknown[][] (do Unknown[])))
+(let brray:balance! (lambda Unknown[] (do Unknown[])))
 ; 1 brray:append!
-(let brray:append! (lambda Unknown[][] Unknown (do Unknown[])))
+(let brray:append! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 brray:prepend!
 (let brray:prepend! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 brray:head!
@@ -2135,7 +2135,7 @@
 ; 1 brray:slice end
 (let end Unknown)
 ; 1 brray:slice slice
-(let slice Unknown[][])
+(let slice Unknown[])
 ; 1 brray:slice slice-len
 (let slice-len Number)
 ; 1 brray:slice half
@@ -2153,7 +2153,7 @@
 ; 1 queue:empty!
 (let queue:empty! (lambda Unknown[] (do Unknown[])))
 ; 1 queue:enqueue!
-(let queue:enqueue! (lambda Unknown[][] Unknown (do Unknown[])))
+(let queue:enqueue! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 queue:dequeue!
 (let queue:dequeue! (lambda Unknown[] (do Unknown[])))
 ; 1 queue:peek
@@ -2165,7 +2165,7 @@
 ; 1 stack:empty!
 (let stack:empty! (lambda Unknown[] (do Unknown[])))
 ; 1 stack:push!
-(let stack:push! (lambda Unknown[][] Unknown (do Unknown[])))
+(let stack:push! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 stack:pop!
 (let stack:pop! (lambda Unknown[] (do Unknown[])))
 ; 1 stack:peek
@@ -2933,7 +2933,7 @@
 ; 1 math:big-integer-less-or-equal? 395 i
 (let i Number[])
 ; 1 math:big-integer-less-or-equal? 395 result
-(let result Boolean[])
+(let result Unknown[])
 ; 1 math:big-integer-less-or-equal? 395 396 da
 (let da Unknown)
 ; 1 math:big-integer-less-or-equal? 395 396 db
@@ -3495,11 +3495,11 @@
 ; 1 string:lesser? 742 pairs
 (let pairs Unknown[])
 ; 1 string:lesser? 742 is
-(let is Boolean[])
+(let is Unknown[])
 ; 1 string:lesser? 742 tail-call:string:lesser 743 current
 (let current Unknown[])
 ; 1 string:lesser? 742 tail-call:string:lesser
-(let tail-call:string:lesser (lambda (do Boolean[])))
+(let tail-call:string:lesser (lambda (do Unknown[])))
 ; 1 string:greater? 152 tail-call:string:greater 744 current
 (let current Unknown[])
 ; 1 string:greater? 745 a
@@ -3509,11 +3509,11 @@
 ; 1 string:greater? 745 pairs
 (let pairs Unknown[])
 ; 1 string:greater? 745 is
-(let is Boolean[])
+(let is Unknown[])
 ; 1 string:greater? 745 tail-call:string:greater 746 current
 (let current Unknown[])
 ; 1 string:greater? 745 tail-call:string:greater
-(let tail-call:string:greater (lambda (do Boolean[])))
+(let tail-call:string:greater (lambda (do Unknown[])))
 ; 1 string:equal? string:equal? lambda::annonymous::1::747
 (let lambda::annonymous::1::747 (lambda Unknown[] (do Boolean)))
 ; 1 string:equal? string:equal? lambda::annonymous::1::749

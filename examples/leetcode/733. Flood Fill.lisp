@@ -1,7 +1,7 @@
 (let flood-fill (lambda image sr sc color
   (do
     (let m (length image))
-    (let n (length (get image 0)))
+    (let n (length (array:first image)))
     (let original-color (matrix:get image sr sc))
     (if (= original-color color)
         image

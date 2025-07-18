@@ -28,7 +28,7 @@
               (or (= l char:hash) (= l char:question-mark))
               (<= r (length left))
               (not (array:has? (array:slice left 0 r) (lambda x (= x char:dot))))
-              (or (= r (length left)) (not (= (get left r) char:hash)))
+              (or (= r (length left)) (not (= (array:get left r) char:hash)))
             )
           (numberp (dp? (array:slice left (+ r 1) (length left)) (cdr right)))))
   )))))
@@ -47,7 +47,7 @@
                 (or (= l char:hash) (= l char:question-mark))
                 (<= r (length left))
                 (not (array:has? (array:slice left 0 r) (lambda x (= x char:dot))))
-                (or (= r (length left)) (not (= (get left r) char:hash))))
+                (or (= r (length left)) (not (= (array:get left r) char:hash))))
             (dpm (array:slice left (+ r 1) (length left)) (cdr right) memo))))
        (if (array:not-empty? key) (map:set! memo key res))
        res
@@ -60,9 +60,9 @@
   (|> 
     (array:of 5 (lambda . (array left right)))
     (array:enumerated-fold (lambda out arg i (do 
-      (array:merge! (get out 0) left)
-      (if (< i 4) (array:merge! (get out 0) (array char:question-mark)))
-      (array:merge! (get out 1) right)
+      (array:merge! (array:get out 0) left)
+      (if (< i 4) (array:merge! (array:get out 0) (array char:question-mark)))
+      (array:merge! (array:get out 1) right)
       out
     )) [[] []])
 ))))

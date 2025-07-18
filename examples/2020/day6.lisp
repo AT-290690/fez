@@ -24,7 +24,7 @@ b")
 
 ; (|> PARSED
 ;   (array:enumerated-map (lambda line i (do 
-;     (let U (array:first (get unique-chars i)))
+;     (let U (array:first (array:get unique-chars i)))
 ;     (let bit-masks (|> line 
 ;       (array:map (lambda str 
 ;         (|> str 

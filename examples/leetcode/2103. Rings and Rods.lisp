@@ -4,15 +4,15 @@
   (loop:for-range 0 len (lambda i (do
     (if (math:even? i)
       (do
-        (let color (get rings i))
-        (let rod-char (get rings (+ i 1)))
-        (let rod (get rods (- (from:char->digit rod-char) 0)))
+        (let color (array:get rings i))
+        (let rod-char (array:get rings (+ i 1)))
+        (let rod (array:get rods (- (from:char->digit rod-char) 0)))
         (cond
           (= color char:R) (set! rod 0 true)
           (= color char:G) (set! rod 1 true)
           (= color char:B) (set! rod 2 true)
           (*) nil))))))
-  (array:count-of rods (lambda rod (and (get rod 0) (get rod 1) (get rod 2)))))))
+  (array:count-of rods (lambda rod (and (array:get rod 0) (array:get rod 1) (array:get rod 2)))))))
 
 ; Example usage
 [(count-points "B0B6G0R6R0R6G9") ; Should return 1

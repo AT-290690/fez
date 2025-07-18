@@ -37,7 +37,9 @@ export const SUGGAR = {
   BIG_INT_DIVISION: 'Idiv',
   BIG_INT_MULTIPLICATION: 'Imul',
   NEW_BIG_INTEGER: 'new:big-integer',
-  PROMISES: '*DATA*'
+  PROMISES: '*DATA*',
+  VARIABLE: 'variable',
+  SET_VARIABLE: 'set'
 }
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
@@ -98,6 +100,23 @@ export const deSuggarAst = (ast, scope) => {
               //       }
               //     }
               //       break
+              case KEYWORDS.GET_ARRAY:
+                if (rest.length === 1) {
+                  exp.push([ATOM, 0])
+                }
+                break
+              case SUGGAR.VARIABLE:
+                {
+                  exp[0][VALUE] = 'let'
+                  const temp = exp.pop()
+                  exp.push([[APPLY, 'var:def'], temp])
+                }
+                deSuggarAst(exp.at(-1))
+                break
+              case SUGGAR.SET_VARIABLE:
+                exp[0][VALUE] = 'var:set!'
+                deSuggarAst(exp.at(-1))
+                break
               case KEYWORDS.BLOCK:
                 {
                   if (rest.length === 0)

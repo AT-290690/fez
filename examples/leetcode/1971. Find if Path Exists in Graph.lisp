@@ -3,10 +3,10 @@
     (do
       (let graph (array:map (math:zeroes n) (lambda . [])))
       (array:for edges (lambda edge (do
-        (let u (get edge 0))
-        (let v (get edge 1))
-        (array:push! (get graph u) v)
-        (array:push! (get graph v) u))))
+        (let u (array:get edge 0))
+        (let v (array:get edge 1))
+        (array:push! (array:get graph u) v)
+        (array:push! (array:get graph v) u))))
       (let visited (math:zeroes n))
       (let queue [source])
       (set! visited source 1)
@@ -16,8 +16,8 @@
           (let current (array:pop! queue))
           (if (= current destination)
             (bool:true! found)
-            (array:for (get graph current) (lambda neighbor (do
-              (if (= (get visited neighbor) 0)
+            (array:for (array:get graph current) (lambda neighbor (do
+              (if (= (array:get visited neighbor) 0)
                 (do
                   (set! visited neighbor 1)
                   (array:push! queue neighbor))))))))))

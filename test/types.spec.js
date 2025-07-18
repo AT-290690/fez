@@ -977,19 +977,21 @@ ZZZ=ZZZ,ZZZ")
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
     )))`,
-      `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Unknown[]) (array:get (array 1 2 3) idx) (check #3)`
+      `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Unknown[]) (array:get (array 1 2 3) (array)) (check #16)`
     )
     fails(
       `(let array:get (lambda xs i (get xs i)))
     (let p2 (lambda (do
     (array:get [1 2 3] (lambda 1))
     )))
-    (let p3 (lambda (do
-    (array:get [1 2 3] [])
-    )))
+   
     (let p4 (lambda (do
     (array:get [1 2 3] 1)
-    )))`,
+    )))
+    
+    ; (let p3 (lambda (do (array:get [1 2 3] []))))
+    
+    `,
       `Incorrect type of argument (1) for (array:get). Expected (Number) but got (Abstraction) (array:get (array 1 2 3) (lambda 1)) (check #16)`
     )
     fails(

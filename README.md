@@ -79,14 +79,12 @@
 
 ; Array operations
 (array:set! xs 0 100) ; set the first element of array xs to 100
-(set! xs 0 100) ; same as above
 (array:pop! xs) ; remove the last element of array xs
-(pop! xs) ; same as above
 (array:push! xs (length xs) 10) ; add the value 10 at the end of array xs
 (array:get xs 0) ; get the first element of array xs
-(get xs 0) ; same as above
 
-; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs). If you want to update variables (scalars), use the variable helpers: var:def to define, var:set! to update, and var:get to retrieve the value.
+; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs).
+; If you want to update variables (scalars), use the variable helpers: var:def to define, var:set! to update, and var:get to retrieve the value.
 
 ; Mathematical operations
 (+ (+ 1 2) x) ; add 1, 2, and x
@@ -207,19 +205,19 @@
 (var:set! data "world")                  ; set to new value
 (var:get data)                           ; get current value
 ;
-; WRONG: (set! counter 5)                  ; ERROR: set! only works on arrays
+; WRONG: (array:set! counter 5)            ; ERROR: array:set! only works on arrays
 ; RIGHT: (math:var-set! counter 5)         ; Use appropriate variable function
 ;
 ; Array operations (set! works here):
 (let arr [1 2 3])
-(set! arr 0 100)                         ; Set array element at index 0 to 100
-(array:set! arr 1 200)                   ; Same as above
+(array:set! arr 0 100)                   ; Set array element at index 0 to 100
+(array:set! arr 1 200)                   ; Set array element at index 1 to 200
 
 ; Defining functions to reverse an array
 (let arr:for (lambda xs cb (do
                     (let tail-call:arr:for (lambda i (do
                         (if (> (length xs) i) (do
-                            (cb (get xs i)) ; apply callback to current element
+                            (cb (array:get xs i)) ; apply callback to current element
                             ; recurse to next index
                             (tail-call:arr:for (+ i 1)))
                             ; return 0 when done
@@ -234,24 +232,25 @@
                     (let tail-call:arr:reverse (lambda i out (do
                         (if (> (length xs) i)
                               (tail-call:arr:reverse (+ i 1)
-                              (arr:merge (array (get xs i)) out))
+                              (arr:merge (array (array:get xs i)) out))
                           out))))
                         (tail-call:arr:reverse 0 (array)))))
 (arr:reverse (array 1 2 3)) ; 3 2 1
 ; Make sure ypu keep the parens balanced
 
+
 ; these are syntactic suggar for the language but you don't need to use them
 ; syntactic suggar for array
-[ 1 2 3 4 5 ]
+[1 2 3 4 5]
 ; syntactic suggar for linked list
-{ 1 2 3 4 5 }
+{1 2 3 4 5}
 ; array destructuring
-[ a b . c ]
+[a b . c]
 ; list destructuring
-{ a b . c }
+{a b . c}
 ; . means skip that element and last one is aways the rest unelss skipped
-[ a . b c ]
-[ a b . ]
+[a . b c]
+[a b .]
 ; pipe operator
 (|> 1 (+ 1 2) (* 3 4))
 ; pipe operator with destructuring

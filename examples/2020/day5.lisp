@@ -17,7 +17,7 @@ BBFFBBFRLL")
                   (= b lower) (set! a 1 (math:floor half))
                   (= b upper) (set! a 0 (math:round half))
                   (*) a))) bounds)
-      (get (numberp (= (array:last inp) upper))))))
+      (array:get (numberp (= (array:last inp) upper))))))
 
 (let PARSED (|> 
     INPUT 

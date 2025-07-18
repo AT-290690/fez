@@ -53,6 +53,7 @@
 (let array:second (lambda Unknown[] (do Any)))
 (let array:third (lambda Unknown[] (do Any)))
 (let array:last (lambda Unknown[] (do Any)))
+(let array:get (lambda Unknown[] Number (do Any)))
 (let array:get-number (lambda Number[] Number (do Number)))
 (let array:get-array (lambda Unknown[][] Number (do Unknown[])))
 (let array:get-boolean (lambda Boolean[] Number (do Boolean)))

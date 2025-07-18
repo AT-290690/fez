@@ -31,7 +31,7 @@
 (let max (math:var-def 0))
 
 (loop:for-n (length grid) (lambda y 
-    (loop:for-n (length (get grid 0)) (lambda x (do 
+    (loop:for-n (length (array:get grid 0)) (lambda x (do 
         (math:var-set! max (math:max (math:var-get max) (matrix:adjacent-product grid matrix:top-down y x *)))
          (math:var-set! max (math:max (math:var-get max) (matrix:adjacent-product grid matrix:left-right y x *)))
           (math:var-set! max (math:max (math:var-get max) (matrix:adjacent-product grid matrix:left-diag y x *)))

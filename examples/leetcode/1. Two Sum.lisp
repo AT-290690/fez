@@ -3,7 +3,7 @@
 ;   (let tail-call:find (lambda i (if (< i len)
 ;     (do
 ;       (let tail-call:j (lambda j (if (< j len)
-;         (if (and (!= i j) (= (+ (get nums i) (get nums j)) target))
+;         (if (and (!= i j) (= (+ (array:get nums i) (array:get nums j)) target))
 ;           [i j]
 ;           (tail-call:j (+ j 1))))))
 ;       (let res (tail-call:j 0))
@@ -15,7 +15,7 @@
   (let len (length nums))
   (let tail-call:find (lambda i (if (< i len)
     (do
-      (let num (get nums i))
+      (let num (array:get nums i))
       (let complement (- target num))
       (let key-num (|> num (from:integer->digits) (from:digits->chars)))
       (let key-complement (|> complement (from:integer->digits) (from:digits->chars)))
