@@ -549,8 +549,9 @@ export const toTypedAst = (ast, userDefinedTypes) => {
     )
     for (const v of types[1].values()) v()
     //  types[0][1][1].slice(1)
-    return types[0]
+    return types
   } catch (error) {
     logError(error.message)
   }
 }
+export const atst = (ast, ctx) => toTypedAst(ast, ctx)[0]
