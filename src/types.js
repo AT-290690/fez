@@ -1368,7 +1368,47 @@ export const formatType = (name, env) => {
       : `(let ${name} ${formatSubType(getTypes(stats))})`
     : name
 }
-
+export const formatInlineType = (name, env) => {
+  const stats = env[name][STATS]
+  return stats
+    ? getType(stats) === APPLY
+      ? `(lambda ${
+          stats[ARG_COUNT] === VARIADIC
+            ? '... '
+            : stats[ARGUMENTS]?.length
+            ? stats[ARGUMENTS].map(
+                (x, i) =>
+                  `${
+                    getType(x[STATS]) === APPLY
+                      ? `${formatType(i, stats[ARGUMENTS])}`
+                      : `${formatSubType(getTypes(x[STATS]))}`
+                  }`
+              ).join(' ') + ' '
+            : ''
+          // TODO format returned functions when type support is added
+        }(${KEYWORDS.BLOCK} ${formatSubType(getReturns(stats))}))`
+      : formatSubType(getTypes(stats))
+    : name
+}
+export const formatAstTypes = (name, env) => {
+  const stats = env[name][STATS]
+  return stats
+    ? getType(stats) === APPLY
+      ? [
+          stats[ARG_COUNT] === VARIADIC
+            ? '...'
+            : stats[ARGUMENTS]?.length
+            ? stats[ARGUMENTS].map((x, i) =>
+                getType(x[STATS]) === APPLY
+                  ? formatType(i, stats[ARGUMENTS])
+                  : formatSubType(getTypes(x[STATS]))
+              )
+            : '',
+          formatSubType(getReturns(stats))
+        ]
+      : formatSubType(getTypes(stats))
+    : name
+}
 export const validateLambda = (exp, name) => {
   if (exp.length === 1)
     throw new TypeError(

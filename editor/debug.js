@@ -28,7 +28,7 @@ import {
 } from '../src/types.js'
 import { removeNoCode, stringifyArgs } from '../src/utils.js'
 import { deSuggarAst, deSuggarSource, SUGGAR } from '../src/macros.js'
-// const libraryTypes = new Map() ?? typeCheck(std[0])[1]
+// const libraryTypes = new Map()
 const libraryTypes = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
 globalThis.__debugStack__ = []
 export const debug = (ast, checkTypes = true, userDefinedTypes) => {

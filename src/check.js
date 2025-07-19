@@ -16,7 +16,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { isLeaf, LISP } from './parser.js'
+import { isLeaf } from './parser.js'
 import {
   SPECIAL_FORM_TYPES,
   toTypeNames,
@@ -91,6 +91,9 @@ export const identity = (name) => [
     [1, 'x']
   ]
 ]
+export const typeSetDefaultFunction = (Types, name, env, exp) =>
+  Types.set(withScope(name, env), () => formatType(name, env))
+
 const returnType = (rest) => {
   const body = rest.at(-1)
   const rem = hasBlock(body) ? body.at(-1) : body
@@ -459,7 +462,7 @@ const getScopeNames = (scope) => {
   }
   return scopeNames.reverse()
 }
-const withScope = (name, scope) => {
+export const withScope = (name, scope) => {
   const chain = getScopeNames(scope)
   return `${chain.join(' ')} ${name}`
 }
@@ -990,7 +993,11 @@ const checkReturnType = ({ exp, stack, name, env, check }) => {
 const stagger = (stack, method, data, fn) => {
   stack[method]({ data, fn })
 }
-export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
+export const typeCheck = (
+  ast,
+  ctx = SPECIAL_FORM_TYPES,
+  typeSet = typeSetDefaultFunction
+) => {
   const Types = new Map()
   const stack = new Brr()
   const rootScopeIndex = 1
@@ -1204,7 +1211,8 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
                 )})`
               )
             if (name in env) {
-              Types.set(withScope(name, env), () => formatType(name, env))
+              typeSet(Types, name, env, exp)
+              // Types.set(withScope(name, env), () => formatType(name, env))
               // If current scope is root then these are user defined types
               if (env[SCOPE_NAME] === rootScopeIndex) break
             }
@@ -1344,7 +1352,8 @@ export const typeCheck = (ast, ctx = SPECIAL_FORM_TYPES) => {
               }
               check(rightHand, env, scope)
             }
-            Types.set(withScope(name, env), () => formatType(name, env))
+            typeSet(Types, name, env, exp)
+            // Types.set(withScope(name, env), () => formatType(name, env))
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
             {
