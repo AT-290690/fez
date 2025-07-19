@@ -5,11 +5,13 @@ import {
   APPLY,
   ATOM,
   DEBUG,
+  FLAG,
   KEYWORDS,
   PLACEHOLDER,
   STATIC_TYPES,
   TYPE,
-  VALUE
+  VALUE,
+  WORD
 } from './keywords.js'
 import { isLeaf } from './parser.js'
 import { shakedList, stringifyArgs } from './utils.js'
@@ -1390,24 +1392,49 @@ export const formatInlineType = (name, env) => {
       : formatSubType(getTypes(stats))
     : name
 }
+export const formatAstSubType = (T) => {
+  switch (T[0]) {
+    case COLLECTION:
+      return `${
+        T[1] instanceof Set
+          ? [...T[1]]
+              .map((x) =>
+                x === COLLECTION
+                  ? formatAstSubType([x])
+                  : toTypeNamesAnyToUknown(x)
+              )
+              .join(' ') || toTypeNames(UNKNOWN)
+          : toTypeNames(UNKNOWN)
+      }[]`
+    case ATOM:
+      return `${
+        T[1] instanceof Set
+          ? [...T[1]].map((x) => toTypeNamesAnyToUknown(x)).join(' ')
+          : toTypeNamesAnyToUknown(NUMBER)
+      }`
+    default:
+      return toTypeNamesAnyToUknown(T[0])
+  }
+}
 export const formatAstTypes = (name, env) => {
   const stats = env[name][STATS]
   return stats
     ? getType(stats) === APPLY
       ? [
-          stats[ARG_COUNT] === VARIADIC
-            ? '...'
+          FLAG,
+          ...(stats[ARG_COUNT] === VARIADIC
+            ? []
             : stats[ARGUMENTS]?.length
             ? stats[ARGUMENTS].map((x, i) =>
                 getType(x[STATS]) === APPLY
-                  ? formatType(i, stats[ARGUMENTS])
-                  : formatSubType(getTypes(x[STATS]))
+                  ? formatAstTypes(i, stats[ARGUMENTS])
+                  : formatAstSubType(getTypes(x[STATS]))
               )
-            : '',
-          formatSubType(getReturns(stats))
+            : []),
+          formatAstSubType(getReturns(stats))
         ]
-      : formatSubType(getTypes(stats))
-    : name
+      : [FLAG, formatAstSubType(getTypes(stats))]
+    : [FLAG, name]
 }
 export const validateLambda = (exp, name) => {
   if (exp.length === 1)

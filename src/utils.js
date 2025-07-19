@@ -2,6 +2,7 @@ import std from '../lib/baked/std.js'
 import {
   APPLY,
   ATOM,
+  FLAG,
   KEYWORDS,
   STATIC_TYPES,
   TYPE,
@@ -16,9 +17,14 @@ import {
   handleUnbalancedQuotes
 } from './macros.js'
 import { enhance, OPTIMIZATIONS } from './enhance.js'
-import { type } from './check.js'
+import { type, typeCheck, withScope } from './check.js'
 import stdT from '../lib/baked/std-T.js'
-import { definedTypes, withCtxTypes } from './types.js'
+import {
+  definedTypes,
+  filteredDefinedTypes,
+  formatAstTypes,
+  withCtxTypes
+} from './types.js'
 import { compile } from './compiler.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
@@ -518,5 +524,33 @@ export const fez = (ast, c = false) => {
     return [c ? compile(ast) : evaluate(opt), null]
   } catch (err) {
     return [null, err]
+  }
+}
+
+export const toTypedAst = (ast, userDefinedTypes) => {
+  try {
+    const types = typeCheck(
+      ast,
+      withCtxTypes(
+        userDefinedTypes
+          ? {
+              ...definedTypes(filteredDefinedTypes(ast, std, stdT)),
+              ...definedTypes(LISP.parse(removeNoCode(userDefinedTypes)))
+            }
+          : definedTypes(filteredDefinedTypes(ast, std, stdT))
+      ),
+      (Types, name, env, exp) => {
+        Types.set(withScope(name, env), () => {
+          if (exp.at(-1)[TYPE] !== FLAG) exp.push(formatAstTypes(name, env))
+          else exp[exp.length - 1] = formatAstTypes(name, env)
+          return ''
+        })
+      }
+    )
+    for (const v of types[1].values()) v()
+    //  types[0][1][1].slice(1)
+    return types[0]
+  } catch (error) {
+    logError(error.message)
   }
 }
