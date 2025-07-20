@@ -2246,7 +2246,7 @@ heap)))
 
 ; Fake keywords section
 ; xxx
-
+(let debug identity)
 (let array:get get)
 (let array:length length)
 (let array:set! set!)

@@ -529,6 +529,13 @@ export const fez = (ast, c = false) => {
 
 export const toTypedAst = (ast, userDefinedTypes) => {
   try {
+    const typeSet = (Types, name, env, exp) => {
+      Types.set(withScope(name, env), () => {
+        if (exp.at(-1)[TYPE] !== FLAG) exp.push(formatAstTypes(name, env))
+        else exp[exp.length - 1] = formatAstTypes(name, env)
+        return ''
+      })
+    }
     const types = typeCheck(
       ast,
       withCtxTypes(
@@ -539,19 +546,14 @@ export const toTypedAst = (ast, userDefinedTypes) => {
             }
           : definedTypes(filteredDefinedTypes(ast, std, stdT))
       ),
-      (Types, name, env, exp) => {
-        Types.set(withScope(name, env), () => {
-          if (exp.at(-1)[TYPE] !== FLAG) exp.push(formatAstTypes(name, env))
-          else exp[exp.length - 1] = formatAstTypes(name, env)
-          return ''
-        })
-      }
+      typeSet
     )
     for (const v of types[1].values()) v()
     //  types[0][1][1].slice(1)
     return types
   } catch (error) {
     logError(error.message)
+    return []
   }
 }
 export const atst = (ast, ctx) => toTypedAst(ast, ctx)[0]

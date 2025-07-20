@@ -2306,6 +2306,8 @@
 (let pt Number)
 ; 1 new:ring-buffer
 (let new:ring-buffer (lambda Number (do Unknown[])))
+; 1 debug
+(let debug (lambda Unknown (do Unknown)))
 ; 1 array:get
 (let array:get (lambda Unknown[] Number (do Unknown)))
 ; 1 array:length
