@@ -891,7 +891,7 @@ export const debugStackToString = (stack) =>
 export const startDebug = (ast, speed = 250, start, end) => {
   debugStack.length = 0
   try {
-    evaluate(ast)
+    evaluate(enhance(ast))
     start = start ? debugStack.findIndex(start) : 0
     end = end ? debugStack.findIndex(end) + 1 : debugStack.length
     const stack = debugStack.slice(start, end)
