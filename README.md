@@ -28,7 +28,16 @@
 
 ```lisp
 ; Lisp programming language. It's not exactly like other Lisps.
+; This is a CUSTOM lisp language that does not fully follow the general Lisp conventions
+
+; Plase strictly follow the language rules as described in this document
+
 ; Everything is an expression.
+
+; Build-in keywords
+(/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...)
+(mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
+(length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...)
 
 ; Important Note:
 ; In this programming language, parentheses are used to group expressions and define the structure of code.
@@ -275,4 +284,5 @@
 (++ n) ; increment number variable by 1
 (+= n 10) ; increment number variable by 10
 (get n) ; get number variable
+
 ```
