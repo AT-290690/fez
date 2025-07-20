@@ -835,7 +835,13 @@ const keywords = {
   [STATIC_TYPES.NUMBERS]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.COLLECTIONS]: (args, env) => evaluate(args[0], env),
   [STATIC_TYPES.ABSTRACTIONS]: (args, env) => evaluate(args[0], env),
-  [STATIC_TYPES.BOOLEANS]: (args, env) => evaluate(args[0], env)
+  [STATIC_TYPES.BOOLEANS]: (args, env) => evaluate(args[0], env),
+
+  [DEBUG.TYPE_SIGNATURE]: (args, env) => evaluate(args[0], env),
+  [DEBUG.SIGNATURE]: (args, env) => evaluate(args[0], env),
+  [DEBUG.STRING]: (args, env) => evaluate(args[0], env),
+  [DEBUG.UNQUOTED_STRING]: (args, env) => evaluate(args[0], env),
+  [DEBUG.LOG]: (args, env) => evaluate(args[0], env)
 }
 const debugStack = []
 const evaluate = (exp, env = keywords) => {
@@ -905,44 +911,6 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
   let types = new Map()
   const debugEnv = {
     ...keywords,
-    [STATIC_TYPES.ABSTRACTION]: (args, env) => {
-      const T = evaluate(args[0], env)
-      const t = typeof T
-      if (t !== 'function')
-        throw new TypeError(
-          `Argument of (${STATIC_TYPES.ABSTRACTION}) must be an (${
-            RUNTIME_TYPES.LAMBDA
-          }) but got something else (${
-            STATIC_TYPES.ABSTRACTION
-          } ${stringifyArgs(args)})`
-        )
-      return T
-    },
-    [STATIC_TYPES.ATOM]: (args, env) => {
-      const T = evaluate(args[0], env)
-      const t = typeof T
-      if (t !== 'number')
-        throw new TypeError(
-          `Argument of (${STATIC_TYPES.ATOM}) must be an (${
-            RUNTIME_TYPES.NUMBER
-          }) but got something else (${STATIC_TYPES.ATOM} ${stringifyArgs(
-            args
-          )})`
-        )
-      return T
-    },
-    [STATIC_TYPES.COLLECTION]: (args, env) => {
-      const T = evaluate(args[0], env)
-      if (!Array.isArray(T))
-        throw new TypeError(
-          `Argument of (${STATIC_TYPES.COLLECTION}) must be an (${
-            RUNTIME_TYPES.ARRAY
-          }) but got something else (${STATIC_TYPES.COLLECTION} ${stringifyArgs(
-            args
-          )})`
-        )
-      return T
-    },
     [DEBUG.TYPE_SIGNATURE]: (args, env) => {
       if (args.length !== 2)
         throw new RangeError(
