@@ -5,6 +5,26 @@
 
 ; Everything is an expression.
 
+; =============================
+; Notation: Prefix vs Infix vs Postfix
+; =============================
+; Infix notation: Operator is written between operands (e.g., 1 + 2). Common in languages like C, Python, JavaScript.
+; Postfix notation: Operator is written after operands (e.g., 1 2 +). Used in some stack-based languages like Forth.
+; Prefix notation: Operator is written before operands, and the entire expression is wrapped in parentheses (e.g., (+ 1 2)).
+;
+; THIS LANGUAGE USES PREFIX NOTATION for all operators and function calls.
+; Examples:
+  (+ 1 2)        ; add 1 and 2
+  (* 3 4 5)      ; multiply 3, 4, and 5
+  (/ 10 2)       ; divide 10 by 2
+;
+; You must always use prefix notation in this language. Infix (1 + 2) and postfix (1 2 +) are NOT valid.
+;
+; This applies to all built-in operators, user-defined functions, and special forms.
+;
+; See below for more examples and details.
+
+
 ; Build-in keywords
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...)
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
@@ -255,3 +275,4 @@
 (++ n) ; increment number variable by 1
 (+= n 10) ; increment number variable by 10
 (get n) ; get number variable
+
