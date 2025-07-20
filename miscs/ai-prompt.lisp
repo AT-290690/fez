@@ -228,3 +228,21 @@
 
 "Hello World!" ; syntactic suggar for string but it's array of character codes
 
+; syntactic suggar for variables 
+
+(let xs [])
+(variable i 0) ; define number variables
+(get i) ; getting nubmer variable
+(loop (< (get i) 10) (do 
+  (array:push! xs (get i)) 
+  (++ i) ; increment number variaable
+))
+
+(boolean x false) ; define boolean variable as false
+(boolean y true) ; define boolean variable as true
+(boole-set x true) ; set boolean variable
+(and (boole:true? x) (boole:true? y)) ; check if boolean variable is true (this is using boole:* from std)
+(variable n 10) ; define number variable
+(++ n) ; increment number variable by 1
+(+= n 10) ; increment number variable by 10
+(get n) ; get number variable

@@ -26,7 +26,7 @@ import {
   withCtxTypes
 } from './types.js'
 import { compile } from './compiler.js'
-import { startDebug } from './debugger.js'
+import { debugStackToString, startDebug } from './debugger.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
@@ -367,6 +367,7 @@ export const isInputVariable = (x) =>
 
 export const UTILS = {
   startDebug,
+  debugStackToString,
   handleUnbalancedQuotes,
   handleUnbalancedParens,
   logError,

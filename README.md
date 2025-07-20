@@ -83,7 +83,7 @@
 (array:push! xs (length xs) 10) ; add the value 10 at the end of array xs
 (array:get xs 0) ; get the first element of array xs
 
-; Note: array:set! and array:pop! are functions that update arrays (array:set! xs idx value, array:pop! xs).
+; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs).
 ; If you want to update variables (scalars), use the variable helpers: var:def to define, var:set! to update, and var:get to retrieve the value.
 
 ; Mathematical operations
@@ -164,7 +164,7 @@
 ; IMPORTANT: Variable Handling and set! Usage
 ; ===========================================
 ;
-; array:set! is ONLY for arrays - it cannot be used to update scalar variables.
+; set! is ONLY for arrays - it cannot be used to update scalar variables.
 ; If you want to update variables (scalars), use the appropriate variable helper functions.
 ;
 ; There are three types of variable systems in this language:
@@ -226,8 +226,8 @@
                 xs)))
 (let arr:merge (lambda a b (do
     (let out (array))  initialize an empty array for output
-    (arr:for a (lambda x (do (array:set! out (length out) x))))
-    (arr:for b (lambda x (do (array:set! out (length out) x)))) out)))
+    (arr:for a (lambda x (do (set! out (length out) x))))
+    (arr:for b (lambda x (do (set! out (length out) x)))) out)))
 (let arr:reverse (lambda xs (do
                     (let tail-call:arr:reverse (lambda i out (do
                         (if (> (length xs) i)
@@ -256,4 +256,23 @@
 ; pipe operator with destructuring
 
 "Hello World!" ; syntactic suggar for string but it's array of character codes
+
+; syntactic suggar for variables
+
+(let xs [])
+(variable i 0) ; define number variables
+(get i) ; getting nubmer variable
+(loop (< (get i) 10) (do
+  (array:push! xs (get i))
+  (++ i) ; increment number variaable
+))
+
+(boolean x false) ; define boolean variable as false
+(boolean y true) ; define boolean variable as true
+(boole-set x true) ; set boolean variable
+(and (boole:true? x) (boole:true? y)) ; check if boolean variable is true (this is using boole:* from std)
+(variable n 10) ; define number variable
+(++ n) ; increment number variable by 1
+(+= n 10) ; increment number variable by 10
+(get n) ; get number variable
 ```

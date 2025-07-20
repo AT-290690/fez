@@ -42,6 +42,15 @@ export const LISP = {
           .join(' ')})`
     else return array
   },
+  serialise: (arg) => {
+    if (typeof arg === 'number' || typeof arg === 'string')
+      return arg.toString()
+    else if (Array.isArray(arg))
+      return arg.length
+        ? `[${arg.map((a) => LISP.serialise(a)).join(' ')}]`
+        : '[]'
+    else return '(lambda)'
+  },
   json: (item) => {
     if (item === null) return 0
     else if (typeof item === 'boolean') return item

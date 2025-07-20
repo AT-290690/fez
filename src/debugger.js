@@ -1,4 +1,3 @@
-import { serialise } from '../editor/utils.js'
 import {
   APPLY,
   ATOM,
@@ -126,7 +125,7 @@ const evaluate = (exp, env = keywords) => {
         //     typeof res === 'function' ? '(lambda)' : serialise(res)
         //   }\x1b[0m`
         // )
-        const out = typeof res === 'function' ? '(lambda)' : serialise(res)
+        const out = typeof res === 'function' ? '(lambda)' : LISP.serialise(res)
         if (debugStack.at(-1)?.result !== out)
           debugStack.push({
             function: value,
