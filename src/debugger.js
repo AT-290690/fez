@@ -17,7 +17,11 @@ import {
 } from './keywords.js'
 import { isLeaf, LISP } from './parser.js'
 import { definedTypes, filteredDefinedTypes, withCtxTypes } from './types.js'
-import { isForbiddenVariableName, removeNoCode } from './utils.js'
+import {
+  isForbiddenVariableName,
+  removeNoCode,
+  stringifyArgs
+} from './utils.js'
 const keywords = {
   [KEYWORDS.LOOP]: (args, env) => {
     if (args.length != 2)
