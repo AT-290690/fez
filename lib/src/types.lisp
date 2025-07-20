@@ -798,6 +798,8 @@
 (let math:list-range (lambda Number Number (do Number[])))
 ; 1 math:unique
 (let math:unique (lambda Number[] (do Number[])))
+; 1 math:collatz
+(let math:collatz (lambda Number (do Number[])))
 ; 1 list:pair
 (let list:pair (lambda Unknown Unknown (do Unknown[])))
 ; 1 list:car
@@ -2334,6 +2336,8 @@
 (let while (lambda Number Unknown (do Number)))
 ; 1 math:sort
 (let math:sort (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
+; 1 math:log1p
+(let math:log1p (lambda Number Number (do Number)))
 ; 1 Int
 (let Int (lambda Number[] (do Number[])))
 ; 1 Iadd

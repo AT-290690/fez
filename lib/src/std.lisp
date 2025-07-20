@@ -716,6 +716,17 @@
                   (or (not (> index 0))
                   (not (= (array:get sorted (- index 1)) (array:get sorted index)))))))
       (math:map array:first)))))
+(let math:collatz (lambda n
+  (do
+    (let tail-call:math:collatz (lambda n seq
+      (if (= n 1)
+          (array:merge! seq (array 1))
+          (tail-call:math:collatz
+            (if (= (mod n 2) 0)
+                (/ n 2)
+                (+ (* 3 n) 1))
+            (array:merge! seq (array n))))))
+    (tail-call:math:collatz n (array)))))
 
 (let list:pair (lambda first second (array first second)))
 (let list:car (lambda pair (array:get pair 0)))
@@ -2269,6 +2280,7 @@ heap)))
 (let new:big-integer from:chars->digits)
 (let while loop)
 (let math:sort array:sort)
+(let math:log1p math:log-taylor-series)
 
 (let Int new:big-integer)
 (let Iadd math:big-integer-addition)

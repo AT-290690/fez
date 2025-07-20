@@ -11,7 +11,7 @@
 (let math:enumerated-select (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
 (let math:enumerated-exclude (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
 (let math:log-taylor-series (lambda Number Number (do Number)))
-
+(let math:collatz (lambda Number (do Number[])))
 (let math:maximum-index (lambda Number[] (do Number)))
 (let math:minimum-index (lambda Number[] (do Number)))
 (let math:var-def (lambda Number (do Number[])))

@@ -225,7 +225,7 @@
                     (tail-call:arr:for 0)
                 xs)))
 (let arr:merge (lambda a b (do 
-    (let out (array))  initialize an empty array for output
+    (let out (array))  
     (arr:for a (lambda x (do (set! out (length out) x)))) 
     (arr:for b (lambda x (do (set! out (length out) x)))) out)))
 (let arr:reverse (lambda xs (do
@@ -237,7 +237,8 @@
                         (tail-call:arr:reverse 0 (array)))))
 (arr:reverse (array 1 2 3)) ; 3 2 1
 ; Make sure ypu keep the parens balanced
-
+; Note this example is only for demonstartion - there is not arr:* in std.
+; Instead in std there are array:merge, array:reverse and array:for
 
 ; these are syntactic suggar for the language but you don't need to use them
 ; syntactic suggar for array
