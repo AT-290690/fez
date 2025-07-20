@@ -505,6 +505,16 @@
   (if (< exp 0)
     (/ 1 (math:power base (- exp)))
     (math:power-helper base exp)))))
+(let math:log-taylor-series (lambda x n
+  (do
+    (let tail-call:math:log-taylor-series (lambda x n k term sum sign
+      (if (> k n)
+          sum
+          (tail-call:math:log-taylor-series x n (+ k 1)
+            (* term x)
+            (+ sum (/ (* sign term) k))
+            (- sign)))))
+    (tail-call:math:log-taylor-series x n 1 x 0 1))))
 ; Integer logarithm base 2
 (let math:int-log2 (lambda n (do
   (let count (math:var-def 0))

@@ -582,6 +582,8 @@
 (let math:power-helper (lambda Number Number (do Number)))
 ; 1 math:power
 (let math:power (lambda Number Number (do Number)))
+; 1 math:log-taylor-series
+(let math:log-taylor-series (lambda Number Number (do Number)))
 ; 1 math:int-log2 count
 (let count Number[])
 ; 1 math:int-log2 value
