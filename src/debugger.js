@@ -889,8 +889,9 @@ export const startDebug = (ast, speed = 250, start, end) => {
   evaluate(ast)
   start = start ? debugStack.findIndex(start) : 0
   end = end ? debugStack.findIndex(end) : debugStack.length
-  const stack = debugStack.slice(start, end).reverse()
+  const stack = debugStack.slice(start, end)
   if (speed !== 0) {
+    stack.reverse()
     const rec = () => {
       setTimeout(() => {
         if (stack.length) {
