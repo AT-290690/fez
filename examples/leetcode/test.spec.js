@@ -96,5 +96,9 @@ test('leetcode', [
         [108, 101, 101, 116, 99, 111, 100, 101]
       ]
     ]
+  },
+  {
+    file: '10. Regular Expression Matching.lisp',
+    result: [0, 1, 1]
   }
 ])

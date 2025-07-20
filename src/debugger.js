@@ -16,7 +16,13 @@ import {
   SPECIAL_FORMS_SET
 } from './keywords.js'
 import { isLeaf, LISP } from './parser.js'
-import { definedTypes, filteredDefinedTypes, withCtxTypes } from './types.js'
+import {
+  definedTypes,
+  filteredDefinedTypes,
+  formatType,
+  SPECIAL_FORM_TYPES,
+  withCtxTypes
+} from './types.js'
 import {
   isForbiddenVariableName,
   removeNoCode,
