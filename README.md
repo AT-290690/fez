@@ -18,15 +18,6 @@
 ## [Try it in online editor](https://at-290690.github.io/fez/)
 
 ```lisp
-; Build-in keywords
-(/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...)
-(mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
-(length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...)
-```
-
-## ⚠️ Important: Do not use this programming language in production!
-
-```lisp
 ; Lisp programming language. It's not exactly like other Lisps.
 ; This is a CUSTOM lisp language that does not fully follow the general Lisp conventions
 
@@ -52,6 +43,12 @@
 ; This applies to all built-in operators, user-defined functions, and special forms.
 ;
 ; See below for more examples and details.
+
+
+; Build-in keywords
+(/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...)
+(mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
+(length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...)
 
 ; Important Note:
 ; In this programming language, parentheses are used to group expressions and define the structure of code.
@@ -215,6 +212,22 @@
    (boole:true? var)    ; - Check if boolean variable is true
    (boole:false? var)   ; - Check if boolean variable is false
 ;
+
+; =============================
+; Boolean Values: true and false
+; =============================
+; In this language, 'true' and 'false' are the canonical boolean values.
+; - 'true' is equivalent to 1 (logical true)
+; - 'false' is equivalent to 0 (logical false)
+; You can use 'true' and 'false' directly in conditions, logical operations, and as variable names for boolean logic.
+; All conditions and logical operations should use these (or 1/0) for clarity and correctness.
+;
+; Examples:
+  (and true false) ; returns false (0)
+  (or true false)  ; returns true (1)
+  (not false)      ; returns true (1)
+
+
 ; Examples:
 (let counter (math:var-def 0))           ; numeric variable
 (math:var-increment! counter)            ; increment by 1

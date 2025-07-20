@@ -192,6 +192,22 @@
    (boole:true? var)    ; - Check if boolean variable is true
    (boole:false? var)   ; - Check if boolean variable is false
 ;
+
+; =============================
+; Boolean Values: true and false
+; =============================
+; In this language, 'true' and 'false' are the canonical boolean values.
+; - 'true' is equivalent to 1 (logical true)
+; - 'false' is equivalent to 0 (logical false)
+; You can use 'true' and 'false' directly in conditions, logical operations, and as variable names for boolean logic.
+; All conditions and logical operations should use these (or 1/0) for clarity and correctness.
+;
+; Examples:
+  (and true false) ; returns false (0)
+  (or true false)  ; returns true (1)
+  (not false)      ; returns true (1)
+
+  
 ; Examples:
 (let counter (math:var-def 0))           ; numeric variable
 (math:var-increment! counter)            ; increment by 1
