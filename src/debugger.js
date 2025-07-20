@@ -13,7 +13,8 @@ import {
   FALSE,
   STATIC_TYPES,
   DEBUG,
-  SPECIAL_FORMS_SET
+  SPECIAL_FORMS_SET,
+  RUNTIME_TYPES
 } from './keywords.js'
 import { isLeaf, LISP } from './parser.js'
 import {
@@ -854,6 +855,7 @@ const keywords = {
   [DEBUG.LOG]: (args, env) => evaluate(args[0], env)
 }
 const debugStack = []
+let isDebugging = false
 const evaluate = (exp, env = keywords) => {
   const [head, ...tail] = isLeaf(exp) ? [exp] : exp
   if (head == undefined) return []
@@ -867,16 +869,12 @@ const evaluate = (exp, env = keywords) => {
     case APPLY:
       res = env[value](tail, env)
       if (
+        isDebugging &&
         value !== KEYWORDS.BLOCK &&
         value !== KEYWORDS.CALL_FUNCTION &&
         value !== KEYWORDS.ANONYMOUS_FUNCTION &&
         value !== KEYWORDS.DEFINE_VARIABLE
       ) {
-        // debugStack.push(
-        //   `\x1b[31m${LISP.source(exp)}\x1b[32m\n${
-        //     typeof res === 'function' ? '(lambda)' : serialise(res)
-        //   }\x1b[0m`
-        // )
         const out = typeof res === 'function' ? '(lambda)' : LISP.serialise(res)
         if (debugStack.at(-1)?.result !== out)
           debugStack.push({
@@ -894,13 +892,17 @@ const evaluate = (exp, env = keywords) => {
 }
 export const debugStackToString = (stack) =>
   stack.map(({ source, result }) => `${source}\n${result}`).join('\n')
+const sliceStack = (debugStack, start, end) => {
+  start = start ? debugStack.findIndex(start) : 0
+  end = end ? debugStack.findIndex(end) + 1 : debugStack.length
+  return debugStack.slice(start, end)
+}
 export const startDebug = (ast, speed = 250, start, end) => {
   debugStack.length = 0
+  isDebugging = true
   try {
     evaluate(enhance(ast))
-    start = start ? debugStack.findIndex(start) : 0
-    end = end ? debugStack.findIndex(end) + 1 : debugStack.length
-    const stack = debugStack.slice(start, end)
+    const stack = sliceStack(debugStack, start, end)
     if (speed !== 0) {
       stack.reverse()
       const rec = () => {
@@ -914,9 +916,11 @@ export const startDebug = (ast, speed = 250, start, end) => {
       }
       rec()
     }
+    isDebugging = false
     return [stack, null]
   } catch (error) {
-    return [null, error]
+    isDebugging = false
+    return [sliceStack(debugStack, start, end), error]
   }
 }
 

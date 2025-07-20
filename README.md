@@ -288,11 +288,42 @@
 ; . means skip that element and last one is aways the rest unelss skipped
 [a . b c]
 [a b .]
-; pipe operator
-(|> 1 (+ 1 2) (* 3 4))
-; pipe operator with destructuring
+
+; =============================
+; Array and List Syntactic Sugar
+; =============================
+; You can use square brackets [ ... ] as syntactic sugar for arrays.
+;   [1 2 3] is equivalent to (array 1 2 3)
+; You can use curly braces { ... } as syntactic sugar for linked lists.
+;   {1 2 3} is equivalent to (list 1 2 3)
+; You can use these forms anywhere an array or list is expected.
+; Destructuring is also supported:
+;   [a b . c] ; destructures the first two elements into a, b, and the rest into c
+;   {a b . c} ; same for lists
+
+; =============================
+; Pipe Operator
+; =============================
+; The pipe operator (|>) allows you to chain expressions, passing the result of one as the input to the next.
+; Syntax:
+  (|> value f1 f2 f3 ...)
+; This is equivalent to:
+  (f3 (f2 (f1 value)))
+; Example:
+  (|> 1 (+ 1) (* 2)) ; equivalent to (* 2 (+ 1 1)) ; returns 4
+; You can use the pipe operator to make code more readable when applying multiple transformations.
 
 "Hello World!" ; syntactic suggar for string but it's array of character codes
+; =============================
+; Strings and Character Codes
+; =============================
+; String literals like "hello" are automatically transformed into arrays of character codes.
+; For example:
+  "abc"
+  ; is equivalent to
+  (array 97 98 99)
+; You can use string literals anywhere an array of character codes is expected.
+; All string operations work on these arrays.
 
 ; syntactic suggar for variables
 
@@ -312,5 +343,95 @@
 (++ n) ; increment number variable by 1
 (+= n 10) ; increment number variable by 10
 (get n) ; get number variable
+
+; =============================
+; Syntactic Sugar for Variables
+; =============================
+; This language provides convenient syntactic sugar for defining and working with mutable variables of different types.
+;
+; 1. Number Variables
+;    - Use (variable name initial-value) to define a mutable number variable.
+;    - Use (++ name) to increment by 1, (+= name x) to add x, and (set name x) to set a new value.
+;    - Use (get name) to retrieve the current value.
+;    Example:
+     (variable n 10)   ; define number variable n with value 10
+     (++ n)            ; increment n by 1 (n = 11)
+     (+= n 5)          ; increment n by 5 (n = 16)
+     (set n 42)        ; set n to 42
+     (get n)           ; returns 42
+;
+; 2. Boolean Variables
+;    - Use (boolean name initial-value) to define a mutable boolean variable.
+;    - Use (boole-set name true/false) to set the value.
+;    - Use (boole:true? name) or (boole:false? name) to check the value.
+;    - Use (boole name) to get the boolean value (true or false) directly.
+;    - Use (get name) is NOT valid for booleans; always use the boolean helpers.
+;    Example:
+     (boolean x false)     ; define boolean variable x as false
+     (boole-set x true)    ; set x to true
+     (boole:true? x)       ; returns true if x is true
+     (boole:false? x)      ; returns true if x is false
+     (boole x)             ; returns true or false (the value of x)
+;
+; 3. Array Variables
+;    - Use (let arr [1 2 3]) to define an array variable.
+;    - Use (array:set! arr idx value) to set an element.
+;    - Use (array:get arr idx) to get an element.
+;
+; 4. General Variables
+;    - Use (let v (var:def value)) to define a general variable.
+;    - Use (var:set! v value) to set a new value.
+;    - Use (var:get v) to retrieve the value.
+;
+; Note:
+; - Use the correct set/get helpers for each variable type.
+; - Do NOT use set! for number or boolean variables; use set or boole-set as appropriate.
+; - Do NOT use get for boolean variables; use boole:true? or boole:false? instead.
+;
+
+; =============================
+; Common Mistakes and Gotchas
+; =============================
+; 1. Using set! on number or boolean variables:
+;      WRONG: (set! n 42) ; n is a number variable, use (set n 42) instead
+;      WRONG: (set! x true) ; x is a boolean variable, use (boole-set x true) instead
+;      IMPORTANT: n (or x) must be defined using the variable helpers (e.g., (variable n 41) or (boolean x false)) in order to use (set n ...) or (boole-set x ...). If you define n as (let n 41), (set n ...) will fail.
+;
+; 2. Using get on boolean variables:
+;      WRONG: (get x) ; x is a boolean variable, use (boole:true? x), (boole:false? x), or (boole x) instead
+;
+; 3. Forgetting to wrap multiple expressions in a lambda body with (do ...):
+;      WRONG: (lambda x y (let z (+ x y)) (* z 2))
+;      RIGHT: (lambda x y (do (let z (+ x y)) (* z 2)))
+;
+; 4. Using infix or postfix notation:
+;      WRONG: (1 + 2) or (1 2 +)
+;      RIGHT: (+ 1 2)
+;
+; 5. Using set! for arrays only:
+;      set! is ONLY for arrays. For all other variable types, use the appropriate set or helper function.
+;
+; 6. Using get for general or number variables is fine, but for booleans always use the boolean helpers.
+;
+; 7. Not using the correct prefix for tail-call or memoized functions:
+;      Only use tail-call: for linear recursion, and memoized: when you want automatic memoization.
+;
+; 8. Not balancing parentheses:
+;      Always check that every opening parenthesis has a matching closing parenthesis.
+;
+; 9. Using forbidden names for variables:
+;      Do NOT use built-in names like 'loop', 'if', 'do' as variable names.
+;
+; 10. Not using prefix notation for all operators and function calls.
+;
+; 11. For arrays, always prefer using array:set!, array:pop!, and array:get instead of the plain set!, pop!, and get forms. This avoids ambiguity and makes your code clearer.
+;
+; - Integer division: (// a b) is syntactic sugar for (math:floor (/ a b)), and performs integer division.
+; - No while: The language does not have a 'while' loop; use (loop ...) or (loop:for-n ...) constructs for iteration.
+; - String and char codes: String literals like "." are syntactic sugar for arrays of character codes. For example, "." is [46], so (array:get str 0) on a string returns the char code (e.g., 46 for ".").
+; - No return: There is no 'return' statement. Use booleans or control flow (like breaking loops or propagating values) for early exit or to indicate success/failure in recursive/backtracking algorithms.
+; - Variable redeclaration: Do not redeclare (let) a variable that already exists in the same scope. Redeclaring variables can cause bugs or unexpected behavior. Always use unique variable names within a given scope, or update the variable using the appropriate set! or var:set! helper.
+; - (get) vs (array:get): (get) and (array:get) are the same under the hood. (get xs) with one argument is equivalent to (get xs 0), returning the first element. However, you should only use (get) for variables declared with (variable) syntactic sugar (numbers only). For arrays, always use (array:get). For booleans, use (boole:true?) or related helpers. This avoids ambiguity and makes your code clearer and less error-prone.
+
 
 ```

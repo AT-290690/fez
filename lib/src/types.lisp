@@ -2214,8 +2214,8 @@
 (let tail-call:while (lambda (do Number)))
 ; 1 loop:while
 (let loop:while (lambda (lambda (do Boolean)) (lambda (do Unknown)) (do Number)))
-; 1 loop:while-safe while
-(let while (lambda (do Number)))
+; 1 loop:while-safe while-loop
+(let while-loop (lambda (do Number)))
 ; 1 loop:while-safe
 (let loop:while-safe (lambda (lambda (do Boolean)) (lambda (do Unknown)) (do Number)))
 ; 1 loop:for-range tail-call:loop:for-range

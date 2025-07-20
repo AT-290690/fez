@@ -2127,8 +2127,8 @@ q)))
    (tail-call:while))))
 
 (let loop:while-safe (lambda condition cb (do 
-    (let while (lambda (if (condition) (do (cb) (while)))))
-    (while))))
+    (let while-loop (lambda (if (condition) (do (cb) (while-loop)))))
+    (while-loop))))
 
 (let loop:for-range (lambda start end cb (do
                           (let tail-call:loop:for-range (lambda i

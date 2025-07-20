@@ -2,7 +2,8 @@ import { isLeaf } from './parser.js'
 import {
   EXPONENTIATION_RAW,
   INTEGER_DIVISION,
-  NOT_EQUAL
+  NOT_EQUAL,
+  EQUAL
 } from '../lib/baked/macros.js'
 import {
   APPLY,
@@ -23,6 +24,7 @@ export const SUGGAR = {
   STR_LIST: '~~',
   NOT_EQUAL_1: '!=',
   NOT_EQUAL_2: '<>',
+  EQUAL_1: '==',
   REMAINDER_OF_DIVISION_1: '%',
   UNLESS: 'unless',
   CREATE_LIST: 'list',
@@ -69,6 +71,10 @@ export const deSuggarAst = (ast, scope) => {
               case SUGGAR.NOT_EQUAL_2:
                 exp.length = 0
                 exp.push(...NOT_EQUAL)
+                break
+              case SUGGAR.EQUAL_1:
+                exp.length = 0
+                exp.push(...EQUAL)
                 break
               case SUGGAR.POWER:
                 exp.length = 0
@@ -522,6 +528,20 @@ export const deSuggarAst = (ast, scope) => {
                   exp[0][VALUE] = KEYWORDS.NOT
                   exp[1] = [[APPLY, KEYWORDS.EQUAL], exp[1], exp[2]]
                   exp.length = 2
+                  deSuggarAst(exp, scope)
+                }
+                break
+              case SUGGAR.EQUAL_1:
+                {
+                  if (rest.length !== 2)
+                    throw new RangeError(
+                      `Invalid number of arguments for (${
+                        exp[0][1]
+                      }), expected (= 2) but got ${rest.length} (${
+                        exp[0][1]
+                      } ${stringifyArgs(rest)})`
+                    )
+                  exp[0][VALUE] = KEYWORDS.EQUAL
                   deSuggarAst(exp, scope)
                 }
                 break

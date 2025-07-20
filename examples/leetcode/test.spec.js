@@ -100,5 +100,9 @@ test('leetcode', [
   {
     file: '10. Regular Expression Matching.lisp',
     result: [0, 1, 1]
+  },
+  {
+    file: '87. Scramble String.lisp',
+    result: [1, 0, 1]
   }
 ])
