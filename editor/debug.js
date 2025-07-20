@@ -159,69 +159,6 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
         ? 'Not defined in library'
         : signatures.map(LISP.source).join('\n\n')
     },
-    [DEBUG.LIST_THEMES]: (args, env) => {
-      if (args.length)
-        throw new RangeError(
-          `Invalid number of arguments to (${DEBUG.LIST_THEMES}) (= 0) (${
-            DEBUG.LIST_THEMES
-          } ${stringifyArgs(args)})`
-        )
-      return `;; light themes
-(${DEBUG.SET_THEME} "chrome")
-(${DEBUG.SET_THEME} "clouds")
-(${DEBUG.SET_THEME} "crimson_editor")
-(${DEBUG.SET_THEME} "dawn")
-(${DEBUG.SET_THEME} "dreamweaver")
-(${DEBUG.SET_THEME} "eclipse")
-(${DEBUG.SET_THEME} "github")
-(${DEBUG.SET_THEME} "iplastic")
-(${DEBUG.SET_THEME} "katzenmilch")
-(${DEBUG.SET_THEME} "kuroir")
-(${DEBUG.SET_THEME} "solarized_light")
-(${DEBUG.SET_THEME} "sqlserver")
-(${DEBUG.SET_THEME} "textmate")
-(${DEBUG.SET_THEME} "tomorrow")
-(${DEBUG.SET_THEME} "xcode")
-;; dark themes
-(${DEBUG.SET_THEME} "ambiance")
-(${DEBUG.SET_THEME} "chaos")
-(${DEBUG.SET_THEME} "clouds_midnight")
-(${DEBUG.SET_THEME} "cobalt")
-(${DEBUG.SET_THEME} "dracula")
-(${DEBUG.SET_THEME} "gob")
-(${DEBUG.SET_THEME} "gruvbox")
-(${DEBUG.SET_THEME} "idle_fingers")
-(${DEBUG.SET_THEME} "kr_theme")
-(${DEBUG.SET_THEME} "merbivore")
-(${DEBUG.SET_THEME} "merbivore_soft")
-(${DEBUG.SET_THEME} "mono_industrial")
-(${DEBUG.SET_THEME} "monokai")
-(${DEBUG.SET_THEME} "pastel_on_dark")
-(${DEBUG.SET_THEME} "solarized_dark")
-(${DEBUG.SET_THEME} "terminal")
-(${DEBUG.SET_THEME} "tomorrow_night")
-(${DEBUG.SET_THEME} "tomorrow_night_blue")
-(${DEBUG.SET_THEME} "tomorrow_night_bright")
-(${DEBUG.SET_THEME} "tomorrow_night_eighties")
-(${DEBUG.SET_THEME} "twilight")
-(${DEBUG.SET_THEME} "vibrant_ink")`
-    },
-    [DEBUG.SET_THEME]: (args, env) => {
-      if (args.length !== 1)
-        throw new RangeError(
-          `Invalid number of arguments to (${DEBUG.LIST_THEMES}) (= 1) (${
-            DEBUG.SET_THEME
-          } ${stringifyArgs(args)})`
-        )
-      const urlParams = new URLSearchParams(window.location.search)
-      urlParams.set(
-        't',
-        evaluate(args[0], env)
-          .map((x) => String.fromCharCode(x))
-          .join('')
-      )
-      window.location.search = urlParams
-    },
     [DEBUG.STRING]: (args, env) => {
       if (args.length !== 1)
         throw new RangeError(

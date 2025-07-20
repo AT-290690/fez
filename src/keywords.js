@@ -76,8 +76,6 @@ export const DEBUG = {
   LOG: 'log',
   ASSERT: 'assert',
   SIGNATURE: 'Info',
-  LIST_THEMES: 'theme?',
-  SET_THEME: 'theme!',
   TYPE_SIGNATURE: 'T'
 }
 

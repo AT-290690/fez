@@ -464,24 +464,6 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [UNKNOWN]
     }
   },
-  [DEBUG.LIST_THEMES]: {
-    [STATS]: {
-      [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: DEBUG.LIST_THEMES,
-      retried: Infinity,
-      [ARG_COUNT]: VARIADIC,
-      [RETURNS]: [UNKNOWN]
-    }
-  },
-  [DEBUG.SET_THEME]: {
-    [STATS]: {
-      [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: DEBUG.SET_THEME,
-      retried: Infinity,
-      [ARG_COUNT]: VARIADIC,
-      [RETURNS]: [UNKNOWN]
-    }
-  },
   [KEYWORDS.BLOCK]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],
