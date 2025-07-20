@@ -890,24 +890,28 @@ export const debugStackToString = (stack) =>
   stack.map(({ source, result }) => `${source}\n${result}`).join('\n')
 export const startDebug = (ast, speed = 250, start, end) => {
   debugStack.length = 0
-  evaluate(ast)
-  start = start ? debugStack.findIndex(start) : 0
-  end = end ? debugStack.findIndex(end) + 1 : debugStack.length
-  const stack = debugStack.slice(start, end)
-  if (speed !== 0) {
-    stack.reverse()
-    const rec = () => {
-      setTimeout(() => {
-        if (stack.length) {
-          const { source, result } = stack.pop()
-          console.log(`\x1b[31m${source}\x1b[32m\n${result}\x1b[0m`)
-          rec()
-        }
-      }, speed)
+  try {
+    evaluate(ast)
+    start = start ? debugStack.findIndex(start) : 0
+    end = end ? debugStack.findIndex(end) + 1 : debugStack.length
+    const stack = debugStack.slice(start, end)
+    if (speed !== 0) {
+      stack.reverse()
+      const rec = () => {
+        setTimeout(() => {
+          if (stack.length) {
+            const { source, result } = stack.pop()
+            console.log(`\x1b[31m${source}\x1b[32m\n${result}\x1b[0m`)
+            rec()
+          }
+        }, speed)
+      }
+      rec()
     }
-    rec()
+    return [stack, null]
+  } catch (error) {
+    return [null, error]
   }
-  return stack
 }
 
 // const types = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
