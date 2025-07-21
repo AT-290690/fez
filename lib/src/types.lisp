@@ -614,14 +614,14 @@
 (let math:least-common-divisor (lambda Number Number (do Number)))
 ; 1 math:coprime?
 (let math:coprime? (lambda Number Number (do Boolean)))
-; 1 math:heron-sqrt good-enough?
+; 1 math:square-root good-enough?
 (let good-enough? (lambda Number Number (do Boolean)))
-; 1 math:heron-sqrt improve-guess
+; 1 math:square-root improve-guess
 (let improve-guess (lambda Number Number (do Number)))
-; 1 math:heron-sqrt tail-call:math:heron-sqrt
-(let tail-call:math:heron-sqrt (lambda Number Number (do Number)))
-; 1 math:heron-sqrt
-(let math:heron-sqrt (lambda Number (do Number)))
+; 1 math:square-root tail-call:math:square-root
+(let tail-call:math:square-root (lambda Number Number (do Number)))
+; 1 math:square-root
+(let math:square-root (lambda Number (do Number)))
 ; 1 math:sqrt x
 (let x Number[])
 ; 1 math:sqrt prev
