@@ -8,6 +8,16 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     deepStrictEqual(
+      evalJS(`; ≈ π/4 radians
+; Output: [~70710, ~70710]  (cos(π/4) ≈ sin(π/4) ≈ 0.7071)
+[(math:cordic-10 78540) (math:cordic-5 78540)]
+`),
+      [
+        [70801.92386886947, 70618.54003063965],
+        [68374.9267578125, 72881.8603515625]
+      ]
+    )
+    deepStrictEqual(
       evalJS(`(math:hamming-numbers 20)`),
       [1, 2, 3, 4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24, 25, 27, 30, 32, 36]
     )

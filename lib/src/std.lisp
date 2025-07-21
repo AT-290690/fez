@@ -229,6 +229,20 @@
                 (array:enumerated-fold (lambda a x i
                     (if (= x 1) (array:append! a (array:get xs i)) a)) [])))))
     out)))
+(let math:unique (lambda arr
+  (do
+    (let seen [])
+    (let out [])
+    (variable i 0)
+    (loop (< (get i) (length arr))
+      (do
+        (let x (array:get arr (get i)))
+        (unless (math:some? seen (lambda y (= x y)))
+          (do
+            (set! seen (length seen) x)
+            (set! out (length out) x)))
+        (++ i)))
+    out)))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
 (let math:lesser-or-equal? (lambda a b (<= a b)))
@@ -658,6 +672,33 @@
               (math:power rad (* 2 i))))) 
         (if (< i terms) (tail-call:math:cosine (+ i 1)) (math:var-get cosine)))))
       (tail-call:math:cosine 0))))
+; K factor for 5 iterations (scaling factor, scaled by 100000)
+(let math:cordic-k 60725)
+; Precomputed arctan(2^-i) for i = 0..4 (in radians, scaled by 100000 for integer math)
+(let math:cordic-atan-table-5 [78540 46365 24491 12435 6270])
+(let math:cordic-atan-table-10 [78540 46365 24498 12435 6242 3124 1562 781 391 195])
+(let math:cordic (lambda theta iterations atan-table
+  (do
+    ; Convert theta to integer, scaled by 100000 (assume input in radians, scaled)
+    (variable x math:cordic-k) ; x = K
+    (variable y 0)
+    (variable z theta)
+    (variable i 0)
+    (loop (< (get i) iterations)
+      (do
+        (let d (if (>= (get z) 0) 1 -1))
+        (let x-new (- (get x) (/ (* d (get y)) (math:power 2 (get i)))))
+        (let y-new (+ (get y) (/ (* d (get x)) (math:power 2 (get i)))))
+        (let z-new (- (get z) (* d (array:get atan-table (get i)))))
+        (set x x-new)
+        (set y y-new)
+        (set z z-new)
+        (++ i)))
+    ; Return [cos, sin], both scaled by 100000
+    [(get x) (get y)])))
+(let math:cordic-10 (lambda theta (math:cordic theta 10 math:cordic-atan-table-10)))
+(let math:cordic-5 (lambda theta (math:cordic theta 5 math:cordic-atan-table-5)))
+
 (let math:prime-factors (lambda N (do 
   (let a []) 
   (let n (math:var-def N))
@@ -1406,13 +1447,13 @@
         (array:exclude array:empty?))))
 (let from:array->string (lambda xs delim (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge! (array:append! a delim) (array:first b)) (array:first b))) [])))
 (let from:matrix->string (lambda matrix (array:lines (array:map matrix (lambda m (array:spaces m))))))
+(let from:matrix-of-integer->string (lambda matrix (from:matrix->string (array:map matrix from:integers->strings))))
 (let array:shallow-copy (lambda xs (array:transform xs (lambda a b (array:set! a (length a) b)) [])))
 (let array:deep-copy (lambda xs (array:transform xs (lambda a b (array:set! a (length a) (if (array? b) (array:deep-copy b) b))) [])))
 (let array:merge! (lambda a b (do (array:for b (lambda x (array:set! a (length a) x))) a)))
 (let array:merge (lambda a b (do (let out []) (array:for a (lambda x (array:set! out (length out) x))) (array:for b (lambda x (array:set! out (length out) x))) out)))
 (let array:concat (lambda xs (array:transform xs array:merge [])))
 (let array:concat-with (lambda xs ch (array:enumerated-transform xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array ch)) b) (array:merge a b))) [])))
-(let string:concat-with-lines (lambda xs (array:enumerated-transform xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
 (let array:swap-remove! (lambda xs i (do (array:set! xs i (array:get xs (- (length xs) 1))) (del! xs))))
 (let array:swap! (lambda xs i j (do (let temp (array:get xs i)) (array:set! xs i (array:get xs j)) (array:set! xs j temp))))
 (let array:index-of (lambda xs item (do
@@ -1420,6 +1461,37 @@
                           (if (> (length xs) i)
                               (if (= (array:get xs i) item) i (tail-call:array:index-of (+ i 1))) -1)))
                         (tail-call:array:index-of 0))))
+(let array:permutations (lambda arr
+  (if (<= (length arr) 1)
+      [arr]
+      (do
+        (let out [])
+        (variable i 0)
+        (loop (< (get i) (length arr))
+          (do
+            (let x (array:get arr (get i)))
+            (let rest (array:select arr (lambda y (!= y x))))
+            (let perms (array:permutations rest))
+            (variable j 0)
+            (loop (< (get j) (length perms))
+              (do
+                (set! out (length out) (array:merge! [x] (array:get perms (get j))))
+                (++ j)))
+            (++ i)))
+        out))))
+(let array:cartesian-product (lambda a b
+  (do
+    (let out [])
+    (variable i 0)
+    (loop (< (get i) (length a))
+      (do
+        (variable j 0)
+        (loop (< (get j) (length b))
+          (do
+            (set! out (length out) [(array:get a (get i)) (array:get b (get j))])
+            (++ j)))
+        (++ i)))
+    out)))
 (let array:enumerate (lambda xs (array:zip (math:sequence xs) xs)))
 (let array:enumerated-map (lambda xs cb (do
                   (let tail-call:array:enumerated-map (lambda i out
@@ -1502,6 +1574,7 @@
      (array:merge! (math:zeroes (- (length b) (length a))) a))))
 (let array:rotate-right (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (array:set! a (mod (+ (array:second b)  n) (length xs)) (array:first b))) (math:zeroes (length xs))))))
 (let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (array:set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
+(let string:concat-with-lines (lambda xs (array:enumerated-transform xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
 (let string:wrap-in-quotes (lambda str (array:concat [[char:double-quote] str [char:double-quote]])))
 (let string:character-occurances (lambda str letter (do
   (let xs str)
@@ -2154,6 +2227,22 @@ q)))
 (let date:day (lambda date (array:third date)))
 (let date:month-day (lambda date (array:tail date)))
 (let date:year-month (lambda date (array (array:first date) (array:second date))))
+
+(let loop:sliding-window-array (lambda arr size
+  (do
+    (let out [])
+    (variable i 0)
+    (loop (<= (+ (get i) size) (length arr))
+      (do
+        (let window [])
+        (variable j 0)
+        (loop (< (get j) size)
+          (do
+            (set! window (length window) (array:get arr (+ (get i) (get j))))
+            (++ j)))
+        (set! out (length out) window)
+        (++ i)))
+    out)))
 
 (let loop:merge (lambda a b
   (do
