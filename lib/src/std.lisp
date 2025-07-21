@@ -1926,6 +1926,27 @@
 (let math:var-subtract-and-get! (lambda variable x (do (array:set! variable 0 (- (math:var-get variable) x)) (math:var-get variable))))
 (let math:var-multiply-and-get! (lambda variable x (do (array:set! variable 0 (* (math:var-get variable) x)) (math:var-get variable))))
 (let math:var-divide-and-get! (lambda variable x (do (array:set! variable 0 (/ (math:var-get variable) x)) (math:var-get variable))))
+(let math:hamming-numbers (lambda n
+  (do
+    (let ham [1])
+    (variable i 0)
+    (loop (< (length ham) n)
+      (do
+        (let next2 (loop:map ham (lambda x (* x 2))))
+        (let next3 (loop:map ham (lambda x (* x 3))))
+        (let next5 (loop:map ham (lambda x (* x 5))))
+        (let merged (loop:merge next2 (loop:merge next3 next5)))
+        ; Find the smallest in merged that is > last ham
+        (variable j 0)
+        (let last (array:get ham (- (length ham) 1)))
+        (loop (< (get j) (length merged))
+          (do
+            (if (> (array:get merged (get j)) last)
+                (do
+                  (set! ham (length ham) (array:get merged (get j)))
+                  (set j (length merged))) ; break
+                (++ j))))))
+                ham)))
 (let math:hamming-weight (lambda N (do
     (let n (math:var-def N))
     (let count (math:var-def 0))
@@ -1977,6 +1998,7 @@
 (let curry:three (lambda f b c (lambda a (f a b c))))
 (let curry:two (lambda f b (lambda a (f a b))))
 (let curry:one (lambda f (lambda a (f a))))
+(let curry:flip (lambda f (lambda x y (f y x))))
 
 (let brray:offset-left (lambda q (* (- (length (array:get q 0)) 1) -1)))
 (let brray:offset-right (lambda q (length (array:get q 1))))
@@ -2132,6 +2154,40 @@ q)))
 (let date:day (lambda date (array:third date)))
 (let date:month-day (lambda date (array:tail date)))
 (let date:year-month (lambda date (array (array:first date) (array:second date))))
+
+(let loop:merge (lambda a b
+  (do
+    (variable i 0)
+    (variable j 0)
+    (let out [])
+    (loop (and (< (get i) (length a)) (< (get j) (length b)))
+      (do
+        (let x (array:get a (get i)))
+        (let y (array:get b (get j)))
+        (if (< x y)
+            (do (set! out (length out) x) (++ i))
+            (if (> x y)
+                (do (set! out (length out) y) (++ j))
+                (do (set! out (length out) x) (++ i) (++ j))))))
+    (loop (< (get i) (length a))
+      (do (set! out (length out) (array:get a (get i))) (++ i)))
+    (loop (< (get j) (length b))
+      (do (set! out (length out) (array:get b (get j))) (++ j)))
+    out)))
+
+(let loop:map (lambda xs f
+  (do
+    (let out [])
+    (variable i 0)
+    (loop (< (get i) (length xs))
+      (do
+        (set! out (length out) (f (array:get xs (get i))))
+        (++ i)))
+    out)))
+
+(let loop:until (lambda p f x (do 
+  (let tail-call:until (lambda p f x (if (p x) x (tail-call:until p f (f x)))))
+  (tail-call:until p f x))))
 
 (let loop:while (lambda condition cb (do 
    (let tail-call:while (lambda (if (condition) (do (cb) (tail-call:while)) nil)))
