@@ -549,13 +549,24 @@
           (if (= b 0) a (tail-call:math:greatest-common-divisor b (mod a b))))) (tail-call:math:greatest-common-divisor a b))))
 (let math:least-common-divisor (lambda a b (/ (* a b) (math:greatest-common-divisor a b))))
 (let math:coprime? (lambda a b (= (math:greatest-common-divisor a b) 1)))
-(let math:sqrt (lambda x (do
+(let math:heron-sqrt (lambda x (do
   (let good-enough? (lambda g x (< (math:abs (- (math:square g) x)) 0.01)))
   (let improve-guess (lambda g x (math:average g (/ x g))))
-  (let tail-call:math:sqrt (lambda g x
+  (let tail-call:math:heron-sqrt (lambda g x
       (if (good-enough? g x) g
-          (tail-call:math:sqrt (improve-guess g x) x))))
-  (tail-call:math:sqrt 1.0 x))))
+          (tail-call:math:heron-sqrt (improve-guess g x) x))))
+  (tail-call:math:heron-sqrt 1.0 x))))
+; faster variant of the above
+(let math:sqrt (lambda n
+  (do
+    (variable x n)
+    (variable prev 0)
+    (variable eps 0.00001)
+    (loop (> (math:abs (- (get x) (get prev))) (get eps))
+      (do
+        (set prev (get x))
+        (set x (/ (+ (get x) (/ n (get x))) 2))))
+    (get x))))
 (let math:standard-deviation2 (lambda xs (do 
   (let mean (math:mean xs))
   (|> xs (math:map (lambda x (** (- x mean) 2))) (math:summation) (/ (- (length xs) 1)) (math:sqrt)))))
