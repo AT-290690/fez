@@ -1,9 +1,5 @@
 # Fez Programming Language
 
-<p align="center">
-<img width="128" src="./favicon.svg"/>
-</p>
-
 ```lisp
 (let fezz-buzz (lambda n
         (cond
@@ -49,6 +45,80 @@
 (/ ...) (+ ...) (* ...) (- ...) (= ...) (< ...) (> ...) (>= ...) (<= ...) (& ...) (~ ...) (| ...) (^ ...) (<< ...) (>> ...)
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
 (length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...)
+
+; Arithmetic Operators
+; +: Addition.
+; Usage: (+ a b) → returns the sum of a and b.
+; -: Subtraction.
+; Usage: (- a b) → returns a minus b.
+; *: Multiplication.
+; Usage: (* a b) → returns the product of a and b.
+; /: Division.
+; Usage: (/ a b) → returns a divided by b.
+; mod: Modulo (remainder).
+; Usage: (mod a b) → returns the remainder of a divided by b.
+; Comparison Operators
+; =: Equality.
+; Usage: (= a b) → returns 1 if a equals b, else 0.
+; <: Less than.
+; Usage: (< a b) → returns 1 if a is less than b, else 0.
+; >: Greater than.
+; Usage: (> a b) → returns 1 if a is greater than b, else 0.
+; <=: Less than or equal.
+; Usage: (<= a b) → returns 1 if a is less than or equal to b, else 0.
+; >=: Greater than or equal.
+; Usage: (>= a b) → returns 1 if a is greater than or equal to b, else 0.
+; Bitwise Operators
+; &: Bitwise AND.
+; Usage: (& a b)
+; |: Bitwise OR.
+; Usage: (| a b)
+; ^: Bitwise XOR.
+; Usage: (^ a b)
+; ~: Bitwise NOT.
+; Usage: (~ a)
+; <<: Bitwise left shift.
+; Usage: (<< a b)
+; >>: Bitwise right shift.
+; Usage: (>> a b)
+; Logical Operators
+; and: Logical AND.
+; Usage: (and a b) → returns a if a is 0, else b.
+; or: Logical OR.
+; Usage: (or a b) → returns 1 if a is 1, else b.
+; not: Logical NOT.
+; Usage: (not a) → returns 1 if a is 0, else 0.
+; Control Flow
+; if: Conditional.
+; Usage: (if cond then else) → evaluates then if cond is true, else else.
+; do: Sequence.
+; Usage: (do expr1 expr2 ...) → evaluates each expression in order, returns the last.
+; loop: While loop.
+; Usage: (loop cond body) → repeatedly evaluates body while cond is true.
+; Functions
+; lambda: Function definition.
+; Usage: (lambda x y (do ...)) → returns a function of x and y.
+; apply: Function application.
+; Usage: (apply f a b ...) → applies function f to arguments.
+; Variables
+; let: Variable definition.
+; Usage: (let x 10) → defines x as 10.
+; set!: Array element assignment.
+; Usage: (set! arr idx val) → sets arr[idx] to val.
+; pop!: Array pop.
+; Usage: (pop! arr) → removes the last element from arr.
+; Arrays
+; array: Array creation.
+; Usage: (array 1 2 3) → creates [1, 2, 3].
+; get: Array element access.
+; Usage: (get arr idx) → returns arr[idx].
+; length: Array length.
+; Usage: (length arr) → returns the number of elements in arr.
+; Type Predicates
+; atom?: Checks if value is a number.
+; Usage: (atom? x) → returns 1 if x is a number, else 0.
+; lambda?: Checks if value is a function.
+; Usage: (lambda? x) → returns 1 if x is a function, else 0.
 
 ; Important Note:
 ; In this programming language, parentheses are used to group expressions and define the structure of code.
@@ -432,6 +502,5 @@
 ; - No return: There is no 'return' statement. Use booleans or control flow (like breaking loops or propagating values) for early exit or to indicate success/failure in recursive/backtracking algorithms.
 ; - Variable redeclaration: Do not redeclare (let) a variable that already exists in the same scope. Redeclaring variables can cause bugs or unexpected behavior. Always use unique variable names within a given scope, or update the variable using the appropriate set! or var:set! helper.
 ; - (get) vs (array:get): (get) and (array:get) are the same under the hood. (get xs) with one argument is equivalent to (get xs 0), returning the first element. However, you should only use (get) for variables declared with (variable) syntactic sugar (numbers only). For arrays, always use (array:get). For booleans, use (boole:true?) or related helpers. This avoids ambiguity and makes your code clearer and less error-prone.
-
 
 ```

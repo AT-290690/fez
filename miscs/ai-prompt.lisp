@@ -30,7 +30,81 @@
 (mod ...) (let ...) (if ...) (not ...) (and ...) (or ...) (atom? ...) (lambda? ...)
 (length ...) (do ...) (array ...) (set! ...) (pop! ...) (get ...) (lambda ...) (apply ...)
 
-; Important Note: 
+; Arithmetic Operators
+; +: Addition.
+; Usage: (+ a b) → returns the sum of a and b.
+; -: Subtraction.
+; Usage: (- a b) → returns a minus b.
+; *: Multiplication.
+; Usage: (* a b) → returns the product of a and b.
+; /: Division.
+; Usage: (/ a b) → returns a divided by b.
+; mod: Modulo (remainder).
+; Usage: (mod a b) → returns the remainder of a divided by b.
+; Comparison Operators
+; =: Equality.
+; Usage: (= a b) → returns 1 if a equals b, else 0.
+; <: Less than.
+; Usage: (< a b) → returns 1 if a is less than b, else 0.
+; >: Greater than.
+; Usage: (> a b) → returns 1 if a is greater than b, else 0.
+; <=: Less than or equal.
+; Usage: (<= a b) → returns 1 if a is less than or equal to b, else 0.
+; >=: Greater than or equal.
+; Usage: (>= a b) → returns 1 if a is greater than or equal to b, else 0.
+; Bitwise Operators
+; &: Bitwise AND.
+; Usage: (& a b)
+; |: Bitwise OR.
+; Usage: (| a b)
+; ^: Bitwise XOR.
+; Usage: (^ a b)
+; ~: Bitwise NOT.
+; Usage: (~ a)
+; <<: Bitwise left shift.
+; Usage: (<< a b)
+; >>: Bitwise right shift.
+; Usage: (>> a b)
+; Logical Operators
+; and: Logical AND.
+; Usage: (and a b) → returns a if a is 0, else b.
+; or: Logical OR.
+; Usage: (or a b) → returns 1 if a is 1, else b.
+; not: Logical NOT.
+; Usage: (not a) → returns 1 if a is 0, else 0.
+; Control Flow
+; if: Conditional.
+; Usage: (if cond then else) → evaluates then if cond is true, else else.
+; do: Sequence.
+; Usage: (do expr1 expr2 ...) → evaluates each expression in order, returns the last.
+; loop: While loop.
+; Usage: (loop cond body) → repeatedly evaluates body while cond is true.
+; Functions
+; lambda: Function definition.
+; Usage: (lambda x y (do ...)) → returns a function of x and y.
+; apply: Function application.
+; Usage: (apply f a b ...) → applies function f to arguments.
+; Variables
+; let: Variable definition.
+; Usage: (let x 10) → defines x as 10.
+; set!: Array element assignment.
+; Usage: (set! arr idx val) → sets arr[idx] to val.
+; pop!: Array pop.
+; Usage: (pop! arr) → removes the last element from arr.
+; Arrays
+; array: Array creation.
+; Usage: (array 1 2 3) → creates [1, 2, 3].
+; get: Array element access.
+; Usage: (get arr idx) → returns arr[idx].
+; length: Array length.
+; Usage: (length arr) → returns the number of elements in arr.
+; Type Predicates
+; atom?: Checks if value is a number.
+; Usage: (atom? x) → returns 1 if x is a number, else 0.
+; lambda?: Checks if value is a function.
+; Usage: (lambda? x) → returns 1 if x is a function, else 0.
+
+; Important Note:
 ; In this programming language, parentheses are used to group expressions and define the structure of code.
 ; It is essential to keep the number of opening and closing parentheses balanced.
 ; Unbalanced parentheses can lead to syntax errors or unexpected behavior in the code.
@@ -73,9 +147,9 @@
 (let x 10) ; define a variable x with the value 10
 (let xs (array 1 2 3 4)) ; define an array xs with initial values
 
-(let add (lambda a b (do 
+(let add (lambda a b (do
     (+ a b))) ; define a function add that takes two parameters a and b
-) 
+)
 
 ; Array operations
 (array:set! xs 0 100) ; set the first element of array xs to 100
@@ -83,7 +157,7 @@
 (array:push! xs (length xs) 10) ; add the value 10 at the end of array xs
 (array:get xs 0) ; get the first element of array xs
 
-; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs). 
+; Note: set! and pop! are functions that update arrays (set! xs idx value, pop! xs).
 ; If you want to update variables (scalars), use the variable helpers: var:def to define, var:set! to update, and var:get to retrieve the value.
 
 ; Mathematical operations
@@ -109,7 +183,7 @@
 (math:round 1.5) ; round 1.5 to the nearest integer
 (math:max 2 3) ; maximum of 2 and 3
 (math:min 4 3) ; minimum of 4 and 3
-(math:power 4 2) ; raise 4 to the power of 4 
+(math:power 4 2) ; raise 4 to the power of 4
 (math:sqrt 9) ; fomd the square root of 9
 
 ; Boolean operations
@@ -146,7 +220,7 @@
   (*) false) ; default case - REQUIRED
 
 ; Using do for multiple expressions
-(if (> 2 1) (do 
+(if (> 2 1) (do
     (let x 10) ; define x
     (let y 23) ; define y
     (+ x y)) ; return the sum of x and y
@@ -163,7 +237,7 @@
 
 ; IMPORTANT: Variable Handling and set! Usage
 ; ===========================================
-; 
+;
 ; set! is ONLY for arrays - it cannot be used to update scalar variables.
 ; If you want to update variables (scalars), use the appropriate variable helper functions.
 ;
@@ -207,7 +281,7 @@
   (or true false)  ; returns true (1)
   (not false)      ; returns true (1)
 
-  
+
 ; Examples:
 (let counter (math:var-def 0))           ; numeric variable
 (math:var-increment! counter)            ; increment by 1
@@ -230,22 +304,22 @@
 (array:set! arr 1 200)                   ; Set array element at index 1 to 200
 
 ; Defining functions to reverse an array
-(let arr:for (lambda xs cb (do 
-                    (let tail-call:arr:for (lambda i (do 
-                        (if (> (length xs) i) (do 
+(let arr:for (lambda xs cb (do
+                    (let tail-call:arr:for (lambda i (do
+                        (if (> (length xs) i) (do
                             (cb (array:get xs i)) ; apply callback to current element
                             ; recurse to next index
                             (tail-call:arr:for (+ i 1)))
-                            ; return 0 when done 
+                            ; return 0 when done
                             0))))
                     (tail-call:arr:for 0)
                 xs)))
-(let arr:merge (lambda a b (do 
-    (let out (array))  
-    (arr:for a (lambda x (do (set! out (length out) x)))) 
+(let arr:merge (lambda a b (do
+    (let out (array))
+    (arr:for a (lambda x (do (set! out (length out) x))))
     (arr:for b (lambda x (do (set! out (length out) x)))) out)))
 (let arr:reverse (lambda xs (do
-                    (let tail-call:arr:reverse (lambda i out (do 
+                    (let tail-call:arr:reverse (lambda i out (do
                         (if (> (length xs) i)
                               (tail-call:arr:reverse (+ i 1)
                               (arr:merge (array (array:get xs i)) out))
@@ -258,11 +332,11 @@
 
 ; these are syntactic suggar for the language but you don't need to use them
 ; syntactic suggar for array
-[1 2 3 4 5] 
+[1 2 3 4 5]
 ; syntactic suggar for linked list
-{1 2 3 4 5} 
+{1 2 3 4 5}
 ; array destructuring
-[a b . c] 
+[a b . c]
 ; list destructuring
 {a b . c}
 ; . means skip that element and last one is aways the rest unelss skipped
@@ -299,19 +373,19 @@
 ; =============================
 ; String literals like "hello" are automatically transformed into arrays of character codes.
 ; For example:
-  "abc" 
-  ; is equivalent to 
+  "abc"
+  ; is equivalent to
   (array 97 98 99)
 ; You can use string literals anywhere an array of character codes is expected.
 ; All string operations work on these arrays.
 
-; syntactic suggar for variables 
+; syntactic suggar for variables
 
 (let xs [])
 (variable i 0) ; define number variables
 (get i) ; getting nubmer variable
-(loop (< (get i) 10) (do 
-  (array:push! xs (get i)) 
+(loop (< (get i) 10) (do
+  (array:push! xs (get i))
   (++ i) ; increment number variaable
 ))
 
@@ -412,4 +486,3 @@
 ; - No return: There is no 'return' statement. Use booleans or control flow (like breaking loops or propagating values) for early exit or to indicate success/failure in recursive/backtracking algorithms.
 ; - Variable redeclaration: Do not redeclare (let) a variable that already exists in the same scope. Redeclaring variables can cause bugs or unexpected behavior. Always use unique variable names within a given scope, or update the variable using the appropriate set! or var:set! helper.
 ; - (get) vs (array:get): (get) and (array:get) are the same under the hood. (get xs) with one argument is equivalent to (get xs 0), returning the first element. However, you should only use (get) for variables declared with (variable) syntactic sugar (numbers only). For arrays, always use (array:get). For booleans, use (boole:true?) or related helpers. This avoids ambiguity and makes your code clearer and less error-prone.
-
