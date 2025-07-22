@@ -300,6 +300,9 @@
 (let math:modulo-bit (lambda numerator divisor (& numerator (- divisor 1))))
 (let math:n-one-bit? (lambda N nth (not (= (& N (<< 1 nth)) 0))))
 (let math:percent (lambda a b (* (/ b 100) a)))
+(let math:round-to (lambda x decimals (do
+    (let factor (math:power 10 decimals))
+    (/ (math:round (* x factor)) factor))))
 (let math:median (lambda xs (do
     (let len (length xs))
     (let half (math:floor (/ len 2)))
@@ -1576,6 +1579,15 @@
 (let array:rotate-left (lambda xs n (|> xs (array:zip (math:sequence xs)) (array:transform (lambda a b (array:set! a (mod (+ (array:second b)  (- (length xs) n)) (length xs)) (array:first b))) (math:zeroes (length xs))))))
 (let string:concat-with-lines (lambda xs (array:enumerated-transform xs (lambda a b i (if (and (> i 0) (< i (length xs))) (array:merge (array:merge a (array char:new-line)) b) (array:merge a b))) [])))
 (let string:wrap-in-quotes (lambda str (array:concat [[char:double-quote] str [char:double-quote]])))
+(let string:to-fixed (lambda s n (do
+    (let dot-pos (array:index-of s char:dot))
+    (if (= dot-pos -1)
+        s
+        (do
+          (let after-dot-len (- (length s) (+ dot-pos 1)))
+          (if (<= after-dot-len n)
+              s
+              (array:slice s 0 (+ dot-pos 1 n))))))))
 (let string:character-occurances (lambda str letter (do
   (let xs str)
   (let bitmask (math:var-def 0))
@@ -1999,6 +2011,9 @@
 (let math:var-subtract-and-get! (lambda variable x (do (array:set! variable 0 (- (math:var-get variable) x)) (math:var-get variable))))
 (let math:var-multiply-and-get! (lambda variable x (do (array:set! variable 0 (* (math:var-get variable) x)) (math:var-get variable))))
 (let math:var-divide-and-get! (lambda variable x (do (array:set! variable 0 (/ (math:var-get variable) x)) (math:var-get variable))))
+; (math:compound-growth 1000 0.05 10)
+; => 1628.8946267774415  (final amount after 10 periods at 5% growth)
+(let math:compound-growth (lambda principal rate periods (* principal (math:power (+ 1 rate) periods))))
 (let math:hamming-numbers (lambda n
   (do
     (let ham [1])

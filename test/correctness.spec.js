@@ -7,6 +7,27 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    strictEqual(
+      evalJS(`; (let amount (- 38108.27 15475.92))
+(let amount 22632.35) ; in 5 months
+(let percentage  0.6838)
+(let N 5)
+
+(|> 
+    (math:range 0 21) 
+    (array:map (lambda i (math:compound-growth amount percentage i)))
+    (array:enumerated-map (lambda amount i (do
+        (let money (|> amount (from:float->string) (string:to-fixed 2)))
+        (let time (|> N (* i)))
+        (let years (|> (/ time 12) (from:float->string) (string:to-fixed 2)))
+        (let months (from:float->string time))
+        \`"{money} BGN for every {years} years ({months} months)")))
+    (from:array->string char:new-line)
+    (math:summation)
+    ; (unquoted-string)
+)`),
+      75822
+    )
     deepStrictEqual(
       evalJS(`; ≈ π/4 radians
 ; Output: [~70710, ~70710]  (cos(π/4) ≈ sin(π/4) ≈ 0.7071)
