@@ -32,77 +32,77 @@
 
 ; Arithmetic Operators
 ; +: Addition.
-; Usage: (+ a b) → returns the sum of a and b.
+(+ a b) ; → returns the sum of a and b.
 ; -: Subtraction.
-; Usage: (- a b) → returns a minus b.
+(- a b) ; → returns a minus b.
 ; *: Multiplication.
-; Usage: (* a b) → returns the product of a and b.
+(* a b) ; → returns the product of a and b.
 ; /: Division.
-; Usage: (/ a b) → returns a divided by b.
+(/ a b) ; → returns a divided by b.
 ; mod: Modulo (remainder).
-; Usage: (mod a b) → returns the remainder of a divided by b.
+(mod a b) ; → returns the remainder of a divided by b.
 ; Comparison Operators
 ; =: Equality.
-; Usage: (= a b) → returns 1 if a equals b, else 0.
+(= a b) ; → returns 1 if a equals b, else 0.
 ; <: Less than.
-; Usage: (< a b) → returns 1 if a is less than b, else 0.
+(< a b) ; → returns 1 if a is less than b, else 0.
 ; >: Greater than.
-; Usage: (> a b) → returns 1 if a is greater than b, else 0.
+(> a b) ; → returns 1 if a is greater than b, else 0.
 ; <=: Less than or equal.
-; Usage: (<= a b) → returns 1 if a is less than or equal to b, else 0.
+(<= a b) ; → returns 1 if a is less than or equal to b, else 0.
 ; >=: Greater than or equal.
-; Usage: (>= a b) → returns 1 if a is greater than or equal to b, else 0.
+(>= a b) ; → returns 1 if a is greater than or equal to b, else 0.
 ; Bitwise Operators
 ; &: Bitwise AND.
-; Usage: (& a b)
+(& a b)
 ; |: Bitwise OR.
-; Usage: (| a b)
+(| a b)
 ; ^: Bitwise XOR.
-; Usage: (^ a b)
+(^ a b)
 ; ~: Bitwise NOT.
-; Usage: (~ a)
+(~ a)
 ; <<: Bitwise left shift.
-; Usage: (<< a b)
+(<< a b)
 ; >>: Bitwise right shift.
-; Usage: (>> a b)
+(>> a b)
 ; Logical Operators
 ; and: Logical AND.
-; Usage: (and a b) → returns a if a is 0, else b.
+(and a b) ; → returns a if a is 0, else b.
 ; or: Logical OR.
-; Usage: (or a b) → returns 1 if a is 1, else b.
+(or a b) ; → returns 1 if a is 1, else b.
 ; not: Logical NOT.
-; Usage: (not a) → returns 1 if a is 0, else 0.
+(not a) ; → returns 1 if a is 0, else 0.
 ; Control Flow
 ; if: Conditional.
-; Usage: (if cond then else) → evaluates then if cond is true, else else.
+(if cond then else) → evaluates then if cond is true, else else.
 ; do: Sequence.
-; Usage: (do expr1 expr2 ...) → evaluates each expression in order, returns the last.
+(do expr1 expr2 ...) → evaluates each expression in order, returns the last.
 ; loop: While loop.
-; Usage: (loop cond body) → repeatedly evaluates body while cond is true.
+(loop cond body) → repeatedly evaluates body while cond is true.
 ; Functions
 ; lambda: Function definition.
-; Usage: (lambda x y (do ...)) → returns a function of x and y.
+(lambda x y (do ...)) ; → returns a function of x and y.
 ; apply: Function application.
-; Usage: (apply f a b ...) → applies function f to arguments.
+(apply f a b ...) → applies function f to arguments.
 ; Variables
 ; let: Variable definition.
-; Usage: (let x 10) → defines x as 10.
+(let x 10) → defines x as 10.
 ; set!: Array element assignment.
-; Usage: (set! arr idx val) → sets arr[idx] to val.
+(set! arr idx val) → sets arr[idx] to val.
 ; pop!: Array pop.
-; Usage: (pop! arr) → removes the last element from arr.
+(pop! arr) → removes the last element from arr.
 ; Arrays
 ; array: Array creation.
-; Usage: (array 1 2 3) → creates [1, 2, 3].
+(array 1 2 3) → creates [1, 2, 3].
 ; get: Array element access.
-; Usage: (get arr idx) → returns arr[idx].
+(get arr idx) ; → returns arr[idx].
 ; length: Array length.
-; Usage: (length arr) → returns the number of elements in arr.
+(length arr) ; → returns the number of elements in arr.
 ; Type Predicates
 ; atom?: Checks if value is a number.
-; Usage: (atom? x) → returns 1 if x is a number, else 0.
+(atom? x) ; → returns 1 if x is a number, else 0.
 ; lambda?: Checks if value is a function.
-; Usage: (lambda? x) → returns 1 if x is a function, else 0.
+(lambda? x) ; → returns 1 if x is a function, else 0.
 
 ; Important Note:
 ; In this programming language, parentheses are used to group expressions and define the structure of code.
