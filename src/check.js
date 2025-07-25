@@ -1255,7 +1255,7 @@ export const typeCheck = (
                         !equalSubTypes(argE[STATS], argA[STATS]))
                     )
                       throw new TypeError(
-                        `Incorrect return type for argument (${
+                        `Incorrect type for argument (${
                           argA[STATS][SIGNATURE]
                         }) The (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
                           expected[STATS][SIGNATURE]
