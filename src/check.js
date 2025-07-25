@@ -1204,26 +1204,77 @@ export const typeCheck = (
               )
             // TODO check let define types
             const name = rest[0][VALUE]
-            if (env.hasOwnProperty(name))
+            if (name[0] !== PLACEHOLDER && env.hasOwnProperty(name))
               throw new ReferenceError(
                 `Attempting to redeclare (${name}) which was previously declared in this scope (${stringifyArgs(
                   exp
                 )})`
               )
-            if (name in env) {
-              typeSet(Types, name, env, exp)
-              // Types.set(withScope(name, env), () => formatType(name, env))
-              // If current scope is root then these are user defined types
-              if (env[SCOPE_NAME] === rootScopeIndex) break
-            }
-            //  Predicate name consistency
             const rightHand = rest.at(-1)
             const isApply =
               rightHand && rightHand[0] && rightHand[0][TYPE] === APPLY
-            if (
-              isApply &&
-              rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
-            ) {
+            const isLambda =
+              isApply && rightHand[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION
+            if (name in env) {
+              // Types.set(withScope(name, env), () => formatType(name, env))
+              // If current scope is root then these are user defined types
+              if (isLambda && !isUnknownReturn(env[name][STATS])) {
+                const lambdaName = `${PLACEHOLDER}${ANONYMOUS_FUNCTION_TYPE_PREFIX}${rootScopeIndex}`
+                check(
+                  [
+                    [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                    [WORD, lambdaName],
+                    exp.at(-1)
+                  ],
+                  env,
+                  scope
+                )
+                const expected = env[name]
+                const actual = env[lambdaName]
+                once(actual[STATS], exp, stack, () => {
+                  if (
+                    !isUnknownReturn(actual[STATS]) &&
+                    (!equalReturns(expected[STATS], actual[STATS]) ||
+                      !equalSubReturns(expected[STATS], actual[STATS]))
+                  )
+                    throw new TypeError(
+                      `Incorrect return type for (${
+                        expected[STATS][SIGNATURE]
+                      }) Expected (${formatSubType(
+                        getReturns(expected[STATS])
+                      )}) but got (${formatSubType(
+                        getReturns(actual[STATS])
+                      )}) (${stringifyArgs(exp)}) (check #999)`
+                    )
+                  for (let i = 0; i < expected[STATS][ARGUMENTS].length; ++i) {
+                    const argE = expected[STATS][ARGUMENTS][i]
+                    const argA = actual[STATS][ARGUMENTS][i]
+                    if (
+                      !isUnknownType(argA[STATS]) &&
+                      (!equalTypes(argE[STATS], argA[STATS]) ||
+                        !equalSubTypes(argE[STATS], argA[STATS]))
+                    )
+                      throw new TypeError(
+                        `Incorrect return type for argument (${
+                          argA[STATS][SIGNATURE]
+                        }) The (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
+                          expected[STATS][SIGNATURE]
+                        }) at position (${i}). Expected (${formatSubType(
+                          getTypes(argE[STATS])
+                        )}) but got (${formatSubType(
+                          getTypes(argA[STATS])
+                        )}) (${stringifyArgs(exp)}) (check #1000)`
+                      )
+                  }
+
+                  Types.delete(`; ${rootScopeIndex} ${lambdaName}`)
+                })
+              }
+              typeSet(Types, name, env, exp)
+              if (env[SCOPE_NAME] === rootScopeIndex) break
+            }
+            //  Predicate name consistency
+            if (isLambda) {
               validateLambda(rightHand, name)
               const n = rightHand.length
               env[name] = {
