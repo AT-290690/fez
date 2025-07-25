@@ -641,7 +641,6 @@ ZZZ=ZZZ,ZZZ")
     doesNotThrow(() => type(std))
   })
   it('Should throw', () => {
-    // TODO uncomment this and make it work
     fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
     (let z [])

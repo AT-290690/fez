@@ -1231,7 +1231,24 @@ export const typeCheck = (
                 )
                 const expected = env[name]
                 const actual = env[lambdaName]
-                once(actual[STATS], exp, stack, () => {
+                const checkReturns = () => {
+                  if (
+                    !isUnknownReturn(actual[STATS]) &&
+                    (!equalReturns(expected[STATS], actual[STATS]) ||
+                      !equalSubReturns(expected[STATS], actual[STATS]))
+                  )
+                    throw new TypeError(
+                      `Incorrect return type for (${
+                        expected[STATS][SIGNATURE]
+                      }) Expected (${formatSubType(
+                        getReturns(expected[STATS])
+                      )}) but got (${formatSubType(
+                        getReturns(actual[STATS])
+                      )}) (${stringifyArgs(exp)}) (check #999)`
+                    )
+                  else retry(actual[STATS], exp, stack, checkReturns)
+                }
+                const checkArgs = () => {
                   if (
                     !isUnknownReturn(actual[STATS]) &&
                     (!equalReturns(expected[STATS], actual[STATS]) ||
@@ -1265,8 +1282,12 @@ export const typeCheck = (
                           getTypes(argA[STATS])
                         )}) (${stringifyArgs(exp)}) (check #1000)`
                       )
+                    else retry(actual[STATS], exp, stack, checkArgs)
                   }
-
+                }
+                once(actual[STATS], exp, stack, () => {
+                  checkReturns()
+                  checkArgs()
                   Types.delete(`; ${rootScopeIndex} ${lambdaName}`)
                 })
               }
