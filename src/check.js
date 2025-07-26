@@ -1116,7 +1116,8 @@ export const typeCheck = (
                     if (
                       !isUnknownType(actual[STATS]) &&
                       !isUnknownType(expected[STATS]) &&
-                      !equalTypes(actual[STATS], expected[STATS])
+                      (!equalTypes(actual[STATS], expected[STATS]) ||
+                        !equalSubTypes(actual[STATS], expected[STATS]))
                     )
                       throw new TypeError(
                         `Incorrect type for (${KEYWORDS.ANONYMOUS_FUNCTION}) (${
@@ -1249,20 +1250,6 @@ export const typeCheck = (
                   else retry(actual[STATS], exp, stack, checkReturns)
                 }
                 const checkArgs = () => {
-                  if (
-                    !isUnknownReturn(actual[STATS]) &&
-                    (!equalReturns(expected[STATS], actual[STATS]) ||
-                      !equalSubReturns(expected[STATS], actual[STATS]))
-                  )
-                    throw new TypeError(
-                      `Incorrect return type for (${
-                        expected[STATS][SIGNATURE]
-                      }) Expected (${formatSubType(
-                        getReturns(expected[STATS])
-                      )}) but got (${formatSubType(
-                        getReturns(actual[STATS])
-                      )}) (${stringifyArgs(exp)}) (check #999)`
-                    )
                   for (let i = 0; i < expected[STATS][ARGUMENTS].length; ++i) {
                     const argE = expected[STATS][ARGUMENTS][i]
                     const argA = actual[STATS][ARGUMENTS][i]
