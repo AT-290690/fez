@@ -406,7 +406,7 @@ export const init = () => {
       const file = readFileSync('./main.lisp', 'utf-8')
       switch (process.argv[2]) {
         case 'comp':
-          writeFileSync('./main.js', 'var _ = ' + comp(file) + '\nconsole.log(_)')
+          writeFileSync('./main.js', 'var _ = ' + comp(file) + '; console.log(_)')
           break
         case 'dev':
         default:
