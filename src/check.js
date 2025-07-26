@@ -1220,7 +1220,7 @@ export const typeCheck = (
               // Types.set(withScope(name, env), () => formatType(name, env))
               // If current scope is root then these are user defined types
               if (isLambda && !isUnknownReturn(env[name][STATS])) {
-                const lambdaName = `${PLACEHOLDER}${ANONYMOUS_FUNCTION_TYPE_PREFIX}${rootScopeIndex}`
+                const lambdaName = `${PLACEHOLDER}${name}${rootScopeIndex}`
                 check(
                   [
                     [APPLY, KEYWORDS.DEFINE_VARIABLE],
@@ -1272,11 +1272,9 @@ export const typeCheck = (
                     else retry(actual[STATS], exp, stack, checkArgs)
                   }
                 }
-                once(actual[STATS], exp, stack, () => {
-                  checkReturns()
-                  checkArgs()
-                  Types.delete(`; ${rootScopeIndex} ${lambdaName}`)
-                })
+                checkReturns()
+                checkArgs()
+                Types.delete(`; ${rootScopeIndex} ${lambdaName}`)
               }
               typeSet(Types, name, env, exp)
               if (env[SCOPE_NAME] === rootScopeIndex) break
