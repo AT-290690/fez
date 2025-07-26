@@ -383,36 +383,36 @@ export const init = () => {
     writeFileSync(
       'index.js',
       `import { compile, enhance, parse, LISP, UTILS } from 'fez-lisp'
-      import { readFileSync, writeFileSync } from 'fs'
-      export const dev = (source, types) => {
-        try {
-          const parsed = parse(source)
-          const { evaluated, type, error } = UTILS.debug(
-            parsed,
-            true,
-            types ? types : undefined
-          )
-          if (error == null) {
-            if (type) {
-              UTILS.logType(type)
-            }
-            UTILS.logResult(LISP.serialise(evaluated))
-          } else UTILS.logError(error.message)
-        } catch (error) {
-          UTILS.logError(error.message)
-        }
+import { readFileSync, writeFileSync } from 'fs'
+export const dev = (source, types) => {
+  try {
+    const parsed = parse(source)
+    const { evaluated, type, error } = UTILS.debug(
+      parsed,
+      true,
+      types ? types : undefined
+    )
+    if (error == null) {
+      if (type) {
+        UTILS.logType(type)
       }
-      export const comp = (source) => compile(enhance(parse(source)))
-      const file = readFileSync('./main.lisp', 'utf-8')
-      switch (process.argv[2]) {
-        case 'comp':
-          writeFileSync('./main.js', 'var _ = ' + comp(file) + '; console.log(_)')
-          break
-        case 'dev':
-        default:
-          dev(file, readFileSync('./types.lisp', 'utf-8'))
-          break
-      }
+      UTILS.logResult(LISP.serialise(evaluated))
+    } else UTILS.logError(error.message)
+  } catch (error) {
+    UTILS.logError(error.message)
+  }
+}
+export const comp = (source) => compile(enhance(parse(source)))
+const file = readFileSync('./main.lisp', 'utf-8')
+switch (process.argv[2]) {
+  case 'comp':
+    writeFileSync('./main.js', 'var _ = ' + comp(file) + '; console.log(_)')
+    break
+  case 'dev':
+  default:
+    dev(file, readFileSync('./types.lisp', 'utf-8'))
+    break
+}
 `
     )
     console.log('Added index.js')
