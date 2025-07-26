@@ -11,6 +11,14 @@
 (|> (math:range 1 100) (array:map fezz-buzz) (from:array->string char:space) (string))
 ```
 
+```bash
+npm i fez-lisp
+```
+
+```node
+require('fez-lisp').UTILS.init()
+```
+
 ## [Try it in online editor](https://at-290690.github.io/fez/)
 
 ```lisp
