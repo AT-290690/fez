@@ -35,7 +35,7 @@ export const logType = (type) => {
   console.log(type, '\n\x1b[0m')
 }
 export const logResult = (result) => {
-  console.log('\x1b[34m')
+  console.log('\x1b[33m')
   console.log(result, '\n\x1b[0m')
 }
 export const wrapInBracesString = (exp) => `(${stringifyArgs(exp)})`
