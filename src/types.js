@@ -1083,8 +1083,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1093,8 +1093,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1114,8 +1114,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
 
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
@@ -1125,8 +1125,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1146,8 +1146,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1156,8 +1156,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1177,8 +1177,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }
@@ -1187,8 +1187,8 @@ export const SPECIAL_FORM_TYPES = {
           [STATS]: {
             retried: Infinity,
             [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM],
-            [RETURNS]: [ATOM],
+            [TYPE_PROP]: [ATOM, SPECIAL_NUMBER],
+            [RETURNS]: [ATOM, SPECIAL_NUMBER],
             [ARGUMENTS]: [],
             [ARG_COUNT]: 0
           }

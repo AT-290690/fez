@@ -642,6 +642,15 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     fails(
+      `(let sum (lambda xs init (do 
+    (let start (math:max init 0))
+    (array:fold xs (lambda a b (+ a b)) start)
+)))
+
+(sum [ 1 2 3 4 ] false)`,
+      `Incorrect type of argument (1) for (sum). Expected (Number) but got (Boolean) (sum (array 1 2 3 4) false) (check #202)`
+    )
+    fails(
       `(let fn (lambda a cb (+ (cb (+ a 1)) 1)))
     (let z [])
     (fn 1 (lambda x (do
