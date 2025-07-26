@@ -15,6 +15,8 @@
 npm i fez-lisp
 ```
 
+Run node in terminal
+
 ```node
 require('fez-lisp').UTILS.init()
 ```

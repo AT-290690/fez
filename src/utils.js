@@ -375,45 +375,62 @@ export const isInputVariable = (x) =>
 
 export const init = () => {
   import('fs').then(({ writeFileSync }) => {
+    console.log('\x1b[32m')
     writeFileSync('main.lisp', '')
+    console.log('Added main.lisp')
     writeFileSync('types.lisp', '')
+    console.log('Added types.lisp')
     writeFileSync(
-      'main.js',
+      'index.js',
       `import { compile, enhance, parse, LISP, UTILS } from 'fez-lisp'
-    import { readFileSync } from 'fs'
-    export const dev = (source, types) => {
-      try {
-        const parsed = parse(source)
-        const { evaluated, type, error } = UTILS.debug(
-          parsed,
-          true,
-          types ? types : undefined
-        )
-        if (error == null) {
-          if (type) {
-            UTILS.logType(type)
-          }
-          UTILS.logResult(LISP.serialise(evaluated))
-        } else UTILS.logError(error.message)
-      } catch (error) {
-        UTILS.logError(error.message)
+      import { readFileSync, writeFileSync } from 'fs'
+      export const dev = (source, types) => {
+        try {
+          const parsed = parse(source)
+          const { evaluated, type, error } = UTILS.debug(
+            parsed,
+            true,
+            types ? types : undefined
+          )
+          if (error == null) {
+            if (type) {
+              UTILS.logType(type)
+            }
+            UTILS.logResult(LISP.serialise(evaluated))
+          } else UTILS.logError(error.message)
+        } catch (error) {
+          UTILS.logError(error.message)
+        }
       }
-    }
-    export const comp = (source) =>
-      UTILS.logResult(
-        LISP.serialise(new Function('return ' + compile(enhance(parse(source))))())
-      )
-    const file = readFileSync('./main.lisp', 'utf-8')
-    switch (process.argv[2]) {
-      case 'comp':
-        comp(file)
-        break
-      case 'dev':
-        dev(file, readFileSync('./types.lisp', 'utf-8'))
-        break
-    }
-    `
+      export const comp = (source) => compile(enhance(parse(source)))
+      const file = readFileSync('./main.lisp', 'utf-8')
+      switch (process.argv[2]) {
+        case 'comp':
+          writeFileSync('./main.js', 'console.log('+ comp(file) + ')')
+          break
+        case 'dev':
+        default:
+          dev(file, readFileSync('./types.lisp', 'utf-8'))
+          break
+      }
+`
     )
+    console.log('Added index.js')
+    console.log(
+      `Done!
+
+Write code in main.lisp and types (if any) in types.lisp
+Run node index.js with the following flags:
+- dev (static type check and run time validations)
+- comp (compile Fez to JavaScript file main.js)
+
+If no flag is specified it defaults to dev
+
+That's it! You are all set!
+`,
+      '\x1b[0m'
+    )
+    process.exit()
   })
 }
 
