@@ -30,6 +30,14 @@ import { debugStackToString, startDebug, debug } from './debugger.js'
 export const logError = (error) =>
   console.log('\x1b[31m', `\n${error}\n`, '\x1b[0m')
 export const logSuccess = (output) => console.log('\x1b[32m', output, '\x1b[0m')
+export const logType = (type) => {
+  console.log('\n\x1b[34m')
+  console.log(type, '\n\x1b[0m')
+}
+export const logResult = (result) => {
+  console.log('\x1b[34m')
+  console.log(result, '\n\x1b[0m')
+}
 export const wrapInBracesString = (exp) => `(${stringifyArgs(exp)})`
 export const logExp = function (exp, ...args) {
   console.log(wrapInBracesString(exp), ...args)
@@ -365,12 +373,59 @@ export const isInputVariable = (x) =>
   x[1][TYPE] === WORD &&
   x[1][VALUE] === 'INPUT'
 
+export const init = () => {
+  import('fs').then(({ writeFileSync }) => {
+    writeFileSync('main.lisp', '')
+    writeFileSync('types.lisp', '')
+    writeFileSync(
+      'main.js',
+      `import { compile, enhance, parse, LISP, UTILS } from 'fez-lisp'
+    import { readFileSync } from 'fs'
+    export const dev = (source, types) => {
+      try {
+        const parsed = parse(source)
+        const { evaluated, type, error } = UTILS.debug(
+          parsed,
+          true,
+          types ? types : undefined
+        )
+        if (error == null) {
+          if (type) {
+            UTILS.logType(type)
+          }
+          UTILS.logResult(LISP.serialise(evaluated))
+        } else UTILS.logError(error.message)
+      } catch (error) {
+        UTILS.logError(error.message)
+      }
+    }
+    export const comp = (source) =>
+      UTILS.logResult(
+        LISP.serialise(new Function('return ' + compile(enhance(parse(source))))())
+      )
+    const file = readFileSync('./main.lisp', 'utf-8')
+    switch (process.argv[2]) {
+      case 'comp':
+        comp(file)
+        break
+      case 'dev':
+        dev(file, readFileSync('./types.lisp', 'utf-8'))
+        break
+    }
+    `
+    )
+  })
+}
+
 export const UTILS = {
+  init,
   debug,
   startDebug,
   debugStackToString,
   handleUnbalancedQuotes,
   handleUnbalancedParens,
+  logType,
+  logResult,
   logError,
   logSuccess,
   formatErrorWithCallstack,
