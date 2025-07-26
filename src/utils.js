@@ -374,48 +374,53 @@ export const isInputVariable = (x) =>
   x[1][VALUE] === 'INPUT'
 
 export const init = () => {
-  import('fs').then(({ writeFileSync }) => {
+  import('fs').then(({ writeFileSync, mkdirSync }) => {
     console.log('\x1b[32m')
-    writeFileSync('main.lisp', '')
-    console.log('Added main.lisp')
-    writeFileSync('types.lisp', '')
-    console.log('Added types.lisp')
+    mkdirSync('src')
+    console.log('Added directory src in root')
+    writeFileSync('./src/main.lisp', '')
+    console.log('Added file main.lisp in src')
+    writeFileSync('./src/types.lisp', '')
+    console.log('Added file types.lisp in src')
     writeFileSync(
       'index.js',
-      `import { compile, enhance, parse, LISP, UTILS } from 'fez-lisp'
-import { readFileSync, writeFileSync } from 'fs'
+      `import { compile, enhance, parse, LISP, UTILS } from "fez-lisp";
+import { readFileSync, writeFileSync } from "fs";
 export const dev = (source, types) => {
   try {
-    const parsed = parse(source)
+    const parsed = parse(source);
     const { evaluated, type, error } = UTILS.debug(
       parsed,
       true,
       types ? types : undefined
-    )
+    );
     if (error == null) {
       if (type) {
-        UTILS.logType(type)
+        UTILS.logType(type);
       }
-      UTILS.logResult(LISP.serialise(evaluated))
-    } else UTILS.logError(error.message)
+      UTILS.logResult(LISP.serialise(evaluated));
+    } else UTILS.logError(error.message);
   } catch (error) {
-    UTILS.logError(error.message)
+    UTILS.logError(error.message);
   }
-}
-export const comp = (source) => compile(enhance(parse(source)))
-const file = readFileSync('./main.lisp', 'utf-8')
+};
+export const comp = (source) => compile(enhance(parse(source)));
+const file = readFileSync("./src/main.lisp", "utf-8");
 switch (process.argv[2]) {
-  case 'comp':
-    writeFileSync('./main.js', 'var _ = ' + comp(file) + '; console.log(_)')
-    break
-  case 'dev':
+  case "comp":
+    writeFileSync(
+      "./src/main.js",
+      "var _ = " + comp(file) + "; console.log(_)"
+    );
+    break;
+  case "dev":
   default:
-    dev(file, readFileSync('./types.lisp', 'utf-8'))
-    break
+    dev(file, readFileSync("./src/types.lisp", "utf-8"));
+    break;
 }
 `
     )
-    console.log('Added index.js')
+    console.log('Added file index.js in root')
     console.log(
       `Done!
 
