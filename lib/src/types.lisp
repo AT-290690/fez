@@ -1056,6 +1056,12 @@
 (let array:exclude (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:fold
 (let array:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
+; 1 array:fold-until tail-call:fold-until next
+(let next Unknown)
+; 1 array:fold-until tail-call:fold-until
+(let tail-call:fold-until (lambda Number Unknown (do Unknown)))
+; 1 array:fold-until
+(let array:fold-until (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (lambda Unknown (do Boolean)) Unknown (do Unknown)))
 ; 1 .array:transform tail-call:array:fold
 (let tail-call:array:fold (lambda Number Unknown (do Unknown)))
 ; 1 .array:transform
@@ -1248,8 +1254,6 @@
 (let array:increment! (lambda Number[] Number Number (do Unknown[])))
 ; 1 array:set
 (let array:set (lambda Unknown[] Number Unknown (do Unknown[])))
-; 1 set
-(let set (lambda Unknown[] Number Unknown (do Unknown[])))
 ; 1 array:sliding-window
 (let array:sliding-window (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:adjacent-difference len

@@ -899,6 +899,14 @@
                             (tail-call:array:fold (+ i 1) (cb out (array:get xs i)))
                             out)))
                       (tail-call:array:fold 0 initial))))
+(let array:fold-until (lambda xs cb untill? initial (do
+                  (let tail-call:fold-until (lambda i out (do 
+                        (let next (cb out (array:get xs i)))
+                        (cond 
+                            (untill? next) next 
+                            (> (length xs) i) (tail-call:fold-until (+ i 1) next)
+                            (*) out))))
+                      (tail-call:fold-until 0 initial))))
 (let array:transform (lambda xs cb initial (do
                   (let tail-call:array:fold (lambda i out
                         (if (> (length xs) i)
@@ -1065,7 +1073,6 @@
 (let array:sorted-by? (lambda xs cb? (array:enumerated-every? xs (lambda x i (or (= i 0) (cb? x (array:get xs (- i 1))))))))
 (let array:increment! (lambda xs idx value (array:set! xs idx (+ (array:get xs idx) value))))
 (let array:set (lambda xs index item (array:set! (array:shallow-copy xs) index item)))
-(let set (lambda xs index item (array:set! (array:shallow-copy xs) index item)))
 (let array:sliding-window (lambda xs size (array:enumerated-transform xs (lambda a b i (if (> (+ i size) (length xs)) a (array:merge a (array (array:slice xs i (+ i size)))))) [])))
 (let array:adjacent-difference (lambda xs cb (do
   (let len (length xs))
