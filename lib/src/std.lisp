@@ -229,20 +229,6 @@
                 (array:enumerated-fold (lambda a x i
                     (if (= x 1) (array:append! a (array:get xs i)) a)) [])))))
     out)))
-(let math:unique (lambda arr
-  (do
-    (let seen [])
-    (let out [])
-    (variable i 0)
-    (loop (< (get i) (length arr))
-      (do
-        (let x (array:get arr (get i)))
-        (unless (math:some? seen (lambda y (= x y)))
-          (do
-            (set! seen (length seen) x)
-            (set! out (length out) x)))
-        (++ i)))
-    out)))
 (let math:greater? (lambda a b (> a b)))
 (let math:lesser? (lambda a b (< a b)))
 (let math:lesser-or-equal? (lambda a b (<= a b)))
@@ -1026,6 +1012,20 @@
         (= (length a) (length b))
           (not (array:some? (math:sequence a) (lambda i (not (array:equal? (array:get a i) (array:get b i)))))))))))
 (let array:not-equal? (lambda a b (not (array:equal? a b))))
+(let array:unique (lambda arr
+  (do
+    (let seen [])
+    (let out [])
+    (variable i 0)
+    (loop (< (get i) (length arr))
+      (do
+        (let x (array:get arr (get i)))
+        (unless (math:some? seen (lambda y (= x y)))
+          (do
+            (set! seen (length seen) x)
+            (set! out (length out) x)))
+        (++ i)))
+    out)))
 (let array:join (lambda xs delim (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a delim) (array:first b)) (array:first b))) [])))
 (let array:chars (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge a (array:first b)) (array:first b))) [])))
 (let array:lines (lambda xs (array:transform (array:zip xs (math:sequence xs)) (lambda a b (if (> (array:second b)  0) (array:merge (array:merge a (array char:new-line)) (array:first b)) (array:first b))) [])))
