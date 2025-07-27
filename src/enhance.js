@@ -169,7 +169,7 @@ const opt = (ast) => {
                             [
                               [APPLY, KEYWORDS.DEFINE_VARIABLE],
                               [WORD, memoName],
-                              [[APPLY, 'new:map-512']]
+                              [[APPLY, 'new:map128']]
                             ],
                             [
                               [APPLY, KEYWORDS.DEFINE_VARIABLE],

@@ -1956,18 +1956,18 @@
 (let new:map64 (lambda (do Unknown[])))
 ; 1 new:map128
 (let new:map128 (lambda (do Unknown[])))
-; 1 new:set-512
-(let new:set-512 (lambda (do Unknown[])))
-; 1 new:map-512
-(let new:map-512 (lambda (do Unknown[])))
-; 1 new:set-1024
-(let new:set-1024 (lambda (do Unknown[])))
-; 1 new:map-1024
-(let new:map-1024 (lambda (do Unknown[])))
-; 1 new:set-2048
-(let new:set-2048 (lambda (do Unknown[])))
-; 1 new:map-2048
-(let new:map-2048 (lambda (do Unknown[])))
+; 1 new:set512
+(let new:set512 (lambda (do Unknown[])))
+; 1 new:map512
+(let new:map512 (lambda (do Unknown[])))
+; 1 new:set1024
+(let new:set1024 (lambda (do Unknown[])))
+; 1 new:map1024
+(let new:map1024 (lambda (do Unknown[])))
+; 1 new:set2048
+(let new:set2048 (lambda (do Unknown[])))
+; 1 new:map2048
+(let new:map2048 (lambda (do Unknown[])))
 ; 1 new:set-n
 (let new:set-n (lambda Number (do Unknown[])))
 ; 1 new:map-n
