@@ -2462,6 +2462,7 @@ heap)))
 (let array:get-number get)
 (let array:get-array get)
 (let array:get-boolean get)
+(let array:filter array:select)
 
 (let array:at (lambda xs i (if (< i 0) (array:get xs (+ (length xs) i)) (array:get xs i))))
 (let array:head (lambda xs (array:get xs 0)))

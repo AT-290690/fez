@@ -2720,6 +2720,8 @@
 (let array:get-array (lambda Unknown[][] Number (do Unknown[])))
 ; 1 array:get-boolean
 (let array:get-boolean (lambda Boolean[] Number (do Boolean)))
+; 1 array:filter
+(let array:filter (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:at
 (let array:at (lambda Unknown[] Number (do Unknown)))
 ; 1 array:head
