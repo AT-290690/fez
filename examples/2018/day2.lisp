@@ -2,8 +2,8 @@
 
 (let part1 (lambda input (do 
 
-    (let two (lambda [key value .] (= value 2)))
-    (let three (lambda [key value .] (= value 3)))
+    (let two (lambda [ key value . ] (= value 2)))
+    (let three (lambda [ key value . ] (= value 3)))
     
     (let a (lambda xs (array:some? xs two)))
     (let b (lambda xs (array:some? xs three)))
@@ -12,7 +12,7 @@
         input 
         (array:map (lambda x (map:count (array:map x array))))
         (array:map map:entries)
-        (array:map (lambda xs (|> xs (array:map (lambda [. value .] value)))))))
+        (array:map (lambda xs (|> xs (array:map (lambda [ . value . ] value)))))))
     
     (let has? (lambda b n (array:some? b (lambda x (= x n)))))
     (* 
