@@ -1409,6 +1409,7 @@
         (|> d (from:chars->digits) (from:digits->integer)))))))
 (let from:integer->string (lambda x (|> x (from:number->positive-or-negative-digits) (from:positive-or-negative-digits->chars))))
 (let from:integers->strings (lambda x (array:map x from:integer->string)))
+(let from:chars->set (lambda x (array:fold x (lambda a b (set:add! a [b])) (new:set16))))
 (let from:array->set (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (set:add! s x))) s)))
 (let from:array->table (lambda xs (do (let s (array [] [] [] [])) (array:for xs (lambda x (map:set! s x 0))) s)))
 (let from:set->array (lambda set (array:select (array:flat-one set) array:not-empty?)))
@@ -1489,6 +1490,17 @@
                 (++ j)))
             (++ i)))
         out))))
+(let array:unique-pairs (lambda xs (do 
+    (let pairs [])
+    (let len (length xs))
+    (variable i 0)
+    (loop (< (get i) len) (do 
+        (variable j (+ (get i) 1))
+        (loop (< (get j) len) (do 
+            (array:push! pairs [(array:get xs (get i)) (array:get xs (get j))])
+            (++ j))) 
+        (++ i)))
+    pairs)))
 (let array:cartesian-product (lambda a b
   (do
     (let out [])

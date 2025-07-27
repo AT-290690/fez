@@ -90,3 +90,4 @@
 (let from:digits->chars (lambda Number[] (do Number[])))
 (let from:digits->integer (lambda Number[] (do Number)))
 (let from:integer->digits (lambda Number (do Number[])))
+(let from:chars->set (lambda Number[] (do Unknown[][])))
