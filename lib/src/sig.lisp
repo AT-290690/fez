@@ -65,6 +65,8 @@
 (let array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
 (let array:push! (lambda Unknown[] Any (do Unknown)))
 (let array:append! (lambda Unknown[] Any (do Unknown[])))
+(let array:fold (lambda Unknown[] (lambda Unknown Unknown (do Any)) Unknown (do Unknown)))
+(let list:fold (lambda Unknown[] (lambda Unknown Unknown (do Any)) Unknown (do Unknown)))
 
 (let bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
 (let boole:def-strict (lambda Boolean (do Boolean[])))

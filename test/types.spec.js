@@ -1186,11 +1186,11 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let add (lambda a b c (+ a b c)))
     (array:fold [1 2 3] add 11)`,
-      `Incorrect number of arguments for (cb) the (lambda) argument of (array:fold) at position (1). Expected (= 2) but got 3 (array:fold (array 1 2 3) add 11) (check #778)`
+      `Incorrect number of arguments for (.) the (lambda) argument of (array:fold) at position (1). Expected (= 2) but got 3 (array:fold (array 1 2 3) add 11) (check #778)`
     )
     fails(
       `(array:fold [1 2 3] (lambda x y x (+ x 1)) 11)`,
-      `Incorrect number of arguments for (cb) the (lambda) argument of (array:fold) at position (1). Expected (= 2) but got 3 (array:fold (array 1 2 3) (lambda x y x (+ x 1)) 11) (check #777)`
+      `Incorrect number of arguments for (.) the (lambda) argument of (array:fold) at position (1). Expected (= 2) but got 3 (array:fold (array 1 2 3) (lambda x y x (+ x 1)) 11) (check #777)`
     )
     // Maybe this is ok since all branches return different stuff
     fails(

@@ -777,7 +777,7 @@
 (let list:nil? (lambda pair (= (length pair) 0)))
 (let list:map (lambda xs f (if (list:nil? xs) [] (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
 (let list:filter (lambda xs f? (if (list:nil? xs) [] (if (f? (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f?)) (list:filter (list:tail xs) f?)))))
-(let list:fold (lambda xs f out (if (list:nil? xs) (Any out) (list:fold (list:tail xs) f (f out (list:head xs))))))
+(let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
 (let list:transform (lambda xs f out (if (list:nil? xs) (Collection out) (list:transform (list:tail xs) f (f out (list:head xs))))))
 (let list:zip (lambda a b (if (list:nil? a) [] (list:pair (list:pair (list:head a) (list:pair (list:head b) [])) (list:zip (list:tail a) (list:tail b))))))
 (let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
@@ -897,7 +897,7 @@
                   (let tail-call:array:fold (lambda i out
                         (if (> (length xs) i)
                             (tail-call:array:fold (+ i 1) (cb out (array:get xs i)))
-                            (Any out))))
+                            out)))
                       (tail-call:array:fold 0 initial))))
 (let array:transform (lambda xs cb initial (do
                   (let tail-call:array:fold (lambda i out
