@@ -247,7 +247,7 @@
 ; 1 pair:list-zip
 (let pair:list-zip (lambda Unknown[] (do Unknown[])))
 ; 1 pair:list-unzip
-(let pair:list-unzip (lambda Unknown[] (do Unknown[])))
+(let pair:list-unzip (lambda Unknown[] (do Unknown[][])))
 ; 1 math:range-exclusive tail-call:range-exclusive
 (let tail-call:range-exclusive (lambda Number[] Number (do Number[])))
 ; 1 math:range-exclusive
@@ -347,7 +347,7 @@
 ; 1 math:subtraction
 (let math:subtraction (lambda Number Number (do Number)))
 ; 1 .math:reverse
-(let .math:reverse (lambda Unknown[] (do Unknown[])))
+(let .math:reverse (lambda Unknown[] (do Unknown)))
 ; 1 math:reverse
 (let math:reverse (lambda Number[] (do Number[])))
 ; 1 .math:fold
@@ -585,9 +585,9 @@
 ; 1 math:big-integer-multiplication 30 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication 30 digit-a
-(let digit-a Unknown)
+(let digit-a Number)
 ; 1 math:big-integer-multiplication 30 31 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication 30 31 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 30 31 prod
@@ -615,9 +615,9 @@
 ; 1 math:big-integer-less-or-equal? 38 result
 (let result Boolean[])
 ; 1 math:big-integer-less-or-equal? 38 39 da
-(let da Unknown)
+(let da Number)
 ; 1 math:big-integer-less-or-equal? 38 39 db
-(let db Unknown)
+(let db Number)
 ; 1 math:big-integer-less-or-equal?
 (let math:big-integer-less-or-equal? (lambda Number[] Unknown[] (do Boolean)))
 ; 1 math:big-integer-division result
@@ -915,7 +915,7 @@
 ; 1 .math:unique sorted
 (let sorted Unknown[])
 ; 1 .math:unique 65 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique
 (let .math:unique (lambda Unknown[] (do Number[])))
 ; 1 math:unique
@@ -949,7 +949,7 @@
 ; 1 list:zip
 (let list:zip (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 list:unzip
-(let list:unzip (lambda Unknown[] (do Unknown[])))
+(let list:unzip (lambda Unknown[] (do Unknown[][])))
 ; 1 list:length
 (let list:length (lambda Unknown[] (do Number)))
 ; 1 list:enumerate
@@ -1101,7 +1101,7 @@
 ; 1 array:reverse tail-call:array:reverse
 (let tail-call:array:reverse (lambda Number Unknown[] (do Unknown[])))
 ; 1 array:reverse
-(let array:reverse (lambda Unknown[] (do Unknown[])))
+(let array:reverse (lambda Unknown[] (do Unknown)))
 ; 1 .array:append!
 (let .array:append! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 array:append!
@@ -1137,11 +1137,11 @@
 ; 1 array:in-bounds?
 (let array:in-bounds? (lambda Unknown[] Number (do Boolean)))
 ; 1 get-option
-(let get-option (lambda Unknown[] Number (do Unknown[][])))
+(let get-option (lambda Unknown[] Number (do Unknown[][][][])))
 ; 1 get-or-default
 (let get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:get-option
-(let array:get-option (lambda Unknown[] Number (do Unknown[][])))
+(let array:get-option (lambda Unknown[] Number (do Unknown[][][][])))
 ; 1 array:get-or-default
 (let array:get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:slice bounds
@@ -1169,7 +1169,7 @@
 ; 1 array:binary-search tail-call:array:binary-search 84 index
 (let index Number)
 ; 1 array:binary-search tail-call:array:binary-search 84 current
-(let current Unknown)
+(let current Number)
 ; 1 array:binary-search tail-call:array:binary-search
 (let tail-call:array:binary-search (lambda Number Number (do Number)))
 ; 1 array:binary-search
@@ -1193,11 +1193,11 @@
 ; 1 array:unique i
 (let i Number[])
 ; 1 array:unique 86 x
-(let x Unknown)
+(let x Number)
 ; 1 array:unique
 (let array:unique (lambda Unknown[] (do Unknown[])))
 ; 1 array:join
-(let array:join (lambda Unknown[] Unknown[] (do Unknown[])))
+(let array:join (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 array:chars
 (let array:chars (lambda Unknown[] (do Unknown[])))
 ; 1 array:lines
@@ -1231,13 +1231,13 @@
 ; 1 array:sort 100 tail-call:array:sort right
 (let right Unknown[])
 ; 1 array:sort 100 tail-call:array:sort
-(let tail-call:array:sort (lambda Number Number Unknown[] Unknown[] (do Unknown[])))
+(let tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
 ; 1 array:sort 100 sorted
 (let sorted Unknown[])
 ; 1 array:sort 100 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 array:sort 100 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 array:sort
 (let array:sort (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (do Unknown[])))
 ; 1 array:sorted-ascending?
@@ -1267,9 +1267,9 @@
 ; 1 array:ranges
 (let array:ranges (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:chunks 111 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks 111 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks
 (let array:chunks (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:adjacent-find len
@@ -1282,18 +1282,24 @@
 (let tail-call:array:adjacent-find (lambda Number (do Number)))
 ; 1 array:adjacent-find
 (let array:adjacent-find (lambda Unknown[] (lambda Unknown Unknown (do Boolean)) (do Number)))
+; 1 .matrix:zeroes
+(let .matrix:zeroes (lambda Number Number (do Unknown[])))
 ; 1 matrix:zeroes
-(let matrix:zeroes (lambda Number Number (do Unknown[])))
+(let matrix:zeroes (lambda Number Number (do Number[][])))
+; 1 .matrix:ones
+(let .matrix:ones (lambda Number Number (do Unknown[])))
 ; 1 matrix:ones
-(let matrix:ones (lambda Number Number (do Unknown[])))
+(let matrix:ones (lambda Number Number (do Number[][])))
 ; 1 matrix:truth-table
 (let matrix:truth-table (lambda Number Number (do Unknown[])))
 ; 1 matrix:false-table
 (let matrix:false-table (lambda Number Number (do Unknown[])))
-; 1 matrix:points coords
+; 1 .matrix:points coords
 (let coords Unknown[])
+; 1 .matrix:points
+(let .matrix:points (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 matrix:points
-(let matrix:points (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
+(let matrix:points (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number[][])))
 ; 1 matrix:for
 (let matrix:for (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
 ; 1 matrix:shallow-copy
@@ -1304,16 +1310,18 @@
 (let tail Unknown[])
 ; 1 matrix:flat-one
 (let matrix:flat-one (lambda Unknown[] (do Unknown[])))
-; 1 matrix:find-index coords
+; 1 .matrix:find-index coords
 (let coords Number[])
-; 1 matrix:find-index 120 idx
+; 1 .matrix:find-index 120 idx
 (let idx Number)
-; 1 matrix:find-index 120 predicate?
+; 1 .matrix:find-index 120 predicate?
 (let predicate? Boolean)
+; 1 .matrix:find-index
+(let .matrix:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 matrix:find-index
-(let matrix:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
+(let matrix:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number[])))
 ; 1 matrix:find coords
-(let coords Unknown[])
+(let coords Number[])
 ; 1 matrix:find
 (let matrix:find (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown)))
 ; 1 matrix:enumerated-for width
@@ -1345,13 +1353,13 @@
 ; 1 matrix:product dimsB
 (let dimsB Unknown[])
 ; 1 matrix:product rowsA
-(let rowsA Unknown)
+(let rowsA Number)
 ; 1 matrix:product colsA
-(let colsA Unknown)
+(let colsA Number)
 ; 1 matrix:product rowsB
-(let rowsB Unknown)
+(let rowsB Number)
 ; 1 matrix:product colsB
-(let colsB Unknown)
+(let colsB Number)
 ; 1 matrix:product
 (let matrix:product (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 matrix:dot-product lenA
@@ -1385,13 +1393,13 @@
 ; 1 matrix:in-bounds?
 (let matrix:in-bounds? (lambda Unknown[] Number Number (do Boolean)))
 ; 1 matrix:diagonal-neighborhood
-(let matrix:diagonal-neighborhood Unknown[][])
+(let matrix:diagonal-neighborhood Number[][])
 ; 1 matrix:kernel-neighborhood
-(let matrix:kernel-neighborhood Unknown[][])
+(let matrix:kernel-neighborhood Number[][])
 ; 1 matrix:moore-neighborhood
-(let matrix:moore-neighborhood Unknown[][])
+(let matrix:moore-neighborhood Number[][])
 ; 1 matrix:von-neumann-neighborhood
-(let matrix:von-neumann-neighborhood Unknown[][])
+(let matrix:von-neumann-neighborhood Number[][])
 ; 1 matrix:adjacent 136 dy
 (let dy Number)
 ; 1 matrix:adjacent 136 dx
@@ -1429,7 +1437,7 @@
 ; 1 matrix:set-and-get!
 (let matrix:set-and-get! (lambda Unknown[] Number Number Unknown (do Unknown)))
 ; 1 matrix:get-option
-(let matrix:get-option (lambda Unknown[] Number Number (do Unknown[][])))
+(let matrix:get-option (lambda Unknown[] Number Number (do Unknown[][][][])))
 ; 1 matrix:get-or-default
 (let matrix:get-or-default (lambda Unknown[] Number Number Unknown (do Unknown)))
 ; 1 from:digit->word
@@ -1445,7 +1453,7 @@
 ; 1 from:list->array tail-call:from:list->array
 (let tail-call:from:list->array (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 from:list->array
-(let from:list->array (lambda Unknown[] (do Unknown[])))
+(let from:list->array (lambda Unknown[] (do Unknown)))
 ; 1 from:array->list tail-call:from:array->list
 (let tail-call:from:array->list (lambda Unknown[] Unknown (do Unknown)))
 ; 1 from:array->list
@@ -1499,7 +1507,7 @@
 ; 1 .from:integer->digits tail-call:from:integer->digits
 (let tail-call:from:integer->digits (lambda Number Number[] (do Number[])))
 ; 1 .from:integer->digits
-(let .from:integer->digits (lambda Number (do Unknown[])))
+(let .from:integer->digits (lambda Number (do Unknown)))
 ; 1 from:integer->digits
 (let from:integer->digits (lambda Number (do Number[])))
 ; 1 from:number->positive-or-negative-digits negative?
@@ -1517,7 +1525,7 @@
 ; 1 from:integer->bits-reversed
 (let from:integer->bits-reversed (lambda Number (do Number[])))
 ; 1 from:integer->bits
-(let from:integer->bits (lambda Number (do Unknown[])))
+(let from:integer->bits (lambda Number (do Unknown)))
 ; 1 from:bits->integer bits->integer
 (let bits->integer (lambda Number (do Number)))
 ; 1 from:bits->integer
@@ -1667,7 +1675,7 @@
 ; 1 array:permutations 172 i
 (let i Number[])
 ; 1 array:permutations 172 173 x
-(let x Unknown)
+(let x Number)
 ; 1 array:permutations 172 173 rest
 (let rest Unknown[])
 ; 1 array:permutations 172 173 perms
@@ -1771,7 +1779,7 @@
 ; 1 string:character-occurances at-least-one
 (let at-least-one Boolean[])
 ; 1 string:character-occurances tail-call:string:character-occurances ch
-(let ch Unknown)
+(let ch Number)
 ; 1 string:character-occurances tail-call:string:character-occurances code
 (let code Number)
 ; 1 string:character-occurances tail-call:string:character-occurances mask
@@ -1795,7 +1803,7 @@
 ; 1 string:slice-to index
 (let index Number)
 ; 1 string:slice-to
-(let string:slice-to (lambda Unknown[] Unknown[] (do Unknown[])))
+(let string:slice-to (lambda Unknown[] Unknown[] (do Unknown)))
 ; 1 string:slice-before a
 (let a Unknown[])
 ; 1 string:slice-before b
@@ -1803,7 +1811,7 @@
 ; 1 string:slice-before index
 (let index Number)
 ; 1 string:slice-before
-(let string:slice-before (lambda Unknown[] Unknown[] (do Unknown[])))
+(let string:slice-before (lambda Unknown[] Unknown[] (do Unknown)))
 ; 1 string:split 185 prev
 (let prev Unknown[])
 ; 1 string:split
@@ -1869,7 +1877,7 @@
 ; 1 string:join-as-table-with row-delimiter
 (let row-delimiter Unknown[])
 ; 1 string:join-as-table-with
-(let string:join-as-table-with (lambda Unknown[] Unknown[] Unknown (do Unknown[])))
+(let string:join-as-table-with (lambda Unknown[] Unknown Unknown (do Unknown[])))
 ; 1 string:starts-with?
 (let string:starts-with? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 string:ends-with?
@@ -1927,7 +1935,7 @@
 ; 1 string:upper n
 (let n Number)
 ; 1 string:upper tail-call:string:upper 208 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 string:upper tail-call:string:upper
 (let tail-call:string:upper (lambda Number (do Unknown[])))
 ; 1 string:upper
@@ -1937,7 +1945,7 @@
 ; 1 string:lower n
 (let n Number)
 ; 1 string:lower tail-call:string:lower 209 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 string:lower tail-call:string:lower
 (let tail-call:string:lower (lambda Number (do Unknown[])))
 ; 1 string:lower
@@ -1989,17 +1997,17 @@
 ; 1 new:array
 (let new:array (lambda Unknown[] (do Unknown[])))
 ; 1 new:list
-(let new:list (lambda Unknown (do Unknown[])))
+(let new:list (lambda Unknown (do Unknown[][])))
 ; 1 new:date
 (let new:date (lambda Unknown Unknown Unknown (do Unknown[])))
 ; 1 new:heap
 (let new:heap Unknown[])
 ; 1 new:brray
-(let new:brray (lambda (do Unknown[][])))
+(let new:brray (lambda (do Unknown[][][][])))
 ; 1 new:queue
-(let new:queue (lambda (do Unknown[][])))
+(let new:queue (lambda (do Unknown[][][][])))
 ; 1 new:stack
-(let new:stack (lambda (do Unknown[][])))
+(let new:stack (lambda (do Unknown[][][][])))
 ; 1 new:binary-tree xs
 (let xs Unknown[])
 ; 1 new:binary-tree
@@ -2029,7 +2037,7 @@
 ; 1 set:index total
 (let total Number[])
 ; 1 set:index tail-call:set:index letter
-(let letter Unknown)
+(let letter Number)
 ; 1 set:index tail-call:set:index
 (let tail-call:set:index (lambda Number Number (do Unknown)))
 ; 1 set:index
@@ -2061,7 +2069,7 @@
 ; 1 set:has? idx
 (let idx Number)
 ; 1 set:has? current
-(let current Unknown)
+(let current Unknown[])
 ; 1 set:has?
 (let set:has? (lambda Unknown[] Unknown[] (do Boolean)))
 ; 1 set:exists?
@@ -2135,7 +2143,7 @@
 ; 1 map:get idx
 (let idx Number)
 ; 1 map:get 230 current
-(let current Unknown)
+(let current Unknown[])
 ; 1 map:get 230 found-index
 (let found-index Number)
 ; 1 map:get
@@ -2143,7 +2151,7 @@
 ; 1 map:get-option idx
 (let idx Number)
 ; 1 map:get-option 232 current
-(let current Unknown)
+(let current Unknown[])
 ; 1 map:get-option 232 index
 (let index Number)
 ; 1 map:get-option
@@ -2169,7 +2177,7 @@
 ; 1 map:max 237 key
 (let key Unknown)
 ; 1 map:max 237 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max
 (let map:max (lambda Unknown[] (do Unknown[])))
 ; 1 map:min min
@@ -2181,7 +2189,7 @@
 ; 1 map:min 239 key
 (let key Unknown)
 ; 1 map:min 239 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min
 (let map:min (lambda Unknown[] (do Unknown[])))
 ; 1 map:increment!
@@ -2311,7 +2319,7 @@
 ; 1 math:hamming-numbers 241 j
 (let j Number[])
 ; 1 math:hamming-numbers 241 last
-(let last Unknown)
+(let last Number)
 ; 1 math:hamming-numbers
 (let math:hamming-numbers (lambda Number (do Number[])))
 ; 1 math:hamming-weight n
@@ -2323,21 +2331,21 @@
 ; 1 math:shoelace len
 (let len Number)
 ; 1 math:shoelace 249 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 249 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 249 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 249 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 249 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 249 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 249 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 249 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace
 (let math:shoelace (lambda Unknown[] (do Number)))
 ; 1 math:collinear?
@@ -2507,9 +2515,9 @@
 ; 1 brray:slice len
 (let len Number)
 ; 1 brray:slice start
-(let start Unknown)
+(let start Number)
 ; 1 brray:slice end
-(let end Unknown)
+(let end Number)
 ; 1 brray:slice slice
 (let slice Unknown[])
 ; 1 brray:slice slice-len
@@ -2597,9 +2605,9 @@
 ; 1 loop:merge out
 (let out Unknown[])
 ; 1 loop:merge 260 x
-(let x Unknown)
+(let x Number)
 ; 1 loop:merge 260 y
-(let y Unknown)
+(let y Number)
 ; 1 loop:merge
 (let loop:merge (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 loop:map out
@@ -2659,7 +2667,7 @@
 ; 1 heap:sift-down! node
 (let node Number[])
 ; 1 heap:sift-down! tail-call:heap:sift-down! 273 max-child
-(let max-child Unknown)
+(let max-child Number)
 ; 1 heap:sift-down! tail-call:heap:sift-down!
 (let tail-call:heap:sift-down! (lambda (do Number)))
 ; 1 heap:sift-down!
@@ -2711,7 +2719,7 @@
 ; 1 new:ring-buffer 281 pt
 (let pt Number)
 ; 1 new:ring-buffer
-(let new:ring-buffer (lambda Number (do Unknown[])))
+(let new:ring-buffer (lambda Number (do Abstraction[])))
 ; 1 debug
 (let debug (lambda Unknown (do Unknown)))
 ; 1 array:get
@@ -2821,7 +2829,7 @@
 ; 1 from:chars->ast acc
 (let acc Unknown[])
 ; 1 from:chars->ast 283 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast 283 284 temp
 (let temp Unknown[])
 ; 1 from:chars->ast 283 284 h
@@ -2909,9 +2917,9 @@
 ; 1 keywords
 (let keywords Unknown[])
 ; 1 prototype:get head
-(let head Unknown)
+(let head Unknown[])
 ; 1 prototype:get tail
-(let tail Unknown)
+(let tail Unknown[])
 ; 1 prototype:get
 (let prototype:get (lambda Unknown[] Unknown[] (do Number)))
 ; 1 prototype:create!
@@ -2923,13 +2931,13 @@
 ; 1 evaluate 291 tail
 (let tail Unknown[])
 ; 1 evaluate 291 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 evaluate
 (let evaluate (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 ast:stringify 292 type
-(let type Unknown)
+(let type Number)
 ; 1 ast:stringify 292 value
-(let value Unknown)
+(let value Unknown[])
 ; 1 ast:stringify
 (let ast:stringify (lambda Unknown[] (do Unknown[])))
 ; 1 ast:get-name
@@ -2939,9 +2947,9 @@
 ; 1 ast:traverse 293 head
 (let head Unknown[])
 ; 1 ast:traverse 293 tail
-(let tail Unknown[])
+(let tail Unknown)
 ; 1 ast:traverse 293 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:traverse
 (let ast:traverse (lambda Unknown[] Unknown (lambda Unknown (do Unknown)) (lambda Unknown (do Unknown)) (lambda Unknown Unknown[] (do Unknown)) (do Unknown[])))
 ; 1 lisp:parse
@@ -3050,13 +3058,13 @@
 (let lambda::annonymous::1::339 (lambda Number (do Number)))
 ; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::339 lambda::annonymous::1::339 lambda::annonymous::1::341
 (let lambda::annonymous::1::341 (lambda Number (do Unknown)))
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::342 idx
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::342 idx
 (let idx Number)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::342 predicate?
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::342 predicate?
 (let predicate? Boolean)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::342
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::342
 (let lambda::annonymous::1::342 (lambda Unknown[] (do Boolean)))
-; 1 matrix:points matrix:points lambda::annonymous::1::343
+; 1 .matrix:points .matrix:points lambda::annonymous::1::343
 (let lambda::annonymous::1::343 (lambda Unknown Unknown Unknown (do Number)))
 ; 1 array:ranges array:ranges lambda::annonymous::1::344
 (let lambda::annonymous::1::344 (lambda Unknown[] Unknown Unknown (do Unknown[])))
@@ -3109,7 +3117,7 @@
 ; 1 array:buckets array:buckets lambda::annonymous::1::369
 (let lambda::annonymous::1::369 (lambda Unknown (do Unknown[])))
 ; 1 .math:unique .math:unique lambda::annonymous::1::370 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::370
 (let lambda::annonymous::1::370 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::371
@@ -3143,7 +3151,7 @@
 ; 1 .math:remove-leading-zeroes .math:remove-leading-zeroes lambda::annonymous::1::387
 (let lambda::annonymous::1::387 (lambda Unknown[] Number (do Unknown[])))
 ; 1 math:big-integer-multiplication 30 30 lambda::annonymous::1::389 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication 30 30 lambda::annonymous::1::389 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 30 30 lambda::annonymous::1::389 prod
@@ -3153,9 +3161,9 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 digit-a
-(let digit-a Unknown)
+(let digit-a Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 391 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 391 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 391 prod
@@ -3167,7 +3175,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390
 (let lambda::annonymous::1::390 (lambda Number (do Number)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::393 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::393 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::393 prod
@@ -3205,9 +3213,9 @@
 ; 1 math:max-length math:max-length lambda::annonymous::1::402
 (let lambda::annonymous::1::402 (lambda Number Unknown[] (do Number)))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::403
-(let lambda::annonymous::1::403 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::403 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::404
-(let lambda::annonymous::1::404 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::404 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 math:product math:product lambda::annonymous::1::405
 (let lambda::annonymous::1::405 (lambda Number Number (do Number)))
 ; 1 math:summation math:summation lambda::annonymous::1::406
@@ -3287,13 +3295,13 @@
 ; 1 math:product math:product lambda::annonymous::1::464
 (let lambda::annonymous::1::464 (lambda Number Number (do Number)))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::465
-(let lambda::annonymous::1::465 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::465 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::467
-(let lambda::annonymous::1::467 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::467 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::468
-(let lambda::annonymous::1::468 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::468 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::470
-(let lambda::annonymous::1::470 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::470 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 math:max-length math:max-length lambda::annonymous::1::471
 (let lambda::annonymous::1::471 (lambda Number Unknown[] (do Number)))
 ; 1 math:max-length math:max-length lambda::annonymous::1::473
@@ -3371,9 +3379,9 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 digit-a
-(let digit-a Unknown)
+(let digit-a Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 502 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 502 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 502 prod
@@ -3385,7 +3393,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501
 (let lambda::annonymous::1::501 (lambda Number (do Number)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::504 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::504 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::504 prod
@@ -3393,7 +3401,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::504
 (let lambda::annonymous::1::504 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication 30 30 lambda::annonymous::1::505 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication 30 30 lambda::annonymous::1::505 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 30 30 lambda::annonymous::1::505 prod
@@ -3403,9 +3411,9 @@
 ; 1 math:big-integer-multiplication 507 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication 507 digit-a
-(let digit-a Unknown)
+(let digit-a Number)
 ; 1 math:big-integer-multiplication 507 508 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication 507 508 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 507 508 prod
@@ -3415,7 +3423,7 @@
 ; 1 math:big-integer-multiplication 507 509 sum
 (let sum Number)
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::511 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::511 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::511 prod
@@ -3425,9 +3433,9 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 digit-a
-(let digit-a Unknown)
+(let digit-a Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 513 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 513 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 513 prod
@@ -3439,7 +3447,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512
 (let lambda::annonymous::1::512 (lambda Number (do Number)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::515 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::515 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::515 prod
@@ -3461,9 +3469,9 @@
 ; 1 math:big-integer-less-or-equal? 529 result
 (let result Boolean[])
 ; 1 math:big-integer-less-or-equal? 529 530 da
-(let da Unknown)
+(let da Number)
 ; 1 math:big-integer-less-or-equal? 529 530 db
-(let db Unknown)
+(let db Number)
 ; 1 math:big-integer-division 533 digit
 (let digit Unknown)
 ; 1 math:big-integer-division 533 low
@@ -3563,13 +3571,13 @@
 ; 1 .math:unique .math:unique lambda::annonymous::1::588
 (let lambda::annonymous::1::588 (lambda Number Number (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::589 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::589
 (let lambda::annonymous::1::589 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique 591 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::592 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::592
 (let lambda::annonymous::1::592 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::593
@@ -3633,15 +3641,15 @@
 ; 1 array:binary-search tail-call:array:binary-search 642 index
 (let index Number)
 ; 1 array:binary-search tail-call:array:binary-search 642 current
-(let current Unknown)
+(let current Number)
 ; 1 array:binary-search tail-call:array:binary-search 643 index
 (let index Number)
 ; 1 array:binary-search tail-call:array:binary-search 643 current
-(let current Unknown)
+(let current Number)
 ; 1 array:unique 86 86 lambda::annonymous::1::645
 (let lambda::annonymous::1::645 (lambda Number (do Boolean)))
 ; 1 array:unique 646 x
-(let x Unknown)
+(let x Number)
 ; 1 array:unique 646 646 lambda::annonymous::1::649
 (let lambda::annonymous::1::649 (lambda Number (do Boolean)))
 ; 1 array:join array:join lambda::annonymous::1::650
@@ -3705,9 +3713,9 @@
 ; 1 array:sort 685 sorted
 (let sorted Unknown[])
 ; 1 array:sort 685 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 array:sort 685 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::686
 (let lambda::annonymous::1::686 (lambda Number Number (do Boolean)))
 ; 1 array:sorted-ascending? array:sorted-ascending? lambda::annonymous::1::688
@@ -3747,18 +3755,18 @@
 ; 1 array:ranges array:ranges lambda::annonymous::1::716
 (let lambda::annonymous::1::716 (lambda Unknown[] Unknown Unknown (do Unknown[])))
 ; 1 array:chunks 717 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks 717 end
-(let end Unknown)
+(let end Number)
 ; 1 array:adjacent-find 718 tail-call:array:adjacent-find prev
 (let prev Unknown)
 ; 1 array:adjacent-find 718 tail-call:array:adjacent-find current
 (let current Unknown)
 ; 1 array:adjacent-find 718 tail-call:array:adjacent-find
 (let tail-call:array:adjacent-find (lambda Number (do Number)))
-; 1 matrix:points matrix:points lambda::annonymous::1::723
+; 1 .matrix:points .matrix:points lambda::annonymous::1::723
 (let lambda::annonymous::1::723 (lambda Unknown Unknown Unknown (do Number)))
-; 1 matrix:points matrix:points lambda::annonymous::1::725
+; 1 .matrix:points .matrix:points lambda::annonymous::1::725
 (let lambda::annonymous::1::725 (lambda Unknown Unknown Unknown (do Number)))
 ; 1 matrix:for matrix:for lambda::annonymous::1::726
 (let lambda::annonymous::1::726 (lambda Unknown[] (do Unknown[])))
@@ -3768,21 +3776,21 @@
 (let lambda::annonymous::1::729 (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:shallow-copy matrix:shallow-copy lambda::annonymous::1::731
 (let lambda::annonymous::1::731 (lambda Unknown[] (do Unknown[])))
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::732 idx
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::732 idx
 (let idx Number)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::732 predicate?
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::732 predicate?
 (let predicate? Boolean)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::732
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::732
 (let lambda::annonymous::1::732 (lambda Unknown[] (do Boolean)))
-; 1 matrix:find-index 733 idx
+; 1 .matrix:find-index 733 idx
 (let idx Number)
-; 1 matrix:find-index 733 predicate?
+; 1 .matrix:find-index 733 predicate?
 (let predicate? Boolean)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::734 idx
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::734 idx
 (let idx Number)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::734 predicate?
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::734 predicate?
 (let predicate? Boolean)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::734
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::734
 (let lambda::annonymous::1::734 (lambda Unknown[] (do Boolean)))
 ; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::735
 (let lambda::annonymous::1::735 (lambda Number (do Number)))
@@ -4071,7 +4079,7 @@
 ; 1 array:permutations 891 i
 (let i Number[])
 ; 1 array:permutations 891 892 x
-(let x Unknown)
+(let x Number)
 ; 1 array:permutations 891 892 rest
 (let rest Unknown[])
 ; 1 array:permutations 891 892 perms
@@ -4189,13 +4197,13 @@
 ; 1 string:chars string:chars lambda::annonymous::1::967
 (let lambda::annonymous::1::967 (lambda Unknown (do Unknown[])))
 ; 1 string:upper tail-call:string:upper 968 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 string:upper tail-call:string:upper 969 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 string:lower tail-call:string:lower 970 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 string:lower tail-call:string:lower 971 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 new:map new:map lambda::annonymous::1::972
 (let lambda::annonymous::1::972 (lambda Unknown[] Unknown Number (do Unknown[])))
 ; 1 new:map new:map lambda::annonymous::1::974
@@ -4235,7 +4243,7 @@
 ; 1 map:get 230 230 lambda::annonymous::1::1010
 (let lambda::annonymous::1::1010 (lambda Unknown[] (do Boolean)))
 ; 1 map:get 1011 current
-(let current Unknown)
+(let current Unknown[])
 ; 1 map:get 1011 found-index
 (let found-index Number)
 ; 1 map:get 1011 1011 lambda::annonymous::1::1013
@@ -4243,7 +4251,7 @@
 ; 1 map:get-option 232 232 lambda::annonymous::1::1014
 (let lambda::annonymous::1::1014 (lambda Unknown[] (do Boolean)))
 ; 1 map:get-option 1015 current
-(let current Unknown)
+(let current Unknown[])
 ; 1 map:get-option 1015 index
 (let index Number)
 ; 1 map:get-option 1015 1015 lambda::annonymous::1::1017
@@ -4263,33 +4271,33 @@
 ; 1 map:max map:max lambda::annonymous::1::1027 key
 (let key Unknown)
 ; 1 map:max map:max lambda::annonymous::1::1027 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::1027
 (let lambda::annonymous::1::1027 (lambda Unknown[] (do Number)))
 ; 1 map:max 1029 key
 (let key Unknown)
 ; 1 map:max 1029 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::1031 key
 (let key Unknown)
 ; 1 map:max map:max lambda::annonymous::1::1031 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::1031
 (let lambda::annonymous::1::1031 (lambda Unknown[] (do Number)))
 ; 1 map:min map:min lambda::annonymous::1::1033 key
 (let key Unknown)
 ; 1 map:min map:min lambda::annonymous::1::1033 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::1033
 (let lambda::annonymous::1::1033 (lambda Unknown[] (do Number)))
 ; 1 map:min 1035 key
 (let key Unknown)
 ; 1 map:min 1035 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::1037 key
 (let key Unknown)
 ; 1 map:min map:min lambda::annonymous::1::1037 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::1037
 (let lambda::annonymous::1::1037 (lambda Unknown[] (do Number)))
 ; 1 math:hamming-numbers 241 241 lambda::annonymous::1::1039
@@ -4309,7 +4317,7 @@
 ; 1 math:hamming-numbers 1042 j
 (let j Number[])
 ; 1 math:hamming-numbers 1042 last
-(let last Unknown)
+(let last Number)
 ; 1 math:hamming-numbers 1042 1042 lambda::annonymous::1::1048
 (let lambda::annonymous::1::1048 (lambda Number (do Number)))
 ; 1 math:hamming-numbers 1042 1042 lambda::annonymous::1::1049
@@ -4325,21 +4333,21 @@
 ; 1 math:hamming-weight math:hamming-weight lambda::annonymous::1::1056
 (let lambda::annonymous::1::1056 (lambda (do Number[])))
 ; 1 math:shoelace 1057 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 1057 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 1057 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 1057 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 1057 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 1057 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 1057 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 1057 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 brray:balance! 1065 initial
 (let initial Unknown[])
 ; 1 brray:balance! 1065 half
@@ -4353,13 +4361,13 @@
 ; 1 loop:sliding-window-array 1066 j
 (let j Number[])
 ; 1 loop:merge 1068 x
-(let x Unknown)
+(let x Number)
 ; 1 loop:merge 1068 y
-(let y Unknown)
+(let y Number)
 ; 1 heap:sift-down! tail-call:heap:sift-down! 1087 max-child
-(let max-child Unknown)
+(let max-child Number)
 ; 1 heap:sift-down! tail-call:heap:sift-down! 1088 max-child
-(let max-child Unknown)
+(let max-child Number)
 ; 1 from:array->heap from:array->heap lambda::annonymous::1::1089
 (let lambda::annonymous::1::1089 (lambda Unknown (do Unknown[])))
 ; 1 from:array->heap from:array->heap lambda::annonymous::1::1091
@@ -4371,7 +4379,7 @@
 ; 1 match:number? match:number? lambda::annonymous::1::1101
 (let lambda::annonymous::1::1101 (lambda Number (do Boolean)))
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1102 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1102 1103 temp
 (let temp Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1102 1103 h
@@ -4383,7 +4391,7 @@
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1102
 (let lambda::annonymous::1::1102 (lambda Number (do Unknown[])))
 ; 1 from:chars->ast 1106 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast 1106 1107 temp
 (let temp Unknown[])
 ; 1 from:chars->ast 1106 1107 h
@@ -4393,7 +4401,7 @@
 ; 1 from:chars->ast 1106 1108 1109 h
 (let h Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1110 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1110 1111 temp
 (let temp Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1110 1111 h
@@ -4423,11 +4431,11 @@
 ; 1 evaluate 1124 tail
 (let tail Unknown[])
 ; 1 evaluate 1124 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:stringify 1125 type
-(let type Unknown)
+(let type Number)
 ; 1 ast:stringify 1125 value
-(let value Unknown)
+(let value Unknown[])
 ; 1 ast:traverse 293 293 lambda::annonymous::1::1126
 (let lambda::annonymous::1::1126 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:traverse 1127 head
@@ -4435,7 +4443,7 @@
 ; 1 ast:traverse 1127 tail
 (let tail Unknown[])
 ; 1 ast:traverse 1127 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:traverse 1127 1127 lambda::annonymous::1::1129
 (let lambda::annonymous::1::1129 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:traverse 293 293 lambda::annonymous::1::1131
@@ -4449,19 +4457,19 @@
 ; 1 ast:traverse 1134 tail
 (let tail Unknown[])
 ; 1 ast:traverse 1134 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:traverse 1134 1134 lambda::annonymous::1::1136
 (let lambda::annonymous::1::1136 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:stringify 1137 type
-(let type Unknown)
+(let type Number)
 ; 1 ast:stringify 1137 value
-(let value Unknown)
+(let value Unknown[])
 ; 1 evaluate 1138 head
 (let head Unknown[])
 ; 1 evaluate 1138 tail
 (let tail Unknown[])
 ; 1 evaluate 1138 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 special-form:array special-form:array lambda::annonymous::1::1139
 (let lambda::annonymous::1::1139 (lambda Unknown[] (do Unknown)))
 ; 1 special-form:array special-form:array lambda::annonymous::1::1140
@@ -4473,7 +4481,7 @@
 ; 1 from:chars->ast 283 285 1143 h
 (let h Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1144 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1144 1145 temp
 (let temp Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1144 1145 h
@@ -4503,53 +4511,53 @@
 ; 1 brray:balance! 1155 tail-call:right:brray:balance!
 (let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 math:shoelace 1156 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 1156 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 1156 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 1156 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 1156 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 1156 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 1156 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 1156 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace 1157 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 1157 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 1157 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 1157 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 1157 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 1157 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 1157 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 1157 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace 1158 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 1158 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 1158 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 1158 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 1158 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 1158 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 1158 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 1158 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:hamming-weight math:hamming-weight lambda::annonymous::0::1159
 (let lambda::annonymous::0::1159 (lambda (do Boolean)))
 ; 1 math:hamming-weight math:hamming-weight lambda::annonymous::1::1160
@@ -4559,33 +4567,33 @@
 ; 1 map:min 1162 key
 (let key Unknown)
 ; 1 map:min 1162 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::1164 key
 (let key Unknown)
 ; 1 map:min map:min lambda::annonymous::1::1164 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::1164
 (let lambda::annonymous::1::1164 (lambda Unknown[] (do Number)))
 ; 1 map:min map:min lambda::annonymous::1::1166 key
 (let key Unknown)
 ; 1 map:min map:min lambda::annonymous::1::1166 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::1166
 (let lambda::annonymous::1::1166 (lambda Unknown[] (do Number)))
 ; 1 map:max 1168 key
 (let key Unknown)
 ; 1 map:max 1168 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::1170 key
 (let key Unknown)
 ; 1 map:max map:max lambda::annonymous::1::1170 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::1170
 (let lambda::annonymous::1::1170 (lambda Unknown[] (do Number)))
 ; 1 map:max map:max lambda::annonymous::1::1172 key
 (let key Unknown)
 ; 1 map:max map:max lambda::annonymous::1::1172 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::1172
 (let lambda::annonymous::1::1172 (lambda Unknown[] (do Number)))
 ; 1 map:count map:count lambda::annonymous::1::1175
@@ -4605,7 +4613,7 @@
 ; 1 map:get-option 232 232 lambda::annonymous::1::1185
 (let lambda::annonymous::1::1185 (lambda Unknown[] (do Boolean)))
 ; 1 map:get-option 1186 current
-(let current Unknown)
+(let current Unknown[])
 ; 1 map:get-option 1186 index
 (let index Number)
 ; 1 map:get-option 1186 1186 lambda::annonymous::1::1188
@@ -4613,7 +4621,7 @@
 ; 1 map:get 230 230 lambda::annonymous::1::1189
 (let lambda::annonymous::1::1189 (lambda Unknown[] (do Boolean)))
 ; 1 map:get 1190 current
-(let current Unknown)
+(let current Unknown[])
 ; 1 map:get 1190 found-index
 (let found-index Number)
 ; 1 map:get 1190 1190 lambda::annonymous::1::1192
@@ -4820,16 +4828,16 @@
 (let lambda::annonymous::1::1358 (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:for matrix:for lambda::annonymous::1::1359
 (let lambda::annonymous::1::1359 (lambda Unknown[] (do Unknown[])))
-; 1 matrix:points matrix:points lambda::annonymous::1::1360
+; 1 .matrix:points .matrix:points lambda::annonymous::1::1360
 (let lambda::annonymous::1::1360 (lambda Unknown Unknown Unknown (do Number)))
 ; 1 matrix:false-table matrix:false-table lambda::annonymous::1::1362
 (let lambda::annonymous::1::1362 (lambda Unknown (do Boolean[])))
 ; 1 matrix:truth-table matrix:truth-table lambda::annonymous::1::1364
 (let lambda::annonymous::1::1364 (lambda Unknown (do Boolean[])))
 ; 1 array:chunks 1367 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks 1367 end
-(let end Unknown)
+(let end Number)
 ; 1 array:ranges array:ranges lambda::annonymous::1::1369
 (let lambda::annonymous::1::1369 (lambda Unknown[] Unknown Unknown (do Unknown[])))
 ; 1 array:sorted-by? array:sorted-by? lambda::annonymous::1::1370
@@ -4893,9 +4901,9 @@
 ; 1 list:unzip list:unzip lambda::annonymous::1::1416
 (let lambda::annonymous::1::1416 (lambda Unknown[] (do Unknown)))
 ; 1 .math:unique 1417 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1418 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1418
 (let lambda::annonymous::1::1418 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::1419
@@ -4915,7 +4923,7 @@
 ; 1 math:standard-deviation2 math:standard-deviation2 lambda::annonymous::1::1432
 (let lambda::annonymous::1::1432 (lambda Number (do Number)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1436 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1436 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1436 prod
@@ -4923,7 +4931,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1436
 (let lambda::annonymous::1::1436 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 1437 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 1437 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 1437 prod
@@ -4931,7 +4939,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 1438 sum
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1439 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1439 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1439 prod
@@ -4939,11 +4947,11 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::1439
 (let lambda::annonymous::1::1439 (lambda Number (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::1443
-(let lambda::annonymous::1::1443 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1443 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::1445
-(let lambda::annonymous::1::1445 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1445 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::1447
-(let lambda::annonymous::1::1447 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1447 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:subset 10 10 lambda::annonymous::1::1449
 (let lambda::annonymous::1::1449 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:subset 1450 1450 lambda::annonymous::1::1452
@@ -5085,17 +5093,17 @@
 ; 1 math:product math:product lambda::annonymous::1::1564
 (let lambda::annonymous::1::1564 (lambda Number Number (do Number)))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::1566
-(let lambda::annonymous::1::1566 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1566 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::1567
-(let lambda::annonymous::1::1567 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1567 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::1569
-(let lambda::annonymous::1::1569 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1569 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::1571
-(let lambda::annonymous::1::1571 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1571 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::1572
-(let lambda::annonymous::1::1572 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1572 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::1574
-(let lambda::annonymous::1::1574 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::1574 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 math:max-length math:max-length lambda::annonymous::1::1575
 (let lambda::annonymous::1::1575 (lambda Number Unknown[] (do Number)))
 ; 1 math:min-length math:min-length lambda::annonymous::1::1576
@@ -5131,7 +5139,7 @@
 ; 1 math:big-integer-subtraction math:big-integer-subtraction lambda::annonymous::1::1587
 (let lambda::annonymous::1::1587 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1592 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1592 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1592 prod
@@ -5139,7 +5147,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1592
 (let lambda::annonymous::1::1592 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 1593 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 1593 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 1593 prod
@@ -5147,7 +5155,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 1594 sum
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1595 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1595 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::1595 prod
@@ -5159,9 +5167,9 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 carry
 (let carry Number[])
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 digit-a
-(let digit-a Unknown)
+(let digit-a Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 1598 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 1598 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 1598 prod
@@ -5173,7 +5181,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597
 (let lambda::annonymous::1::1597 (lambda Number (do Number)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::1600 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::1600 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::1600 prod
@@ -5181,7 +5189,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::1600
 (let lambda::annonymous::1::1600 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::1601 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::1601 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::1601 prod
@@ -5189,7 +5197,7 @@
 ; 1 math:big-integer-multiplication 507 507 lambda::annonymous::1::1601
 (let lambda::annonymous::1::1601 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1602 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1602 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1602 prod
@@ -5197,7 +5205,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1602
 (let lambda::annonymous::1::1602 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 1603 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 1603 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 1603 prod
@@ -5205,7 +5213,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 1604 sum
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1605 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1605 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::1605 prod
@@ -5281,21 +5289,21 @@
 ; 1 .math:max-sub-array-sum .math:max-sub-array-sum lambda::annonymous::1::1663
 (let lambda::annonymous::1::1663 (lambda Number[] Number (do Number[])))
 ; 1 .math:unique 1664 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1665 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1665
 (let lambda::annonymous::1::1665 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::1666
 (let lambda::annonymous::1::1666 (lambda Number Number (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::1667 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1667
 (let lambda::annonymous::1::1667 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique 1668 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1669 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::1669
 (let lambda::annonymous::1::1669 (lambda Unknown[] (do Boolean)))
 ; 1 list:unzip list:unzip lambda::annonymous::1::1670
@@ -5345,7 +5353,7 @@
 ; 1 array:binary-search tail-call:array:binary-search 1694 index
 (let index Number)
 ; 1 array:binary-search tail-call:array:binary-search 1694 current
-(let current Unknown)
+(let current Number)
 ; 1 array:equal? array:equal? lambda::annonymous::1::1696
 (let lambda::annonymous::1::1696 (lambda Number (do Boolean)))
 ; 1 array:equal? array:equal? lambda::annonymous::1::1698
@@ -5425,42 +5433,42 @@
 ; 1 array:ranges array:ranges lambda::annonymous::1::1749
 (let lambda::annonymous::1::1749 (lambda Unknown[] Unknown Unknown (do Unknown[])))
 ; 1 array:chunks 1750 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks 1750 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1751 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1751 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1751
 (let lambda::annonymous::1::1751 (lambda Unknown[] (do Unknown[])))
 ; 1 array:chunks array:chunks lambda::annonymous::1::1752 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1752 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1752
 (let lambda::annonymous::1::1752 (lambda Unknown[] (do Unknown[])))
 ; 1 array:chunks 1753 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks 1753 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1754 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1754 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::1754
 (let lambda::annonymous::1::1754 (lambda Unknown[] (do Unknown[])))
-; 1 matrix:zeroes matrix:zeroes lambda::annonymous::1::1756
+; 1 .matrix:zeroes .matrix:zeroes lambda::annonymous::1::1756
 (let lambda::annonymous::1::1756 (lambda Unknown (do Number[])))
-; 1 matrix:zeroes matrix:zeroes lambda::annonymous::1::1757
+; 1 .matrix:zeroes .matrix:zeroes lambda::annonymous::1::1757
 (let lambda::annonymous::1::1757 (lambda Unknown (do Number[])))
-; 1 matrix:zeroes matrix:zeroes lambda::annonymous::1::1759
+; 1 .matrix:zeroes .matrix:zeroes lambda::annonymous::1::1759
 (let lambda::annonymous::1::1759 (lambda Unknown (do Number[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::1761
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::1761
 (let lambda::annonymous::1::1761 (lambda Unknown (do Number[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::1762
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::1762
 (let lambda::annonymous::1::1762 (lambda Unknown (do Number[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::1764
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::1764
 (let lambda::annonymous::1::1764 (lambda Unknown (do Number[])))
 ; 1 matrix:truth-table matrix:truth-table lambda::annonymous::1::1766
 (let lambda::annonymous::1::1766 (lambda Unknown (do Boolean[])))
@@ -5474,7 +5482,7 @@
 (let lambda::annonymous::1::1772 (lambda Unknown (do Boolean[])))
 ; 1 matrix:false-table matrix:false-table lambda::annonymous::1::1774
 (let lambda::annonymous::1::1774 (lambda Unknown (do Boolean[])))
-; 1 matrix:points matrix:points lambda::annonymous::1::1775
+; 1 .matrix:points .matrix:points lambda::annonymous::1::1775
 (let lambda::annonymous::1::1775 (lambda Unknown Unknown Unknown (do Number)))
 ; 1 matrix:for matrix:for lambda::annonymous::1::1776
 (let lambda::annonymous::1::1776 (lambda Unknown[] (do Unknown[])))
@@ -5482,11 +5490,11 @@
 (let lambda::annonymous::1::1777 (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:shallow-copy matrix:shallow-copy lambda::annonymous::1::1778
 (let lambda::annonymous::1::1778 (lambda Unknown[] (do Unknown[])))
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::1779 idx
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::1779 idx
 (let idx Number)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::1779 predicate?
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::1779 predicate?
 (let predicate? Boolean)
-; 1 matrix:find-index matrix:find-index lambda::annonymous::1::1779
+; 1 .matrix:find-index .matrix:find-index lambda::annonymous::1::1779
 (let lambda::annonymous::1::1779 (lambda Unknown[] (do Boolean)))
 ; 1 matrix:enumerated-for matrix:enumerated-for lambda::annonymous::1::735 lambda::annonymous::1::735 lambda::annonymous::1::1780
 (let lambda::annonymous::1::1780 (lambda Number (do Unknown)))
@@ -5777,9 +5785,9 @@
 ; 1 string:chars string:chars lambda::annonymous::1::1974
 (let lambda::annonymous::1::1974 (lambda Unknown (do Unknown[])))
 ; 1 string:upper tail-call:string:upper 1975 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 string:lower tail-call:string:lower 1976 current-char
-(let current-char Unknown)
+(let current-char Number)
 ; 1 new:map new:map lambda::annonymous::1::1977
 (let lambda::annonymous::1::1977 (lambda Unknown[] Unknown Number (do Unknown[])))
 ; 1 new:set new:set lambda::annonymous::1::1978
@@ -5861,13 +5869,13 @@
 ; 1 map:max map:max lambda::annonymous::1::2041 key
 (let key Unknown)
 ; 1 map:max map:max lambda::annonymous::1::2041 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::2041
 (let lambda::annonymous::1::2041 (lambda Unknown[] (do Number)))
 ; 1 map:min map:min lambda::annonymous::1::2045 key
 (let key Unknown)
 ; 1 map:min map:min lambda::annonymous::1::2045 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::2045
 (let lambda::annonymous::1::2045 (lambda Unknown[] (do Number)))
 ; 1 math:hamming-numbers 1042 1042 lambda::annonymous::1::2048
@@ -5881,157 +5889,157 @@
 ; 1 math:hamming-weight math:hamming-weight lambda::annonymous::1::2052
 (let lambda::annonymous::1::2052 (lambda (do Number[])))
 ; 1 math:shoelace 2053 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2053 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2053 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2053 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2053 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2053 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2053 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2053 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2054
 (let lambda::annonymous::1::2054 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace 2055 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2055 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2055 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2055 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2055 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2055 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2055 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2055 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2056
 (let lambda::annonymous::1::2056 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2057
 (let lambda::annonymous::1::2057 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace 2058 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2058 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2058 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2058 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2058 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2058 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2058 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2058 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2059
 (let lambda::annonymous::1::2059 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace 2060 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2060 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2060 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2060 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2060 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2060 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2060 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2060 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2061
 (let lambda::annonymous::1::2061 (lambda Unknown[] Number (do Number[])))
 ; 1 brray:balance! 2062 initial
@@ -6057,7 +6065,7 @@
 ; 1 match:number? match:number? lambda::annonymous::1::2072
 (let lambda::annonymous::1::2072 (lambda Number (do Boolean)))
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2073 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2073 2074 temp
 (let temp Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2073 2074 h
@@ -6081,7 +6089,7 @@
 ; 1 from:chars->ast 283 285 2081 h
 (let h Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2082 cursor
-(let cursor Unknown)
+(let cursor Number)
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2082 2083 temp
 (let temp Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2082 2083 h
@@ -6111,41 +6119,41 @@
 ; 1 special-form:do special-form:do lambda::annonymous::1::2093
 (let lambda::annonymous::1::2093 (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 evaluate 2094 head
-(let head Unknown)
+(let head Unknown[])
 ; 1 evaluate 2094 tail
 (let tail Unknown[])
 ; 1 evaluate 2094 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 evaluate 2095 head
-(let head Unknown)
+(let head Unknown[])
 ; 1 evaluate 2095 tail
 (let tail Unknown[])
 ; 1 evaluate 2095 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:stringify 2096 type
-(let type Unknown)
+(let type Number)
 ; 1 ast:stringify 2096 value
-(let value Unknown)
+(let value Unknown[])
 ; 1 ast:stringify 2097 type
-(let type Unknown)
+(let type Number)
 ; 1 ast:stringify 2097 value
-(let value Unknown)
+(let value Unknown[])
 ; 1 ast:traverse 2098 head
-(let head Unknown)
+(let head Unknown[])
 ; 1 ast:traverse 2098 tail
 (let tail Unknown[])
 ; 1 ast:traverse 2098 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:traverse 2098 2098 lambda::annonymous::1::2100
 (let lambda::annonymous::1::2100 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:traverse 1127 1127 lambda::annonymous::1::2101
 (let lambda::annonymous::1::2101 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:traverse 2102 head
-(let head Unknown)
+(let head Unknown[])
 ; 1 ast:traverse 2102 tail
 (let tail Unknown[])
 ; 1 ast:traverse 2102 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:traverse 2102 2102 lambda::annonymous::1::2104
 (let lambda::annonymous::1::2104 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:traverse 293 293 lambda::annonymous::1::2105
@@ -6153,23 +6161,23 @@
 ; 1 ast:traverse 1134 1134 lambda::annonymous::1::2106
 (let lambda::annonymous::1::2106 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:traverse 2107 head
-(let head Unknown)
+(let head Unknown[])
 ; 1 ast:traverse 2107 tail
 (let tail Unknown[])
 ; 1 ast:traverse 2107 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 ast:traverse 2107 2107 lambda::annonymous::1::2109
 (let lambda::annonymous::1::2109 (lambda Unknown[] (do Unknown[])))
 ; 1 ast:stringify 2110 type
-(let type Unknown)
+(let type Number)
 ; 1 ast:stringify 2110 value
-(let value Unknown)
+(let value Unknown[])
 ; 1 evaluate 2111 head
-(let head Unknown)
+(let head Unknown[])
 ; 1 evaluate 2111 tail
 (let tail Unknown[])
 ; 1 evaluate 2111 pattern
-(let pattern Unknown)
+(let pattern Number)
 ; 1 from:chars->ast 283 285 2112 h
 (let h Unknown[])
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::1144 2113 temp
@@ -6195,159 +6203,159 @@
 ; 1 brray:balance! 2119 tail-call:right:brray:balance!
 (let tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2120
 (let lambda::annonymous::1::2120 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2121
 (let lambda::annonymous::1::2121 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace 2122 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2122 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2122 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2122 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2122 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2122 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2122 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2122 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2123
 (let lambda::annonymous::1::2123 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2124
 (let lambda::annonymous::1::2124 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace 2125 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2125 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2125 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2125 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2125 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2125 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2125 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2125 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2126
 (let lambda::annonymous::1::2126 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace 2127 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace 2127 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace 2127 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace 2127 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace 2127 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace 2127 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace 2127 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace 2127 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2128
 (let lambda::annonymous::1::2128 (lambda Unknown[] Number (do Number[])))
 ; 1 math:hamming-weight math:hamming-weight lambda::annonymous::0::2129
@@ -6359,13 +6367,13 @@
 ; 1 map:min map:min lambda::annonymous::1::2132 key
 (let key Unknown)
 ; 1 map:min map:min lambda::annonymous::1::2132 value
-(let value Unknown)
+(let value Number)
 ; 1 map:min map:min lambda::annonymous::1::2132
 (let lambda::annonymous::1::2132 (lambda Unknown[] (do Number)))
 ; 1 map:max map:max lambda::annonymous::1::2136 key
 (let key Unknown)
 ; 1 map:max map:max lambda::annonymous::1::2136 value
-(let value Unknown)
+(let value Number)
 ; 1 map:max map:max lambda::annonymous::1::2136
 (let lambda::annonymous::1::2136 (lambda Unknown[] (do Number)))
 ; 1 map:count map:count lambda::annonymous::1::2140
@@ -6598,32 +6606,32 @@
 (let lambda::annonymous::1::2295 (lambda Number (do Unknown)))
 ; 1 matrix:for matrix:for lambda::annonymous::1::2296
 (let lambda::annonymous::1::2296 (lambda Unknown[] (do Unknown[])))
-; 1 matrix:points matrix:points lambda::annonymous::1::2297
+; 1 .matrix:points .matrix:points lambda::annonymous::1::2297
 (let lambda::annonymous::1::2297 (lambda Unknown Unknown Unknown (do Number)))
 ; 1 matrix:false-table matrix:false-table lambda::annonymous::1::2298
 (let lambda::annonymous::1::2298 (lambda Unknown (do Boolean[])))
 ; 1 matrix:truth-table matrix:truth-table lambda::annonymous::1::2299
 (let lambda::annonymous::1::2299 (lambda Unknown (do Boolean[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::2300
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::2300
 (let lambda::annonymous::1::2300 (lambda Unknown (do Number[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::2302
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::2302
 (let lambda::annonymous::1::2302 (lambda Unknown (do Number[])))
-; 1 matrix:zeroes matrix:zeroes lambda::annonymous::1::2303
+; 1 .matrix:zeroes .matrix:zeroes lambda::annonymous::1::2303
 (let lambda::annonymous::1::2303 (lambda Unknown (do Number[])))
 ; 1 array:chunks array:chunks lambda::annonymous::1::2304 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2304 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2304
 (let lambda::annonymous::1::2304 (lambda Unknown[] (do Unknown[])))
 ; 1 array:chunks 2305 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks 2305 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2306 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2306 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2306
 (let lambda::annonymous::1::2306 (lambda Unknown[] (do Unknown[])))
 ; 1 array:ranges array:ranges lambda::annonymous::1::2307
@@ -6667,7 +6675,7 @@
 ; 1 list:unzip list:unzip lambda::annonymous::1::2328
 (let lambda::annonymous::1::2328 (lambda Unknown[] (do Unknown)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::2329 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::2329
 (let lambda::annonymous::1::2329 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::2330
@@ -6689,7 +6697,7 @@
 ; 1 math:standard-deviation2 math:standard-deviation2 lambda::annonymous::1::2340
 (let lambda::annonymous::1::2340 (lambda Number (do Number)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::2342 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::2342 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::390 lambda::annonymous::1::390 lambda::annonymous::1::2342 prod
@@ -6701,15 +6709,15 @@
 ; 1 math:divisors-exclusive math:divisors-exclusive lambda::annonymous::1::2345
 (let lambda::annonymous::1::2345 (lambda Number (do Boolean)))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2346
-(let lambda::annonymous::1::2346 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2346 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2347
-(let lambda::annonymous::1::2347 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2347 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2349
-(let lambda::annonymous::1::2349 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2349 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2350
-(let lambda::annonymous::1::2350 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2350 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2352
-(let lambda::annonymous::1::2352 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2352 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:subset 10 10 lambda::annonymous::1::2353
 (let lambda::annonymous::1::2353 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:subset .math:subset lambda::annonymous::2::2354
@@ -6859,31 +6867,31 @@
 ; 1 .math:subset .math:subset lambda::annonymous::2::1560 lambda::annonymous::2::1560 lambda::annonymous::1::2451
 (let lambda::annonymous::1::2451 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2452
-(let lambda::annonymous::1::2452 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2452 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2454
-(let lambda::annonymous::1::2454 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2454 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2456
-(let lambda::annonymous::1::2456 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2456 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2457
-(let lambda::annonymous::1::2457 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2457 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2459
-(let lambda::annonymous::1::2459 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2459 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2460
-(let lambda::annonymous::1::2460 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2460 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2462
-(let lambda::annonymous::1::2462 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2462 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2464
-(let lambda::annonymous::1::2464 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2464 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2465
-(let lambda::annonymous::1::2465 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2465 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2467
-(let lambda::annonymous::1::2467 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2467 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 math:divisors-exclusive math:divisors-exclusive lambda::annonymous::1::2468
 (let lambda::annonymous::1::2468 (lambda Number (do Boolean)))
 ; 1 math:divisors-exclusive math:divisors-exclusive lambda::annonymous::1::2469
 (let lambda::annonymous::1::2469 (lambda Number (do Boolean)))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::2472 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::2472 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::2472 prod
@@ -6891,7 +6899,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::501 lambda::annonymous::1::501 lambda::annonymous::1::2472
 (let lambda::annonymous::1::2472 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2473 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2473 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2473 prod
@@ -6899,7 +6907,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2473
 (let lambda::annonymous::1::2473 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 2474 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 2474 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 2474 prod
@@ -6907,7 +6915,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 2475 sum
 (let sum Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2476 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2476 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2476 prod
@@ -6915,7 +6923,7 @@
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2476
 (let lambda::annonymous::1::2476 (lambda Number (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::2477 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::2477 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::512 lambda::annonymous::1::512 lambda::annonymous::1::2477 prod
@@ -6955,11 +6963,11 @@
 ; 1 math:cartesian-product math:cartesian-product lambda::annonymous::1::582 lambda::annonymous::1::582 lambda::annonymous::1::2496
 (let lambda::annonymous::1::2496 (lambda Unknown (do Unknown[])))
 ; 1 .math:unique .math:unique lambda::annonymous::1::2497 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::2497
 (let lambda::annonymous::1::2497 (lambda Unknown[] (do Boolean)))
 ; 1 .math:unique .math:unique lambda::annonymous::1::2498 index
-(let index Unknown)
+(let index Number)
 ; 1 .math:unique .math:unique lambda::annonymous::1::2498
 (let lambda::annonymous::1::2498 (lambda Unknown[] (do Boolean)))
 ; 1 array:equal? array:equal? lambda::annonymous::1::2499
@@ -6997,24 +7005,24 @@
 ; 1 array:ranges array:ranges lambda::annonymous::1::2516
 (let lambda::annonymous::1::2516 (lambda Unknown[] Unknown Unknown (do Unknown[])))
 ; 1 array:chunks array:chunks lambda::annonymous::1::2517 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2517 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2517
 (let lambda::annonymous::1::2517 (lambda Unknown[] (do Unknown[])))
 ; 1 array:chunks array:chunks lambda::annonymous::1::2518 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2518 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2518
 (let lambda::annonymous::1::2518 (lambda Unknown[] (do Unknown[])))
-; 1 matrix:zeroes matrix:zeroes lambda::annonymous::1::2519
+; 1 .matrix:zeroes .matrix:zeroes lambda::annonymous::1::2519
 (let lambda::annonymous::1::2519 (lambda Unknown (do Number[])))
-; 1 matrix:zeroes matrix:zeroes lambda::annonymous::1::2520
+; 1 .matrix:zeroes .matrix:zeroes lambda::annonymous::1::2520
 (let lambda::annonymous::1::2520 (lambda Unknown (do Number[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::2521
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::2521
 (let lambda::annonymous::1::2521 (lambda Unknown (do Number[])))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::2522
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::2522
 (let lambda::annonymous::1::2522 (lambda Unknown (do Number[])))
 ; 1 matrix:truth-table matrix:truth-table lambda::annonymous::1::2523
 (let lambda::annonymous::1::2523 (lambda Unknown (do Boolean[])))
@@ -7209,75 +7217,75 @@
 ; 1 map:count map:count lambda::annonymous::1::2657
 (let lambda::annonymous::1::2657 (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2660
 (let lambda::annonymous::1::2660 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2661
 (let lambda::annonymous::1::2661 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2662
 (let lambda::annonymous::1::2662 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2663
 (let lambda::annonymous::1::2663 (lambda Unknown[] Number (do Number[])))
 ; 1 from:chars->ast from:chars->ast lambda::annonymous::1::2073 2664 temp
@@ -7303,57 +7311,57 @@
 ; 1 ast:traverse 2107 2107 lambda::annonymous::1::2672
 (let lambda::annonymous::1::2672 (lambda Unknown[] (do Unknown[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2673
 (let lambda::annonymous::1::2673 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2674
 (let lambda::annonymous::1::2674 (lambda Unknown[] Number (do Number[])))
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 a
-(let a Unknown)
+(let a Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 b
-(let b Unknown)
+(let b Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 left
-(let left Unknown)
+(let left Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 right
-(let right Unknown)
+(let right Unknown[])
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 y1
-(let y1 Unknown)
+(let y1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 x1
-(let x1 Unknown)
+(let x1 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 y2
-(let y2 Unknown)
+(let y2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675 x2
-(let x2 Unknown)
+(let x2 Number)
 ; 1 math:shoelace math:shoelace lambda::annonymous::1::2675
 (let lambda::annonymous::1::2675 (lambda Unknown[] Number (do Number[])))
 ; 1 map:count map:count lambda::annonymous::1::2678
@@ -7446,12 +7454,12 @@
 (let lambda::annonymous::1::2731 (lambda Number Number (do Number)))
 ; 1 matrix:product matrix:product lambda::annonymous::2::1340 lambda::annonymous::2::1340 lambda::annonymous::1::2732
 (let lambda::annonymous::1::2732 (lambda Number Number (do Number)))
-; 1 matrix:ones matrix:ones lambda::annonymous::1::2733
+; 1 .matrix:ones .matrix:ones lambda::annonymous::1::2733
 (let lambda::annonymous::1::2733 (lambda Unknown (do Number[])))
 ; 1 array:chunks array:chunks lambda::annonymous::1::2734 start
-(let start Unknown)
+(let start Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2734 end
-(let end Unknown)
+(let end Number)
 ; 1 array:chunks array:chunks lambda::annonymous::1::2734
 (let lambda::annonymous::1::2734 (lambda Unknown[] (do Unknown[])))
 ; 1 array:equal? array:equal? lambda::annonymous::1::2735
@@ -7465,17 +7473,17 @@
 ; 1 math:divisors-exclusive math:divisors-exclusive lambda::annonymous::1::2739
 (let lambda::annonymous::1::2739 (lambda Number (do Boolean)))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2741
-(let lambda::annonymous::1::2741 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2741 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2742
-(let lambda::annonymous::1::2742 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2742 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2744
-(let lambda::annonymous::1::2744 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2744 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2746
-(let lambda::annonymous::1::2746 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2746 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2747
-(let lambda::annonymous::1::2747 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2747 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2749
-(let lambda::annonymous::1::2749 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2749 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:subset .math:subset lambda::annonymous::2::2354 lambda::annonymous::2::2354 lambda::annonymous::1::2750
 (let lambda::annonymous::1::2750 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:subset .math:subset lambda::annonymous::2::2354 lambda::annonymous::2::2354 lambda::annonymous::1::2752
@@ -7549,37 +7557,37 @@
 ; 1 .math:subset .math:subset lambda::annonymous::2::1560 lambda::annonymous::2::1560 lambda::annonymous::1::2796
 (let lambda::annonymous::1::2796 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2798
-(let lambda::annonymous::1::2798 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2798 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2799
-(let lambda::annonymous::1::2799 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2799 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2801
-(let lambda::annonymous::1::2801 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2801 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2802
-(let lambda::annonymous::1::2802 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2802 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2804
-(let lambda::annonymous::1::2804 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2804 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2806
-(let lambda::annonymous::1::2806 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2806 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2807
-(let lambda::annonymous::1::2807 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2807 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2809
-(let lambda::annonymous::1::2809 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2809 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2811
-(let lambda::annonymous::1::2811 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2811 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2812
-(let lambda::annonymous::1::2812 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2812 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2814
-(let lambda::annonymous::1::2814 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2814 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2815
-(let lambda::annonymous::1::2815 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2815 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2817
-(let lambda::annonymous::1::2817 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2817 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2819
-(let lambda::annonymous::1::2819 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2819 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2820
-(let lambda::annonymous::1::2820 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2820 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2821 digit-B
-(let digit-B Unknown)
+(let digit-B Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2821 idx
 (let idx Number)
 ; 1 math:big-integer-multiplication math:big-integer-multiplication lambda::annonymous::1::1597 lambda::annonymous::1::1597 lambda::annonymous::1::2821 prod
@@ -7677,13 +7685,13 @@
 ; 1 matrix:product matrix:product lambda::annonymous::2::2270 lambda::annonymous::2::2270 lambda::annonymous::1::2875
 (let lambda::annonymous::1::2875 (lambda Number Number (do Number)))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2876
-(let lambda::annonymous::1::2876 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2876 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2877
-(let lambda::annonymous::1::2877 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2877 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2878
-(let lambda::annonymous::1::2878 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2878 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2879
-(let lambda::annonymous::1::2879 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2879 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:subset .math:subset lambda::annonymous::2::2354 lambda::annonymous::2::2354 lambda::annonymous::1::2880
 (let lambda::annonymous::1::2880 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:permutations .math:permutations lambda::annonymous::1::2363 lambda::annonymous::1::2363 lambda::annonymous::1::2881
@@ -7707,23 +7715,23 @@
 ; 1 .math:subset .math:subset lambda::annonymous::2::2445 lambda::annonymous::2::2445 lambda::annonymous::1::2890
 (let lambda::annonymous::1::2890 (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2891
-(let lambda::annonymous::1::2891 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2891 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2892
-(let lambda::annonymous::1::2892 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2892 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2893
-(let lambda::annonymous::1::2893 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2893 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2894
-(let lambda::annonymous::1::2894 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2894 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:maximum-index .math:maximum-index lambda::annonymous::1::2895
-(let lambda::annonymous::1::2895 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2895 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2896
-(let lambda::annonymous::1::2896 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2896 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2897
-(let lambda::annonymous::1::2897 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2897 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2898
-(let lambda::annonymous::1::2898 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2898 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 .math:minimum-index .math:minimum-index lambda::annonymous::1::2899
-(let lambda::annonymous::1::2899 (lambda Unknown[] Number Unknown (do Unknown[])))
+(let lambda::annonymous::1::2899 (lambda Unknown[] Number Unknown (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2900
 (let lambda::annonymous::1::2900 (lambda Number (do Number[])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2902

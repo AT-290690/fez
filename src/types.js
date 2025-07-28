@@ -43,6 +43,7 @@ export class SubType {
   }
   add(type) {
     this.types.push(type)
+    return this
   }
   has(type) {
     return this.types[0] === type
@@ -50,6 +51,8 @@ export class SubType {
   isMatching(b) {
     for (let i = 0; i < this.types.length; ++i) {
       if (
+        this.types[i] == undefined ||
+        b.types[i] == undefined ||
         this.types[i] === UNKNOWN ||
         b.types[i] === UNKNOWN ||
         this.types[i] === ANY ||
@@ -1343,19 +1346,17 @@ export const formatSubType = (T) => {
     case COLLECTION:
       return `${
         isSubType(T[1])
-          ? [...T[1]]
-              .map((x) =>
-                x === COLLECTION
-                  ? formatSubType([x])
-                  : toTypeNamesAnyToUknown(x)
-              )
-              .join(' ') || toTypeNames(UNKNOWN)
+          ? T[1].has(COLLECTION)
+            ? `${toTypeNamesAnyToUknown(T[1].types.at(-1))}${'[]'.repeat(
+                T[1].types.length - 1
+              )}`
+            : toTypeNamesAnyToUknown(T[1].types[0]) || toTypeNames(UNKNOWN)
           : toTypeNames(UNKNOWN)
       }[]`
     case ATOM:
       return `${
         isSubType(T[1])
-          ? [...T[1]].map((x) => toTypeNamesAnyToUknown(x)).join(' ')
+          ? toTypeNamesAnyToUknown(T[1].types[0])
           : toTypeNamesAnyToUknown(NUMBER)
       }`
     default:

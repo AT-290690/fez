@@ -108,6 +108,8 @@ describe('Type checking', () => {
 (let fff (get rabbits 0))
 (let iitem (array:zip [1 2 3] [10 20 30]))
 (let iiitem (get iitem 0))
+(let fifi (if (> 1 2) (math:summation [1 2 3]) (math:summation [1 2 3]) ))
+(let bools [[[[true true]]]])
 `,
 
         [
@@ -132,7 +134,9 @@ describe('Type checking', () => {
           'rabbits',
           'fff',
           'iitem',
-          'iiitem'
+          'iiitem',
+          'fifi',
+          'bools'
         ]
       ),
       [
@@ -157,7 +161,9 @@ describe('Type checking', () => {
         '(let rabbits Number[])',
         '(let fff Unknown)',
         '(let iitem Unknown[][])',
-        '(let iiitem Unknown)'
+        '(let iiitem Unknown)',
+        '(let fifi Number)',
+        '(let bools Boolean[][][][])'
       ]
     )
     deepStrictEqual(

@@ -510,7 +510,16 @@ const IfApplyBranch = ({
       }
       break
     default:
-      return setPropToReturnRef(ref[STATS], prop, branch[STATS])
+      if (
+        getType(ref[STATS]) === UNKNOWN &&
+        getReturn(branch[STATS]) === UNKNOWN
+      ) {
+        retry(ref[STATS], exp, stack, () =>
+          setPropToReturn(ref[STATS], prop, branch[STATS])
+        )
+        return true
+      }
+      return setPropToReturn(ref[STATS], prop, branch[STATS])
   }
 }
 const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
@@ -522,6 +531,7 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
     const alt = isLeaf(re[1]) ? re[1] : re[1][0]
     const concequent = env[conc[VALUE]]
     const alternative = env[alt[VALUE]]
+
     // TODO make this more simple - it's so many different things just because types are functions or not
     // WHY not consider making return types for everything
     if (concequent)
@@ -697,34 +707,47 @@ const resolveSetter = (first, rest, env, stack) => {
     //   )
   }
 }
-
+const initArrayTypeRec = ({ rem, env }) => {
+  return rem.slice(1).map((x) =>
+    isLeaf(x)
+      ? x[TYPE] === WORD
+        ? env[x[VALUE]]
+          ? // env[x[VALUE]][STATS][TYPE_PROP][0] === COLLECTION
+            //   ? initArrayTypeRec({ rem: x, env })
+            //   :
+            getTypes(env[x[VALUE]][STATS])
+          : [UNKNOWN]
+        : [
+            x[TYPE],
+            x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new SubType([UNKNOWN])
+          ]
+      : env[x[0][VALUE]]
+      ? x.length > 1 && env[x[0][VALUE]][STATS][RETURNS][0] === COLLECTION
+        ? initArrayTypeRec({ rem: x, env })
+        : getReturns(env[x[0][VALUE]][STATS])
+      : [UNKNOWN]
+  )
+}
 const initArrayType = ({ rem, env }) => {
-  const ret = rem
-    .slice(1)
-    .map((x) =>
-      isLeaf(x)
-        ? x[TYPE] === WORD
-          ? env[x[VALUE]]
-            ? getTypes(env[x[VALUE]][STATS])
-            : [UNKNOWN]
-          : [
-              x[TYPE],
-              x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new SubType([UNKNOWN])
-            ]
-        : env[x[0][VALUE]]
-        ? getReturns(env[x[0][VALUE]][STATS])
-        : [UNKNOWN]
-    )
+  const ret = initArrayTypeRec({ rem, env })
   const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
-  if (
-    known &&
-    ret.length &&
-    !ret.some((x) => known[0] !== x[0] || known.length !== x.length)
-  ) {
+  // console.log(known[0], ret[0])
+  if (known && ret.length) {
+    if (Array.isArray(ret[0][0])) {
+      let head = ret[0][0]
+      ret[0].length = 0
+      const subT = new SubType([COLLECTION])
+      ret[0].push(COLLECTION, subT)
+      while (head && !isSubType(head[1])) {
+        subT.add(COLLECTION)
+        head = head[0]
+      }
+      if (head) subT.add(head[1].types[0])
+    }
     const [main, sub] = ret[0]
     return {
       [TYPE_PROP]: [APPLY],
-      [RETURNS]: [COLLECTION, new SubType(sub ? [...sub] : [main])]
+      [RETURNS]: [COLLECTION, new SubType(isSubType(sub) ? [...sub] : [main])]
     }
   } else
     return {
@@ -1312,8 +1335,11 @@ export const typeCheck = (
                   : env[right[VALUE]] == undefined
                   ? UNKNOWN
                   : env[right[VALUE]][STATS][RETURNS][0]
-                if (type !== UNKNOWN)
+
+                if (type !== UNKNOWN && type !== ANY) {
                   setTypeToReturn(env[name][STATS], env[right[VALUE]][STATS])
+                }
+
                 const resolve = () => {
                   const body = rightHand
                   const rem = hasBlock(body) ? body.at(-1) : body
@@ -1330,6 +1356,7 @@ export const typeCheck = (
                   })
                 }
                 resolve()
+
                 if (isUnknownType(env[name][STATS]))
                   once(env[name][STATS], exp, stack, () => resolve())
               }
