@@ -45,7 +45,8 @@ import {
   IS_ARGUMENT,
   NUMBER,
   NUMBER_SUBTYPE,
-  UNKNOWN_SUBTYPE
+  UNKNOWN_SUBTYPE,
+  SubType
 } from './types.js'
 import {
   Brr,
@@ -56,12 +57,7 @@ import {
   logExp,
   stringifyArgs
 } from './utils.js'
-Set.prototype.difference = function (B) {
-  const A = this
-  const out = new Set()
-  A.forEach((element) => !B.has(element) && out.add(element))
-  return out
-}
+
 export const identity = (name) => [
   [0, 'let'],
   [1, name],
@@ -269,7 +265,7 @@ export const isUnknownType = (stats) => stats && stats[TYPE_PROP][0] === UNKNOWN
 export const isUnknownProp = (stats, prop) => {
   return stats && stats[prop][0] === UNKNOWN
 }
-export const isSubType = (subtype) => subtype instanceof Set
+export const isSubType = (subtype) => subtype instanceof SubType
 export const isSubTypeUknown = (subtype) =>
   subtype.size === 1 && subtype.has(UNKNOWN)
 export const matchSub = (a, b) =>
@@ -277,7 +273,7 @@ export const matchSub = (a, b) =>
   b.has(UNKNOWN) ||
   a.has(ANY) ||
   b.has(ANY) ||
-  a.difference(b).size === 0
+  a.isMatching(b)
 export const isUnknownReturn = (stats) => stats[RETURNS][0] === UNKNOWN
 export const getType = (stats) => stats && stats[TYPE_PROP][0]
 export const getTypes = (stats) => stats && stats[TYPE_PROP]
@@ -607,7 +603,7 @@ const resolveSetter = (first, rest, env, stack) => {
     const right = isLeaf(rest.at(-1)) ? rest.at(-1) : rest.at(-1)[0]
     const currentSubType = hasSubType(current[STATS])
       ? getSubType(current[STATS])
-      : new Set([UNKNOWN])
+      : new SubType([UNKNOWN])
     switch (right[TYPE]) {
       case ATOM:
         if (
@@ -631,7 +627,7 @@ const resolveSetter = (first, rest, env, stack) => {
         if (env[right[VALUE]]) {
           if (hasSubType(env[right[VALUE]][STATS])) {
             if (currentSubType.has(UNKNOWN))
-              current[STATS][TYPE_PROP][1] = new Set([
+              current[STATS][TYPE_PROP][1] = new SubType([
                 ...getSubType(env[right[VALUE]][STATS])
               ])
             else if (!equalSubTypes(current[STATS], env[right[VALUE]][STATS]))
@@ -644,7 +640,7 @@ const resolveSetter = (first, rest, env, stack) => {
                   getTypes(env[right[VALUE]][STATS])
                 )}) (${stringifyArgs([first, rest])}) (check #198)`
               )
-            current[STATS][TYPE_PROP][1] = new Set(
+            current[STATS][TYPE_PROP][1] = new SubType(
               getSubType(env[right[VALUE]][STATS])
             )
           } else
@@ -664,7 +660,7 @@ const resolveSetter = (first, rest, env, stack) => {
           }
           if (hasSubReturn(env[right[VALUE]][STATS])) {
             if (currentSubType.has(UNKNOWN))
-              current[STATS][TYPE_PROP][1] = new Set([
+              current[STATS][TYPE_PROP][1] = new SubType([
                 ...getSubReturn(env[right[VALUE]][STATS])
               ])
             else if (
@@ -682,7 +678,7 @@ const resolveSetter = (first, rest, env, stack) => {
                   getReturns(env[right[VALUE]][STATS])
                 )}) (${stringifyArgs([first, rest])}) (check #198)`
               )
-            current[STATS][TYPE_PROP][1] = new Set([
+            current[STATS][TYPE_PROP][1] = new SubType([
               ...getSubReturn(env[right[VALUE]][STATS])
             ])
           }
@@ -711,7 +707,10 @@ const initArrayType = ({ rem, env }) => {
           ? env[x[VALUE]]
             ? getTypes(env[x[VALUE]][STATS])
             : [UNKNOWN]
-          : [x[TYPE], x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new Set([UNKNOWN])]
+          : [
+              x[TYPE],
+              x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new SubType([UNKNOWN])
+            ]
         : env[x[0][VALUE]]
         ? getReturns(env[x[0][VALUE]][STATS])
         : [UNKNOWN]
@@ -725,12 +724,12 @@ const initArrayType = ({ rem, env }) => {
     const [main, sub] = ret[0]
     return {
       [TYPE_PROP]: [APPLY],
-      [RETURNS]: [COLLECTION, new Set(sub ? [...sub] : [main])]
+      [RETURNS]: [COLLECTION, new SubType(sub ? [...sub] : [main])]
     }
   } else
     return {
       [TYPE_PROP]: [APPLY],
-      [RETURNS]: [COLLECTION, new Set([UNKNOWN])]
+      [RETURNS]: [COLLECTION, new SubType([UNKNOWN])]
     }
 }
 const resolveReturnType = ({

@@ -36,11 +36,22 @@ export const IS_ARGUMENT = 'is_arg'
 export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
-export const BOOLEAN_SUBTYPE = () => new Set([BOOLEAN])
-export const COLLECTION_SUBTYPE = () => new Set([COLLECTION])
-export const NUMBER_SUBTYPE = () => new Set([NUMBER])
-export const ABSTRACTION_SUBTYPE = () => new Set([APPLY])
-export const UNKNOWN_SUBTYPE = () => new Set([UNKNOWN])
+export class SubType extends Set {
+  difference = function (B) {
+    const A = this
+    const out = new Set()
+    A.forEach((element) => !B.has(element) && out.add(element))
+    return out
+  }
+  isMatching(b) {
+    return this.difference(b).size === 0
+  }
+}
+export const BOOLEAN_SUBTYPE = () => new SubType([BOOLEAN])
+export const COLLECTION_SUBTYPE = () => new SubType([COLLECTION])
+export const NUMBER_SUBTYPE = () => new SubType([NUMBER])
+export const ABSTRACTION_SUBTYPE = () => new SubType([APPLY])
+export const UNKNOWN_SUBTYPE = () => new SubType([UNKNOWN])
 
 const SPECIAL_BOOLEAN = BOOLEAN_SUBTYPE()
 const SPECIAL_COLLECTION = COLLECTION_SUBTYPE()
@@ -83,7 +94,7 @@ export const toTypeCodes = (type) => {
     case 'Unknown[]':
     case 'Unknowns':
     case 'Collection':
-      return [COLLECTION, new Set([ANY])]
+      return [COLLECTION, new SubType([ANY])]
     case 'Numbers':
     case 'Number[]':
       return [COLLECTION, NUMBER_SUBTYPE()]
@@ -954,7 +965,7 @@ export const SPECIAL_FORM_TYPES = {
           }
         }
       ],
-      // [GENERIC, new Set([PLACEHOLDER]), 0]
+      // [GENERIC, new SubType([PLACEHOLDER]), 0]
       [RETURNS]: [COLLECTION]
     }
   },
