@@ -2480,6 +2480,7 @@ heap)))
 (let new:big-integer from:chars->digits)
 (let while loop)
 (let math:sort array:sort)
+(let math:flat-one array:flat-one)
 (let math:log1p math:log-taylor-series)
 
 (let Int new:big-integer)

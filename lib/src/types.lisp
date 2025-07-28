@@ -2746,6 +2746,8 @@
 (let while (lambda Number Unknown (do Number)))
 ; 1 math:sort
 (let math:sort (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
+; 1 math:flat-one
+(let math:flat-one (lambda Number[][] (do Number[])))
 ; 1 math:log1p
 (let math:log1p (lambda Number Number (do Number)))
 ; 1 Int

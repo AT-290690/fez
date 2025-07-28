@@ -43,6 +43,7 @@
 (let math:divisors (lambda Number (do Number[])))
 (let math:remove-leading-zeroes (lambda Number[] (do Number[])))
 (let math:sort (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
+(let math:flat-one (lambda Number[][] (do Number[])))
 
 (let matrix:zeroes (lambda Number Number (do Number[][])))
 (let matrix:ones (lambda Number Number (do Number[][])))
