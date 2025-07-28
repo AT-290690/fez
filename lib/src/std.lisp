@@ -1116,7 +1116,7 @@
   (array:set! coords 0 (array:find-index matrix (lambda row (do
     (let idx (array:find-index row cb))
     (let predicate? (> idx -1))
-    (if predicate? (array:set! coords 1 idx) nil)
+    (if predicate? (array:set! coords 1 idx))
     predicate?)))))))
 (let matrix:find (lambda matrix cb (do 
   (let coords (matrix:find-index matrix cb))

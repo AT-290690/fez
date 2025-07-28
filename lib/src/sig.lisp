@@ -44,6 +44,11 @@
 (let math:remove-leading-zeroes (lambda Number[] (do Number[])))
 (let math:sort (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
 
+(let matrix:zeroes (lambda Number Number (do Number[][])))
+(let matrix:ones (lambda Number Number (do Number[][])))
+(let matrix:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number[])))
+(let matrix:points (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number[][])))
+
 (let var:def (lambda Any (do Unknown[])))
 (let var:get (lambda Unknown[] (do Any)))
 (let var:set! (lambda Unknown[] Any (do Unknown[])))
@@ -56,8 +61,16 @@
 (let array:last (lambda Unknown[] (do Any)))
 (let array:get (lambda Unknown[] Number (do Any)))
 (let array:get-number (lambda Number[] Number (do Number)))
+(let array:get-nested-number-1 (lambda Number[][] Number (do Number[])))
+(let array:get-nested-number-2 (lambda Number[][][] Number (do Number[][])))
+
 (let array:get-array (lambda Unknown[][] Number (do Unknown[])))
+(let array:get-nested-array-1 (lambda Unknown[][] Number (do Unknown[])))
+(let array:get-nested-array-2 (lambda Unknown[][][] Number (do Unknown[][])))
+
 (let array:get-boolean (lambda Boolean[] Number (do Boolean)))
+(let array:get-nested-boolean-1 (lambda Boolean[][] Number (do Boolean[])))
+(let array:get-nested-boolean-2 (lambda Boolean[][][] Number (do Boolean[][])))
 
 (let array:transform (lambda Unknown[] (lambda Unknown[] Unknown (do Unknown)) Unknown[] (do Unknown[])))
 (let array:reduce (lambda Unknown[] (lambda Number Unknown (do Number)) Number (do Number)))

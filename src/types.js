@@ -36,15 +36,35 @@ export const IS_ARGUMENT = 'is_arg'
 export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
-export class SubType extends Set {
-  difference = function (B) {
-    const A = this
-    const out = new Set()
-    A.forEach((element) => !B.has(element) && out.add(element))
-    return out
+export class SubType {
+  constructor(args) {
+    this.types = []
+    this.types.push(...args)
+  }
+  add(type) {
+    this.types.push(type)
+  }
+  has(type) {
+    return this.types[0] === type
   }
   isMatching(b) {
-    return this.difference(b).size === 0
+    for (let i = 0; i < this.types.length; ++i) {
+      if (
+        this.types[i] === UNKNOWN ||
+        b.types[i] === UNKNOWN ||
+        this.types[i] === ANY ||
+        b.types[i] === ANY
+      )
+        return true
+      if (this.types[i] !== b.types[i]) return false
+    }
+    return true
+  }
+  get size() {
+    return this.types.length
+  }
+  *[Symbol.iterator]() {
+    for (let i = 0, len = this.size; i < len; ++i) yield this.types[i]
   }
 }
 export const BOOLEAN_SUBTYPE = () => new SubType([BOOLEAN])
@@ -93,7 +113,7 @@ export const toTypeCodes = (type) => {
       return [UNKNOWN]
     case 'Unknown[]':
     case 'Unknowns':
-    case 'Collection':
+      // case 'Collection':
       return [COLLECTION, new SubType([ANY])]
     case 'Numbers':
     case 'Number[]':
@@ -101,10 +121,14 @@ export const toTypeCodes = (type) => {
     case 'Booleans':
     case 'Boolean[]':
       return [COLLECTION, BOOLEAN_SUBTYPE()]
-    case 'Collections':
-    case 'Collection[]':
+    // case 'Collections':
+    // case 'Collection[]':
     case 'Unknown[][]':
       return [COLLECTION, COLLECTION_SUBTYPE()]
+    case 'Boolean[][]':
+      return [COLLECTION, new SubType([COLLECTION, BOOLEAN])]
+    case 'Number[][]':
+      return [COLLECTION, new SubType([COLLECTION, NUMBER])]
     case 'Any':
       return [ANY]
     default:
