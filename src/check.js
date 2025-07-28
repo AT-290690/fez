@@ -56,26 +56,6 @@ import {
   logExp,
   stringifyArgs
 } from './utils.js'
-Set.prototype.union = function (B) {
-  const A = this
-  const out = new Set()
-  A.forEach((element) => out.add(element))
-  B.forEach((element) => out.add(element))
-  return out
-}
-Set.prototype.xor = function (B) {
-  const A = this
-  const out = new Set()
-  B.forEach((element) => !A.has(element) && out.add(element))
-  A.forEach((element) => !B.has(element) && out.add(element))
-  return out
-}
-Set.prototype.intersection = function (B) {
-  const A = this
-  const out = new Set()
-  B.forEach((element) => A.has(element) && out.add(element))
-  return out
-}
 Set.prototype.difference = function (B) {
   const A = this
   const out = new Set()
@@ -289,30 +269,36 @@ export const isUnknownType = (stats) => stats && stats[TYPE_PROP][0] === UNKNOWN
 export const isUnknownProp = (stats, prop) => {
   return stats && stats[prop][0] === UNKNOWN
 }
-
+export const isSubType = (subtype) => subtype instanceof Set
+export const isSubTypeUknown = (subtype) =>
+  subtype.size === 1 && subtype.has(UNKNOWN)
+export const matchSub = (a, b) =>
+  a.has(UNKNOWN) ||
+  b.has(UNKNOWN) ||
+  a.has(ANY) ||
+  b.has(ANY) ||
+  a.difference(b).size === 0
 export const isUnknownReturn = (stats) => stats[RETURNS][0] === UNKNOWN
 export const getType = (stats) => stats && stats[TYPE_PROP][0]
 export const getTypes = (stats) => stats && stats[TYPE_PROP]
 export const getReturn = (stats) => stats && stats[RETURNS][0]
 export const getReturns = (stats) => stats && stats[RETURNS]
 export const getSubType = (stats) => stats && stats[TYPE_PROP][1]
-export const hasSubType = (stats) => stats && stats[TYPE_PROP][1] instanceof Set
+export const hasSubType = (stats) => stats && isSubType(stats[TYPE_PROP][1])
 export const getSubReturn = (stats) => stats && stats[RETURNS][1]
-export const hasSubReturn = (stats) => stats && stats[RETURNS][1] instanceof Set
+export const hasSubReturn = (stats) => stats && isSubType(stats[RETURNS][1])
 export const isUnknownSubReturn = (stats) =>
   !hasSubReturn(stats) ||
   (stats &&
     stats[RETURNS] &&
     stats[RETURNS][1] &&
-    stats[RETURNS][1].size === 1 &&
-    stats[RETURNS][1].has(UNKNOWN))
+    isSubTypeUknown(stats[RETURNS][1]))
 export const isUnknownSubType = (stats) =>
   hasSubType(stats) &&
   stats &&
   stats[TYPE_PROP] &&
   stats[TYPE_PROP][1] &&
-  stats[TYPE_PROP][1].size === 1 &&
-  stats[TYPE_PROP][1].has(UNKNOWN)
+  isSubTypeUknown(stats[TYPE_PROP][1])
 export const isAtomType = (stats) =>
   isAnyType(stats) || stats[TYPE_PROP][0] === ATOM
 export const isAtomReturn = (stats) =>
@@ -357,35 +343,21 @@ const IsPredicate = (leaf) =>
 
 const equalSubTypes = (a, b) => {
   return (
-    !hasSubType(a) ||
-    !hasSubType(b) ||
-    getSubType(a).has(UNKNOWN) ||
-    getSubType(b).has(UNKNOWN) ||
-    getSubType(a).has(ANY) ||
-    getSubType(b).has(ANY) ||
-    getSubType(a).difference(getSubType(b)).size === 0
+    !hasSubType(a) || !hasSubType(b) || matchSub(getSubType(a), getSubType(b))
   )
 }
 const equalSubReturns = (a, b) => {
   return (
     !hasSubReturn(a) ||
     !hasSubReturn(b) ||
-    getSubReturn(a).has(UNKNOWN) ||
-    getSubReturn(b).has(UNKNOWN) ||
-    getSubReturn(a).has(ANY) ||
-    getSubReturn(b).has(ANY) ||
-    getSubReturn(a).difference(getSubReturn(b)).size === 0
+    matchSub(getSubReturn(a), getSubReturn(b))
   )
 }
 const equalSubTypesWithSubReturn = (a, b) => {
   return (
     !hasSubType(a) ||
     !hasSubReturn(b) ||
-    getSubType(a).has(UNKNOWN) ||
-    getSubReturn(b).has(UNKNOWN) ||
-    getSubType(a).has(ANY) ||
-    getSubReturn(b).has(ANY) ||
-    getSubType(a).difference(getSubReturn(b)).size === 0
+    matchSub(getSubType(a), getSubReturn(b))
   )
 }
 const isAtomABoolean = (atom) => atom === TRUE || atom === FALSE
@@ -729,52 +701,7 @@ const resolveSetter = (first, rest, env, stack) => {
     //   )
   }
 }
-const resolveGetter = ({ rem, prop, name, env }) => {
-  const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
-  if (!env[array[VALUE]] || !env[name]) return true
-  switch (array[TYPE]) {
-    case APPLY:
-      if (hasSubType(env[array[VALUE]][STATS])) {
-        const rightSub = getSubReturn(env[array[VALUE]][STATS])
-        const isAtom = rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
-        const isCollection = rightSub.has(COLLECTION)
-        if (isAtom && !isCollection) {
-          setPropToAtom(env[name][STATS], prop)
-          setPropToSubReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
-        } else if (!isAtom && isCollection) {
-          setPropToReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
-          // TODO: handle this nested array overwrite better
-          if (getSubReturn(env[array[VALUE]][STATS]).has(COLLECTION))
-            setPropToSubReturn(env[name][STATS], prop, {
-              [RETURNS]: [COLLECTION, UNKNOWN_SUBTYPE()]
-            })
-        } else return false
-      } else return false
-      break
-    case WORD:
-      {
-        if (hasSubType(env[array[VALUE]][STATS])) {
-          const rightSub = getSubType(env[array[VALUE]][STATS])
-          const isAtom =
-            rightSub.has(ATOM) || rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
-          const isCollection = rightSub.has(COLLECTION)
-          if (isAtom && !isCollection) {
-            setPropToAtom(env[name][STATS], prop)
-            setPropToSubType(env[name][STATS], prop, env[array[VALUE]][STATS])
-          } else if (!isAtom && isCollection) {
-            setPropToType(env[name][STATS], prop, env[array[VALUE]][STATS])
-            // TODO: handle this nested array overwrite better
-            if (getSubType(env[array[VALUE]][STATS]).has(COLLECTION))
-              setPropToSubType(env[name][STATS], prop, {
-                [TYPE_PROP]: [COLLECTION, UNKNOWN_SUBTYPE()]
-              })
-          } else return false
-        } else return false
-      }
-      break
-  }
-  return true
-}
+
 const initArrayType = ({ rem, env }) => {
   const ret = rem
     .slice(1)

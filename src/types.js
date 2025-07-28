@@ -1,6 +1,6 @@
 import stdT from '../lib/baked/std-T.js'
 import std from '../lib/baked/std.js'
-import { getReturn, getReturns, getType, getTypes } from './check.js'
+import { getReturn, getReturns, getType, getTypes, isSubType } from './check.js'
 import {
   APPLY,
   ATOM,
@@ -1307,7 +1307,7 @@ export const formatSubType = (T) => {
   switch (T[0]) {
     case COLLECTION:
       return `${
-        T[1] instanceof Set
+        isSubType(T[1])
           ? [...T[1]]
               .map((x) =>
                 x === COLLECTION
@@ -1319,7 +1319,7 @@ export const formatSubType = (T) => {
       }[]`
     case ATOM:
       return `${
-        T[1] instanceof Set
+        isSubType(T[1])
           ? [...T[1]].map((x) => toTypeNamesAnyToUknown(x)).join(' ')
           : toTypeNamesAnyToUknown(NUMBER)
       }`
@@ -1378,7 +1378,7 @@ export const formatAstSubType = (T) => {
   switch (T[0]) {
     case COLLECTION:
       return `${
-        T[1] instanceof Set
+        isSubType(T[1])
           ? [...T[1]]
               .map((x) =>
                 x === COLLECTION
@@ -1390,7 +1390,7 @@ export const formatAstSubType = (T) => {
       }[]`
     case ATOM:
       return `${
-        T[1] instanceof Set
+        isSubType(T[1])
           ? [...T[1]].map((x) => toTypeNamesAnyToUknown(x)).join(' ')
           : toTypeNamesAnyToUknown(NUMBER)
       }`
