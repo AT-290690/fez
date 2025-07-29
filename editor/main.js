@@ -1,4 +1,4 @@
-import { parse, compile, enhance, AST, LISP } from '../index.js'
+import { parse, compile, enhance, AST, LISP, UTILS } from '../index.js'
 import { debug } from './debug.js'
 import { makeEditor, serialise } from './utils.js'
 const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
@@ -25,8 +25,9 @@ const inter = () => {
   const value = editor.getValue()
   if (value.trim()) {
     try {
-      const parsed = parse(value)
-      const { evaluated, type, error } = debug(parsed, true)
+      const [source, types] = UTILS.extractTypes(value)
+      const parsed = parse(source)
+      const { evaluated, type, error } = debug(parsed, true, types)
       terminal.setValue(
         error == null
           ? type

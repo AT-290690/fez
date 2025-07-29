@@ -21,6 +21,7 @@ import { type, typeCheck, withScope } from './check.js'
 import stdT from '../lib/baked/std-T.js'
 import {
   definedTypes,
+  extractTypes,
   filteredDefinedTypes,
   formatAstTypes,
   withCtxTypes
@@ -380,8 +381,8 @@ export const init = () => {
     console.log('Added directory src in root')
     writeFileSync('./src/main.lisp', '')
     console.log('Added file main.lisp in src')
-    writeFileSync('./src/types.lisp', '')
-    console.log('Added file types.lisp in src')
+    // writeFileSync('./src/types.lisp', '')
+    // console.log('Added file types.lisp in src')
     writeFileSync(
       'index.js',
       `import { compile, enhance, parse, LISP, UTILS } from "fez-lisp";
@@ -406,16 +407,17 @@ export const dev = (source, types) => {
 };
 export const comp = (source) => compile(enhance(parse(source)));
 const file = readFileSync("./src/main.lisp", "utf-8");
+const [src, typ] = UTILS.extractTypes(file);
 switch (process.argv[2]) {
   case "comp":
     writeFileSync(
       "./src/main.js",
-      "var _ = " + comp(file) + "; console.log(_)"
+      "var _ = " + comp(src) + "; console.log(_)"
     );
     break;
   case "dev":
   default:
-    dev(file, readFileSync("./src/types.lisp", "utf-8"));
+    dev(src, typ);
     break;
 }
 `
@@ -424,7 +426,7 @@ switch (process.argv[2]) {
     console.log(
       `Done!
 
-Write code in main.lisp and types (if any) in types.lisp
+Write code in main.lisp
 Run node index.js with the following flags:
 - dev (static type check and run time validations)
 - comp (compile Fez to JavaScript file main.js)
@@ -440,6 +442,7 @@ That's it! You are all set!
 }
 
 export const UTILS = {
+  extractTypes,
   init,
   debug,
   startDebug,

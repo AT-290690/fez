@@ -1539,3 +1539,12 @@ export const filteredDefinedTypes = (program, lib, libT) => {
 export const definedTypes = (T) => fromSourceToType(T)
 export const withStdDefinedTypes = (ast) =>
   withCtxTypes(definedTypes(filteredDefinedTypes(ast, std, stdT)))
+
+export const extractTypes = (source) => {
+  let types
+  const src = source.replaceAll(/\(the.+\)/g, (match, token) => {
+    types = match
+    return ''
+  })
+  return [src, types]
+}
