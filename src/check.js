@@ -711,7 +711,7 @@ const resolveSetter = (first, rest, env, stack) => {
         break
       case APPLY:
         if (env[right[VALUE]]) {
-          if (right[VALUE] === 'array:get') {
+          if (right[VALUE] === KEYWORDS.CREATE_ARRAY) {
             current[STATS][TYPE_PROP][1] = initArrayType({
               rem: rest.at(-1),
               env
@@ -848,7 +848,7 @@ const resolveReturnType = ({
         break
       default:
         {
-          if (returns[VALUE] === KEYWORDS.GET_ARRAY)
+          if (returns[VALUE] === 'array:get')
             resolveGetter({ rem, prop, name, env })
           // if (
           //   !GETTERS_SET.has(name) &&

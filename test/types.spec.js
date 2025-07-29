@@ -75,7 +75,7 @@ describe('Type checking', () => {
 (let iffx (lambda x (if (> x 1) x x)))
 (let g (lambda x (do
                   (or (not (> (length x) 0)) 1)
-                  (let index (lambda (do (set! x 0 1) (get x 0)))) 
+                  (let index (lambda (do (set! x 0 1) (array:get x 0)))) 
                   (index))))
 (let Aarr [])
 (set! Aarr (length Aarr) [])
@@ -107,7 +107,7 @@ describe('Type checking', () => {
 
 (let fff (get rabbits 0))
 (let iitem (array:zip [1 2 3] [10 20 30]))
-(let iiitem (get iitem 0))
+(let iiitem (array:get iitem 0))
 (let fifi (if (> 1 2) (math:summation [1 2 3]) (math:summation [1 2 3]) ))
 (let bools [[[[true true]]]])
 `,
