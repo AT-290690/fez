@@ -91,49 +91,39 @@ export const toTypeNames = (type) => {
       return 'Atom'
     case NUMBER:
       return 'Number'
-    // case ATOM:
-    //   return 'Atom'
     case UNKNOWN:
       return 'Unknown'
     case COLLECTION:
-      // return 'Array'
       return 'Unknown[]'
     case ANY:
       return 'Any'
     default:
-      break
+      return 'Unknown'
   }
 }
+
+export const extractArrayType = (type) => {
+  const arr = [...type].filter((x) => x === '[')
+  return [type.split('[')[0], arr.length]
+}
+const fillArrayType = (n) => Array.from({ length: n - 1 }).fill(COLLECTION)
 export const toTypeCodes = (type) => {
-  switch (type) {
+  const [t, n] = extractArrayType(type)
+  switch (t) {
     case 'Abstraction':
       return [APPLY]
     case 'Boolean':
+      if (n) return [COLLECTION, new SubType(fillArrayType(n).concat(BOOLEAN))]
       return [ATOM, BOOLEAN_SUBTYPE()]
     case 'Atom':
+      if (n) return [COLLECTION, new SubType(fillArrayType(n).concat(ATOM))]
       return [ATOM]
     case 'Number':
+      if (n) return [COLLECTION, new SubType(fillArrayType(n).concat(NUMBER))]
       return [ATOM, NUMBER_SUBTYPE()]
     case 'Unknown':
+      if (n) return [COLLECTION, new SubType(fillArrayType(n))]
       return [UNKNOWN]
-    case 'Unknown[]':
-    case 'Unknowns':
-      // case 'Collection':
-      return [COLLECTION, new SubType([ANY])]
-    case 'Numbers':
-    case 'Number[]':
-      return [COLLECTION, NUMBER_SUBTYPE()]
-    case 'Booleans':
-    case 'Boolean[]':
-      return [COLLECTION, BOOLEAN_SUBTYPE()]
-    // case 'Collections':
-    // case 'Collection[]':
-    case 'Unknown[][]':
-      return [COLLECTION, COLLECTION_SUBTYPE()]
-    case 'Boolean[][]':
-      return [COLLECTION, new SubType([COLLECTION, BOOLEAN])]
-    case 'Number[][]':
-      return [COLLECTION, new SubType([COLLECTION, NUMBER])]
     case 'Any':
       return [ANY]
     default:

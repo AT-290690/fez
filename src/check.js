@@ -606,7 +606,7 @@ const resolveGetter = ({ rem, prop, name, env }) => {
 
   switch (array[TYPE]) {
     case APPLY:
-      if (hasSubType(env[array[VALUE]][STATS])) {
+      if (hasSubReturn(env[array[VALUE]][STATS])) {
         const rightSub = getSubReturn(env[array[VALUE]][STATS])
         const isAtom = rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
         const isCollection = rightSub.has(COLLECTION)
@@ -614,12 +614,12 @@ const resolveGetter = ({ rem, prop, name, env }) => {
           setPropToAtom(env[name][STATS], prop)
           setPropToSubReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
         } else if (!isAtom && isCollection) {
-          setPropToReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
-          // TODO: handle this nested array overwrite better
-          if (getSubReturn(env[array[VALUE]][STATS]).has(COLLECTION))
-            setPropToSubReturn(env[name][STATS], prop, {
-              [RETURNS]: [COLLECTION, UNKNOWN_SUBTYPE()]
-            })
+          setPropToReturn(env[name][STATS], prop, {
+            [RETURNS]: [
+              env[array[VALUE]][STATS][RETURNS][1].types[0],
+              new SubType(env[array[VALUE]][STATS][RETURNS][1].types.slice(1))
+            ]
+          })
         } else return false
       } else return false
       break
@@ -713,10 +713,12 @@ const resolveSetter = (first, rest, env, stack) => {
       case APPLY:
         if (env[right[VALUE]]) {
           if (right[VALUE] === KEYWORDS.CREATE_ARRAY) {
-            current[STATS][TYPE_PROP][1] = initArrayType({
+            const inner = initArrayType({
               rem: rest.at(-1),
               env
             })[RETURNS][1]
+            current[STATS][TYPE_PROP][0] = COLLECTION
+            if (!inner.has(UNKNOWN)) current[STATS][TYPE_PROP][1] = inner
             break
           }
           if (hasSubReturn(env[right[VALUE]][STATS])) {
@@ -782,7 +784,6 @@ const initArrayTypeRec = ({ rem, env }) => {
 const initArrayType = ({ rem, env }) => {
   const ret = initArrayTypeRec({ rem, env })
   const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
-  // console.log(known[0], ret[0])
   if (known && ret.length) {
     if (Array.isArray(ret[0][0])) {
       let head = ret[0][0]
@@ -796,6 +797,7 @@ const initArrayType = ({ rem, env }) => {
       if (head) subT.add(head[1].types[0])
     }
     const [main, sub] = ret[0]
+    if (isSubType(sub) && sub.types.at(-1) === COLLECTION) sub.types.pop()
     return {
       [TYPE_PROP]: [APPLY],
       [RETURNS]: [COLLECTION, new SubType(isSubType(sub) ? [...sub] : [main])]

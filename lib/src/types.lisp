@@ -623,7 +623,7 @@
 ; 1 math:big-integer-division result
 (the result Unknown[])
 ; 1 math:big-integer-division current
-(the current Number[])
+(the current Unknown[])
 ; 1 math:big-integer-division i
 (the i Number[])
 ; 1 math:big-integer-division len
@@ -673,9 +673,9 @@
 ; 1 math:log-base 49 max-iter
 (the max-iter Number)
 ; 1 math:log-base 49 ln-base 50 g
-(the g Number[])
+(the g Unknown[])
 ; 1 math:log-base 49 ln-base 50 i
-(the i Number[])
+(the i Unknown[])
 ; 1 math:log-base 49 ln-base
 (the ln-base (lambda Number (do Number)))
 ; 1 math:log-base 49 ln-x
@@ -887,7 +887,7 @@
 ; 1 math:fibonacci
 (the math:fibonacci (lambda Number (do Number)))
 ; 1 math:enumeration I
-(the I Number[])
+(the I Unknown[])
 ; 1 math:enumeration enumeration i
 (the i Number)
 ; 1 math:enumeration enumeration
@@ -1137,11 +1137,11 @@
 ; 1 array:in-bounds?
 (the array:in-bounds? (lambda Unknown[] Number (do Boolean)))
 ; 1 get-option
-(the get-option (lambda Unknown[] Number (do Unknown[][][][])))
+(the get-option (lambda Unknown[] Number (do Unknown[][][])))
 ; 1 get-or-default
 (the get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:get-option
-(the array:get-option (lambda Unknown[] Number (do Unknown[][][][])))
+(the array:get-option (lambda Unknown[] Number (do Unknown[][][])))
 ; 1 array:get-or-default
 (the array:get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:slice bounds
@@ -1371,7 +1371,7 @@
 ; 1 matrix:rotate-square len
 (the len Number)
 ; 1 matrix:rotate-square out
-(the out Unknown[])
+(the out Number[])
 ; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square 132 tail-call:inner:matrix:rotate-square
 (the tail-call:inner:matrix:rotate-square (lambda Number (do Number)))
 ; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square
@@ -1381,7 +1381,7 @@
 ; 1 matrix:flip-square len
 (the len Number)
 ; 1 matrix:flip-square out
-(the out Unknown[])
+(the out Number[])
 ; 1 matrix:flip-square tail-call:outer:matrix:flip-square 134 tail-call:inner:matrix:flip-square
 (the tail-call:inner:matrix:flip-square (lambda Number (do Unknown[])))
 ; 1 matrix:flip-square tail-call:outer:matrix:flip-square
@@ -1437,7 +1437,7 @@
 ; 1 matrix:set-and-get!
 (the matrix:set-and-get! (lambda Unknown[] Number Number Unknown (do Unknown)))
 ; 1 matrix:get-option
-(the matrix:get-option (lambda Unknown[] Number Number (do Unknown[][][][])))
+(the matrix:get-option (lambda Unknown[] Number Number (do Unknown[][][])))
 ; 1 matrix:get-or-default
 (the matrix:get-or-default (lambda Unknown[] Number Number Unknown (do Unknown)))
 ; 1 from:digit->word
@@ -1471,7 +1471,7 @@
 ; 1 from:digits->chars
 (the from:digits->chars (lambda Number[] (do Number[])))
 ; 1 from:chars->positive-or-negative-digits current-sign
-(the current-sign Number[])
+(the current-sign Unknown[])
 ; 1 from:chars->positive-or-negative-digits
 (the from:chars->positive-or-negative-digits (lambda Unknown[] (do Unknown[])))
 ; 1 .from:digits->integer tail-call:from:digits->integer
@@ -1955,7 +1955,7 @@
 ; 1 new:set
 (the new:set (lambda Unknown[] (do Unknown[])))
 ; 1 new:set4
-(the new:set4 (lambda (do Unknown[][])))
+(the new:set4 (lambda (do Unknown[])))
 ; 1 new:set8
 (the new:set8 (lambda (do Unknown[])))
 ; 1 new:set16
@@ -1967,7 +1967,7 @@
 ; 1 new:set128
 (the new:set128 (lambda (do Unknown[])))
 ; 1 new:map4
-(the new:map4 (lambda (do Unknown[][])))
+(the new:map4 (lambda (do Unknown[])))
 ; 1 new:map8
 (the new:map8 (lambda (do Unknown[])))
 ; 1 new:map16
@@ -2003,11 +2003,11 @@
 ; 1 new:heap
 (the new:heap Unknown[])
 ; 1 new:brray
-(the new:brray (lambda (do Unknown[][][][])))
+(the new:brray (lambda (do Unknown[][][])))
 ; 1 new:queue
-(the new:queue (lambda (do Unknown[][][][])))
+(the new:queue (lambda (do Unknown[][][])))
 ; 1 new:stack
-(the new:stack (lambda (do Unknown[][][][])))
+(the new:stack (lambda (do Unknown[][][])))
 ; 1 new:binary-tree xs
 (the xs Unknown[])
 ; 1 new:binary-tree
@@ -2425,7 +2425,7 @@
 ; 1 brray:empty?
 (the brray:empty? (lambda Unknown[] (do Boolean)))
 ; 1 brray:empty!
-(the brray:empty! (lambda Unknown[] (do Unknown[])))
+(the brray:empty! (lambda Unknown[][] (do Unknown[][])))
 ; 1 brray:get offset-index
 (the offset-index Number)
 ; 1 brray:get index
@@ -2447,11 +2447,11 @@
 ; 1 brray:remove-from-left! len
 (the len Number)
 ; 1 brray:remove-from-left!
-(the brray:remove-from-left! (lambda Unknown[] (do Unknown[])))
+(the brray:remove-from-left! (lambda Unknown[] (do Unknown[][])))
 ; 1 brray:remove-from-right! len
 (the len Number)
 ; 1 brray:remove-from-right!
-(the brray:remove-from-right! (lambda Unknown[] (do Unknown[])))
+(the brray:remove-from-right! (lambda Unknown[] (do Unknown[][])))
 ; 1 brray:iter tail-call:brray:iter
 (the tail-call:brray:iter (lambda Number Number (do Number)))
 ; 1 brray:iter
@@ -2479,7 +2479,7 @@
 ; 1 brray:balance! 257 tail-call:right:brray:balance!
 (the tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 brray:balance!
-(the brray:balance! (lambda Unknown[] (do Unknown[])))
+(the brray:balance! (lambda Unknown[] (do Unknown[][])))
 ; 1 brray:append!
 (the brray:append! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 brray:prepend!
@@ -2535,7 +2535,7 @@
 ; 1 queue:not-empty?
 (the queue:not-empty? (lambda Unknown[] (do Boolean)))
 ; 1 queue:empty!
-(the queue:empty! (lambda Unknown[] (do Unknown[])))
+(the queue:empty! (lambda Unknown[][] (do Unknown[][])))
 ; 1 queue:enqueue!
 (the queue:enqueue! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 queue:dequeue!
@@ -2547,7 +2547,7 @@
 ; 1 stack:not-empty?
 (the stack:not-empty? (lambda Unknown[] (do Boolean)))
 ; 1 stack:empty!
-(the stack:empty! (lambda Unknown[] (do Unknown[])))
+(the stack:empty! (lambda Unknown[][] (do Unknown[][])))
 ; 1 stack:push!
 (the stack:push! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 stack:pop!
@@ -2659,13 +2659,13 @@
 ; 1 heap:greater?
 (the heap:greater? (lambda Unknown[] Number Number (lambda Unknown Unknown (do Unknown)) (do Unknown)))
 ; 1 heap:sift-up! node
-(the node Number[])
+(the node Unknown[])
 ; 1 heap:sift-up! tail-call:heap:sift-up!
 (the tail-call:heap:sift-up! (lambda (do Number)))
 ; 1 heap:sift-up!
 (the heap:sift-up! (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (do Number)))
 ; 1 heap:sift-down! node
-(the node Number[])
+(the node Unknown[])
 ; 1 heap:sift-down! tail-call:heap:sift-down! 273 max-child
 (the max-child Number)
 ; 1 heap:sift-down! tail-call:heap:sift-down!
@@ -3509,9 +3509,9 @@
 ; 1 math:log-base 49 ln-base 50 50 lambda::annonymous::1::549
 (the lambda::annonymous::1::549 (lambda (do Unknown[])))
 ; 1 math:log-base 49 ln-base 550 g
-(the g Number[])
+(the g Unknown[])
 ; 1 math:log-base 49 ln-base 550 i
-(the i Number[])
+(the i Unknown[])
 ; 1 math:log-base 49 ln-base 550 550 lambda::annonymous::0::553
 (the lambda::annonymous::0::553 (lambda (do Boolean)))
 ; 1 math:log-base 49 ln-base 550 550 lambda::annonymous::1::554
@@ -3521,9 +3521,9 @@
 ; 1 math:log-base 555 max-iter
 (the max-iter Number)
 ; 1 math:log-base 555 ln-base 556 g
-(the g Number[])
+(the g Unknown[])
 ; 1 math:log-base 555 ln-base 556 i
-(the i Number[])
+(the i Unknown[])
 ; 1 math:log-base 555 ln-base
 (the ln-base (lambda Number (do Number)))
 ; 1 math:log-base 555 ln-x
@@ -5243,9 +5243,9 @@
 ; 1 math:log-base 555 ln-base 556 556 lambda::annonymous::1::1623
 (the lambda::annonymous::1::1623 (lambda (do Unknown[])))
 ; 1 math:log-base 555 ln-base 1624 g
-(the g Number[])
+(the g Unknown[])
 ; 1 math:log-base 555 ln-base 1624 i
-(the i Number[])
+(the i Unknown[])
 ; 1 math:log-base 555 ln-base 1624 1624 lambda::annonymous::0::1627
 (the lambda::annonymous::0::1627 (lambda (do Boolean)))
 ; 1 math:log-base 555 ln-base 1624 1624 lambda::annonymous::1::1628

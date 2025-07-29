@@ -110,8 +110,8 @@ export const MUTATORS_SET = new Set([
   'array:set!',
   'push!',
   'array:append!',
-  'array:push!',
-  'var:set!'
+  'array:push!'
+  // 'var:set!'
 ])
 export const GETTERS_SET = new Set([
   KEYWORDS.GET_ARRAY,
