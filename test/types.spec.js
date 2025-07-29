@@ -666,7 +666,7 @@ ZZZ=ZZZ,ZZZ")
         1
     )))
     `,
-      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Unknown[]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
+      `Incorrect type for (lambda) (cb) argument at position (0) named as (x). Expected (Number) but got (Number[]) (fn 1 (lambda x (do (let y 10) (set! x 0 1) 1))) (check #780)`
     )
     fails(
       `(let math:power-bug (lambda base exp (do
@@ -738,7 +738,7 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(and (array:empty! [1 2 3]) 1)`,
-      `Incorrect type of argument (0) for (and). Expected (Number) but got (Unknown[]) (and (array:empty! (array 1 2 3)) 1) (check #16)`
+      `Incorrect type of argument (0) for (and). Expected (Boolean) but got (Unknown[]) (and (array:empty! (array 1 2 3)) 1) (check #16)`
     )
 
     fails(
@@ -756,11 +756,11 @@ ZZZ=ZZZ,ZZZ")
       `(let x 1)
 (let y 2)
 (set! 1 1 4)`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! 1 1 4) (check #2)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Atom) (set! 1 1 4) (check #2)`
     )
     fails(
       `(set! 1 1 10)`,
-      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Number) (set! 1 1 10) (check #2)`
+      `Incorrect type of argument (0) for (set!). Expected (Unknown[]) but got (Atom) (set! 1 1 10) (check #2)`
     )
     fails(
       `(let x ())`,
@@ -844,7 +844,7 @@ ZZZ=ZZZ,ZZZ")
 
 (+ (f6 1) (f6 10) (f7 8) (f7 11) (f1 1) (add 3 4) (f8) (f5 1))
 `,
-      `Incorrect type of argument (1) for (+). Expected (Number) but got (Unknown[]) (+ (f8) (f5 1)) (check #16)`
+      `Incorrect type of argument (1) for (+). Expected (Number) but got (Number[]) (+ (f8) (f5 1)) (check #16)`
     )
     fails(
       `(let fn (lambda x y? (+ x (numberp (or y? 1))))) (fn 1 2)`,
@@ -936,7 +936,7 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(and (array:map [1 2 3] math:square) false)`,
-      `Incorrect type of argument (0) for (and). Expected (Number) but got (Unknown[]) (and (array:map (array 1 2 3) math:square) false) (check #16)`
+      `Incorrect type of argument (0) for (and). Expected (Boolean) but got (Unknown[]) (and (array:map (array 1 2 3) math:square) false) (check #16)`
     )
     fails(
       `(not (length []))`,

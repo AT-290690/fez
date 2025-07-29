@@ -1003,9 +1003,9 @@ export const typeCheck = (
         throw new TypeError(
           `Incorrect type of argument (${i}) for (${
             first[VALUE]
-          }). Expected (${toTypeNames(
-            getType(expected)
-          )}) but got (${toTypeNames(getReturn(actual))}) (${stringifyArgs(
+          }). Expected (${formatSubType(
+            getTypes(expected)
+          )}) but got (${formatSubType(getReturns(actual))}) (${stringifyArgs(
             exp
           )}) (check #16)`
         )
@@ -1111,10 +1111,10 @@ export const typeCheck = (
                           local[lambdaName][STATS][ARGUMENTS][j][STATS][
                             SIGNATURE
                           ]
-                        }). Expected (${toTypeNames(
-                          getType(expected[STATS])
-                        )}) but got (${toTypeNames(
-                          getType(actual[STATS])
+                        }). Expected (${formatSubType(
+                          getTypes(expected[STATS])
+                        )}) but got (${formatSubType(
+                          getTypes(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #780)`
                       )
                     else if (!equalSubReturns(expected[STATS], actual[STATS]))
@@ -1123,10 +1123,10 @@ export const typeCheck = (
                           expected[STATS][SIGNATURE]
                         }) the (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
                           first[VALUE]
-                        }) at position (${i}). Expected (${toTypeNames(
-                          getReturn(expected[STATS])
-                        )}) but got (${toTypeNames(
-                          getReturn(actual[STATS])
+                        }) at position (${i}). Expected (${formatSubType(
+                          getReturns(expected[STATS])
+                        )}) but got (${formatSubType(
+                          getReturns(actual[STATS])
                         )}) (${stringifyArgs(exp)}) (check #784)`
                       )
                     // else
@@ -1690,13 +1690,9 @@ export const typeCheck = (
                                   first[VALUE]
                                 }). Expected (${formatSubType(
                                   getTypes(args[i][STATS])
-                                )}) but got (${
-                                  rest[i][TYPE] === ATOM
-                                    ? toTypeNames(rest[i][TYPE])
-                                    : formatSubType(
-                                        getTypes(env[rest[i][VALUE]][STATS])
-                                      )
-                                }) (${stringifyArgs(exp)}) (check #203)`
+                                )}) but got (${toTypeNames(
+                                  NUMBER
+                                )}) (${stringifyArgs(exp)}) (check #203)`
                               )
                           }
                           break
@@ -1719,8 +1715,8 @@ export const typeCheck = (
                                       first[VALUE]
                                     }) at position (${i}). Expected (${
                                       STATIC_TYPES.ABSTRACTION
-                                    }) but got (${toTypeNames(
-                                      getType(args[i][STATS])
+                                    }) but got (${formatSubType(
+                                      getTypes(args[i][STATS])
                                     )}) (${stringifyArgs(exp)}) (check #111)`
                                   )
                                 else if (getType(args[i][STATS]) === APPLY)

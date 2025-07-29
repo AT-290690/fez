@@ -88,6 +88,7 @@ export const toTypeNames = (type) => {
     case BOOLEAN:
       return 'Boolean'
     case ATOM:
+      return 'Atom'
     case NUMBER:
       return 'Number'
     // case ATOM:
