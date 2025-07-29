@@ -304,6 +304,10 @@ export const wrapInBlock = (ast) => [
     [[APPLY, KEYWORDS.BLOCK], ...ast]
   ]
 ]
+export const wrapInApplyLambda = (ast) => [
+  [APPLY, KEYWORDS.CALL_FUNCTION],
+  [[APPLY, KEYWORDS.ANONYMOUS_FUNCTION], ...ast]
+]
 export const interpret = (ast, keywords) =>
   ast.reduce((_, x) => evaluate(x, keywords), 0)
 export const shake = (parsed, std) => treeShake(parsed, std).concat(parsed)

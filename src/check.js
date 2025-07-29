@@ -56,7 +56,9 @@ import {
   hasBlock,
   log,
   logExp,
-  stringifyArgs
+  stringifyArgs,
+  wrapInApplyLambda,
+  wrapInBlock
 } from './utils.js'
 
 export const identity = (name) => [
@@ -603,7 +605,6 @@ const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
 const resolveGetter = ({ rem, prop, name, env }) => {
   const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
   if (!env[array[VALUE]] || !env[name]) return true
-
   switch (array[TYPE]) {
     case APPLY:
       if (hasSubReturn(env[array[VALUE]][STATS])) {
@@ -1206,7 +1207,7 @@ export const typeCheck = (
             if (name in env) {
               // Types.set(withScope(name, env), () => formatType(name, env))
               // If current scope is root then these are user defined types
-              if (isLambda && !isUnknownReturn(env[name][STATS])) {
+              if (isLambda) {
                 const lambdaName = `${PLACEHOLDER}${name}`
                 check(
                   [
@@ -1261,6 +1262,26 @@ export const typeCheck = (
                 }
                 checkReturns()
                 checkArgs()
+                // Check lambda body with defined types
+                const copy = Object.create(env)
+                for (let i = 0; i < env[name][STATS][ARGUMENTS].length; ++i) {
+                  const A = env[lambdaName][STATS][ARGUMENTS][i]
+                  const B = env[name][STATS][ARGUMENTS][i]
+                  copy[A[STATS][SIGNATURE]] = {
+                    [STATS]: {
+                      [SIGNATURE]: A[STATS][SIGNATURE],
+                      [TYPE_PROP]: B[STATS][TYPE_PROP],
+                      [RETURNS]: B[STATS][RETURNS]
+                    }
+                  }
+                }
+                check(
+                  wrapInApplyLambda(exp.at(-1).slice(2)).at(-1),
+                  copy,
+                  scope
+                )
+                // console.log(exp.at(-1).slice(1))
+                // check(exp.at(-1), env, scope)
                 // Types.delete(`; ${rootScopeIndex} ${lambdaName}`)
               }
               typeSet(Types, name, env, exp)
