@@ -599,6 +599,56 @@ const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
       break
   }
 }
+const resolveGetter = ({ rem, prop, name, env }) => {
+  const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
+  if (!env[array[VALUE]] || !env[name]) return true
+
+  switch (array[TYPE]) {
+    case APPLY:
+      if (hasSubType(env[array[VALUE]][STATS])) {
+        const rightSub = getSubReturn(env[array[VALUE]][STATS])
+        const isAtom = rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
+        const isCollection = rightSub.has(COLLECTION)
+        if (isAtom && !isCollection) {
+          setPropToAtom(env[name][STATS], prop)
+          setPropToSubReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
+        } else if (!isAtom && isCollection) {
+          setPropToReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
+          // TODO: handle this nested array overwrite better
+          if (getSubReturn(env[array[VALUE]][STATS]).has(COLLECTION))
+            setPropToSubReturn(env[name][STATS], prop, {
+              [RETURNS]: [COLLECTION, UNKNOWN_SUBTYPE()]
+            })
+        } else return false
+      } else return false
+      break
+    case WORD:
+      {
+        if (hasSubType(env[array[VALUE]][STATS])) {
+          const rightSub = getSubType(env[array[VALUE]][STATS])
+          const isAtom =
+            rightSub.has(ATOM) || rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
+          const isCollection = rightSub.has(COLLECTION)
+          if (isAtom && !isCollection) {
+            setPropToAtom(env[name][STATS], prop)
+            setPropToSubType(env[name][STATS], prop, env[array[VALUE]][STATS])
+          } else if (!isAtom && isCollection) {
+            setPropToType(env[name][STATS], prop, {
+              [TYPE_PROP]: [
+                env[array[VALUE]][STATS][TYPE_PROP][1].types[0],
+                new SubType(
+                  env[array[VALUE]][STATS][TYPE_PROP][1].types.slice(1)
+                )
+              ]
+            })
+          } else return false
+        } else return false
+      }
+      break
+  }
+  return true
+}
+
 const resolveSetter = (first, rest, env, stack) => {
   if (
     getSuffix(first[VALUE]) === MUTATION_SUFFIX &&
@@ -661,7 +711,7 @@ const resolveSetter = (first, rest, env, stack) => {
         break
       case APPLY:
         if (env[right[VALUE]]) {
-          if (right[VALUE] === KEYWORDS.CREATE_ARRAY) {
+          if (right[VALUE] === 'array:get') {
             current[STATS][TYPE_PROP][1] = initArrayType({
               rem: rest.at(-1),
               env
@@ -798,6 +848,8 @@ const resolveReturnType = ({
         break
       default:
         {
+          if (returns[VALUE] === KEYWORDS.GET_ARRAY)
+            resolveGetter({ rem, prop, name, env })
           // if (
           //   !GETTERS_SET.has(name) &&
           //   GETTERS_SET.has(returns[VALUE]) &&
@@ -1483,6 +1535,14 @@ export const typeCheck = (
             // Setters are just like DEFINE_VARIABLE as they are essentially the Var case for Collections
             // So they MUST happen before Judgement
             resolveSetter(first, rest, env, stack)
+            if (first[VALUE] === 'array:get-infer' && first[TYPE] === APPLY) {
+              resolveGetter({
+                rem: rest[0],
+                prop: TYPE_PROP,
+                name: rest[0],
+                env
+              })
+            }
             // end of Var  ---------------
             // Judgement
             const judge = () => {

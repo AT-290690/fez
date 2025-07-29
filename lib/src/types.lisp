@@ -1371,7 +1371,7 @@
 ; 1 matrix:rotate-square len
 (let len Number)
 ; 1 matrix:rotate-square out
-(let out Unknown[])
+(let out Number[])
 ; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square 132 tail-call:inner:matrix:rotate-square
 (let tail-call:inner:matrix:rotate-square (lambda Number (do Number)))
 ; 1 matrix:rotate-square tail-call:outer:matrix:rotate-square
@@ -1381,7 +1381,7 @@
 ; 1 matrix:flip-square len
 (let len Number)
 ; 1 matrix:flip-square out
-(let out Unknown[])
+(let out Number[])
 ; 1 matrix:flip-square tail-call:outer:matrix:flip-square 134 tail-call:inner:matrix:flip-square
 (let tail-call:inner:matrix:flip-square (lambda Number (do Unknown[])))
 ; 1 matrix:flip-square tail-call:outer:matrix:flip-square
@@ -2305,7 +2305,7 @@
 ; 1 math:compound-growth
 (let math:compound-growth (lambda Number Number Number (do Number)))
 ; 1 math:hamming-numbers ham
-(let ham Number[])
+(let ham Unknown[])
 ; 1 math:hamming-numbers i
 (let i Number[])
 ; 1 math:hamming-numbers 241 next2
@@ -2321,7 +2321,7 @@
 ; 1 math:hamming-numbers 241 last
 (let last Number)
 ; 1 math:hamming-numbers
-(let math:hamming-numbers (lambda Number (do Number[])))
+(let math:hamming-numbers (lambda Number (do Unknown[])))
 ; 1 math:hamming-weight n
 (let n Number[])
 ; 1 math:hamming-weight count

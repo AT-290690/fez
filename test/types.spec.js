@@ -149,7 +149,7 @@ describe('Type checking', () => {
         '(let x? Number)',
         '(let abb (lambda Number (do Number)))',
         '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda Number[] (do Unknown)))',
+        '(let g (lambda Number[] (do Number)))',
         '(let Ax Number[])',
         '(let ix Number)',
         '(let iz (lambda (do Number)))',
@@ -161,7 +161,7 @@ describe('Type checking', () => {
         '(let rabbits Number[])',
         '(let fff Unknown)',
         '(let iitem Unknown[][])',
-        '(let iiitem Unknown)',
+        '(let iiitem Unknown[])',
         '(let fifi Number)',
         '(let bools Boolean[][][][])'
       ]

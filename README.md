@@ -21,6 +21,12 @@ Run node in terminal
 require('fez-lisp').UTILS.init()
 ```
 
+or run node and type
+
+```node
+;(await import('fez-lisp')).UTILS.init()
+```
+
 ## [Try it in online editor](https://at-290690.github.io/fez/)
 
 ```lisp
