@@ -46,7 +46,8 @@ import {
   NUMBER,
   NUMBER_SUBTYPE,
   UNKNOWN_SUBTYPE,
-  SubType
+  SubType,
+  GET_ARRAY_INFERENCE
 } from './types.js'
 import {
   Brr,
@@ -848,25 +849,8 @@ const resolveReturnType = ({
         break
       default:
         {
-          if (returns[VALUE] === 'array:get')
+          if (returns[VALUE] === GET_ARRAY_INFERENCE)
             resolveGetter({ rem, prop, name, env })
-          // if (
-          //   !GETTERS_SET.has(name) &&
-          //   GETTERS_SET.has(returns[VALUE]) &&
-          //   !resolveGetter({ rem, prop, name, env })
-          // )
-          //   return retry(env[name][STATS], [returns, env], stack, () => {
-          //     resolveReturnType({
-          //       returns,
-          //       rem,
-          //       stack,
-          //       prop,
-          //       exp,
-          //       name,
-          //       env,
-          //       check
-          //     })
-          //   })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           // TODO: DRY
           const index = env[name][STATS][ARGUMENTS]
@@ -1535,14 +1519,6 @@ export const typeCheck = (
             // Setters are just like DEFINE_VARIABLE as they are essentially the Var case for Collections
             // So they MUST happen before Judgement
             resolveSetter(first, rest, env, stack)
-            if (first[VALUE] === 'array:get-infer' && first[TYPE] === APPLY) {
-              resolveGetter({
-                rem: rest[0],
-                prop: TYPE_PROP,
-                name: rest[0],
-                env
-              })
-            }
             // end of Var  ---------------
             // Judgement
             const judge = () => {
