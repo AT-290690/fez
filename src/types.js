@@ -1369,7 +1369,7 @@ export const formatType = (name, env) => {
   const isAnonymous = typeof name === 'number'
   return stats
     ? getType(stats) === APPLY
-      ? `${isAnonymous ? '' : `(let ${name} `}(lambda ${
+      ? `${isAnonymous ? '' : `(${STATIC_TYPES.DEFINE_TYPE} ${name} `}(lambda ${
           stats[ARG_COUNT] === VARIADIC
             ? '... '
             : stats[ARGUMENTS]?.length
@@ -1386,7 +1386,9 @@ export const formatType = (name, env) => {
         }(${KEYWORDS.BLOCK} ${formatSubType(getReturns(stats))})${
           isAnonymous ? '' : ')'
         })`
-      : `(let ${name} ${formatSubType(getTypes(stats))})`
+      : `(${STATIC_TYPES.DEFINE_TYPE} ${name} ${formatSubType(
+          getTypes(stats)
+        )})`
     : name
 }
 export const formatInlineType = (name, env) => {

@@ -5,6 +5,7 @@ import { typeCheck } from '../src/check.js'
 import std from '../lib/baked/std.js'
 import { definedTypes, withCtxTypes } from '../src/types.js'
 import stdT from '../lib/baked/std-T.js'
+import { STATIC_TYPES } from '../src/keywords.js'
 
 const passes = (source) =>
   doesNotThrow(() => type(parse(source), withCtxTypes(definedTypes(stdT))))
@@ -48,18 +49,18 @@ describe('Type checking', () => {
         'list:zip'
       ]),
       [
-        '(let matrix:enumerated-for (lambda Unknown[] (lambda Unknown Number Number (do Unknown)) (do Unknown[])))',
-        '(let math:overlap? (lambda Number Number Number (do Boolean)))',
-        '(let math:prime? (lambda Number (do Boolean)))',
-        '(let matrix:adjacent (lambda Unknown[] Unknown[] Number Number (lambda Unknown Unknown[] Number Number (do Unknown)) (do Unknown[])))',
-        '(let array:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))',
-        '(let list:find (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))',
-        '(let list:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))',
-        '(let math:unique (lambda Number[] (do Number[])))',
-        '(let array:empty? (lambda Unknown[] (do Boolean)))',
-        '(let array:join (lambda Unknown[] Unknown[] (do Unknown[])))',
-        '(let string:join-as-table-with (lambda Unknown[] Unknown[] Unknown (do Unknown[])))',
-        '(let list:zip (lambda Unknown[] Unknown[] (do Unknown[])))'
+        `(${STATIC_TYPES.DEFINE_TYPE} matrix:enumerated-for (lambda Unknown[] (lambda Unknown Number Number (do Unknown)) (do Unknown[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} math:overlap? (lambda Number Number Number (do Boolean)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} math:prime? (lambda Number (do Boolean)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} matrix:adjacent (lambda Unknown[] Unknown[] Number Number (lambda Unknown Unknown[] Number Number (do Unknown)) (do Unknown[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} array:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} list:find (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} list:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} math:unique (lambda Number[] (do Number[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} array:empty? (lambda Unknown[] (do Boolean)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} array:join (lambda Unknown[] Unknown[] (do Unknown[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} string:join-as-table-with (lambda Unknown[] Unknown[] Unknown (do Unknown[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} list:zip (lambda Unknown[] Unknown[] (do Unknown[])))`
       ]
     )
     deepStrictEqual(
@@ -140,30 +141,30 @@ describe('Type checking', () => {
         ]
       ),
       [
-        '(let is12? (lambda Number (do Boolean)))',
-        '(let a Number)',
-        '(let c Number)',
-        '(let b Unknown[])',
-        '(let box (lambda Unknown (do Unknown[])))',
-        '(let add (lambda Number Unknown[] (do Number)))',
-        '(let x? Number)',
-        '(let abb (lambda Number (do Number)))',
-        '(let iffx (lambda Number (do Number)))',
-        '(let g (lambda Number[] (do Number)))',
-        '(let Ax Number[])',
-        '(let ix Number)',
-        '(let iz (lambda (do Number)))',
-        '(let iy (lambda (do Number)))',
-        '(let ib Number[])',
-        '(let ic (lambda Number (do Number)))',
-        '(let aafn (lambda Number Boolean[] (do Number[])))',
-        '(let sqrt-of-nine Number)',
-        '(let rabbits Number[])',
-        '(let fff Unknown)',
-        '(let iitem Unknown[][])',
-        '(let iiitem Unknown[])',
-        '(let fifi Number)',
-        '(let bools Boolean[][][][])'
+        `(${STATIC_TYPES.DEFINE_TYPE} is12? (lambda Number (do Boolean)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} a Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} c Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} b Unknown[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} box (lambda Unknown (do Unknown[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} add (lambda Number Unknown[] (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} x? Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} abb (lambda Number (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} iffx (lambda Number (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} g (lambda Number[] (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} Ax Number[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} ix Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} iz (lambda (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} iy (lambda (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} ib Number[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} ic (lambda Number (do Number)))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} aafn (lambda Number Boolean[] (do Number[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} sqrt-of-nine Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} rabbits Number[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} fff Unknown)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} iitem Unknown[][])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} iiitem Unknown[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} fifi Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} bools Boolean[][][][])`
       ]
     )
     deepStrictEqual(
@@ -182,9 +183,9 @@ describe('Type checking', () => {
         ['m', 'y', 'add']
       ),
       [
-        '(let m Number)',
-        '(let y Number)',
-        '(let add (lambda Number (do Number)))'
+        `(${STATIC_TYPES.DEFINE_TYPE} m Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} y Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} add (lambda Number (do Number)))`
       ]
     )
   })

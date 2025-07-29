@@ -21,7 +21,8 @@ export const STATIC_TYPES = {
   ABSTRACTIONS: 'Abstractions',
   COLLECTIONS: 'Collections',
   AS_NUMBER: 'numberp',
-  ANY: 'Any'
+  ANY: 'Any',
+  DEFINE_TYPE: 'the'
 }
 export const KEYWORDS = {
   LOOP: 'loop',
