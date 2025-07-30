@@ -111,6 +111,20 @@ describe('Type checking', () => {
 (let iiitem (array:get iitem 0))
 (let fifi (if (> 1 2) (math:summation [1 2 3]) (math:summation [1 2 3]) ))
 (let bools [[[[true true]]]])
+(let teeest (lambda (do 
+(let x [false])
+(let a [])
+(set! a (length a) x)
+(let f (get a 0))
+f)))
+(let teeest2 (lambda (do 
+(let x [[false]])
+(let a [])
+(set! a (length a) x)
+(let f (get a 0))
+f)))
+(teeest)
+(teeest2)
 `,
 
         [
@@ -137,7 +151,9 @@ describe('Type checking', () => {
           'iitem',
           'iiitem',
           'fifi',
-          'bools'
+          'bools',
+          'teeest',
+          'teeest2'
         ]
       ),
       [
@@ -164,7 +180,9 @@ describe('Type checking', () => {
         `(${STATIC_TYPES.DEFINE_TYPE} iitem Unknown[][])`,
         `(${STATIC_TYPES.DEFINE_TYPE} iiitem Unknown[])`,
         `(${STATIC_TYPES.DEFINE_TYPE} fifi Number)`,
-        `(${STATIC_TYPES.DEFINE_TYPE} bools Boolean[][][][])`
+        `(${STATIC_TYPES.DEFINE_TYPE} bools Boolean[][][][])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} teeest (lambda (do Boolean[])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} teeest2 (lambda (do Boolean[][])))`
       ]
     )
     deepStrictEqual(

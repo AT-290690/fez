@@ -692,11 +692,17 @@ const resolveSetter = (first, rest, env, stack) => {
       case WORD:
         if (env[right[VALUE]]) {
           if (hasSubType(env[right[VALUE]][STATS])) {
-            if (currentSubType.has(UNKNOWN))
-              current[STATS][TYPE_PROP][1] = new SubType([
-                ...getSubType(env[right[VALUE]][STATS])
-              ])
-            else if (!equalSubTypes(current[STATS], env[right[VALUE]][STATS]))
+            if (currentSubType.has(UNKNOWN)) {
+              if (env[right[VALUE]][STATS][TYPE_PROP][0] === COLLECTION) {
+                current[STATS][TYPE_PROP][1] = new SubType([
+                  COLLECTION,
+                  ...getSubType(env[right[VALUE]][STATS]).types
+                ])
+              } else
+                current[STATS][TYPE_PROP][1] = new SubType(
+                  getSubType(env[right[VALUE]][STATS]).types
+                )
+            } else if (!equalSubTypes(current[STATS], env[right[VALUE]][STATS]))
               throw new TypeError(
                 `Incorrect array type at (${
                   first[VALUE]
@@ -706,9 +712,9 @@ const resolveSetter = (first, rest, env, stack) => {
                   getTypes(env[right[VALUE]][STATS])
                 )}) (${stringifyArgs([first, rest])}) (check #198)`
               )
-            current[STATS][TYPE_PROP][1] = new SubType(
-              getSubType(env[right[VALUE]][STATS])
-            )
+            // current[STATS][TYPE_PROP][1] = new SubType(
+            //   getSubType(env[right[VALUE]][STATS])
+            // )
           } else
             retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
               resolveSetter(first, rest, env, stack)
@@ -727,11 +733,17 @@ const resolveSetter = (first, rest, env, stack) => {
             break
           }
           if (hasSubReturn(env[right[VALUE]][STATS])) {
-            if (currentSubType.has(UNKNOWN))
-              current[STATS][TYPE_PROP][1] = new SubType([
-                ...getSubReturn(env[right[VALUE]][STATS])
-              ])
-            else if (
+            if (currentSubType.has(UNKNOWN)) {
+              if (env[right[VALUE]][STATS][RETURNS][0] === COLLECTION) {
+                current[STATS][TYPE_PROP][1] = new SubType([
+                  COLLECTION,
+                  ...getSubReturn(env[right[VALUE]][STATS]).types
+                ])
+              } else
+                current[STATS][TYPE_PROP][1] = new SubType(
+                  getSubReturn(env[right[VALUE]][STATS]).types
+                )
+            } else if (
               !equalSubTypesWithSubReturn(
                 current[STATS],
                 env[right[VALUE]][STATS]
@@ -746,9 +758,9 @@ const resolveSetter = (first, rest, env, stack) => {
                   getReturns(env[right[VALUE]][STATS])
                 )}) (${stringifyArgs([first, rest])}) (check #198)`
               )
-            current[STATS][TYPE_PROP][1] = new SubType([
-              ...getSubReturn(env[right[VALUE]][STATS])
-            ])
+            // current[STATS][TYPE_PROP][1] = new SubType([
+            //   ...getSubReturn(env[right[VALUE]][STATS])
+            // ])
           }
           // else
           // retry(env[right[VALUE]][STATS], [first[VALUE], rest], stack, () =>
