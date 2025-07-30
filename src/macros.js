@@ -48,7 +48,8 @@ export const SUGGAR = {
   DECREMENT_BY: '-=',
   BOOLEAN_VARIABLE: 'boolean',
   BOOLEAN_VARIABLE_GET: 'boole',
-  BOOLEAN_VARIABLE_SET: 'boole-set'
+  BOOLEAN_VARIABLE_SET: 'boole-set',
+  GET_ARRAY: 'array:get'
 }
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
@@ -569,7 +570,7 @@ export const deSuggarAst = (ast, scope) => {
                             let wrap = right
                             for (let i = 0; i < n; ++i) {
                               wrap = [
-                                [APPLY, KEYWORDS.GET_ARRAY],
+                                [APPLY, SUGGAR.GET_ARRAY],
                                 wrap,
                                 [ATOM, 1]
                               ]
@@ -577,17 +578,13 @@ export const deSuggarAst = (ast, scope) => {
                             return [
                               [APPLY, KEYWORDS.DEFINE_VARIABLE],
                               name,
-                              [[APPLY, KEYWORDS.GET_ARRAY], wrap, [ATOM, 0]]
+                              [[APPLY, SUGGAR.GET_ARRAY], wrap, [ATOM, 0]]
                             ]
                           })
                         if (lastLeft[VALUE] !== PLACEHOLDER) {
                           let wrap = right
                           for (let i = 0; i < vars.length; ++i) {
-                            wrap = [
-                              [APPLY, KEYWORDS.GET_ARRAY],
-                              wrap,
-                              [ATOM, 1]
-                            ]
+                            wrap = [[APPLY, SUGGAR.GET_ARRAY], wrap, [ATOM, 1]]
                           }
                           newScope.push([
                             [APPLY, KEYWORDS.DEFINE_VARIABLE],
@@ -619,7 +616,7 @@ export const deSuggarAst = (ast, scope) => {
                           .map(([i]) => [
                             [APPLY, KEYWORDS.DEFINE_VARIABLE],
                             vars[i],
-                            [[APPLY, KEYWORDS.GET_ARRAY], right, [ATOM, i]]
+                            [[APPLY, SUGGAR.GET_ARRAY], right, [ATOM, i]]
                           ])
                         if (isSlicing)
                           newScope.push([

@@ -699,6 +699,17 @@ ZZZ=ZZZ,ZZZ")
 (set! ifs 0 1)`,
       `Incorrect array type at (set!). ifs is (Boolean[]) but insertion is (Number) (set! (ifs 0 1)) (check #199)`
     )
+    fails(
+      `
+(let bools [[[false]]])
+
+(let a (array:first bools))
+(let b (array:first a))
+(let c (array:first b))
+(let d (array:first c))
+`,
+      `Incorrect type of argument (0) for (array:first). Expected (Unknown[]) but got (Boolean) (array:first c) (check #3)`
+    )
     // TODO make this fail
     // fails(`(let xs [])
     // (let x (array:set-and-get! xs 0 100))

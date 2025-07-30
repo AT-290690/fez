@@ -37,6 +37,7 @@ export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
 export const GET_ARRAY_INFERENCE_SET = new Set([
+  KEYWORDS.GET_ARRAY,
   'array:get',
   'array:at',
   'array:first',
