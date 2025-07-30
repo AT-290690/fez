@@ -202,7 +202,11 @@ export const setTypeRef = (stats, value) =>
   (isUnknownType(stats) || isAnyType(stats)) &&
   (stats[TYPE_PROP] = value[TYPE_PROP])
 export const setReturnRef = (stats, value) => {
-  if (SPECIAL_FORMS_SET.has(value[SIGNATURE])) {
+  // to prevent overiding the type of sepcial form or if the type of the function is any
+  // any could also be deliberate as some functions like array:get and array;first
+  // are sort of special forms too
+  // In general anything that has type of any should not be infered
+  if (SPECIAL_FORMS_SET.has(value[SIGNATURE]) || isAnyReturn(value)) {
     return setReturn(stats, value)
   }
   return isUnknownReturn(stats) && (stats[RETURNS] = value[RETURNS])
@@ -213,6 +217,7 @@ export const setReturnToTypeRef = (stats, value) => {
     (stats[RETURNS] = value[TYPE_PROP])
   )
 }
+export const setStats = (a, b) => (a[STATS] = b[STATS])
 export const setStatsRef = (a, b) => (a[STATS] = b[STATS])
 export const setTypeToReturnRef = (stats, value) => {
   // To prevent getters overwritting the array subtype

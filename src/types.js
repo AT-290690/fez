@@ -39,9 +39,10 @@ export const FALSE_WORD = 'false'
 export const GET_ARRAY_INFERENCE_SET = new Set([
   'array:get',
   'array:at',
-  'array:first'
-  // 'array:first',
-  // 'array:last'
+  'array:first',
+  'array:second',
+  'array:third',
+  'array:last'
 ])
 export class SubType {
   constructor(args) {
