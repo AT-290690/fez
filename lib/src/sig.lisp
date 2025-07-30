@@ -77,6 +77,8 @@
 (the array:reduce (lambda Unknown[] (lambda Number Unknown (do Number)) Number (do Number)))
 (the array:enumerated-reduce (lambda Unknown[] (lambda Number Unknown Number (do Number)) Number (do Number)))
 (the array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
+(the array:unzip (lambda Unknown[] (do Unknown[][]))) 
+
 (the array:push! (lambda Unknown[] Any (do Unknown)))
 (the array:append! (lambda Unknown[] Any (do Unknown[])))
 (the array:fold (lambda Unknown[] (lambda Unknown Unknown (do Any)) Unknown (do Unknown)))

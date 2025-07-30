@@ -38,7 +38,8 @@ export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
 export const GET_ARRAY_INFERENCE_SET = new Set([
   'array:get',
-  'array:at'
+  'array:at',
+  'array:first'
   // 'array:first',
   // 'array:last'
 ])

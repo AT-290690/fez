@@ -615,11 +615,9 @@ const resolveGetter = ({ rem, prop, name, env }) => {
           setPropToAtom(env[name][STATS], prop)
           setPropToSubReturn(env[name][STATS], prop, env[array[VALUE]][STATS])
         } else if (!isAtom && isCollection) {
+          const [f, ...r] = env[array[VALUE]][STATS][RETURNS][1].types
           setPropToReturn(env[name][STATS], prop, {
-            [RETURNS]: [
-              env[array[VALUE]][STATS][RETURNS][1].types[0],
-              new SubType(env[array[VALUE]][STATS][RETURNS][1].types.slice(1))
-            ]
+            [RETURNS]: [f, new SubType(r)]
           })
         } else return false
       } else return false
@@ -635,13 +633,9 @@ const resolveGetter = ({ rem, prop, name, env }) => {
             setPropToAtom(env[name][STATS], prop)
             setPropToSubType(env[name][STATS], prop, env[array[VALUE]][STATS])
           } else if (!isAtom && isCollection) {
+            const [f, ...r] = env[array[VALUE]][STATS][TYPE_PROP][1].types
             setPropToType(env[name][STATS], prop, {
-              [TYPE_PROP]: [
-                env[array[VALUE]][STATS][TYPE_PROP][1].types[0],
-                new SubType(
-                  env[array[VALUE]][STATS][TYPE_PROP][1].types.slice(1)
-                )
-              ]
+              [TYPE_PROP]: [f, new SubType(r)]
             })
           } else return false
         } else return false
@@ -795,7 +789,7 @@ const initArrayType = ({ rem, env }) => {
         subT.add(COLLECTION)
         head = head[0]
       }
-      if (head) subT.add(head[1].types[0])
+      if (head && head[1].types.length) subT.add(head[1].types[0])
     }
     const [main, sub] = ret[0]
     if (isSubType(sub) && sub.types.at(-1) === COLLECTION) sub.types.pop()
