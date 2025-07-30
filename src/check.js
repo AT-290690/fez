@@ -72,7 +72,6 @@ export const identity = (name) => [
 ]
 export const typeSetDefaultFunction = (Types, name, env, exp) =>
   Types.set(withScope(name, env), () => formatType(name, env))
-
 const returnType = (rest) => {
   const body = rest.at(-1)
   const rem = hasBlock(body) ? body.at(-1) : body
@@ -218,6 +217,12 @@ export const setReturnToTypeRef = (stats, value) => {
   )
 }
 export const setStats = (a, b) => (a[STATS] = b[STATS])
+export const cloneStats = (name, x) => ({
+  [STATS]: {
+    ...x[STATS],
+    [SIGNATURE]: name
+  }
+})
 export const setStatsRef = (a, b) => (a[STATS] = b[STATS])
 export const setTypeToReturnRef = (stats, value) => {
   // To prevent getters overwritting the array subtype
@@ -753,6 +758,7 @@ const resolveSetter = (first, rest, env, stack) => {
         break
     }
     setTypeToCollection(current[STATS])
+
     // // Retry setting the sub-type if infered it out later
     // if (!hasSubType(current[STATS]) || getSubType(current[STATS]).has(UNKNOWN))
     //   retry(current[STATS], [first[VALUE], rest], stack, () =>
@@ -1421,7 +1427,6 @@ export const typeCheck = (
               check(rightHand, env, scope)
             }
             typeSet(Types, name, env, exp)
-            // Types.set(withScope(name, env), () => formatType(name, env))
             break
           case KEYWORDS.ANONYMOUS_FUNCTION:
             {
