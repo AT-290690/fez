@@ -36,7 +36,12 @@ export const IS_ARGUMENT = 'is_arg'
 export const NIL = 'nil'
 export const TRUE_WORD = 'true'
 export const FALSE_WORD = 'false'
-export const GET_ARRAY_INFERENCE = 'array:get'
+export const GET_ARRAY_INFERENCE_SET = new Set([
+  'array:get',
+  'array:at'
+  // 'array:first',
+  // 'array:last'
+])
 export class SubType {
   constructor(args) {
     this.types = []

@@ -47,7 +47,7 @@ import {
   NUMBER_SUBTYPE,
   UNKNOWN_SUBTYPE,
   SubType,
-  GET_ARRAY_INFERENCE
+  GET_ARRAY_INFERENCE_SET
 } from './types.js'
 import {
   Brr,
@@ -852,7 +852,7 @@ const resolveReturnType = ({
         break
       default:
         {
-          if (returns[VALUE] === GET_ARRAY_INFERENCE)
+          if (GET_ARRAY_INFERENCE_SET.has(returns[VALUE]))
             resolveGetter({ rem, prop, name, env })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           // TODO: DRY
