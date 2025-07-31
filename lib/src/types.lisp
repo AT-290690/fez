@@ -1139,7 +1139,7 @@
 ; 1 array:find-option index
 (the index Number)
 ; 1 array:find-option
-(the array:find-option (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[][][])))
+(the array:find-option (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[][])))
 ; 1 array:has? tail-call:array:has
 (the tail-call:array:has (lambda Number (do Boolean)))
 ; 1 array:has?
@@ -1185,11 +1185,11 @@
 ; 1 array:in-bounds?
 (the array:in-bounds? (lambda Unknown[] Number (do Boolean)))
 ; 1 get-option
-(the get-option (lambda Unknown[] Number (do Unknown[][])))
+(the get-option (lambda Unknown[] Number (do Unknown[])))
 ; 1 get-or-default
 (the get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:get-option
-(the array:get-option (lambda Unknown[] Number (do Unknown[][])))
+(the array:get-option (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:get-or-default
 (the array:get-or-default (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:slice bounds
@@ -1497,7 +1497,7 @@
 ; 1 matrix:set-and-get!
 (the matrix:set-and-get! (lambda Unknown[] Number Number Unknown (do Unknown)))
 ; 1 matrix:get-option
-(the matrix:get-option (lambda Unknown[] Number Number (do Unknown[][])))
+(the matrix:get-option (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 matrix:get-or-default
 (the matrix:get-or-default (lambda Unknown[] Number Number Unknown (do Unknown)))
 ; 1 from:digit->word
@@ -2099,11 +2099,11 @@
 ; 1 new:heap
 (the new:heap Unknown[])
 ; 1 new:brray
-(the new:brray (lambda (do Unknown[][])))
+(the new:brray (lambda (do Unknown[])))
 ; 1 new:queue
-(the new:queue (lambda (do Unknown[][])))
+(the new:queue (lambda (do Unknown[])))
 ; 1 new:stack
-(the new:stack (lambda (do Unknown[][])))
+(the new:stack (lambda (do Unknown[])))
 ; 1 new:binary-tree xs
 (the xs Unknown[])
 ; 1 new:binary-tree

@@ -125,6 +125,8 @@ f)))
 f)))
 (teeest)
 (teeest2)
+(let moore-neighborhood (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
+(let ls { 1 2 3 })
 `,
 
         [
@@ -153,7 +155,9 @@ f)))
           'fifi',
           'bools',
           'teeest',
-          'teeest2'
+          'teeest2',
+          'moore-neighborhood',
+          'ls'
         ]
       ),
       [
@@ -182,7 +186,9 @@ f)))
         `(${STATIC_TYPES.DEFINE_TYPE} fifi Number)`,
         `(${STATIC_TYPES.DEFINE_TYPE} bools Boolean[][][][])`,
         `(${STATIC_TYPES.DEFINE_TYPE} teeest (lambda (do Boolean[])))`,
-        `(${STATIC_TYPES.DEFINE_TYPE} teeest2 (lambda (do Boolean[][])))`
+        `(${STATIC_TYPES.DEFINE_TYPE} teeest2 (lambda (do Boolean[][])))`,
+        `(${STATIC_TYPES.DEFINE_TYPE} moore-neighborhood Number[][])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} ls Unknown[])`
       ]
     )
     deepStrictEqual(

@@ -886,7 +886,11 @@ const initArrayType = ({ rem, env }) => {
   const ret = initArrayTypeRec({ rem, env })
   const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
   const isCollection = ret.length && ret[0] && ret[0][0] === COLLECTION
-  if (known && ret.length) {
+  if (
+    known &&
+    ret.length &&
+    !ret.some((x) => known[0][0] !== x[0][0] || known[0].length !== x[0].length)
+  ) {
     if (Array.isArray(ret[0][0])) {
       let head = ret[0][0]
       ret[0].length = 0
