@@ -118,6 +118,17 @@ export const deSuggarAst = (ast, scope) => {
                 if (rest.length === 1) {
                   exp[0][VALUE] = 'math:var-get'
                   // exp.push([ATOM, 0])
+                } else if (rest.length > 2) {
+                  exp.length = 0
+                  rest.reverse()
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, SUGGAR.GET_ARRAY], [], rest[i])
+                      temp = temp.at(-2)
+                    } else temp.push(...rest[i])
+                  }
+                  deSuggarAst(exp, scope)
                 }
                 break
               case SUGGAR.INCREMENT:

@@ -617,6 +617,8 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
   if (!env[array[VALUE]] || !env[name]) return true
   switch (array[TYPE]) {
     case APPLY:
+      // TODO: figure out recursively what is the inner type of all nested getters
+      if (GET_ARRAY_INFERENCE_SET.has(array[VALUE])) return true
       if (
         getReturn(env[array[VALUE]][STATS]) === UNKNOWN ||
         getReturn(env[array[VALUE]][STATS]) === ANY
