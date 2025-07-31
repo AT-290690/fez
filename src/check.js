@@ -612,11 +612,24 @@ const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
       break
   }
 }
-const resolveGetter = ({ rem, prop, name, env }) => {
+const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
   const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
   if (!env[array[VALUE]] || !env[name]) return true
   switch (array[TYPE]) {
     case APPLY:
+      if (
+        getReturn(env[array[VALUE]][STATS]) === UNKNOWN ||
+        getReturn(env[array[VALUE]][STATS]) === ANY
+      )
+        return true
+      if (getReturn(env[array[VALUE]][STATS]) !== COLLECTION)
+        throw new TypeError(
+          `Incorrect type of argument (${0}) for (${caller}). Expected (${formatSubType(
+            getTypes(env[caller][STATS][ARGUMENTS][0][STATS])
+          )}) but got (${formatSubType(
+            getReturns(env[array[VALUE]][STATS])
+          )}) (${stringifyArgs(exp)}) (check #1001)`
+        )
       if (hasSubReturn(env[array[VALUE]][STATS])) {
         const rightSub = getSubReturn(env[array[VALUE]][STATS])
         const isAtom = rightSub.has(NUMBER) || rightSub.has(BOOLEAN)
@@ -634,6 +647,19 @@ const resolveGetter = ({ rem, prop, name, env }) => {
       break
     case WORD:
       {
+        if (
+          getType(env[array[VALUE]][STATS]) === UNKNOWN ||
+          getType(env[array[VALUE]][STATS]) === ANY
+        )
+          return true
+        if (getType(env[array[VALUE]][STATS]) !== COLLECTION)
+          throw new TypeError(
+            `Incorrect type of argument (${0}) for (${caller}). Expected (${formatSubType(
+              getTypes(env[caller][STATS][ARGUMENTS][0][STATS])
+            )}) but got (${formatSubType(
+              getType(env[array[VALUE]][STATS])
+            )}) (${stringifyArgs(exp)}) (check #1002)`
+          )
         if (hasSubType(env[array[VALUE]][STATS])) {
           const rightSub = getSubType(env[array[VALUE]][STATS])
           const isAtom =
@@ -870,7 +896,7 @@ const resolveReturnType = ({
       default:
         {
           if (GET_ARRAY_INFERENCE_SET.has(returns[VALUE]))
-            resolveGetter({ rem, prop, name, env })
+            resolveGetter({ rem, prop, name, env, caller: returns[VALUE], exp })
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           // TODO: DRY
           const index = env[name][STATS][ARGUMENTS]

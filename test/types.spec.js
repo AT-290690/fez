@@ -726,7 +726,7 @@ ZZZ=ZZZ,ZZZ")
 (let c (array:first b))
 (let d (array:first c))
 `,
-      `Incorrect type of argument (0) for (array:first). Expected (Unknown[]) but got (Boolean) (array:first c) (check #3)`
+      `Incorrect type of argument (0) for (array:first). Expected (Unknown[]) but got (Unknown) (let d (array:first c)) (check #1002)`
     )
     // TODO make this fail
     // fails(`(let xs [])
