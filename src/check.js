@@ -828,6 +828,7 @@ const initArrayTypeRec = ({ rem, env }) => {
 const initArrayType = ({ rem, env }) => {
   const ret = initArrayTypeRec({ rem, env })
   const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
+  const isCollection = ret.length && ret[0] && ret[0][0] === COLLECTION
   if (known && ret.length) {
     if (Array.isArray(ret[0][0])) {
       let head = ret[0][0]
@@ -844,12 +845,24 @@ const initArrayType = ({ rem, env }) => {
     if (isSubType(sub) && sub.types.at(-1) === COLLECTION) sub.types.pop()
     return {
       [TYPE_PROP]: [APPLY],
-      [RETURNS]: [COLLECTION, new SubType(isSubType(sub) ? [...sub] : [main])]
+      [RETURNS]: [
+        COLLECTION,
+        isCollection
+          ? new SubType(
+              isSubType(sub) ? [COLLECTION, ...sub] : [COLLECTION, main]
+            )
+          : new SubType(isSubType(sub) ? [...sub] : [main])
+      ]
     }
   } else
     return {
       [TYPE_PROP]: [APPLY],
-      [RETURNS]: [COLLECTION, new SubType([UNKNOWN])]
+      [RETURNS]: [
+        COLLECTION,
+        isCollection
+          ? new SubType([COLLECTION, UNKNOWN])
+          : new SubType([UNKNOWN])
+      ]
     }
 }
 const resolveReturnType = ({

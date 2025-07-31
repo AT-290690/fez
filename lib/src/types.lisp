@@ -1139,7 +1139,7 @@
 ; 1 array:find-option index
 (the index Number)
 ; 1 array:find-option
-(the array:find-option (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[][])))
+(the array:find-option (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[][][])))
 ; 1 array:has? tail-call:array:has
 (the tail-call:array:has (lambda Number (do Boolean)))
 ; 1 array:has?
@@ -1283,7 +1283,7 @@
 ; 1 array:sort 157 tail-call:array:sort right
 (the right Unknown[])
 ; 1 array:sort 157 tail-call:array:sort
-(the tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[])))
+(the tail-call:array:sort (lambda Number Number Unknown Unknown (do Unknown[][])))
 ; 1 array:sort 157 sorted
 (the sorted Unknown[])
 ; 1 array:sort 157 left
@@ -1693,13 +1693,13 @@
 ; 1 from:chars->set
 (the from:chars->set (lambda Number[] (do Unknown[][])))
 ; 1 from:array->set s
-(the s Unknown[][])
+(the s Unknown[][][])
 ; 1 from:array->set
-(the from:array->set (lambda Unknown[] (do Unknown[][])))
+(the from:array->set (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:array->table s
-(the s Unknown[][])
+(the s Unknown[][][])
 ; 1 from:array->table
-(the from:array->table (lambda Unknown[] (do Unknown[][])))
+(the from:array->table (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:set->array
 (the from:set->array (lambda Unknown[] (do Unknown[])))
 ; 1 from:map->array
@@ -1779,7 +1779,7 @@
 ; 1 array:permutations 257 258 j
 (the j Number[])
 ; 1 array:permutations
-(the array:permutations (lambda Unknown[] (do Unknown[])))
+(the array:permutations (lambda Unknown[] (do Unknown[][])))
 ; 1 array:unique-pairs pairs
 (the pairs Unknown[])
 ; 1 array:unique-pairs len
@@ -2093,7 +2093,7 @@
 ; 1 new:array
 (the new:array (lambda Unknown[] (do Unknown[])))
 ; 1 new:list
-(the new:list (lambda Unknown (do Unknown[][])))
+(the new:list (lambda Unknown (do Unknown[][][])))
 ; 1 new:date
 (the new:date (lambda Unknown Unknown Unknown (do Unknown[])))
 ; 1 new:heap
@@ -2217,7 +2217,7 @@
 ; 1 map:set! index
 (the index Number)
 ; 1 map:set! entry
-(the entry Unknown[])
+(the entry Unknown[][])
 ; 1 map:set!
 (the map:set! (lambda Unknown[] Unknown[] Unknown (do Unknown[])))
 ; 1 map:remove! idx
@@ -2251,7 +2251,7 @@
 ; 1 map:get-option 317 index
 (the index Number)
 ; 1 map:get-option
-(the map:get-option (lambda Unknown[] Unknown[] (do Unknown[][])))
+(the map:get-option (lambda Unknown[] Unknown[] (do Unknown[][][])))
 ; 1 map:has? idx
 (the idx Number)
 ; 1 map:has? current
@@ -2523,7 +2523,7 @@
 ; 1 brray:empty?
 (the brray:empty? (lambda Unknown[] (do Boolean)))
 ; 1 brray:empty!
-(the brray:empty! (lambda Unknown[][] (do Unknown[][])))
+(the brray:empty! (lambda Unknown[][][] (do Unknown[][][])))
 ; 1 brray:get offset-index
 (the offset-index Number)
 ; 1 brray:get index
@@ -2545,11 +2545,11 @@
 ; 1 brray:remove-from-left! len
 (the len Number)
 ; 1 brray:remove-from-left!
-(the brray:remove-from-left! (lambda Unknown[] (do Unknown[][])))
+(the brray:remove-from-left! (lambda Unknown[] (do Unknown[][][])))
 ; 1 brray:remove-from-right! len
 (the len Number)
 ; 1 brray:remove-from-right!
-(the brray:remove-from-right! (lambda Unknown[] (do Unknown[][])))
+(the brray:remove-from-right! (lambda Unknown[] (do Unknown[][][])))
 ; 1 brray:iter tail-call:brray:iter
 (the tail-call:brray:iter (lambda Number Number (do Number)))
 ; 1 brray:iter
@@ -2577,7 +2577,7 @@
 ; 1 brray:balance! 373 tail-call:right:brray:balance!
 (the tail-call:right:brray:balance! (lambda Number Number (do Number)))
 ; 1 brray:balance!
-(the brray:balance! (lambda Unknown[] (do Unknown[][])))
+(the brray:balance! (lambda Unknown[] (do Unknown[][][])))
 ; 1 brray:append!
 (the brray:append! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 brray:prepend!
@@ -2633,7 +2633,7 @@
 ; 1 queue:not-empty?
 (the queue:not-empty? (lambda Unknown[] (do Boolean)))
 ; 1 queue:empty!
-(the queue:empty! (lambda Unknown[][] (do Unknown[][])))
+(the queue:empty! (lambda Unknown[][][] (do Unknown[][][])))
 ; 1 queue:enqueue!
 (the queue:enqueue! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 queue:dequeue!
@@ -2645,7 +2645,7 @@
 ; 1 stack:not-empty?
 (the stack:not-empty? (lambda Unknown[] (do Boolean)))
 ; 1 stack:empty!
-(the stack:empty! (lambda Unknown[][] (do Unknown[][])))
+(the stack:empty! (lambda Unknown[][][] (do Unknown[][][])))
 ; 1 stack:push!
 (the stack:push! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 stack:pop!
@@ -2923,7 +2923,7 @@
 ; 1 from:chars->ast tree
 (the tree Unknown[])
 ; 1 from:chars->ast stack
-(the stack Unknown[][][])
+(the stack Unknown[][])
 ; 1 from:chars->ast head
 (the head Unknown[])
 ; 1 from:chars->ast acc
@@ -3901,7 +3901,7 @@
 ; 1 array:sort 851 tail-call:array:sort right
 (the right Unknown[])
 ; 1 array:sort 851 tail-call:array:sort
-(the tail-call:array:sort (lambda Number Number Unknown[] Unknown[] (do Unknown[])))
+(the tail-call:array:sort (lambda Number Number Unknown[] Unknown[] (do Unknown[][])))
 ; 1 array:sort 851 sorted
 (the sorted Unknown[])
 ; 1 array:sort 851 left
@@ -4149,9 +4149,9 @@
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::983
 (the lambda::annonymous::1::983 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::984
-(the lambda::annonymous::1::984 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::984 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::986
-(the lambda::annonymous::1::986 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::986 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::987
 (the lambda::annonymous::1::987 (lambda Number[] Number (do Number[])))
 ; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::991
@@ -4983,7 +4983,7 @@
 ; 1 from:positive-or-negative-digits->chars from:positive-or-negative-digits->chars lambda::annonymous::1::1499
 (the lambda::annonymous::1::1499 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::1503
-(the lambda::annonymous::1::1503 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::1503 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::1505
 (the lambda::annonymous::1::1505 (lambda Number (do Number[])))
 ; 1 matrix:adjacent 1506 dy
@@ -5947,11 +5947,11 @@
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2137
 (the lambda::annonymous::1::2137 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2139
-(the lambda::annonymous::1::2139 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::2139 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2140
-(the lambda::annonymous::1::2140 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::2140 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2142
-(the lambda::annonymous::1::2142 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::2142 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:chars->positive-or-negative-digits from:chars->positive-or-negative-digits lambda::annonymous::1::2144
 (the lambda::annonymous::1::2144 (lambda Number[] Number (do Number[])))
 ; 1 from:digits->integer-base from:digits->integer-base lambda::annonymous::1::2147
@@ -6875,7 +6875,7 @@
 ; 1 from:digits->integer-base from:digits->integer-base lambda::annonymous::1::2532
 (the lambda::annonymous::1::2532 (lambda Number Number (do Number)))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2533
-(the lambda::annonymous::1::2533 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::2533 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2534
 (the lambda::annonymous::1::2534 (lambda Number (do Number[])))
 ; 1 matrix:adjacent matrix:adjacent lambda::annonymous::1::2535 dy
@@ -7583,9 +7583,9 @@
 ; 1 from:yx->key from:yx->key lambda::annonymous::1::2957
 (the lambda::annonymous::1::2957 (lambda Number (do Number[])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2958
-(the lambda::annonymous::1::2958 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::2958 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:string-or-number->key from:string-or-number->key lambda::annonymous::1::2959
-(the lambda::annonymous::1::2959 (lambda Unknown[] (do Unknown[][])))
+(the lambda::annonymous::1::2959 (lambda Unknown[] (do Unknown[][][])))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2961
 (the lambda::annonymous::1::2961 (lambda Number[] (do Number)))
 ; 1 from:string->date from:string->date lambda::annonymous::1::2963
