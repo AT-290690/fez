@@ -114,6 +114,7 @@ export const deSuggarAst = (ast, scope) => {
               //       }
               //     }
               //       break
+              case PLACEHOLDER:
               case KEYWORDS.GET_ARRAY:
                 if (rest.length === 1) {
                   exp[0][VALUE] = 'math:var-get'
