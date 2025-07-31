@@ -667,6 +667,19 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     fails(
+      `(let xs [[[false]]])
+(let a (. xs 0 0 0))
+(let b (. xs 0 0 0))
+(if (> a b) 10 100)`,
+      `Incorrect type of argument (0) for (>). Expected (Number) but got (Boolean) (> a b) (check #202)`
+    )
+    fails(
+      `(let xs [[[ 1 ]]])
+(let a (. xs 0 0 0 0))`,
+      `(array:get) is trying to access nested structure at level (4) which is deeper than it's (3) levels at (let a (array:get (array:get (array:get (array:get xs 0) 0) 0) 0)) (check #1003)`,
+      'RangeError'
+    )
+    fails(
       `(let sum (lambda xs init (do 
     (let start (math:max init 0))
     (array:fold xs (lambda a b (+ a b)) start)

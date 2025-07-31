@@ -649,9 +649,9 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
         const [times, level, type, types] = resolveGetterRec(rem, env)
         if (times >= level)
           throw new RangeError(
-            `(${caller}) is trying to access nested structure at level (${level}) which is deeper than it's (${times}) levels at (${stringifyArgs(
-              exp
-            )}) (check #1003)`
+            `(${caller}) is trying to access nested structure at level (${level}) which is deeper than it's (${
+              times - 1
+            }) levels at (${stringifyArgs(exp)}) (check #1003)`
           )
         if (times === level - 1) {
           setPropToType(env[name][STATS], prop, {
