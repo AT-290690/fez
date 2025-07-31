@@ -621,7 +621,7 @@ const resolveGetterRec = ([head, tail], env, times = 0) => {
         break
       case WORD:
         {
-          if (env[tail][STATS][TYPE_PROP][0] === UNKNOWN) return
+          if (!env[tail] || env[tail][STATS][TYPE_PROP][0] === UNKNOWN) return
           const types = env[tail][STATS][TYPE_PROP][1].types
           const sub = types.at(-1)
           const type =
@@ -1327,17 +1327,23 @@ export const typeCheck = (
               // If current scope is root then these are user defined types
               if (isLambda) {
                 const lambdaName = `${PLACEHOLDER}${name}`
-                check(
-                  [
-                    [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                    [WORD, lambdaName],
-                    exp.at(-1)
-                  ],
-                  env,
-                  scope
-                )
+                const fn = [
+                  [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                  [WORD, lambdaName],
+                  exp.at(-1)
+                ]
+                check(fn, env, scope)
                 const expected = env[name]
                 const actual = env[lambdaName]
+                if (expected[ARG_COUNT] !== actual[ARG_COUNT]) {
+                  throw new RangeError(
+                    `Incorrect number of arguments for (${
+                      expected[STATS][SIGNATURE]
+                    }) Expected (${expected[ARG_COUNT]}) but got (${
+                      actual[ARG_COUNT]
+                    }) (${stringifyArgs(exp)}) (check #1004)`
+                  )
+                }
                 const checkReturns = () => {
                   if (
                     !isUnknownReturn(actual[STATS]) &&
@@ -1382,9 +1388,9 @@ export const typeCheck = (
                 checkArgs()
                 // Check lambda body with defined types
                 const copy = Object.create(env)
-                for (let i = 0; i < env[name][STATS][ARGUMENTS].length; ++i) {
-                  const A = env[lambdaName][STATS][ARGUMENTS][i]
-                  const B = env[name][STATS][ARGUMENTS][i]
+                for (let i = 0; i < expected[STATS][ARGUMENTS].length; ++i) {
+                  const A = actual[STATS][ARGUMENTS][i]
+                  const B = expected[STATS][ARGUMENTS][i]
                   copy[A[STATS][SIGNATURE]] = {
                     [STATS]: {
                       [SIGNATURE]: A[STATS][SIGNATURE],
@@ -1394,12 +1400,12 @@ export const typeCheck = (
                   }
                 }
                 check(
-                  wrapInApplyLambda(exp.at(-1).slice(2)).at(-1),
+                  wrapInApplyLambda(
+                    exp.at(-1).slice(expected[ARG_COUNT] ? 2 : 1)
+                  ).at(-1),
                   copy,
                   scope
                 )
-                // console.log(exp.at(-1).slice(1))
-                // check(exp.at(-1), env, scope)
                 // Types.delete(`; ${rootScopeIndex} ${lambdaName}`)
               }
               typeSet(Types, name, env, exp)
