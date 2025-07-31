@@ -616,25 +616,23 @@ const resolveGetterRec = ([head, tail], env, times = 0) => {
   if (GET_ARRAY_INFERENCE_SET.has(head[VALUE])) {
     return resolveGetterRec(tail, env, ++times)
   } else {
-    switch (head) {
-      case APPLY:
-        break
-      case WORD:
-        {
-          if (!env[tail] || env[tail][STATS][TYPE_PROP][0] === UNKNOWN) return
-          const types = env[tail][STATS][TYPE_PROP][1].types
-          const sub = types.at(-1)
-          const type =
-            sub === ATOM || sub === NUMBER || sub === BOOLEAN
-              ? ATOM
-              : sub === APPLY
-              ? APPLY
-              : COLLECTION
-          const len = types.length ? types.length + 1 : times + 1
-          return [times, len, type, types]
-        }
-        break
+    if (Array.isArray(head)) {
+      tail = head[VALUE]
+      head = head[TYPE]
     }
+    if (head !== WORD && head !== APPLY) return
+    const prop = head === WORD ? TYPE_PROP : RETURNS
+    if (!env[tail] || env[tail][STATS][prop][0] === UNKNOWN) return
+    const types = env[tail][STATS][prop][1].types
+    const sub = types.at(-1)
+    const type =
+      sub === ATOM || sub === NUMBER || sub === BOOLEAN
+        ? ATOM
+        : sub === APPLY
+        ? APPLY
+        : COLLECTION
+    const len = types.length ? types.length + 1 : times + 1
+    return [times, len, type, types]
   }
 }
 const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
@@ -668,7 +666,6 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
         }
         return true
       }
-
       if (
         getReturn(env[array[VALUE]][STATS]) === UNKNOWN ||
         getReturn(env[array[VALUE]][STATS]) === ANY
@@ -970,8 +967,26 @@ const resolveReturnType = ({
         break
       default:
         {
-          if (GET_ARRAY_INFERENCE_SET.has(returns[VALUE]))
-            resolveGetter({ rem, prop, name, env, caller: returns[VALUE], exp })
+          if (GET_ARRAY_INFERENCE_SET.has(returns[VALUE])) {
+            resolveGetter({
+              rem,
+              prop,
+              name,
+              env,
+              caller: returns[VALUE],
+              exp
+            })
+            retry(env[name][STATS], exp, stack, () => {
+              resolveGetter({
+                rem,
+                prop,
+                name,
+                env,
+                caller: returns[VALUE],
+                exp
+              })
+            })
+          }
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           // TODO: DRY
           const index = env[name][STATS][ARGUMENTS]

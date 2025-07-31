@@ -176,7 +176,7 @@ f)))
         `(${STATIC_TYPES.DEFINE_TYPE} aafn (lambda Number Boolean[] (do Number[])))`,
         `(${STATIC_TYPES.DEFINE_TYPE} sqrt-of-nine Number)`,
         `(${STATIC_TYPES.DEFINE_TYPE} rabbits Number[])`,
-        `(${STATIC_TYPES.DEFINE_TYPE} fff Unknown)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} fff Number)`,
         `(${STATIC_TYPES.DEFINE_TYPE} iitem Unknown[][])`,
         `(${STATIC_TYPES.DEFINE_TYPE} iiitem Unknown[])`,
         `(${STATIC_TYPES.DEFINE_TYPE} fifi Number)`,
