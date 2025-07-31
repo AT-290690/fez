@@ -115,6 +115,19 @@ export const deSuggarAst = (ast, scope) => {
               //     }
               //       break
               case PLACEHOLDER:
+                {
+                  exp.length = 0
+                  rest.reverse()
+                  let temp = exp
+                  for (let i = 0; i < rest.length; i += 1) {
+                    if (i < rest.length - 1) {
+                      temp.push([APPLY, SUGGAR.GET_ARRAY], [], rest[i])
+                      temp = temp.at(-2)
+                    } else temp.push(...rest[i])
+                  }
+                  deSuggarAst(exp, scope)
+                }
+                break
               case KEYWORDS.GET_ARRAY:
                 if (rest.length === 1) {
                   exp[0][VALUE] = 'math:var-get'

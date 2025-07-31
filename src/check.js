@@ -612,13 +612,58 @@ const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
       break
   }
 }
+const resolveGetterRec = ([head, tail], env, times = 0) => {
+  if (GET_ARRAY_INFERENCE_SET.has(head[VALUE])) {
+    return resolveGetterRec(tail, env, ++times)
+  } else {
+    switch (head) {
+      case APPLY:
+        break
+      case WORD:
+        {
+          if (env[tail][STATS][TYPE_PROP][0] === UNKNOWN) return
+          const types = env[tail][STATS][TYPE_PROP][1].types
+          const sub = types.at(-1)
+          const type =
+            sub === ATOM || sub === NUMBER || sub === BOOLEAN
+              ? ATOM
+              : sub === APPLY
+              ? APPLY
+              : COLLECTION
+          const len = types.length ? types.length + 1 : times + 1
+          return [times, len, type, types]
+        }
+        break
+    }
+  }
+}
 const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
   const array = isLeaf(rem[1]) ? rem[1] : rem[1][0]
   if (!env[array[VALUE]] || !env[name]) return true
   switch (array[TYPE]) {
     case APPLY:
       // TODO: figure out recursively what is the inner type of all nested getters
-      if (GET_ARRAY_INFERENCE_SET.has(array[VALUE])) return true
+      if (GET_ARRAY_INFERENCE_SET.has(array[VALUE])) {
+        const rec = resolveGetterRec(rem, env)
+        if (!rec) return true
+        const [times, level, type, types] = resolveGetterRec(rem, env)
+        if (times >= level) throw new Error('Too deep')
+        if (times === level - 1) {
+          setPropToType(env[name][STATS], prop, {
+            [TYPE_PROP]: types.length
+              ? [type, new SubType([types.at(-1)])]
+              : [UNKNOWN]
+          })
+        } else {
+          setPropToType(env[name][STATS], prop, {
+            [TYPE_PROP]: types.length
+              ? [COLLECTION, new SubType(types.slice(times))]
+              : [UNKNOWN]
+          })
+        }
+        return true
+      }
+
       if (
         getReturn(env[array[VALUE]][STATS]) === UNKNOWN ||
         getReturn(env[array[VALUE]][STATS]) === ANY
@@ -644,8 +689,12 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
           setPropToReturn(env[name][STATS], prop, {
             [RETURNS]: [f, new SubType(r)]
           })
-        } else return false
-      } else return false
+        } else if (rightSub.has(APPLY)) {
+          // TODOD: abstractions go here but what can we do with them
+          // perhaps show the signature?
+          setPropToAbstraction(env[name][STATS], prop)
+        }
+      }
       break
     case WORD:
       {
@@ -675,8 +724,12 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
             setPropToType(env[name][STATS], prop, {
               [TYPE_PROP]: [f, new SubType(r)]
             })
-          } else return false
-        } else return false
+          } else if (rightSub.has(APPLY)) {
+            // TODOD: abstractions go here but what can we do with them
+            // perhaps show the signature?
+            setPropToAbstraction(env[name][STATS], prop)
+          }
+        }
       }
       break
   }
@@ -837,11 +890,13 @@ const initArrayType = ({ rem, env }) => {
       ret[0].length = 0
       const subT = new SubType([COLLECTION])
       ret[0].push(COLLECTION, subT)
-      while (head && !isSubType(head[1])) {
-        subT.add(COLLECTION)
+      while (Array.isArray(head) && !isSubType(head[1])) {
+        if (head[0] === APPLY) subT.types.push(APPLY)
+        else subT.add(COLLECTION)
         head = head[0]
       }
-      if (head && head[1].types.length) subT.add(head[1].types[0])
+      if (Array.isArray(head) && head[1].types.length)
+        subT.add(head[1].types[0])
     }
     const [main, sub] = ret[0]
     if (isSubType(sub) && sub.types.at(-1) === COLLECTION) sub.types.pop()
