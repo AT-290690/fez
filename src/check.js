@@ -647,7 +647,8 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
         const rec = resolveGetterRec(rem, env)
         if (!rec) return true
         const [times, level, type, types] = resolveGetterRec(rem, env)
-        if (times >= level)
+        const isUnknown = types.at(-1) === UNKNOWN
+        if (!isUnknown && times >= level)
           throw new RangeError(
             `(${caller}) is trying to access nested structure at level (${level}) which is deeper than it's (${
               times - 1

@@ -1831,6 +1831,16 @@
 (let binary-tree:value (lambda node (array:get node 0)))
 (let binary-tree:value! (lambda tree value (array:set! tree 0 value)))
 (let binary-tree:node? (lambda tree (array:not-empty? tree)))
+(let binary-tree:nil? (lambda tree (array:empty? tree)))
+(let binary-tree:equal? (lambda a b
+    (cond
+        (and (binary-tree:nil? a) (binary-tree:nil? b)) true
+        (or (binary-tree:nil? a) (binary-tree:nil? b)) false
+        (and (=
+                (binary-tree:value a) (binary-tree:value b))
+                (binary-tree:equal? (binary-tree:left a) (binary-tree:left b))
+                (binary-tree:equal? (binary-tree:right a) (binary-tree:right b))) true
+        (*) false)))
 (let binary-tree:traverse-pre-order (lambda tree cb
     (if (binary-tree:node? tree) (do
         (cb tree)

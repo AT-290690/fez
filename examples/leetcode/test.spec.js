@@ -104,5 +104,9 @@ test('leetcode', [
   {
     file: '87. Scramble String.lisp',
     result: [1, 0, 1]
+  },
+  {
+    file: '100. Same Tree.lisp',
+    result: [1, 0, 0]
   }
 ])
