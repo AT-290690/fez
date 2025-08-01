@@ -2454,7 +2454,7 @@ heap)))
 ; (let ring (new:ring-buffer 5))
 ; (let [gt ps bf .] ring)
 ; (loop:for-range 0 6 (lambda i (ps i)))
-; (identity bf)
+; (identity (bf))
 (let new:ring-buffer (lambda len (do 
     (let pointer (math:var-def 0))
     (let buffer [])
@@ -2463,7 +2463,7 @@ heap)))
         (let pt (math:var-get pointer))
         (array:set! buffer pt item)
         (math:var-set! pointer (mod (+ len pt 1) len))
-        item)) buffer])))
+        item)) (lambda buffer)])))
 
 ; Fake keywords section
 ; xxx

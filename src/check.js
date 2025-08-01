@@ -1695,6 +1695,7 @@ export const typeCheck = (
                 )
               else if (
                 env[first[VALUE]][STATS][TYPE_PROP][0] === APPLY &&
+                env[first[VALUE]][STATS][ARG_COUNT] &&
                 env[first[VALUE]][STATS][ARG_COUNT] !== VARIADIC &&
                 env[first[VALUE]][STATS][ARG_COUNT] !== rest.length
               )

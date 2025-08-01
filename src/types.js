@@ -119,6 +119,7 @@ export const toTypeCodes = (type) => {
   const [t, n] = extractArrayType(type)
   switch (t) {
     case 'Abstraction':
+      if (n) return [COLLECTION, new SubType(fillArrayType(n).concat(APPLY))]
       return [APPLY]
     case 'Boolean':
       if (n) return [COLLECTION, new SubType(fillArrayType(n).concat(BOOLEAN))]
