@@ -127,10 +127,12 @@ export const setTypeToPredicate = (stats) => {
   return (stats[RETURNS][1] = BOOLEAN_SUBTYPE())
 }
 export const setPropToAbstraction = (stats, prop) => {
-  return (
-    (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) &&
-    (stats[prop][0] = APPLY)
-  )
+  if (stats[prop][0] === UNKNOWN || stats[prop][0] === ANY) {
+    stats[prop][0] = APPLY
+    // since we don't know how many they are we just set the args to variadic
+    if (!stats[ARG_COUNT]) stats[ARG_COUNT] = VARIADIC
+  }
+  return APPLY
 }
 export const setPropToCollection = (stats, prop) => {
   return (
@@ -1695,7 +1697,6 @@ export const typeCheck = (
                 )
               else if (
                 env[first[VALUE]][STATS][TYPE_PROP][0] === APPLY &&
-                env[first[VALUE]][STATS][ARG_COUNT] &&
                 env[first[VALUE]][STATS][ARG_COUNT] !== VARIADIC &&
                 env[first[VALUE]][STATS][ARG_COUNT] !== rest.length
               )
