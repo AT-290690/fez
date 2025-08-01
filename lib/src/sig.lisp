@@ -79,7 +79,8 @@
 (the array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
 (the array:unzip (lambda Unknown[] (do Unknown[][]))) 
 
-(the array:push! (lambda Unknown[] Any (do Unknown)))
+(the array:set! (lambda Unknown[] Number Any (do Unknown[])))
+(the array:push! (lambda Unknown[] Any (do Any)))
 (the array:append! (lambda Unknown[] Any (do Unknown[])))
 (the array:fold (lambda Unknown[] (lambda Unknown Unknown (do Any)) Unknown (do Unknown)))
 (the list:fold (lambda Unknown[] (lambda Unknown Unknown (do Any)) Unknown (do Unknown)))
