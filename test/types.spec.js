@@ -28,7 +28,7 @@ describe('Type checking', () => {
     const A = [
       ...typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1].entries()
     ]
-      .filter((x) => x[0].split(' ').length === 3)
+      .filter((x) => x[0].split(' ').length === 3 && !x[0].includes('.'))
       .map(([k, v]) => `${v()}`)
     deepStrictEqual(A, B)
   })

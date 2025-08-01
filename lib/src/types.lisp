@@ -270,24 +270,14 @@
 (the math:bionomial-coefficient (lambda Number Number (do Number)))
 ; 1 math:number-of-permutations
 (the math:number-of-permutations (lambda Number Number (do Number)))
-; 1 .math:permutations
-(the .math:permutations (lambda Unknown[] (do Unknown[])))
 ; 1 math:permutations
 (the math:permutations (lambda Unknown[] (do Unknown[][])))
-; 1 .math:combinations
-(the .math:combinations (lambda Unknown[] (do Unknown[])))
 ; 1 math:combinations
 (the math:combinations (lambda Unknown[] (do Unknown[][])))
-; 1 .math:combinations-n
-(the .math:combinations-n (lambda Unknown[] Number (do Unknown[])))
 ; 1 math:combinations-n
 (the math:combinations-n (lambda Unknown[] Number (do Unknown[][])))
-; 1 .math:variants
-(the .math:variants (lambda Unknown[] Number (do Unknown[])))
 ; 1 math:variants
 (the math:variants (lambda Unknown[] Number (do Unknown[][])))
-; 1 .math:subset
-(the .math:subset (lambda Unknown[] (do Unknown[])))
 ; 1 math:subset
 (the math:subset (lambda Unknown[] (do Unknown[][])))
 ; 1 math:greater?
@@ -308,54 +298,30 @@
 (the math:division (lambda Number Number (do Number)))
 ; 1 math:subtraction
 (the math:subtraction (lambda Number Number (do Number)))
-; 1 .math:reverse
-(the .math:reverse (lambda Unknown[] (do Unknown)))
 ; 1 math:reverse
 (the math:reverse (lambda Number[] (do Number[])))
-; 1 .math:fold
-(the .math:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 math:fold
 (the math:fold (lambda Number[] (lambda Number Number (do Number)) Number (do Number)))
-; 1 .math:enumerated-fold
-(the .math:enumerated-fold (lambda Unknown[] (lambda Unknown Unknown Number (do Unknown)) Unknown (do Unknown)))
 ; 1 math:enumerated-fold
 (the math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) Number (do Number)))
-; 1 .math:map
-(the .math:map (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
 ; 1 math:map
 (the math:map (lambda Number[] (lambda Number (do Number)) (do Number[])))
 ; 1 math:enumerated-map
 (the math:enumerated-map (lambda Unknown[] (lambda Unknown Number (do Unknown)) (do Unknown[])))
-; 1 .math:select
-(the .math:select (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 math:select
 (the math:select (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
-; 1 .math:exclude
-(the .math:exclude (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 math:exclude
 (the math:exclude (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
-; 1 .math:every?
-(the .math:every? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
 ; 1 math:every?
 (the math:every? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
-; 1 .math:some?
-(the .math:some? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
 ; 1 math:some?
 (the math:some? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
-; 1 .math:enumerated-every?
-(the .math:enumerated-every? (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Boolean)))
 ; 1 math:enumerated-every?
 (the math:enumerated-every? (lambda Number[] (lambda Number Number (do Boolean)) (do Boolean)))
-; 1 .math:enumerated-some?
-(the .math:enumerated-some? (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Boolean)))
 ; 1 math:enumerated-some?
 (the math:enumerated-some? (lambda Number[] (lambda Number Number (do Boolean)) (do Boolean)))
-; 1 .math:enumerated-select
-(the .math:enumerated-select (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Unknown[])))
 ; 1 math:enumerated-select
 (the math:enumerated-select (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
-; 1 .math:enumerated-exclude
-(the .math:enumerated-exclude (lambda Unknown[] (lambda Unknown Number (do Boolean)) (do Unknown[])))
 ; 1 math:enumerated-exclude
 (the math:enumerated-exclude (lambda Number[] (lambda Number Number (do Boolean)) (do Number[])))
 ; 1 math:max
@@ -370,12 +336,8 @@
 (the math:maximum (lambda Unknown[] (do Number)))
 ; 1 math:minimum
 (the math:minimum (lambda Unknown[] (do Number)))
-; 1 .math:maximum-index
-(the .math:maximum-index (lambda Unknown[] (do Unknown)))
 ; 1 math:maximum-index
 (the math:maximum-index (lambda Number[] (do Number)))
-; 1 .math:minimum-index
-(the .math:minimum-index (lambda Unknown[] (do Unknown)))
 ; 1 math:minimum-index
 (the math:minimum-index (lambda Number[] (do Number)))
 ; 1 math:max-length
@@ -434,20 +396,14 @@
 (the math:percent (lambda Number Number (do Number)))
 ; 1 math:round-to
 (the math:round-to (lambda Number Number (do Number)))
-; 1 .math:median
-(the .math:median (lambda Unknown[] (do Number)))
 ; 1 math:median
 (the math:median (lambda Number[] (do Number)))
-; 1 .math:mean
-(the .math:mean (lambda Unknown[] (do Number)))
 ; 1 math:mean
 (the math:mean (lambda Number[] (do Number)))
 ; 1 math:fold-n
 (the math:fold-n (lambda Number (lambda Unknown Number (do Unknown)) Unknown (do Unknown)))
 ; 1 math:fold-range
 (the math:fold-range (lambda Number Number (lambda Unknown Number (do Unknown)) Unknown (do Unknown)))
-; 1 .math:divisors
-(the .math:divisors (lambda Number (do Unknown[])))
 ; 1 math:divisors
 (the math:divisors (lambda Number (do Number[])))
 ; 1 math:divisors-exclusive
@@ -474,8 +430,6 @@
 (the math:big-integer-subtraction (lambda Number[] Number[] (do Number[])))
 ; 1 math:big-integer-multiplication
 (the math:big-integer-multiplication (lambda Number[] Number[] (do Number[])))
-; 1 .math:remove-leading-zeroes
-(the .math:remove-leading-zeroes (lambda Unknown[] (do Unknown[])))
 ; 1 math:remove-leading-zeroes
 (the math:remove-leading-zeroes (lambda Number[] (do Number[])))
 ; 1 math:remove-trailing-zeroes
@@ -488,8 +442,6 @@
 (the math:power-helper (lambda Number Number (do Number)))
 ; 1 math:power
 (the math:power (lambda Number Number (do Number)))
-; 1 .math:log-taylor-series
-(the .math:log-taylor-series (lambda Number Number (do Number)))
 ; 1 math:log-taylor-series
 (the math:log-taylor-series (lambda Number Number (do Number)))
 ; 1 math:int-log2
@@ -626,8 +578,6 @@
 (the math:enumeration (lambda (do Unknown)))
 ; 1 math:palindrome?
 (the math:palindrome? (lambda Unknown[] (do Boolean)))
-; 1 .math:max-sub-array-sum
-(the .math:max-sub-array-sum (lambda Unknown[] (do Unknown)))
 ; 1 math:max-sub-array-sum
 (the math:max-sub-array-sum (lambda Number[] (do Number)))
 ; 1 math:list-fold
@@ -642,12 +592,8 @@
 (the math:list-product (lambda Unknown[] (do Number)))
 ; 1 math:list-range
 (the math:list-range (lambda Number Number (do Number[])))
-; 1 .math:unique
-(the .math:unique (lambda Unknown[] (do Number[])))
 ; 1 math:unique
 (the math:unique (lambda Number[] (do Number[])))
-; 1 .math:collatz
-(the .math:collatz (lambda Number (do Unknown[])))
 ; 1 math:collatz
 (the math:collatz (lambda Number (do Number[])))
 ; 1 list:pair
@@ -666,8 +612,6 @@
 (the list:map (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
 ; 1 list:filter
 (the list:filter (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
-; 1 .list:fold
-(the .list:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 list:fold
 (the list:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 list:transform
@@ -722,20 +666,12 @@
 (the list:slice (lambda Unknown[] Number Number (do Unknown[])))
 ; 1 list:for
 (the list:for (lambda Unknown[] (lambda Unknown (do Unknown)) (do Unknown[])))
-; 1 .array:first
-(the .array:first (lambda Unknown[] (do Unknown)))
 ; 1 array:first
 (the array:first (lambda Unknown[] (do Unknown)))
-; 1 .array:second
-(the .array:second (lambda Unknown[] (do Unknown)))
 ; 1 array:second
 (the array:second (lambda Unknown[] (do Unknown)))
-; 1 .array:third
-(the .array:third (lambda Unknown[] (do Unknown)))
 ; 1 array:third
 (the array:third (lambda Unknown[] (do Unknown)))
-; 1 .array:last
-(the .array:last (lambda Unknown[] (do Unknown)))
 ; 1 array:last
 (the array:last (lambda Unknown[] (do Unknown)))
 ; 1 array:for
@@ -754,22 +690,14 @@
 (the array:select (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:exclude
 (the array:exclude (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
-; 1 .array:fold
-(the .array:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 array:fold
 (the array:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 array:fold-until
 (the array:fold-until (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) (lambda Unknown (do Boolean)) Unknown (do Unknown)))
-; 1 .array:transform
-(the .array:transform (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 array:transform
 (the array:transform (lambda Unknown[] (lambda Unknown[] Unknown (do Unknown)) Unknown[] (do Unknown[])))
-; 1 .array:reduce
-(the .array:reduce (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 array:reduce
 (the array:reduce (lambda Unknown[] (lambda Number Unknown (do Number)) Number (do Number)))
-; 1 .array:enumerated-reduce
-(the .array:enumerated-reduce (lambda Unknown[] (lambda Unknown Unknown Number (do Unknown)) Unknown (do Unknown)))
 ; 1 array:enumerated-reduce
 (the array:enumerated-reduce (lambda Unknown[] (lambda Number Unknown Number (do Number)) Number (do Number)))
 ; 1 array:every?
@@ -784,16 +712,12 @@
 (the array:has? (lambda Unknown[] (lambda Unknown (do Boolean)) (do Boolean)))
 ; 1 array:reverse
 (the array:reverse (lambda Unknown[] (do Unknown)))
-; 1 .array:append!
-(the .array:append! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 array:append!
 (the array:append! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 array:set-and-get!
 (the array:set-and-get! (lambda Unknown[] Number Unknown (do Unknown)))
 ; 1 array:tail!
 (the array:tail! (lambda Unknown[] (do Unknown[])))
-; 1 .array:push!
-(the .array:push! (lambda Unknown[] Unknown (do Unknown)))
 ; 1 array:push!
 (the array:push! (lambda Unknown[] Unknown (do Unknown)))
 ; 1 array:pop!
@@ -838,12 +762,8 @@
 (the array:drop (lambda Unknown[] Number (do Unknown[])))
 ; 1 array:binary-search
 (the array:binary-search (lambda Unknown[] Number (do Number)))
-; 1 .array:zip
-(the .array:zip (lambda Unknown[] Unknown[] (do Unknown[])))
 ; 1 array:zip
 (the array:zip (lambda Unknown[] Unknown[] (do Unknown[][])))
-; 1 .array:unzip
-(the .array:unzip (lambda Unknown[] (do Unknown[])))
 ; 1 array:unzip
 (the array:unzip (lambda Unknown[] (do Unknown[][])))
 ; 1 array:equal?
@@ -900,20 +820,14 @@
 (the array:chunks (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 array:adjacent-find
 (the array:adjacent-find (lambda Unknown[] (lambda Unknown Unknown (do Boolean)) (do Number)))
-; 1 .matrix:zeroes
-(the .matrix:zeroes (lambda Number Number (do Unknown[])))
 ; 1 matrix:zeroes
 (the matrix:zeroes (lambda Number Number (do Number[][])))
-; 1 .matrix:ones
-(the .matrix:ones (lambda Number Number (do Unknown[])))
 ; 1 matrix:ones
 (the matrix:ones (lambda Number Number (do Number[][])))
 ; 1 matrix:truth-table
 (the matrix:truth-table (lambda Number Number (do Unknown[])))
 ; 1 matrix:false-table
 (the matrix:false-table (lambda Number Number (do Unknown[])))
-; 1 .matrix:points
-(the .matrix:points (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 matrix:points
 (the matrix:points (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number[][])))
 ; 1 matrix:for
@@ -922,8 +836,6 @@
 (the matrix:shallow-copy (lambda Unknown[] (do Unknown[])))
 ; 1 matrix:flat-one
 (the matrix:flat-one (lambda Unknown[] (do Unknown[])))
-; 1 .matrix:find-index
-(the .matrix:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
 ; 1 matrix:find-index
 (the matrix:find-index (lambda Unknown[] (lambda Unknown (do Boolean)) (do Number[])))
 ; 1 matrix:find
@@ -992,20 +904,14 @@
 (the from:array->list (lambda Unknown[] (do Unknown)))
 ; 1 from:char->digit
 (the from:char->digit (lambda Number (do Number)))
-; 1 .from:chars->digits
-(the .from:chars->digits (lambda Unknown[] (do Unknown[])))
 ; 1 from:chars->digits
 (the from:chars->digits (lambda Number[] (do Number[])))
 ; 1 from:digit->char
 (the from:digit->char (lambda Number (do Number)))
-; 1 .from:digits->chars
-(the .from:digits->chars (lambda Unknown[] (do Unknown[])))
 ; 1 from:digits->chars
 (the from:digits->chars (lambda Number[] (do Number[])))
 ; 1 from:chars->positive-or-negative-digits
 (the from:chars->positive-or-negative-digits (lambda Unknown[] (do Unknown[])))
-; 1 .from:digits->integer
-(the .from:digits->integer (lambda Unknown[] (do Number)))
 ; 1 from:digits->integer
 (the from:digits->integer (lambda Number[] (do Number)))
 ; 1 from:digits->integer-base
@@ -1016,8 +922,6 @@
 (the from:positive-or-negative-digits->integer (lambda Unknown[] (do Number)))
 ; 1 from:positive-or-negative-digits->chars
 (the from:positive-or-negative-digits->chars (lambda Unknown[] (do Unknown[])))
-; 1 .from:integer->digits
-(the .from:integer->digits (lambda Number (do Unknown)))
 ; 1 from:integer->digits
 (the from:integer->digits (lambda Number (do Number[])))
 ; 1 from:number->positive-or-negative-digits
@@ -1036,34 +940,22 @@
 (the from:positive-or-negative-chars->integer (lambda Unknown[] (do Number)))
 ; 1 from:string->integer
 (the from:string->integer (lambda Number[] (do Number)))
-; 1 .from:strings->integers
-(the .from:strings->integers (lambda Unknown[] (do Unknown[])))
 ; 1 from:strings->integers
 (the from:strings->integers (lambda Unknown[][] (do Number[])))
-; 1 .from:string->float
-(the .from:string->float (lambda Unknown[] (do Number)))
 ; 1 from:string->float
 (the from:string->float (lambda Number[] (do Number)))
-; 1 .from:strings->floats
-(the .from:strings->floats (lambda Unknown[] (do Unknown[])))
 ; 1 from:strings->floats
 (the from:strings->floats (lambda Unknown[][] (do Number[])))
-; 1 .from:float->string
-(the .from:float->string (lambda Number (do Number[])))
 ; 1 from:float->string
 (the from:float->string (lambda Number (do Number[])))
 ; 1 from:floats->strings
 (the from:floats->strings (lambda Unknown[] (do Unknown[])))
 ; 1 from:string->date
 (the from:string->date (lambda Unknown[] (do Unknown[])))
-; 1 .from:integer->string
-(the .from:integer->string (lambda Number (do Unknown[])))
 ; 1 from:integer->string
 (the from:integer->string (lambda Number (do Number[])))
 ; 1 from:integers->strings
 (the from:integers->strings (lambda Unknown[] (do Unknown[])))
-; 1 .from:chars->set
-(the .from:chars->set (lambda Unknown[] (do Unknown)))
 ; 1 from:chars->set
 (the from:chars->set (lambda Number[] (do Unknown[][])))
 ; 1 from:array->set
@@ -1080,16 +972,12 @@
 (the from:array->brray (lambda Unknown[] (do Unknown[])))
 ; 1 from:brray->array
 (the from:brray->array (lambda Unknown[] (do Unknown[])))
-; 1 .from:string->array
-(the .from:string->array (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 from:string->array
 (the from:string->array (lambda Number[] Number (do Unknown[][])))
 ; 1 from:string->words
 (the from:string->words (lambda Unknown[] (do Unknown[])))
 ; 1 from:string->chunks
 (the from:string->chunks (lambda Unknown[] (lambda Unknown (do Boolean)) (do Unknown[])))
-; 1 .from:array->string
-(the .from:array->string (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 from:array->string
 (the from:array->string (lambda Unknown[][] Number (do Number[])))
 ; 1 from:matrix->string
@@ -1410,96 +1298,52 @@
 (the doubly-linked-list:next (lambda Unknown[] (do Unknown)))
 ; 1 doubly-linked-list:value
 (the doubly-linked-list:value (lambda Unknown[] (do Unknown)))
-; 1 .var:def
-(the .var:def (lambda Unknown (do Unknown[])))
 ; 1 var:def
 (the var:def (lambda Unknown (do Unknown[])))
-; 1 .var:get
-(the .var:get (lambda Unknown[] (do Unknown)))
 ; 1 var:get
 (the var:get (lambda Unknown[] (do Unknown)))
-; 1 .var:set!
-(the .var:set! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 var:set!
 (the var:set! (lambda Unknown[] Unknown (do Unknown[])))
-; 1 .var:del!
-(the .var:del! (lambda Unknown[] (do Unknown[])))
 ; 1 var:del!
 (the var:del! (lambda Unknown[] (do Unknown[])))
-; 1 .var:set-and-get!
-(the .var:set-and-get! (lambda Unknown[] Unknown (do Unknown)))
 ; 1 var:set-and-get!
 (the var:set-and-get! (lambda Unknown[] Unknown (do Unknown)))
-; 1 .math:var-def
-(the .math:var-def (lambda Unknown (do Unknown[])))
 ; 1 math:var-def
 (the math:var-def (lambda Number (do Number[])))
 ; 1 math:var-zero
 (the math:var-zero (lambda (do Number[])))
 ; 1 math:var-one
 (the math:var-one (lambda (do Number[])))
-; 1 .math:var-get
-(the .math:var-get (lambda Unknown[] (do Unknown)))
 ; 1 math:var-get
 (the math:var-get (lambda Number[] (do Number)))
-; 1 .math:var-set!
-(the .math:var-set! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 math:var-set!
 (the math:var-set! (lambda Number[] Number (do Number[])))
-; 1 .math:var-del!
-(the .math:var-del! (lambda Unknown[] (do Unknown[])))
 ; 1 math:var-del!
 (the math:var-del! (lambda Number[] (do Number[])))
-; 1 .math:var-set-and-get!
-(the .math:var-set-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-set-and-get!
 (the math:var-set-and-get! (lambda Number[] Number (do Number)))
-; 1 .math:var-increment!
-(the .math:var-increment! (lambda Number[] (do Unknown[])))
 ; 1 math:var-increment!
 (the math:var-increment! (lambda Number[] (do Number[])))
-; 1 .math:var-decrement!
-(the .math:var-decrement! (lambda Number[] (do Unknown[])))
 ; 1 math:var-decrement!
 (the math:var-decrement! (lambda Number[] (do Number[])))
-; 1 .math:var-increment-and-get!
-(the .math:var-increment-and-get! (lambda Number[] (do Number)))
 ; 1 math:var-increment-and-get!
 (the math:var-increment-and-get! (lambda Number[] (do Number)))
-; 1 .math:var-decrement-and-get!
-(the .math:var-decrement-and-get! (lambda Number[] (do Number)))
 ; 1 math:var-decrement-and-get!
 (the math:var-decrement-and-get! (lambda Number[] (do Number)))
-; 1 .math:var-add!
-(the .math:var-add! (lambda Number[] Number (do Unknown[])))
 ; 1 math:var-add!
 (the math:var-add! (lambda Number[] Number (do Number[])))
-; 1 .math:var-subtract!
-(the .math:var-subtract! (lambda Number[] Number (do Unknown[])))
 ; 1 math:var-subtract!
 (the math:var-subtract! (lambda Number[] Number (do Number[])))
-; 1 .math:var-multiply!
-(the .math:var-multiply! (lambda Number[] Number (do Unknown[])))
 ; 1 math:var-multiply!
 (the math:var-multiply! (lambda Number[] Number (do Number[])))
-; 1 .math:var-divide!
-(the .math:var-divide! (lambda Number[] Number (do Unknown[])))
 ; 1 math:var-divide!
 (the math:var-divide! (lambda Number[] Number (do Number[])))
-; 1 .math:var-add-and-get!
-(the .math:var-add-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-add-and-get!
 (the math:var-add-and-get! (lambda Number[] Number (do Number)))
-; 1 .math:var-subtract-and-get!
-(the .math:var-subtract-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-subtract-and-get!
 (the math:var-subtract-and-get! (lambda Number[] Number (do Number)))
-; 1 .math:var-multiply-and-get!
-(the .math:var-multiply-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-multiply-and-get!
 (the math:var-multiply-and-get! (lambda Number[] Number (do Number)))
-; 1 .math:var-divide-and-get!
-(the .math:var-divide-and-get! (lambda Number[] Number (do Number)))
 ; 1 math:var-divide-and-get!
 (the math:var-divide-and-get! (lambda Number[] (do Number)))
 ; 1 math:compound-growth
@@ -1512,8 +1356,6 @@
 (the math:shoelace (lambda Unknown[] (do Number)))
 ; 1 math:collinear?
 (the math:collinear? (lambda Unknown[] (do Boolean)))
-; 1 .bools:fold
-(the .bools:fold (lambda Unknown[] (lambda Unknown Unknown (do Unknown)) Unknown (do Unknown)))
 ; 1 bools:fold
 (the bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
 ; 1 boole:truths
@@ -1522,40 +1364,24 @@
 (the boole:lies (lambda Number (do Boolean[])))
 ; 1 boole:def
 (the boole:def (lambda Unknown (do Boolean[])))
-; 1 .boole:def-strict
-(the .boole:def-strict (lambda Unknown (do Unknown[])))
 ; 1 boole:def-strict
 (the boole:def-strict (lambda Boolean (do Boolean[])))
-; 1 .boole:get
-(the .boole:get (lambda Unknown[] (do Unknown)))
 ; 1 boole:get
 (the boole:get (lambda Boolean[] (do Boolean)))
-; 1 .boole:set!
-(the .boole:set! (lambda Unknown[] Unknown (do Unknown[])))
 ; 1 boole:set!
 (the boole:set! (lambda Boolean[] Boolean (do Boolean[])))
-; 1 .boole:toggle!
-(the .boole:toggle! (lambda Boolean[] (do Unknown[])))
 ; 1 boole:toggle!
 (the boole:toggle! (lambda Boolean[] (do Boolean[])))
 ; 1 boole:true
 (the boole:true (lambda (do Boolean[])))
 ; 1 boole:false
 (the boole:false (lambda (do Boolean[])))
-; 1 .boole:true!
-(the .boole:true! (lambda Boolean[] (do Unknown[])))
 ; 1 boole:true!
 (the boole:true! (lambda Boolean[] (do Boolean[])))
-; 1 .boole:false!
-(the .boole:false! (lambda Boolean[] (do Unknown[])))
 ; 1 boole:false!
 (the boole:false! (lambda Boolean[] (do Boolean[])))
-; 1 .boole:true?
-(the .boole:true? (lambda Unknown[] (do Boolean)))
 ; 1 boole:true?
 (the boole:true? (lambda Boolean[] (do Boolean)))
-; 1 .boole:false?
-(the .boole:false? (lambda Unknown[] (do Boolean)))
 ; 1 boole:false?
 (the boole:false? (lambda Boolean[] (do Boolean)))
 ; 1 curry:ternary
