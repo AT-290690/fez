@@ -889,7 +889,9 @@ const initArrayType = ({ rem, env }) => {
   if (
     known &&
     ret.length &&
-    !ret.some((x) => known[0][0] !== x[0][0] || known[0].length !== x[0].length)
+    (Array.isArray(known[0])
+      ? !ret.some((x) => known[0][0] !== x[0][0])
+      : !ret.some((x) => known[0] !== x[0]))
   ) {
     if (Array.isArray(ret[0][0])) {
       let head = ret[0][0]
