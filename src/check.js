@@ -46,8 +46,7 @@ import {
   NUMBER,
   NUMBER_SUBTYPE,
   SubType,
-  GET_ARRAY_INFERENCE_SET,
-  UNBOUND_VARIABLE
+  GET_ARRAY_INFERENCE_SET
 } from './types.js'
 import {
   Brr,
@@ -2005,20 +2004,6 @@ export const typeCheck = (
                     }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
                   )
               }
-              // env[UNBOUND_VARIABLE] = {
-              //   [STATS]: {
-              //     [SIGNATURE]: UNBOUND_VARIABLE,
-              //     [TYPE_PROP]: [],
-              //     [RETURNS]: []
-              //   }
-              // }
-              // checkReturnType({
-              //   exp: [[r]],
-              //   env,
-              //   stack,
-              //   name: UNBOUND_VARIABLE,
-              //   check
-              // })
               check(r, env, scope)
             }
             break
