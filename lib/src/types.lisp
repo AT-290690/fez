@@ -603,6 +603,7 @@
 (the binary-tree:value! (lambda Unknown[] Unknown (do Unknown[])))
 (the binary-tree:node? (lambda Unknown[] (do Boolean)))
 (the binary-tree:nil? (lambda Unknown[] (do Boolean)))
+(the binary-tree:equal? (lambda Unknown[] Unknown[] (do Boolean)))
 (the binary-tree:traverse-pre-order (lambda Unknown[] (lambda Unknown[] (do Unknown)) (do Number)))
 (the binary-tree:traverse-in-order (lambda Unknown[] (lambda Unknown[] (do Unknown)) (do Number)))
 (the binary-tree:traverse-post-order (lambda Unknown[] (lambda Unknown[] (do Unknown)) (do Number)))
