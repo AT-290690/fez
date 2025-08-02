@@ -23,6 +23,7 @@ export const RETURNS = 'returns'
 export const SCOPE_NAME = '__scope__'
 export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
+export const UNBOUND_VARIABLE = '__unbound__'
 export const UNKNOWN = -1
 export const COLLECTION = 3
 export const BOOLEAN = 5

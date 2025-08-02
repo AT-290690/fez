@@ -127,6 +127,13 @@ f)))
 (teeest2)
 (let moore-neighborhood (array (array 0 1) (array 1 0) (array -1 0) (array 0 -1) (array 1 -1) (array -1 -1) (array 1 1) (array -1 1)))
 (let ls { 1 2 3 })
+
+(let AAxs [ 10 20 30 40 ])
+(let AAx [(. AAxs 0)])
+
+(let BBxs [[ true false ]])
+(let BBx [(. BBxs 0 0)])
+
 `,
 
         [
@@ -157,7 +164,9 @@ f)))
           'teeest',
           'teeest2',
           'moore-neighborhood',
-          'ls'
+          'ls',
+          'AAx',
+          'BBx'
         ]
       ),
       [
@@ -188,7 +197,9 @@ f)))
         `(${STATIC_TYPES.DEFINE_TYPE} teeest (lambda (do Boolean[])))`,
         `(${STATIC_TYPES.DEFINE_TYPE} teeest2 (lambda (do Boolean[][])))`,
         `(${STATIC_TYPES.DEFINE_TYPE} moore-neighborhood Number[][])`,
-        `(${STATIC_TYPES.DEFINE_TYPE} ls Unknown[])`
+        `(${STATIC_TYPES.DEFINE_TYPE} ls Unknown[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} AAx Number[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} BBx Boolean[])`
       ]
     )
     deepStrictEqual(
@@ -672,6 +683,13 @@ ZZZ=ZZZ,ZZZ")
     doesNotThrow(() => type(std))
   })
   it('Should throw', () => {
+    fails(
+      `
+(let Bxs [[ 10 20 30 40 ]])
+(let f [(. Bxs 0 0 0)])`,
+      `(array:get) is trying to access nested structure at level (3) which is deeper than it's (2) levels at (array (array:get (array:get (array:get Bxs 0) 0) 0)) (check #1003)`,
+      'RangeError'
+    )
     fails(
       `(let xs [[[false]]])
 (let a (. xs 0 0 0))

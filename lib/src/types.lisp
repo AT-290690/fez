@@ -219,6 +219,7 @@
 (the math:big-integer-less-or-equal? (lambda Number[] Unknown[] (do Boolean)))
 (the math:big-integer-division (lambda Unknown[] Number[] (do Number[])))
 (the math:power-helper (lambda Number Number (do Number)))
+(the math:reciprocal (lambda Number (do Number)))
 (the math:power (lambda Number Number (do Number)))
 (the math:log-taylor-series (lambda Number Number (do Number)))
 (the math:int-log2 (lambda Number (do Number)))

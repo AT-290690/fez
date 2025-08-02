@@ -504,9 +504,10 @@
           (math:var-set! b (* (math:var-get b) (math:var-get b)))
           (math:var-set! e (// (math:var-get e) 2)))))
       (math:var-get result))))
+(let math:reciprocal (lambda x (/ 1 x)))
 (let math:power (lambda base exp (do
   (if (< exp 0)
-    (/ 1 (math:power base (- exp)))
+    (math:reciprocal (math:power base (- exp)))
     (math:power-helper base exp)))))
 (let math:log-taylor-series (lambda x n
   (do
@@ -1336,7 +1337,7 @@
     (* (tail-call:from:positive-or-negative-digits->integer 0 0 (* (math:power 10 (length digits)) 0.1)) (if negative? -1 1)))))
 (let from:positive-or-negative-digits->chars (lambda xs (|>
   xs
-  (array:map (lambda x (if (math:negative? x) (array 0 (* x -1)) (array 1 x))))
+  (array:map (lambda x (if (math:negative? x) (array false (* x -1)) (array true x))))
   (array:transform (lambda a x
   (if (array:first x)
       (array:set! a (length a) (from:digit->char (array:second x)))

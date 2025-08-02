@@ -45,9 +45,9 @@ import {
   IS_ARGUMENT,
   NUMBER,
   NUMBER_SUBTYPE,
-  UNKNOWN_SUBTYPE,
   SubType,
-  GET_ARRAY_INFERENCE_SET
+  GET_ARRAY_INFERENCE_SET,
+  UNBOUND_VARIABLE
 } from './types.js'
 import {
   Brr,
@@ -57,8 +57,7 @@ import {
   log,
   logExp,
   stringifyArgs,
-  wrapInApplyLambda,
-  wrapInBlock
+  wrapInApplyLambda
 } from './utils.js'
 
 export const identity = (name) => [
@@ -625,7 +624,9 @@ const resolveGetterRec = ([head, tail], env, times = 0) => {
     if (head !== WORD && head !== APPLY) return
     const prop = head === WORD ? TYPE_PROP : RETURNS
     if (!env[tail] || env[tail][STATS][prop][0] === UNKNOWN) return
-    const types = env[tail][STATS][prop][1].types
+    const types = isSubType(env[tail][STATS][prop][1])
+      ? env[tail][STATS][prop][1].types
+      : []
     const sub = types.at(-1)
     const type =
       sub === ATOM || sub === NUMBER || sub === BOOLEAN
@@ -634,7 +635,7 @@ const resolveGetterRec = ([head, tail], env, times = 0) => {
         ? APPLY
         : COLLECTION
     const len = types.length ? types.length + 1 : times + 1
-    return [times, len, type, types]
+    return [times, len, type, types, tail]
   }
 }
 const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
@@ -864,27 +865,36 @@ const resolveSetter = (first, rest, env, stack) => {
     //   )
   }
 }
-const initArrayTypeRec = ({ rem, env }) => {
-  return rem.slice(1).map((x) =>
-    isLeaf(x)
-      ? x[TYPE] === WORD
-        ? env[x[VALUE]]
-          ? // env[x[VALUE]][STATS][TYPE_PROP][0] === COLLECTION
-            //   ? initArrayTypeRec({ rem: x, env })
-            //   :
-            getTypes(env[x[VALUE]][STATS])
-          : [UNKNOWN]
-        : [
-            x[TYPE],
-            x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new SubType([UNKNOWN])
-          ]
-      : env[x[0][VALUE]]
-      ? x.length > 1 && env[x[0][VALUE]][STATS][RETURNS][0] === COLLECTION
-        ? initArrayTypeRec({ rem: x, env })
-        : getReturns(env[x[0][VALUE]][STATS])
-      : [UNKNOWN]
-  )
-}
+const initArrayTypeRec = ({ rem, env }) =>
+  rem.slice(1).map((x) => {
+    if (isLeaf(x))
+      if (x[TYPE] === WORD)
+        if (env[x[VALUE]]) return getTypes(env[x[VALUE]][STATS])
+        else return [UNKNOWN]
+      else
+        return [
+          x[TYPE],
+          x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new SubType([UNKNOWN])
+        ]
+    else if (env[x[0][VALUE]])
+      if (x.length > 1 && env[x[0][VALUE]][STATS][RETURNS][0] === COLLECTION)
+        return initArrayTypeRec({ rem: x, env })
+      else if (GET_ARRAY_INFERENCE_SET.has(x[0][VALUE])) {
+        const res = resolveGetterRec(x, env)
+        if (!res) return [UNKNOWN]
+        const name = resolveGetterRec(x, env).at(-1)
+        resolveGetter({
+          rem: x,
+          prop: RETURNS,
+          name,
+          env,
+          caller: x[0][VALUE],
+          exp: rem
+        })
+        return getReturns(env[name][STATS])
+      } else return getReturns(env[x[0][VALUE]][STATS])
+    else return [UNKNOWN]
+  })
 const initArrayType = ({ rem, env }) => {
   const ret = initArrayTypeRec({ rem, env })
   const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
@@ -1995,6 +2005,20 @@ export const typeCheck = (
                     }) at argument (${i}) (${stringifyArgs(exp)}) (check #20)`
                   )
               }
+              // env[UNBOUND_VARIABLE] = {
+              //   [STATS]: {
+              //     [SIGNATURE]: UNBOUND_VARIABLE,
+              //     [TYPE_PROP]: [],
+              //     [RETURNS]: []
+              //   }
+              // }
+              // checkReturnType({
+              //   exp: [[r]],
+              //   env,
+              //   stack,
+              //   name: UNBOUND_VARIABLE,
+              //   check
+              // })
               check(r, env, scope)
             }
             break
