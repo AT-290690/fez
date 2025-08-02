@@ -115,9 +115,12 @@
 (let zero 0)
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
+(let math:tau (* math:pi 2))
+
 (let math:min-safe-integer -9007199254740991)
 (let math:max-safe-integer 9007199254740991)
 (let math:decimal-scaling 1000000000000)
+(let math:infinity 9007199254740992)
 
 (let pair:apply (lambda x cb (cb (array:first x) (array:second x))))
 (let pair:fork-apply (lambda pair cb1 cb2 [(cb1 (array:first pair)) (cb2 (array:second pair))]))
@@ -2519,6 +2522,9 @@ heap)))
 (let array:for-range loop:for-range)
 
 (let π math:pi)
+(let τ math:tau)
+(let η math:e)
+(let ∞ math:infinity)
 (let λ lambda)
 
 (let array? (lambda x (and (not (atom? x)) (not (lambda? x)))))
