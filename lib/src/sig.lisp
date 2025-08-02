@@ -86,6 +86,10 @@
 (the list:fold (lambda Unknown[] (lambda Unknown Unknown (do Any)) Unknown (do Unknown)))
 
 (the bools:fold (lambda Boolean[] (lambda Boolean Boolean (do Boolean)) Boolean (do Boolean)))
+(the bools:map (lambda Boolean[] (lambda Boolean (do Boolean)) (do Boolean[])))
+(the bools:select (lambda Boolean[] (lambda Boolean (do Boolean)) (do Boolean[])))
+(the bools:exclude (lambda Boolean[] (lambda Boolean (do Boolean)) (do Boolean[])))
+
 (the boole:def-strict (lambda Boolean (do Boolean[])))
 (the boole:get (lambda Boolean[] (do Boolean)))
 (the boole:set! (lambda Boolean[] Boolean (do Boolean[])))

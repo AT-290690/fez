@@ -2099,11 +2099,10 @@
         (math:abs)
         (* 0.5)))))
 (let math:collinear? (lambda points (= (math:shoelace points) 0)))
-(let bools:fold (lambda xs cb initial (do xs
-    (let tail-call:bools:fold (lambda i out
-        (if (> (length xs) i)
-            (tail-call:bools:fold (+ i 1) (cb out (array:get xs i))) out))) 
-            (tail-call:bools:fold 0 initial))))
+(let bools:fold (lambda xs cb initial (array:fold xs cb initial)))
+(let bools:map (lambda xs cb (array:map xs cb)))
+(let bools:select (lambda xs cb? (array:select xs cb?)))
+(let bools:exclude (lambda xs cb? (array:exclude xs cb?)))
 (let boole:truths (lambda n (do
                           (let tail-call:boole:truths (lambda out
                           (if (< (length out) n) (tail-call:boole:truths (array:set! out (length out) true)) out)))
