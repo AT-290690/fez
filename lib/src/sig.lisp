@@ -3,6 +3,7 @@
 (the math:select (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
 (the math:exclude (lambda Number[] (lambda Number (do Boolean)) (do Number[])))
 (the math:fold (lambda Number[] (lambda Number Number (do Number)) Number (do Number)))
+(the math:enumerated-map (lambda Number[] (lambda Number Number (do Number)) (do Number[])))
 (the math:enumerated-fold (lambda Number[] (lambda Number Number Number (do Number)) Number (do Number)))
 (the math:every? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))
 (the math:some? (lambda Number[] (lambda Number (do Boolean)) (do Boolean)))

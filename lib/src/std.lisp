@@ -123,6 +123,9 @@
 (let math:infinity 9007199254740992)
 
 (let pair:apply (lambda x cb (cb (array:first x) (array:second x))))
+(let pair:apply-last (lambda xs cb (array:set! xs (- (length xs) 1) (cb (array:last xs)))))
+(let pair:apply-first (lambda xs cb (array:set! xs 0 (cb (array:first xs)))))
+(let pair:equal? (lambda [a b .] (array:equal? a b)))
 (let pair:fork-apply (lambda pair cb1 cb2 [(cb1 (array:first pair)) (cb2 (array:second pair))]))
 (let pair:add (lambda x (+ (array:first x) (array:second x))))
 (let pair:subtract (lambda x (- (array:first x) (array:second x))))
