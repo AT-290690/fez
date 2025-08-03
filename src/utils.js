@@ -389,42 +389,64 @@ export const init = () => {
     // console.log('Added file types.lisp in src')
     writeFileSync(
       'index.js',
-      `import { compile, enhance, parse, LISP, UTILS } from "fez-lisp";
-import { readFileSync, writeFileSync } from "fs";
-export const dev = (source, types) => {
-  try {
-    const parsed = parse(source);
-    const { evaluated, type, error } = UTILS.debug(
-      parsed,
-      true,
-      types ? types : undefined
-    );
-    if (error == null) {
-      if (type) {
-        UTILS.logType(type);
+      `import { compile, enhance, parse, LISP, UTILS, verify } from '../index.js'
+      import { readFileSync, writeFileSync } from 'fs'
+      export const dev = (source, types) => {
+        try {
+          const parsed = parse(source)
+          const { evaluated, type, error } = UTILS.debug(parsed, true, types)
+          if (error == null) {
+            if (type) {
+              UTILS.logType(type)
+            }
+            UTILS.logResult(LISP.serialise(evaluated))
+          } else UTILS.logError(error.message)
+        } catch (error) {
+          UTILS.logError(error.message)
+        }
       }
-      UTILS.logResult(LISP.serialise(evaluated));
-    } else UTILS.logError(error.message);
-  } catch (error) {
-    UTILS.logError(error.message);
-  }
-};
-export const comp = (source) => compile(enhance(parse(source)));
-const file = readFileSync("./src/main.lisp", "utf-8");
-const [src, typ] = UTILS.extractTypes(file);
-switch (process.argv[2]) {
-  case "comp":
-    writeFileSync(
-      "./src/main.js",
-      "var _ = " + comp(src) + "; console.log(_)"
-    );
-    break;
-  case "dev":
-  default:
-    dev(src, typ);
-    break;
-}
-`
+      export const run = (source) => {
+        try {
+          const parsed = parse(source)
+          const { evaluated, error } = UTILS.debug(parsed, false)
+          if (error == null) {
+            UTILS.logResult(LISP.serialise(evaluated))
+          } else UTILS.logError(error.message)
+        } catch (error) {
+          UTILS.logError(error.message)
+        }
+      }
+      export const check = (source, types) => {
+        try {
+          const parsed = parse(source)
+          const error = verify(parsed, types)
+          if (error == null) UTILS.logResult(LISP.serialise(evaluated))
+          else UTILS.logError(error)
+        } catch (error) {
+          UTILS.logError(error.message)
+        }
+      }
+      export const comp = (source) => compile(enhance(parse(source)))
+      const file = readFileSync('./src/main.lisp', 'utf-8')
+      const [src, typ] = UTILS.extractTypes(file)
+      switch (process.argv[2]) {
+        case 'check':
+          check(src, typ)
+          break
+        case 'run':
+          run(src, typ)
+          break
+        case 'comp':
+          writeFileSync(
+            './src/main.js',
+            'var _ = ' + comp(src) + '; console.log(_)'
+          )
+          break
+        case 'dev':
+        default:
+          dev(src, typ)
+          break
+      }`
     )
     console.log('Added file index.js in root')
     console.log(
@@ -432,6 +454,8 @@ switch (process.argv[2]) {
 
 Write code in main.lisp
 Run node index.js with the following flags:
+- check (static type check)
+- run (run time validations)
 - dev (static type check and run time validations)
 - comp (compile Fez to JavaScript file main.js)
 
@@ -645,3 +669,23 @@ export const toTypedAst = (ast, userDefinedTypes) => {
   }
 }
 export const atst = (ast, ctx) => toTypedAst(ast, ctx)[0]
+
+export const verify = (ast, userDefinedTypes) => {
+  try {
+    typeCheck(
+      ast,
+      withCtxTypes(
+        userDefinedTypes
+          ? {
+              ...definedTypes(filteredDefinedTypes(ast, std, stdT)),
+              ...definedTypes(LISP.parse(removeNoCode(userDefinedTypes)))
+            }
+          : definedTypes(filteredDefinedTypes(ast, std, stdT))
+      )
+    )
+    return null
+  } catch (error) {
+    // console.log(error)
+    return error.message
+  }
+}
