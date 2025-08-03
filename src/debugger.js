@@ -949,6 +949,7 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
       if (option === 'Scope') {
         if (wildcard) {
           return [...types.entries()]
+            .filter((x) => x[0].split(' ').length === 3 && !x[0].includes('.'))
             .sort((a, b) => a[0].localeCompare(b[0]))
             .map(([k, v]) => `${k}\n${v()}`)
             .join('\n\n')
@@ -957,6 +958,7 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
         return t ? t() : ''
       } else if (option === 'Search') {
         return [...types.entries()]
+          .filter((x) => x[0].split(' ').length === 3 && !x[0].includes('.'))
           .filter((x) => x[0].includes(name))
           .sort((a, b) => a[0].localeCompare(b[0]))
           .map(([k, v]) => `${k}\n${v()}`)
@@ -964,12 +966,22 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
       } else if (option === 'Special') {
         return formatType(name, SPECIAL_FORM_TYPES)
       } else if (option === 'Type') {
+        types = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
         const [from, to] = name.split(KEYWORDS.BLOCK).map((x) => x.trim())
         return [...types.entries()]
+          .filter((x) => x[0].split(' ').length === 3 && !x[0].includes('.'))
           .filter(([k, v]) => {
             const T = v()
             if (T && T.includes(KEYWORDS.BLOCK)) {
-              const [left, right] = T.split(KEYWORDS.BLOCK).map((x) => x.trim())
+              const [left, right] = LISP.parse(T)
+                .at(-1)
+                .at(-1)
+                .slice(1)
+                .flat(Infinity)
+                .filter((x) => x.length)
+                .join(' ')
+                .split(KEYWORDS.BLOCK)
+                .map((x) => x.trim())
               return left.includes(from) && right.includes(to)
             }
           })
@@ -979,8 +991,14 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
       } else if (option === 'Library') {
         types = typeCheck(std[0], withCtxTypes(definedTypes(stdT)))[1]
         const matches = wildcard
-          ? [...types.entries()]
-          : [...types.entries()].filter(([k, v]) => v().includes(name))
+          ? [...types.entries()].filter(
+              (x) => x[0].split(' ').length === 3 && !x[0].includes('.')
+            )
+          : [...types.entries()]
+              .filter(
+                (x) => x[0].split(' ').length === 3 && !x[0].includes('.')
+              )
+              .filter(([k, v]) => v().includes(name))
         return matches
           .sort((a, b) => a[0].length - b[0].length)
           .map(([k, v]) => `${k}\n${v()}`)
