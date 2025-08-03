@@ -867,7 +867,14 @@ const evaluate = (exp, env = keywords) => {
       res = env[value]
       return res
     case APPLY:
-      res = env[value](tail, env)
+      const apply = env[value]
+      if (apply == undefined)
+        throw new ReferenceError(
+          `Undefined (${
+            KEYWORDS.ANONYMOUS_FUNCTION
+          }) (${value}) (${stringifyArgs(exp)})`
+        )
+      res = apply(tail, env)
       if (
         isDebugging &&
         value !== KEYWORDS.BLOCK &&
@@ -1185,7 +1192,7 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
       error: null
     }
   } catch (error) {
-    // console.log(error)
+    console.log(error)
     return {
       type: null,
       evaluated: null,

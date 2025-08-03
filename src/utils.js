@@ -420,8 +420,7 @@ export const init = () => {
         try {
           const parsed = parse(source)
           const error = verify(parsed, types)
-          if (error == null) UTILS.logResult(LISP.serialise(evaluated))
-          else UTILS.logError(error)
+          if (error != null) UTILS.logError(error)
         } catch (error) {
           UTILS.logError(error.message)
         }
