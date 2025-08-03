@@ -116,21 +116,22 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
         return formatType(name, SPECIAL_FORM_TYPES)
       } else if (option === 'Type') {
         const [from, to] = name.split(KEYWORDS.BLOCK).map((x) => x.trim())
-        return [...types.entries()]
+        return [...libraryTypes.entries()]
           .filter((x) => x[0].split(' ').length === 3 && !x[0].includes('.'))
           .filter(([k, v]) => {
             const T = v()
-            if (T && T.includes(KEYWORDS.BLOCK)) {
-              const [left, right] = LISP.parse(T)
-                .at(-1)
-                .at(-1)
-                .slice(1)
-                .flat(Infinity)
-                .filter((x) => x.length)
-                .join(' ')
-                .split(KEYWORDS.BLOCK)
-                .map((x) => x.trim())
-              return left.includes(from) && right.includes(to)
+            if (T) {
+              const last = LISP.parse(T).at(-1).at(-1)
+              if (last[0][VALUE] === KEYWORDS.ANONYMOUS_FUNCTION) {
+                const [left, right] = last
+                  .slice(1)
+                  .flat(Infinity)
+                  .filter((x) => x.length)
+                  .join(' ')
+                  .split(KEYWORDS.BLOCK)
+                  .map((x) => x.trim())
+                return left.includes(from) && right.includes(to)
+              }
             }
           })
           .sort((a, b) => a[0].length - b[0].length)
