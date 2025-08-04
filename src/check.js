@@ -106,9 +106,9 @@ export const castReturn = (stats, type) => {
   )
 }
 export const isGenericReturn = (stats) =>
-  stats[RETURNS].length === 3 && stats[RETURNS][2] !== -1
+  stats[RETURNS].length === 3 && stats[RETURNS][2][0] !== -1
 export const isGenericType = (stats) =>
-  stats[TYPE_PROP].length === 3 && stats[TYPE_PROP][2] !== -1
+  stats[TYPE_PROP].length === 3 && stats[TYPE_PROP][2][0] !== -1
 
 export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) => {
@@ -118,7 +118,7 @@ export const setPropToAtom = (stats, prop) => {
   )
 }
 const setReturnToGeneric = (stats, index) => {
-  stats[RETURNS] = [UNKNOWN, undefined, index]
+  stats[RETURNS] = [UNKNOWN, undefined, [index, 1]]
 }
 export const setPropToPredicate = (stats, prop) => {
   return (stats[prop][1] = BOOLEAN_SUBTYPE())
@@ -964,18 +964,18 @@ const resolveReturnType = ({
       else
         once(env[name][STATS], exp, stack, () => {
           setPropToTypeRef(env[name][STATS], prop, env[returns[VALUE]][STATS])
-          if (isUnknownProp(env[name][STATS], prop)) {
-            // TODO: DRY
-            const index = env[name][STATS][ARGUMENTS]
-              ? env[name][STATS][ARGUMENTS].findIndex(
-                  (x) => x[STATS][SIGNATURE] === returns[VALUE]
-                )
-              : -1
-            if (index >= 0) {
-              setReturnToGeneric(env[name][STATS], index)
-              return true
-            } else if (!env[returns[VALUE]]) return false
-          }
+          // if (isUnknownProp(env[name][STATS], prop)) {
+          //   // TODO: DRY
+          //   const index = env[name][STATS][ARGUMENTS]
+          //     ? env[name][STATS][ARGUMENTS].findIndex(
+          //         (x) => x[STATS][SIGNATURE] === returns[VALUE]
+          //       )
+          //     : -1
+          //   if (index >= 0) {
+          //     setReturnToGeneric(env[name][STATS], index)
+          //     return true
+          //   } else if (!env[returns[VALUE]]) return false
+          // }
         })
     }
   } else {
@@ -1010,114 +1010,129 @@ const resolveReturnType = ({
             })
           }
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
-          // TODO: DRY
-          // const index = env[name][STATS][ARGUMENTS]
-          //   ? env[name][STATS][ARGUMENTS].findIndex(
-          //       (x) => x[STATS][SIGNATURE] === returns[VALUE]
-          //     )
-          //   : -1
-
-          // if (index >= 0) {
-          //   setReturnToGeneric(env[name][STATS], index)
-          //   return true
-          // } else
           if (!env[returns[VALUE]]) return false
           else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
             if (returns[TYPE] === WORD) setReturnToAbstraction(env[name][STATS])
-            else {
-              // ALWAYS APPLY
-              // rest.at(-1)[0][TYPE] === APPLY
-              // Here is upon application to store the result in the variable
-
-              if (isUnknownType(env[name][STATS]))
-                stagger(stack, 'prepend', exp, () => {
-                  if (isGenericReturn(env[returns[VALUE]][STATS])) {
-                    // env[name][STATS][TYPE_PROP] =
-                    const genericReturn =
-                      rem.slice(1)[env[returns[VALUE]][STATS][RETURNS][2]]
-                    const nestGeneric =
-                      env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION
-                        ? isSubType(env[returns[VALUE]][STATS][RETURNS][1])
-                          ? env[returns[VALUE]][STATS][
-                              RETURNS
-                            ][1].nestedLevels()
-                          : 0
+            // ALWAYS APPLY
+            // rest.at(-1)[0][TYPE] === APPLY
+            // Here is upon application to store the   result in the variable
+            else if (isUnknownType(env[name][STATS]))
+              stagger(stack, 'prepend', exp, () => {
+                if (isGenericReturn(env[returns[VALUE]][STATS])) {
+                  // env[name][STATS][TYPE_PROP] =
+                  const [index, multiplier] =
+                    env[returns[VALUE]][STATS][RETURNS][2]
+                  const genericReturn = rem.slice(1)[index]
+                  const nestGeneric =
+                    env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION
+                      ? isSubType(env[returns[VALUE]][STATS][RETURNS][1])
+                        ? env[returns[VALUE]][STATS][RETURNS][1].nestedLevels()
                         : 0
-                    const head = isLeaf(genericReturn)
-                      ? genericReturn
-                      : genericReturn[0]
+                      : 0
 
-                    switch (head[TYPE]) {
-                      case ATOM:
-                        setTypeToAtom(env[name][STATS])
-                        break
-                      case WORD:
-                        if (env[head[VALUE]])
-                          env[name][STATS][prop] =
-                            env[head[VALUE]][STATS][TYPE_PROP]
-                        break
-                      case APPLY:
-                        switch (head[VALUE]) {
-                          case KEYWORDS.ANONYMOUS_FUNCTION:
-                            {
-                              // TODO figure out a better way to do this
-                              // This is initialization of identity or any other
-                              // function that returns it's argument
-                              // Redefine the variable but since it's an error doing that
-                              // Delete it first
-                              delete env[name]
-                              check(
-                                [
-                                  [APPLY, KEYWORDS.DEFINE_VARIABLE],
-                                  [WORD, name],
-                                  genericReturn
-                                ],
-                                env,
-                                exp
-                              )
+                  const head = isLeaf(genericReturn)
+                    ? genericReturn
+                    : genericReturn[0]
 
-                              // const n = genericReturn.length
-                              // setTypeToAbstraction(env[name][STATS])
-                              // env[name][STATS][ARG_COUNT] = n - 2
-                              // env[name][STATS][ARGUMENTS] = fillUnknownArgs(
-                              //   n - 2
-                              // )
-                              // checkReturnType({
-                              //   exp: [genericReturn],
-                              //   stack,
-                              //   name,
-                              //   env,
-                              //   check
-                              // })
-                            }
-                            break
-                          case KEYWORDS.CREATE_ARRAY:
-                            {
-                              setTypeToCollection(env[name][STATS])
-                              setPropToSubReturn(
-                                env[name][STATS],
-                                TYPE_PROP,
-                                initArrayType({ rem: genericReturn, env })
+                  switch (head[TYPE]) {
+                    case ATOM:
+                      setTypeToAtom(env[name][STATS])
+                      break
+                    case WORD:
+                      if (env[head[VALUE]])
+                        env[name][STATS][prop] =
+                          env[head[VALUE]][STATS][TYPE_PROP]
+                      break
+                    case APPLY:
+                      switch (head[VALUE]) {
+                        case KEYWORDS.ANONYMOUS_FUNCTION:
+                          {
+                            // TODO figure out a better way to do this
+                            // This is initialization of identity or any other
+                            // function that returns it's argument
+                            // Redefine the variable but since it's an error doing that
+                            // Delete it first
+                            delete env[name]
+                            check(
+                              [
+                                [APPLY, KEYWORDS.DEFINE_VARIABLE],
+                                [WORD, name],
+                                genericReturn
+                              ],
+                              env,
+                              exp
+                            )
+
+                            // const n = genericReturn.length
+                            // setTypeToAbstraction(env[name][STATS])
+                            // env[name][STATS][ARG_COUNT] = n - 2
+                            // env[name][STATS][ARGUMENTS] = fillUnknownArgs(
+                            //   n - 2
+                            // )
+                            // checkReturnType({
+                            //   exp: [genericReturn],
+                            //   stack,
+                            //   name,
+                            //   env,
+                            //   check
+                            // })
+                          }
+                          break
+                        case KEYWORDS.CREATE_ARRAY:
+                          {
+                            setTypeToCollection(env[name][STATS])
+                            setPropToSubReturn(
+                              env[name][STATS],
+                              TYPE_PROP,
+                              initArrayType({ rem: genericReturn, env })
+                            )
+                          }
+                          break
+                        default:
+                          break
+                      }
+                      break
+                    default:
+                      if (env[head[VALUE]])
+                        setTypeToReturn(
+                          env[name][STATS],
+                          env[head[VALUE]][STATS]
+                        )
+                      break
+                  }
+                  if (env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION) {
+                    const T = isSubType(env[name][STATS][prop][1])
+                      ? env[name][STATS][prop][1].types
+                      : [env[name][STATS][prop][0]]
+                    if (multiplier === -1) {
+                      if (nestGeneric === 0) {
+                        if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
+                          if (isSubType(env[name][STATS][prop][1])) {
+                            if (env[name][STATS][prop][1].types.length === 1)
+                              env[name][STATS][prop][0] = ATOM
+                            else {
+                              env[name][STATS][prop][1] = new SubType(
+                                env[name][STATS][prop][1].types.slice(1)
                               )
+                              env[name][STATS][prop][0] = COLLECTION
                             }
-                            break
-                          default:
-                            break
+                          } else env[name][STATS][prop][0] = ATOM
                         }
-                        break
-                      default:
-                        if (env[head[VALUE]])
-                          setTypeToReturn(
-                            env[name][STATS],
-                            env[head[VALUE]][STATS]
-                          )
-                        break
-                    }
-                    if (env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION) {
-                      console.log('dsds')
-                      const T = isSubType(env[name][STATS][prop][1])
-                        ? env[name][STATS][prop][1].types
-                        : [env[name][STATS][prop][0]]
+                      } else {
+                        if (T.length - nestGeneric - 1) {
+                          for (let i = 0; i < nestGeneric + 1; ++i)
+                            env[name][STATS][prop][1].types.shift()
+                        } else {
+                          if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
+                            env[name][STATS][prop][0] = ATOM
+                            env[name][STATS][prop][0] = T.at(-1)
+                          } else {
+                            env[name][STATS][prop][0] = APPLY
+                            env[name][STATS][prop].length = 1
+                          }
+                        }
+                      }
+                    } else {
                       const st = new SubType([])
                       for (let i = 0; i < nestGeneric; ++i) st.add(COLLECTION)
                       if (env[name][STATS][prop][0] === COLLECTION)
@@ -1126,19 +1141,18 @@ const resolveReturnType = ({
                       env[name][STATS][prop][0] = COLLECTION
                       env[name][STATS][prop][1] = st
                     }
-                  } else {
-                    setTypeToReturnRef(
-                      env[name][STATS],
-                      env[returns[VALUE]][STATS]
-                    )
                   }
-                })
-              else {
-                // if (SPECIAL_FORMS_SET.has(returns[VALUE]))
-                //   setReturn(env[name][STATS], env[returns[VALUE]][STATS])
-                // else
-                setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
-              }
+                } else
+                  setTypeToReturnRef(
+                    env[name][STATS],
+                    env[returns[VALUE]][STATS]
+                  )
+              })
+            else {
+              // if (SPECIAL_FORMS_SET.has(returns[VALUE]))
+              //   setReturn(env[name][STATS], env[returns[VALUE]][STATS])
+              // else
+              setReturnRef(env[name][STATS], env[returns[VALUE]][STATS])
             }
           }
         }

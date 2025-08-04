@@ -121,7 +121,7 @@ export const toTypeNames = (type) => {
 
 export const extractArrayType = (type) => {
   const arr = [...type].filter((x) => x === '[')
-  return [type.split('[')[0], arr.length]
+  return [type.replaceAll('[]', ''), arr.length]
 }
 const fillArrayType = (n) => Array.from({ length: n - 1 }).fill(COLLECTION)
 export const toTypeCodes = (type, i) => {
@@ -144,10 +144,16 @@ export const toTypeCodes = (type, i) => {
       return [UNKNOWN]
     case 'Any':
       return [ANY]
-    default:
+    default: {
+      const d = type[0] === '[' ? -1 : 1
       if (n)
-        return [COLLECTION, new SubType(fillArrayType(n).concat(UNKNOWN)), i]
-      return [UNKNOWN, undefined, i]
+        return [
+          COLLECTION,
+          new SubType(fillArrayType(n).concat(UNKNOWN)),
+          [i, d]
+        ]
+      return [UNKNOWN, undefined, [i, d]]
+    }
   }
 }
 export const toTypeNamesAnyToUknown = (type) => {
@@ -1540,7 +1546,8 @@ export const fromSourceToType = (T) => {
           args.findIndex(
             (x) =>
               !Array.isArray(x[VALUE]) &&
-              x[VALUE] === returns[VALUE].split('[')[0]
+              x[VALUE] ===
+                returns[VALUE].replaceAll('[', '').replaceAll(']', '')
           )
         )
       }
