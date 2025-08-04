@@ -58,6 +58,9 @@ export class SubType {
   has(type) {
     return this.types[0] === type
   }
+  nestedLevels() {
+    return this.types.length - 1
+  }
   isMatching(b) {
     for (let i = 0; i < this.types.length; ++i) {
       if (
@@ -66,7 +69,9 @@ export class SubType {
         this.types[i] === UNKNOWN ||
         b.types[i] === UNKNOWN ||
         this.types[i] === ANY ||
-        b.types[i] === ANY
+        b.types[i] === ANY ||
+        this.types[i] === GENERIC ||
+        b.types[i] === GENERIC
       )
         return true
       if (this.types[i] !== b.types[i]) return false
@@ -83,6 +88,7 @@ export class SubType {
 export const BOOLEAN_SUBTYPE = () => new SubType([BOOLEAN])
 export const COLLECTION_SUBTYPE = () => new SubType([COLLECTION])
 export const NUMBER_SUBTYPE = () => new SubType([NUMBER])
+export const GENERIC_SUBTYPE = () => new SubType([GENERIC])
 export const ABSTRACTION_SUBTYPE = () => new SubType([APPLY])
 export const UNKNOWN_SUBTYPE = () => new SubType([UNKNOWN])
 
@@ -106,6 +112,8 @@ export const toTypeNames = (type) => {
       return 'Unknown[]'
     case ANY:
       return 'Any'
+    case GENERIC:
+    // return 'T'
     default:
       return 'Unknown'
   }
@@ -116,7 +124,7 @@ export const extractArrayType = (type) => {
   return [type.split('[')[0], arr.length]
 }
 const fillArrayType = (n) => Array.from({ length: n - 1 }).fill(COLLECTION)
-export const toTypeCodes = (type) => {
+export const toTypeCodes = (type, i) => {
   const [t, n] = extractArrayType(type)
   switch (t) {
     case 'Abstraction':
@@ -137,7 +145,9 @@ export const toTypeCodes = (type) => {
     case 'Any':
       return [ANY]
     default:
-      break
+      if (n)
+        return [COLLECTION, new SubType(fillArrayType(n).concat(UNKNOWN)), i]
+      return [UNKNOWN, undefined, i]
   }
 }
 export const toTypeNamesAnyToUknown = (type) => {
@@ -1492,7 +1502,7 @@ export const toArgType = (A, i) => {
         [IS_ARGUMENT]: true,
         [SIGNATURE]: PLACEHOLDER,
         [TYPE_PROP]: [APPLY],
-        [RETURNS]: toTypeCodes(returns[VALUE]),
+        [RETURNS]: toTypeCodes(returns[VALUE], i),
         [ARGUMENTS]: args.map(toArgType).flat(1),
         [ARG_COUNT]: args.length
       }
@@ -1504,8 +1514,8 @@ export const toArgType = (A, i) => {
         retried: Infinity,
         [IS_ARGUMENT]: true,
         [SIGNATURE]: PLACEHOLDER,
-        [TYPE_PROP]: toTypeCodes(arg[VALUE]),
-        [RETURNS]: toTypeCodes(arg[VALUE]),
+        [TYPE_PROP]: toTypeCodes(arg[VALUE], i),
+        [RETURNS]: toTypeCodes(arg[VALUE], i),
         [ARGUMENTS]: [],
         [ARG_COUNT]: 0
       }
@@ -1525,7 +1535,14 @@ export const fromSourceToType = (T) => {
         [SIGNATURE]: name,
         [ARG_COUNT]: args.length,
         [ARGUMENTS]: args.map(toArgType).flat(1),
-        [RETURNS]: toTypeCodes(returns[VALUE])
+        [RETURNS]: toTypeCodes(
+          returns[VALUE],
+          args.findIndex(
+            (x) =>
+              !Array.isArray(x[VALUE]) &&
+              x[VALUE] === returns[VALUE].split('[')[0]
+          )
+        )
       }
     }
   }
@@ -1541,9 +1558,9 @@ export const withStdDefinedTypes = (ast) =>
   withCtxTypes(definedTypes(filteredDefinedTypes(ast, std, stdT)))
 
 export const extractTypes = (source) => {
-  let types
+  let types = ''
   const src = source.replaceAll(/\(the.+\)/g, (match, token) => {
-    types = match
+    types += match + '\n'
     return ''
   })
   return [src, types]

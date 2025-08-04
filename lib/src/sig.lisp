@@ -112,4 +112,11 @@
 (the from:digits->chars (lambda Number[] (do Number[])))
 (the from:digits->integer (lambda Number[] (do Number)))
 (the from:integer->digits (lambda Number (do Number[])))
-(the from:chars->set (lambda Number[] (do Unknown[][])))
+(the from:chars->set (lambda Number[] (do Number[][])))
+
+(the identity (lambda T (do T)))
+
+(the generic:fold (lambda T (lambda K M (do K)) K (do K)))
+(the generic:map (lambda T (lambda T (do T)) (do T)))
+(the generic:enumerated-fold (lambda T (lambda K Number M (do K)) K (do K)))
+(the generic:enumerated-map (lambda T (lambda T Number (do T)) (do T)))

@@ -46,7 +46,8 @@ import {
   NUMBER,
   NUMBER_SUBTYPE,
   SubType,
-  GET_ARRAY_INFERENCE_SET
+  GET_ARRAY_INFERENCE_SET,
+  GENERIC
 } from './types.js'
 import {
   Brr,
@@ -104,7 +105,11 @@ export const castReturn = (stats, type) => {
     type[RETURNS][1] && (stats[RETURNS][1] = type[RETURNS][1])
   )
 }
-export const isGenericReturn = (stats) => stats[RETURNS].length === 3
+export const isGenericReturn = (stats) =>
+  stats[RETURNS].length === 3 && stats[RETURNS][2] !== -1
+export const isGenericType = (stats) =>
+  stats[TYPE_PROP].length === 3 && stats[TYPE_PROP][2] !== -1
+
 export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) => {
   return (
@@ -275,9 +280,8 @@ export const setReturnToType = (stats, value) =>
 export const isAnyReturn = (stats) => stats && stats[RETURNS][0] === ANY
 export const isAnyType = (stats) => stats && stats[TYPE_PROP][0] === ANY
 export const isUnknownType = (stats) => stats && stats[TYPE_PROP][0] === UNKNOWN
-export const isUnknownProp = (stats, prop) => {
-  return stats && stats[prop][0] === UNKNOWN
-}
+export const isUnknownProp = (stats, prop) =>
+  stats && stats[prop][0] === UNKNOWN
 export const isSubType = (subtype) => subtype instanceof SubType
 export const isSubTypeUknown = (subtype) =>
   subtype.size === 1 && subtype.has(UNKNOWN)
@@ -1007,38 +1011,50 @@ const resolveReturnType = ({
           }
           checkPredicateNameDeep(name, exp, exp.slice(1), returns)
           // TODO: DRY
-          const index = env[name][STATS][ARGUMENTS]
-            ? env[name][STATS][ARGUMENTS].findIndex(
-                (x) => x[STATS][SIGNATURE] === returns[VALUE]
-              )
-            : -1
+          // const index = env[name][STATS][ARGUMENTS]
+          //   ? env[name][STATS][ARGUMENTS].findIndex(
+          //       (x) => x[STATS][SIGNATURE] === returns[VALUE]
+          //     )
+          //   : -1
 
-          if (index >= 0) {
-            setReturnToGeneric(env[name][STATS], index)
-            return true
-          } else if (!env[returns[VALUE]]) return false
+          // if (index >= 0) {
+          //   setReturnToGeneric(env[name][STATS], index)
+          //   return true
+          // } else
+          if (!env[returns[VALUE]]) return false
           else if (getType(env[returns[VALUE]][STATS]) === APPLY) {
             if (returns[TYPE] === WORD) setReturnToAbstraction(env[name][STATS])
             else {
               // ALWAYS APPLY
               // rest.at(-1)[0][TYPE] === APPLY
               // Here is upon application to store the result in the variable
+
               if (isUnknownType(env[name][STATS]))
                 stagger(stack, 'prepend', exp, () => {
                   if (isGenericReturn(env[returns[VALUE]][STATS])) {
                     // env[name][STATS][TYPE_PROP] =
                     const genericReturn =
                       rem.slice(1)[env[returns[VALUE]][STATS][RETURNS][2]]
+                    const nestGeneric =
+                      env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION
+                        ? isSubType(env[returns[VALUE]][STATS][RETURNS][1])
+                          ? env[returns[VALUE]][STATS][
+                              RETURNS
+                            ][1].nestedLevels()
+                          : 0
+                        : 0
                     const head = isLeaf(genericReturn)
                       ? genericReturn
                       : genericReturn[0]
+
                     switch (head[TYPE]) {
                       case ATOM:
                         setTypeToAtom(env[name][STATS])
                         break
                       case WORD:
                         if (env[head[VALUE]])
-                          setStatsRef(env[name], env[head[VALUE]])
+                          env[name][STATS][prop] =
+                            env[head[VALUE]][STATS][TYPE_PROP]
                         break
                       case APPLY:
                         switch (head[VALUE]) {
@@ -1059,6 +1075,7 @@ const resolveReturnType = ({
                                 env,
                                 exp
                               )
+
                               // const n = genericReturn.length
                               // setTypeToAbstraction(env[name][STATS])
                               // env[name][STATS][ARG_COUNT] = n - 2
@@ -1084,7 +1101,10 @@ const resolveReturnType = ({
                               )
                             }
                             break
+                          default:
+                            break
                         }
+                        break
                       default:
                         if (env[head[VALUE]])
                           setTypeToReturn(
@@ -1093,11 +1113,25 @@ const resolveReturnType = ({
                           )
                         break
                     }
-                  } else
+                    if (env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION) {
+                      console.log('dsds')
+                      const T = isSubType(env[name][STATS][prop][1])
+                        ? env[name][STATS][prop][1].types
+                        : [env[name][STATS][prop][0]]
+                      const st = new SubType([])
+                      for (let i = 0; i < nestGeneric; ++i) st.add(COLLECTION)
+                      if (env[name][STATS][prop][0] === COLLECTION)
+                        st.add(COLLECTION)
+                      st.add(...T)
+                      env[name][STATS][prop][0] = COLLECTION
+                      env[name][STATS][prop][1] = st
+                    }
+                  } else {
                     setTypeToReturnRef(
                       env[name][STATS],
                       env[returns[VALUE]][STATS]
                     )
+                  }
                 })
               else {
                 // if (SPECIAL_FORMS_SET.has(returns[VALUE]))
@@ -1144,11 +1178,11 @@ export const typeCheck = (
   // TODO also handle casting
   const match = ({ rest, args, i, env, scope, exp }) => {
     const first = exp[0]
-    const actual =
+    let actual =
       rest[i][0][VALUE] === KEYWORDS.CREATE_ARRAY
         ? initArrayType({ rem: rest[i], env })
         : env[rest[i][0][VALUE]][STATS]
-    const expected = args[i][STATS]
+    let expected = args[i][STATS]
     retryArgs(args[i][STATS], exp, stack, () =>
       match({ rest, args, i, env, scope, exp })
     )
@@ -1212,6 +1246,14 @@ export const typeCheck = (
                   const match1 = () => {
                     const actual = local[lambdaName]
                     const expected = args[i]
+                    // if (
+                    //   isGenericReturn(args[i][STATS]) &&
+                    //   !isUnknownReturn(actual[STATS]) &&
+                    //   !isAnyReturn(actual[STATS])
+                    // ) {
+                    //   args[i][STATS][RETURNS] = actual[STATS][RETURNS]
+                    //   return
+                    // }
                     if (
                       !isUnknownReturn(expected[STATS]) &&
                       !isUnknownReturn(actual[STATS]) &&
@@ -1249,48 +1291,65 @@ export const typeCheck = (
                       )
                   }
                   match1()
-                  for (let j = 0; j < args[i][STATS][ARGUMENTS].length; ++j) {
-                    const actual = local[lambdaName][STATS][ARGUMENTS][j]
-                    const expected = args[i][STATS][ARGUMENTS][j]
-                    if (
-                      !isUnknownType(actual[STATS]) &&
-                      !isUnknownType(expected[STATS]) &&
-                      (!equalTypes(actual[STATS], expected[STATS]) ||
-                        !equalSubTypes(actual[STATS], expected[STATS]))
-                    )
-                      throw new TypeError(
-                        `Incorrect type for (${KEYWORDS.ANONYMOUS_FUNCTION}) (${
-                          args[i][STATS][SIGNATURE]
-                        }) argument at position (${j}) named as (${
-                          local[lambdaName][STATS][ARGUMENTS][j][STATS][
-                            SIGNATURE
-                          ]
-                        }). Expected (${formatSubType(
-                          getTypes(expected[STATS])
-                        )}) but got (${formatSubType(
-                          getTypes(actual[STATS])
-                        )}) (${stringifyArgs(exp)}) (check #780)`
+                  const match2 = () => {
+                    for (let j = 0; j < args[i][STATS][ARGUMENTS].length; ++j) {
+                      const actual = local[lambdaName][STATS][ARGUMENTS][j]
+                      const expected = args[i][STATS][ARGUMENTS][j]
+                      // if (
+                      //   isGenericType(expected[STATS]) &&
+                      //   !isUnknownType(actual[STATS]) &&
+                      //   !isAnyType(actual[STATS])
+                      // ) {
+                      //   expected[STATS][TYPE_PROP] = actual[STATS][TYPE_PROP]
+                      //   return
+                      // }
+
+                      if (
+                        !isUnknownType(actual[STATS]) &&
+                        !isUnknownType(expected[STATS]) &&
+                        (!equalTypes(actual[STATS], expected[STATS]) ||
+                          !equalSubTypes(actual[STATS], expected[STATS]))
                       )
-                    else if (!equalSubReturns(expected[STATS], actual[STATS]))
-                      throw new TypeError(
-                        `Incorrect return type for (${
-                          expected[STATS][SIGNATURE]
-                        }) the (${KEYWORDS.ANONYMOUS_FUNCTION}) argument of (${
-                          first[VALUE]
-                        }) at position (${i}). Expected (${formatSubType(
-                          getReturns(expected[STATS])
-                        )}) but got (${formatSubType(
-                          getReturns(actual[STATS])
-                        )}) (${stringifyArgs(exp)}) (check #784)`
-                      )
-                    // else
-                    //   retry(
-                    //     actual[STATS],
-                    //     [[WORD, lambdaName], local],
-                    //     stack,
-                    //     match2
-                    //   )
+                        throw new TypeError(
+                          `Incorrect type for (${
+                            KEYWORDS.ANONYMOUS_FUNCTION
+                          }) (${
+                            args[i][STATS][SIGNATURE]
+                          }) argument at position (${j}) named as (${
+                            local[lambdaName][STATS][ARGUMENTS][j][STATS][
+                              SIGNATURE
+                            ]
+                          }). Expected (${formatSubType(
+                            getTypes(expected[STATS])
+                          )}) but got (${formatSubType(
+                            getTypes(actual[STATS])
+                          )}) (${stringifyArgs(exp)}) (check #780)`
+                        )
+                      else if (!equalSubReturns(expected[STATS], actual[STATS]))
+                        throw new TypeError(
+                          `Incorrect return type for (${
+                            expected[STATS][SIGNATURE]
+                          }) the (${
+                            KEYWORDS.ANONYMOUS_FUNCTION
+                          }) argument of (${
+                            first[VALUE]
+                          }) at position (${i}). Expected (${formatSubType(
+                            getReturns(expected[STATS])
+                          )}) but got (${formatSubType(
+                            getReturns(actual[STATS])
+                          )}) (${stringifyArgs(exp)}) (check #784)`
+                        )
+                      else {
+                        retry(
+                          actual[STATS],
+                          [[WORD, lambdaName], local],
+                          stack,
+                          match2
+                        )
+                      }
+                    }
                   }
+                  match2()
                 }
               } else {
                 // TODO fix curry: lambdas enter here as undefined
@@ -1380,6 +1439,7 @@ export const typeCheck = (
                 const checkReturns = () => {
                   if (
                     !isUnknownReturn(actual[STATS]) &&
+                    !isUnknownReturn(expected[STATS]) &&
                     (!equalReturns(expected[STATS], actual[STATS]) ||
                       !equalSubReturns(expected[STATS], actual[STATS]))
                   )
@@ -1400,6 +1460,7 @@ export const typeCheck = (
                     const argA = actual[STATS][ARGUMENTS][i]
                     if (
                       !isUnknownType(argA[STATS]) &&
+                      !isUnknownType(argE[STATS]) &&
                       (!equalTypes(argE[STATS], argA[STATS]) ||
                         !equalSubTypes(argE[STATS], argA[STATS]))
                     )
@@ -1552,9 +1613,12 @@ export const typeCheck = (
                   ? UNKNOWN
                   : env[right[VALUE]][STATS][RETURNS][0]
 
-                if (type !== UNKNOWN && type !== ANY) {
+                if (
+                  type !== UNKNOWN &&
+                  type !== ANY &&
+                  !isGenericReturn(env[right[VALUE]][STATS])
+                )
                   setTypeToReturn(env[name][STATS], env[right[VALUE]][STATS])
-                }
 
                 const resolve = () => {
                   const body = rightHand
@@ -1772,6 +1836,7 @@ export const typeCheck = (
                 }
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
+                // const generics = Array.from(args).fill(null)
                 for (let i = 0; i < args.length; ++i) {
                   // type check
                   // TODO get rof pred type
@@ -1813,6 +1878,9 @@ export const typeCheck = (
                                   )
                               }
                             }
+                            // if (isGenericType(args[i][STATS])) {
+                            //   generics[i] = env[name]
+                            // }
                             const eqTypes = equalTypes(
                               args[i][STATS],
                               env[name][STATS]
@@ -1928,13 +1996,17 @@ export const typeCheck = (
                             !equalSubTypes(args[i][STATS], env[name][STATS]))
                         )
                           setType(env[name][STATS], args[i][STATS])
-                        else if (isUnknownType(env[name][STATS])) {
+                        else if (
+                          isUnknownType(env[name][STATS]) &&
+                          !isUnknownType(args[i][STATS])
+                        ) {
                           // REFF ASSIGMENT
                           // EXPLAIN: Not assigning ref fixes this overwriting
                           // (let sum (lambda testxs (+ (get testxs 0) (get testxs 1))))
                           // (let range (math:range 1 10))
                           // (sum range)
                           // But it reduces good inference too
+
                           if (getType(args[i][STATS]) !== APPLY)
                             setTypeRef(env[name][STATS], args[i][STATS])
                           else setStatsRef(env[rest[i][VALUE]], args[i])
@@ -1987,6 +2059,31 @@ export const typeCheck = (
                     }
                   }
                 }
+                // if (generics.some((x) => x !== null)) {
+                //   const copy = Object.create(env)
+                //   const genCopy = [...generics]
+                //   for (let i = 0; i < generics.length; ++i) {
+                //     if (!generics[i]) continue
+                //     genCopy[i] = structuredClone(
+                //       copy[first[VALUE]][STATS][ARGUMENTS][i]
+                //     )
+                //     copy[first[VALUE]][STATS][ARGUMENTS][i] = structuredClone(
+                //       generics[i]
+                //     )
+                //     copy[first[VALUE]][STATS][ARGUMENTS][i][STATS][
+                //       TYPE_PROP
+                //     ].length = 2
+                //   }
+                //   check(exp, copy, scope)
+
+                //   for (let i = 0; i < generics.length; ++i) {
+                //     if (!generics[i]) continue
+                //     copy[first[VALUE]][STATS][ARGUMENTS][i] = genCopy[i]
+                //     copy[first[VALUE]][STATS][ARGUMENTS][i][STATS][
+                //       TYPE_PROP
+                //     ].length = 2
+                //   }
+                // }
               }
             }
             stagger(stack, 'append', [first, env], judge)

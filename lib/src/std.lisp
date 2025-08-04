@@ -2481,6 +2481,11 @@ heap)))
         (math:var-set! pointer (mod (+ len pt 1) len))
         item)) (lambda buffer)])))
 
+
+(let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
+(let generic:map (lambda xs cb (array:map xs cb)))
+(let generic:enumerated-fold (lambda xs cb initial (array:enumerated-fold xs cb initial)))
+(let generic:enumerated-map (lambda xs cb (array:enumerated-map xs cb)))
 ; Fake keywords section
 ; xxx
 (let debug identity)
