@@ -1,11 +1,16 @@
-import { type, parse } from '../index.js'
+import { type, parse, UTILS, LISP } from '../index.js'
 import { throws, doesNotThrow, deepStrictEqual, strictEqual } from 'assert'
 import { readFileSync } from 'fs'
 import { typeCheck } from '../src/check.js'
 import std from '../lib/baked/std.js'
-import { definedTypes, withCtxTypes } from '../src/types.js'
+import {
+  definedTypes,
+  filteredDefinedTypes,
+  withCtxTypes
+} from '../src/types.js'
 import stdT from '../lib/baked/std-T.js'
 import { STATIC_TYPES } from '../src/keywords.js'
+import { removeNoCode } from '../src/utils.js'
 
 const passes = (source) =>
   doesNotThrow(() => type(parse(source), withCtxTypes(definedTypes(stdT))))
@@ -15,7 +20,15 @@ const fails = (source, message, name = 'TypeError') =>
     message
   })
 const inference = (source, keys) => {
-  const map = typeCheck(parse(source), withCtxTypes(definedTypes(stdT)))[1]
+  const [src, typ] = UTILS.extractTypes(source)
+  const userDefinedTypes = LISP.parse(removeNoCode(typ))
+  const map = typeCheck(
+    parse(src),
+    withCtxTypes({
+      ...definedTypes(stdT),
+      ...definedTypes(userDefinedTypes)
+    })
+  )[1]
   return keys.map((key) => map.get(`; 1 ${key}`)())
 }
 const signatures = (abstractions) =>
@@ -134,6 +147,17 @@ f)))
 (let BBxs [[ true false ]])
 (let BBx [(. BBxs 0 0)])
 
+
+(the Pf (lambda T (do [][][][][]T)))
+(let Pf (lambda xs (. xs 0 0 0 0 0)))
+(let Px [[[[[1 2 3]]]]])
+(let Pz (Pf Px))
+
+
+(the Ptt (lambda T (do T[])))
+(let Ptt (lambda x [x]))
+(let Pw (Ptt false))
+
 `,
 
         [
@@ -166,7 +190,9 @@ f)))
           'moore-neighborhood',
           'ls',
           'AAx',
-          'BBx'
+          'BBx',
+          'Pz',
+          'Pw'
         ]
       ),
       [
@@ -199,7 +225,9 @@ f)))
         `(${STATIC_TYPES.DEFINE_TYPE} moore-neighborhood Number[][])`,
         `(${STATIC_TYPES.DEFINE_TYPE} ls Unknown[])`,
         `(${STATIC_TYPES.DEFINE_TYPE} AAx Number[])`,
-        `(${STATIC_TYPES.DEFINE_TYPE} BBx Boolean[])`
+        `(${STATIC_TYPES.DEFINE_TYPE} BBx Boolean[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} Pz Number)`,
+        `(${STATIC_TYPES.DEFINE_TYPE} Pw Boolean[])`
       ]
     )
     deepStrictEqual(
