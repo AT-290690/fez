@@ -1125,7 +1125,7 @@ const resolveReturnType = ({
                         } else {
                           if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
                             env[name][STATS][prop][0] = ATOM
-                            env[name][STATS][prop][0] = T.at(-1)
+                            env[name][STATS][prop][1] = new SubType([T.at(-1)])
                           } else {
                             env[name][STATS][prop][0] = APPLY
                             env[name][STATS][prop].length = 1
@@ -1231,7 +1231,10 @@ export const typeCheck = (
                 env[rest[i][0][VALUE]][STATS][SIGNATURE] ===
                 KEYWORDS.ANONYMOUS_FUNCTION
               ) {
-                if (argsN !== args[i][STATS][ARG_COUNT])
+                if (
+                  args[i][STATS][ARG_COUNT] !== VARIADIC &&
+                  argsN !== args[i][STATS][ARG_COUNT]
+                )
                   throw new TypeError(
                     `Incorrect number of arguments for (${
                       args[i][STATS][SIGNATURE]
@@ -1432,6 +1435,7 @@ export const typeCheck = (
               // Types.set(withScope(name, env), () => formatType(name, env))
               // If current scope is root then these are user defined types
               if (isLambda) {
+                env[name][STATS].source = exp
                 const lambdaName = `${PLACEHOLDER}${name}`
                 const fn = [
                   [APPLY, KEYWORDS.DEFINE_VARIABLE],
@@ -1869,7 +1873,8 @@ export const typeCheck = (
                               !isUnknownType(env[name][STATS])
                             if (
                               isKnown &&
-                              env[name][STATS][ARG_COUNT] !== VARIADIC
+                              env[name][STATS][ARG_COUNT] !== VARIADIC &&
+                              args[i][STATS][ARG_COUNT] !== VARIADIC
                             ) {
                               if (
                                 env[name][STATS][ARG_COUNT] !==
@@ -1892,9 +1897,6 @@ export const typeCheck = (
                                   )
                               }
                             }
-                            // if (isGenericType(args[i][STATS])) {
-                            //   generics[i] = env[name]
-                            // }
                             const eqTypes = equalTypes(
                               args[i][STATS],
                               env[name][STATS]
@@ -1956,6 +1958,8 @@ export const typeCheck = (
                                 )}) (${stringifyArgs(exp)}) (check #203)`
                               )
                           }
+                          // if (isGenericType(args[i][STATS]))
+                          //   generics[i] = [ATOM]
                           break
                         case APPLY:
                           {
@@ -2025,6 +2029,9 @@ export const typeCheck = (
                             setTypeRef(env[name][STATS], args[i][STATS])
                           else setStatsRef(env[rest[i][VALUE]], args[i])
                         }
+                        // if (isGenericType(args[i][STATS])) {
+                        //   generics[i] = env[name][STATS][TYPE_PROP]
+                        // }
                       }
                       if (isUnknownType(args[i][STATS])) {
                         retry(args[i][STATS], [first, env], stack, () =>
@@ -2070,33 +2077,39 @@ export const typeCheck = (
                             break
                         }
                       match({ rest, args, i, env, scope, exp })
+
+                      // if (isGenericType(args[i][STATS]))
+                      //   generics[i] = env[name][STATS][RETURNS]
                     }
                   }
                 }
                 // if (generics.some((x) => x !== null)) {
                 //   const copy = Object.create(env)
-                //   const genCopy = [...generics]
+                //   const newName = `${PLACEHOLDER}${PLACEHOLDER}${first[VALUE]}`
+                //   // copy[newName] = structuredClone(copy[first[VALUE]])
+                //   copy[newName] = {
+                //     [STATS]: structuredClone(env[first[VALUE]][STATS])
+                //   }
                 //   for (let i = 0; i < generics.length; ++i) {
                 //     if (!generics[i]) continue
-                //     genCopy[i] = structuredClone(
-                //       copy[first[VALUE]][STATS][ARGUMENTS][i]
-                //     )
-                //     copy[first[VALUE]][STATS][ARGUMENTS][i] = structuredClone(
-                //       generics[i]
-                //     )
-                //     copy[first[VALUE]][STATS][ARGUMENTS][i][STATS][
-                //       TYPE_PROP
-                //     ].length = 2
+                //     copy[newName][STATS][ARGUMENTS][i] = {
+                //       [STATS]: {
+                //         [ARG_COUNT]: VARIADIC,
+                //         [ARGUMENTS]: [],
+                //         [TYPE_PROP]: generics[i],
+                //         [RETURNS]: generics[i]
+                //       }
+                //     }
                 //   }
-                //   check(exp, copy, scope)
-
-                //   for (let i = 0; i < generics.length; ++i) {
-                //     if (!generics[i]) continue
-                //     copy[first[VALUE]][STATS][ARGUMENTS][i] = genCopy[i]
-                //     copy[first[VALUE]][STATS][ARGUMENTS][i][STATS][
-                //       TYPE_PROP
-                //     ].length = 2
-                //   }
+                //   console.log(copy[newName][STATS][ARGUMENTS][0])
+                //   const cexp = structuredClone(exp)
+                //   cexp[0][VALUE] = newName
+                //   copy[newName][STATS].source = structuredClone(
+                //     copy[newName][STATS].source
+                //   )
+                //   copy[newName][STATS].source[1][VALUE] = newName
+                //   check(copy[newName][STATS].source, copy, scope)
+                //   check(cexp, copy, scope)
                 // }
               }
             }
