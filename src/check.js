@@ -1441,7 +1441,7 @@ export const typeCheck = (
                 check(fn, env, scope)
                 const expected = env[name]
                 const actual = env[lambdaName]
-                if (expected[ARG_COUNT] !== actual[ARG_COUNT]) {
+                if (expected[STATS][ARG_COUNT] !== actual[STATS][ARG_COUNT]) {
                   throw new RangeError(
                     `Incorrect number of arguments for (${
                       expected[STATS][SIGNATURE]

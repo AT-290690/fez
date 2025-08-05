@@ -31,7 +31,7 @@
 (the math:var-add-and-get! (lambda Number[] Number (do Number)))
 (the math:var-subtract-and-get! (lambda Number[] Number (do Number)))
 (the math:var-multiply-and-get! (lambda Number[] Number (do Number)))
-(the math:var-divide-and-get! (lambda Number[] (do Number)))
+(the math:var-divide-and-get! (lambda Number[] Number (do Number)))
 (the math:max-sub-array-sum (lambda Number[] (do Number)))
 (the math:median (lambda Number[] (do Number)))
 (the math:mean (lambda Number[] (do Number)))
