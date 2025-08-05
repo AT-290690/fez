@@ -2482,18 +2482,6 @@ heap)))
         item)) (lambda buffer)])))
 
 
-(let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
-(let generic:map (lambda xs cb (array:map xs cb)))
-(let generic:enumerated-fold (lambda xs cb initial (array:enumerated-fold xs cb initial)))
-(let generic:enumerated-map (lambda xs cb (array:enumerated-map xs cb)))
-(let generic:select (lambda xs cb? (array:select xs cb?)))
-(let generic:exclude (lambda xs cb? (array:exclude xs cb?)))
-(let generic:some? (lambda xs cb? (array:some? xs cb?)))
-(let generic:every? (lambda xs cb? (array:every? xs cb?)))
-(let generic:count (lambda xs x (array:count xs x)))
-(let generic:count-of (lambda xs cb? (array:count-of xs cb?)))
-
-
 ; Fake keywords section
 ; xxx
 (let debug identity)

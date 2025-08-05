@@ -113,16 +113,3 @@
 (the from:digits->integer (lambda Number[] (do Number)))
 (the from:integer->digits (lambda Number (do Number[])))
 (the from:chars->set (lambda Number[] (do Number[][])))
-
-(the identity (lambda T (do T)))
-
-(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
-(the generic:map (lambda T (lambda T (do T)) (do T)))
-(the generic:enumerated-fold (lambda T (lambda K Number M (do K)) K (do K)))
-(the generic:enumerated-map (lambda T (lambda T Number (do T)) (do T)))
-
-
-(the generic:select (lambda T (lambda T (do Boolean)) (do T)))
-(the generic:exclude (lambda T (lambda T (do Boolean)) (do T)))
-(the generic:some? (lambda T (lambda T (do Boolean)) (do Boolean)))
-(the generic:every? (lambda T (lambda T (do Boolean)) (do Boolean)))

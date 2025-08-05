@@ -3,32 +3,30 @@ import { throws, doesNotThrow, deepStrictEqual, strictEqual } from 'assert'
 import { readFileSync } from 'fs'
 import { typeCheck } from '../src/check.js'
 import std from '../lib/baked/std.js'
-import {
-  definedTypes,
-  filteredDefinedTypes,
-  withCtxTypes
-} from '../src/types.js'
+import { definedTypes, withCtxTypes } from '../src/types.js'
 import stdT from '../lib/baked/std-T.js'
 import { STATIC_TYPES } from '../src/keywords.js'
 import { removeNoCode } from '../src/utils.js'
 
-const passes = (source) =>
-  doesNotThrow(() => type(parse(source), withCtxTypes(definedTypes(stdT))))
-const fails = (source, message, name = 'TypeError') =>
-  throws(() => type(parse(source), withCtxTypes(definedTypes(stdT))), {
-    name,
-    message
-  })
-const inference = (source, keys) => {
+const prep = (source) => {
   const [src, typ] = UTILS.extractTypes(source)
   const userDefinedTypes = LISP.parse(removeNoCode(typ))
-  const map = typeCheck(
+  return [
     parse(src),
     withCtxTypes({
       ...definedTypes(stdT),
       ...definedTypes(userDefinedTypes)
     })
-  )[1]
+  ]
+}
+const passes = (source) => doesNotThrow(() => type(...prep(source)))
+const fails = (source, message, name = 'TypeError') =>
+  throws(() => type(...prep(source)), {
+    name,
+    message
+  })
+const inference = (source, keys) => {
+  const map = typeCheck(...prep(source))[1]
   return keys.map((key) => map.get(`; 1 ${key}`)())
 }
 const signatures = (abstractions) =>
@@ -78,7 +76,12 @@ describe('Type checking', () => {
     )
     deepStrictEqual(
       inference(
-        `(let a 10)
+        `
+        
+(the identity (lambda T (do T)))
+
+
+        (let a 10)
 (let b [])
 (let box (lambda x [x]))
 (let add (lambda a b (math:summation [(+ a 1) (length b)])))
@@ -253,6 +256,11 @@ f)))
     )
   })
   it('Does not throw', () => {
+    passes(`
+(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+(let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
+(let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
+(+ f 23)`)
     passes(`(let ifs (Numbers []))
 (set! ifs 0 (numberp (and (> 2 2) (> 1 1))))`)
     passes(`(let ifs (Booleans []))
@@ -526,6 +534,11 @@ f)))
 (let PARSED (parse INPUT))
 
 (array (part1 PARSED) (part2 PARSED))`)
+    passes(
+      `(the f (lambda T (do T)))
+(let f (lambda x (+ x 10)))
+(f 42)`
+    )
     passes(`(let sample1 
 "RL
 
@@ -711,6 +724,30 @@ ZZZ=ZZZ,ZZZ")
     doesNotThrow(() => type(std))
   })
   it('Should throw', () => {
+    fails(
+      `
+      
+(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+(let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
+
+      (let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
+    (f 42)`,
+      `(f) is not a (lambda) (f 42) (check #12)`
+    )
+    fails(
+      `
+(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+(let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
+(let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
+    (and f true)`,
+      `Incorrect type of argument (0) for (and). Expected (Boolean) but got (Number) (and f true) (check #202)`
+    )
+    fails(
+      `(the f (lambda T (do T)))
+(let f (lambda x (+ x 10)))
+(f false)`,
+      `Incorrect type for argument (x) The (lambda) argument of (f) at position (0). Expected (Boolean) but got (Number) (let .f (lambda x (+ x 10))) (check #1000)`
+    )
     fails(
       `
 (let Bxs [[ 10 20 30 40 ]])

@@ -874,6 +874,12 @@ const evaluate = (exp, env = keywords) => {
             KEYWORDS.ANONYMOUS_FUNCTION
           }) (${value}) (${stringifyArgs(exp)})`
         )
+      if (typeof apply !== 'function')
+        throw new TypeError(
+          `${value} is not a (${KEYWORDS.ANONYMOUS_FUNCTION}) (${stringifyArgs(
+            exp
+          )})`
+        )
       res = apply(tail, env)
       if (
         isDebugging &&
