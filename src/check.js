@@ -1445,8 +1445,8 @@ export const typeCheck = (
                   throw new RangeError(
                     `Incorrect number of arguments for (${
                       expected[STATS][SIGNATURE]
-                    }) Expected (${expected[ARG_COUNT]}) but got (${
-                      actual[ARG_COUNT]
+                    }) Expected (${expected[STATS][ARG_COUNT]}) but got (${
+                      actual[STATS][ARG_COUNT]
                     }) (${stringifyArgs(exp)}) (check #1004)`
                   )
                 }
