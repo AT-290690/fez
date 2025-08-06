@@ -161,6 +161,10 @@ f)))
 (let Ptt (lambda x [x]))
 (let Pw (Ptt false))
 
+
+(let FFxs [[[[]]]])
+(let FFx (get FFxs 0 0 0))
+
 `,
 
         [
@@ -195,7 +199,8 @@ f)))
           'AAx',
           'BBx',
           'Pz',
-          'Pw'
+          'Pw',
+          'FFx'
         ]
       ),
       [
@@ -230,7 +235,8 @@ f)))
         `(${STATIC_TYPES.DEFINE_TYPE} AAx Number[])`,
         `(${STATIC_TYPES.DEFINE_TYPE} BBx Boolean[])`,
         `(${STATIC_TYPES.DEFINE_TYPE} Pz Number)`,
-        `(${STATIC_TYPES.DEFINE_TYPE} Pw Boolean[])`
+        `(${STATIC_TYPES.DEFINE_TYPE} Pw Boolean[])`,
+        `(${STATIC_TYPES.DEFINE_TYPE} FFx Unknown[])`
       ]
     )
     deepStrictEqual(
@@ -256,6 +262,8 @@ f)))
     )
   })
   it('Does not throw', () => {
+    passes(`(let xs [[[[]]]])
+(let x (get xs 0 0 0))`)
     passes(`
 (the generic:fold (lambda T (lambda K T (do K)) K (do K)))
 (let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
@@ -725,9 +733,13 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     fails(
-      `
-      
-(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+      `(let xs [[[[]]]])
+      (let x (get xs 0 0 0 0))`,
+      `(array:get) is trying to access nested structure at level (4) which is deeper than it's (3) levels at (let x (array:get (array:get (array:get (array:get xs 0) 0) 0) 0)) (check #1003)`,
+      'RangeError'
+    )
+    fails(
+      `(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
 (let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
 
       (let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
@@ -735,8 +747,7 @@ ZZZ=ZZZ,ZZZ")
       `(f) is not a (lambda) (f 42) (check #12)`
     )
     fails(
-      `
-(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+      `(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
 (let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
 (let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
     (and f true)`,

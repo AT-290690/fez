@@ -662,7 +662,12 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
         if (times === level - 1) {
           setPropToType(env[name][STATS], prop, {
             [TYPE_PROP]: types.length
-              ? [type, new SubType([types.at(-1)])]
+              ? [
+                  type,
+                  new SubType([
+                    types.at(-1) === COLLECTION ? UNKNOWN : types.at(-1)
+                  ])
+                ]
               : [UNKNOWN]
           })
         } else {
@@ -924,15 +929,12 @@ const initArrayType = ({ rem, env }) => {
         subT.add(head[1].types[0])
     }
     const [main, sub] = ret[0]
-    if (isSubType(sub) && sub.types.at(-1) === COLLECTION) sub.types.pop()
     return {
       [TYPE_PROP]: [APPLY],
       [RETURNS]: [
         COLLECTION,
         isCollection
-          ? new SubType(
-              isSubType(sub) ? [COLLECTION, ...sub] : [COLLECTION, main]
-            )
+          ? new SubType(isSubType(sub) ? [COLLECTION, ...sub] : [COLLECTION])
           : new SubType(isSubType(sub) ? [...sub] : [main])
       ]
     }
