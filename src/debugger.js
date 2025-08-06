@@ -971,9 +971,8 @@ export const debug = (ast, checkTypes = true, userDefinedTypes) => {
         return t ? t() : ''
       } else if (option === 'Search') {
         return [...types.entries()]
-          .filter((x) => x[0].split(' ').length === 3 && !x[0].includes('.'))
+          .filter((x) => !x[0].includes('.'))
           .filter((x) => x[0].includes(name))
-          .sort((a, b) => a[0].localeCompare(b[0]))
           .map(([k, v]) => `${k}\n${v()}`)
           .join('\n\n')
       } else if (option === 'Special') {

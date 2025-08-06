@@ -1519,7 +1519,7 @@ export const toArgType = (A, i) => {
         argIndex: i,
         retried: Infinity,
         [IS_ARGUMENT]: true,
-        [SIGNATURE]: PLACEHOLDER,
+        [SIGNATURE]: arg[VALUE].replaceAll('[', '').replaceAll(']', ''),
         [TYPE_PROP]: toTypeCodes(arg[VALUE], i),
         [RETURNS]: toTypeCodes(arg[VALUE], i),
         [ARGUMENTS]: [],

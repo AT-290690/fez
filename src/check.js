@@ -1312,6 +1312,8 @@ export const typeCheck = (
                     for (let j = 0; j < args[i][STATS][ARGUMENTS].length; ++j) {
                       const actual = local[lambdaName][STATS][ARGUMENTS][j]
                       const expected = args[i][STATS][ARGUMENTS][j]
+                      // TODO: after refactoring the generic nesting and unnesting logic
+                      // apply it here to judge lambda arguments based on the signature
                       // if (
                       //   isGenericType(expected[STATS]) &&
                       //   !isUnknownType(actual[STATS]) &&
