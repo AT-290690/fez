@@ -652,31 +652,29 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
         const rec = resolveGetterRec(rem, env)
         if (!rec) return true
         const [times, level, type, types] = resolveGetterRec(rem, env)
-        const isUnknown = types.at(-1) === UNKNOWN
+        const isUnknown =
+          types.at(-1) === UNKNOWN || types.at(-1) === COLLECTION
         if (!isUnknown && times >= level)
           throw new RangeError(
             `(${caller}) is trying to access nested structure at level (${level}) which is deeper than it's (${
               times - 1
             }) levels at (${stringifyArgs(exp)}) (check #1003)`
           )
-        if (times === level - 1) {
+        if (times === level - 1)
           setPropToType(env[name][STATS], prop, {
-            [TYPE_PROP]: types.length
-              ? [
-                  type,
-                  new SubType([
-                    types.at(-1) === COLLECTION ? UNKNOWN : types.at(-1)
-                  ])
-                ]
-              : [UNKNOWN]
+            [TYPE_PROP]:
+              types.length && !isUnknown
+                ? [type, new SubType([types.at(-1)])]
+                : types.at(-1) === COLLECTION
+                ? [COLLECTION]
+                : [UNKNOWN]
           })
-        } else {
+        else
           setPropToType(env[name][STATS], prop, {
             [TYPE_PROP]: types.length
               ? [COLLECTION, new SubType(types.slice(times))]
               : [UNKNOWN]
           })
-        }
         return true
       }
       if (
@@ -704,11 +702,10 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
           setPropToReturn(env[name][STATS], prop, {
             [RETURNS]: [f, new SubType(r)]
           })
-        } else if (rightSub.has(APPLY)) {
+        } else if (rightSub.has(APPLY))
           // TODOD: abstractions go here but what can we do with them
           // perhaps show the signature?
           setPropToAbstraction(env[name][STATS], prop)
-        }
       }
       break
     case WORD:
@@ -739,11 +736,10 @@ const resolveGetter = ({ rem, prop, name, env, caller, exp }) => {
             setPropToType(env[name][STATS], prop, {
               [TYPE_PROP]: [f, new SubType(r)]
             })
-          } else if (rightSub.has(APPLY)) {
+          } else if (rightSub.has(APPLY))
             // TODOD: abstractions go here but what can we do with them
             // perhaps show the signature?
             setPropToAbstraction(env[name][STATS], prop)
-          }
         }
       }
       break
@@ -874,6 +870,8 @@ const resolveSetter = (first, rest, env, stack) => {
     //   )
   }
 }
+const countLevels = (arr, lvl = -1) =>
+  Array.isArray(arr[0]) ? countLevels(arr[0], ++lvl) : lvl
 const initArrayTypeRec = ({ rem, env }) =>
   rem.slice(1).map((x) => {
     if (isLeaf(x))
@@ -906,14 +904,15 @@ const initArrayTypeRec = ({ rem, env }) =>
   })
 const initArrayType = ({ rem, env }) => {
   const ret = initArrayTypeRec({ rem, env })
-  const known = ret.find((x) => x[0] !== ANY && x[0] !== UNKNOWN)
-  const isCollection = ret.length && ret[0] && ret[0][0] === COLLECTION
+  const flat = ret.flat(Infinity).filter((x) => !isSubType(x))
+  const subTypes = ret.flat(Infinity).filter((x) => isSubType(x))
+  const known = flat.find((x) => x !== ANY && x !== UNKNOWN)
+  const isCollection = ret.length && Array.isArray(ret[0])
   if (
     known &&
     ret.length &&
-    (Array.isArray(known[0])
-      ? !ret.some((x) => known[0][0] !== x[0][0])
-      : !ret.some((x) => known[0] !== x[0]))
+    !flat.some((x) => known !== x) &&
+    !subTypes.some((x) => subTypes[0].types[0] !== x.types[0])
   ) {
     if (Array.isArray(ret[0][0])) {
       let head = ret[0][0]
@@ -934,7 +933,7 @@ const initArrayType = ({ rem, env }) => {
       [RETURNS]: [
         COLLECTION,
         isCollection
-          ? new SubType(isSubType(sub) ? [COLLECTION, ...sub] : [COLLECTION])
+          ? new SubType(isSubType(sub) ? [...sub] : [COLLECTION])
           : new SubType(isSubType(sub) ? [...sub] : [main])
       ]
     }
@@ -944,7 +943,10 @@ const initArrayType = ({ rem, env }) => {
       [RETURNS]: [
         COLLECTION,
         isCollection
-          ? new SubType([COLLECTION, UNKNOWN])
+          ? new SubType([
+              ...Array.from({ length: countLevels(ret) }).fill(COLLECTION),
+              UNKNOWN
+            ])
           : new SubType([UNKNOWN])
       ]
     }
