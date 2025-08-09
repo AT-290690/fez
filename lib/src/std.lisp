@@ -785,7 +785,7 @@
 (let list:map (lambda xs f (if (list:nil? xs) [] (list:pair (f (list:head xs)) (list:map (list:tail xs) f)))))
 (let list:filter (lambda xs f? (if (list:nil? xs) [] (if (f? (list:head xs)) (list:pair (list:head xs) (list:filter (list:tail xs) f?)) (list:filter (list:tail xs) f?)))))
 (let list:fold (lambda xs f out (if (list:nil? xs) out (list:fold (list:tail xs) f (f out (list:head xs))))))
-(let list:transform (lambda xs f out (if (list:nil? xs) (Collection out) (list:transform (list:tail xs) f (f out (list:head xs))))))
+(let list:transform (lambda xs f out (if (list:nil? xs) out (list:transform (list:tail xs) f (f out (list:head xs))))))
 (let list:zip (lambda a b (if (list:nil? a) [] (list:pair (list:pair (list:head a) (list:pair (list:head b) [])) (list:zip (list:tail a) (list:tail b))))))
 (let list:unzip (lambda xs (list (list:map xs (lambda x (list:head x))) (list:map xs (lambda x (list:head (list:tail x)))))))
 (let list:length (lambda list (math:list-fold list (lambda a . (+ a 1)) 0)))
@@ -989,7 +989,7 @@
           (if (< i bounds)
               (tail-call:array:slice (+ i 1) (array:set! out (length out) (array:get xs (+ start i))))
               out)))
-        (Collection (tail-call:array:slice 0 [])))))
+        (tail-call:array:slice 0 []))))
 
 (let car (lambda xs (array:get xs 0)))
 (let cdr (lambda xs (do
@@ -1020,7 +1020,7 @@
     (if (and (> (length a) i) (> (length b) j)) (tail-call:array:zip (+ i 1) (+ j 1) (array:set! output (length output) (array (array:get a i) (array:get b j)))) output)))
   (tail-call:array:zip 0 0 []))))
 (let array:unzip (lambda xs (array (array:map xs array:first) (array:map xs array:second))))
-(let array:equal? (lambda a b (do (Collection a) (Collection b)
+(let array:equal? (lambda a b (do
   (or
   (and (atom? a) (atom? b) (= (Any a) (Any b)))
   (and (array? a)
@@ -1557,7 +1557,7 @@
                   (let tail-call:array:enumerated-transform (lambda i out
                         (if (> (length xs) i)
                             (tail-call:array:enumerated-transform (+ i 1) (cb out (array:get xs i) i))
-                            (Collection out))))
+                            out)))
                       (tail-call:array:enumerated-transform 0 initial))))
 (let array:enumerated-find (lambda xs predicate? (do
                     (let tail-call:array:enumerated-find (lambda i
@@ -2484,7 +2484,7 @@ heap)))
 
 ; Fake keywords section
 ; xxx
-(let numberp (lambda x (if (= x true) 1 0)))
+(let numberp (lambda x (if (= x false) 0 x)))
 (let debug identity)
 (let array:get get)
 (let array:length length)
