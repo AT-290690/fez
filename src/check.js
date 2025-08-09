@@ -1884,6 +1884,7 @@ export const typeCheck = (
                     }
                   }
                 }
+
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
                 for (let i = 0; i < args.length; ++i) {
@@ -2078,11 +2079,8 @@ export const typeCheck = (
                         isUnknownReturn(env[name][STATS]) &&
                         !env[name][STATS][IS_ARGUMENT]
                       )
-                        return retry(
-                          env[name][STATS],
-                          [first, env],
-                          stack,
-                          () => check(exp, env, scope)
+                        retry(env[name][STATS], [first, env], stack, () =>
+                          check(exp, env, scope)
                         )
                       else if (
                         env[name] &&
@@ -2109,8 +2107,9 @@ export const typeCheck = (
                 // GENERICS CODE START
                 if (
                   first[VALUE][0] !== PLACEHOLDER &&
-                  env[first[VALUE]][STATS].source &&
+                  env[first[VALUE]][STATS][ARGUMENTS] &&
                   env[first[VALUE]][STATS][ARGUMENTS].length &&
+                  env[first[VALUE]][STATS].source &&
                   env[first[VALUE]][STATS][ARGUMENTS].some(
                     (x) => isGenericType(x[STATS]) || isGenericReturn(x[STATS])
                   )
@@ -2180,7 +2179,6 @@ export const typeCheck = (
                           const desiredType = isLeaf(rest[desiredTypeIndex])
                             ? rest[desiredTypeIndex]
                             : rest[desiredTypeIndex][0]
-
                           switch (desiredType[TYPE]) {
                             case ATOM:
                               expected[STATS][TYPE_PROP] = [
@@ -2250,7 +2248,6 @@ export const typeCheck = (
                   )
                   cexp[0][VALUE] = newName
                   copy[newName][STATS].source[1][VALUE] = newName
-
                   doOnce(copy[newName][STATS], cexp, stack, () => {
                     check(
                       wrapInArray([copy[newName][STATS].source, cexp]),

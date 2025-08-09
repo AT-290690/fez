@@ -745,6 +745,27 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     fails(
+      `
+(the array:select (lambda T (lambda T[] (do Boolean)) (do T)))
+(the array:fold (lambda T (lambda K []T (do K)) K (do K)))
+
+(let x (|> 
+  [ 1 2 3 4 5 ] 
+  (array:select math:odd?)
+  (array:fold (lambda a b (and a b)) 0)))`,
+      `Incorrect type for (lambda) (.) argument at position (0) named as (a). Expected (Number) but got (Boolean) (.array:fold (array:select (array 1 2 3 4 5) math:odd?) (lambda a b (and a b)) 0) (check #780)`
+    )
+    fails(
+      `
+(the array:select (lambda T (lambda T[] (do Boolean)) (do T)))
+(the array:fold (lambda T (lambda K []T (do K)) K (do K)))
+
+(let nums [ 1 2 3 4 5 ])
+(let odd (array:select nums math:odd?))
+(let sum (array:fold odd (lambda a b (and a b)) 0))`,
+      `Incorrect type for (lambda) (.) argument at position (0) named as (a). Expected (Number) but got (Boolean) (.array:fold odd (lambda a b (and a b)) 0) (check #780)`
+    )
+    fails(
       `(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
 (let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
 (let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
