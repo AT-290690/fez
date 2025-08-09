@@ -277,7 +277,7 @@ f)))
     passes(`(let xs [[[[]]]])
 (let x (get xs 0 0 0))`)
     passes(`
-(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+(the generic:fold (lambda T (lambda K []T (do K)) K (do K)))
 (let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
 (let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
 (+ f 23)`)
@@ -747,6 +747,13 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
 (let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
+(let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
+`,
+      `Incorrect type for (lambda) (.) argument at position (1) named as (b). Expected (Number[]) but got (Number) (.generic:fold (array 1 2 3 4) (lambda a b (+ a b)) 0) (check #780)`
+    )
+    fails(
+      `(the generic:fold (lambda T (lambda K T (do K)) K (do K)))
+(let generic:fold (lambda xs cb initial (array:fold xs cb initial)))
 
       (let f (generic:fold [ 1 2 3 4 ] (lambda a b (+ a b)) 0))
     (f 42)`,
@@ -763,7 +770,8 @@ ZZZ=ZZZ,ZZZ")
       `(the f (lambda T (do T)))
 (let f (lambda x (+ x 10)))
 (f false)`,
-      `Incorrect type for argument (x) The (lambda) argument of (f) at position (0). Expected (Boolean) but got (Number) (let .f (lambda x (+ x 10))) (check #1000)`
+      `Incorrect type for argument (x) The (lambda) argument of (.f) at position (0). Expected (Boolean) but got (Number) (let .f (lambda x (+ x 10))) (check #1000)`
+      // `Incorrect type of argument (0) for (.f). Expected (Number) but got (Boolean) (.f false) (check #202)`
     )
     fails(
       `
@@ -1004,6 +1012,31 @@ ZZZ=ZZZ,ZZZ")
     xs)))
 (flip-bools [1 2 3])`,
       `Incorrect type of argument (0) for (flip-bools). Expected (Boolean[]) but got (Number[]) (flip-bools (array 1 2 3)) (check #206)`
+    )
+    fails(
+      `(the f (lambda Number (do Boolean)))
+(let f (lambda x (+ x 1)))`,
+      `Incorrect return type for (f) Expected (Boolean) but got (Number) (let f (lambda x (+ x 1))) (check #999)`
+    )
+    fails(
+      `(the f (lambda Number (do Boolean)))
+(let f (lambda x (and x 1)))`,
+      `Incorrect type for argument (x) The (lambda) argument of (f) at position (0). Expected (Number) but got (Boolean) (let f (lambda x (and x 1))) (check #1000)`
+    )
+    fails(
+      `(the map (lambda T (lambda []T (do []T)) (do T)))
+(let map (lambda xs cb (do
+                  (let tail-call:array:map (lambda i out
+                        (if (> (length xs) i)
+                              (tail-call:array:map (+ i 1)
+                                (array:set! out (length out) (cb (array:get xs i))))
+                              out)))
+                      (tail-call:array:map 0 []))))
+; should know that T is first item of the passed array
+(let x [ false ])
+(let xs (map x (lambda x (+ x 1))))
+`,
+      `Incorrect type for (lambda) (.) argument at position (0) named as (x). Expected (Boolean) but got (Number) (.map x (lambda x (+ x 1))) (check #780)`
     )
     fails(
       `(let fn1? (lambda (apply [1] array:empty!)))

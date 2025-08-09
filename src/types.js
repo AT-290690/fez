@@ -23,6 +23,8 @@ export const RETURNS = 'returns'
 export const SCOPE_NAME = '__scope__'
 export const TYPE_PROP = 'type'
 export const SIGNATURE = 'name'
+export const TYPE_NAME = 'type_name'
+export const RETURN_NAME = 'return_name'
 export const UNBOUND_VARIABLE = '__unbound__'
 export const UNKNOWN = -1
 export const COLLECTION = 3
@@ -1508,6 +1510,8 @@ export const toArgType = (A, i) => {
         [IS_ARGUMENT]: true,
         [SIGNATURE]: PLACEHOLDER,
         [TYPE_PROP]: [APPLY],
+        [TYPE_NAME]: PLACEHOLDER,
+        [RETURN_NAME]: returns[VALUE].replaceAll('[', '').replaceAll(']', ''),
         [RETURNS]: toTypeCodes(returns[VALUE], i),
         [ARGUMENTS]: args.map(toArgType).flat(1),
         [ARG_COUNT]: args.length
@@ -1519,7 +1523,8 @@ export const toArgType = (A, i) => {
         argIndex: i,
         retried: Infinity,
         [IS_ARGUMENT]: true,
-        [SIGNATURE]: arg[VALUE].replaceAll('[', '').replaceAll(']', ''),
+        [SIGNATURE]: PLACEHOLDER,
+        [TYPE_NAME]: arg[VALUE].replaceAll('[', '').replaceAll(']', ''),
         [TYPE_PROP]: toTypeCodes(arg[VALUE], i),
         [RETURNS]: toTypeCodes(arg[VALUE], i),
         [ARGUMENTS]: [],
@@ -1539,6 +1544,8 @@ export const fromSourceToType = (T) => {
         retried: Infinity,
         [TYPE_PROP]: [APPLY],
         [SIGNATURE]: name,
+        [TYPE_NAME]: name,
+        [RETURN_NAME]: returns[VALUE].replaceAll('[', '').replaceAll(']', ''),
         [ARG_COUNT]: args.length,
         [ARGUMENTS]: args.map(toArgType).flat(1),
         [RETURNS]: toTypeCodes(

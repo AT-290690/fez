@@ -297,6 +297,7 @@ export const dfs = (tree, callback) => {
   if (!isLeaf(tree)) for (const leaf of tree) dfs(leaf)
   else callback(tree)
 }
+export const wrapInArray = (ast) => [[APPLY, KEYWORDS.CREATE_ARRAY], ...ast]
 export const wrapInBlock = (ast) => [
   [APPLY, KEYWORDS.CALL_FUNCTION],
   [

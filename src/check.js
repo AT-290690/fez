@@ -47,7 +47,9 @@ import {
   NUMBER_SUBTYPE,
   SubType,
   GET_ARRAY_INFERENCE_SET,
-  GENERIC
+  GENERIC,
+  TYPE_NAME,
+  RETURN_NAME
 } from './types.js'
 import {
   Brr,
@@ -58,6 +60,7 @@ import {
   logExp,
   stringifyArgs,
   wrapInApplyLambda,
+  wrapInArray,
   wrapInBlock
 } from './utils.js'
 
@@ -110,6 +113,8 @@ export const isGenericReturn = (stats) =>
   stats[RETURNS].length === 3 && stats[RETURNS][2][0] !== -1
 export const isGenericType = (stats) =>
   stats[TYPE_PROP].length === 3 && stats[TYPE_PROP][2][0] !== -1
+export const isGenericProp = (stats, prop) =>
+  stats[prop].length === 3 && stats[prop][2][0] !== -1
 
 export const isTypeAbstraction = (stats) => stats[TYPE_PROP] === APPLY
 export const setPropToAtom = (stats, prop) => {
@@ -340,6 +345,69 @@ const isRedefinedInLambda = (env, name, exp) => {
     return true
   else return false
 }
+const getGenericPropNest = (ref, prop) =>
+  ref[STATS][prop][0] === COLLECTION
+    ? isSubType(ref[STATS][prop][1])
+      ? ref[STATS][prop][1].nestedLevels()
+      : 0
+    : 0
+const getGenericProp = (ref, rem, prop) => {
+  const [index, multiplier] = ref[STATS][prop][2]
+  const generic = rem.slice(1)[index]
+  const nestGeneric = getGenericPropNest(ref, prop)
+  return [
+    generic,
+    isLeaf(generic) ? generic : generic[0],
+    nestGeneric,
+    multiplier
+  ]
+}
+const getGenericReturn = (ref, rem) => getGenericProp(ref, rem, RETURNS)
+const getGenericType = (ref, rem) => getGenericProp(ref, rem, TYPE_PROP)
+const resolveGenericNest = (ref, prop, nestGeneric, multiplier) => {
+  const T = isSubType(ref[STATS][prop][1])
+    ? ref[STATS][prop][1].types
+    : [ref[STATS][prop][0]]
+  if (multiplier === -1) {
+    if (nestGeneric === 0) {
+      if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
+        if (isSubType(ref[STATS][prop][1])) {
+          if (ref[STATS][prop][1].types.length === 1) ref[STATS][prop][0] = ATOM
+          else {
+            ref[STATS][prop][1] = new SubType(
+              ref[STATS][prop][1].types.slice(1)
+            )
+            ref[STATS][prop][0] = COLLECTION
+            ref[STATS][prop].length = 2
+          }
+        } else ref[STATS][prop][0] = ATOM
+      }
+    } else {
+      if (T.length - nestGeneric - 1) {
+        for (let i = 0; i < nestGeneric + 1; ++i)
+          ref[STATS][prop][1].types.shift()
+        ref[STATS][prop].length = 2
+      } else {
+        if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
+          ref[STATS][prop][0] = ATOM
+          ref[STATS][prop][1] = new SubType([T.at(-1)])
+          ref[STATS][prop].length = 2
+        } else {
+          ref[STATS][prop][0] = APPLY
+          ref[STATS][prop].length = 1
+        }
+      }
+    }
+  } else if (multiplier === 1) {
+    const st = new SubType([])
+    for (let i = 0; i < nestGeneric; ++i) st.add(COLLECTION)
+    if (ref[STATS][prop][0] === COLLECTION) st.add(COLLECTION)
+    st.add(...T)
+    ref[STATS][prop][0] = COLLECTION
+    ref[STATS][prop][1] = st
+  }
+}
+
 export const equalReturns = (a, b) =>
   isAnyReturn(a) || isAnyReturn(b) || a[RETURNS][0] === b[RETURNS][0]
 export const equalsTypeWithReturn = (a, b) =>
@@ -466,6 +534,12 @@ const once = (stats, ctx, stack, cb, method = 'prepend') => {
     (isUnknownNotAnyType(stats) || isUnknownNotAnyReturn(stats)) &&
     !stats.tried
   ) {
+    stats.tried = true
+    stagger(stack, method, ctx, cb)
+  }
+}
+const doOnce = (stats, ctx, stack, cb, method = 'prepend') => {
+  if (!stats.tried) {
     stats.tried = true
     stagger(stack, method, ctx, cb)
   }
@@ -1023,18 +1097,9 @@ const resolveReturnType = ({
             // Here is upon application to store the   result in the variable
             if (isGenericReturn(env[returns[VALUE]][STATS])) {
               // env[name][STATS][TYPE_PROP] =
-              const [index, multiplier] = env[returns[VALUE]][STATS][RETURNS][2]
-              const genericReturn = rem.slice(1)[index]
-              const nestGeneric =
-                env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION
-                  ? isSubType(env[returns[VALUE]][STATS][RETURNS][1])
-                    ? env[returns[VALUE]][STATS][RETURNS][1].nestedLevels()
-                    : 0
-                  : 0
 
-              const head = isLeaf(genericReturn)
-                ? genericReturn
-                : genericReturn[0]
+              const [genericReturn, head, nestGeneric, multiplier] =
+                getGenericReturn(env[returns[VALUE]], rem)
 
               switch (head[TYPE]) {
                 case ATOM:
@@ -1102,47 +1167,9 @@ const resolveReturnType = ({
                     setTypeToReturn(env[name][STATS], env[head[VALUE]][STATS])
                   break
               }
+
               if (env[returns[VALUE]][STATS][RETURNS][0] === COLLECTION) {
-                const T = isSubType(env[name][STATS][prop][1])
-                  ? env[name][STATS][prop][1].types
-                  : [env[name][STATS][prop][0]]
-                if (multiplier === -1) {
-                  if (nestGeneric === 0) {
-                    if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
-                      if (isSubType(env[name][STATS][prop][1])) {
-                        if (env[name][STATS][prop][1].types.length === 1)
-                          env[name][STATS][prop][0] = ATOM
-                        else {
-                          env[name][STATS][prop][1] = new SubType(
-                            env[name][STATS][prop][1].types.slice(1)
-                          )
-                          env[name][STATS][prop][0] = COLLECTION
-                        }
-                      } else env[name][STATS][prop][0] = ATOM
-                    }
-                  } else {
-                    if (T.length - nestGeneric - 1) {
-                      for (let i = 0; i < nestGeneric + 1; ++i)
-                        env[name][STATS][prop][1].types.shift()
-                    } else {
-                      if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
-                        env[name][STATS][prop][0] = ATOM
-                        env[name][STATS][prop][1] = new SubType([T.at(-1)])
-                      } else {
-                        env[name][STATS][prop][0] = APPLY
-                        env[name][STATS][prop].length = 1
-                      }
-                    }
-                  }
-                } else {
-                  const st = new SubType([])
-                  for (let i = 0; i < nestGeneric; ++i) st.add(COLLECTION)
-                  if (env[name][STATS][prop][0] === COLLECTION)
-                    st.add(COLLECTION)
-                  st.add(...T)
-                  env[name][STATS][prop][0] = COLLECTION
-                  env[name][STATS][prop][1] = st
-                }
+                resolveGenericNest(env[name], prop, nestGeneric, multiplier)
               }
             }
             if (isUnknownType(env[name][STATS]))
@@ -1264,6 +1291,8 @@ export const typeCheck = (
                   const match1 = () => {
                     const actual = local[lambdaName]
                     const expected = args[i]
+                    if (isGenericReturn(expected[STATS])) return
+
                     // if (
                     //   isGenericReturn(args[i][STATS]) &&
                     //   !isUnknownReturn(actual[STATS]) &&
@@ -1314,6 +1343,7 @@ export const typeCheck = (
                     for (let j = 0; j < args[i][STATS][ARGUMENTS].length; ++j) {
                       const actual = local[lambdaName][STATS][ARGUMENTS][j]
                       const expected = args[i][STATS][ARGUMENTS][j]
+                      if (isGenericType(expected[STATS])) continue
                       // TODO: after refactoring the generic nesting and unnesting logic
                       // apply it here to judge lambda arguments based on the signature
                       // if (
@@ -1324,7 +1354,6 @@ export const typeCheck = (
                       //   expected[STATS][TYPE_PROP] = actual[STATS][TYPE_PROP]
                       //   return
                       // }
-
                       if (
                         !isUnknownType(actual[STATS]) &&
                         !isUnknownType(expected[STATS]) &&
@@ -1857,7 +1886,6 @@ export const typeCheck = (
                 }
                 // also type of arg
                 const args = env[first[VALUE]][STATS][ARGUMENTS] ?? []
-                const generics = Array.from(args).fill(null)
                 for (let i = 0; i < args.length; ++i) {
                   // type check
                   // TODO get rof pred type
@@ -1961,8 +1989,6 @@ export const typeCheck = (
                                 )}) (${stringifyArgs(exp)}) (check #203)`
                               )
                           }
-                          if (isGenericType(args[i][STATS]))
-                            generics[i] = [ATOM]
                           break
                         case APPLY:
                           {
@@ -2032,12 +2058,6 @@ export const typeCheck = (
                             setTypeRef(env[name][STATS], args[i][STATS])
                           else setStatsRef(env[rest[i][VALUE]], args[i])
                         }
-                        if (
-                          isGenericType(args[i][STATS]) &&
-                          !isUnknownNotAnyType(env[name][STATS])
-                        ) {
-                          generics[i] = env[name][STATS][TYPE_PROP]
-                        }
                       }
                       if (isUnknownType(args[i][STATS])) {
                         retry(args[i][STATS], [first, env], stack, () =>
@@ -2083,46 +2103,162 @@ export const typeCheck = (
                             break
                         }
                       match({ rest, args, i, env, scope, exp })
-
-                      if (
-                        isGenericType(args[i][STATS]) &&
-                        !isUnknownNotAnyReturn(env[name][STATS])
-                      )
-                        generics[i] = env[name][STATS][RETURNS]
                     }
                   }
                 }
-                if (generics.some((x) => x !== null && x[0] !== UNKNOWN)) {
+                // GENERICS CODE START
+                if (
+                  first[VALUE][0] !== PLACEHOLDER &&
+                  env[first[VALUE]][STATS].source &&
+                  env[first[VALUE]][STATS][ARGUMENTS].length &&
+                  env[first[VALUE]][STATS][ARGUMENTS].some(
+                    (x) => isGenericType(x[STATS]) || isGenericReturn(x[STATS])
+                  )
+                ) {
+                  const rec = (ref) => {
+                    if (isGenericReturn(ref[STATS])) {
+                      const [index, multiplier] = ref[STATS][RETURNS][2]
+                      const desiredTypeIndex = env[first[VALUE]][STATS][
+                        ARGUMENTS
+                      ].findIndex(
+                        (x) => x[STATS][TYPE_NAME] === ref[STATS][RETURN_NAME]
+                      )
+                      const isCollection = ref[STATS][RETURNS][0] === COLLECTION
+                      if (desiredTypeIndex !== -1) {
+                        const desiredType = isLeaf(rest[desiredTypeIndex])
+                          ? rest[desiredTypeIndex]
+                          : rest[desiredTypeIndex][0]
+                        switch (desiredType[TYPE]) {
+                          case ATOM:
+                            ref[STATS][RETURNS] = [ATOM, NUMBER_SUBTYPE()]
+                            break
+                          case WORD:
+                            ref[STATS][RETURNS][0] =
+                              env[desiredType[VALUE]][STATS][TYPE_PROP][0]
+                            ref[STATS][RETURNS][1] =
+                              env[desiredType[VALUE]][STATS][TYPE_PROP][1]
+                            break
+                          case APPLY:
+                            switch (desiredType[VALUE]) {
+                              case KEYWORDS.CREATE_ARRAY:
+                                ref[STATS][RETURNS] = initArrayType({
+                                  rem: rest[desiredTypeIndex],
+                                  env
+                                })[RETURNS]
+                                break
+                              default:
+                                ref[STATS][RETURNS] =
+                                  env[desiredType[VALUE]][STATS][RETURNS]
+                                break
+                            }
+                            break
+                          default:
+                            break
+                        }
+                        if (isCollection) {
+                          const nest = getGenericPropNest(
+                            env[desiredType[VALUE]],
+                            TYPE_PROP
+                          )
+                          resolveGenericNest(ref, RETURNS, nest, multiplier)
+                        }
+                        ref[STATS][RETURNS].length = 2
+                      }
+                    }
+                    const args = ref[STATS][ARGUMENTS]
+                    for (const expected of args) {
+                      if (isGenericType(expected[STATS])) {
+                        const [index, multiplier] =
+                          expected[STATS][TYPE_PROP][2]
+                        const desiredTypeIndex = env[first[VALUE]][STATS][
+                          ARGUMENTS
+                        ].findIndex(
+                          (x) =>
+                            x[STATS][TYPE_NAME] === expected[STATS][TYPE_NAME]
+                        )
+                        if (desiredTypeIndex !== -1) {
+                          const desiredType = isLeaf(rest[desiredTypeIndex])
+                            ? rest[desiredTypeIndex]
+                            : rest[desiredTypeIndex][0]
+
+                          switch (desiredType[TYPE]) {
+                            case ATOM:
+                              expected[STATS][TYPE_PROP] = [
+                                ATOM,
+                                NUMBER_SUBTYPE()
+                              ]
+                              break
+                            case WORD:
+                              expected[STATS][TYPE_PROP][0] =
+                                env[desiredType[VALUE]][STATS][TYPE_PROP][0]
+                              expected[STATS][TYPE_PROP][1] =
+                                env[desiredType[VALUE]][STATS][TYPE_PROP][1]
+                              break
+                            case APPLY:
+                              switch (desiredType[VALUE]) {
+                                case KEYWORDS.CREATE_ARRAY:
+                                  expected[STATS][TYPE_PROP] = initArrayType({
+                                    rem: rest[desiredTypeIndex],
+                                    env
+                                  })[RETURNS]
+                                  break
+                                default:
+                                  expected[STATS][ARG_COUNT] =
+                                    env[desiredType[VALUE]][STATS][ARG_COUNT]
+                                  expected[STATS][TYPE_PROP][0] =
+                                    env[desiredType[VALUE]][STATS][RETURNS][0]
+                                  expected[STATS][TYPE_PROP][1] =
+                                    env[desiredType[VALUE]][STATS][RETURNS][1]
+                                  break
+                              }
+                              break
+                            default:
+                              break
+                          }
+                          if (expected[STATS][TYPE_PROP][0] === COLLECTION) {
+                            const nest = getGenericPropNest(
+                              env[desiredType[VALUE]],
+                              TYPE_PROP
+                            )
+
+                            resolveGenericNest(
+                              expected,
+                              TYPE_PROP,
+                              nest,
+                              multiplier === 1 ? 0 : multiplier
+                            )
+                          }
+                          expected[STATS][TYPE_PROP].length = 2
+                        }
+                      }
+                      if (expected[STATS][ARGUMENTS].length) rec(expected)
+                    }
+                  }
                   const copy = Object.create(env)
                   const newName = `${PLACEHOLDER}${first[VALUE]}`
-                  // copy[newName] = structuredClone(copy[first[VALUE]])
+                  copy[newName] = null
                   copy[newName] = {
                     [STATS]: structuredClone(env[first[VALUE]][STATS])
                   }
-                  for (let i = 0; i < generics.length; ++i) {
-                    if (!generics[i]) continue
-                    copy[newName][STATS][ARGUMENTS][i] = {
-                      [STATS]: {
-                        [ARG_COUNT]: VARIADIC,
-                        [ARGUMENTS]: [],
-                        [TYPE_PROP]: generics[i],
-                        [RETURNS]: generics[i]
-                      }
-                    }
-                  }
+                  copy[newName][STATS][SIGNATURE] = newName
+
+                  rec(copy[newName])
+
                   const cexp = structuredClone(exp)
                   copy[newName][STATS].source = structuredClone(
                     copy[newName][STATS].source
                   )
                   cexp[0][VALUE] = newName
                   copy[newName][STATS].source[1][VALUE] = newName
-                  once(copy[newName][STATS], exp, stack, () => {
+
+                  doOnce(copy[newName][STATS], cexp, stack, () => {
                     check(
-                      wrapInBlock([copy[newName][STATS].source, cexp]),
+                      wrapInArray([copy[newName][STATS].source, cexp]),
                       copy,
                       scope
                     )
                   })
+                  // GENERICS END END
                   return
                 }
               }
