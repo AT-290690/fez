@@ -150,7 +150,6 @@ export const AST = {
             case STATIC_TYPES.ABSTRACTIONS:
             case STATIC_TYPES.BOOLEANS:
             case STATIC_TYPES.COLLECTIONS:
-            case STATIC_TYPES.AS_NUMBER:
               out += dfs(tail[0])
               break
             default:
@@ -193,7 +192,6 @@ export const AST = {
             case STATIC_TYPES.ABSTRACTIONS:
             case STATIC_TYPES.BOOLEANS:
             case STATIC_TYPES.COLLECTIONS:
-            case STATIC_TYPES.AS_NUMBER:
               out += dfs(tail[0])
               break
             default:
@@ -241,7 +239,6 @@ pub fn ${mod}() -> Expression { ${str} }`
             case STATIC_TYPES.ABSTRACTIONS:
             case STATIC_TYPES.BOOLEANS:
             case STATIC_TYPES.COLLECTIONS:
-            case STATIC_TYPES.AS_NUMBER:
               out += dfs(tail[0])
               break
             default:

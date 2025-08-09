@@ -36,11 +36,6 @@ const opt = (ast) => {
         case APPLY:
           {
             switch (first[VALUE]) {
-              case STATIC_TYPES.AS_NUMBER:
-                exp.length = 0
-                for (let i = 0; i < rest.length; ++i) exp.push(...rest[i])
-                evaluate(exp)
-                break
               case KEYWORDS.DEFINE_VARIABLE:
                 {
                   const last = exp.at(-1)
@@ -257,7 +252,6 @@ export const removeCast = (ast) => {
               case STATIC_TYPES.ABSTRACTIONS:
               case STATIC_TYPES.BOOLEANS:
               case STATIC_TYPES.COLLECTIONS:
-              case STATIC_TYPES.AS_NUMBER:
                 exp.length = 0
                 for (let i = 0; i < rest.length; ++i) exp.push(...rest[i])
                 evaluate(exp)

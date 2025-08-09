@@ -287,7 +287,6 @@ const comp = (tree, Drill) => {
       case STATIC_TYPES.ABSTRACTIONS:
       case STATIC_TYPES.BOOLEANS:
       case STATIC_TYPES.COLLECTIONS:
-      case STATIC_TYPES.AS_NUMBER:
       case DEBUG.LOG:
       case DEBUG.STRING:
       case DEBUG.UNQUOTED_STRING:

@@ -234,27 +234,6 @@ export const SPECIAL_FORM_TYPES = {
       [RETURNS]: [ATOM]
     }
   },
-  [STATIC_TYPES.AS_NUMBER]: {
-    [STATS]: {
-      [TYPE_PROP]: [APPLY],
-      [SIGNATURE]: STATIC_TYPES.AS_NUMBER,
-      retried: Infinity,
-      [ARG_COUNT]: 1,
-      [ARGUMENTS]: [
-        {
-          [STATS]: {
-            retried: Infinity,
-            [SIGNATURE]: PLACEHOLDER,
-            [TYPE_PROP]: [ATOM, SPECIAL_BOOLEAN],
-            [RETURNS]: [ATOM, SPECIAL_BOOLEAN],
-            [ARGUMENTS]: [],
-            [ARG_COUNT]: 0
-          }
-        }
-      ],
-      [RETURNS]: [ATOM, SPECIAL_NUMBER]
-    }
-  },
   [STATIC_TYPES.BOOLEAN]: {
     [STATS]: {
       [TYPE_PROP]: [APPLY],

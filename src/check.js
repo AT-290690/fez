@@ -2114,7 +2114,7 @@ export const typeCheck = (
                     (x) => isGenericType(x[STATS]) || isGenericReturn(x[STATS])
                   )
                 ) {
-                  const rec = (ref) => {
+                  const genericRecursiveDecent = (ref) => {
                     if (isGenericReturn(ref[STATS])) {
                       const [index, multiplier] = ref[STATS][RETURNS][2]
                       const desiredTypeIndex = env[first[VALUE]][STATS][
@@ -2229,7 +2229,8 @@ export const typeCheck = (
                           expected[STATS][TYPE_PROP].length = 2
                         }
                       }
-                      if (expected[STATS][ARGUMENTS].length) rec(expected)
+                      if (expected[STATS][ARGUMENTS].length)
+                        genericRecursiveDecent(expected)
                     }
                   }
                   const copy = Object.create(env)
@@ -2240,7 +2241,7 @@ export const typeCheck = (
                   }
                   copy[newName][STATS][SIGNATURE] = newName
 
-                  rec(copy[newName])
+                  genericRecursiveDecent(copy[newName])
 
                   const cexp = structuredClone(exp)
                   copy[newName][STATS].source = structuredClone(

@@ -801,6 +801,7 @@
 (the option:value (lambda Unknown[] (do Unknown)))
 (the option:error (lambda Unknown[] (do Unknown)))
 (the new:ring-buffer (lambda Number (do Unknown[])))
+(the numberp (lambda Boolean (do Number)))
 (the debug (lambda Unknown (do Unknown)))
 (the array:get (lambda Unknown[] Number (do Unknown)))
 (the array:length (lambda Unknown[] (do Number)))

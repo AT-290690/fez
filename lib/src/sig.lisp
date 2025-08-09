@@ -114,4 +114,6 @@
 (the from:integer->digits (lambda Number (do Number[])))
 (the from:chars->set (lambda Number[] (do Number[][])))
 
+(the numberp (lambda Boolean (do Number)))
+
 (the identity (lambda T (do T)))

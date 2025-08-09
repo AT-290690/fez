@@ -2484,6 +2484,7 @@ heap)))
 
 ; Fake keywords section
 ; xxx
+(let numberp (lambda x (if (= x true) 1 0)))
 (let debug identity)
 (let array:get get)
 (let array:length length)

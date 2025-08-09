@@ -20,7 +20,6 @@ export const STATIC_TYPES = {
   BOOLEANS: 'Booleans',
   ABSTRACTIONS: 'Abstractions',
   COLLECTIONS: 'Collections',
-  AS_NUMBER: 'numberp',
   ANY: 'Any',
   DEFINE_TYPE: 'the'
 }
