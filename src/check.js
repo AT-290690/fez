@@ -365,13 +365,12 @@ const getGenericProp = (ref, rem, prop) => {
 const getGenericReturn = (ref, rem) => getGenericProp(ref, rem, RETURNS)
 const getGenericType = (ref, rem) => getGenericProp(ref, rem, TYPE_PROP)
 const resolveGenericNest = (ref, prop, nestGeneric, multiplier) => {
-  const T = isSubType(ref[STATS][prop][1])
-    ? ref[STATS][prop][1].types
-    : [ref[STATS][prop][0]]
+  const hasSubType = isSubType(ref[STATS][prop][1])
+  const T = hasSubType ? ref[STATS][prop][1].types : [ref[STATS][prop][0]]
   if (multiplier === -1) {
     if (nestGeneric === 0) {
       if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
-        if (isSubType(ref[STATS][prop][1])) {
+        if (hasSubType) {
           if (ref[STATS][prop][1].types.length === 1) ref[STATS][prop][0] = ATOM
           else {
             ref[STATS][prop][1] = new SubType(
@@ -384,8 +383,9 @@ const resolveGenericNest = (ref, prop, nestGeneric, multiplier) => {
       }
     } else {
       if (T.length - nestGeneric - 1) {
-        for (let i = 0; i < nestGeneric + 1; ++i)
-          ref[STATS][prop][1].types.shift()
+        if (hasSubType)
+          for (let i = 0; i < nestGeneric + 1; ++i)
+            ref[STATS][prop][1].types.shift()
         ref[STATS][prop].length = 2
       } else {
         if (T.at(-1) === NUMBER || T.at(-1) === BOOLEAN) {
