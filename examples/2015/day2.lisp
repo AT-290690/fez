@@ -5,7 +5,7 @@
                                                     (array:map (lambda d (|> d
                                                                             (from:chars->digits)
                                                                             (from:digits->integer))))))))))
-(let sample (array:concat ["2x3x4" [char:new-line] "1x1x10")])
+(let sample (array:concat ["2x3x4" [char:new-line] "1x1x10"]))
 
 (let part1 (lambda input 
   (|> input 
