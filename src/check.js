@@ -964,7 +964,7 @@ const initArrayTypeRec = ({ rem, env }) =>
         x.length > 1 &&
         env[x[0][VALUE]][STATS][RETURNS][0] === COLLECTION
       )
-        return getReturns(env[x[0][VALUE]][STATS])
+        return [getReturns(env[x[0][VALUE]][STATS])]
       else if (GET_ARRAY_INFERENCE_SET.has(x[0][VALUE])) {
         const res = resolveGetterRec(x, env)
         if (!res) return [UNKNOWN]
