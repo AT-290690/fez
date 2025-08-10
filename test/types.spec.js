@@ -747,8 +747,11 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     fails(
-      `
-(the array:select (lambda T (lambda T[] (do Boolean)) (do T)))
+      `(let x (if (> 2 2) [ 1 2 3 ] [ true ]))`,
+      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 2 2) (array 1 2 3) (array true))) (check #1005)`
+    )
+    fails(
+      `(the array:select (lambda T (lambda T[] (do Boolean)) (do T)))
 (the array:fold (lambda T (lambda K []T (do K)) K (do K)))
 
 (let x (|> 

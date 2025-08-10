@@ -629,7 +629,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
     case APPLY:
       if (env[concequent[VALUE]])
         if (concequent[VALUE] === KEYWORDS.CREATE_ARRAY) {
-          A = initArrayType({ rem: re[0].slice(1), env })[RETURNS]
+          A = initArrayType({ rem: re[0], env })[RETURNS]
         } else A = env[concequent[VALUE]][STATS][RETURNS]
       break
   }
@@ -645,7 +645,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
     case APPLY:
       if (env[alternative[VALUE]])
         if (alternative[VALUE] === KEYWORDS.CREATE_ARRAY) {
-          B = initArrayType({ rem: re[1].slice(1), env })[RETURNS]
+          B = initArrayType({ rem: re[1], env })[RETURNS]
         } else B = env[alternative[VALUE]][STATS][RETURNS]
       break
   }
