@@ -663,7 +663,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
       (isSubType(A[1]) && isSubType(B[1]) && !A[1].isMatching(B[1]))
     ) {
       throw new TypeError(
-        `(if) statemnet needs to have matching concequent and alternative branches but got (${formatSubType(
+        `(if) needs to have matching concequent and alternative branches but got (${formatSubType(
           A
         )}) and (${formatSubType(B)}) (${stringifyArgs(exp)}) (check #1005)`
       )
