@@ -10,6 +10,7 @@ export const PLACEHOLDER = '.'
 export const MUTATION_SUFFIX = '!'
 export const PREDICATE_SUFFIX = '?'
 export const STATIC_TYPES = {
+  NIL: 'nil',
   NUMBER: 'Number',
   ABSTRACTION: 'Abstraction',
   UNKNOWN: 'Unknown',

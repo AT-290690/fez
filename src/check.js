@@ -639,7 +639,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
       B = [ATOM]
       break
     case WORD:
-      if (alternative[VALUE] !== STATIC_TYPES.NIL) return
+      if (alternative[VALUE] === STATIC_TYPES.NIL) return
       if (env[alternative[VALUE]]) B = env[alternative[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
