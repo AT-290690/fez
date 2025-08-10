@@ -958,8 +958,13 @@ const initArrayTypeRec = ({ rem, env }) =>
           x[TYPE] === ATOM ? NUMBER_SUBTYPE() : new SubType([UNKNOWN])
         ]
     else if (env[x[0][VALUE]])
-      if (x.length > 1 && env[x[0][VALUE]][STATS][RETURNS][0] === COLLECTION)
+      if (x.length > 1 && x[0][VALUE] === KEYWORDS.CREATE_ARRAY)
         return initArrayTypeRec({ rem: x, env })
+      else if (
+        x.length > 1 &&
+        env[x[0][VALUE]][STATS][RETURNS][0] === COLLECTION
+      )
+        return getReturns(env[x[0][VALUE]][STATS])
       else if (GET_ARRAY_INFERENCE_SET.has(x[0][VALUE])) {
         const res = resolveGetterRec(x, env)
         if (!res) return [UNKNOWN]
