@@ -382,6 +382,15 @@ export const deSuggarAst = (ast, scope) => {
                   exp[0][TYPE] = ATOM
                   exp[0][VALUE] = FALSE
                 } else if (rest.length > 2) {
+                  // TODO: maybe one day implement
+                  // Constant folding
+                  // it works sort of like this
+                  // while (
+                  //   rest.at(-2) &&
+                  //   rest.at(-1)[TYPE] === ATOM &&
+                  //   rest.at(-2)[TYPE] === ATOM
+                  // )
+                  //   rest[rest.length - 2][VALUE] += rest.pop()[VALUE]
                   exp.length = 0
                   let temp = exp
                   for (let i = 0; i < rest.length; i += 1) {

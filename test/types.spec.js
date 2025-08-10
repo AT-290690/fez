@@ -274,6 +274,8 @@ f)))
     )
   })
   it('Does not throw', () => {
+    passes(`(let x (if (> 1 2) [ [ 1 2 3 ] ] [ [ 1 2 3 ] ]))`)
+    passes(`(let x (if (> 1 2) [ true false ] [ true false ]))`)
     passes(`(let xs [[[[]]]])
 (let x (get xs 0 0 0))`)
     passes(`
@@ -754,6 +756,14 @@ ZZZ=ZZZ,ZZZ")
   (array:select math:odd?)
   (array:fold (lambda a b (and a b)) 0)))`,
       `Incorrect type for (lambda) (.) argument at position (0) named as (a). Expected (Number) but got (Boolean) (.array:fold (array:select (array 1 2 3 4 5) math:odd?) (lambda a b (and a b)) 0) (check #780)`
+    )
+    fails(
+      `(let fn (lambda  x (if (> x 2) [ 1 2 3 ] [ true false ])))`,
+      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let fn (lambda x (if (> x 2) (array 1 2 3) (array true false)))) (check #1005)`
+    )
+    fails(
+      `(let x (if (> 1 2) [ 1 2 3 ] [ true false ]))`,
+      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 1 2) (array 1 2 3) (array true false))) (check #1005)`
     )
     fails(
       `

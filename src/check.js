@@ -614,9 +614,66 @@ const IfApplyBranch = ({
       return setPropToReturn(ref[STATS], prop, branch[STATS])
   }
 }
+
+const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
+  let A = null
+  let B = null
+  switch (concequent[TYPE]) {
+    case ATOM:
+      A = [ATOM]
+      break
+    case WORD:
+      if (concequent[VALUE] === STATIC_TYPES.NIL) return
+      if (env[concequent[VALUE]]) A = env[concequent[VALUE]][STATS][TYPE_PROP]
+      break
+    case APPLY:
+      if (env[concequent[VALUE]])
+        if (concequent[VALUE] === KEYWORDS.CREATE_ARRAY) {
+          A = initArrayType({ rem: re[0].slice(1), env })[RETURNS]
+        } else A = env[concequent[VALUE]][STATS][RETURNS]
+      break
+  }
+
+  switch (alternative[TYPE]) {
+    case ATOM:
+      B = [ATOM]
+      break
+    case WORD:
+      if (alternative[VALUE] !== STATIC_TYPES.NIL) return
+      if (env[alternative[VALUE]]) B = env[alternative[VALUE]][STATS][TYPE_PROP]
+      break
+    case APPLY:
+      if (env[alternative[VALUE]])
+        if (alternative[VALUE] === KEYWORDS.CREATE_ARRAY) {
+          B = initArrayType({ rem: re[1].slice(1), env })[RETURNS]
+        } else B = env[alternative[VALUE]][STATS][RETURNS]
+      break
+  }
+  if (
+    A === null ||
+    B === null ||
+    A[0] === UNKNOWN ||
+    B[0] === UNKNOWN ||
+    A[0] === ANY ||
+    B[0] === ANY
+  ) {
+  } else {
+    if (
+      A[0] !== B[0] ||
+      (isSubType(A[1]) && isSubType(B[1]) && !A[1].isMatching(B[1]))
+    ) {
+      throw new TypeError(
+        `(if) statemnet needs to have matching concequent and alternative branches but got (${formatSubType(
+          A
+        )}) and (${formatSubType(B)}) (${stringifyArgs(exp)}) (check #1005)`
+      )
+    }
+  }
+}
 const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
-  if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM)
+  if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
     return setPropToAtom(ref[STATS], prop)
+  }
   // TODO check that both branches are predicates if one is
   else {
     const conc = isLeaf(re[0]) ? re[0] : re[0][0]
@@ -628,13 +685,13 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
     // WHY not consider making return types for everything
     if (concequent)
       if (conc[TYPE] === WORD) {
-        return setPropToTypeRef(ref[STATS], prop, concequent[STATS])
+        setPropToTypeRef(ref[STATS], prop, concequent[STATS])
       } else if (
         conc[TYPE] === APPLY &&
         getType(concequent[STATS]) === APPLY &&
         // Making sure the recursive function don't look for their own return type
         concequent[STATS][SIGNATURE] !== ref[STATS][SIGNATURE]
-      ) {
+      )
         IfApplyBranch({
           leaf: conc,
           branch: concequent,
@@ -646,16 +703,15 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
           exp,
           check
         })
-      }
-    if (alternative) {
+    if (alternative)
       if (alt[TYPE] === WORD) {
-        return setPropToTypeRef(ref[STATS], prop, alternative[STATS])
+        setPropToTypeRef(ref[STATS], prop, alternative[STATS])
       } else if (
         alt[TYPE] === APPLY &&
         getType(alternative[STATS]) === APPLY &&
         // Making sure the recursive function don't look for their own return type
         alternative[STATS][SIGNATURE] !== ref[STATS][SIGNATURE]
-      ) {
+      )
         IfApplyBranch({
           leaf: alt,
           branch: alternative,
@@ -667,8 +723,7 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
           exp,
           check
         })
-      }
-    }
+    validateIfMatchingBranches(conc, alt, env, exp, re)
   }
 }
 const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
@@ -2266,6 +2321,7 @@ export const typeCheck = (
                 }
               }
             }
+
             stagger(stack, 'append', [first, env], judge)
             stagger(stack, 'prepend', [first, env], judge)
             for (let i = 0; i < rest.length; ++i) {

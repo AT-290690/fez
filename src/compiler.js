@@ -276,17 +276,17 @@ const comp = (tree, Drill) => {
         )}}return -1})();`
       }
 
-      case STATIC_TYPES.ABSTRACTION:
-      case STATIC_TYPES.COLLECTION:
-      case STATIC_TYPES.UNKNOWN:
-      case STATIC_TYPES.ATOM:
-      case STATIC_TYPES.BOOLEAN:
-      case STATIC_TYPES.ANY:
-      case STATIC_TYPES.NUMBER:
-      case STATIC_TYPES.NUMBERS:
-      case STATIC_TYPES.ABSTRACTIONS:
-      case STATIC_TYPES.BOOLEANS:
-      case STATIC_TYPES.COLLECTIONS:
+      // case STATIC_TYPES.ABSTRACTION:
+      // case STATIC_TYPES.COLLECTION:
+      // case STATIC_TYPES.UNKNOWN:
+      // case STATIC_TYPES.ATOM:
+      // case STATIC_TYPES.BOOLEAN:
+      // case STATIC_TYPES.ANY:
+      // case STATIC_TYPES.NUMBER:
+      // case STATIC_TYPES.NUMBERS:
+      // case STATIC_TYPES.ABSTRACTIONS:
+      // case STATIC_TYPES.BOOLEANS:
+      // case STATIC_TYPES.COLLECTIONS:
       case DEBUG.LOG:
       case DEBUG.STRING:
       case DEBUG.UNQUOTED_STRING:
