@@ -273,7 +273,7 @@ const toIgnore = (ast) => {
         break
     }
   }
-  dfs(ast[0])
+  dfs(ast)
   return out
   // ast.filter(([x]) => isDefinition(x)).map(([_, x]) => x[VALUE])
 }
@@ -282,12 +282,12 @@ export const treeShake = (ast, libs) => {
   const visited = new Set()
   const ignored = new Set(toIgnore(ast))
   deepShake(ast, deps, visited, ignored)
-  return extractDeps(visited, deps)
+  return [extractDeps(visited, deps), visited]
 }
 export const shakedList = (ast, libs) => {
   const deps = toDeps(libs)
   const visited = new Set()
-  const ignored = new Set(toIgnore(ast))
+  const ignored = new Set(toIgnore(ast[0]))
   deepShake(ast, deps, visited, ignored)
   const out = []
   for (const [key] of deps) if (visited.has(key)) out.push(key)
@@ -311,7 +311,10 @@ export const wrapInApplyLambda = (ast) => [
 ]
 export const interpret = (ast, keywords) =>
   ast.reduce((_, x) => evaluate(x, keywords), 0)
-export const shake = (parsed, std) => treeShake(parsed, std).concat(parsed)
+export const shake = (parsed, std) => {
+  const [shaked] = treeShake(parsed, std)
+  return shaked.concat(parsed)
+}
 export const tree = (source, std) =>
   std
     ? shake(LISP.parse(deSuggarSource(removeNoCode(source))), std)

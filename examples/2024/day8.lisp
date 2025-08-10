@@ -66,7 +66,7 @@
             (if bounds1? (matrix:set! copy Y1 X1 char:hash))
             (if bounds2? (matrix:set! copy Y2 X2 char:hash))
             
-            (if (or bounds1? bounds2?) (tail-call:iter (+ i 1))))))
+            (if (or bounds1? bounds2?) (tail-call:iter (+ i 1)) false))))
 
         (tail-call:iter 1))))
     

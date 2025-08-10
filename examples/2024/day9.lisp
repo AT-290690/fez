@@ -17,7 +17,8 @@
         (if (= (array:last disk) -1) (do (array:pop! disk) (tail-call:fragment ind))
             (if (not (<= (array:length disk) i)) (do
                 (array:set! disk i (array:pop! disk))
-                (tail-call:fragment (+ ind 1))))))))
+                (tail-call:fragment (+ ind 1))) 
+                false)))))
         (tail-call:fragment 0)
         (|> disk (math:enumerated-fold  (lambda a b i (+ a (* b i))) 0)))))
        

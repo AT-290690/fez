@@ -23,14 +23,14 @@
     (let l (car left))
     (let r (car right))
     (+ 
-      (if (or (= l char:dot) (= l char:question-mark)) (numberp (dp? (cdr left) right)))
+      (if (or (= l char:dot) (= l char:question-mark)) (numberp (dp? (cdr left) right)) 0)
       (if (and 
               (or (= l char:hash) (= l char:question-mark))
               (<= r (length left))
               (not (array:has? (array:slice left 0 r) (lambda x (= x char:dot))))
               (or (= r (length left)) (not (= (array:get left r) char:hash)))
             )
-          (numberp (dp? (array:slice left (+ r 1) (length left)) (cdr right)))))
+          (numberp (dp? (array:slice left (+ r 1) (length left)) (cdr right))) 0))
   )))))
 )))
 (let dpm (lambda left right memo (do 
@@ -42,13 +42,13 @@
       (let l (car left))
       (let r (car right))
       (let res (+
-        (if (or (= l char:dot) (= l char:question-mark)) (dpm (cdr left) right memo))
+        (if (or (= l char:dot) (= l char:question-mark)) (dpm (cdr left) right memo) 0)
         (if (and
                 (or (= l char:hash) (= l char:question-mark))
                 (<= r (length left))
                 (not (array:has? (array:slice left 0 r) (lambda x (= x char:dot))))
                 (or (= r (length left)) (not (= (array:get left r) char:hash))))
-            (dpm (array:slice left (+ r 1) (length left)) (cdr right) memo))))
+            (dpm (array:slice left (+ r 1) (length left)) (cdr right) memo) 0)))
        (if (array:not-empty? key) (map:set! memo key res))
        res
     ))))))

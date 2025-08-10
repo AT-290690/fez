@@ -31,7 +31,7 @@
       (cond
           (= current char:hash) (tail-call:step start (+ angle 1))
           (or (= current char:dot) (= current char:X)) (tail-call:step start-copy angle) 
-          (*) 0))))))
+          (*) 0)) false))))
   (tail-call:step starting 0)
   (|> matrix (array:flat-one) (array:count char:X)))))
 
@@ -59,7 +59,7 @@
           (var:set! loops (+ (var:get loops) 1))
           (tail-call:step matrix start (+ angle 1) (map:set! corners key (+ c 1)))))
           (or (= current char:dot) (= current char:X)) (tail-call:step matrix start-copy angle corners)
-          (*) 0))))))
+          (*) 0)) false))))
   (tail-call:step matrix starting 0 (new:set64))
   (let path [])
   (let [Y X .] starting)
@@ -71,7 +71,7 @@
       (let x (array:get pos 1))
       (matrix:set! copy Y X char:X)
       (matrix:set! copy y x char:hash)
-      (if (not (and (= y Y) (= x X))) (tail-call:step copy starting 0 (new:set64))))))
+      (if (not (and (= y Y) (= x X))) (tail-call:step copy starting 0 (new:set64)) nil))))
   (var:get loops))))
   
 (let PARSED (parse INPUT))

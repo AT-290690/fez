@@ -750,15 +750,15 @@ ZZZ=ZZZ,ZZZ")
       `(let a false)
 (let b 10)
 (let x (if (> 2 2) a b))`,
-      `(if) statemnet needs to have matching concequent and alternative branches but got (Boolean) and (Number) (let x (if (> 2 2) a b)) (check #1005)`
+      `(if) needs to have matching concequent and alternative branches but got (Boolean) and (Number) (let x (if (> 2 2) a b)) (check #1005)`
     )
     fails(
       `(let x (if (> 2 2) [ 1 2 3 ] 1))`,
-      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Number) (let x (if (> 2 2) (array 1 2 3) 1)) (check #1005)`
+      `(if) needs to have matching concequent and alternative branches but got (Number[]) and (Number) (let x (if (> 2 2) (array 1 2 3) 1)) (check #1005)`
     )
     fails(
       `(let x (if (> 2 2) [ 1 2 3 ] [ true ]))`,
-      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 2 2) (array 1 2 3) (array true))) (check #1005)`
+      `(if) needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 2 2) (array 1 2 3) (array true))) (check #1005)`
     )
     fails(
       `(the array:select (lambda T (lambda T[] (do Boolean)) (do T)))
@@ -772,11 +772,11 @@ ZZZ=ZZZ,ZZZ")
     )
     fails(
       `(let fn (lambda  x (if (> x 2) [ 1 2 3 ] [ true false ])))`,
-      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let fn (lambda x (if (> x 2) (array 1 2 3) (array true false)))) (check #1005)`
+      `(if) needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let fn (lambda x (if (> x 2) (array 1 2 3) (array true false)))) (check #1005)`
     )
     fails(
       `(let x (if (> 1 2) [ 1 2 3 ] [ true false ]))`,
-      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 1 2) (array 1 2 3) (array true false))) (check #1005)`
+      `(if) needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 1 2) (array 1 2 3) (array true false))) (check #1005)`
     )
     fails(
       `
@@ -979,12 +979,12 @@ ZZZ=ZZZ,ZZZ")
       `(la1mbda) is trying to access undefined variable (input) at argument (0) (la1mbda input (string:lines input)) (check #20)`
     )
     fails(
-      `(let array:iterate (lambda xs cb (do 
+      `(let array:iterate2 (lambda xs cb (do 
   (loop:for-n (length xs) cb)
   xs)))
 
-(array:iterate [1 2 3] (lambda x i (+ x i)))`,
-      `Incorrect number of arguments for (cb) the (lambda) argument of (array:iterate) at position (1). Expected (= 1) but got 2 (array:iterate (array 1 2 3) (lambda x i (+ x i))) (check #777)`
+(array:iterate2 [1 2 3] (lambda x i (+ x i)))`,
+      `Incorrect number of arguments for (cb) the (lambda) argument of (array:iterate2) at position (1). Expected (= 1) but got 2 (array:iterate2 (array 1 2 3) (lambda x i (+ x i))) (check #777)`
     )
     fails(
       `(let arr [1 2 3 4])
@@ -1426,12 +1426,12 @@ ZZZ=ZZZ,ZZZ")
     )
     // Maybe this is ok since all branches return different stuff
     fails(
-      `(let array:equal? (lambda a b
+      `(let array:equal2? (lambda a b
   (or
   (and (atom? a) (atom? b) (= a b))
   (and (array? a)
         (= (length a) (length b))
-          (not (array:some? (math:sequence a) (lambda i (not (array:equal? (get a i) (get b i))))))))))`,
+          (not (array:some? (math:sequence a) (lambda i (not (array:equal2? (get a i) (get b i))))))))))`,
       `Incorrect type of argument (0) for (=). Expected (Number) but got (Unknown[]) (= a b) (check #3)`
     )
     fails(

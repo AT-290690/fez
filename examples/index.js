@@ -1,5 +1,6 @@
 import { compile, enhance, evaluate, parse, type } from '../index.js'
 import { readFileSync, access } from 'fs'
+import { withStdDefinedTypes } from '../src/types.js'
 const year = process.argv[2]
 const day = process.argv[3]
 const path = `./examples/${year}/day${day}.lisp`
@@ -9,7 +10,7 @@ access(path, (err) => {
   } else {
     try {
       const parsed = parse(readFileSync(path, 'utf-8'))
-      type(parsed)
+      type(parsed, withStdDefinedTypes(parsed))
       const solution = new Function(`return ${compile(enhance(parsed))}`)()
       // const solution = evaluate(parse(readFileSync(path, "utf-8")));
       if (Array.isArray(solution))

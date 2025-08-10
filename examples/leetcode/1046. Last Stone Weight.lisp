@@ -10,7 +10,8 @@
         (heap:pop! heap max-cmp)
         (if (!= x y)
           (heap:push! heap (- y x) max-cmp))
-        (tail-call:smash)))))
+        (tail-call:smash))
+        false)))
   (tail-call:smash)
   (if (> (length heap) 0) (heap:peek heap) 0))))
 

@@ -16,7 +16,7 @@ import {
   VALUE,
   WORD
 } from './keywords.js'
-import { hasBlock, stringifyArgs } from './utils.js'
+import { hasBlock, logExp, stringifyArgs } from './utils.js'
 import { NIL } from './types.js'
 export const SUGGAR = {
   // Syntactic suggars
@@ -531,7 +531,11 @@ export const deSuggarAst = (ast, scope) => {
                         KEYWORDS.IF
                       } ${stringifyArgs(rest)})`
                     )
-                  if (rest.length === 2) exp.push([WORD, NIL])
+                  if (rest.length === 2) {
+                    // for this to work also make nil to be a false boolean
+                    // exp[2] = [[APPLY, 'logic:true'], exp[2]]
+                    exp.push([WORD, NIL])
+                  }
                 }
                 deSuggarAst(exp[1], scope)
                 break

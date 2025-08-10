@@ -36,7 +36,8 @@ bbrgwb")
                 (array:map (lambda index (do
                     (let pattern (array:slice stripes 0 (math:min index (array:length stripes))))
                     (if (set:exists? patterns pattern)
-                        (memoized:num-possibilities (array:slice stripes index (array:length stripes)))))))
+                        (memoized:num-possibilities (array:slice stripes index (array:length stripes)))
+                        nil))))
                 (math:summation)))))
   (|> towels (array:map memoized:num-possibilities) (math:summation)))))
 

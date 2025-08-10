@@ -623,7 +623,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
       A = [ATOM, NUMBER_SUBTYPE()]
       break
     case WORD:
-      if (concequent[VALUE] === STATIC_TYPES.NIL) return
+      if (concequent[VALUE] === NIL) return
       if (env[concequent[VALUE]]) A = env[concequent[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
@@ -639,7 +639,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
       B = [ATOM, NUMBER_SUBTYPE()]
       break
     case WORD:
-      if (alternative[VALUE] === STATIC_TYPES.NIL) return
+      if (alternative[VALUE] === NIL) return
       if (env[alternative[VALUE]]) B = env[alternative[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
