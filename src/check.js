@@ -620,7 +620,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
   let B = null
   switch (concequent[TYPE]) {
     case ATOM:
-      A = [ATOM]
+      A = [ATOM, NUMBER_SUBTYPE()]
       break
     case WORD:
       if (concequent[VALUE] === STATIC_TYPES.NIL) return
@@ -636,7 +636,7 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
 
   switch (alternative[TYPE]) {
     case ATOM:
-      B = [ATOM]
+      B = [ATOM, NUMBER_SUBTYPE()]
       break
     case WORD:
       if (alternative[VALUE] === STATIC_TYPES.NIL) return
@@ -671,16 +671,15 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
   }
 }
 const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
+  const conc = isLeaf(re[0]) ? re[0] : re[0][0]
+  const alt = isLeaf(re[1]) ? re[1] : re[1][0]
+  const concequent = env[conc[VALUE]]
+  const alternative = env[alt[VALUE]]
   if (re[0][TYPE] === ATOM || re[1][TYPE] === ATOM) {
-    return setPropToAtom(ref[STATS], prop)
+    setPropToAtom(ref[STATS], prop)
   }
   // TODO check that both branches are predicates if one is
   else {
-    const conc = isLeaf(re[0]) ? re[0] : re[0][0]
-    const alt = isLeaf(re[1]) ? re[1] : re[1][0]
-    const concequent = env[conc[VALUE]]
-    const alternative = env[alt[VALUE]]
-
     // TODO make this more simple - it's so many different things just because types are functions or not
     // WHY not consider making return types for everything
     if (concequent)
@@ -723,8 +722,8 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
           exp,
           check
         })
-    validateIfMatchingBranches(conc, alt, env, exp, re)
   }
+  validateIfMatchingBranches(conc, alt, env, exp, re)
 }
 const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
   const ret = rem[0]

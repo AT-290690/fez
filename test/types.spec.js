@@ -747,6 +747,16 @@ ZZZ=ZZZ,ZZZ")
   })
   it('Should throw', () => {
     fails(
+      `(let a false)
+(let b 10)
+(let x (if (> 2 2) a b))`,
+      `(if) statemnet needs to have matching concequent and alternative branches but got (Boolean) and (Number) (let x (if (> 2 2) a b)) (check #1005)`
+    )
+    fails(
+      `(let x (if (> 2 2) [ 1 2 3 ] 1))`,
+      `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Number) (let x (if (> 2 2) (array 1 2 3) 1)) (check #1005)`
+    )
+    fails(
       `(let x (if (> 2 2) [ 1 2 3 ] [ true ]))`,
       `(if) statemnet needs to have matching concequent and alternative branches but got (Number[]) and (Boolean[]) (let x (if (> 2 2) (array 1 2 3) (array true))) (check #1005)`
     )
