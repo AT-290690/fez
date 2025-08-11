@@ -96,24 +96,24 @@
 (let Library 1)
 (let Type 1)
 (let Search 1)
-(let truthy? (lambda x
-    (cond
-     (atom? x) (not (= (Any x) 0))
-     (array? x) (> (length (Any x)) 0)
-     (*) 1)))
-(let falsy? (lambda x
-    (cond
-     (atom? x) (= (Any x) 0)
-     (array? x) (= (length (Any x)) 0)
-     (*) 0)))
-(let true? (lambda x (and (atom? x) (= (Any x) 1))))
-(let false? (lambda x (and (atom? x) (= (Any x) 0))))
 (let true (not 0))
 (let false (not 1))
 ; (let nil (not 1))
 (let nil 0)
 (let one 1)
 (let zero 0)
+(let truthy? (lambda x
+    (cond
+     (atom? x) (not (= (Any x) 0))
+     (array? x) (> (length (Any x)) 0)
+     (*) true)))
+(let falsy? (lambda x
+    (cond
+     (atom? x) (= (Any x) 0)
+     (array? x) (= (length (Any x)) 0)
+     (*) false)))
+(let true? (lambda x (and (atom? x) (= (Any x) 1))))
+(let false? (lambda x (and (atom? x) (= (Any x) 0))))
 (let math:e 2.718281828459045)
 (let math:pi 3.141592653589793)
 (let math:tau (* math:pi 2))

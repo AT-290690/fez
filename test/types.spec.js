@@ -746,6 +746,25 @@ ZZZ=ZZZ,ZZZ")
     doesNotThrow(() => type(std))
   })
   it('Should throw', () => {
+    // TODO
+    // uncomment this and make it fail
+    // fails(`(let x (if true (if false (if false (if true 1 0) false) false) 2))`)
+    fails(
+      `(let x (if true (if false (if false (if true 1 0) false) false) false))`,
+      `(if) needs to have matching concequent and alternative branches but got (Number) and (Boolean) (let x (if true (if false (if false (if true 1 0) false) false) false)) (check #1005)`
+    )
+    fails(
+      `(let x (if true (if false (if false true 1) false) 2))`,
+      `(if) needs to have matching concequent and alternative branches but got (Boolean) and (Number) (let x (if true (if false (if false true 1) false) 2)) (check #1005)`
+    )
+    fails(
+      `(let x (if true (if false true false) 2))`,
+      `(if) needs to have matching concequent and alternative branches but got (Boolean) and (Number) (let x (if true (if false true false) 2)) (check #1005)`
+    )
+    fails(
+      `(let x (if true 2 (if false true false)))`,
+      `(if) needs to have matching concequent and alternative branches but got (Number) and (Boolean) (let x (if true 2 (if false true false))) (check #1005)`
+    )
     fails(
       `(let a false)
 (let b 10)

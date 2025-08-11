@@ -615,7 +615,14 @@ const IfApplyBranch = ({
   }
 }
 
-const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
+const validateIfMatchingBranches = (
+  concequent,
+  alternative,
+  env,
+  exp,
+  re,
+  name
+) => {
   let A = null
   let B = null
   switch (concequent[TYPE]) {
@@ -627,9 +634,19 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
       if (env[concequent[VALUE]]) A = env[concequent[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
-      if (env[concequent[VALUE]])
+      if (env[concequent[VALUE]] && concequent[VALUE] !== name)
         if (concequent[VALUE] === KEYWORDS.CREATE_ARRAY) {
           A = initArrayType({ rem: re[0], env })[RETURNS]
+        } else if (concequent[VALUE] === KEYWORDS.IF && re[0][2]) {
+          const conc = isLeaf(re[0][2]) ? re[0][2] : re[0][2][0]
+          validateIfMatchingBranches(
+            conc,
+            alternative,
+            env,
+            exp,
+            isLeaf(re[0]) ? re[0].slice(2) : re[0].slice(2),
+            name
+          )
         } else A = env[concequent[VALUE]][STATS][RETURNS]
       break
   }
@@ -643,9 +660,19 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
       if (env[alternative[VALUE]]) B = env[alternative[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
-      if (env[alternative[VALUE]])
+      if (env[alternative[VALUE]] && alternative[VALUE] !== name)
         if (alternative[VALUE] === KEYWORDS.CREATE_ARRAY) {
           B = initArrayType({ rem: re[1], env })[RETURNS]
+        } else if (alternative[VALUE] === KEYWORDS.IF && re[1][2]) {
+          const alt = isLeaf(re[1][2]) ? re[1][2] : re[1][2][0]
+          validateIfMatchingBranches(
+            concequent,
+            alt,
+            env,
+            exp,
+            isLeaf(re[1]) ? re[1].slice(2) : re[1].slice(2),
+            name
+          )
         } else B = env[alternative[VALUE]][STATS][RETURNS]
       break
   }
@@ -656,18 +683,17 @@ const validateIfMatchingBranches = (concequent, alternative, env, exp, re) => {
     B[0] === UNKNOWN ||
     A[0] === ANY ||
     B[0] === ANY
+  )
+    return
+  if (
+    A[0] !== B[0] ||
+    (isSubType(A[1]) && isSubType(B[1]) && !A[1].isMatching(B[1]))
   ) {
-  } else {
-    if (
-      A[0] !== B[0] ||
-      (isSubType(A[1]) && isSubType(B[1]) && !A[1].isMatching(B[1]))
-    ) {
-      throw new TypeError(
-        `(if) needs to have matching concequent and alternative branches but got (${formatSubType(
-          A
-        )}) and (${formatSubType(B)}) (${stringifyArgs(exp)}) (check #1005)`
-      )
-    }
+    throw new TypeError(
+      `(if) needs to have matching concequent and alternative branches but got (${formatSubType(
+        A
+      )}) and (${formatSubType(B)}) (${stringifyArgs(exp)}) (check #1005)`
+    )
   }
 }
 const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
@@ -723,7 +749,7 @@ const ifExpression = ({ re, env, ref, prop, stack, exp, check }) => {
           check
         })
   }
-  validateIfMatchingBranches(conc, alt, env, exp, re)
+  validateIfMatchingBranches(conc, alt, env, exp, re, ref[STATS][SIGNATURE])
 }
 const resolveCondition = ({ rem, name, env, exp, prop, stack, check }) => {
   const ret = rem[0]
