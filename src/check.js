@@ -634,7 +634,7 @@ const validateIfMatchingBranches = (
       if (env[concequent[VALUE]]) A = env[concequent[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
-      if (env[concequent[VALUE]] && concequent[VALUE] !== name)
+      if (concequent[VALUE] !== name && env[concequent[VALUE]])
         if (concequent[VALUE] === KEYWORDS.CREATE_ARRAY) {
           A = initArrayType({ rem: re[0], env })[RETURNS]
         } else if (concequent[VALUE] === KEYWORDS.IF && re[0][2]) {
@@ -650,7 +650,6 @@ const validateIfMatchingBranches = (
         } else A = env[concequent[VALUE]][STATS][RETURNS]
       break
   }
-
   switch (alternative[TYPE]) {
     case ATOM:
       B = [ATOM, NUMBER_SUBTYPE()]
@@ -660,7 +659,7 @@ const validateIfMatchingBranches = (
       if (env[alternative[VALUE]]) B = env[alternative[VALUE]][STATS][TYPE_PROP]
       break
     case APPLY:
-      if (env[alternative[VALUE]] && alternative[VALUE] !== name)
+      if (alternative[VALUE] !== name && env[alternative[VALUE]])
         if (alternative[VALUE] === KEYWORDS.CREATE_ARRAY) {
           B = initArrayType({ rem: re[1], env })[RETURNS]
         } else if (alternative[VALUE] === KEYWORDS.IF && re[1][2]) {

@@ -108,5 +108,13 @@ test('leetcode', [
   {
     file: '100. Same Tree.lisp',
     result: [1, 0, 0]
+  },
+  {
+    file: '922. Sort Array By Parity II.lisp',
+    result: [
+      [4, 2, 5, 7],
+      [2, 3],
+      [4, 3]
+    ]
   }
 ])
