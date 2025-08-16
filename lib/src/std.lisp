@@ -1668,18 +1668,20 @@
                                                         word) i (tail-call:string:match (array:tail xs) (+ i 1)))
                                                     -1)))
                                               (tail-call:string:match str 0)))))))
+
+(let string:has?-helper (lambda str word (do 
+  (let tail-call:string:has (lambda xs i
+      (if (and (> (length xs) 0) (>= (length xs) (length word)))
+            (if (string:equal?
+              (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
+              word)
+              true 
+              (tail-call:string:has (array:tail xs) (+ i 1))) false)))
+(tail-call:string:has str 0))))
 (let string:has? (lambda str word  (cond
                                         (< (length str) (length word)) false
                                         (string:equal? str word) true
-                                        (*) (apply (lambda (do
-                                              (let tail-call:string:has (lambda xs i
-                                                    (if (and (> (length xs) 0) (>= (length xs) (length word)))
-                                                          (if (string:equal?
-                                                            (|> str (array:slice i (+ i (length word))) (array) (array:join (array char:empty)))
-                                                            word)
-                                                            true 
-                                                            (tail-call:string:has (array:tail xs) (+ i 1))) false)))
-                                                  (tail-call:string:has str 0)))))))
+                                        (*) (string:has?-helper str word))))
 (let string:lesser? (lambda A B (and (not (string:equal? A B)) (apply (lambda (do
   (let a (if (< (length A) (length B)) (array:merge! A (math:zeroes (- (length B) (length A)))) A))
   (let b (if (> (length A) (length B)) (array:merge! B (math:zeroes (- (length A) (length B)))) B))

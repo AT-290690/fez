@@ -538,6 +538,7 @@
 (the string:slice-before (lambda Unknown[] Unknown[] (do Unknown[])))
 (the string:split (lambda Unknown[] Unknown (do Unknown[])))
 (the string:match (lambda Unknown[] Unknown[] (do Number)))
+(the string:has?-helper (lambda Unknown[] Unknown[] (do Boolean)))
 (the string:has? (lambda Unknown[] Unknown[] (do Boolean)))
 (the string:lesser? (lambda Unknown[] Unknown[] (do Boolean)))
 (the string:greater? (lambda Unknown[] Unknown[] (do Boolean)))

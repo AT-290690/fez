@@ -644,7 +644,7 @@ const validateIfMatchingBranches = (
             alternative,
             env,
             exp,
-            isLeaf(re[0]) ? re[0].slice(2) : re[0].slice(2),
+            re[0].slice(2),
             name
           )
         } else A = env[concequent[VALUE]][STATS][RETURNS]
@@ -669,7 +669,7 @@ const validateIfMatchingBranches = (
             alt,
             env,
             exp,
-            isLeaf(re[1]) ? re[1].slice(2) : re[1].slice(2),
+            re[1].slice(2),
             name
           )
         } else B = env[alternative[VALUE]][STATS][RETURNS]
