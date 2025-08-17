@@ -614,7 +614,29 @@ const IfApplyBranch = ({
       return setPropToReturn(ref[STATS], prop, branch[STATS])
   }
 }
-
+const inferIf = (branch, re, env, name) => {
+  switch (branch[TYPE]) {
+    case ATOM:
+      return [[ATOM, NUMBER_SUBTYPE()]]
+    case WORD:
+      if (branch[VALUE] === NIL) return [[UNKNOWN]]
+      if (env[branch[VALUE]]) return [env[branch[VALUE]][STATS][TYPE_PROP]]
+      break
+    case APPLY:
+      if (branch[VALUE] !== name && env[branch[VALUE]])
+        if (branch[VALUE] === KEYWORDS.CREATE_ARRAY) {
+          return [initArrayType({ rem: re, env })[RETURNS]]
+        } else if (branch[VALUE] === KEYWORDS.IF) {
+          const conc = isLeaf(re[2]) ? re[2] : re[2][0]
+          const alt = isLeaf(re[3]) ? re[3] : re[3][0]
+          return inferIf(conc, re[2], env, name).concat(
+            inferIf(alt, re[3], env, name)
+          )
+        } else return [env[branch[VALUE]][STATS][RETURNS]]
+      break
+  }
+  return []
+}
 const validateIfMatchingBranches = (
   concequent,
   alternative,
@@ -623,75 +645,40 @@ const validateIfMatchingBranches = (
   re,
   name
 ) => {
-  let A = null
-  let B = null
-  switch (concequent[TYPE]) {
-    case ATOM:
-      A = [ATOM, NUMBER_SUBTYPE()]
-      break
-    case WORD:
-      if (concequent[VALUE] === NIL) return
-      if (env[concequent[VALUE]]) A = env[concequent[VALUE]][STATS][TYPE_PROP]
-      break
-    case APPLY:
-      if (concequent[VALUE] !== name && env[concequent[VALUE]])
-        if (concequent[VALUE] === KEYWORDS.CREATE_ARRAY) {
-          A = initArrayType({ rem: re[0], env })[RETURNS]
-        } else if (concequent[VALUE] === KEYWORDS.IF && re[0][2]) {
-          const conc = isLeaf(re[0][2]) ? re[0][2] : re[0][2][0]
-          validateIfMatchingBranches(
-            conc,
-            alternative,
-            env,
-            exp,
-            re[0].slice(2),
-            name
-          )
-        } else A = env[concequent[VALUE]][STATS][RETURNS]
-      break
-  }
-  switch (alternative[TYPE]) {
-    case ATOM:
-      B = [ATOM, NUMBER_SUBTYPE()]
-      break
-    case WORD:
-      if (alternative[VALUE] === NIL) return
-      if (env[alternative[VALUE]]) B = env[alternative[VALUE]][STATS][TYPE_PROP]
-      break
-    case APPLY:
-      if (alternative[VALUE] !== name && env[alternative[VALUE]])
-        if (alternative[VALUE] === KEYWORDS.CREATE_ARRAY) {
-          B = initArrayType({ rem: re[1], env })[RETURNS]
-        } else if (alternative[VALUE] === KEYWORDS.IF && re[1][2]) {
-          const alt = isLeaf(re[1][2]) ? re[1][2] : re[1][2][0]
-          validateIfMatchingBranches(
-            concequent,
-            alt,
-            env,
-            exp,
-            re[1].slice(2),
-            name
-          )
-        } else B = env[alternative[VALUE]][STATS][RETURNS]
-      break
-  }
-  if (
-    A === null ||
-    B === null ||
-    A[0] === UNKNOWN ||
-    B[0] === UNKNOWN ||
-    A[0] === ANY ||
-    B[0] === ANY
+  const A = inferIf(concequent, re[0], env, name).filter(
+    (x) => x[0] !== UNKNOWN && x[0] !== ANY
   )
-    return
+  const B = inferIf(alternative, re[1], env, name).filter(
+    (x) => x[0] !== UNKNOWN && x[0] !== ANY
+  )
+
+  if (!A.length || !B.length) return
+
+  const isSame = (A, B) => {
+    if (
+      A[0] !== B[0] ||
+      (isSubType(A[1]) && isSubType(B[1]) && !A[1].isMatching(B[1]))
+    ) {
+      throw new TypeError(
+        `(if) needs to have matching concequent and alternative branches but got (${formatSubType(
+          A
+        )}) and (${formatSubType(B)}) (${stringifyArgs(exp)}) (check #1005)`
+      )
+    }
+  }
+  A.forEach((x) => isSame(A[0], x))
+  B.forEach((x) => isSame(B[0], x))
+
+  const FA = A[0]
+  const FB = B[0]
   if (
-    A[0] !== B[0] ||
-    (isSubType(A[1]) && isSubType(B[1]) && !A[1].isMatching(B[1]))
+    FA[0] !== FB[0] ||
+    (isSubType(FA[1]) && isSubType(FB[1]) && !FA[1].isMatching(FB[1]))
   ) {
     throw new TypeError(
       `(if) needs to have matching concequent and alternative branches but got (${formatSubType(
-        A
-      )}) and (${formatSubType(B)}) (${stringifyArgs(exp)}) (check #1005)`
+        FA
+      )}) and (${formatSubType(FB)}) (${stringifyArgs(exp)}) (check #1005)`
     )
   }
 }

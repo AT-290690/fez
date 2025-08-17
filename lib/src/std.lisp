@@ -1267,7 +1267,7 @@
 (let from:yx->key (lambda y x (array:concat-with (array:map (array y x) (lambda c (|> c (from:integer->digits) (from:digits->chars)))) char:dash)))
 (let from:string-or-number->key (lambda arr (array:commas (array:map arr (lambda x
       (cond
-          (atom? x) (array x)
+          (atom? x) (Any (array x))
           (= (length x) 0) (array char:comma) 
           (*) x))))))
 (let from:list->array (lambda list (do
