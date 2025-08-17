@@ -8,6 +8,14 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 describe('Corretness', () => {
   it('Should be correct', () => {
     strictEqual(
+      evalJS(
+        `(let x 1)
+(let y 1)
+(- x (- (- (- (- y)))))`
+      ),
+      0
+    )
+    strictEqual(
       evalJS(`; (let amount (- 38108.27 15475.92))
 (let amount 22632.35) ; in 5 months
 (let percentage  0.6838)
