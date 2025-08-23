@@ -7,6 +7,15 @@ const interpred = (source) => evaluate(enhance(parse(source)))
 // const evalJS = (source) => interpred(source, {  mutation: 1 })
 describe('Corretness', () => {
   it('Should be correct', () => {
+    deepStrictEqual(
+      evalJS(`(let nim (lambda n (<> (mod n 4) 0)))
+[
+    (nim 4) ; 0
+    (nim 1) ; 1
+    (nim 2) ; 1
+]`),
+      [0, 1, 1]
+    )
     strictEqual(
       evalJS(
         `(let x 1)
