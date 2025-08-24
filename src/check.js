@@ -2140,6 +2140,13 @@ export const typeCheck = (
                       const name = rest[i][0][VALUE]
                       if (!env[name]) continue
                       else if (name === KEYWORDS.IF) {
+                        // TODO: optimize this!!!
+                        // it will be extremely slow if
+                        // the condition is
+                        // 1. deeply nested
+                        // 2. piped with other things
+                        // as it will type check everything
+                        // for each condition exponentially
                         const concequent = [...rest]
                         const alternative = [...rest]
                         concequent[i] = rest[i][2]
