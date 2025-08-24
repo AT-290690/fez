@@ -967,7 +967,7 @@
                         (tail-call:array:reverse 0 []))))
 (let array:append! (lambda q item (array:set! q (length q) item)))
 (let array:set-and-get! (lambda q index item (do (array:set! q index item) item)))
-(let array:tail! (lambda q (del! q)))
+(let array:tail! (lambda q (do (del! q) q)))
 (let array:push! (lambda q item (do (array:set! q (length q) item) item)))
 (let array:pop! (lambda q (do (let l (array:at q -1)) (del! q) l)))
 (let array:even-indexed (lambda x (array:enumerated-transform x (lambda a b i (if (math:even? i) (array:append! a b) a)) [])))

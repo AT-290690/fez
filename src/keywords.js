@@ -116,5 +116,8 @@ export const GETTERS_SET = new Set([
   KEYWORDS.GET_ARRAY,
   'array:get-number',
   'array:get-array',
-  'array:get-boolean'
+  'array:get-boolean',
+  'pop!',
+  'array:pop!',
+  'array:at'
 ])
