@@ -841,7 +841,7 @@ ZZZ=ZZZ,ZZZ")
       `
 (let Bxs [[ 10 20 30 40 ]])
 (let f [(. Bxs 0 0 0)])`,
-      `(array:get) is trying to access nested structure at level (3) which is deeper than it's (2) levels at (array (array:get (array:get (array:get Bxs 0) 0) 0)) (check #1003)`,
+      `(get) is trying to access nested structure at level (3) which is deeper than it's (2) levels at (array (get (get (get Bxs 0) 0) 0)) (check #1003)`,
       'RangeError'
     )
     fails(
@@ -854,7 +854,7 @@ ZZZ=ZZZ,ZZZ")
     fails(
       `(let xs [[[ 1 ]]])
 (let a (. xs 0 0 0 0))`,
-      `(array:get) is trying to access nested structure at level (4) which is deeper than it's (3) levels at (let a (array:get (array:get (array:get (array:get xs 0) 0) 0) 0)) (check #1003)`,
+      `(get) is trying to access nested structure at level (4) which is deeper than it's (3) levels at (let a (get (get (get (get xs 0) 0) 0) 0)) (check #1003)`,
       'RangeError'
     )
     fails(

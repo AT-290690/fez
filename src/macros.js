@@ -49,7 +49,7 @@ export const SUGGAR = {
   BOOLEAN_VARIABLE: 'boolean',
   BOOLEAN_VARIABLE_GET: 'boole',
   BOOLEAN_VARIABLE_SET: 'boole-set',
-  GET_ARRAY: 'array:get'
+  GET_ARRAY: 'get'
 }
 export const deSuggarAst = (ast, scope) => {
   if (scope === undefined) scope = ast
