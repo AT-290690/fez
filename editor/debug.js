@@ -7,18 +7,16 @@ import {
   APPLY,
   ATOM,
   DEBUG,
-  FALSE,
   KEYWORDS,
   RUNTIME_TYPES,
   SPECIAL_FORMS_SET,
   STATIC_TYPES,
-  TRUE,
   TYPE,
   VALUE,
   WORD
 } from '../src/keywords.js'
 import { enhance } from '../src/enhance.js'
-import { AST, isLeaf, LISP } from '../src/parser.js'
+import { isLeaf, LISP } from '../src/parser.js'
 import {
   definedTypes,
   filteredDefinedTypes,

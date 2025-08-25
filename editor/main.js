@@ -1,4 +1,4 @@
-import { parse, compile, enhance, AST, LISP, UTILS } from '../index.js'
+import { parse, compile, enhance, LISP, UTILS } from '../index.js'
 import { debug } from './debug.js'
 import { makeEditor, serialise } from './utils.js'
 const THEME = new URLSearchParams(location.search).get('t') ?? 'terminal'
