@@ -46,7 +46,8 @@ export const GET_ARRAY_INFERENCE_SET = new Set([
   'array:first',
   'array:second',
   'array:third',
-  'array:last'
+  'array:last',
+  'array:pop!'
 ])
 export class SubType {
   constructor(args) {

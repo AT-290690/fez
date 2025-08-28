@@ -83,7 +83,6 @@
 (the array:set! (lambda Unknown[] Number Any (do Unknown[])))
 (the array:push! (lambda Unknown[] Any (do Any)))
 (the push! (lambda Unknown[] Any (do Any)))
-(the pop! (lambda Unknown[] (do Any)))
 (the array:pop! (lambda Unknown[] (do Any)))
 
 (the array:append! (lambda Unknown[] Any (do Unknown[])))
