@@ -25,7 +25,7 @@
     "build": "node ./lib/builder.js",
     "fez": "node main.js",
     "test": "mocha",
-    "examples": "node ./examples/leetcode/test.spec.js && node ./examples/quests/test.spec.js && node ./examples/2015/test.spec.js && node ./examples/2018/test.spec.js && node ./examples/2019/test.spec.js && node ./examples/2020/test.spec.js && node ./examples/2021/test.spec.js && node ./examples/2023/test.spec.js && node ./examples/2024/test.spec.js"
+    "examples": "node ./examples/leetcode/test.spec.js && node ./examples/hacker-rank/test.spec.js && node ./examples/quests/test.spec.js && node ./examples/2015/test.spec.js && node ./examples/2018/test.spec.js && node ./examples/2019/test.spec.js && node ./examples/2020/test.spec.js && node ./examples/2021/test.spec.js && node ./examples/2023/test.spec.js && node ./examples/2024/test.spec.js"
   },
   "license": "MIT",
   "devDependencies": {
