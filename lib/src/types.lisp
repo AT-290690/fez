@@ -63,6 +63,7 @@
 (the char:empty Number)
 (the char:double-quote Number)
 (the char:new-line Number)
+(the char:tab Number)
 (the char:space Number)
 (the char:comma Number)
 (the char:dot Number)
